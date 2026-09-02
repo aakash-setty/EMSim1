@@ -1,0 +1,410 @@
+{
+ "binding_version": "0.1",
+ "case_id": "adhf-hfref-01",
+ "catalog_version": "0.1-draft",
+ "status": "DRAFT. Every mapped row is an author judgement and needs review.",
+ "counts": {
+  "exact": 16,
+  "mapped": 41,
+  "unmatched": 7
+ },
+ "group_coverage": {
+  "crystalloid_bolus_1l": [
+   "lactated_ringer_s_1l_bolus",
+   "lactated_ringer_s_500ml_bolus",
+   "normal_saline_500ml_bolus"
+  ]
+ },
+ "blocking": [],
+ "rows": [
+  {
+   "case_id": "niv_cpap",
+   "catalog_id": "non_invasive_positive_pressure_ventilation",
+   "status": "mapped",
+   "note": "Catalog collapses CPAP and BiPAP into one entry on author instruction. The case distinguishes them and tags both critical, so two case actions bind to one catalog entry and the distinction is lost in the interface."
+  },
+  {
+   "case_id": "niv_bipap",
+   "catalog_id": "non_invasive_positive_pressure_ventilation",
+   "status": "mapped",
+   "note": "See niv_cpap."
+  },
+  {
+   "case_id": "nitroglycerin_infusion",
+   "catalog_id": "nitroglycerin_drip",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "nitroglycerin_sublingual",
+   "catalog_id": "nitroglycerin_sublingual",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "nitroglycerin_stop",
+   "catalog_id": "stop_nitroglycerin",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "furosemide_iv",
+   "catalog_id": "furosemide_40_mg_iv",
+   "status": "mapped",
+   "note": "Catalog carries the dose in the display name, so the case no longer needs its own."
+  },
+  {
+   "case_id": "iv_access_peripheral",
+   "catalog_id": "insert_iv",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "cardiac_monitor",
+   "catalog_id": "attach_monitor",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "oxygen_nonrebreather",
+   "catalog_id": "non_rebreather_mask",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "cxr_portable",
+   "catalog_id": "xr_chest",
+   "status": "mapped",
+   "note": "Catalog does not distinguish portable from departmental. The case's authored report says portable AP."
+  },
+  {
+   "case_id": "pocus_lung_cardiac",
+   "catalog_id": "ultrasound_lung",
+   "status": "mapped",
+   "note": "The case authors a single combined lung-and-cardiac scan. The catalog has ultrasound_lung and ultrasound_cardiac as separate acts. Bound to the lung study; the cardiac findings in the authored report are therefore unreachable by a learner who orders only the cardiac scan. This should be split into two case content keys."
+  },
+  {
+   "case_id": "interview_topic_medication_adherence",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Interview topics are not catalog actions. See review packet 6.5: the case scores asking about adherence as a critical action, which requires topics to be addressable in the action namespace. The catalog does not model them."
+  },
+  {
+   "case_id": "intubation_rsi",
+   "catalog_id": "intubate_rapid_sequence",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "etomidate_iv",
+   "catalog_id": "etomidate_bolus",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_iv",
+   "catalog_id": "ketamine_bolus",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "rocuronium_iv",
+   "catalog_id": "rocuronium_bolus",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "succinylcholine_iv",
+   "catalog_id": "succinylcholine_bolus",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "post_intubation_sedation_infusion",
+   "catalog_id": "propofol_infusion",
+   "status": "mapped",
+   "note": "Catalog offers propofol or ketamine infusion. The case treats sedation as one action; the follow-up satisfied_by list needs both catalog ids."
+  },
+  {
+   "case_id": "vent_settings_lung_protective",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "No ventilator settings action."
+  },
+  {
+   "case_id": "peep_reduce",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "No ventilator settings action."
+  },
+  {
+   "case_id": "norepinephrine_infusion",
+   "catalog_id": "norepinephrine_drip",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "epinephrine_push_dose",
+   "catalog_id": "epinephrine_bolus",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "metoprolol_iv",
+   "catalog_id": "metoprolol_bolus",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "diltiazem_iv",
+   "catalog_id": "diltiazem_bolus",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "crystalloid_bolus_1l",
+   "catalog_id": "normal_saline_1l_bolus",
+   "status": "mapped",
+   "note": "Harmful here. The catalog offers four crystalloid boluses and every one reaches the same harm, so the tag covers the whole equivalence group rather than one entry.",
+   "also_covers": [
+    "lactated_ringer_s_1l_bolus",
+    "lactated_ringer_s_500ml_bolus",
+    "normal_saline_500ml_bolus"
+   ]
+  },
+  {
+   "case_id": "dobutamine_infusion",
+   "catalog_id": "dobutamine_drip",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "morphine_iv",
+   "catalog_id": "morphine_bolus",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "albuterol_ipratropium_neb",
+   "catalog_id": "albuterol",
+   "status": "mapped",
+   "note": "The case authors a combined albuterol and ipratropium nebuliser; the catalog lists them separately. Bound to albuterol, so a learner who gives ipratropium alone reaches the same trap through an unbound action and gets no debrief note for it."
+  },
+  {
+   "case_id": "methylprednisolone_iv",
+   "catalog_id": "methylprednisolone_bolus",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "ceftriaxone_iv",
+   "catalog_id": "ceftriaxone",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "aspirin_po",
+   "catalog_id": "aspirin",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "labs_dimer",
+   "catalog_id": "d_dimer",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "ct_pulmonary_angiogram",
+   "catalog_id": "ct_pulmonary_embolus",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "bp_cycling_q5min",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "No monitoring-frequency action. Catalog agrees this is unmatched."
+  },
+  {
+   "case_id": "urine_output_monitoring",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "No monitoring action. Catalog agrees this is unmatched."
+  },
+  {
+   "case_id": "foley_catheter",
+   "catalog_id": "insert_foley_catheter",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "labs_cbc",
+   "catalog_id": "complete_blood_count_cbc",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "labs_bmp",
+   "catalog_id": "basic_chemistry_chem_7",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "labs_bnp",
+   "catalog_id": "pro_bnp",
+   "status": "mapped",
+   "note": "Catalog offers pro-BNP; the case authored a BNP of 2840 with a reference under 100. Those are different assays with different reference intervals. The number must be rewritten for pro-BNP or a BNP entry added."
+  },
+  {
+   "case_id": "labs_troponin_hs",
+   "catalog_id": "troponin_t",
+   "status": "mapped",
+   "note": "Catalog troponin default is qualitative ('Unremarkable'); the case teaches a numeric high-sensitivity troponin against a stated URL. Assay mismatch."
+  },
+  {
+   "case_id": "labs_vbg",
+   "catalog_id": "venous_blood_gas",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "labs_lactate",
+   "catalog_id": "lactate",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "labs_lft",
+   "catalog_id": "liver_function_tests_lfts",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "labs_magnesium",
+   "catalog_id": "magnesium_level",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "labs_tsh",
+   "catalog_id": "tsh",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "labs_urinalysis",
+   "catalog_id": "urinalysis",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "echo_formal",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "No formal echocardiogram in the catalog."
+  },
+  {
+   "case_id": "consult_cardiology",
+   "catalog_id": "consult_cardiology",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_nephrology",
+   "catalog_id": "consult_renal",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Catalog has no handoff tab or action; listed in its own known_gaps."
+  },
+  {
+   "case_id": "arterial_line",
+   "catalog_id": "arterial_line",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck",
+   "status": "exact",
+   "note": "Carries the jugular venous pressure and the hepatojugular reflux, which the case previously scored as two separate manoeuvres. The reflux is no longer a discrete act a learner can choose to perform."
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card",
+   "status": "exact",
+   "note": "Carries the peripheral oedema as well as the cardiac auscultation, because the catalog's routing map assigns pedal oedema here rather than to the musculoskeletal or circulation exam."
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_abd",
+   "catalog_id": "exam_abd",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych",
+   "status": "exact",
+   "note": null
+  }
+ ]
+}

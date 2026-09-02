@@ -1,0 +1,468 @@
+/* ============================================================
+   Engine. Case-agnostic: no clinical knowledge, no case names.
+   Mirrors system-design-v2.md section 12 components.
+
+   v2 changes: the action surface is the action catalog, not the case. A case
+   action binds onto a catalog entry and supplies the tag, prompt, prerequisites
+   and debrief note. Everything else is inert. Study results resolve case first,
+   catalog default second, nothing third.
+   ============================================================ */
+
+/* ---------- condition language (section 4) ---------- */
+function tokenize(s){
+  return s.replace(/\(/g,' ( ').replace(/\)/g,' ) ').trim().split(/\s+/).filter(Boolean);
+}
+function parseCond(s){
+  if(s===null||s===undefined||s==='') return {t:'true'};
+  const p={i:0,k:tokenize(s)};
+  const n=pExpr(p);
+  if(p.i<p.k.length) throw new Error('trailing tokens in condition: '+s);
+  return n;
+}
+function pExpr(p){ let a=pTerm(p); while(p.k[p.i]==='OR'){p.i++; a={t:'or',a,b:pTerm(p)};} return a; }
+function pTerm(p){ let a=pFac(p); while(p.k[p.i]==='AND'){p.i++; a={t:'and',a,b:pFac(p)};} return a; }
+function pFac(p){
+  if(p.k[p.i]==='NOT'){p.i++; return {t:'not',a:pFac(p)};}
+  if(p.k[p.i]==='('){p.i++; const e=pExpr(p); if(p.k[p.i]!==')') throw new Error('unbalanced parens'); p.i++; return e;}
+  return pAtom(p);
+}
+function pAtom(p){
+  const k=p.k, i=p.i;
+  if(k[i]==='phase'&&k[i+1]==='is'){p.i=i+3; return {t:'phase',v:k[i+2]};}
+  if(k[i]==='flag'&&k[i+2]==='set'){p.i=i+3; return {t:'flag',v:k[i+1]};}
+  if(k[i]==='study'&&k[i+2]==='ordered'){p.i=i+3; return {t:'ordered',v:k[i+1]};}
+  if(k[i]==='study'&&k[i+2]==='resulted'){p.i=i+3; return {t:'resulted',v:k[i+1]};}
+  if(k[i]==='action'&&k[i+2]==='taken'){p.i=i+3; return {t:'taken',v:k[i+1]};}
+  /* The catalog ships prerequisites written as "flag F" without the trailing
+     keyword, which section 4 does not permit. Accept it here so the prototype can
+     run, and record it so the interface can say the grammar is being bent. */
+  if(k[i]==='flag'&&(k[i+2]===undefined||k[i+2]==='AND'||k[i+2]==='OR'||k[i+2]===')')){
+    LOOSE_CONDITIONS.add(p.k.join(' '));
+    p.i=i+2; return {t:'flag',v:k[i+1]};
+  }
+  throw new Error('unparseable atom near: '+k.slice(i,i+3).join(' '));
+}
+const LOOSE_CONDITIONS=new Set();
+
+function evalCond(n,st){
+  switch(n.t){
+    case 'true':     return true;
+    case 'and':      return evalCond(n.a,st)&&evalCond(n.b,st);
+    case 'or':       return evalCond(n.a,st)||evalCond(n.b,st);
+    case 'not':      return !evalCond(n.a,st);
+    case 'phase':    return st.phase===n.v;
+    case 'flag':     return st.flags.has(n.v);
+    case 'ordered':  return st.ordered.has(n.v);
+    case 'resulted': return st.resulted.has(n.v);
+    case 'taken':    return st.taken.has(n.v);
+  }
+  return false;
+}
+const _ccache=new Map();
+function cond(s){ if(!_ccache.has(s)) _ccache.set(s,parseCond(s)); return _ccache.get(s); }
+function test(s,st){ return evalCond(cond(s===null?'':s),st); }
+
+/* resolver: first match wins, unconditional default last */
+function resolve(rules,st){
+  for(const r of rules){ if(r.when===null||r.when===undefined||test(r.when,st)) return r.value; }
+  return null;
+}
+
+/* ---------- case selection and the catalog merge ----------
+   PROTO is assembled here rather than at build time so that every case shares one
+   copy of the catalog. Section 6.2: catalog defaults apply unless the case waives
+   them, and case prerequisites are additional rather than a replacement. */
+let CASE=null, PROTO=null, PACK=null;
+let PHASE={}, ACT={}, FU={}, CK=null, CONTENT={}, GENERAL_STATUS=null;
+
+function orphanCategory(eff){
+  if(eff.indexOf('exam_')===0) return 'exam';
+  if(eff.indexOf('consult_')===0) return 'consultant';
+  if(/^(labs_|echo_|cxr|ct_|pocus)/.test(eff)) return 'investigation';
+  if(eff.indexOf('interview_topic_')===0) return 'interview';
+  if(eff==='handoff_submit') return 'handoff';
+  return 'stabilization';
+}
+
+function mergeAction(eff, base, caseAct, extra){
+  base = base||{}; caseAct = caseAct||{};
+  const waived=(caseAct.prerequisite_overrides||[]).map(w=>w.waived).filter(Boolean);
+  const prereqs=[], seen=new Set();
+  for(const p of (base.default_prerequisites||[])){
+    if(seen.has(p.when)||waived.indexOf(p.when)>=0) continue;
+    seen.add(p.when); prereqs.push(Object.assign({},p,{origin:'catalog_default'}));
+  }
+  for(const p of (caseAct.prerequisites||[])){
+    if(seen.has(p.when)) continue;
+    seen.add(p.when); prereqs.push(Object.assign({},p,{origin:'case'}));
+  }
+  const origins=new Set(prereqs.map(p=>p.origin));
+  const flags=[...new Set((caseAct.flags_set||[]).concat(base.flags_set_default||[]))];
+  const rec={
+    id:eff,
+    catalog_id:base.id||null,
+    name:((extra&&extra.coveredBy)?null:caseAct.display_name)||base.name||eff.replace(/_/g,' '),
+    tab:(extra&&extra.tab)||base.tab,
+    group:(extra&&extra.group)||base.group,
+    category:base.category||(extra&&extra.category)||orphanCategory(eff),
+    state_changing:base.state_changing!==undefined?base.state_changing
+                  :(caseAct.state_changing!==undefined?caseAct.state_changing:true),
+    turnaround_class:base.turnaround_class||null,
+    turnaround_override:caseAct.turnaround_override_seconds||null,
+    narration_template:base.narration_template||(extra&&extra.narration_template)||null,
+    dose_required:!!base.dose_required,
+    persistent:!!base.persistent,
+    repeatable:base.repeatable!==false,
+    prerequisites:prereqs,
+    prerequisite_source:origins.size>1?'mixed':(prereqs.length?prereqs[0].origin:'none'),
+    prerequisite_waived:waived,
+    flags_set:flags,
+    default_result:base.default_result||null,
+    bound:!!caseAct.catalog_id,
+    orphan:!!(extra&&extra.orphan),
+    shadowed:(extra&&extra.shadowed)||[],
+    covered_by:(extra&&extra.coveredBy)||null
+  };
+  if(caseAct.catalog_id){
+    rec.tag=caseAct.tag;
+    rec.prompt=caseAct.prompt;
+    rec.debrief_note=caseAct.debrief_note;
+    rec.references=caseAct.references;
+    rec.halt_reason=caseAct.halt_reason;
+    rec.follow_ups_triggered=caseAct.follow_ups_triggered;
+  }
+  return rec;
+}
+
+function buildActions(pack){
+  const caseActs={};
+  pack.case.case_actions.forEach(a=>caseActs[a.catalog_id]=a);
+  const hiddenBy={};   // case id bound to a catalog entry another case action already holds
+  Object.keys(pack.shadowed||{}).forEach(h=>{
+    const owner=pack.shadowed[h];
+    (hiddenBy[owner]=hiddenBy[owner]||[]).push(h);
+  });
+  const out={};
+  for(const cid in SHARED.actionsBase){
+    const eff=(pack.bindings||{})[cid]||cid;
+    /* covers: this catalog entry keeps its own id and name, but takes the case
+       fields of another action, so a tag applies to every route to the same act. */
+    const via=(pack.covers||{})[cid];
+    const ca=caseActs[eff]||(via?caseActs[via]:null);
+    out[eff]=mergeAction(eff, SHARED.actionsBase[cid], ca,
+                         {shadowed:hiddenBy[eff]||[], coveredBy:via||null});
+  }
+  for(const eff in (pack.orphans||{})){
+    const o=pack.orphans[eff];
+    out[eff]=mergeAction(eff, null, caseActs[eff], Object.assign({orphan:true},o));
+  }
+  return out;
+}
+
+/* let-bindings inside an eval are not visible to the caller, so the test harness
+   reads them through this instead of touching the variables. */
+function engineState(){ return {CASE,PROTO,PACK,PHASE,ACT,FU,CK,CONTENT,GENERAL_STATUS}; }
+
+function selectCase(ref){
+  PACK = typeof ref==='number' ? CASES[ref]
+       : CASES.find(c=>c.prefix===ref||c.id===ref);
+  if(!PACK) throw new Error('no such case: '+ref);
+  CASE = PACK.case;
+  PROTO = Object.assign({}, SHARED, {
+    actions: buildActions(PACK),
+    bindingCounts: PACK.bindingCounts,
+    shadowed: PACK.shadowed,
+    phaseShort: PACK.phaseShort,
+    traps: PACK.traps,
+    dispOrder: PACK.dispOrder,
+    dispLabels: PACK.dispLabels,
+    correctDxId: PACK.correctDxId,
+    correctDxExplanation: PACK.correctDxExplanation,
+    altDx: PACK.altDx,
+    promptCap: PACK.promptCap,
+    buildNotes: PACK.buildNotes
+  });
+  PHASE={}; CASE.phases.forEach(p=>PHASE[p.id]=p);
+  ACT=PROTO.actions;
+  FU={}; (CASE.follow_ups||[]).forEach(f=>FU[f.id]=f);
+  CK=CASE.content_keys;
+  CONTENT={};
+  ['exam','labs','imaging','consultants'].forEach(g=>{
+    Object.keys(CK[g]||{}).forEach(k=>{
+      if(k==='authoring_note') return;
+      const v=CK[g][k];
+      CONTENT[k]=Array.isArray(v)?v:v.rules;
+    });
+  });
+  GENERAL_STATUS = CK.general_status ? CK.general_status.rules : null;
+  return PACK;
+}
+
+/* The line above the exam list. Case rules first, catalog default second. */
+function generalStatus(st){
+  if(GENERAL_STATUS){
+    const v=resolve(GENERAL_STATUS,st);
+    if(v) return {value:v,source:'case'};
+  }
+  return {value:SHARED.generalStatusDefault,source:'catalog_default'};
+}
+
+const catOf   = id => (ACT[id]||{}).category;
+const IS_STUDY   = id=>catOf(id)==='investigation';
+const IS_EXAM    = id=>catOf(id)==='exam';
+const IS_CONSULT = id=>catOf(id)==='consultant';
+
+function turnaround(id){
+  const a=ACT[id]||{};
+  if(a.turnaround_override) return a.turnaround_override;
+  return PROTO.turnaround[a.turnaround_class]!==undefined
+       ? PROTO.turnaround[a.turnaround_class] : PROTO.turnaround.lab;
+}
+function tagOf(id,st){
+  const a=ACT[id];
+  if(!a||!a.tag) return 'neutral';
+  return resolve(a.tag,st)||'neutral';
+}
+function stateChanging(id){
+  const a=ACT[id];
+  if(!a) return false;
+  if(IS_EXAM(id)) return false;
+  if(catOf(id)==='interview') return false;
+  return a.state_changing!==false;
+}
+function dispName(id){ return (ACT[id]&&ACT[id].name)||id.replace(/_/g,' '); }
+
+/* ---------- result resolution: case, then catalog default, then nothing ------ */
+function resolveResult(id,snap){
+  if(CONTENT[id]) return {value:resolve(CONTENT[id],snap),source:'case'};
+  const d=(ACT[id]||{}).default_result;
+  if(d) return {value:d,source:'catalog_default'};
+  return {value:null,source:'none'};
+}
+
+/* ---------- the fold (section 5.2) ---------- */
+function snapshot(st){
+  return {phase:st.phase,flags:new Set(st.flags),ordered:new Set(st.ordered),
+          resulted:new Set(st.resulted),taken:new Set(st.taken)};
+}
+/* difficultyMultiplier scales every nurse prompt deadline, including escalations
+   and follow-up prompts. It scales nothing else: result turnaround, transitions and
+   tags are unaffected, so the medicine is identical in both modes and only the
+   amount of help changes. */
+function fold(log, now, difficultyMultiplier){
+  const DM = difficultyMultiplier || 1;
+  const st={
+    phase:CASE.phases[0].id, flags:new Set(), ordered:new Set(), resulted:new Set(), taken:new Set(),
+    orders:{}, phaseEntry:{}, phaseSeq:[], halted:null, complete:null, earlyExit:null,
+    nurse:[], readouts:[], blocked:[], timeline:[], prompted:new Set(),
+    promptFires:[], fuFires:[], fuOutstanding:new Set(), handoff:null, now:now, dm:DM,
+    expected:new Set(), expectedByPhase:{}, recommendedTaken:new Set(), defaultsServed:new Set()
+  };
+  st.phaseEntry[st.phase]=0;
+  st.phaseSeq.push({id:st.phase,t:0});
+
+  const ev=[]; let evseq=0;
+  const push=(e)=>{ e._s=evseq++; e.done=false; ev.push(e); };
+  const promptCount={};
+
+  function onPhaseEntry(phase,t){
+    const entrySt=snapshot(st); entrySt.phase=phase;
+    for(const id in ACT){
+      const a=ACT[id];
+      if(a.tag&&tagOf(id,entrySt)==='critical'){
+        st.expected.add(id);
+        (st.expectedByPhase[phase]=st.expectedByPhase[phase]||new Set()).add(id);
+      }
+      if(!a.prompt) continue;
+      if(tagOf(id,entrySt)!=='critical') continue;
+      push({t:t+a.prompt.deadline_seconds*DM,kind:'prompt',id,phase,level:1});
+      if(a.prompt.escalation)
+        push({t:t+a.prompt.escalation.deadline_seconds*DM,kind:'prompt',id,phase,level:2});
+    }
+  }
+  function cancelPromptsFor(phase){
+    for(const e of ev) if(e.kind==='prompt'&&e.phase===phase&&!e.done) e.done=true;
+  }
+  function enterPhase(to,t){
+    cancelPromptsFor(st.phase);
+    st.phase=to;
+    st.phaseEntry[to]=t;
+    st.phaseSeq.push({id:to,t});
+    if(!PHASE[to].terminal) onPhaseEntry(to,t);
+  }
+  function checkTransitions(t){
+    const p=PHASE[st.phase];
+    if(!p||!p.transitions) return;
+    for(const tr of p.transitions){
+      if(test(tr.when,st)){ if(tr.to!==st.phase) enterPhase(tr.to,t); return; }
+    }
+  }
+
+  onPhaseEntry(st.phase,0);
+
+  let li=0;
+  for(;;){
+    if(st.halted||st.complete||st.earlyExit) break;
+    const L=(li<log.length&&log[li].t<=now)?log[li]:null;
+    let E=null;
+    for(const e of ev){ if(!e.done&&e.t<=now&&(!E||e.t<E.t||(e.t===E.t&&e._s<E._s))) E=e; }
+    if(!L&&!E) break;
+    let takeLog;
+    if(!E) takeLog=true; else if(!L) takeLog=false; else takeLog=(L.t<=E.t);
+    if(takeLog){ applyLog(log[li],log[li].t); li++; }
+    else { E.done=true; applyEvent(E,E.t); }
+  }
+
+  function narrate(t,text,kind){ if(text) st.nurse.push({t,text,kind:kind||'narration'}); }
+
+  function applyLog(entry,t){
+    const id=entry.actionId;
+    const a=ACT[id];
+
+    if(entry.kind==='early_exit'){
+      st.earlyExit={t}; st.timeline.push({t,id:'early_exit',type:'end',label:'Ended the case early'});
+      return;
+    }
+    if(entry.kind==='interview'){
+      const G=CASE.interview.global_answer_rules||[];
+      const T=entry.topic?CASE.interview.topics.find(x=>x.topic===entry.topic):null;
+      const rules=G.concat(T?T.answer:CASE.interview.out_of_scope_fallback);
+      const ans=resolve(rules,st);
+      st.timeline.push({t,id:'interview:'+(entry.topic||'unmatched'),type:'observational',
+        label:entry.topic?('Asked about '+entry.topic.replace(/_/g,' ')):'Question not understood'});
+      st.readouts.push({t,kind:'speech',key:entry.topic||'unmatched',title:entry.q,body:ans,
+        matched:entry.topic||null});
+      if(entry.topic&&ACT['interview_topic_'+entry.topic]) st.taken.add('interview_topic_'+entry.topic);
+      return;
+    }
+    if(!a) return;
+
+    /* prerequisite checker: the condition is a requirement that must hold */
+    for(const pr of (a.prerequisites||[])){
+      let ok;
+      try{ ok=test(pr.when,st); }catch(e){ ok=true; }   // unparseable catalog condition
+      if(!ok){
+        st.blocked.push({t,id,message:pr.failure_message,source:pr.origin||a.prerequisite_source});
+        st.timeline.push({t,id,type:'blocked',label:'Blocked: '+dispName(id)});
+        narrate(t,pr.failure_message,'blocked');
+        return;
+      }
+    }
+
+    st.taken.add(id);
+
+    if(!stateChanging(id)){
+      if(IS_EXAM(id)){
+        const r=CONTENT[id]?{value:resolve(CONTENT[id],st),source:'case'}
+                           :{value:(ACT[id]||{}).default_result||null,source:'catalog_default'};
+        st.readouts.push({t,kind:'exam',key:id,title:dispName(id),
+          body:r.value,source:r.source});
+        if(r.source!=='case') st.defaultsServed.add(id);
+      } else if(IS_CONSULT(id)){
+        st.readouts.push({t,kind:'consult',key:id,title:dispName(id),
+          body: CONTENT[id]?resolve(CONTENT[id],st):PROTO.globalConsultant,
+          source: CONTENT[id]?'case':'catalog_default'});
+        if(!CONTENT[id]) st.defaultsServed.add(id);
+      }
+      st.timeline.push({t,id,type:'observational',label:dispName(id)});
+      return;
+    }
+
+    const tag=tagOf(id,st);
+    st.timeline.push({t,id,type:'state-changing',label:dispName(id),tag});
+
+    if(tag==='harmful'){
+      st.halted={t,id,reason:a.halt_reason||'This action halted the case.'};
+      enterPhase('halted',t);
+      narrate(t,a.halt_reason||'',"halt");
+      return;
+    }
+    if(tag==='recommended') st.recommendedTaken.add(id);
+    narrate(t,narrationFor(id),'narration');
+
+    (a.flags_set||[]).forEach(f=>st.flags.add(f));
+
+    if(IS_CONSULT(id)){
+      st.readouts.push({t,kind:'consult',key:id,title:dispName(id),
+        body: CONTENT[id]?resolve(CONTENT[id],st):PROTO.globalConsultant,
+        source: CONTENT[id]?'case':'catalog_default'});
+      if(!CONTENT[id]) st.defaultsServed.add(id);
+    }
+
+    if(IS_STUDY(id)){
+      st.ordered.add(id);
+      const due=t+turnaround(id);
+      const rec={orderT:t,dueT:due,snap:snapshot(st),value:null,source:null};
+      (st.orders[id]=st.orders[id]||[]).push(rec);
+      push({t:due,kind:'result',id,rec});
+    }
+
+    (a.follow_ups_triggered||[]).forEach(fid=>{
+      const f=FU[fid]; if(!f) return;
+      push({t:t+f.deadline_seconds*DM,kind:'followup',fid});
+    });
+
+    if(id==='handoff_submit') st.handoff=entry.payload||null;
+
+    checkTransitions(t);
+    if(st.phase==='case_complete') st.complete={t};
+  }
+
+  function applyEvent(e,t){
+    if(e.kind==='result'){
+      const r=resolveResult(e.id,e.rec.snap);
+      e.rec.value=r.value; e.rec.source=r.source;
+      if(r.source==='catalog_default') st.defaultsServed.add(e.id);
+      st.resulted.add(e.id);
+      const a=ACT[e.id]||{};
+      const tmpl={lab:'{name} is back.',imaging:'{name} is up on the screen.',
+                  ecg:'{name} is up.',bedside:'{name} is done.'}[a.turnaround_class]||'{name} is back.';
+      narrate(t,tmpl.replace('{name}',dispName(e.id)),'result');
+      return;
+    }
+    if(e.kind==='prompt'){
+      if(st.taken.has(e.id)) return;
+      const a=ACT[e.id];
+      if(a.prompt.guard&&!test(a.prompt.guard,st)) return;
+      promptCount[e.phase]=(promptCount[e.phase]||0);
+      if(promptCount[e.phase]>=PROTO.promptCap) return;
+      promptCount[e.phase]++;
+      narrate(t,e.level===2?a.prompt.escalation.text:a.prompt.text,'prompt');
+      st.prompted.add(e.id);
+      st.promptFires.push({t,id:e.id,level:e.level});
+      return;
+    }
+    if(e.kind==='followup'){
+      const f=FU[e.fid];
+      if(f.applies_when&&!test(f.applies_when,st)) return;
+      if(f.satisfied_by&&f.satisfied_by.some(x=>st.taken.has(x))) return;
+      promptCount[st.phase]=(promptCount[st.phase]||0)+1;
+      narrate(t,f.nurse_prompt,'prompt');
+      st.fuFires.push({t,fid:e.fid});
+      st.fuOutstanding.add(e.fid);
+      return;
+    }
+  }
+
+  st.pending=[];
+  Object.keys(st.orders).forEach(id=>st.orders[id].forEach(o=>{
+    if(o.value===null) st.pending.push({id,dueT:o.dueT,orderT:o.orderT});
+  }));
+  st.fuOutstanding.forEach(fid=>{
+    const f=FU[fid];
+    if(f.satisfied_by&&f.satisfied_by.some(x=>st.taken.has(x))) st.fuOutstanding.delete(fid);
+  });
+  return st;
+}
+
+function narrationFor(id){
+  const a=ACT[id]||{};
+  if(a.narration_template){
+    /* Dose entry is not implemented, so {dose} is dropped rather than faked. */
+    return a.narration_template.replace('{name}',a.name.toLowerCase())
+                               .replace('{dose}','').replace(/\s{2,}/g,' ')
+                               .replace(' of .','.').replace(' at .','.').trim();
+  }
+  if(IS_STUDY(id)) return dispName(id)+' is away.';
+  return 'Okay: '+dispName(id).toLowerCase()+'.';
+}

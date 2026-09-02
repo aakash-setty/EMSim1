@@ -1,0 +1,3268 @@
+{
+  "catalog_version": "0.1-draft",
+  "status": "DRAFT, NOT CLINICALLY REVIEWED",
+  "aligned_to": [
+    "system-design-v2.md v0.3 sections 3 and 9",
+    "case-authoring-requirements.md v0.2 section 12"
+  ],
+  "scope": "US emergency department practice; diagnoses a resident could plausibly commit to at handoff, plus the near-misses that make search a real cognitive task.",
+  "provenance": {
+    "assembled_by": "drafting AI, not a physician",
+    "codes": "none. ICD-10 and SNOMED codes are deliberately absent rather than generated from memory.",
+    "review_required": "list composition is a clinical judgement and an omission is invisible to the learner."
+  },
+  "search_contract": {
+    "match_on": [
+      "display_name",
+      "synonyms"
+    ],
+    "note": "synonyms exist so a resident typing STEMI, DKA, or AAA finds the entry. Coverage is uneven and needs an author pass."
+  },
+  "open_questions": [
+    "The 'undifferentiated' category lets a resident hand off without committing to a specific diagnosis. Whether that should ever be scored as correct is a pedagogical decision, not a data one.",
+    "No severity or acuity qualifier is attached to any entry. If a case wants to distinguish 'sepsis' from 'septic shock' as the handoff answer, both exist, but nothing enforces which is right.",
+    "Many entries pair a general and a specific form (heart failure with reduced vs preserved EF; AAA ruptured vs not). Cases must decide whether the general form counts as partially correct.",
+    "No pediatric-vs-adult flag. Some entries are pediatric-only and will appear in adult case searches.",
+    "Peds, tox, and environmental sections are thinner than cardiovascular and GI. That reflects drafting effort, not clinical importance."
+  ],
+  "counts": {
+    "cardiovascular": 49,
+    "respiratory": 32,
+    "neurologic": 38,
+    "gastrointestinal": 43,
+    "renal_genitourinary": 20,
+    "infectious_disease": 26,
+    "endocrine_metabolic": 25,
+    "hematology_oncology": 24,
+    "toxicology": 38,
+    "environmental": 16,
+    "trauma": 35,
+    "musculoskeletal": 29,
+    "dermatologic": 12,
+    "obstetric_gynecologic": 30,
+    "ent_ophthalmology_dental": 30,
+    "psychiatric": 13,
+    "allergy_immunology": 4,
+    "pediatric": 13,
+    "undifferentiated": 11
+  },
+  "total": 488,
+  "entries": [
+    {
+      "id": "dx_st_elevation_myocardial_infarction",
+      "display_name": "ST-elevation myocardial infarction",
+      "category": "cardiovascular",
+      "synonyms": [
+        "STEMI",
+        "heart attack",
+        "MI"
+      ]
+    },
+    {
+      "id": "dx_non_st_elevation_myocardial_infarction",
+      "display_name": "Non-ST-elevation myocardial infarction",
+      "category": "cardiovascular",
+      "synonyms": [
+        "NSTEMI"
+      ]
+    },
+    {
+      "id": "dx_unstable_angina",
+      "display_name": "Unstable angina",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_stable_angina",
+      "display_name": "Stable angina",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_coronary_syndrome_unspecified",
+      "display_name": "Acute coronary syndrome, unspecified",
+      "category": "cardiovascular",
+      "synonyms": [
+        "ACS"
+      ]
+    },
+    {
+      "id": "dx_atrial_fibrillation_with_rapid_ventricular_response",
+      "display_name": "Atrial fibrillation with rapid ventricular response",
+      "category": "cardiovascular",
+      "synonyms": [
+        "AF RVR",
+        "afib RVR"
+      ]
+    },
+    {
+      "id": "dx_atrial_fibrillation",
+      "display_name": "Atrial fibrillation",
+      "category": "cardiovascular",
+      "synonyms": [
+        "afib"
+      ]
+    },
+    {
+      "id": "dx_atrial_flutter",
+      "display_name": "Atrial flutter",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_supraventricular_tachycardia",
+      "display_name": "Supraventricular tachycardia",
+      "category": "cardiovascular",
+      "synonyms": [
+        "SVT"
+      ]
+    },
+    {
+      "id": "dx_ventricular_tachycardia",
+      "display_name": "Ventricular tachycardia",
+      "category": "cardiovascular",
+      "synonyms": [
+        "VT",
+        "V tach"
+      ]
+    },
+    {
+      "id": "dx_ventricular_fibrillation",
+      "display_name": "Ventricular fibrillation",
+      "category": "cardiovascular",
+      "synonyms": [
+        "VF",
+        "V fib"
+      ]
+    },
+    {
+      "id": "dx_torsades_de_pointes",
+      "display_name": "Torsades de pointes",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_wolff_parkinson_white_syndrome",
+      "display_name": "Wolff-Parkinson-White syndrome",
+      "category": "cardiovascular",
+      "synonyms": [
+        "WPW"
+      ]
+    },
+    {
+      "id": "dx_third_degree_atrioventricular_block",
+      "display_name": "Third-degree atrioventricular block",
+      "category": "cardiovascular",
+      "synonyms": [
+        "complete heart block",
+        "3rd degree AV block"
+      ]
+    },
+    {
+      "id": "dx_second_degree_av_block_mobitz_type_i",
+      "display_name": "Second-degree AV block, Mobitz type I",
+      "category": "cardiovascular",
+      "synonyms": [
+        "Wenckebach"
+      ]
+    },
+    {
+      "id": "dx_second_degree_av_block_mobitz_type_ii",
+      "display_name": "Second-degree AV block, Mobitz type II",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_first_degree_av_block",
+      "display_name": "First-degree AV block",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_sick_sinus_syndrome",
+      "display_name": "Sick sinus syndrome",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_symptomatic_bradycardia",
+      "display_name": "Symptomatic bradycardia",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pacemaker_malfunction",
+      "display_name": "Pacemaker malfunction",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_decompensated_heart_failure_with_reduced_ejection_fraction",
+      "display_name": "Acute decompensated heart failure with reduced ejection fraction",
+      "category": "cardiovascular",
+      "synonyms": [
+        "ADHF HFrEF",
+        "CHF exacerbation",
+        "systolic heart failure"
+      ]
+    },
+    {
+      "id": "dx_acute_decompensated_heart_failure_with_preserved_ejection_fraction",
+      "display_name": "Acute decompensated heart failure with preserved ejection fraction",
+      "category": "cardiovascular",
+      "synonyms": [
+        "ADHF HFpEF",
+        "diastolic heart failure"
+      ]
+    },
+    {
+      "id": "dx_cardiogenic_shock",
+      "display_name": "Cardiogenic shock",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_cardiogenic_pulmonary_edema",
+      "display_name": "Cardiogenic pulmonary edema",
+      "category": "cardiovascular",
+      "synonyms": [
+        "flash pulmonary edema"
+      ]
+    },
+    {
+      "id": "dx_hypertensive_emergency",
+      "display_name": "Hypertensive emergency",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hypertensive_urgency",
+      "display_name": "Hypertensive urgency",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_pericarditis",
+      "display_name": "Acute pericarditis",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_cardiac_tamponade",
+      "display_name": "Cardiac tamponade",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pericardial_effusion_without_tamponade",
+      "display_name": "Pericardial effusion without tamponade",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_myocarditis",
+      "display_name": "Myocarditis",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_infective_endocarditis",
+      "display_name": "Infective endocarditis",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_aortic_dissection",
+      "display_name": "Aortic dissection",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_thoracic_aortic_aneurysm",
+      "display_name": "Thoracic aortic aneurysm",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ruptured_abdominal_aortic_aneurysm",
+      "display_name": "Ruptured abdominal aortic aneurysm",
+      "category": "cardiovascular",
+      "synonyms": [
+        "ruptured AAA"
+      ]
+    },
+    {
+      "id": "dx_abdominal_aortic_aneurysm_unruptured",
+      "display_name": "Abdominal aortic aneurysm, unruptured",
+      "category": "cardiovascular",
+      "synonyms": [
+        "AAA"
+      ]
+    },
+    {
+      "id": "dx_acute_limb_ischemia",
+      "display_name": "Acute limb ischemia",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_peripheral_arterial_disease",
+      "display_name": "Peripheral arterial disease",
+      "category": "cardiovascular",
+      "synonyms": [
+        "PAD"
+      ]
+    },
+    {
+      "id": "dx_deep_vein_thrombosis",
+      "display_name": "Deep vein thrombosis",
+      "category": "cardiovascular",
+      "synonyms": [
+        "DVT"
+      ]
+    },
+    {
+      "id": "dx_superficial_thrombophlebitis",
+      "display_name": "Superficial thrombophlebitis",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_severe_aortic_stenosis",
+      "display_name": "Severe aortic stenosis",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_mitral_regurgitation",
+      "display_name": "Acute mitral regurgitation",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_prosthetic_valve_thrombosis",
+      "display_name": "Prosthetic valve thrombosis",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_left_ventricular_assist_device_malfunction",
+      "display_name": "Left ventricular assist device malfunction",
+      "category": "cardiovascular",
+      "synonyms": [
+        "LVAD malfunction"
+      ]
+    },
+    {
+      "id": "dx_cardiac_arrest",
+      "display_name": "Cardiac arrest",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_post_cardiac_arrest_syndrome",
+      "display_name": "Post-cardiac arrest syndrome",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_takotsubo_cardiomyopathy",
+      "display_name": "Takotsubo cardiomyopathy",
+      "category": "cardiovascular",
+      "synonyms": [
+        "stress cardiomyopathy"
+      ]
+    },
+    {
+      "id": "dx_hypertrophic_cardiomyopathy",
+      "display_name": "Hypertrophic cardiomyopathy",
+      "category": "cardiovascular",
+      "synonyms": [
+        "HCM"
+      ]
+    },
+    {
+      "id": "dx_vasovagal_syncope",
+      "display_name": "Vasovagal syncope",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_orthostatic_hypotension",
+      "display_name": "Orthostatic hypotension",
+      "category": "cardiovascular",
+      "synonyms": []
+    },
+    {
+      "id": "dx_community_acquired_pneumonia",
+      "display_name": "Community-acquired pneumonia",
+      "category": "respiratory",
+      "synonyms": [
+        "CAP"
+      ]
+    },
+    {
+      "id": "dx_hospital_acquired_pneumonia",
+      "display_name": "Hospital-acquired pneumonia",
+      "category": "respiratory",
+      "synonyms": [
+        "HAP"
+      ]
+    },
+    {
+      "id": "dx_aspiration_pneumonia",
+      "display_name": "Aspiration pneumonia",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_aspiration_pneumonitis",
+      "display_name": "Aspiration pneumonitis",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_copd_exacerbation",
+      "display_name": "COPD exacerbation",
+      "category": "respiratory",
+      "synonyms": [
+        "AECOPD",
+        "emphysema exacerbation"
+      ]
+    },
+    {
+      "id": "dx_asthma_exacerbation",
+      "display_name": "Asthma exacerbation",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_status_asthmaticus",
+      "display_name": "Status asthmaticus",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pulmonary_embolism",
+      "display_name": "Pulmonary embolism",
+      "category": "respiratory",
+      "synonyms": [
+        "PE"
+      ]
+    },
+    {
+      "id": "dx_massive_pulmonary_embolism",
+      "display_name": "Massive pulmonary embolism",
+      "category": "respiratory",
+      "synonyms": [
+        "saddle PE"
+      ]
+    },
+    {
+      "id": "dx_primary_spontaneous_pneumothorax",
+      "display_name": "Primary spontaneous pneumothorax",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_secondary_spontaneous_pneumothorax",
+      "display_name": "Secondary spontaneous pneumothorax",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_tension_pneumothorax",
+      "display_name": "Tension pneumothorax",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hemothorax",
+      "display_name": "Hemothorax",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pleural_effusion",
+      "display_name": "Pleural effusion",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_empyema",
+      "display_name": "Empyema",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_respiratory_distress_syndrome",
+      "display_name": "Acute respiratory distress syndrome",
+      "category": "respiratory",
+      "synonyms": [
+        "ARDS"
+      ]
+    },
+    {
+      "id": "dx_acute_hypoxemic_respiratory_failure",
+      "display_name": "Acute hypoxemic respiratory failure",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_hypercapnic_respiratory_failure",
+      "display_name": "Acute hypercapnic respiratory failure",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_bronchiolitis",
+      "display_name": "Bronchiolitis",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_foreign_body_aspiration",
+      "display_name": "Foreign body aspiration",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_lung_abscess",
+      "display_name": "Lung abscess",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_bronchiectasis_exacerbation",
+      "display_name": "Bronchiectasis exacerbation",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pertussis",
+      "display_name": "Pertussis",
+      "category": "respiratory",
+      "synonyms": [
+        "whooping cough"
+      ]
+    },
+    {
+      "id": "dx_influenza",
+      "display_name": "Influenza",
+      "category": "respiratory",
+      "synonyms": [
+        "flu"
+      ]
+    },
+    {
+      "id": "dx_covid_19",
+      "display_name": "COVID-19",
+      "category": "respiratory",
+      "synonyms": [
+        "SARS-CoV-2"
+      ]
+    },
+    {
+      "id": "dx_respiratory_syncytial_virus_infection",
+      "display_name": "Respiratory syncytial virus infection",
+      "category": "respiratory",
+      "synonyms": [
+        "RSV"
+      ]
+    },
+    {
+      "id": "dx_pulmonary_hypertension",
+      "display_name": "Pulmonary hypertension",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_interstitial_lung_disease_exacerbation",
+      "display_name": "Interstitial lung disease exacerbation",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pulmonary_tuberculosis",
+      "display_name": "Pulmonary tuberculosis",
+      "category": "respiratory",
+      "synonyms": [
+        "TB"
+      ]
+    },
+    {
+      "id": "dx_massive_hemoptysis",
+      "display_name": "Massive hemoptysis",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_tracheostomy_obstruction",
+      "display_name": "Tracheostomy obstruction",
+      "category": "respiratory",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ventilator_associated_pneumonia",
+      "display_name": "Ventilator-associated pneumonia",
+      "category": "respiratory",
+      "synonyms": [
+        "VAP"
+      ]
+    },
+    {
+      "id": "dx_acute_ischemic_stroke",
+      "display_name": "Acute ischemic stroke",
+      "category": "neurologic",
+      "synonyms": [
+        "CVA",
+        "stroke"
+      ]
+    },
+    {
+      "id": "dx_transient_ischemic_attack",
+      "display_name": "Transient ischemic attack",
+      "category": "neurologic",
+      "synonyms": [
+        "TIA"
+      ]
+    },
+    {
+      "id": "dx_intracerebral_hemorrhage",
+      "display_name": "Intracerebral hemorrhage",
+      "category": "neurologic",
+      "synonyms": [
+        "ICH"
+      ]
+    },
+    {
+      "id": "dx_subarachnoid_hemorrhage",
+      "display_name": "Subarachnoid hemorrhage",
+      "category": "neurologic",
+      "synonyms": [
+        "SAH"
+      ]
+    },
+    {
+      "id": "dx_acute_subdural_hematoma",
+      "display_name": "Acute subdural hematoma",
+      "category": "neurologic",
+      "synonyms": [
+        "SDH"
+      ]
+    },
+    {
+      "id": "dx_chronic_subdural_hematoma",
+      "display_name": "Chronic subdural hematoma",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_epidural_hematoma",
+      "display_name": "Epidural hematoma",
+      "category": "neurologic",
+      "synonyms": [
+        "EDH"
+      ]
+    },
+    {
+      "id": "dx_cerebral_venous_sinus_thrombosis",
+      "display_name": "Cerebral venous sinus thrombosis",
+      "category": "neurologic",
+      "synonyms": [
+        "CVST"
+      ]
+    },
+    {
+      "id": "dx_carotid_artery_dissection",
+      "display_name": "Carotid artery dissection",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_vertebral_artery_dissection",
+      "display_name": "Vertebral artery dissection",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_status_epilepticus",
+      "display_name": "Status epilepticus",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_first_time_generalized_seizure",
+      "display_name": "First-time generalized seizure",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_breakthrough_seizure",
+      "display_name": "Breakthrough seizure",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_nonconvulsive_status_epilepticus",
+      "display_name": "Nonconvulsive status epilepticus",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_bacterial_meningitis",
+      "display_name": "Bacterial meningitis",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_viral_meningitis",
+      "display_name": "Viral meningitis",
+      "category": "neurologic",
+      "synonyms": [
+        "aseptic meningitis"
+      ]
+    },
+    {
+      "id": "dx_encephalitis",
+      "display_name": "Encephalitis",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_brain_abscess",
+      "display_name": "Brain abscess",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_migraine_headache",
+      "display_name": "Migraine headache",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_cluster_headache",
+      "display_name": "Cluster headache",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_tension_headache",
+      "display_name": "Tension headache",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_idiopathic_intracranial_hypertension",
+      "display_name": "Idiopathic intracranial hypertension",
+      "category": "neurologic",
+      "synonyms": [
+        "pseudotumor cerebri"
+      ]
+    },
+    {
+      "id": "dx_giant_cell_arteritis",
+      "display_name": "Giant cell arteritis",
+      "category": "neurologic",
+      "synonyms": [
+        "temporal arteritis"
+      ]
+    },
+    {
+      "id": "dx_bell_palsy",
+      "display_name": "Bell palsy",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_guillain_barre_syndrome",
+      "display_name": "Guillain-Barre syndrome",
+      "category": "neurologic",
+      "synonyms": [
+        "GBS"
+      ]
+    },
+    {
+      "id": "dx_myasthenic_crisis",
+      "display_name": "Myasthenic crisis",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_multiple_sclerosis_relapse",
+      "display_name": "Multiple sclerosis relapse",
+      "category": "neurologic",
+      "synonyms": [
+        "MS flare"
+      ]
+    },
+    {
+      "id": "dx_spinal_epidural_abscess",
+      "display_name": "Spinal epidural abscess",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_cauda_equina_syndrome",
+      "display_name": "Cauda equina syndrome",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_transverse_myelitis",
+      "display_name": "Transverse myelitis",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_benign_paroxysmal_positional_vertigo",
+      "display_name": "Benign paroxysmal positional vertigo",
+      "category": "neurologic",
+      "synonyms": [
+        "BPPV"
+      ]
+    },
+    {
+      "id": "dx_vestibular_neuritis",
+      "display_name": "Vestibular neuritis",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_meniere_disease",
+      "display_name": "Meniere disease",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_delirium",
+      "display_name": "Delirium",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_dementia",
+      "display_name": "Dementia",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_wernicke_encephalopathy",
+      "display_name": "Wernicke encephalopathy",
+      "category": "neurologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ventriculoperitoneal_shunt_malfunction",
+      "display_name": "Ventriculoperitoneal shunt malfunction",
+      "category": "neurologic",
+      "synonyms": [
+        "VP shunt malfunction"
+      ]
+    },
+    {
+      "id": "dx_normal_pressure_hydrocephalus",
+      "display_name": "Normal pressure hydrocephalus",
+      "category": "neurologic",
+      "synonyms": [
+        "NPH"
+      ]
+    },
+    {
+      "id": "dx_acute_appendicitis",
+      "display_name": "Acute appendicitis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_cholecystitis",
+      "display_name": "Acute cholecystitis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_biliary_colic",
+      "display_name": "Biliary colic",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_choledocholithiasis",
+      "display_name": "Choledocholithiasis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ascending_cholangitis",
+      "display_name": "Ascending cholangitis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_pancreatitis",
+      "display_name": "Acute pancreatitis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_small_bowel_obstruction",
+      "display_name": "Small bowel obstruction",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "SBO"
+      ]
+    },
+    {
+      "id": "dx_large_bowel_obstruction",
+      "display_name": "Large bowel obstruction",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ileus",
+      "display_name": "Ileus",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_perforated_peptic_ulcer",
+      "display_name": "Perforated peptic ulcer",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_peptic_ulcer_disease",
+      "display_name": "Peptic ulcer disease",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "PUD"
+      ]
+    },
+    {
+      "id": "dx_upper_gastrointestinal_bleed",
+      "display_name": "Upper gastrointestinal bleed",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "UGIB"
+      ]
+    },
+    {
+      "id": "dx_lower_gastrointestinal_bleed",
+      "display_name": "Lower gastrointestinal bleed",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "LGIB"
+      ]
+    },
+    {
+      "id": "dx_variceal_hemorrhage",
+      "display_name": "Variceal hemorrhage",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_diverticulitis",
+      "display_name": "Diverticulitis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_mesenteric_ischemia",
+      "display_name": "Acute mesenteric ischemia",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_sigmoid_volvulus",
+      "display_name": "Sigmoid volvulus",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_cecal_volvulus",
+      "display_name": "Cecal volvulus",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_incarcerated_hernia",
+      "display_name": "Incarcerated hernia",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_strangulated_hernia",
+      "display_name": "Strangulated hernia",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_inflammatory_bowel_disease_flare",
+      "display_name": "Inflammatory bowel disease flare",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "Crohn",
+        "ulcerative colitis"
+      ]
+    },
+    {
+      "id": "dx_clostridioides_difficile_colitis",
+      "display_name": "Clostridioides difficile colitis",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "C diff"
+      ]
+    },
+    {
+      "id": "dx_infectious_gastroenteritis",
+      "display_name": "Infectious gastroenteritis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_viral_gastroenteritis",
+      "display_name": "Viral gastroenteritis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_esophageal_food_impaction",
+      "display_name": "Esophageal food impaction",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_boerhaave_syndrome",
+      "display_name": "Boerhaave syndrome",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "esophageal rupture"
+      ]
+    },
+    {
+      "id": "dx_mallory_weiss_tear",
+      "display_name": "Mallory-Weiss tear",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_gastroesophageal_reflux_disease",
+      "display_name": "Gastroesophageal reflux disease",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "GERD"
+      ]
+    },
+    {
+      "id": "dx_acute_viral_hepatitis",
+      "display_name": "Acute viral hepatitis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_alcoholic_hepatitis",
+      "display_name": "Alcoholic hepatitis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_decompensated_cirrhosis",
+      "display_name": "Decompensated cirrhosis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_spontaneous_bacterial_peritonitis",
+      "display_name": "Spontaneous bacterial peritonitis",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "SBP"
+      ]
+    },
+    {
+      "id": "dx_hepatic_encephalopathy",
+      "display_name": "Hepatic encephalopathy",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_liver_failure",
+      "display_name": "Acute liver failure",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_intussusception",
+      "display_name": "Intussusception",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hypertrophic_pyloric_stenosis",
+      "display_name": "Hypertrophic pyloric stenosis",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_necrotizing_enterocolitis",
+      "display_name": "Necrotizing enterocolitis",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "NEC"
+      ]
+    },
+    {
+      "id": "dx_anorectal_abscess",
+      "display_name": "Anorectal abscess",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_thrombosed_external_hemorrhoid",
+      "display_name": "Thrombosed external hemorrhoid",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_anal_fissure",
+      "display_name": "Anal fissure",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_constipation",
+      "display_name": "Constipation",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_gastrostomy_tube_dislodgement",
+      "display_name": "Gastrostomy tube dislodgement",
+      "category": "gastrointestinal",
+      "synonyms": [
+        "G tube dislodgement"
+      ]
+    },
+    {
+      "id": "dx_toxic_megacolon",
+      "display_name": "Toxic megacolon",
+      "category": "gastrointestinal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_kidney_injury",
+      "display_name": "Acute kidney injury",
+      "category": "renal_genitourinary",
+      "synonyms": [
+        "AKI"
+      ]
+    },
+    {
+      "id": "dx_chronic_kidney_disease",
+      "display_name": "Chronic kidney disease",
+      "category": "renal_genitourinary",
+      "synonyms": [
+        "CKD"
+      ]
+    },
+    {
+      "id": "dx_nephrolithiasis",
+      "display_name": "Nephrolithiasis",
+      "category": "renal_genitourinary",
+      "synonyms": [
+        "kidney stone",
+        "renal colic"
+      ]
+    },
+    {
+      "id": "dx_obstructive_uropathy",
+      "display_name": "Obstructive uropathy",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_urinary_tract_infection",
+      "display_name": "Urinary tract infection",
+      "category": "renal_genitourinary",
+      "synonyms": [
+        "UTI"
+      ]
+    },
+    {
+      "id": "dx_pyelonephritis",
+      "display_name": "Pyelonephritis",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_urosepsis",
+      "display_name": "Urosepsis",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_urinary_retention",
+      "display_name": "Urinary retention",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_testicular_torsion",
+      "display_name": "Testicular torsion",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_epididymitis",
+      "display_name": "Epididymitis",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_orchitis",
+      "display_name": "Orchitis",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_fournier_gangrene",
+      "display_name": "Fournier gangrene",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_priapism",
+      "display_name": "Priapism",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_paraphimosis",
+      "display_name": "Paraphimosis",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_renal_infarction",
+      "display_name": "Renal infarction",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_rhabdomyolysis",
+      "display_name": "Rhabdomyolysis",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_dialysis_catheter_complication",
+      "display_name": "Dialysis catheter complication",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_volume_overload_from_missed_dialysis",
+      "display_name": "Volume overload from missed dialysis",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_bleeding_hemodialysis_access_site",
+      "display_name": "Bleeding hemodialysis access site",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_bacterial_prostatitis",
+      "display_name": "Acute bacterial prostatitis",
+      "category": "renal_genitourinary",
+      "synonyms": []
+    },
+    {
+      "id": "dx_sepsis",
+      "display_name": "Sepsis",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_septic_shock",
+      "display_name": "Septic shock",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_cellulitis",
+      "display_name": "Cellulitis",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_cutaneous_abscess",
+      "display_name": "Cutaneous abscess",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_necrotizing_soft_tissue_infection",
+      "display_name": "Necrotizing soft tissue infection",
+      "category": "infectious_disease",
+      "synonyms": [
+        "necrotizing fasciitis"
+      ]
+    },
+    {
+      "id": "dx_septic_arthritis",
+      "display_name": "Septic arthritis",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_osteomyelitis",
+      "display_name": "Osteomyelitis",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_meningococcemia",
+      "display_name": "Meningococcemia",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_toxic_shock_syndrome",
+      "display_name": "Toxic shock syndrome",
+      "category": "infectious_disease",
+      "synonyms": [
+        "TSS"
+      ]
+    },
+    {
+      "id": "dx_malaria",
+      "display_name": "Malaria",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_dengue_fever",
+      "display_name": "Dengue fever",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_typhoid_fever",
+      "display_name": "Typhoid fever",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_tetanus",
+      "display_name": "Tetanus",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_rabies_exposure",
+      "display_name": "Rabies exposure",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_lyme_disease",
+      "display_name": "Lyme disease",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_rocky_mountain_spotted_fever",
+      "display_name": "Rocky Mountain spotted fever",
+      "category": "infectious_disease",
+      "synonyms": [
+        "RMSF"
+      ]
+    },
+    {
+      "id": "dx_acute_retroviral_syndrome",
+      "display_name": "Acute retroviral syndrome",
+      "category": "infectious_disease",
+      "synonyms": [
+        "acute HIV"
+      ]
+    },
+    {
+      "id": "dx_pneumocystis_pneumonia",
+      "display_name": "Pneumocystis pneumonia",
+      "category": "infectious_disease",
+      "synonyms": [
+        "PJP",
+        "PCP"
+      ]
+    },
+    {
+      "id": "dx_herpes_zoster",
+      "display_name": "Herpes zoster",
+      "category": "infectious_disease",
+      "synonyms": [
+        "shingles"
+      ]
+    },
+    {
+      "id": "dx_herpes_zoster_ophthalmicus",
+      "display_name": "Herpes zoster ophthalmicus",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_infectious_mononucleosis",
+      "display_name": "Infectious mononucleosis",
+      "category": "infectious_disease",
+      "synonyms": [
+        "mono",
+        "EBV"
+      ]
+    },
+    {
+      "id": "dx_measles",
+      "display_name": "Measles",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_varicella",
+      "display_name": "Varicella",
+      "category": "infectious_disease",
+      "synonyms": [
+        "chickenpox"
+      ]
+    },
+    {
+      "id": "dx_scarlet_fever",
+      "display_name": "Scarlet fever",
+      "category": "infectious_disease",
+      "synonyms": []
+    },
+    {
+      "id": "dx_central_line_associated_bloodstream_infection",
+      "display_name": "Central line-associated bloodstream infection",
+      "category": "infectious_disease",
+      "synonyms": [
+        "CLABSI"
+      ]
+    },
+    {
+      "id": "dx_streptococcal_pharyngitis",
+      "display_name": "Streptococcal pharyngitis",
+      "category": "infectious_disease",
+      "synonyms": [
+        "strep throat"
+      ]
+    },
+    {
+      "id": "dx_diabetic_ketoacidosis",
+      "display_name": "Diabetic ketoacidosis",
+      "category": "endocrine_metabolic",
+      "synonyms": [
+        "DKA"
+      ]
+    },
+    {
+      "id": "dx_hyperosmolar_hyperglycemic_state",
+      "display_name": "Hyperosmolar hyperglycemic state",
+      "category": "endocrine_metabolic",
+      "synonyms": [
+        "HHS"
+      ]
+    },
+    {
+      "id": "dx_hypoglycemia",
+      "display_name": "Hypoglycemia",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_alcoholic_ketoacidosis",
+      "display_name": "Alcoholic ketoacidosis",
+      "category": "endocrine_metabolic",
+      "synonyms": [
+        "AKA"
+      ]
+    },
+    {
+      "id": "dx_thyroid_storm",
+      "display_name": "Thyroid storm",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_myxedema_coma",
+      "display_name": "Myxedema coma",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hypothyroidism",
+      "display_name": "Hypothyroidism",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hyperthyroidism",
+      "display_name": "Hyperthyroidism",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_adrenal_crisis",
+      "display_name": "Adrenal crisis",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pheochromocytoma_crisis",
+      "display_name": "Pheochromocytoma crisis",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hyperkalemia",
+      "display_name": "Hyperkalemia",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hypokalemia",
+      "display_name": "Hypokalemia",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hyponatremia",
+      "display_name": "Hyponatremia",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hypernatremia",
+      "display_name": "Hypernatremia",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hypercalcemia",
+      "display_name": "Hypercalcemia",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hypocalcemia",
+      "display_name": "Hypocalcemia",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hypermagnesemia",
+      "display_name": "Hypermagnesemia",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hypomagnesemia",
+      "display_name": "Hypomagnesemia",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_anion_gap_metabolic_acidosis",
+      "display_name": "Anion gap metabolic acidosis",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_non_anion_gap_metabolic_acidosis",
+      "display_name": "Non-anion gap metabolic acidosis",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_metabolic_alkalosis",
+      "display_name": "Metabolic alkalosis",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_respiratory_acidosis",
+      "display_name": "Respiratory acidosis",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_respiratory_alkalosis",
+      "display_name": "Respiratory alkalosis",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_lactic_acidosis",
+      "display_name": "Lactic acidosis",
+      "category": "endocrine_metabolic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hypovolemia",
+      "display_name": "Hypovolemia",
+      "category": "endocrine_metabolic",
+      "synonyms": [
+        "dehydration"
+      ]
+    },
+    {
+      "id": "dx_acute_blood_loss_anemia",
+      "display_name": "Acute blood loss anemia",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_iron_deficiency_anemia",
+      "display_name": "Iron deficiency anemia",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_sickle_cell_vaso_occlusive_crisis",
+      "display_name": "Sickle cell vaso-occlusive crisis",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "sickle cell pain crisis"
+      ]
+    },
+    {
+      "id": "dx_acute_chest_syndrome",
+      "display_name": "Acute chest syndrome",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_splenic_sequestration_crisis",
+      "display_name": "Splenic sequestration crisis",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_immune_thrombocytopenia",
+      "display_name": "Immune thrombocytopenia",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "ITP"
+      ]
+    },
+    {
+      "id": "dx_thrombotic_thrombocytopenic_purpura",
+      "display_name": "Thrombotic thrombocytopenic purpura",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "TTP"
+      ]
+    },
+    {
+      "id": "dx_hemolytic_uremic_syndrome",
+      "display_name": "Hemolytic uremic syndrome",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "HUS"
+      ]
+    },
+    {
+      "id": "dx_disseminated_intravascular_coagulation",
+      "display_name": "Disseminated intravascular coagulation",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "DIC"
+      ]
+    },
+    {
+      "id": "dx_hemophilia_a_with_acute_bleeding",
+      "display_name": "Hemophilia A with acute bleeding",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hemophilia_b_with_acute_bleeding",
+      "display_name": "Hemophilia B with acute bleeding",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_von_willebrand_disease_with_acute_bleeding",
+      "display_name": "Von Willebrand disease with acute bleeding",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_warfarin_associated_coagulopathy",
+      "display_name": "Warfarin-associated coagulopathy",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "supratherapeutic INR"
+      ]
+    },
+    {
+      "id": "dx_direct_oral_anticoagulant_associated_bleeding",
+      "display_name": "Direct oral anticoagulant-associated bleeding",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "DOAC bleed"
+      ]
+    },
+    {
+      "id": "dx_heparin_induced_thrombocytopenia",
+      "display_name": "Heparin-induced thrombocytopenia",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "HIT"
+      ]
+    },
+    {
+      "id": "dx_febrile_neutropenia",
+      "display_name": "Febrile neutropenia",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_tumor_lysis_syndrome",
+      "display_name": "Tumor lysis syndrome",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "TLS"
+      ]
+    },
+    {
+      "id": "dx_hypercalcemia_of_malignancy",
+      "display_name": "Hypercalcemia of malignancy",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_superior_vena_cava_syndrome",
+      "display_name": "Superior vena cava syndrome",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "SVC syndrome"
+      ]
+    },
+    {
+      "id": "dx_malignant_spinal_cord_compression",
+      "display_name": "Malignant spinal cord compression",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_leukostasis",
+      "display_name": "Leukostasis",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_hemolytic_transfusion_reaction",
+      "display_name": "Acute hemolytic transfusion reaction",
+      "category": "hematology_oncology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_transfusion_related_acute_lung_injury",
+      "display_name": "Transfusion-related acute lung injury",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "TRALI"
+      ]
+    },
+    {
+      "id": "dx_transfusion_associated_circulatory_overload",
+      "display_name": "Transfusion-associated circulatory overload",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "TACO"
+      ]
+    },
+    {
+      "id": "dx_acetaminophen_toxicity",
+      "display_name": "Acetaminophen toxicity",
+      "category": "toxicology",
+      "synonyms": [
+        "Tylenol overdose",
+        "paracetamol"
+      ]
+    },
+    {
+      "id": "dx_salicylate_toxicity",
+      "display_name": "Salicylate toxicity",
+      "category": "toxicology",
+      "synonyms": [
+        "aspirin overdose"
+      ]
+    },
+    {
+      "id": "dx_opioid_overdose",
+      "display_name": "Opioid overdose",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_benzodiazepine_overdose",
+      "display_name": "Benzodiazepine overdose",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_alcohol_intoxication",
+      "display_name": "Acute alcohol intoxication",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_alcohol_withdrawal",
+      "display_name": "Alcohol withdrawal",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_delirium_tremens",
+      "display_name": "Delirium tremens",
+      "category": "toxicology",
+      "synonyms": [
+        "DTs"
+      ]
+    },
+    {
+      "id": "dx_methanol_toxicity",
+      "display_name": "Methanol toxicity",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ethylene_glycol_toxicity",
+      "display_name": "Ethylene glycol toxicity",
+      "category": "toxicology",
+      "synonyms": [
+        "antifreeze"
+      ]
+    },
+    {
+      "id": "dx_isopropanol_ingestion",
+      "display_name": "Isopropanol ingestion",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_tricyclic_antidepressant_overdose",
+      "display_name": "Tricyclic antidepressant overdose",
+      "category": "toxicology",
+      "synonyms": [
+        "TCA overdose"
+      ]
+    },
+    {
+      "id": "dx_ssri_overdose",
+      "display_name": "SSRI overdose",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_serotonin_syndrome",
+      "display_name": "Serotonin syndrome",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_neuroleptic_malignant_syndrome",
+      "display_name": "Neuroleptic malignant syndrome",
+      "category": "toxicology",
+      "synonyms": [
+        "NMS"
+      ]
+    },
+    {
+      "id": "dx_lithium_toxicity",
+      "display_name": "Lithium toxicity",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_digoxin_toxicity",
+      "display_name": "Digoxin toxicity",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_beta_blocker_overdose",
+      "display_name": "Beta-blocker overdose",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_calcium_channel_blocker_overdose",
+      "display_name": "Calcium channel blocker overdose",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_sympathomimetic_toxicity",
+      "display_name": "Sympathomimetic toxicity",
+      "category": "toxicology",
+      "synonyms": [
+        "cocaine",
+        "amphetamine",
+        "methamphetamine"
+      ]
+    },
+    {
+      "id": "dx_anticholinergic_toxidrome",
+      "display_name": "Anticholinergic toxidrome",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_organophosphate_poisoning",
+      "display_name": "Organophosphate poisoning",
+      "category": "toxicology",
+      "synonyms": [
+        "cholinergic toxidrome"
+      ]
+    },
+    {
+      "id": "dx_carbon_monoxide_poisoning",
+      "display_name": "Carbon monoxide poisoning",
+      "category": "toxicology",
+      "synonyms": [
+        "CO poisoning"
+      ]
+    },
+    {
+      "id": "dx_cyanide_poisoning",
+      "display_name": "Cyanide poisoning",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_methemoglobinemia",
+      "display_name": "Methemoglobinemia",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_iron_toxicity",
+      "display_name": "Iron toxicity",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_lead_poisoning",
+      "display_name": "Lead poisoning",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_caustic_ingestion",
+      "display_name": "Caustic ingestion",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hydrocarbon_ingestion",
+      "display_name": "Hydrocarbon ingestion",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_button_battery_ingestion",
+      "display_name": "Button battery ingestion",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_body_packer_or_body_stuffer",
+      "display_name": "Body packer or body stuffer",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_cannabinoid_hyperemesis_syndrome",
+      "display_name": "Cannabinoid hyperemesis syndrome",
+      "category": "toxicology",
+      "synonyms": [
+        "CHS"
+      ]
+    },
+    {
+      "id": "dx_synthetic_cannabinoid_toxicity",
+      "display_name": "Synthetic cannabinoid toxicity",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_opioid_withdrawal",
+      "display_name": "Opioid withdrawal",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_sedative_hypnotic_withdrawal",
+      "display_name": "Sedative-hypnotic withdrawal",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_crotalid_snake_envenomation",
+      "display_name": "Crotalid snake envenomation",
+      "category": "toxicology",
+      "synonyms": [
+        "rattlesnake bite"
+      ]
+    },
+    {
+      "id": "dx_scorpion_envenomation",
+      "display_name": "Scorpion envenomation",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_black_widow_spider_envenomation",
+      "display_name": "Black widow spider envenomation",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_brown_recluse_spider_envenomation",
+      "display_name": "Brown recluse spider envenomation",
+      "category": "toxicology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_heat_exhaustion",
+      "display_name": "Heat exhaustion",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_heat_stroke",
+      "display_name": "Heat stroke",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_accidental_hypothermia",
+      "display_name": "Accidental hypothermia",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_frostbite",
+      "display_name": "Frostbite",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_drowning",
+      "display_name": "Drowning",
+      "category": "environmental",
+      "synonyms": [
+        "submersion injury"
+      ]
+    },
+    {
+      "id": "dx_decompression_sickness",
+      "display_name": "Decompression sickness",
+      "category": "environmental",
+      "synonyms": [
+        "the bends"
+      ]
+    },
+    {
+      "id": "dx_arterial_gas_embolism",
+      "display_name": "Arterial gas embolism",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_high_altitude_cerebral_edema",
+      "display_name": "High-altitude cerebral edema",
+      "category": "environmental",
+      "synonyms": [
+        "HACE"
+      ]
+    },
+    {
+      "id": "dx_high_altitude_pulmonary_edema",
+      "display_name": "High-altitude pulmonary edema",
+      "category": "environmental",
+      "synonyms": [
+        "HAPE"
+      ]
+    },
+    {
+      "id": "dx_acute_mountain_sickness",
+      "display_name": "Acute mountain sickness",
+      "category": "environmental",
+      "synonyms": [
+        "AMS"
+      ]
+    },
+    {
+      "id": "dx_electrical_injury",
+      "display_name": "Electrical injury",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_lightning_injury",
+      "display_name": "Lightning injury",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_thermal_burn",
+      "display_name": "Thermal burn",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_chemical_burn",
+      "display_name": "Chemical burn",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_inhalation_injury",
+      "display_name": "Inhalation injury",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_radiation_syndrome",
+      "display_name": "Acute radiation syndrome",
+      "category": "environmental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_severe_traumatic_brain_injury",
+      "display_name": "Severe traumatic brain injury",
+      "category": "trauma",
+      "synonyms": [
+        "severe TBI"
+      ]
+    },
+    {
+      "id": "dx_mild_traumatic_brain_injury",
+      "display_name": "Mild traumatic brain injury",
+      "category": "trauma",
+      "synonyms": [
+        "concussion"
+      ]
+    },
+    {
+      "id": "dx_diffuse_axonal_injury",
+      "display_name": "Diffuse axonal injury",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_basilar_skull_fracture",
+      "display_name": "Basilar skull fracture",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_cervical_spine_fracture",
+      "display_name": "Cervical spine fracture",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_thoracolumbar_spine_fracture",
+      "display_name": "Thoracolumbar spine fracture",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_spinal_cord_injury",
+      "display_name": "Spinal cord injury",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_rib_fractures",
+      "display_name": "Rib fractures",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_flail_chest",
+      "display_name": "Flail chest",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pulmonary_contusion",
+      "display_name": "Pulmonary contusion",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_traumatic_pneumothorax",
+      "display_name": "Traumatic pneumothorax",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_traumatic_hemothorax",
+      "display_name": "Traumatic hemothorax",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_blunt_cardiac_injury",
+      "display_name": "Blunt cardiac injury",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_blunt_aortic_injury",
+      "display_name": "Blunt aortic injury",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_splenic_laceration",
+      "display_name": "Splenic laceration",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hepatic_laceration",
+      "display_name": "Hepatic laceration",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_traumatic_bowel_perforation",
+      "display_name": "Traumatic bowel perforation",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_retroperitoneal_hematoma",
+      "display_name": "Retroperitoneal hematoma",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pelvic_fracture",
+      "display_name": "Pelvic fracture",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_penetrating_chest_trauma",
+      "display_name": "Penetrating chest trauma",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_penetrating_abdominal_trauma",
+      "display_name": "Penetrating abdominal trauma",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_traumatic_cardiac_arrest",
+      "display_name": "Traumatic cardiac arrest",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hemorrhagic_shock",
+      "display_name": "Hemorrhagic shock",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_crush_injury",
+      "display_name": "Crush injury",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_compartment_syndrome",
+      "display_name": "Acute compartment syndrome",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_traumatic_amputation",
+      "display_name": "Traumatic amputation",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_open_fracture",
+      "display_name": "Open fracture",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_orbital_fracture",
+      "display_name": "Orbital fracture",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_midface_fracture",
+      "display_name": "Midface fracture",
+      "category": "trauma",
+      "synonyms": [
+        "Le Fort fracture"
+      ]
+    },
+    {
+      "id": "dx_mandibular_fracture",
+      "display_name": "Mandibular fracture",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_dental_avulsion",
+      "display_name": "Dental avulsion",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_major_burn",
+      "display_name": "Major burn",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_suspected_physical_child_abuse",
+      "display_name": "Suspected physical child abuse",
+      "category": "trauma",
+      "synonyms": [
+        "non-accidental trauma"
+      ]
+    },
+    {
+      "id": "dx_suspected_elder_abuse_or_neglect",
+      "display_name": "Suspected elder abuse or neglect",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_intimate_partner_violence_related_injury",
+      "display_name": "Intimate partner violence-related injury",
+      "category": "trauma",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hip_fracture",
+      "display_name": "Hip fracture",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_femoral_shaft_fracture",
+      "display_name": "Femoral shaft fracture",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_distal_radius_fracture",
+      "display_name": "Distal radius fracture",
+      "category": "musculoskeletal",
+      "synonyms": [
+        "Colles fracture"
+      ]
+    },
+    {
+      "id": "dx_scaphoid_fracture",
+      "display_name": "Scaphoid fracture",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_humerus_fracture",
+      "display_name": "Humerus fracture",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_clavicle_fracture",
+      "display_name": "Clavicle fracture",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ankle_fracture",
+      "display_name": "Ankle fracture",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_tibial_plateau_fracture",
+      "display_name": "Tibial plateau fracture",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_anterior_shoulder_dislocation",
+      "display_name": "Anterior shoulder dislocation",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_posterior_shoulder_dislocation",
+      "display_name": "Posterior shoulder dislocation",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hip_dislocation",
+      "display_name": "Hip dislocation",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_elbow_dislocation",
+      "display_name": "Elbow dislocation",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_patellar_dislocation",
+      "display_name": "Patellar dislocation",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_knee_dislocation",
+      "display_name": "Knee dislocation",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_achilles_tendon_rupture",
+      "display_name": "Achilles tendon rupture",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_gout",
+      "display_name": "Gout",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pseudogout",
+      "display_name": "Pseudogout",
+      "category": "musculoskeletal",
+      "synonyms": [
+        "calcium pyrophosphate deposition"
+      ]
+    },
+    {
+      "id": "dx_olecranon_bursitis",
+      "display_name": "Olecranon bursitis",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_nonspecific_low_back_pain",
+      "display_name": "Nonspecific low back pain",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_lumbar_radiculopathy",
+      "display_name": "Lumbar radiculopathy",
+      "category": "musculoskeletal",
+      "synonyms": [
+        "sciatica"
+      ]
+    },
+    {
+      "id": "dx_rotator_cuff_tear",
+      "display_name": "Rotator cuff tear",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_radial_head_subluxation",
+      "display_name": "Radial head subluxation",
+      "category": "musculoskeletal",
+      "synonyms": [
+        "nursemaid's elbow"
+      ]
+    },
+    {
+      "id": "dx_slipped_capital_femoral_epiphysis",
+      "display_name": "Slipped capital femoral epiphysis",
+      "category": "musculoskeletal",
+      "synonyms": [
+        "SCFE"
+      ]
+    },
+    {
+      "id": "dx_legg_calve_perthes_disease",
+      "display_name": "Legg-Calve-Perthes disease",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_toddler_s_fracture",
+      "display_name": "Toddler's fracture",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_paronychia",
+      "display_name": "Paronychia",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_felon",
+      "display_name": "Felon",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_flexor_tenosynovitis",
+      "display_name": "Flexor tenosynovitis",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_high_pressure_injection_injury",
+      "display_name": "High-pressure injection injury",
+      "category": "musculoskeletal",
+      "synonyms": []
+    },
+    {
+      "id": "dx_stevens_johnson_syndrome",
+      "display_name": "Stevens-Johnson syndrome",
+      "category": "dermatologic",
+      "synonyms": [
+        "SJS"
+      ]
+    },
+    {
+      "id": "dx_toxic_epidermal_necrolysis",
+      "display_name": "Toxic epidermal necrolysis",
+      "category": "dermatologic",
+      "synonyms": [
+        "TEN"
+      ]
+    },
+    {
+      "id": "dx_dress_syndrome",
+      "display_name": "DRESS syndrome",
+      "category": "dermatologic",
+      "synonyms": [
+        "drug reaction with eosinophilia"
+      ]
+    },
+    {
+      "id": "dx_erythema_multiforme",
+      "display_name": "Erythema multiforme",
+      "category": "dermatologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_urticaria",
+      "display_name": "Urticaria",
+      "category": "dermatologic",
+      "synonyms": [
+        "hives"
+      ]
+    },
+    {
+      "id": "dx_angioedema",
+      "display_name": "Angioedema",
+      "category": "dermatologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hereditary_angioedema",
+      "display_name": "Hereditary angioedema",
+      "category": "dermatologic",
+      "synonyms": [
+        "HAE"
+      ]
+    },
+    {
+      "id": "dx_ace_inhibitor_induced_angioedema",
+      "display_name": "ACE inhibitor-induced angioedema",
+      "category": "dermatologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_contact_dermatitis",
+      "display_name": "Contact dermatitis",
+      "category": "dermatologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pemphigus_vulgaris",
+      "display_name": "Pemphigus vulgaris",
+      "category": "dermatologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_staphylococcal_scalded_skin_syndrome",
+      "display_name": "Staphylococcal scalded skin syndrome",
+      "category": "dermatologic",
+      "synonyms": [
+        "SSSS"
+      ]
+    },
+    {
+      "id": "dx_purpura_fulminans",
+      "display_name": "Purpura fulminans",
+      "category": "dermatologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ectopic_pregnancy",
+      "display_name": "Ectopic pregnancy",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ruptured_ectopic_pregnancy",
+      "display_name": "Ruptured ectopic pregnancy",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_threatened_abortion",
+      "display_name": "Threatened abortion",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_incomplete_abortion",
+      "display_name": "Incomplete abortion",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_missed_abortion",
+      "display_name": "Missed abortion",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_septic_abortion",
+      "display_name": "Septic abortion",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hyperemesis_gravidarum",
+      "display_name": "Hyperemesis gravidarum",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_preeclampsia",
+      "display_name": "Preeclampsia",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_preeclampsia_with_severe_features",
+      "display_name": "Preeclampsia with severe features",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_eclampsia",
+      "display_name": "Eclampsia",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hellp_syndrome",
+      "display_name": "HELLP syndrome",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_placental_abruption",
+      "display_name": "Placental abruption",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_placenta_previa",
+      "display_name": "Placenta previa",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_preterm_labor",
+      "display_name": "Preterm labor",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_precipitous_delivery",
+      "display_name": "Precipitous delivery",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_postpartum_hemorrhage",
+      "display_name": "Postpartum hemorrhage",
+      "category": "obstetric_gynecologic",
+      "synonyms": [
+        "PPH"
+      ]
+    },
+    {
+      "id": "dx_retained_products_of_conception",
+      "display_name": "Retained products of conception",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_chorioamnionitis",
+      "display_name": "Chorioamnionitis",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_postpartum_endometritis",
+      "display_name": "Postpartum endometritis",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_amniotic_fluid_embolism",
+      "display_name": "Amniotic fluid embolism",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_peripartum_cardiomyopathy",
+      "display_name": "Peripartum cardiomyopathy",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ovarian_torsion",
+      "display_name": "Ovarian torsion",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ruptured_ovarian_cyst",
+      "display_name": "Ruptured ovarian cyst",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pelvic_inflammatory_disease",
+      "display_name": "Pelvic inflammatory disease",
+      "category": "obstetric_gynecologic",
+      "synonyms": [
+        "PID"
+      ]
+    },
+    {
+      "id": "dx_tubo_ovarian_abscess",
+      "display_name": "Tubo-ovarian abscess",
+      "category": "obstetric_gynecologic",
+      "synonyms": [
+        "TOA"
+      ]
+    },
+    {
+      "id": "dx_bartholin_abscess",
+      "display_name": "Bartholin abscess",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_abnormal_uterine_bleeding",
+      "display_name": "Abnormal uterine bleeding",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_sexual_assault",
+      "display_name": "Sexual assault",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_trauma_in_pregnancy",
+      "display_name": "Trauma in pregnancy",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_postpartum_preeclampsia",
+      "display_name": "Postpartum preeclampsia",
+      "category": "obstetric_gynecologic",
+      "synonyms": []
+    },
+    {
+      "id": "dx_anterior_epistaxis",
+      "display_name": "Anterior epistaxis",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_posterior_epistaxis",
+      "display_name": "Posterior epistaxis",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_peritonsillar_abscess",
+      "display_name": "Peritonsillar abscess",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_retropharyngeal_abscess",
+      "display_name": "Retropharyngeal abscess",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ludwig_angina",
+      "display_name": "Ludwig angina",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_epiglottitis",
+      "display_name": "Epiglottitis",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_croup",
+      "display_name": "Croup",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": [
+        "laryngotracheitis"
+      ]
+    },
+    {
+      "id": "dx_acute_otitis_media",
+      "display_name": "Acute otitis media",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_otitis_externa",
+      "display_name": "Otitis externa",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_malignant_otitis_externa",
+      "display_name": "Malignant otitis externa",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_mastoiditis",
+      "display_name": "Mastoiditis",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_bacterial_sinusitis",
+      "display_name": "Acute bacterial sinusitis",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_sudden_sensorineural_hearing_loss",
+      "display_name": "Sudden sensorineural hearing loss",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_nasal_foreign_body",
+      "display_name": "Nasal foreign body",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_aural_foreign_body",
+      "display_name": "Aural foreign body",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_dental_abscess",
+      "display_name": "Dental abscess",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_angle_closure_glaucoma",
+      "display_name": "Acute angle-closure glaucoma",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_central_retinal_artery_occlusion",
+      "display_name": "Central retinal artery occlusion",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": [
+        "CRAO"
+      ]
+    },
+    {
+      "id": "dx_central_retinal_vein_occlusion",
+      "display_name": "Central retinal vein occlusion",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": [
+        "CRVO"
+      ]
+    },
+    {
+      "id": "dx_retinal_detachment",
+      "display_name": "Retinal detachment",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_optic_neuritis",
+      "display_name": "Optic neuritis",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_orbital_cellulitis",
+      "display_name": "Orbital cellulitis",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_periorbital_cellulitis",
+      "display_name": "Periorbital cellulitis",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": [
+        "preseptal cellulitis"
+      ]
+    },
+    {
+      "id": "dx_corneal_abrasion",
+      "display_name": "Corneal abrasion",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_corneal_ulcer",
+      "display_name": "Corneal ulcer",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_hyphema",
+      "display_name": "Hyphema",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_chemical_eye_injury",
+      "display_name": "Chemical eye injury",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_anterior_uveitis",
+      "display_name": "Anterior uveitis",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": [
+        "iritis"
+      ]
+    },
+    {
+      "id": "dx_endophthalmitis",
+      "display_name": "Endophthalmitis",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_ruptured_globe",
+      "display_name": "Ruptured globe",
+      "category": "ent_ophthalmology_dental",
+      "synonyms": []
+    },
+    {
+      "id": "dx_suicidal_ideation",
+      "display_name": "Suicidal ideation",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_suicide_attempt",
+      "display_name": "Suicide attempt",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_homicidal_ideation",
+      "display_name": "Homicidal ideation",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_psychosis",
+      "display_name": "Acute psychosis",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_schizophrenia_exacerbation",
+      "display_name": "Schizophrenia exacerbation",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_bipolar_disorder_manic_episode",
+      "display_name": "Bipolar disorder, manic episode",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_major_depressive_episode",
+      "display_name": "Major depressive episode",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_panic_attack",
+      "display_name": "Panic attack",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_acute_agitation",
+      "display_name": "Acute agitation",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_catatonia",
+      "display_name": "Catatonia",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_substance_use_disorder",
+      "display_name": "Substance use disorder",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_eating_disorder_with_medical_complication",
+      "display_name": "Eating disorder with medical complication",
+      "category": "psychiatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_functional_neurologic_disorder",
+      "display_name": "Functional neurologic disorder",
+      "category": "psychiatric",
+      "synonyms": [
+        "conversion disorder"
+      ]
+    },
+    {
+      "id": "dx_anaphylaxis",
+      "display_name": "Anaphylaxis",
+      "category": "allergy_immunology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_localized_allergic_reaction",
+      "display_name": "Localized allergic reaction",
+      "category": "allergy_immunology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_drug_hypersensitivity_reaction",
+      "display_name": "Drug hypersensitivity reaction",
+      "category": "allergy_immunology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_food_allergy",
+      "display_name": "Food allergy",
+      "category": "allergy_immunology",
+      "synonyms": []
+    },
+    {
+      "id": "dx_simple_febrile_seizure",
+      "display_name": "Simple febrile seizure",
+      "category": "pediatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_complex_febrile_seizure",
+      "display_name": "Complex febrile seizure",
+      "category": "pediatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_fever_without_a_source_in_a_young_infant",
+      "display_name": "Fever without a source in a young infant",
+      "category": "pediatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_neonatal_sepsis",
+      "display_name": "Neonatal sepsis",
+      "category": "pediatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_neonatal_jaundice",
+      "display_name": "Neonatal jaundice",
+      "category": "pediatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_kawasaki_disease",
+      "display_name": "Kawasaki disease",
+      "category": "pediatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_multisystem_inflammatory_syndrome_in_children",
+      "display_name": "Multisystem inflammatory syndrome in children",
+      "category": "pediatric",
+      "synonyms": [
+        "MIS-C"
+      ]
+    },
+    {
+      "id": "dx_iga_vasculitis",
+      "display_name": "IgA vasculitis",
+      "category": "pediatric",
+      "synonyms": [
+        "Henoch-Schonlein purpura",
+        "HSP"
+      ]
+    },
+    {
+      "id": "dx_ductal_dependent_congenital_heart_disease",
+      "display_name": "Ductal-dependent congenital heart disease",
+      "category": "pediatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_brief_resolved_unexplained_event",
+      "display_name": "Brief resolved unexplained event",
+      "category": "pediatric",
+      "synonyms": [
+        "BRUE",
+        "ALTE"
+      ]
+    },
+    {
+      "id": "dx_sudden_infant_death_syndrome",
+      "display_name": "Sudden infant death syndrome",
+      "category": "pediatric",
+      "synonyms": [
+        "SIDS"
+      ]
+    },
+    {
+      "id": "dx_pediatric_dehydration",
+      "display_name": "Pediatric dehydration",
+      "category": "pediatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_pediatric_exploratory_ingestion",
+      "display_name": "Pediatric exploratory ingestion",
+      "category": "pediatric",
+      "synonyms": []
+    },
+    {
+      "id": "dx_undifferentiated_shock",
+      "display_name": "Undifferentiated shock",
+      "category": "undifferentiated",
+      "synonyms": []
+    },
+    {
+      "id": "dx_undifferentiated_syncope",
+      "display_name": "Undifferentiated syncope",
+      "category": "undifferentiated",
+      "synonyms": []
+    },
+    {
+      "id": "dx_undifferentiated_chest_pain",
+      "display_name": "Undifferentiated chest pain",
+      "category": "undifferentiated",
+      "synonyms": []
+    },
+    {
+      "id": "dx_undifferentiated_abdominal_pain",
+      "display_name": "Undifferentiated abdominal pain",
+      "category": "undifferentiated",
+      "synonyms": []
+    },
+    {
+      "id": "dx_undifferentiated_altered_mental_status",
+      "display_name": "Undifferentiated altered mental status",
+      "category": "undifferentiated",
+      "synonyms": [
+        "AMS"
+      ]
+    },
+    {
+      "id": "dx_undifferentiated_fever",
+      "display_name": "Undifferentiated fever",
+      "category": "undifferentiated",
+      "synonyms": []
+    },
+    {
+      "id": "dx_generalized_weakness",
+      "display_name": "Generalized weakness",
+      "category": "undifferentiated",
+      "synonyms": []
+    },
+    {
+      "id": "dx_undifferentiated_dizziness",
+      "display_name": "Undifferentiated dizziness",
+      "category": "undifferentiated",
+      "synonyms": []
+    },
+    {
+      "id": "dx_undifferentiated_dyspnea",
+      "display_name": "Undifferentiated dyspnea",
+      "category": "undifferentiated",
+      "synonyms": []
+    },
+    {
+      "id": "dx_cardiac_arrest_of_undetermined_cause",
+      "display_name": "Cardiac arrest of undetermined cause",
+      "category": "undifferentiated",
+      "synonyms": []
+    },
+    {
+      "id": "dx_no_acute_pathology_identified",
+      "display_name": "No acute pathology identified",
+      "category": "undifferentiated",
+      "synonyms": []
+    }
+  ]
+}

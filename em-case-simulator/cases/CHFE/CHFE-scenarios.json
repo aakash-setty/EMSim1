@@ -1,0 +1,120 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "adhf-hfref-01",
+ "note": "End-to-end paths through this case. Reachability is a weak claim: the validator says a phase can be reached, these say a plausible sequence of clinical actions gets there. Cover the intended path, every harmful halt, every blocked prerequisite, the deterioration branch and its rescue, and any ordering a resident is likely to produce.",
+ "scenarios": [
+  {
+   "name": "Intended path, run cleanly",
+   "steps": [
+    "iv_access_peripheral",
+    "cardiac_monitor",
+    "niv_cpap",
+    "ecg_12_lead",
+    "nitroglycerin_infusion",
+    "bp_cycling_q5min",
+    "cxr_portable",
+    "interview_topic_medication_adherence",
+    "furosemide_iv",
+    "urine_output_monitoring",
+    "consult_cardiology",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete"
+  },
+  {
+   "name": "Prerequisite blocking: infusion and intubation attempted out of sequence",
+   "steps": [
+    "nitroglycerin_infusion",
+    "intubation_rsi",
+    "iv_access_peripheral",
+    "nitroglycerin_infusion",
+    "niv_cpap"
+   ],
+   "expect_phase": "stabilizing"
+  },
+  {
+   "name": "Sublingual nitrate as the bridge still advances the phase",
+   "steps": [
+    "iv_access_peripheral",
+    "niv_cpap",
+    "nitroglycerin_sublingual"
+   ],
+   "expect_phase": "stabilizing"
+  },
+  {
+   "name": "Harmful: intravenous metoprolol for the compensatory tachycardia",
+   "steps": [
+    "iv_access_peripheral",
+    "niv_cpap",
+    "metoprolol_iv"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Harmful: crystalloid bolus",
+   "steps": [
+    "iv_access_peripheral",
+    "crystalloid_bolus_1l"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Harmful: dobutamine while warm and hypertensive",
+   "steps": [
+    "iv_access_peripheral",
+    "dobutamine_infusion"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Deterioration and rescue: early intubation, then correct management",
+   "steps": [
+    "iv_access_peripheral",
+    "nitroglycerin_infusion",
+    "etomidate_iv",
+    "rocuronium_iv",
+    "intubation_rsi",
+    "post_intubation_sedation_infusion",
+    "nitroglycerin_stop",
+    "norepinephrine_infusion"
+   ],
+   "expect_phase": "intubated_stabilized"
+  },
+  {
+   "name": "Deterioration mismanaged: fluid bolus for post-intubation hypotension",
+   "steps": [
+    "iv_access_peripheral",
+    "nitroglycerin_infusion",
+    "etomidate_iv",
+    "rocuronium_iv",
+    "intubation_rsi",
+    "crystalloid_bolus_1l"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Restarting the nitrate after vasopressor rescue is harmful",
+   "steps": [
+    "iv_access_peripheral",
+    "nitroglycerin_infusion",
+    "etomidate_iv",
+    "rocuronium_iv",
+    "intubation_rsi",
+    "nitroglycerin_stop",
+    "norepinephrine_infusion",
+    "nitroglycerin_infusion"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Every phase is reachable in some run: improving reached without NIV first",
+   "steps": [
+    "iv_access_peripheral",
+    "furosemide_iv",
+    "niv_bipap",
+    "nitroglycerin_infusion"
+   ],
+   "expect_phase": "stabilizing"
+  }
+ ]
+}

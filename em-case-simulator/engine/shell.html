@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bay:#0A1014; --bay2:#111A21; --bayline:#22303B;
+  --hr:#35D07F; --bp:#F0685A; --spo2:#54C7F0; --rr:#FFD24A; --temp:#DDE4E9;
+  --paper:#DFE3E7; --surface:#FFFFFF; --surface2:#F4F6F8;
+  --ink:#12171C; --ink2:#5C666F; --ink3:#8A939B;
+  --rule:#C3CAD1; --rule2:#E2E6EA;
+  --act:#17466B; --actl:#E7EEF5;
+  --harm:#9E2B22; --harml:#FBEAE8;
+  --ok:#1B6B48; --okl:#E6F2EC;
+  --warn:#8A5A00; --warnl:#FBF1DE;
+  --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--sans);
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 0 64px}
+
+/* ---------- the bay: dark strip, monitor + nurse ---------- */
+.stick{position:sticky;top:0;z-index:40}
+.bay{
+  background:linear-gradient(180deg,var(--bay2),var(--bay));
+  color:var(--temp); border-bottom:1px solid var(--bayline);
+}
+.bayin{max-width:1180px;margin:0 auto;padding:12px 20px 14px;
+  display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start}
+.nurse{min-width:0}
+.nurselab{font-size:11.5px;color:#6E828F;letter-spacing:.02em;margin-bottom:3px}
+.nurseline{font-size:15.5px;line-height:1.45;color:#E9F0F4;min-height:2.9em}
+.nurseline.fresh{animation:nfade .5s ease}
+@keyframes nfade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.nursemeta{font-family:var(--mono);font-size:11px;color:#5E7280;margin-top:4px}
+
+.mon{display:flex;gap:18px;align-items:flex-end}
+.vit{text-align:right;min-width:78px}
+.vitlab{font-size:10.5px;color:#677B88;font-family:var(--mono);letter-spacing:.04em}
+.vitval{font-family:var(--mono);font-weight:600;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.vitunit{font-size:11px;color:#677B88;font-family:var(--mono)}
+.v-hr{color:var(--hr)} .v-bp{color:var(--bp)} .v-spo2{color:var(--spo2)}
+.v-rr{color:var(--rr)} .v-temp{color:var(--temp)}
+.clockbox{text-align:right;border-left:1px solid var(--bayline);padding-left:16px}
+.clock{font-family:var(--mono);font-size:26px;font-weight:500;color:#B9C6CE;font-variant-numeric:tabular-nums}
+.phasechip{font-size:11px;color:#8FA3AF;font-family:var(--mono);margin-top:2px;
+  max-width:190px;margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trace{height:22px;margin-top:6px;opacity:.85}
+
+.soundrow{display:flex;align-items:center;gap:10px;margin-top:8px}
+.soundbtn{background:none;border:1px solid var(--bayline);color:#9FB2BE;border-radius:2px;
+  padding:3px 10px;font-size:12px;cursor:pointer}
+.soundbtn:hover{border-color:#3C5262;color:#D5E1E8}
+.soundbtn[aria-pressed="true"]{border-color:var(--hr);color:var(--hr)}
+
+/* ---------- splash ---------- */
+.splash{position:fixed;inset:0;z-index:100;background:var(--paper);overflow:auto;
+  display:flex;align-items:flex-start;justify-content:center;padding:40px 20px}
+.splash.hidden{display:none}
+.splashcard{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+  max-width:640px;width:100%;padding:30px 34px 34px}
+.splashcard .setting{font-family:var(--mono);font-size:11.5px;color:var(--ink3);
+  letter-spacing:.03em;margin-bottom:14px}
+.splashcard h1{font-size:22px;line-height:1.3;margin:0 0 14px;font-weight:600;letter-spacing:-.01em}
+.splashcard .cc{border-left:3px solid var(--act);background:var(--actl);padding:12px 15px;
+  font-size:16px;border-radius:2px;margin-bottom:6px}
+.splashsec{margin-top:22px}
+.splashsec h2{font-size:12.5px;color:var(--ink2);font-weight:600;margin:0 0 7px;letter-spacing:0}
+.splashsec p{margin:0;font-size:14.5px;color:var(--ink)}
+.modes{display:flex;gap:10px;flex-wrap:wrap}
+.mode{flex:1 1 220px;text-align:left;background:var(--surface2);border:1px solid var(--rule);
+  border-left:3px solid var(--rule);border-radius:2px;padding:11px 13px;cursor:pointer;font-size:14.5px}
+.mode:hover{background:#fff;border-color:var(--act)}
+.mode[aria-checked="true"]{background:var(--actl);border-color:var(--act);border-left-color:var(--act);
+  box-shadow:inset 0 0 0 1px var(--act)}
+.mode b{display:block;font-weight:600;margin-bottom:2px}
+.mode span{display:block;font-size:12.5px;color:var(--ink2);line-height:1.4}
+.modenote{font-size:12.5px;color:var(--ink3);margin:9px 0 0}
+.btn.begin{margin-top:26px;padding:12px 30px;font-size:16px}
+.splashwarn{font-size:12.5px;color:var(--harm);margin:16px 0 0;line-height:1.5}
+.pknote{font-size:12.5px;color:var(--ink3);margin:16px 0 0}
+.cardlist{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.casecard{display:block;width:100%;text-align:left;background:var(--surface2);
+  border:1px solid var(--rule);border-left:3px solid var(--act);border-radius:2px;
+  padding:14px 16px;cursor:pointer}
+.casecard:hover{background:#fff;border-color:var(--act)}
+.casecard .pk{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.04em}
+.casecard .ti{display:block;font-size:16px;font-weight:600;margin:3px 0 5px;line-height:1.35}
+.casecard .cc{display:block;font-size:14px;color:var(--ink2);margin-bottom:7px}
+.casecard .mt{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.casecard .flagred{color:var(--harm)}
+
+/* ---------- tabs ---------- */
+.tabbar{background:var(--surface);border-bottom:1px solid var(--rule)}
+.tabbarin{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;gap:2px;overflow-x:auto}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:11px 14px;
+  cursor:pointer;color:var(--ink2);white-space:nowrap;font-size:14.5px}
+.tab:hover{color:var(--ink);background:var(--surface2)}
+.tab[aria-selected="true"]{color:var(--act);border-bottom-color:var(--act);font-weight:500}
+.tab .badge{display:inline-block;margin-left:6px;background:var(--act);color:#fff;border-radius:9px;
+  font-family:var(--mono);font-size:10.5px;padding:0 5px;vertical-align:1px}
+
+/* ---------- layout ---------- */
+.cols{display:grid;grid-template-columns:1fr 320px;gap:20px;padding:20px}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:18px 20px}
+.panel + .panel{margin-top:14px}
+h2{font-size:17px;margin:0 0 3px;font-weight:600;letter-spacing:-.01em}
+h3{font-size:13.5px;margin:20px 0 8px;font-weight:600;color:var(--ink2)}
+h3:first-child{margin-top:0}
+.sub{color:var(--ink2);font-size:13.5px;margin:0 0 14px}
+p{margin:0 0 10px;max-width:72ch}
+
+/* ---------- action buttons ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:8px}
+.ab{position:relative;display:block;width:100%;text-align:left;background:var(--surface2);
+  border:1px solid var(--rule);border-left:3px solid var(--rule);border-radius:2px;
+  padding:9px 22px 9px 11px;cursor:pointer;line-height:1.35;font-size:14px}
+.ab:hover{background:#fff;border-color:var(--act);border-left-color:var(--act)}
+.ab:active{transform:translateY(1px)}
+.ab:disabled{opacity:.5;cursor:default}
+.ab:disabled:hover{background:var(--surface2);border-color:var(--rule);border-left-color:var(--rule)}
+.ab .sm{display:block;font-size:11.5px;color:var(--ink3);font-family:var(--mono);margin-top:2px}
+.ab.done{border-left-color:var(--ok);background:var(--okl)}
+.ab.pend{border-left-color:var(--warn);background:var(--warnl)}
+.ab.blocked{border-left-color:var(--harm)}
+.ab.hasres{border-left-color:var(--act);background:var(--actl)}
+
+.searchwrap{position:relative;display:inline-block}
+.filter{margin-bottom:0;width:260px;padding-right:30px}
+/* Absolutely positioned so showing and hiding it never moves the toolbar. */
+.clearfilter{position:absolute;right:1px;top:1px;bottom:1px;width:26px;
+  background:none;border:0;border-radius:0 2px 2px 0;cursor:pointer;
+  color:var(--ink3);font-size:17px;line-height:1;padding:0}
+.clearfilter:hover{color:var(--ink);background:var(--surface2)}
+.ab,h3,.read,.speech,.opt{scroll-margin-top:calc(var(--hdr,140px) + 16px)}
+.ab.orphan{border-left-color:var(--warn);border-style:dashed}
+.grouphdr{display:flex;width:100%;align-items:center;gap:11px;text-align:left;
+  background:var(--surface2);border:1px solid var(--rule);border-radius:2px;
+  padding:13px 15px;margin:0 0 9px;cursor:pointer;font-size:17px;font-weight:600;
+  letter-spacing:-.01em}
+.grouphdr:hover{background:#fff;border-color:var(--act)}
+.grouphdr[aria-expanded="true"]{background:var(--actl);border-color:var(--act)}
+.grouphdr .chev{font-family:var(--mono);font-size:13px;color:var(--ink3);width:14px}
+.grouphdr[aria-expanded="true"] .chev{color:var(--act)}
+.grouphdr .n{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:var(--ink3);font-weight:400}
+.grouphdr .picks{font-family:var(--mono);font-size:12.5px;color:var(--act);font-weight:400}
+.groupbody{margin:0 0 14px}
+.ab.picked,.ab.picked:hover{background:var(--actl);border-color:var(--act);
+  border-left-color:var(--act);box-shadow:inset 0 0 0 1px var(--act);font-weight:500}
+.ab.picked::after{content:"\2713";position:absolute;top:5px;right:8px;
+  font-size:12px;line-height:1;color:var(--act);font-weight:700}
+.ab.unread{box-shadow:inset 0 0 0 1px var(--act)}
+.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.basket{background:var(--actl);border:1px solid var(--act);border-radius:2px;
+  padding:9px 12px;margin-bottom:16px;font-size:13.5px;color:var(--act)}
+/* Rendered even when empty so picking an item does not shift the grid under the
+   cursor and turn the next click into a misclick. */
+.basket.empty{background:var(--surface2);border-color:var(--rule2);color:var(--ink3)}
+.panel.gs{padding:14px 20px}
+.panel.gs h2{font-size:13.5px;color:var(--ink2);font-weight:600;margin-bottom:6px;letter-spacing:0}
+.gsline{font-size:15px;line-height:1.5}
+.gsline.abn{color:var(--harm)}
+.panel.gs .meta{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:6px}
+
+/* ---------- readouts ---------- */
+.read{border-left:3px solid var(--act);background:var(--actl);padding:10px 13px;margin:8px 0;border-radius:2px}
+.read h4{margin:0 0 4px;font-size:13px;font-weight:600}
+.read .body{font-family:var(--mono);font-size:13px;line-height:1.6;white-space:pre-wrap}
+.read .meta{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:6px}
+table.labtbl{border-collapse:collapse;font-family:var(--mono);font-size:13px;width:100%;max-width:520px}
+table.labtbl td{padding:2px 10px 2px 0;vertical-align:baseline}
+table.labtbl td.lab{color:var(--ink2)}
+table.labtbl td.val{font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.labtbl td.ref{color:var(--ink3);font-size:11.5px}
+table.labtbl tr.abn td.val{color:var(--harm);font-weight:600}
+table.labtbl tr.abn td.lab{color:var(--harm)}
+table.labtbl tr.abn td.val::after{content:" \2691";font-size:10px}
+.abn-report{border-left:2px solid var(--harm);padding-left:9px}
+.verify{font-size:11.5px;color:var(--warn);background:var(--warnl);border-radius:2px;
+  padding:6px 9px;margin-top:7px;line-height:1.45}
+.speech .meta{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:6px}
+.blockmsg .meta{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:5px}
+.hit .syn{display:block;font-size:11px;color:var(--ink3);font-family:var(--mono)}
+.speech{border-left:3px solid #6B5B95;background:#F1EFF7;padding:10px 13px;margin:8px 0;border-radius:2px;font-size:14.5px}
+.speech .who{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-bottom:3px}
+.blockmsg{border-left:3px solid var(--harm);background:var(--harml);padding:10px 13px;margin:8px 0;border-radius:2px}
+
+/* ---------- record rail ---------- */
+.rail{position:sticky;top:calc(var(--hdr,132px) + 12px);align-self:start;display:flex;flex-direction:column;
+  max-height:calc(100vh - var(--hdr,132px) - 28px)}
+.railbox{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:12px 14px}
+/* Running chart: every output the case has produced, newest last, always on screen.
+   Findings scroll off the tab you were on; this does not. */
+.feedbox{display:flex;flex-direction:column;min-height:0;flex:1}
+#feed{overflow-y:auto;min-height:0;flex:1;scroll-behavior:smooth}
+.feedcount{float:right;font-family:var(--mono);font-weight:400;color:var(--ink3);font-size:11px}
+.fitem{border-left:2px solid var(--rule2);padding:0 0 0 9px;margin:0 0 11px}
+.fitem:last-child{margin-bottom:2px}
+.fitem .fh{display:flex;gap:6px;align-items:baseline;margin-bottom:2px}
+.fitem .ft{font-family:var(--mono);font-size:10.5px;color:var(--ink3)}
+.fitem .fn{font-size:12.5px;font-weight:600;line-height:1.3}
+.fitem .fb{font-size:12px;color:var(--ink2);line-height:1.45}
+.fitem .fb .ab{all:unset}
+.fitem.k-lab{border-left-color:var(--act)}
+.fitem.k-imaging{border-left-color:var(--act)}
+.fitem.k-exam{border-left-color:var(--rule2)}
+.fitem.k-consult{border-left-color:#7A5C9E}
+.fitem.k-action{border-left-color:var(--ok)}
+.fitem.k-order{border-left-color:var(--rule2)}
+.fitem.k-order .fn{font-weight:400;color:var(--ink2)}
+.fitem.k-speech{border-left-color:var(--rule2)}
+.fitem.k-harm{border-left-color:var(--harm)}
+.fitem.k-blocked{border-left-color:var(--warn)}
+.fitem td.abn{color:var(--harm);font-weight:600}
+.fitem .fb.abn{color:inherit}
+.fitem.abnormal{border-left-color:var(--harm)}
+.fitem table{border-collapse:collapse;width:100%;margin-top:2px}
+.fitem td{font-size:11.5px;padding:1px 0;vertical-align:top}
+.fitem td.lb{color:var(--ink2);padding-right:6px}
+.fitem td.vl{font-family:var(--mono);text-align:right;white-space:nowrap}
+.railbox + .railbox{margin-top:12px}
+.railh{font-size:12px;color:var(--ink2);margin:0 0 8px;font-weight:600}
+.logrow{display:grid;grid-template-columns:44px 1fr;gap:8px;font-size:12.5px;padding:3px 0;
+  border-top:1px solid var(--rule2);line-height:1.4}
+.logrow:first-of-type{border-top:0}
+.logrow .t{font-family:var(--mono);color:var(--ink3);font-size:11.5px}
+.logrow.blk .txt{color:var(--harm)}
+.logrow.obs .txt{color:var(--ink2)}
+.pendrow{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;font-family:var(--mono)}
+.pendrow .cd{color:var(--warn)}
+.bar{height:3px;background:var(--rule2);border-radius:2px;overflow:hidden;margin-top:2px}
+.bar i{display:block;height:100%;background:var(--warn)}
+
+/* ---------- forms ---------- */
+input[type=text],select{font:inherit;padding:8px 10px;border:1px solid var(--rule);border-radius:2px;
+  background:#fff;width:100%;color:var(--ink)}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--act);outline-offset:1px}
+.btn{background:var(--act);color:#fff;border:0;border-radius:2px;padding:9px 16px;cursor:pointer}
+.btn:hover{background:#0F3550}
+.btn.ghost{background:none;color:var(--act);border:1px solid var(--rule)}
+.btn.ghost:hover{background:var(--actl)}
+.btn.danger{background:var(--harm)} .btn.danger:hover{background:#7E211A}
+.btn:disabled{background:var(--ink3);cursor:default}
+.opt{display:block;width:100%;text-align:left;background:var(--surface2);border:1px solid var(--rule);
+  border-radius:2px;padding:10px 12px;margin-bottom:6px;cursor:pointer;font-size:14px}
+.opt:hover{border-color:var(--act);background:#fff}
+.opt[aria-pressed="true"]{background:var(--actl);border-color:var(--act);border-left:3px solid var(--act)}
+.hits{border:1px solid var(--rule);border-top:0;max-height:210px;overflow:auto;background:#fff}
+.hit{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--rule2);
+  padding:8px 10px;cursor:pointer;font-size:14px}
+.hit:hover{background:var(--actl)}
+
+/* ---------- halt / debrief ---------- */
+.halt{background:var(--harml);border:1px solid var(--harm);border-left:5px solid var(--harm);
+  border-radius:3px;padding:18px 20px;margin:20px}
+.halt h2{color:var(--harm)}
+.dbf{padding:20px}
+.dbsec{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:18px 20px;margin-bottom:14px}
+.item{border-top:1px solid var(--rule2);padding:11px 0}
+.item:first-of-type{border-top:0}
+.item .hd{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+.item .nm{font-weight:600;font-size:14.5px}
+.item .note{font-size:13.5px;color:var(--ink2);margin-top:4px;max-width:78ch}
+.item .refs{font-size:12px;color:var(--ink3);margin-top:5px;font-family:var(--mono)}
+/* Teaching notes collapse behind a per-action expander, so the list of what was done
+   and missed stays readable and the reasoning is one click away. */
+details.teach summary{list-style:none;cursor:pointer}
+details.teach summary::-webkit-details-marker{display:none}
+details.teach summary .expand{margin-left:auto;font-family:var(--mono);font-size:11px;
+  color:var(--act);border:1px solid var(--rule);border-radius:2px;padding:2px 8px;
+  white-space:nowrap;font-weight:400}
+details.teach summary:hover .expand{background:var(--actl);border-color:var(--act)}
+details.teach[open] summary .expand::after{content:"\00A0\25B4"}
+details.teach:not([open]) summary .expand::after{content:"\00A0\25BE"}
+.pill{font-size:11px;font-family:var(--mono);padding:1px 7px;border-radius:9px;border:1px solid}
+.p-crit{color:var(--act);border-color:var(--act);background:var(--actl)}
+.p-harm{color:var(--harm);border-color:var(--harm);background:var(--harml)}
+.p-ok{color:var(--ok);border-color:var(--ok);background:var(--okl)}
+.p-warn{color:var(--warn);border-color:var(--warn);background:var(--warnl)}
+.p-neu{color:var(--ink2);border-color:var(--rule);background:var(--surface2)}
+table.dom{width:100%;border-collapse:collapse;font-size:13.5px}
+table.dom td,table.dom th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--rule2)}
+table.dom th{color:var(--ink2);font-weight:600;font-size:12.5px}
+table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap}
+
+.note{background:var(--surface2);border-left:3px solid var(--rule);padding:10px 13px;
+  font-size:13px;color:var(--ink2);margin:12px 0;border-radius:2px}
+.note b{color:var(--ink)}
+.foot{padding:0 20px;font-size:12.5px;color:var(--ink3);max-width:80ch}
+.hidden{display:none !important}
+@media (max-width:900px){
+  .cols{grid-template-columns:1fr}
+  .rail{position:static;max-height:none}
+  .bayin{grid-template-columns:1fr;gap:12px}
+  .mon{flex-wrap:wrap;justify-content:flex-start}
+  .vit{text-align:left;min-width:64px}
+  .vitval{font-size:24px}
+  .clockbox{border-left:0;padding-left:0;text-align:left}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<div id="picker" class="splash">
+  <div class="splashcard">
+    <div class="setting">EM Case Simulator</div>
+    <h1>Choose a case</h1>
+    <div id="pk-list" class="cardlist"></div>
+    <p class="pknote" id="pk-warn"></p>
+  </div>
+</div>
+
+<div id="splash" class="splash hidden">
+  <div class="splashcard">
+    <div class="setting" id="sp-setting"></div>
+    <h1 id="sp-title"></h1>
+    <div class="cc" id="sp-cc"></div>
+    <div class="splashsec"><h2>How they got to you</h2><p id="sp-arrival"></p></div>
+    <div class="splashsec"><h2>Mode</h2>
+      <div class="modes" id="sp-modes" role="radiogroup" aria-label="Difficulty"></div>
+    </div>
+    <button class="btn begin" id="beginbtn">Begin</button>
+    <button class="btn ghost" id="backtopicker" style="margin-top:26px;margin-left:8px;padding:12px 20px">Choose a different case</button>
+  </div>
+</div>
+
+<header class="stick">
+<div class="bay">
+  <div class="bayin">
+    <div class="nurse">
+      <div class="nurselab">Nurse</div>
+      <div class="nurseline" id="nurseline">Ready when you are.</div>
+      <div class="nursemeta" id="nursemeta"></div>
+      <div class="soundrow">
+        <button id="soundbtn" class="soundbtn" aria-pressed="false">Enable sound</button>
+        
+      </div>
+    </div>
+    <div>
+      <div class="mon" id="monitor"></div>
+      <svg class="trace" id="trace" viewBox="0 0 420 22" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+  </div>
+</div>
+
+<div class="tabbar"><div class="tabbarin" id="tabbar" role="tablist"></div></div>
+</header>
+
+<div class="wrap">
+  <div id="playview">
+    <div class="cols">
+      <div id="tabpanel" role="tabpanel"></div>
+      <div class="rail">
+        <div class="railbox">
+          <div class="railh">Pending</div>
+          <div id="pendlist"><div style="font-size:12.5px;color:var(--ink3)">Nothing ordered.</div></div>
+        </div>
+        <div class="railbox feedbox">
+          <div class="railh">Chart<span class="feedcount" id="feedcount"></span></div>
+          <div id="feed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="endview" class="hidden"></div>
+</div>
+
+<script type="application/json" id="shared-data">__SHARED_JSON__</script>
+<script type="application/json" id="cases-data">__CASES_JSON__</script>
+<script>
+"use strict";
+const SHARED = JSON.parse(document.getElementById('shared-data').textContent);
+const CASES  = JSON.parse(document.getElementById('cases-data').textContent);
+</script>
+</body>
+</html>
