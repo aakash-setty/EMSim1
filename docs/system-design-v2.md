@@ -1,6 +1,6 @@
 # EM Case Simulator: System Design
 
-**Version 0.5 | Supersedes v0.4**
+**Version 0.6 | Supersedes v0.5**
 
 ---
 
@@ -40,6 +40,40 @@ Sections 3, 4, 6, 8, 11, 13 and 15 have substantive changes. Sections 16, 17, 18
 
 Sections 8, 15, 17 and 18 change. The authoring consequences are in `case-authoring-requirements.md` v0.4, sections 3.2 and 10.6.
 
+**v0.6 adds time-guarded phase transitions.** Through v0.5 the clock governed information and
+prompting and nothing else, and section 2.1 stated flatly that there are no time-driven phase
+transitions. That invariant is now relaxed in one specific, bounded way: a phase transition may
+carry a deadline, so that a phase can be left because the resident did not act rather than because
+they did.
+
+| v0.5 | v0.6 |
+|---|---|
+| No time-driven phase transitions; an untreated patient never changes | A transition rule may carry `after_seconds`; the guard is re-evaluated on a tick and fires if it still holds |
+| Time excluded from the condition language, and therefore from transitions | Time still excluded from the condition language. It lives in named fields on transition rules only |
+| The transition checker runs after a state-changing action | It also runs on a tick, but only while the current phase has at least one time-guarded rule |
+| A nurse prompt may never imply a trajectory | Unchanged inside a phase. A time-driven phase change carries an authored narration line, which is the one place a trajectory may be described |
+| A case ends by handoff or by a harmful action | Or, with an explicit per-transition opt-in, by a time-driven transition into a terminal phase |
+| Two review artifacts: the per-key matrix and the path simulator | A third: the deterioration timeline, which is the only artifact that shows what happens when the resident does nothing |
+
+Sections 2, 4, 5, 7, 10, 11, 13, 14, 15 and 17 change. The authoring consequences are in
+`case-authoring-requirements.md` v0.5, sections 0, 5, 9 and 14.
+
+**Why this was worth breaking an invariant for.** The static-patient rule bought coherence cheaply
+and it bought it by making a whole category of case unauthorable. Meningococcaemia, anaphylaxis,
+status epilepticus, tension pneumothorax, a tricyclic overdose and an untreated STEMI all share a
+teaching point that cannot be expressed as a consequence of an action, because the point is that
+nothing was done. Before v0.6 the only way to author those was to substitute a proxy: make the
+patient collapse on intubation, or on some other action the resident might not take. That
+misattributes the harm.
+
+**Why it is bounded the way it is.** The v0.5 argument for excluding time from the condition
+language was that time-conditional content everywhere would make the per-key review matrix
+unenumerable. That argument is correct and it survives intact, because time does not enter the
+condition language here. It enters one named field on one kind of rule. Content keys, clinical
+tags, prerequisites, follow-up applicability and interview answers still project over phase, flags
+and study state exactly as before, and the per-key matrix is unchanged in shape. What changes is
+how a phase is reached, and the matrix already enumerates over phases.
+
 **The reason for removing the Patient tab.** It held a full structured background, and a resident who opened it first was handed most of the history without asking for it. The information is still authored, because the interview answers are built from it, but it is now reachable only by asking. What replaces it is a deliberately mediocre arrival handover, two sentences, of the quality a real EMS crew or triage nurse gives when they are busy: enough to start, not enough to diagnose.
 
 **This is a trade, not a free improvement.** A resident who cannot think of the right question now gets nothing, where before they got a paragraph. That is the intended pressure, but it puts more weight on interview matching than v0.4 did, which is why the matcher work in the same version is not a coincidence. If matching fails, the case becomes unplayable rather than merely harder. Section 15 and authoring section 10.6 carry the measured accuracy.
@@ -74,15 +108,91 @@ The clock governs three things:
 2. **Nurse prompting.** Critical actions carry deadlines measured from phase entry.
 3. **Timing feedback** in the debrief.
 
-The clock does **not** change the patient. There are no time-driven phase transitions. Vitals do not drift. An untreated patient does not deteriorate. Phases advance only when the resident acts.
+4. **Time-guarded phase transitions**, new in v0.6 and described in 2.1a. A phase may be left
+   because a deadline expired with the guard still true.
 
-This boundary is deliberate and must hold, because violating it creates incoherence the resident will notice immediately.
+The clock still does **not** change the patient continuously. Vitals do not drift, there is no
+interpolation with state behind it, and nothing moves between phase boundaries. What changed in
+v0.6 is that a phase boundary can now be crossed by the clock as well as by an action.
+
+The boundary that must still hold is narrower than it was, and it is this: **the patient's state is
+always a phase, and a phase always has authored numbers.** Time selects which phase; it never
+produces a value nobody wrote.
+
+### 2.1a Time-guarded transitions
+
+A transition rule may carry `after_seconds`. The rule then matches only when its guard is true
+**and** the elapsed time since a reference moment is at least that many seconds. A rule without
+`after_seconds` is instantaneous and behaves exactly as it did before v0.6, so every case written
+against v0.5 runs unchanged.
+
+```json
+{
+  "when": "NOT flag abx_given set",
+  "after_seconds": 240,
+  "measured_from": "phase_entry",
+  "to": "progressive_sepsis",
+  "narration": "The spots on her ankles have joined up while we've been standing here.",
+  "debrief_note": "The organism was never treated and the septicaemia progressed.",
+  "author_rationale": "Untreated meningococcal bacteraemia progresses over minutes to hours."
+}
+```
+
+**Reference moment.** `measured_from` is `phase_entry` by default, matching prompt deadlines.
+The alternative is `guard_true`, meaning the clock starts when the guard first became true, which
+is what a delayed consequence of an action needs.
+
+**Evaluation.** The transition checker runs after every state-changing action, and additionally on
+a tick while the current phase has at least one time-guarded rule. Phases with no time-guarded
+rules are never ticked, so a v0.5 case is bit-identical. Both evaluations run the full ordered list
+with first-match-wins, so an instantaneous rule always outranks a time-guarded rule beneath it.
+
+**Three patterns this supports**, and authors should be able to name which one they are using:
+
+| Pattern | Guard | `measured_from` | Example |
+|---|---|---|---|
+| Deterioration on inaction | negative, `NOT flag F set` | `phase_entry` | Untreated sepsis progresses |
+| Delayed consequence of an action | positive, `flag F set` | `guard_true` | Peri-intubation collapse forty-five seconds after induction rather than instantly |
+| Scheduled natural history | `null` | `phase_entry` | A simple febrile seizure self-terminating; a thrombolysis window closing |
+
+The third requires an `unguarded_rationale`, because a transition that fires regardless of what the
+resident does is a scripted trajectory and should be a deliberate choice rather than an oversight.
+
+**A negative guard can only be falsified, never re-satisfied**, because flags are permanent. So once
+the resident gives the drug, that deterioration is cancelled for the remainder of the case, not
+merely deferred. This is the property that makes the mechanism reviewable: each time-guarded rule is
+a single question, "was this done in time", with a yes or no answer.
+
+**Terminal destinations require an explicit opt-in.** A time-guarded transition into a terminal
+phase ends the case without the resident having done anything, which is the strongest statement this
+system can make. It requires `allow_time_to_terminal: true` and a rationale on the rule, and the
+validator errors without both. It must not be the shared `halted` phase, which carries a harmful
+action's halt reason; a case that ends this way authors its own terminal phase with its own
+`timeout_reason`.
+
+### 2.2 The coherence trap this creates
 
 ### 2.2 The coherence trap this creates
 
 If the nurse says "his sats are dropping" while the monitor shows a static saturation, the case contradicts itself.
 
-**Requirement:** nurse prompt text must describe the current state or express concern about inaction. It must never imply a trajectory, because there is no trajectory. Acceptable: "He's still working hard to breathe. Do you want to do anything about the airway?" Not acceptable: "He's getting worse." No validator can catch this, so it belongs on the physician review checklist.
+**Requirement, unchanged inside a phase:** nurse prompt text must describe the current state or
+express concern about inaction. It must never imply a trajectory, because within a phase there is
+no trajectory. Acceptable: "He's still working hard to breathe. Do you want to do anything about
+the airway?" Not acceptable: "He's getting worse." No validator can catch this, so it belongs on
+the physician review checklist.
+
+**v0.6 adds one exception, and exactly one.** A time-guarded transition carries a `narration`
+string which is spoken at the moment the phase changes. This is the only place in the system where
+a nurse line may describe a change, and it is legitimate because a change has just happened and the
+monitor is about to show it. The constraint on that line is the mirror of the constraint above: it
+must be true of the numbers displayed immediately after it, not of numbers that have not moved. A
+narration saying the pressure has fallen, on a transition whose destination has the same systolic
+pressure, is the same contradiction pointing the other way.
+
+**A prompt in a phase with a time-guarded exit may name the consequence.** "If we don't get an
+antibiotic into her she is going to get worse" is now a true statement in such a phase, where before
+it was false everywhere. It is still not licence to describe the numbers as moving.
 
 **Audio inherits this constraint.** See section 8.5. A pitch that falls as saturation falls is legitimate, because saturation genuinely changed at a phase boundary. A pitch that drifts downward while the phase is unchanged would be the audible version of the same contradiction and must not be built.
 
@@ -99,6 +209,13 @@ Optionally display a simulated clock that advances faster than real time, so a 5
 **Server-authoritative, client-triggered.** No websockets, no background processes, no persistent simulation loop. This keeps hosting cheap enough that free global access stays viable.
 
 Every server response includes the current view plus a **schedule**: future events with their due times. The client sets timers and issues a request when an item comes due. The server checks its own timestamps, applies every event actually due, and returns the updated view.
+
+**Time-guarded transitions join the schedule.** On entering a phase, the server computes the due
+time of every time-guarded rule in it and adds them, exactly as it does for prompt deadlines. There
+is no new transport and no new loop: the deterioration is a scheduled event like any other, and the
+existing 5-second heartbeat is what catches it in a throttled or suspended tab. A resident whose
+laptop slept through a deadline finds the deterioration applied on the next request, which is the
+right answer and follows from the server being authoritative.
 
 The client timer is only a trigger. The server decides what is due. This matters because browsers throttle timers in background tabs; when the tab returns, the next request catches up every overdue event at once.
 
@@ -241,11 +358,27 @@ Use `flag` rather than `action taken` for state-changing actions, since every on
 
 **This applies to catalog conditions too.** Default prerequisites in the catalog use the same language and must satisfy the same grammar. The validator checks the catalog, not only the case.
 
-### Time is deliberately excluded from this language
+### Time is deliberately excluded from this language, and stays excluded in v0.6
 
-There is no `elapsed > N` predicate. Timing lives only in explicit deadline fields on prompts and follow-ups.
+There is still no `elapsed > N` predicate. Timing lives only in explicit named fields: deadlines on
+prompts and follow-ups, and, since v0.6, `after_seconds` on a phase transition rule.
 
-If time entered the general condition language, authors would write time-conditional content everywhere and the per-key review matrix would stop being enumerable. Confining timing to named fields keeps every case reviewable by a physician. Treat requests to add a time predicate as an architectural change, not a convenience.
+The reason has not changed. If time entered the general condition language, authors would write
+time-conditional content everywhere and the per-key review matrix would stop being enumerable. A
+lab result that reads one way before four minutes and another way after cannot be reviewed by
+reading a table, because the table would need a time axis with no natural granularity.
+
+**Time-guarded transitions do not weaken this argument, and it is worth being precise about why.**
+A content key resolves against phase, flags and study state. Adding a way to reach a phase does not
+add a dimension to that projection: the matrix already enumerates over every phase, including the
+ones only a clock can reach. The number of rows is unchanged. What is genuinely new is that a phase
+can be entered with no action having been taken, which the matrix cannot show and which is why v0.6
+adds a third review artifact rather than widening the second one. See 13.2a.
+
+**The rule for a drafting AI is therefore unchanged.** A request for a time predicate in the
+condition language is an architectural change and should be refused and escalated. A request for a
+deterioration on a clock is now a supported feature, and should be authored as a time-guarded
+transition rather than smuggled in as a condition.
 
 ---
 
@@ -260,6 +393,9 @@ Each entry carries a sequence number, a timestamp relative to case start, the ac
 - **state-changing**: interventions, stabilizations, study orders, consults that unlock something, handoff
 - **observational**: exams, interview questions, viewing a result, most consults
 - **blocked**: an action attempted whose prerequisites were not met
+- **time_transition**: a phase change caused by a time-guarded rule rather than by an action. It
+  carries the rule's guard, its deadline and the phase it left, because the debrief has to be able
+  to say which deadline expired and what would have prevented it
 
 Blocked attempts are logged, because attempting intubation without sedation is a teaching moment that must reach the debrief.
 
@@ -277,7 +413,21 @@ The fold produces: current phase, flag set, ordered studies, resulted studies, f
 
 This is the most likely place to introduce a defect.
 
-Derived time events, meaning result arrivals, prompt deadlines and follow-up deadlines, are computed from log entries plus case data. The fold merges log entries and derived events into one chronological sequence and processes them in timestamp order.
+Derived time events, meaning result arrivals, prompt deadlines, follow-up deadlines and, since
+v0.6, time-guarded transition deadlines, are computed from log entries plus case data. The fold
+merges log entries and derived events into one chronological sequence and processes them in
+timestamp order.
+
+**Time-guarded transitions make this materially harder and the ordering rule matters more than it
+did.** A deterioration due at t=240 and a drug given at t=240 produce opposite outcomes depending
+on which is processed first. The existing tiebreak already answers it: at identical timestamps, log
+entries before derived events. The resident who gets the drug in on the deadline is credited with
+having got it in. That is the right way round for a teaching tool, and it should be stated rather
+than left to be discovered.
+
+**A deterioration also invalidates the schedule that follows it.** On a time-driven phase change,
+outstanding prompt and time-transition deadlines for the old phase are dropped and the new phase's
+are computed from the moment of entry, exactly as for an action-driven change.
 
 Order a lab at t=2, give a drug at t=5, lab results at t=7. The replay must process all three in that order. Processing all actions first and then all time events produces wrong state.
 
@@ -297,13 +447,26 @@ A prompt for critical action A in phase P with deadline D is due at (phase P ent
 
 This is fully derivable from the log, so nothing extra is stored and no read writes to state. The debrief determines prompted versus unprompted by comparing timestamps.
 
-Deadlines are measured from phase entry. On a phase change, outstanding prompts for the previous phase are cancelled and new deadlines begin.
+Deadlines are measured from phase entry. On a phase change, whether caused by an action or by the
+clock, outstanding prompts for the previous phase are cancelled and new deadlines begin.
+
+**This creates a defect a case can have and no reviewer will notice by reading.** A prompt at 260
+seconds in a phase with a time-guarded exit at 240 can never fire. The validator checks for it (13.1)
+because the failure is silent: the case looks complete, the prompt exists, and the learner is simply
+never helped with that action. The same applies to an escalation deadline that lands past the exit.
 
 **The set of expected actions is collected at the same moment.** On entering a phase, the fold records which actions resolve to `critical` against the state at entry. That set drives both prompt scheduling and the omissions section of the debrief, so the two cannot drift apart.
 
 ### 5.6 Cascading transitions
 
-After a state-changing action the transition checker evaluates the current phase's rules once. If the destination phase's own rules are already satisfied on arrival, they do **not** fire until the next state-changing action.
+After a state-changing action the transition checker evaluates the current phase's rules once. If the destination phase's own rules are already satisfied on arrival, they do **not** fire until the next evaluation.
+
+**In v0.6 the next evaluation is not necessarily the next action.** In a phase carrying at least one
+time-guarded rule the checker also runs on a tick, so an already-satisfied instantaneous rule fires
+within one tick rather than waiting for the resident. This is a behaviour change and it is confined
+to phases that have a time-guarded rule, which means no case written before v0.6 is affected. Inside
+such a phase the cascade resolves promptly, which is the more coherent behaviour: a patient should
+not sit in a phase whose exit condition is already met while a deterioration clock runs against her.
 
 This is reachable in practice: a resident who gives the diuretic early can satisfy the improving-phase transition before ever entering the stabilizing phase, and the next action then advances two phases in one step. Single-step evaluation is the specified behaviour. Authors should be aware that prompt deadlines are measured from phase entry, so a phase entered and left in the same step issues no prompts.
 
@@ -461,9 +624,25 @@ The handoff requires:
 
 ---
 
-## 10. Harmful actions and halting
+## 10. Harmful actions, halting, and ending on the clock
 
 A harmful action bypasses all transition rules and moves directly to a terminal halted phase carrying that action's halt reason.
+
+**A time-driven ending is a different thing and must look different.** Since v0.6 a case can also
+end because a time-guarded transition reached a terminal phase. The two are not interchangeable and
+should never share a phase:
+
+| | Harmful halt | Time-driven ending |
+|---|---|---|
+| Cause | Something the resident did | Something the resident did not do |
+| Phase | The shared `halted` phase | A phase the case authors, with its own vitals |
+| Text shown | The action's `halt_reason` | The phase's `timeout_reason` |
+| Authored per | Action | Transition |
+| Opt-in required | No | Yes: `allow_time_to_terminal` plus a rationale |
+
+Attributing an omission to a commission is the specific error this separation prevents. A resident
+who is told "you gave metoprolol and she arrested" when in fact she arrested because nothing was
+given has been taught something false about their own run.
 
 On halt:
 1. The case ends and the clock stops
@@ -490,6 +669,11 @@ The debrief is the product. Design it explanation-first, score second.
 **Order matters.** The harmful action, if there was one, comes first, then the critical actions. A resident reading top to bottom should meet the medicine before the scoreboard; a debrief that opens with a domain table invites them to read the score and stop.
 
 1. **Harmful actions** and their consequence
+1a. **Deteriorations that happened on the clock**, if any: which deadline expired, in which phase,
+    what the guard was, and which action would have prevented it, with the transition's own
+    teaching note. This sits with the harmful actions rather than with the omissions because it is
+    the strongest thing that happened in the run, and a resident who arrested a patient by doing
+    nothing needs to meet that before the scoreboard
 2. **Critical actions**, those done and those missed together, each with its teaching note
 3. **Recommended actions** that were done
 4. **Summary**, the domain table and the score
@@ -500,6 +684,11 @@ The debrief is the product. Design it explanation-first, score second.
 9. **Studies still pending** at completion
 10. **Independent versus prompted**, as self-knowledge
 11. **References** per teaching note, optional per author
+
+**Item 1a is the reason the log needs a `time_transition` entry type.** Without it the debrief can
+say the patient ended up in a bad phase but not why, and "you missed the antibiotic" and "she
+deteriorated at four minutes because the antibiotic had not been given" are different sentences with
+different teaching in them.
 
 **Item 8 matters more than it looks.** It is the only place a normal-by-omission becomes visible. A resident reading "your lipase and your orthopaedics consult were answered by a default" learns that the case had nothing to say about them, which is different from learning that they were normal.
 
@@ -556,7 +745,22 @@ Case-agnostic. No clinical knowledge, no case names, no drug behavior. An `if` s
 
 ### 13.1 Validator
 
-**Structure.** Every content key ends in an unconditional default. Every referenced action, flag, study, and phase exists. Every phase is reachable and every non-terminal phase has a satisfiable transition. Every critical action is reachable. Every action whose tag can evaluate to harmful has a halt reason. Every prerequisite is satisfiable and non-circular, with a failure message. Every follow-up has a deadline, prompt, and note. Every critical action with a deadline has prompt text. No condition uses an unpermitted predicate.
+**Structure.** Every content key ends in an unconditional default. Every referenced action, flag, study, and phase exists. Every phase is reachable and every non-terminal phase has a satisfiable transition. Reachability traverses time-guarded edges as well as action-driven ones, since a phase reachable only by the clock is still reachable. Every critical action is reachable. Every action whose tag can evaluate to harmful has a halt reason. Every prerequisite is satisfiable and non-circular, with a failure message. Every follow-up has a deadline, prompt, and note. Every critical action with a deadline has prompt text. No condition uses an unpermitted predicate.
+
+**Time-guarded transitions.** `after_seconds` is an integer at or above the floor, currently 30,
+with a warning below 60. `measured_from` is `phase_entry` or `guard_true`, and `guard_true` requires
+a guard. An unguarded time transition requires an `unguarded_rationale`. Every time-guarded rule
+carries a narration, a debrief note and an author rationale. Every flag named in a guard is settable
+by some reachable action. A terminal destination requires `allow_time_to_terminal` and a rationale.
+A non-terminal destination must itself have an exit. No cycle may be composed only of time edges,
+since it would loop with no resident involvement.
+
+**The fairness check.** For every flag a guard requires to be unset, some action that sets that flag
+must prompt in that phase, at a deadline at least 20 seconds before the transition fires. A
+deterioration the resident was never warned about is a trap rather than a lesson, and this is the
+one check that enforces section 1's framing mechanically rather than leaving it to review. The
+converse is also checked: a prompt or escalation whose deadline lands at or after the phase's
+earliest time-guarded exit can never fire, and warns.
 
 **Payloads.** Every authored result is a structured payload, not a prose string. Every payload carries `abnormal` at both levels, and the payload level equals the OR of its components. Every component carries a label, value and reference range.
 
@@ -584,9 +788,34 @@ Do not attempt to enumerate the full reachable state space. With fifteen interve
 
 Per-key projection can generate combinations unreachable in the real case, for example two mutually exclusive interventions both set. Either filter these with a reachability pass or label them in the output.
 
+### 13.2a Deterioration timeline
+
+New in v0.6, and required for any case that uses a time-guarded transition.
+
+The per-key matrix cannot show these. It enumerates what a key resolves to in a phase, not how the
+phase was reached, and the whole point of a time-guarded transition is that it is reached by nobody
+doing anything. So the tooling emits a third artifact with three parts:
+
+1. **Every time-guarded exit, by phase**: the deadline, the guard, the destination, whether the
+   destination is terminal, and the prompts that precede it with their deadlines. A physician reads
+   this asking two questions: would this patient really deteriorate in that time if that treatment
+   were withheld, and was the resident warned early enough to act.
+2. **The do-nothing trajectory**: the sequence of phases and vitals a resident sees if they perform
+   no state-changing action at all, with the elapsed clock at each hop. This is the path an author
+   is least likely to have imagined and the one a frozen or overwhelmed learner will actually see.
+3. **Every narration line**, collected together, because these are the only lines in the system
+   permitted to describe a trajectory and they should be read as a set against the vitals they
+   precede.
+
 ### 13.3 Path simulator
 
 A scripted replay of a dozen or so end-to-end routes through the case: the intended path, each harmful halt, each blocked prerequisite, the deterioration branch and its rescue, and any ordering the author considers likely.
+
+**A case with time-guarded transitions needs waits in its scripts,** and at least four more routes:
+doing nothing at all from arrival to the end; treating each deficit alone and letting the clock take
+the other; a rescue inside the last window; and a rescue one action too late. The fourth is the one
+worth writing carefully, because the difference between it and the third is the entire lesson and it
+is easy to author a window nobody can hit.
 
 Reachability is a weak claim. The validator says a phase *can* be reached; the simulator confirms that a plausible sequence of clinical actions actually gets there. It is also where ordering ambiguities such as cascading transitions (5.6) surface.
 
@@ -610,6 +839,17 @@ Two categories, both belonging on the human checklist:
 6. **Scoring weights** across the dimensions in section 11.2, including the new discouraged tier.
 7. **Simulated clock display** for compressed time. Low priority.
 8. **Difficulty modes** and an explicit hint control. Deferred, fits the existing schema.
+9. **Whether the clock pauses.** Time-guarded transitions make this consequential where it was
+   cosmetic. A resident reading a long consultant response or composing a batch of orders is on the
+   same clock as one who is stuck, and a deterioration that fires while they are reading is unfair in
+   a way a prompt firing is not. Shipped behaviour is that the clock does not pause, on the grounds
+   that one clock with one set of semantics is worth more than the fairness it costs, and that the
+   30-second floor and the mandatory preceding prompt are the mitigations. Revisit with a real
+   learner.
+10. **A global `time_pressure_multiplier`.** Time-guarded deadlines are authored in seconds and are
+    subject to the same expectation of global recalibration as prompt deadlines. A single multiplier
+    applied to every time-guarded deadline, defaulting to 1, would let pacing be tuned across the
+    library without editing cases. Not built.
 
 ---
 
@@ -617,8 +857,19 @@ Two categories, both belonging on the human checklist:
 
 - **Flags are binary and permanent.** A single dose fixes something for the rest of the case. Cases cannot depend on redosing or titration, and partial response cannot be represented. Stopping an infusion sets its own flag rather than clearing the running flag, so a case can tell that a drip was started and then stopped, but not that it is currently running.
 - **Permanent flags can shadow phase-correct content.** A patient who received non-invasive ventilation, then deteriorated, still carries the `on_niv` flag. A key keyed on that flag returns the improved value in the deteriorated phase. **Phase rules must precede flag rules in any list where both appear.** This is the most easily missed consequence of flag permanence and has already produced a wrong result in review.
-- **Vitals are static within a phase.** The monitor holds one authored set per phase. Cosmetic variance and the five-second boundary ramp (8.4a) disguise this but do not fix it: between boundaries nothing moves, and the ramp is a rendering effect with no state behind it. A case cannot author a trajectory, only a sequence of plateaus.
-- **The patient does not deteriorate.** Time affects information availability and prompting only. A resident who ignores every prompt reaches the same patient state as one who acts immediately, and sees the difference only in the debrief.
+- **Vitals are static within a phase.** The monitor holds one authored set per phase. Cosmetic variance and the five-second boundary ramp (8.4a) disguise this but do not fix it: between boundaries nothing moves, and the ramp is a rendering effect with no state behind it. A case cannot author a trajectory, only a sequence of plateaus. Time-guarded transitions let those plateaus be chained on a clock, which is a staircase rather than a slope; a case that needs a genuine gradient still needs more phases, and the section 3.3 ceiling of six clinical phases binds sooner than it used to.
+- **The patient deteriorates only where a case authored it, and only in steps.** v0.6 removed the
+  blanket rule that an untreated patient never changes, but what replaced it is a staircase, not a
+  slope: a time-guarded transition moves the patient from one authored plateau to the next. A case
+  that authors no time-guarded transitions behaves exactly as it did in v0.5, and a resident who
+  ignores every prompt in such a case still reaches the same patient state as one who acts
+  immediately. Most cases should stay that way. The mechanism is for the presentations whose
+  teaching point is the passage of time, and using it where the point is something else buys
+  unfairness for nothing.
+- **Deterioration is all-or-nothing per rule.** A guard is true or false, so a treatment given at
+  the deadline minus one second has the same effect as one given at the start. Partial credit for
+  partial delay is not representable, and neither is a dose-response between how late you were and
+  how sick she becomes. Authors wanting graded lateness need graded phases.
 - **Order cannot be expressed in conditions,** beyond what prerequisites enforce.
 - **Serial testing cannot be represented.** A repeat study in an unchanged state returns an identical value, so a rising troponin cannot be taught without gating on an unrelated flag, which would be dishonest. A predicate such as `study S ordered at least N times` would fix this and would stay enumerable in the review matrix.
 - **Stopping an infusion is a separate action, not a toggle.** Every persistent infusion has a matching stop entry, so a rescue that depends on withdrawing a drip is now authorable, but the case must author the stop as its own step and gate the transition on the flag it sets. Restarting the same infusion afterwards is not represented.
@@ -771,6 +1022,18 @@ The multiplier scales prompt deadlines, prompt escalations and follow-up prompt
 deadlines. **It scales nothing else.** Result turnaround, phase transitions and clinical
 tags are identical, so the medicine is the same in both modes and only the amount of
 help changes. This is what makes the two modes comparable in the debrief.
+
+**Time-guarded transition deadlines are not scaled, and the reason is worth stating** because it
+looks like an omission. Scaling them by the same multiplier would make hard mode *more* forgiving,
+since the patient would take three times as long to deteriorate, while the prompts arriving later
+makes it less forgiving. The two effects point in opposite directions and the mode would stop
+meaning anything. Leaving deterioration unscaled keeps the property the modes were built for: the
+patient's physiology is identical in both, and the only difference is how much help the nurse gives.
+The consequence is real and should be understood before a case leans on it heavily: in hard mode a
+resident may deteriorate a patient before the prompt that would have warned them has fired. That is
+the honest version of the question hard mode exists to ask, and it is also the strongest argument
+for the 30-second floor and the mandatory preceding prompt in 13.1. If deterioration pacing needs
+tuning it should move through the global multiplier in open decision 10, not through difficulty.
 
 Hard mode is the honest test of whether a resident would have acted unaided, which is
 the question the prompted-versus-independent report in section 11.2 exists to answer and

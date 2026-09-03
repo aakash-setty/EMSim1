@@ -3,6 +3,11 @@
 what changed and why; re-running it on an already-migrated file will fail its own
 assertions, which is the intended safety.
 
+NOTE, later: this file still names `niv_cpap`, which no longer exists. That action was
+merged into `niv_bipap_cpap` by `consolidate_niv.py`. The reference is left as it was
+because this file is a record of what the case looked like when the migration ran, and
+editing it would falsify that record.
+
 Redistribute the case's exam findings into the catalog's closed set of 14 manoeuvres.
 
 The action catalog states that the 14 exam entries are the complete set and supplies

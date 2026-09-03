@@ -1,0 +1,228 @@
+{
+ "case_prefix": "MGCA",
+ "status": "RUN. Results are in MGCA-review-packet.md section 10 and in the harness output. The set has NOT been used to tune the matcher or to add variants to the case: section 10.6 is explicit that doing so and then quoting the result measures memorisation rather than coverage. It stays held out.",
+ "authoring_note": "None of these phrasings appears in any variant list in the case file. Written in the registers section 10.6 says an author-written set tends to miss: clinical shorthand, typos, compound questions and conversational openers. The expected topic on each row is a drafting judgement and should be reviewed before any number is quoted.",
+ "out_of_scope_arm_note": "Six out-of-scope questions is far too few to conclude anything. Section 10.6 puts the floor at thirty.",
+ "questions": [
+  {
+   "register": "paraphrase",
+   "q": "When did you start feeling sick?",
+   "expected_topic": "onset"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has the rash spread since you got here?",
+   "expected_topic": "rash"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do bright lights make your eyes hurt?",
+   "expected_topic": "photophobia"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Can you bend your neck forward for me?",
+   "expected_topic": "neck_stiffness"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How much water have you managed to keep down?",
+   "expected_topic": "last_oral_intake"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is there any chance at all that you might be expecting?",
+   "expected_topic": "pregnancy"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you noticed you're not going to the bathroom as much?",
+   "expected_topic": "urine_output"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do your muscles hurt or is it the joints?",
+   "expected_topic": "joint_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has anybody in your building come down with anything?",
+   "expected_topic": "sick_contacts"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are you taking anything for birth control?",
+   "expected_topic": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you have a cold or anything before this started?",
+   "expected_topic": "cough_sore_throat"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has your head been clear or are you struggling to follow me?",
+   "expected_topic": "confusion"
+  },
+  {
+   "register": "shorthand",
+   "q": "PMH?",
+   "expected_topic": "past_medical_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "any PSH",
+   "expected_topic": "past_surgical_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "NKDA?",
+   "expected_topic": "allergies"
+  },
+  {
+   "register": "shorthand",
+   "q": "LMP",
+   "expected_topic": "menstrual_and_tampon"
+  },
+  {
+   "register": "shorthand",
+   "q": "meds",
+   "expected_topic": "current_medications"
+  },
+  {
+   "register": "shorthand",
+   "q": "FHx",
+   "expected_topic": "family_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "tick exposure",
+   "expected_topic": "tick_and_outdoor_exposure"
+  },
+  {
+   "register": "shorthand",
+   "q": "immunisation hx",
+   "expected_topic": "vaccinations"
+  },
+  {
+   "register": "shorthand",
+   "q": "n/v",
+   "expected_topic": "nausea_vomiting"
+  },
+  {
+   "register": "shorthand",
+   "q": "SOB?",
+   "expected_topic": "breathing"
+  },
+  {
+   "register": "shorthand",
+   "q": "photophobia or neck stiffness",
+   "expected_topic": "photophobia"
+  },
+  {
+   "register": "shorthand",
+   "q": "last PO intake",
+   "expected_topic": "last_oral_intake"
+  },
+  {
+   "register": "typo",
+   "q": "when did the rah start",
+   "expected_topic": "rash"
+  },
+  {
+   "register": "typo",
+   "q": "any allergis",
+   "expected_topic": "allergies"
+  },
+  {
+   "register": "typo",
+   "q": "do you smokee",
+   "expected_topic": "social_history"
+  },
+  {
+   "register": "typo",
+   "q": "hav you traveled recently",
+   "expected_topic": "travel_history"
+  },
+  {
+   "register": "typo",
+   "q": "any nausae or vomitting",
+   "expected_topic": "nausea_vomiting"
+  },
+  {
+   "register": "compound",
+   "q": "Any nausea or vomiting, and have you kept anything down?",
+   "expected_topic": "nausea_vomiting"
+  },
+  {
+   "register": "compound",
+   "q": "Do you smoke or drink, and do you use any drugs?",
+   "expected_topic": "social_history"
+  },
+  {
+   "register": "compound",
+   "q": "Any neck stiffness or sensitivity to light?",
+   "expected_topic": "neck_stiffness"
+  },
+  {
+   "register": "compound",
+   "q": "When did it start and has it got worse?",
+   "expected_topic": "onset"
+  },
+  {
+   "register": "compound",
+   "q": "Are you on any medications and do you have any allergies?",
+   "expected_topic": "current_medications"
+  },
+  {
+   "register": "conversational",
+   "q": "Tell me a bit about what's been going on with you",
+   "expected_topic": "onset"
+  },
+  {
+   "register": "conversational",
+   "q": "Is there anything else you think I should know?",
+   "expected_topic": "__ambiguous__"
+  },
+  {
+   "register": "conversational",
+   "q": "Talk me through your morning",
+   "expected_topic": "timing_progression"
+  },
+  {
+   "register": "conversational",
+   "q": "What worries you most right now?",
+   "expected_topic": "code_status_goals"
+  },
+  {
+   "register": "out_of_scope",
+   "q": "What is your favourite colour?",
+   "expected_topic": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Who is the president?",
+   "expected_topic": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Do you like your roommate?",
+   "expected_topic": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "What are you studying at university?",
+   "expected_topic": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Can I have a glass of water?",
+   "expected_topic": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "How much does parking cost here?",
+   "expected_topic": null
+  }
+ ]
+}

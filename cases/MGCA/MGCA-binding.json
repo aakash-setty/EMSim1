@@ -1,0 +1,770 @@
+{
+ "binding_version": "0.1",
+ "case_id": "mgc-meningococcemia-adrenal-01",
+ "catalog_version": "0.1-draft",
+ "status": "DRAFT. Every mapped row is an author judgement and needs review.",
+ "counts": {
+  "exact": 123,
+  "mapped": 0,
+  "unmatched": 1
+ },
+ "group_coverage": {
+  "normal_saline_1l_bolus": [
+   "lactated_ringer_s_1l_bolus",
+   "lactated_ringer_s_500ml_bolus",
+   "normal_saline_500ml_bolus"
+  ]
+ },
+ "blocking": [],
+ "rows": [
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "second_iv",
+   "catalog_id": "second_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intraosseous_line",
+   "catalog_id": "intraosseous_line",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "central_venous_catheter_triple_lumen",
+   "catalog_id": "central_venous_catheter_triple_lumen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "arterial_line",
+   "catalog_id": "arterial_line",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "nasal_cannula_oxygen",
+   "catalog_id": "nasal_cannula_oxygen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "non_rebreather_mask",
+   "catalog_id": "non_rebreather_mask",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intubate_rapid_sequence",
+   "catalog_id": "intubate_rapid_sequence",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "etomidate_bolus",
+   "catalog_id": "etomidate_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_bolus",
+   "catalog_id": "ketamine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propofol_bolus",
+   "catalog_id": "propofol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "midazolam_bolus",
+   "catalog_id": "midazolam_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "rocuronium_bolus",
+   "catalog_id": "rocuronium_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "succinylcholine_bolus",
+   "catalog_id": "succinylcholine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propofol_infusion",
+   "catalog_id": "propofol_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_infusion",
+   "catalog_id": "ketamine_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fentanyl_bolus",
+   "catalog_id": "fentanyl_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "status": "exact",
+   "note": null,
+   "also_covers": [
+    "lactated_ringer_s_1l_bolus",
+    "lactated_ringer_s_500ml_bolus",
+    "normal_saline_500ml_bolus"
+   ]
+  },
+  {
+   "case_id": "normal_saline_infusion",
+   "catalog_id": "normal_saline_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lactated_ringer_s_infusion",
+   "catalog_id": "lactated_ringer_s_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d50_bolus",
+   "catalog_id": "d50_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d5_ns_bolus",
+   "catalog_id": "d5_ns_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "glucagon",
+   "catalog_id": "glucagon",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "hydrocortisone_bolus",
+   "catalog_id": "hydrocortisone_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "methylprednisolone_bolus",
+   "catalog_id": "methylprednisolone_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "dexamethasone",
+   "catalog_id": "dexamethasone",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "prednisone",
+   "catalog_id": "prednisone",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ceftriaxone",
+   "catalog_id": "ceftriaxone",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "cefotaxime",
+   "catalog_id": "cefotaxime",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "cefepime",
+   "catalog_id": "cefepime",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "meropenem",
+   "catalog_id": "meropenem",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "piperacillin_tazobactam",
+   "catalog_id": "piperacillin_tazobactam",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "penicillin_g",
+   "catalog_id": "penicillin_g",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ampicillin",
+   "catalog_id": "ampicillin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "vancomycin",
+   "catalog_id": "vancomycin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "doxycycline",
+   "catalog_id": "doxycycline",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "rifampin",
+   "catalog_id": "rifampin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "acyclovir",
+   "catalog_id": "acyclovir",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "norepinephrine_drip",
+   "catalog_id": "norepinephrine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "epinephrine_drip",
+   "catalog_id": "epinephrine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "vasopressin_drip",
+   "catalog_id": "vasopressin_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "dopamine_drip",
+   "catalog_id": "dopamine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "phenylephrine_drip",
+   "catalog_id": "phenylephrine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "epinephrine_bolus",
+   "catalog_id": "epinephrine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "stop_norepinephrine",
+   "catalog_id": "stop_norepinephrine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "metoprolol_bolus",
+   "catalog_id": "metoprolol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propranolol_bolus",
+   "catalog_id": "propranolol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "esmolol_drip",
+   "catalog_id": "esmolol_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "labetalol_bolus",
+   "catalog_id": "labetalol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "labetalol_drip",
+   "catalog_id": "labetalol_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "diltiazem_bolus",
+   "catalog_id": "diltiazem_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insulin_bolus",
+   "catalog_id": "insulin_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insulin_drip",
+   "catalog_id": "insulin_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "potassium_chloride_kcl",
+   "catalog_id": "potassium_chloride_kcl",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "hypertonic_saline_3_infusion",
+   "catalog_id": "hypertonic_saline_3_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "hypertonic_saline_25_bolus",
+   "catalog_id": "hypertonic_saline_25_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "heparin_bolus_drip",
+   "catalog_id": "heparin_bolus_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ibuprofen",
+   "catalog_id": "ibuprofen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "transfuse_platelets",
+   "catalog_id": "transfuse_platelets",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "transfuse_ffp",
+   "catalog_id": "transfuse_ffp",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "tranexamic_acid",
+   "catalog_id": "tranexamic_acid",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "calcium_chloride_bolus",
+   "catalog_id": "calcium_chloride_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "na_bicarbonate_bolus",
+   "catalog_id": "na_bicarbonate_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ct_head",
+   "catalog_id": "ct_head",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urine_rapid_antigen_test_for_n_meningitidis",
+   "catalog_id": "urine_rapid_antigen_test_for_n_meningitidis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "place_nasogastric_tube",
+   "catalog_id": "place_nasogastric_tube",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "place_patient_on_isolation_precautions",
+   "catalog_id": "place_patient_on_isolation_precautions",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "don_personal_protective_equipment",
+   "catalog_id": "don_personal_protective_equipment",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_public_health_authorities",
+   "catalog_id": "consult_public_health_authorities",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fingerstick_blood_sugar",
+   "catalog_id": "fingerstick_blood_sugar",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lactate",
+   "catalog_id": "lactate",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "blood_culture_x_2",
+   "catalog_id": "blood_culture_x_2",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lumbar_puncture",
+   "catalog_id": "lumbar_puncture",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "csf_cell_count",
+   "catalog_id": "csf_cell_count",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "csf_gram_stain",
+   "catalog_id": "csf_gram_stain",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "csf_protein",
+   "catalog_id": "csf_protein",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "csf_glucose",
+   "catalog_id": "csf_glucose",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "csf_culture",
+   "catalog_id": "csf_culture",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "csf_rapid_antigen_test_for_n_meningitidis",
+   "catalog_id": "csf_rapid_antigen_test_for_n_meningitidis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "skin_biopsy_of_the_rash",
+   "catalog_id": "skin_biopsy_of_the_rash",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "complete_blood_count_cbc",
+   "catalog_id": "complete_blood_count_cbc",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "coagulation_panel",
+   "catalog_id": "coagulation_panel",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d_dimer",
+   "catalog_id": "d_dimer",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "peripheral_smear",
+   "catalog_id": "peripheral_smear",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "plasma_procalcitonin",
+   "catalog_id": "plasma_procalcitonin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "c_reactive_protein_crp",
+   "catalog_id": "c_reactive_protein_crp",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "liver_function_tests_lfts",
+   "catalog_id": "liver_function_tests_lfts",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urinalysis",
+   "catalog_id": "urinalysis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "influenza_a_and_b_antigen_test",
+   "catalog_id": "influenza_a_and_b_antigen_test",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "covid_19_test",
+   "catalog_id": "covid_19_test",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "xr_chest",
+   "catalog_id": "xr_chest",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urine_hcg_qualitative",
+   "catalog_id": "urine_hcg_qualitative",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "serum_hcg_quantitative",
+   "catalog_id": "serum_hcg_quantitative",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "blood_type_and_screen",
+   "catalog_id": "blood_type_and_screen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ultrasound_cardiac",
+   "catalog_id": "ultrasound_cardiac",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ultrasound_renal",
+   "catalog_id": "ultrasound_renal",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insert_foley_catheter",
+   "catalog_id": "insert_foley_catheter",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "acetaminophen",
+   "catalog_id": "acetaminophen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ondansetron",
+   "catalog_id": "ondansetron",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_infectious_disease",
+   "catalog_id": "consult_infectious_disease",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_endocrinology",
+   "catalog_id": "consult_endocrinology",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_renal",
+   "catalog_id": "consult_renal",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_heme_onc",
+   "catalog_id": "consult_heme_onc",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_neurology",
+   "catalog_id": "consult_neurology",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": null
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_abd",
+   "catalog_id": "exam_abd",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_gu",
+   "catalog_id": "exam_gu",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_back",
+   "catalog_id": "exam_back",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych",
+   "status": "exact",
+   "note": null
+  }
+ ]
+}

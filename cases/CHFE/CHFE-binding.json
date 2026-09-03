@@ -5,7 +5,7 @@
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
   "exact": 16,
-  "mapped": 41,
+  "mapped": 40,
   "unmatched": 7
  },
  "group_coverage": {
@@ -18,16 +18,10 @@
  "blocking": [],
  "rows": [
   {
-   "case_id": "niv_cpap",
+   "case_id": "niv_bipap_cpap",
    "catalog_id": "non_invasive_positive_pressure_ventilation",
    "status": "mapped",
-   "note": "Catalog collapses CPAP and BiPAP into one entry on author instruction. The case distinguishes them and tags both critical, so two case actions bind to one catalog entry and the distinction is lost in the interface."
-  },
-  {
-   "case_id": "niv_bipap",
-   "catalog_id": "non_invasive_positive_pressure_ventilation",
-   "status": "mapped",
-   "note": "See niv_cpap."
+   "note": "Formerly two case actions, niv_cpap and niv_bipap, both bound to the single catalog entry non_invasive_positive_pressure_ventilation. Because one catalog entry resolves to one case action, the second was unreachable: its tag, debrief note and references never rendered, and a scenario step naming it was silently discarded. Merged into one action whose note carries both teaching points. If the catalog ever splits continuous and bilevel into separate entries, add them to the non_invasive_ventilation equivalence group and bind this action to the group with also_covers_group, rather than reintroducing two case actions."
   },
   {
    "case_id": "nitroglycerin_infusion",

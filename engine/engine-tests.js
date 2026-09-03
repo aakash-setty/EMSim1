@@ -266,10 +266,67 @@ if (promptAction) {
       promptAction + ' at ' + d + 's');
   chk('the same prompt fires in hard mode at three times the deadline',
       fold(mk([]), d * 3 + 2, 3).promptFires.some(p => p.id === promptAction));
+  /* Until v0.6 this asserted the phase was still START_PHASE after 300 seconds of
+     doing nothing, because no case could change on its own. A case may now author
+     time-guarded transitions, so the invariant that actually matters is that the two
+     modes produce the SAME trajectory: prompt deadlines are scaled, deterioration
+     deadlines are not, so the medicine is identical and only the help differs.
+     Design 17.1. */
   const easyEnd = fold(mk([]), 300, 1), hardEnd = fold(mk([]), 300, 3);
   chk('mode changes only the prompts, not the phase',
-      easyEnd.phase === hardEnd.phase && easyEnd.phase === START_PHASE);
+      easyEnd.phase === hardEnd.phase, easyEnd.phase + ' vs ' + hardEnd.phase);
+  chk('mode does not change the trajectory',
+      JSON.stringify(easyEnd.phaseSeq) === JSON.stringify(hardEnd.phaseSeq),
+      JSON.stringify(easyEnd.phaseSeq.map(p => p.id + '@' + p.t)));
 } else chk('a prompted critical action exists to test', false);
+
+section('time-guarded transitions');
+{
+  const timed = [];
+  for (const p of CASE.phases)
+    (p.transitions || []).forEach((t, i) => {
+      if (t.after_seconds !== undefined) timed.push([p.id, i, t]);
+    });
+  if (!timed.length) {
+    chk('case authors no time-guarded transitions, nothing to test', true);
+  } else {
+    chk('every time-guarded rule carries narration, a note and a rationale',
+        timed.every(([, , t]) => t.narration && t.debrief_note && t.author_rationale));
+    chk('a time-driven ending never reuses the shared halted phase',
+        timed.every(([, , t]) => t.to !== 'halted'));
+    /* The mechanism has to actually run, not merely be authored. */
+    const longest = Math.max(...timed.map(([, , t]) => t.after_seconds));
+    const idle = fold(mk([]), longest * timed.length + 60, 1);
+    chk('doing nothing eventually changes the phase',
+        idle.phase !== START_PHASE, idle.phase);
+    chk('each deterioration is recorded for the debrief',
+        idle.timeFires.length > 0 &&
+        idle.timeFires.every(f => f.after > 0 && typeof f.from === 'string'),
+        JSON.stringify(idle.timeFires.map(f => f.from + '->' + f.to)));
+    /* The one place a nurse line may describe a trajectory is a deterioration, and it
+       must not arrive on the prompt channel, or the no-trajectory rule below is
+       silently weakened. */
+    chk('deterioration narration is on its own channel',
+        idle.nurse.filter(n => n.kind === 'deterioration').length === idle.timeFires.length);
+    /* The fairness rule the validator enforces on authored deadlines, checked here
+       against what actually fires: the prompt cap can suppress a prompt the validator
+       thought would be seen. */
+    const guarded = timed.filter(([, , t]) => /NOT\s+flag/.test(t.when || ''));
+    const unwarned = [];
+    for (const [phase, , t] of guarded) {
+      const flags = [...(t.when.match(/flag ([a-z0-9_]+) set/g) || [])]
+        .map(x => x.replace('flag ', '').replace(' set', ''));
+      for (const f of flags) {
+        const setters = Object.keys(A).filter(id => (A[id].flags_set || []).includes(f));
+        const fired = idle.promptFires.some(p => setters.includes(p.id) &&
+                                                 p.t < (idle.phaseEntry[phase] || 0) + t.after_seconds);
+        if (!fired) unwarned.push(phase + ' deteriorates on ' + f + ' with no prompt seen');
+      }
+    }
+    chk('every deterioration is preceded by a prompt that actually fires',
+        unwarned.length === 0, unwarned.join('; '));
+  }
+}
 
 const ST_SAMPLE = fold(mk([[1, AUTHORED_STUDIES[0]]]), 40);
 

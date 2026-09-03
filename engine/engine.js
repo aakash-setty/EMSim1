@@ -248,7 +248,12 @@ function snapshot(st){
 /* difficultyMultiplier scales every nurse prompt deadline, including escalations
    and follow-up prompts. It scales nothing else: result turnaround, transitions and
    tags are unaffected, so the medicine is identical in both modes and only the
-   amount of help changes. */
+   amount of help changes.
+
+   v0.6: this now also means time-guarded transition deadlines are NOT scaled. Scaling
+   them would make hard mode more forgiving (slower deterioration) at the same time as
+   the later prompts make it less forgiving, and the mode would stop meaning anything.
+   Design 17.1. */
 function fold(log, now, difficultyMultiplier){
   const DM = difficultyMultiplier || 1;
   const st={
@@ -256,7 +261,11 @@ function fold(log, now, difficultyMultiplier){
     orders:{}, phaseEntry:{}, phaseSeq:[], halted:null, complete:null, earlyExit:null,
     nurse:[], readouts:[], blocked:[], timeline:[], prompted:new Set(),
     promptFires:[], fuFires:[], fuOutstanding:new Set(), handoff:null, now:now, dm:DM,
-    expected:new Set(), expectedByPhase:{}, recommendedTaken:new Set(), defaultsServed:new Set()
+    expected:new Set(), expectedByPhase:{}, recommendedTaken:new Set(), defaultsServed:new Set(),
+    /* v0.6. guardTrue records when a measured_from:"guard_true" rule first held, so a
+       delayed consequence is timed from the action rather than from phase entry.
+       timeFires is what the debrief reads to name the deadline that expired. */
+    guardTrue:{}, timeFires:[]
   };
   st.phaseEntry[st.phase]=0;
   st.phaseSeq.push({id:st.phase,t:0});
@@ -266,9 +275,17 @@ function fold(log, now, difficultyMultiplier){
   const promptCount={};
 
   function onPhaseEntry(phase,t){
+    scheduleDeadlines(phase,t);
     const entrySt=snapshot(st); entrySt.phase=phase;
     for(const id in ACT){
       const a=ACT[id];
+      /* An entry covered through also_covers borrows another action's case fields so
+         that a tag cannot be escaped by choosing a sibling. It must not borrow the
+         prompt or the expectation: the resident performs the act once, and four
+         entries prompting for one act both nags and consumes the per-phase prompt cap.
+         That defect suppressed the glucocorticoid prompt in MGCA and left a
+         deterioration unwarned, which is the thing the cap must never do. */
+      if(a.covered_by) continue;
       if(a.tag&&tagOf(id,entrySt)==='critical'){
         st.expected.add(id);
         (st.expectedByPhase[phase]=st.expectedByPhase[phase]||new Set()).add(id);
@@ -281,7 +298,18 @@ function fold(log, now, difficultyMultiplier){
     }
   }
   function cancelPromptsFor(phase){
-    for(const e of ev) if(e.kind==='prompt'&&e.phase===phase&&!e.done) e.done=true;
+    for(const e of ev) if((e.kind==='prompt'||e.kind==='deadline')&&e.phase===phase&&!e.done)
+      e.done=true;
+  }
+  /* A time-guarded deadline joins the same schedule as prompts and results. No new
+     loop: the fold already merges log entries and derived events in timestamp order,
+     and the 5.3 tiebreak (log entries first at equal timestamps) means a resident who
+     gets the drug in on the deadline is credited. */
+  function scheduleDeadlines(phase,t){
+    const p=PHASE[phase];
+    if(!p||!p.transitions) return;
+    for(const tr of p.transitions)
+      if(tr.after_seconds!==undefined) push({t:t+tr.after_seconds,kind:'deadline',phase});
   }
   function enterPhase(to,t){
     cancelPromptsFor(st.phase);
@@ -290,11 +318,39 @@ function fold(log, now, difficultyMultiplier){
     st.phaseSeq.push({id:to,t});
     if(!PHASE[to].terminal) onPhaseEntry(to,t);
   }
+  /* v0.6: a transition rule may carry after_seconds. It matches only when its guard
+     holds AND the deadline has passed, measured from phase entry by default or from
+     the moment the guard first became true. A rule without after_seconds is
+     instantaneous and behaves exactly as it did in v0.5, so a case that authors none
+     is bit-identical. Design 2.1a. */
+  function transitionDue(tr,idx,t){
+    if(tr.after_seconds===undefined) return true;
+    if((tr.measured_from||'phase_entry')==='guard_true'){
+      const k=st.phase+'|'+idx;
+      if(st.guardTrue[k]===undefined) st.guardTrue[k]=t;
+      return t-st.guardTrue[k] >= tr.after_seconds;
+    }
+    return t-(st.phaseEntry[st.phase]||0) >= tr.after_seconds;
+  }
   function checkTransitions(t){
     const p=PHASE[st.phase];
     if(!p||!p.transitions) return;
-    for(const tr of p.transitions){
-      if(test(tr.when,st)){ if(tr.to!==st.phase) enterPhase(tr.to,t); return; }
+    for(let i=0;i<p.transitions.length;i++){
+      const tr=p.transitions[i];
+      if(!test(tr.when,st)) continue;
+      if(!transitionDue(tr,i,t)) continue;
+      if(tr.to!==st.phase){
+        if(tr.after_seconds!==undefined){
+          /* The only place a nurse line may describe a trajectory, because one has
+             just happened and the monitor is about to show it. Design 2.2. Emitted
+             on its own kind so the no-trajectory assertion on prompts stays valid. */
+          if(tr.narration) narrate(t,tr.narration,'deterioration');
+          st.timeFires.push({t,from:st.phase,to:tr.to,after:tr.after_seconds,
+                             when:tr.when,note:tr.debrief_note||''});
+        }
+        enterPhase(tr.to,t);
+      }
+      return;
     }
   }
 
@@ -432,6 +488,7 @@ function fold(log, now, difficultyMultiplier){
       st.promptFires.push({t,id:e.id,level:e.level});
       return;
     }
+    if(e.kind==='deadline'){ checkTransitions(t); return; }
     if(e.kind==='followup'){
       const f=FU[e.fid];
       if(f.applies_when&&!test(f.applies_when,st)) return;

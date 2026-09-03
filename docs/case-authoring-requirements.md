@@ -1,6 +1,6 @@
 # Case Authoring Requirements
 
-**Version 0.4 | Aligned to System Design v0.5**
+**Version 0.5 | Aligned to System Design v0.6**
 
 What must be provided to produce one complete, playable, clinically valid case.
 
@@ -18,6 +18,24 @@ This document has two audiences. The **case author** is an emergency physician w
 - Vitals ramp over five seconds at phase boundaries. This changes nothing you author; section 6 notes the one consequence.
 - Section 10.6 carries new measurements of the interview matcher, and the matcher itself has changed.
 
+**Changed from v0.4. One change, and it removes a constraint rather than adding one.** A phase
+transition may now carry a deadline, so a phase can be left because the resident did not act. Through
+v0.4 the patient never changed unless the resident changed her, and a case whose teaching point was
+the passage of time could not be authored at all.
+
+- **Section 5** carries the mechanism: the schema, the three patterns it supports, and the six rules
+  that keep it from becoming a trap.
+- **Section 0 fact 2** is rewritten. It is the fact most authors build their mental model on.
+- **Section 9.5** gains one exception to the no-trajectory rule, and only one.
+- **Section 9.7** explains why hard mode does not slow deterioration down.
+- **Section 14** adds the validator checks, a third review artifact and four checklist items.
+- **Section 15** amends the limitation that said the patient does not deteriorate.
+
+**Most cases should not use this.** It exists for the presentations whose lesson is that time itself
+costs something: meningococcal sepsis, anaphylaxis, status epilepticus, tension pneumothorax, an
+untreated occlusive infarct, a tricyclic overdose. If your case's teaching point is a decision rather
+than a delay, author it without a clock and the case stays easier to review and fairer to play.
+
 If you are authoring your first case, read section 0, then jump to **section 16** and follow it. The rest of this document is the reference it points into.
 
 ---
@@ -27,7 +45,7 @@ If you are authoring your first case, read section 0, then jump to **section 16*
 Understanding the runtime is necessary to author for it. Twelve facts govern everything below.
 
 1. **The case moves through phases.** A phase is a clinically distinct patient status. Interventions move the patient between phases.
-2. **A clock runs, but it does not change the patient.** Time governs when results arrive, when the nurse prompts, and timing feedback in the debrief. There are no time-driven phase transitions and vitals do not drift. An untreated patient does not deteriorate.
+2. **A clock runs. It changes the patient only where you author it to.** Time governs when results arrive, when the nurse prompts, and timing feedback in the debrief. Since v0.5 it can also drive a phase transition, but only where the case wrote one: a transition rule carrying `after_seconds` fires when that many seconds have passed and its guard still holds. Vitals never drift; a time-driven change moves the patient from one authored phase to the next, in a step. A case that authors no such transition behaves exactly as it did before, and an untreated patient in that case does not deteriorate. See section 5.
 3. **Flags are binary and permanent.** An intervention sets a flag. Nothing wears off, and nothing is partial.
 4. **Reads never change state.** Exams and interview questions return content based on current state. They do not alter it. Ordering a study does change state, even though it feels like a read.
 5. **Every readout is resolved, not stored.** Each thing the resident can see is a *key* owning an ordered list of guarded alternatives. First match wins. The last alternative is unconditional.
@@ -102,6 +120,14 @@ Supplied before any AI drafting begins. For a case the author knows well this sh
 
 **3.1 Case identity**
 - Working title and chief complaint as the patient would state it
+- **A short clinical complaint**, `metadata.complaint`, three or four words in clinical
+  register: "Worsening breathlessness", "Fever and a rash on her ankles". This is what
+  the welcome screen lists, and it is not the chief complaint, which is the patient's
+  own words and belongs on the splash. Optional; a case without one falls back to its
+  working title, which is usually too long for a list
+- **A category**, `metadata.category`, naming the body system or problem class:
+  "Cardiovascular", "Infectious disease". It groups the welcome list and generates the
+  filter chips. Optional; a case without one drops into a single unnamed group
 - Final diagnosis, **as a diagnosis catalog id**
 - Three to six learning objectives
 - Target level (intern, junior resident, senior resident)
@@ -156,6 +182,14 @@ Through v0.3 arrival was free prose, it was shown on the splash screen, and it w
 **3.3 Phases (three to six clinical phases, plus terminals)**
 For each: a short label, a one-line clinical description, and the vital signs in that phase. At least one must be a resolution phase. At least one should be a deterioration phase if deterioration is clinically plausible.
 
+**And, for each phase, whether anything happens if the resident does nothing.** This is a clinical
+question and it is yours: how long can this patient sit in this state without the treatment that is
+missing, and what does she look like afterwards. If the answer is "indefinitely, for the purposes of
+a fifteen-minute case", author no clock and say so. If the answer is a number, that number is the
+seed for a time-guarded transition and section 5 is where it goes. Decide it here rather than later,
+because a deterioration bolted onto a finished case tends to fire during the part the author never
+played.
+
 The count refers to clinical phases. The two terminal phases (halted, complete) are structural and do not count against it.
 
 **3.4 The action spine**
@@ -209,7 +243,22 @@ No arithmetic. No comparisons. No nesting beyond one level of grouping.
 
 **`flag` versus `action taken`.** Every state-changing action sets a flag, so for those two the predicates are equivalent. Use `flag`. Reserve `action taken` for observational actions, for example a consultant who responds differently depending on whether the abdomen was examined.
 
-**There is no time predicate.** Timing is expressed only in the deadline fields on prompts and follow-ups, never in conditions. Requests to add a time predicate should be refused by the drafting AI and escalated, because time-conditional content everywhere would make the per-key review matrix unenumerable and the case unreviewable.
+**There is still no time predicate, and there will not be one.** Timing is expressed only in named
+deadline fields: on prompts, on follow-ups, and since v0.5 on phase transition rules. It never
+appears in a condition. Requests to add a time predicate should be refused by the drafting AI and
+escalated, because time-conditional *content* would make the per-key review matrix unenumerable and
+the case unreviewable.
+
+**Time-guarded transitions do not breach this, and the distinction is the thing to hold onto.** A
+transition rule's `when` is an ordinary condition in this language, with no time in it. The timing
+sits beside it in a separate field. So a lab result, an exam finding, a clinical tag, a prerequisite
+and an interview answer still resolve against phase, flags and study state and nothing else, and the
+review matrix has exactly the rows it had before. What a clock can change is which phase you are in,
+and the matrix already enumerates over phases.
+
+Concretely: `{"when": "NOT flag abx_given set", "after_seconds": 240}` is allowed on a transition.
+`"elapsed > 240"` is not allowed anywhere, and `"after_seconds"` is not allowed on a content rule, a
+tag, a prerequisite or a follow-up.
 
 **Rule ordering rule of thumb: phase rules before flag rules.** Flags are permanent, so a flag set in an early phase is still set in a later one. A key that tests `flag on_niv set` above `phase is post_intubation_hypotension` returns the improved value to a patient who has since collapsed. Whenever both appear in one list, the phase rules go first. This is the single most common way a rule list is correct for the situations the author was thinking about and wrong for one they were not.
 
@@ -236,7 +285,100 @@ Harmful actions bypass transition rules entirely and move directly to a terminal
 
 **Every deterioration branch needs a reachable exit.** If entering a phase requires an action, leaving it requires an action too, and that action must exist in the catalog. Confirm the exit exists before authoring the branch. Stopping an infusion is a case in point: every persistent infusion has a matching stop action, but stopping is a separate step rather than a toggle, so the case must author it as its own action and gate the rescue transition on the flag it sets.
 
-**Requirement:** every phase must be reachable, and every non-terminal phase must have at least one satisfiable transition.
+**Requirement:** every phase must be reachable, and every non-terminal phase must have at least one satisfiable transition. A phase reachable only by the clock counts as reachable.
+
+### 5.1 Time-guarded transitions
+
+A transition rule may carry a deadline. It then fires when the deadline has passed **and** its guard
+is still true. A rule without a deadline is instantaneous and behaves as it always has.
+
+```json
+{
+  "when": "NOT flag abx_given set",
+  "after_seconds": 240,
+  "measured_from": "phase_entry",
+  "to": "progressive_sepsis",
+  "narration": "The spots on her ankles have joined up while we've been standing here.",
+  "debrief_note": "The organism was never treated and the septicaemia progressed. Meningococcal disease is measured in hours and the rash is the clock you can see.",
+  "author_rationale": "Untreated meningococcal bacteraemia progresses over minutes to hours."
+}
+```
+
+| Field | Required | Meaning |
+|---|---|---|
+| `after_seconds` | yes, to make it time-guarded | Deadline. Minimum 30; below 60 warns |
+| `measured_from` | no, defaults to `phase_entry` | `phase_entry` or `guard_true` |
+| `narration` | yes | What the nurse says at the moment it fires. AI-DRAFTABLE |
+| `debrief_note` | yes | What the learner is told about it afterwards. AI-DRAFTABLE from your rationale |
+| `author_rationale` | yes | Why this patient deteriorates in this time. **AUTHOR-ONLY** |
+| `allow_time_to_terminal` | only if the destination is terminal | Explicit opt-in to ending the case on the clock |
+| `terminal_opt_in_rationale` | with the above | **AUTHOR-ONLY** |
+| `unguarded_rationale` | only if `when` is null | Why this fires regardless of what the resident does. **AUTHOR-ONLY** |
+
+**The three patterns.** Name which one you are using before you write the rule.
+
+*Deterioration on inaction.* A negative guard, `NOT flag F set`, measured from phase entry. The
+common case, and the one the feature exists for. Because flags are permanent, a negative guard can
+only be falsified and never re-satisfied, so once the resident gives the drug that deterioration is
+cancelled for the rest of the case rather than deferred. Each rule is one question with a yes or no
+answer: was this done in time.
+
+*Delayed consequence of an action.* A positive guard, `flag F set`, with
+`measured_from: "guard_true"`. Use this where an action has a consequence that is not instantaneous.
+Peri-intubation collapse is the obvious one: modelling it as instant teaches that the tube caused it,
+where modelling it forty-five seconds later teaches that the induction agent and the positive
+pressure did, and leaves room for the resident to have a pressor ready.
+
+*Scheduled natural history.* No guard. The illness does something regardless: a simple febrile
+seizure self-terminating, a thrombolysis window closing, the second phase of a biphasic reaction.
+This requires an `unguarded_rationale`, because a transition nothing can prevent is a scripted
+trajectory and should be a decision rather than an oversight.
+
+### 5.2 The six rules that keep this from becoming a trap
+
+These are enforced by the validator (14.1), and the reasoning is worth having rather than just the
+rule.
+
+1. **Thirty-second floor**, with a warning below sixty. A deterioration the resident could not
+   plausibly have prevented teaches nothing about medicine and a great deal about reflexes.
+2. **A prompt must come first.** For every flag your guard requires to be unset, some action that
+   sets that flag must prompt in that phase, at least twenty seconds before the deadline. This is
+   section 1's framing made mechanical: the nurse exists to teach, and a deterioration nobody warned
+   about is a trap. If you find yourself wanting a deterioration with no warning, what you actually
+   want is a longer deadline and an earlier prompt.
+3. **A prompt that cannot fire is an error in your case.** A prompt at 260 seconds in a phase that
+   ends at 240 will never be seen. Nothing about the case looks wrong; the learner is simply never
+   helped with that action. The validator warns.
+4. **Terminal destinations need an explicit opt-in.** Ending a case because nothing was done is the
+   strongest statement this system can make, and it must never happen because an author reused a
+   phase id. It also must not use the shared `halted` phase, which carries a harmful action's halt
+   reason: attributing an omission to a commission teaches the learner something false about their
+   own run. Author your own terminal phase with its own `timeout_reason`.
+5. **No cycle made only of time edges.** A loop with no resident involvement is a case that plays
+   itself.
+6. **Every destination needs an exit**, exactly as for an action-driven deterioration branch. If the
+   clock can put the patient somewhere, something must be able to get her out.
+
+### 5.3 What a time-guarded transition costs you
+
+**Prompt deadlines and deterioration deadlines share a phase and compete for it.** Everything you
+want the nurse to say has to fit before the phase can end. In a phase with a 240-second exit and
+nine prompted critical actions, the last few will not be heard. This tightens the prompt cap problem
+rather than creating it, and it is the most common reason to lengthen a deadline.
+
+**The clock does not pause.** A resident reading a long consultant response, composing a batch of
+orders, or thinking, is on the same clock as one who has frozen. The floor and the mandatory prompt
+are the mitigations; there is no grace period. Author deadlines with a slow reader in mind.
+
+**Hard mode does not slow it down.** See 9.7.
+
+**Deterioration is all-or-nothing.** A drug given one second before the deadline has the same effect
+as one given immediately. Graded lateness is not representable; if you need it, you need more phases,
+and the section 3.3 ceiling of six clinical phases binds sooner than it used to.
+
+**You now have to review a path nobody takes on purpose.** What the patient looks like when the
+resident does nothing at all is a real trajectory in your case, and it is the one you are least
+likely to have imagined. Section 14.2c generates it.
 
 ---
 
@@ -413,7 +555,22 @@ Not every critical action needs a prompt. Prompt for the ones where delay carrie
 
 ### 9.5 Two hard constraints on prompt text
 
-**Prompts must not imply a trajectory.** The patient does not deteriorate, so a prompt saying the patient is getting worse contradicts a monitor showing static vitals. Describe the current state or express concern about inaction.
+**Prompts must not imply a trajectory.** Within a phase the patient does not change, so a prompt saying the patient is getting worse contradicts a monitor showing static vitals. Describe the current state or express concern about inaction.
+
+**Two amendments in v0.5, both narrow.**
+
+*The narration on a time-guarded transition is the one place a trajectory may be described*, because
+one has just happened and the monitor is about to show it. "She's harder to rouse than she was ten
+minutes ago and her pressure's come down" is correct there and nowhere else. The constraint on that
+line is the mirror image of the constraint above: it must be true of the numbers displayed
+immediately afterwards. A narration saying the pressure has fallen, on a transition whose
+destination has the same systolic pressure, is the same contradiction pointing the other way. Check
+each one against the destination phase's vitals; the deterioration timeline (14.2c) prints them
+side by side for exactly this.
+
+*In a phase that has a time-guarded exit, a prompt may name the consequence.* "If we don't get an
+antibiotic into her, she's going to get worse" is a true statement in such a phase where it was
+false everywhere before. It is still not permission to describe the numbers as moving.
 
 - Acceptable: "He's still working hard to breathe. Do you want to do anything about the airway?"
 - Acceptable: "His sat is sitting at 87 on six litres."
@@ -421,17 +578,43 @@ Not every critical action needs a prompt. Prompt for the ones where delay carrie
 
 No validator can catch this. It is a review checklist item, and it is the constraint most likely to be violated without anyone noticing, because the failure is a contradiction between the text and the monitor rather than an error in either.
 
+**The prompt cap can suppress a prompt a deterioration depends on, and no static check
+sees it.** The validator enforces that a time-guarded deterioration is preceded by a
+prompt naming the missing treatment, but it checks the deadline you authored, not
+whether that prompt survives the per-phase cap. Author nine prompts into a phase with a
+cap of three and the fourth onwards never fire, so the deterioration arrives unwarned.
+Count the prompts in every phase that has a time-guarded exit, and make sure the ones
+your guards depend on are the earliest. `engine-tests.js` checks this at runtime by
+walking the do-nothing path; the validator cannot.
+
 **Prompts must be helpful.** This is a teaching tool. A prompted action counts as done and is not penalized; it is only noted in the debrief so the learner can see where they needed help. Write prompts that would actually rescue a stuck learner.
 
 ### 9.6 On deadline values
 
 Author deadlines in seconds, but expect global recalibration once the pacing is tuned. Prioritize getting the **relative** urgency right between actions in a case over any absolute number.
 
+This applies to time-guarded transition deadlines too, with one difference: a prompt deadline that
+is slightly wrong produces a prompt at a slightly odd moment, and a transition deadline that is
+slightly wrong changes the outcome of the case. Get the ordering right first, meaning that every
+prompt in a phase lands before the phase can end, and treat the absolute numbers as provisional. A
+global multiplier for deterioration pacing is proposed but not built; see system design open
+decision 10.
+
 ### 9.7 Difficulty modes change when prompts fire
 
 The resident chooses easy or hard on the splash screen. Hard multiplies every prompt deadline, escalation and follow-up deadline by three. It changes nothing else: turnaround, transitions and tags are identical, so the medicine is the same either way.
 
 **Author for easy mode.** Get the relative urgency right at the authored deadlines, per 9.6. Hard mode is derived from those numbers and needs no separate authoring.
+
+**Hard mode does not slow deterioration down, and you should understand why before relying on it.**
+The multiplier scales prompts only. If it also scaled time-guarded transitions, the patient would
+take three times as long to deteriorate in hard mode, which would make it more forgiving at the same
+time as the later prompts make it less forgiving, and the mode would stop meaning anything. Leaving
+deterioration unscaled preserves the property the modes exist for: the physiology is identical in
+both and only the amount of help differs. The consequence is that in hard mode a resident can
+deteriorate a patient before the prompt that would have warned them has fired. That is the honest
+version of the question hard mode asks, and it is the strongest argument for setting your deadlines
+generously.
 
 **What hard mode is for.** In easy mode the prompt often arrives before the resident has finished thinking, so the prompted-versus-independent report in the debrief measures reading speed as much as knowledge. Hard mode is the honest version of that question, and it means many runs will end with the prompt never firing at all. Write prompts that still make sense arriving late.
 
@@ -555,6 +738,20 @@ Two evaluation sets exist for the reference case (34 topics, 340 variants, thres
 #### The rules that follow from this
 
 **The number to watch is the wrong-topic rate on topics whose answers change management**, not overall accuracy. A fallthrough is visible to the learner; a wrong topic is not. Expand variants first on the topics where a wrong answer changes the workup. Both harnesses report this number separately for that reason.
+
+**A second case has now been measured, and it is worse.** MGCA scores 22 of 37 in scope
+with 4 wrong topics on management-changing topics, against a held-out set written
+deliberately in the registers this section says an author's own set misses. The two
+numbers are not comparable, because CHFE's set is 25 well-formed lay sentences and this
+one is not, but the direction is a warning: a case with more topics and more variants did
+not match better.
+
+**A larger variant space may reject less.** The same twelve unrelated questions put to
+both cases were refused 7 of 12 by CHFE, with 340 variants across 34 topics, and 5 of 12
+by MGCA, with 492 across 41. At that n it concludes nothing. It is recorded because if it
+holds, variant expansion trades out-of-scope rejection for recall, and the decision to
+disable the veto rule in favour of recall becomes something each case should make rather
+than a global default.
 
 **Out-of-scope handling is the weakest part and did not improve.** Two in five unrelated questions still receive a confident, specific, wrong answer. "What is your favourite colour" returns the cough and sputum answer. Assume any question your case does not cover may be answered as though it were a different question.
 
@@ -701,6 +898,7 @@ A good note states what the action does, why it was right or wrong **in this cas
 **Reference verification markers stay in the case file and are stripped from the display.** A note ending "[UNVERIFIED, confirm before release]" is addressed to the reviewing physician, and printing it in a teaching note tells a learner to distrust the sentence they just read. Keep the markers; the interface removes them.
 
 Notes are needed for:
+- Every time-guarded transition, explaining what deteriorated, why it deteriorated in that time, and which action would have prevented it. This is the note a learner reads at the worst moment of their run, so it should teach the physiology rather than restate the deadline
 - Every critical, recommended, discouraged and harmful action
 - Every trap
 - Every follow-up requirement
@@ -723,7 +921,7 @@ Blocked attempts are surfaced in the debrief but not penalized, since the system
 **Case structure**
 - Every content key ends in an unconditional default
 - Every referenced action, flag, study, and phase exists
-- Every phase is reachable; every non-terminal phase has a satisfiable transition
+- Every phase is reachable, counting phases reachable only by the clock; every non-terminal phase has a satisfiable transition
 - Every critical action is reachable
 - Every action whose tag can evaluate to harmful has a halt reason
 - Every prerequisite is satisfiable, non-circular, and has a failure message
@@ -731,6 +929,18 @@ Blocked attempts are surfaced in the debrief but not penalized, since the system
 - Every time-sensitive critical action has a deadline and prompt text
 - No condition uses a predicate outside the five permitted, in the full grammar
 - Vital sign values fall in physiologically possible ranges
+
+**Time-guarded transitions**
+- `after_seconds` is an integer of at least 30, and warns below 60
+- `measured_from` is `phase_entry` or `guard_true`; `guard_true` requires a guard
+- An unguarded time transition has an `unguarded_rationale`
+- Every time-guarded rule carries a narration, a debrief note and an author rationale
+- Every flag named in a guard is settable by a reachable action
+- A terminal destination has `allow_time_to_terminal` and a rationale
+- A non-terminal destination has an exit of its own
+- No cycle is composed only of time edges
+- **Every flag a guard requires to be unset is prompted for in that phase, at least 20 seconds before the deadline** (error)
+- No prompt or escalation deadline lands at or after the phase's earliest time-guarded exit (warning)
 
 **Payloads**
 - Every authored result is a structured payload, not a prose string
@@ -775,6 +985,26 @@ This is what the physician author reviews. It surfaces the failure mode this sys
 
 Per-key enumeration can produce combinations unreachable in the real case, for example two mutually exclusive interventions both set. These are labeled rather than trusted.
 
+### 14.2c The deterioration timeline
+
+Required for any case using a time-guarded transition, and generated by the same tooling.
+
+The per-key matrix cannot show these, because it enumerates what a key resolves to in a phase rather
+than how the phase was reached, and the whole point of a time-guarded transition is that it is
+reached by nobody doing anything. The timeline has three parts:
+
+1. **Every time-guarded exit, by phase**: deadline, guard, destination, whether the destination is
+   terminal, and the prompts that precede it with their own deadlines. Read each row asking two
+   questions. Would this patient really deteriorate in that time if that treatment were withheld.
+   And was the resident warned early enough to act on it.
+2. **The do-nothing trajectory**: the phases and vitals a resident sees from arrival to the end if
+   they perform no state-changing action at all, with the clock at each hop. This is the path an
+   author is least likely to have imagined and the one a frozen learner will actually see. If the
+   last row of it is a terminal phase, you have written a case that can kill the patient without the
+   resident touching her, and that should be a decision you remember making.
+3. **Every narration line**, collected together, to be read against the vitals of the phase each one
+   introduces.
+
 ### 14.3 Author sign-off checklist
 
 **Clinical content**
@@ -808,6 +1038,14 @@ Per-key enumeration can produce combinations unreachable in the real case, for e
 - [ ] Interview answers are correct at every alertness level, and every topic has a distressed-phase answer where the case needs one
 - [ ] Paraphrase coverage is adequate on every topic whose answer changes management
 
+**Time-guarded transitions**, where the case uses them
+- [ ] Every deadline is a clinical claim you are willing to defend: this patient, without this treatment, deteriorates in about this long
+- [ ] Every deterioration is preceded by a prompt naming the missing treatment, early enough to act on, and you have read the deterioration timeline to confirm it
+- [ ] Every narration line is true of the vital signs shown immediately after it fires
+- [ ] The do-nothing trajectory is clinically right from end to end, not only at the first hop
+- [ ] If the clock can end the case, you intended that, and the `timeout_reason` attributes it to the omission rather than to anything the resident did
+- [ ] No prompt in a timed phase is stranded past the exit
+
 **Structure and sequencing**
 - [ ] Consultant advice never references a study that was not ordered, or one still pending
 - [ ] A pending tier exists for every consultant whose advice depends on a study
@@ -831,7 +1069,8 @@ The last item is not ceremonial. Both the validator and the review matrix read t
 - **Flags are permanent.** A single dose fixes something for the remainder of the case. Do not build cases that depend on redosing or titration.
 - **Permanent flags can shadow phase-correct content.** Put phase rules before flag rules in any list where both appear. See section 4.
 - **Flags are binary.** Symptoms and findings switch rather than grade. Partial response cannot be represented.
-- **The patient does not deteriorate.** Ignoring every nurse prompt produces the same patient as acting immediately. The difference appears only in the debrief.
+- **The patient deteriorates only where the case authored it, and only in steps.** A time-guarded transition moves her from one authored plateau to the next; there is no gradient and no partial deterioration. In a case that authors none, ignoring every nurse prompt still produces the same patient as acting immediately, and most cases should stay that way.
+- **Deterioration is all-or-nothing per rule.** A treatment given one second before the deadline has the same effect as one given at once, and how late you were does not affect how sick she becomes.
 - **Order cannot be expressed in conditions**, beyond what prerequisites enforce.
 - **Serial testing cannot be represented.** A repeat study in an unchanged state returns the same value.
 - **One vitals block per terminal phase.** Every halt shows the same numbers whatever the mechanism.
@@ -886,6 +1125,12 @@ Expect the first run to find things. On the reference case it found a phantom ac
 
 ### Step 8. Simulate (system design 13.3).
 Script a dozen end-to-end routes: the intended path, each harmful halt, each blocked prerequisite, the deterioration branch and its rescue, and any ordering you think a resident might produce. Reachability is a weak claim; a walked path is a strong one.
+
+If the case uses time-guarded transitions, the scripts need waits, and four more routes: doing
+nothing at all from arrival to the end, treating each deficit alone and letting the clock take the
+other, a rescue inside the last window, and a rescue one action too late. Write the last two
+together, because the difference between them is the lesson and it is easy to author a window nobody
+can hit.
 
 ### Step 9. Read the review matrix in full (section 14.2). AUTHOR-ONLY.
 This is where the clinically wrong resolutions are, and they raise no error. Pay closest attention to the deterioration branch and to any key where a flag rule and a phase rule appear in the same list.

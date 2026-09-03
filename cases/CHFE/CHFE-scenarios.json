@@ -8,7 +8,7 @@
    "steps": [
     "iv_access_peripheral",
     "cardiac_monitor",
-    "niv_cpap",
+    "niv_bipap_cpap",
     "ecg_12_lead",
     "nitroglycerin_infusion",
     "bp_cycling_q5min",
@@ -28,7 +28,7 @@
     "intubation_rsi",
     "iv_access_peripheral",
     "nitroglycerin_infusion",
-    "niv_cpap"
+    "niv_bipap_cpap"
    ],
    "expect_phase": "stabilizing"
   },
@@ -36,7 +36,7 @@
    "name": "Sublingual nitrate as the bridge still advances the phase",
    "steps": [
     "iv_access_peripheral",
-    "niv_cpap",
+    "niv_bipap_cpap",
     "nitroglycerin_sublingual"
    ],
    "expect_phase": "stabilizing"
@@ -45,7 +45,7 @@
    "name": "Harmful: intravenous metoprolol for the compensatory tachycardia",
    "steps": [
     "iv_access_peripheral",
-    "niv_cpap",
+    "niv_bipap_cpap",
     "metoprolol_iv"
    ],
    "expect_phase": "halted"
@@ -107,14 +107,42 @@
    "expect_phase": "halted"
   },
   {
-   "name": "Every phase is reachable in some run: improving reached without NIV first",
+   "name": "Diuretic given before positive pressure still reaches stabilizing",
    "steps": [
     "iv_access_peripheral",
     "furosemide_iv",
-    "niv_bipap",
+    "niv_bipap_cpap",
     "nitroglycerin_infusion"
    ],
-   "expect_phase": "stabilizing"
+   "expect_phase": "stabilizing",
+   "note": "Previously named niv_bipap, which the binding shadowed, so the step was silently discarded and the scenario reached presentation instead. Fixed by the NIV consolidation."
+  },
+  {
+   "name": "Harmful: a litre of Ringer's reaches the same halt through the equivalence group",
+   "steps": [
+    "iv_access_peripheral",
+    "lactated_ringer_s_1l_bolus"
+   ],
+   "expect_phase": "halted",
+   "note": "A harmful tag has to cover every catalog route to the same act. This walks one of the three siblings the crystalloid_bolus group covers."
+  },
+  {
+   "name": "Harmful: 500 mL of saline reaches the same halt through the equivalence group",
+   "steps": [
+    "iv_access_peripheral",
+    "normal_saline_500ml_bolus"
+   ],
+   "expect_phase": "halted",
+   "note": "A harmful tag has to cover every catalog route to the same act. This walks one of the three siblings the crystalloid_bolus group covers."
+  },
+  {
+   "name": "Harmful: 500 mL of Ringer's reaches the same halt through the equivalence group",
+   "steps": [
+    "iv_access_peripheral",
+    "lactated_ringer_s_500ml_bolus"
+   ],
+   "expect_phase": "halted",
+   "note": "A harmful tag has to cover every catalog route to the same act. This walks one of the three siblings the crystalloid_bolus group covers."
   }
  ]
 }

@@ -73,7 +73,9 @@
    "mode": "ems",
    "location": "resuscitation_bay",
    "line": "Brought in by EMS. Handover given on arrival in the resuscitation bay."
-  }
+  },
+  "complaint": "Worsening breathlessness",
+  "category": "Cardiovascular"
  },
  "patient": {
   "age": 65,
@@ -318,8 +320,8 @@
  "flag_namespace_note": "Flags here use unprefixed catalog-level names because catalog prerequisites (for example intubation requiring sedation_given and paralytic_given) must reference the same flag across all cases. Section 14.1 requires that no flag name collide with another case, which is incompatible with shared catalog flags. Flagged in the review packet.",
  "case_actions": [
   {
-   "catalog_id": "niv_cpap",
-   "display_name": "Positive pressure ventilation (CPAP/BIPAP)",
+   "catalog_id": "niv_bipap_cpap",
+   "display_name": "Positive pressure ventilation (BiPAP/CPAP)",
    "tag": [
     {
      "when": "phase is post_intubation_hypotension OR phase is intubated_stabilized",
@@ -353,43 +355,12 @@
      "text": "He's still tripoding and pulling with his neck muscles, sat's still 87. I've got CPAP and BiPAP both at the bedside. Do you want either of them on him?"
     }
    },
-   "debrief_note": "Non-invasive positive pressure ventilation is the single highest-value early intervention in acute cardiogenic pulmonary oedema. It recruits flooded alveoli, reduces the work of breathing, and by raising intrathoracic pressure it reduces both preload and left ventricular transmural pressure, which lowers afterload. Applying it early is what allows most of these patients to avoid an endotracheal tube. Be honest with learners about the evidence: earlier meta-analyses reported reductions in intubation and mortality, but the largest randomised trial, 3CPO, found no difference in seven-day mortality or intubation rate versus standard oxygen therapy. The strongest defensible claim is faster symptomatic and physiological improvement, with intubation avoidance supported by meta-analytic but not by the single largest trial.",
+   "debrief_note": "Non-invasive positive pressure ventilation is the single highest-value early intervention in acute cardiogenic pulmonary oedema. It recruits flooded alveoli, reduces the work of breathing, and by raising intrathoracic pressure it reduces both preload and left ventricular transmural pressure, which lowers afterload. Applying it early is what allows most of these patients to avoid an endotracheal tube. Be honest with learners about the evidence: earlier meta-analyses reported reductions in intubation and mortality, but the largest randomised trial, 3CPO, found no difference in seven-day mortality or intubation rate versus standard oxygen therapy. The strongest defensible claim is faster symptomatic and physiological improvement, with intubation avoidance supported by meta-analytic but not by the single largest trial. On the choice between modes, which is one button here because it is one decision: continuous and bilevel positive pressure are equivalent for the purposes of this case. Bilevel adds inspiratory support and is often preferred when the patient is hypercapnic and tiring, as this one is with a pCO2 of 54. 3CPO found no difference between the two modes in mortality or intubation rate, so either is defensible and the decision that mattered was to apply positive pressure at all. The historical concern that bilevel increased myocardial infarction has not been borne out.",
    "references": [
     "Gray A, Goodacre S, Newby DE, Masson M, Sampson F, Nicholl J; 3CPO Trialists. Noninvasive ventilation in acute cardiogenic pulmonary edema. N Engl J Med. 2008;359(2):142-51. [PubMed record checked]",
     "Masip J, Roque M, Sanchez B, et al. Noninvasive ventilation in acute cardiogenic pulmonary edema: systematic review and meta-analysis. JAMA. 2005;294(24):3124-30. [citation seen in secondary sources; verify]"
-   ]
-  },
-  {
-   "catalog_id": "niv_bipap",
-   "display_name": "BiPAP, IPAP 12 / EPAP 6, FiO2 titrated",
-   "tag": [
-    {
-     "when": "phase is post_intubation_hypotension OR phase is intubated_stabilized",
-     "value": "neutral"
-    },
-    {
-     "when": "phase is presentation",
-     "value": "critical"
-    },
-    {
-     "when": null,
-     "value": "recommended"
-    }
    ],
-   "flags_set": [
-    "on_niv"
-   ],
-   "prerequisites": [
-    {
-     "when": "NOT flag intubated set",
-     "failure_message": "He's already got a tube in and he's on the ventilator. The mask won't do anything now.",
-     "source": "case"
-    }
-   ],
-   "debrief_note": "Equivalent to CPAP for the purposes of this case. Bilevel adds inspiratory support, which is often preferred when the patient is hypercapnic and tiring, as this one is with a pCO2 of 54. 3CPO found no difference between CPAP and bilevel in mortality or intubation rate, so either is a defensible choice and the important decision was to apply positive pressure at all. Historical concern that bilevel increased myocardial infarction has not been borne out.",
-   "references": [
-    "Gray A, et al. N Engl J Med. 2008;359(2):142-51. [PubMed record checked]"
-   ]
+   "binding_note": "Formerly two case actions, niv_cpap and niv_bipap, both bound to the single catalog entry non_invasive_positive_pressure_ventilation. Because one catalog entry resolves to one case action, the second was unreachable: its tag, debrief note and references never rendered, and a scenario step naming it was silently discarded. Merged into one action whose note carries both teaching points. If the catalog ever splits continuous and bilevel into separate entries, add them to the non_invasive_ventilation equivalence group and bind this action to the group with also_covers_group, rather than reintroducing two case actions."
   },
   {
    "catalog_id": "nitroglycerin_infusion",
@@ -3723,8 +3694,7 @@
     "id": "airway_breathing",
     "label": "Airway, oxygenation and ventilation",
     "actions": [
-     "niv_cpap",
-     "niv_bipap",
+     "niv_bipap_cpap",
      "oxygen_nonrebreather",
      "intubation_rsi",
      "vent_settings_lung_protective",
@@ -3853,7 +3823,8 @@
  },
  "migrations": [
   "structure_results",
-  "restructure_exam"
+  "restructure_exam",
+  "consolidate_niv"
  ],
  "phases_note": "label is the full clinical description used in the debrief; short_label is what fits on the monitor beside the vitals. Keep short_label to a few words."
 }

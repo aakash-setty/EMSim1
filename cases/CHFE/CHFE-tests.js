@@ -6,7 +6,7 @@
  */
 
 section('intended path');
-let st=fold(mk([[1,'iv_access_peripheral'],[2,'cardiac_monitor'],[6,'niv_cpap'],[20,'nitroglycerin_infusion'],[30,'furosemide_iv']]),40);
+let st=fold(mk([[1,'iv_access_peripheral'],[2,'cardiac_monitor'],[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion'],[30,'furosemide_iv']]),40);
 chk('reaches improving',st.phase==='improving',st.phase);
 chk('phase sequence',JSON.stringify(st.phaseSeq.map(p=>p.id))==='["presentation","stabilizing","improving"]',JSON.stringify(st.phaseSeq.map(p=>p.id)));
 chk('no halt',!st.halted);
@@ -35,16 +35,18 @@ chk('nitrate in hypotensive phase halts',s2.halted&&s2.halted.id==='nitroglyceri
 
 section('renamed actions');
 chk('IV action reads Insert IV',PROTO.actions.iv_access_peripheral.name==='Insert IV',PROTO.actions.iv_access_peripheral.name);
+chk('the old split NIV ids are gone',
+    !PROTO.actions.niv_cpap&&!PROTO.actions.niv_bipap&&!PROTO.shadowed.niv_bipap);
 chk('NIV reads positive pressure ventilation',
-    /Positive pressure ventilation \(CPAP\/BIPAP\)/.test(PROTO.actions.niv_cpap.name),PROTO.actions.niv_cpap.name);
+    /Positive pressure ventilation \(BiPAP\/CPAP\)/.test(PROTO.actions.niv_bipap_cpap.name),PROTO.actions.niv_bipap_cpap.name);
 
 section('prompts');
 st=fold(mk([]),50);
-chk('NIV prompt fires at 45s',st.promptFires.some(p=>p.id==='niv_cpap'&&p.level===1));
-st=fold(mk([[10,'niv_cpap']]),50);
-chk('no prompt once action taken',!st.promptFires.some(p=>p.id==='niv_cpap'));
+chk('NIV prompt fires at 45s',st.promptFires.some(p=>p.id==='niv_bipap_cpap'&&p.level===1));
+st=fold(mk([[10,'niv_bipap_cpap']]),50);
+chk('no prompt once action taken',!st.promptFires.some(p=>p.id==='niv_bipap_cpap'));
 st=fold(mk([]),100);
-chk('escalation fires at 90s',st.promptFires.some(p=>p.id==='niv_cpap'&&p.level===2));
+chk('escalation fires at 90s',st.promptFires.some(p=>p.id==='niv_bipap_cpap'&&p.level===2));
 chk('prompt cap respected',Object.keys(st.phaseEntry).length>=1&&st.promptFires.length<=PROTO.promptCap+2,String(st.promptFires.length));
 const anyTraj=st.nurse.filter(n=>n.kind==='prompt').some(n=>/dropping|crashing|getting worse|deteriorat|falling/i.test(n.text));
 chk('no prompt implies a trajectory',!anyTraj);
@@ -57,7 +59,7 @@ chk('satisfied follow-up does not prompt',!st.fuFires.some(f=>f.fid==='post_intu
 
 section('exam changes with treatment');
 const pre=fold(mk([[1,'exam_pulm']]),5).readouts[0].body.findings;
-const post=fold(mk([[1,'iv_access_peripheral'],[2,'niv_cpap'],[3,'nitroglycerin_infusion'],[6,'exam_pulm']]),10).readouts[0].body.findings;
+const post=fold(mk([[1,'iv_access_peripheral'],[2,'niv_bipap_cpap'],[3,'nitroglycerin_infusion'],[6,'exam_pulm']]),10).readouts[0].body.findings;
 chk('lung findings differ after treatment',pre!==post);
 chk('wheeze present at presentation',/wheeze/i.test(pre));
 
@@ -77,7 +79,7 @@ st=fold(mk([[1,'iv_access_peripheral'],[2,'etomidate_iv'],[3,'rocuronium_iv'],[4
 chk('alertness gating: intubated patient gives no history',/cannot give any history|does not respond/i.test(st.readouts[st.readouts.length-1].body));
 
 section('handoff');
-st=fold(mk([[1,'iv_access_peripheral'],[6,'niv_cpap'],[20,'nitroglycerin_infusion'],[30,'furosemide_iv']]).concat([{seq:9,t:40,actionId:'handoff_submit',payload:{disposition:'icu_or_ccu',diagnosis:PROTO.correctDxId}}]),60);
+st=fold(mk([[1,'iv_access_peripheral'],[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion'],[30,'furosemide_iv']]).concat([{seq:9,t:40,actionId:'handoff_submit',payload:{disposition:'icu_or_ccu',diagnosis:PROTO.correctDxId}}]),60);
 chk('handoff completes the case',st.phase==='case_complete'&&st.complete);
 chk('payload recorded',st.handoff&&st.handoff.disposition==='icu_or_ccu');
 chk('expected actions collected',st.expected.size>0,String(st.expected.size));

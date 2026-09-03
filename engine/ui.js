@@ -1274,23 +1274,150 @@ function debriefHTML(){
 }
 
 /* ---------- case picker ---------- */
+/* ---------- welcome screen ----------
+   Replaces the old card picker. Derived entirely from CASES, so adding a case stays a
+   data change. Two optional card fields drive it, `complaint` and `category`; both
+   degrade, so a pack that predates them still lists. Age and sex come from
+   case.patient, which every pack already has. */
+let WL_FILTER='all', WL_SEL=-1, WL_ROWS=[], WL_BOUND=false;
+const WL_SHORT={male:'M',female:'F'};
+const WL_LABEL={male:'Male patient',female:'Female patient'};
+
+function wlModel(){
+  return CASES.map((c,i)=>{
+    const k=c.card||{}, p=(c.case&&c.case.patient)||{};
+    /* "medical student, intern, junior resident" is a range and reads better as one */
+    const lvs=(Array.isArray(k.target_level)?k.target_level:[k.target_level||''])
+      .filter(Boolean).map(x=>String(x).replace(/_/g,' '));
+    const lv=lvs.length>2 ? lvs[0]+' to '+lvs[lvs.length-1] : lvs.join(' and ');
+    return {i, prefix:c.prefix,
+      complaint:k.complaint||k.title||c.prefix,
+      age:p.age, sex:(p.sex||'').toLowerCase(),
+      category:k.category||'Cases',
+      level:lv.charAt(0).toUpperCase()+lv.slice(1),
+      mins:k.runtime_seconds?Math.round(k.runtime_seconds/60):null,
+      unreviewed:k.unreviewed!==false,
+      broken:(c.buildNotes||[]).length};
+  });
+}
+function wlCats(m){ const o=[]; for(const c of m) if(!o.includes(c.category)) o.push(c.category); return o.sort(); }
+
+function wlChips(m){
+  const box=el('wl-chips'), cats=wlCats(m);
+  /* one category is not a filter, it is noise */
+  if(cats.length<2){ box.style.display='none'; return; }
+  box.style.display='';
+  box.innerHTML=[['all','All cases']].concat(cats.map(c=>[c,c]))
+    .map(([k,l])=>`<button class="wl-chip" type="button" data-wlchip="${esc(k)}" aria-pressed="${WL_FILTER===k}">${esc(l)}</button>`)
+    .join('');
+}
+
 function renderPicker(){
-  el('pk-list').innerHTML=CASES.map((c,i)=>{
-    const k=c.card, lv=Array.isArray(k.target_level)
-      ? k.target_level.map(x=>String(x).replace(/_/g,' ')).join(', ')
-      : String(k.target_level||'').replace(/_/g,' ');
-    const mins=k.runtime_seconds?Math.round(k.runtime_seconds/60)+' min':'';
-    return `<button class="casecard" data-case="${i}">
-      <span class="pk">${esc(c.prefix)}</span>
-      <span class="ti">${esc(k.title)}</span>
-      ${k.chief_complaint?`<span class="cc">\u201C${esc(k.chief_complaint)}\u201D</span>`:''}
-      <span class="mt">${[esc(k.setting),esc(lv),mins].filter(Boolean).join('  \u00B7  ')}</span>
-      ${(c.buildNotes||[]).length?`<span class="mt flagred">incomplete: ${c.buildNotes.length} build problem${c.buildNotes.length>1?'s':''}, this case will not run correctly</span>`:''}
-    </button>`;
-  }).join('');
+  const m=wlModel();
+  const q=(el('wl-q')?el('wl-q').value:'').trim().toLowerCase();
+  wlChips(m);
+  const hits=m.filter(c=>{
+    if(WL_FILTER!=='all'&&c.category!==WL_FILTER) return false;
+    if(!q) return true;
+    const hay=[c.complaint,c.category,c.level,String(c.age),WL_SHORT[c.sex]||'',c.sex,c.prefix]
+      .join(' ').toLowerCase();
+    return q.split(/\s+/).every(t=>hay.includes(t));
+  });
+  el('wl-count').textContent=hits.length;
+  WL_ROWS=hits;
+
+  if(!hits.length){
+    el('pk-list').innerHTML='<div class="wl-empty"><b>No case matches that.</b>'+
+      'Try a body system, an age, or clear the search to see everything.</div>';
+    WL_SEL=-1; return;
+  }
+  const groups=[...new Set(hits.map(c=>c.category))].sort();
+  const grouped=groups.length>1;
+  let html='';
+  for(const g of groups){
+    if(grouped) html+=`<div class="wl-group">${esc(g)}</div>`;
+    for(const c of hits.filter(x=>x.category===g)){
+      const face=WL_SHORT[c.sex]?`<i class="${c.sex}"></i>`:'';
+      const aria=[c.complaint,
+                  (WL_LABEL[c.sex]||'Patient')+', '+(c.age!==undefined?c.age+' years old':'age not recorded'),
+                  c.category,c.level,c.mins?'about '+c.mins+' minutes':'',
+                  c.unreviewed?'Unsigned draft.':'Reviewed.',
+                  c.broken?'Incomplete: '+c.broken+' build problems, this case will not run correctly.':''
+                 ].filter(Boolean).join('. ');
+      html+=`<button class="wl-case" type="button" role="option" data-case="${c.i}"
+        data-row="${WL_ROWS.indexOf(c)}" aria-label="${esc(aria)}">
+        <span class="wl-face">${face}</span>
+        <span class="wl-body">
+          <span class="wl-ttl">${esc(c.complaint)}</span>
+          <span class="wl-meta">
+            <span class="ag">${c.age!==undefined?esc(String(c.age)):'\u2013'} ${esc(WL_SHORT[c.sex]||'\u2013')}</span>
+            <span class="lv">${c.broken?'<span style="color:var(--harm)">will not run correctly</span>':esc(c.level)}</span>
+            <span class="rt">${c.mins?c.mins+' min':''}</span>
+          </span>
+        </span>
+        <span class="wl-state${c.unreviewed?'':' ok'}" title="${c.unreviewed?'Unsigned draft':'Reviewed'}"></span>
+      </button>`;
+    }
+  }
+  el('pk-list').innerHTML=html;
+  wlPaint();
   el('pk-warn').textContent = CASES.length===1
-    ? ''
-    : 'Each case is independent. Nothing carries over between them.';
+    ? '' : 'Each case is independent. Nothing carries over between them.';
+  wlBind();
+}
+function wlPaint(){
+  document.querySelectorAll('.wl-case').forEach(b=>{
+    const on=Number(b.dataset.row)===WL_SEL;
+    b.classList.toggle('sel',on); b.setAttribute('aria-selected',String(on));
+  });
+}
+function wlOpen(){ if(WL_SEL>=0&&WL_ROWS[WL_SEL]) chooseCase(WL_ROWS[WL_SEL].i); }
+function wlVisible(){ return !el('picker').classList.contains('hidden'); }
+function wlBind(){
+  if(WL_BOUND) return; WL_BOUND=true;
+  el('wl-q').addEventListener('input',()=>{ WL_SEL=-1; renderPicker(); });
+  /* Rows carry data-case, so opening a case still goes through the document-level
+     delegation and chooseCase(). This listener only handles the chrome. */
+  el('picker').addEventListener('click',e=>{
+    const chip=e.target.closest('[data-wlchip]');
+    if(chip){ WL_FILTER=chip.dataset.wlchip; WL_SEL=-1; renderPicker(); return; }
+    const kb=e.target.closest('#wl-menubtn');
+    if(kb){ e.stopPropagation();
+      const on=!el('wl-menu').classList.contains('open');
+      el('wl-menu').classList.toggle('open',on); kb.setAttribute('aria-expanded',String(on)); return; }
+    const nav=e.target.closest('[data-nav]');
+    if(nav){ e.preventDefault(); el('wl-menu').classList.remove('open');
+      el('wl-menubtn').setAttribute('aria-expanded','false');
+      document.dispatchEvent(new CustomEvent('navigate',{detail:{to:nav.dataset.nav}})); return; }
+    const row=e.target.closest('.wl-case');
+    if(row){ WL_SEL=Number(row.dataset.row); wlPaint(); }
+    el('wl-menu').classList.remove('open');
+    el('wl-menubtn').setAttribute('aria-expanded','false');
+  });
+  /* Scoped to the welcome screen so none of these keys reach a running case. */
+  document.addEventListener('keydown',e=>{
+    if(!wlVisible()) return;
+    const q=el('wl-q');
+    if(e.key==='/'&&document.activeElement!==q){ e.preventDefault(); q.focus(); q.select(); return; }
+    if(e.key==='Escape'){
+      if(el('wl-menu').classList.contains('open')){
+        el('wl-menu').classList.remove('open');
+        el('wl-menubtn').setAttribute('aria-expanded','false'); return; }
+      if(q.value){ q.value=''; renderPicker(); } return; }
+    if(!WL_ROWS.length) return;
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      e.preventDefault();
+      WL_SEL=e.key==='ArrowDown'?Math.min(WL_ROWS.length-1,WL_SEL+1):Math.max(0,WL_SEL-1);
+      wlPaint();
+      const r=document.querySelector('.wl-case[data-row="'+WL_SEL+'"]');
+      if(r) r.scrollIntoView({block:'nearest'});
+      return; }
+    if(e.key==='Enter'){
+      /* Enter from the search box opens the first result, but only when nothing is
+         selected. Arrowing down then pressing Enter must open what is highlighted. */
+      if(WL_SEL<0&&document.activeElement===q&&WL_ROWS.length){ WL_SEL=0; wlPaint(); }
+      wlOpen(); }
+  });
 }
 function chooseCase(i){
   selectCase(i);
@@ -1303,7 +1430,9 @@ function chooseCase(i){
 function backToPicker(){
   el('splash').classList.add('hidden');
   el('picker').classList.remove('hidden');
+  WL_SEL=-1;                          // returning must not land on a stale highlight
   renderPicker();
+  const q=el('wl-q'); if(q) q.blur();
 }
 
 /* ---------- splash ---------- */

@@ -8,17 +8,7 @@ This is the artifact the reviewing physician reads. The failure it is designed t
 
 For lab, imaging and exam keys the resolved payload is shown inline. **Bold** components are the ones the author flagged abnormal, which are the ones the interface renders in red. A component that reads abnormal to you but is not bold is a display defect that no other check will catch.
 
-### `action_tag/niv_cpap`
-
-| phase | resolves to | reachable? |
-|---|---|---|
-| intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| presentation | rule 1 (phase is presentation) | plausible |
-| «any other phase» | rule 2 (default) | plausible |
-
-
-### `action_tag/niv_bipap`
+### `action_tag/niv_bipap_cpap`
 
 | phase | resolves to | reachable? |
 |---|---|---|

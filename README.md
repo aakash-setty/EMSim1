@@ -11,8 +11,8 @@ before using any of it with a learner.
 ```
 engine/     case-agnostic code and tools. No clinical content, no case names.
 catalog/    global action and diagnosis catalogs, and their generators.
-cases/      one folder per case. CHFE is the reference case.
-docs/       specification.
+cases/      one folder per case. CHFE is the reference case; MGCA is the second.
+docs/       specification, and decisions/ holding one rationale record per change.
 build/      generated. simulator.html and an identical index.html.
 ```
 
@@ -39,6 +39,8 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `semantic.js` | Optional in-browser embedding model. Loads in the background, may never load |
 | `audio.js` | Heartbeat and prompt tones |
 | `room-bg.txt` | The blurred room background as a data URI |
+| `hero-bg.txt` | The welcome screen photograph as a data URI |
+| `avatar-male.txt`, `avatar-female.txt` | Patient silhouettes, used as CSS masks so they follow the theme |
 
 The bundle order in `build_simulator.py` is load-bearing: `semantic.js` declares `SEM`
 and `ui.js` registers on it at top level, so reversing them produces a blank page.
@@ -59,6 +61,13 @@ is `CHFE` (congestive heart failure exacerbation):
 | `CHFE-binding.json` | generated | binding with derived statuses |
 | `CHFE-review-matrix.md` | generated | the physician's review artifact |
 | `CHFE-review-packet.md` | authored | what the reviewing physician reads first |
+
+A case that uses time-guarded transitions carries one more generated file,
+`<PREFIX>-deterioration-timeline.md`: every timed exit with its guard and the prompts
+that precede it, the trajectory a resident sees if they do nothing at all, and every
+narration line collected to be read against the vitals it introduces. The per-key matrix
+cannot show any of that, because it enumerates what a key resolves to in a phase rather
+than how the phase was reached. See `cases/MGCA/`.
 
 Migration scripts that were run once against this case live in the pack too, since
 their content is case-specific: `restructure_exam.py`, `structure_results.py`.
@@ -118,6 +127,21 @@ the seven tabs work, and the interview answers, with the matcher chip reading
 endpoint, and no way for one learner's run to reach anyone else. The only browser
 storage is the model cache.
 
+## The clock
+
+Through v0.5 the clock governed information and prompting and nothing else, and an
+untreated patient never changed. A transition rule may now carry `after_seconds` and
+fires when that deadline passes with its guard still true, which is what makes a case
+whose lesson is delay authorable at all. Time does not enter the condition language, so
+the per-key review matrix is unchanged in shape.
+
+Most cases should not use it. If the lesson is a decision, author it as a tag; if it is
+the consequence of an action, author an ordinary transition. Only when the lesson is that
+something had to happen sooner does a clock belong in the case. Six validator rules keep
+it from becoming a trap, of which the one that matters is that every deterioration must
+be preceded by a prompt naming the missing treatment. See
+`docs/decisions/time-driven-transitions.md` for what was rejected and why.
+
 ## Adding a case
 
 ```
@@ -159,20 +183,24 @@ copy was stale and missing the exam defaults and the routing map.
 
 | File | What it is |
 |---|---|
-| `docs/system-design-v2.md` | The system design. **v0.5 is current** |
-| `docs/case-authoring-requirements.md` | What an author must supply. **v0.4 is current** |
+| `docs/system-design-v2.md` | The system design. **v0.6 is current** |
+| `docs/case-authoring-requirements.md` | What an author must supply. **v0.5 is current** |
 | `docs/spec-addendum.md` | Superseded. Its content is folded into the two above |
-| `docs/arrival-and-history-change.md` | Superseded. Folded into authoring 3.2 and design 17, 18 |
-| `docs/interview-matching-plan.md` | Superseded. Folded into design 20 and authoring 10.6 |
+| `docs/decisions/` | One record per change: why it was made and what was rejected |
 
-The three superseded files are kept because they record why the changes were made and
-what was rejected, which the current documents state only as conclusions. They are not
-a source of truth for how the system behaves.
+`docs/decisions/` holds `time-driven-transitions.md`, `welcome-integration.md`,
+`ui-redesign-notes.md`, `arrival-and-history-change.md` and `interview-matching-plan.md`.
+They are kept because they record what was rejected, which the current documents state
+only as conclusions. They are not a source of truth for how the system behaves.
 
 ## Status
 
-The reference case passes the validator with no errors and two warnings, walks all ten
-authored scenarios, and passes 86 engine assertions. That is a structural claim only.
+Both cases pass the validator with no errors. CHFE walks 13 authored scenarios and passes
+91 engine assertions; MGCA walks 26 and passes 118. Each carries one warning, in both
+cases about actions the catalog does not hold, which the prototype renders anyway so the
+gap stays visible. Those are catalog change requests rather than defects.
+
+That is a structural claim only.
 
 **Nothing here has been reviewed by a physician**: not the reference case, not the
 290-entry action catalog, and not the 488-entry diagnosis catalog, which was generated
@@ -180,6 +208,11 @@ from model memory with no source consulted. The interface no longer displays tha
 warning, so `cases/CHFE/CHFE-review-packet.md` is the only place a reader will
 encounter it. Read it before using any of this with a learner.
 
-**The interview matcher's accuracy is measured on two small sets, one of which was
-written by an AI.** Authoring section 10.6 gives the numbers and states plainly what
-they do and do not support.
+**The interview matcher's accuracy is measured on small sets and the second case scores
+badly.** CHFE returns 23 of 25 held-out phrasings correctly; MGCA returns 22 of 37, with
+four wrong topics on topics that change management. The two are not comparable, because
+CHFE's set is 25 well-formed lay sentences and MGCA's was written deliberately in the
+registers that section 10.6 says an author's own set misses. Neither was collected from
+residents, so neither characterises how they actually type. Authoring section 10.6 and
+`cases/MGCA/MGCA-review-packet.md` section 10 state what the numbers do and do not
+support.

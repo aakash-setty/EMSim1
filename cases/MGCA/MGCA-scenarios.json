@@ -1,0 +1,318 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "mgc-meningococcemia-adrenal-01",
+ "note": "End-to-end paths. The last eight exercise the clock, which this case is the first to use: doing nothing at all, each deficit treated alone, a rescue inside the last window, and a rescue one action too late.",
+ "scenarios": [
+  {
+   "name": "Intended path: both deficits recognised before volume",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fingerstick_blood_sugar",
+    "basic_chemistry_chem_7",
+    "lactate",
+    "blood_culture_x_2",
+    "place_patient_on_isolation_precautions",
+    "don_personal_protective_equipment",
+    "ceftriaxone",
+    "hydrocortisone_bolus",
+    "normal_saline_1l_bolus",
+    "insert_foley_catheter",
+    "lumbar_puncture",
+    "csf_cell_count",
+    "consult_public_health_authorities",
+    "consult_critical_care",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete"
+  },
+  {
+   "name": "Volume first, adrenal deficit missed then recognised",
+   "steps": [
+    "insert_iv",
+    "basic_chemistry_chem_7",
+    "ceftriaxone",
+    "normal_saline_1l_bolus",
+    "d50_bolus",
+    "fingerstick_blood_sugar",
+    "hydrocortisone_bolus"
+   ],
+   "expect_phase": "improving"
+  },
+  {
+   "name": "Dextrose alone: no fluid, no glucocorticoid",
+   "steps": [
+    "insert_iv",
+    "d50_bolus"
+   ],
+   "expect_phase": "adrenal_crisis"
+  },
+  {
+   "name": "Seed state 3: cortisol and volume in, organism untreated, then rescued with a pressor",
+   "steps": [
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    "hydrocortisone_bolus",
+    "norepinephrine_drip",
+    "ceftriaxone"
+   ],
+   "expect_phase": "stabilized_shock"
+  },
+  {
+   "name": "Seed state 3 rescued without a pressor",
+   "steps": [
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    "hydrocortisone_bolus",
+    "ceftriaxone"
+   ],
+   "expect_phase": "improving"
+  },
+  {
+   "name": "Deterioration by intubation before resuscitation, then full rescue",
+   "steps": [
+    "insert_iv",
+    "ketamine_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence",
+    "epinephrine_bolus",
+    "norepinephrine_drip",
+    "ceftriaxone",
+    "hydrocortisone_bolus",
+    "ketamine_infusion",
+    "xr_chest"
+   ],
+   "expect_phase": "stabilized_shock"
+  },
+  {
+   "name": "Harmful: rate control of the compensatory tachycardia",
+   "steps": [
+    "insert_iv",
+    "metoprolol_bolus"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Harmful: esmolol, covering a second beta blocker route",
+   "steps": [
+    "insert_iv",
+    "esmolol_drip"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Harmful: insulin for the potassium with the glucose ignored",
+   "steps": [
+    "insert_iv",
+    "insulin_bolus"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Harmful: potassium replacement in mineralocorticoid deficiency",
+   "steps": [
+    "insert_iv",
+    "potassium_chloride_kcl"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Harmful: hypertonic saline for a sodium of 128",
+   "steps": [
+    "insert_iv",
+    "hypertonic_saline_3_infusion"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Blocked: lumbar puncture attempted once hypotensive",
+   "steps": [
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    "lumbar_puncture"
+   ],
+   "expect_phase": "adrenal_crisis"
+  },
+  {
+   "name": "Blocked: drugs before a line, cerebrospinal fluid before the puncture",
+   "steps": [
+    "attach_monitor",
+    "ceftriaxone",
+    "csf_cell_count",
+    "insert_iv",
+    "ceftriaxone"
+   ],
+   "expect_phase": "presentation"
+  },
+  {
+   "name": "Blocked: intubation without induction or paralysis",
+   "steps": [
+    "insert_iv",
+    "intubate_rapid_sequence"
+   ],
+   "expect_phase": "presentation"
+  },
+  {
+   "name": "Alternative antibiotic and alternative steroid still resolve the case",
+   "steps": [
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    "cefepime",
+    "methylprednisolone_bolus"
+   ],
+   "expect_phase": "improving"
+  },
+  {
+   "name": "Oral steroid does not count as replacement",
+   "steps": [
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    "ceftriaxone",
+    "prednisone"
+   ],
+   "expect_phase": "adrenal_crisis"
+  },
+  {
+   "name": "Vancomycin alone does not count as treating the organism",
+   "steps": [
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    "hydrocortisone_bolus",
+    "vancomycin"
+   ],
+   "expect_phase": "progressive_meningococcaemia"
+  },
+  {
+   "name": "Crystalloid group coverage: a 500 mL bag counts as the bolus",
+   "steps": [
+    "insert_iv",
+    "lactated_ringer_s_500ml_bolus"
+   ],
+   "expect_phase": "adrenal_crisis"
+  },
+  {
+   "name": "Clock: nothing done at all",
+   "steps": [
+    {
+     "wait": 1200
+    }
+   ],
+   "expect_phase": "cardiac_arrest",
+   "note": "The do-nothing trajectory. Three time-guarded transitions and a terminal one."
+  },
+  {
+   "name": "Clock: adrenal deficit treated, organism left",
+   "steps": [
+    "insert_iv",
+    "hydrocortisone_bolus",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 1200
+    }
+   ],
+   "expect_phase": "cardiac_arrest",
+   "note": "Hydrocortisone treats what the infection caused, not the infection."
+  },
+  {
+   "name": "Clock: organism treated, adrenal deficit left",
+   "steps": [
+    "insert_iv",
+    "ceftriaxone",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 1200
+    }
+   ],
+   "expect_phase": "cardiac_arrest",
+   "note": "The mirror image. Two deficits need two drugs."
+  },
+  {
+   "name": "Clock: both drugs before the first deadline",
+   "steps": [
+    "insert_iv",
+    "ceftriaxone",
+    "hydrocortisone_bolus",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 1200
+    }
+   ],
+   "expect_phase": "improving",
+   "note": "No deadline ever fires."
+  },
+  {
+   "name": "Clock: rescued inside the last window",
+   "steps": [
+    "insert_iv",
+    {
+     "wait": 230
+    },
+    "ceftriaxone",
+    {
+     "wait": 215
+    },
+    "hydrocortisone_bolus",
+    "norepinephrine_drip"
+   ],
+   "expect_phase": "stabilized_shock"
+  },
+  {
+   "name": "Clock: rescued one action too late",
+   "steps": [
+    "insert_iv",
+    {
+     "wait": 230
+    },
+    {
+     "wait": 215
+    },
+    {
+     "wait": 305
+    },
+    "ceftriaxone",
+    "hydrocortisone_bolus",
+    "norepinephrine_drip"
+   ],
+   "expect_phase": "cardiac_arrest",
+   "note": "The pair to the scenario above. The difference between them is the lesson."
+  },
+  {
+   "name": "Clock: a slow but complete resident is not punished for thinking",
+   "steps": [
+    "attach_monitor",
+    {
+     "wait": 60
+    },
+    "insert_iv",
+    "fingerstick_blood_sugar",
+    "basic_chemistry_chem_7",
+    {
+     "wait": 90
+    },
+    "blood_culture_x_2",
+    "ceftriaxone",
+    {
+     "wait": 60
+    },
+    "hydrocortisone_bolus",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 600
+    }
+   ],
+   "expect_phase": "improving",
+   "note": "The fairness check. Pauses of 60, 90 and 60 seconds still reach resolution untouched."
+  },
+  {
+   "name": "Clock: a harmful action still halts after a deadline has passed",
+   "steps": [
+    "insert_iv",
+    {
+     "wait": 400
+    },
+    "metoprolol_bolus"
+   ],
+   "expect_phase": "halted"
+  }
+ ]
+}

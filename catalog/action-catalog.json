@@ -135,8 +135,8 @@
     "_note": "Ids used in sim_check.py mapped to this catalog. 'unmatched' means the case file assumes an action the UI does not offer.",
     "furosemide_iv": "furosemide_40_mg_iv",
     "dobutamine_infusion": "dobutamine_drip",
-    "niv_cpap": "non_invasive_positive_pressure_ventilation",
-    "niv_bipap": "non_invasive_positive_pressure_ventilation",
+    "niv_bipap_cpap": "non_invasive_positive_pressure_ventilation",
+    
     "cardiac_monitor": "attach_monitor",
     "crystalloid_bolus_1l": "equivalence group crystalloid_bolus (four entries)",
     "cxr_portable": "xr_chest (catalog does not distinguish portable)",

@@ -245,6 +245,11 @@ def build_pack(pack):
         # everything the picker needs, so it does not have to open the case file
         "card": {
             "title": m.get("working_title", case["case_id"]),
+            # The welcome screen lists the short clinical complaint, not the patient's
+            # own words; chief_complaint is the quote and belongs on the splash. Both
+            # of these are optional and degrade, so a pack written before them lists.
+            "complaint": m.get("complaint") or m.get("working_title", case["case_id"]),
+            "category": m.get("category"),
             "chief_complaint": m.get("chief_complaint_patient_voice", ""),
             "setting": (m.get("care_setting") or {}).get("label", ""),
             "target_level": m.get("target_level"),
@@ -285,6 +290,11 @@ def main():
     # so it lives beside the shell as a data URI rather than inline in it; the command
     # that regenerates it is in a comment at the top of the .room rule.
     room_bg = open(os.path.join(HERE, "room-bg.txt")).read().strip()
+    # Welcome screen assets, substituted the same way. Derived from assets/, not
+    # authored; see engine/README-assets.md for the regeneration commands.
+    hero_bg = open(os.path.join(HERE, "hero-bg.txt")).read().strip()
+    avatar_m = open(os.path.join(HERE, "avatar-male.txt")).read().strip()
+    avatar_f = open(os.path.join(HERE, "avatar-female.txt")).read().strip()
     # semantic.js declares `const SEM` and ui.js registers a listener on it at top
     # level, so it MUST come before ui.js. Reversed, the bundle throws before the
     # first render and the page is blank.
@@ -296,6 +306,9 @@ def main():
     title = "EM Case Simulator" if len(packs) != 1 else packs[0]["card"]["title"]
     shell = shell.replace("__TITLE__", title.replace("<", ""))
     shell = shell.replace("__ROOM_BG__", room_bg)
+    shell = shell.replace("__HERO_BG__", "data:image/jpeg;base64," + hero_bg)
+    shell = shell.replace("__AVATAR_M__", "data:image/png;base64," + avatar_m)
+    shell = shell.replace("__AVATAR_F__", "data:image/png;base64," + avatar_f)
     shell = shell.replace("__SHARED_JSON__", jsafe(shared))
     shell = shell.replace("__CASES_JSON__", jsafe(packs))
     shell = shell.replace("</script>\n</body>", bundle + "</script>\n</body>")

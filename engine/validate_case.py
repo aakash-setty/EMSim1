@@ -350,7 +350,146 @@ def run_checks(case):
             if cp is not None and cp not in reach:
                 errors.append(f"[reach] {a['catalog_id']} is critical in unreachable phase {cp!r}")
 
-    # -- F: harmful-capable tags carry a halt reason ------------------------
+
+    # -- T: time-guarded transitions (design 2.1a, authoring 5.1) -----------
+    # Six rules. Each is a lesson from a way a deterioration on a clock can become a
+    # trap rather than a lesson, so the reasoning is in the message, not only the rule.
+    FLOOR_ERROR, FLOOR_WARN, PROMPT_LEAD = 30, 60, 20
+
+    def guard_flags(tr):
+        """Flags the guard requires to be UNSET for this transition to fire."""
+        out = set()
+        w = tr.get("when") or ""
+        try:
+            node, _ = parse_condition(w)
+        except ParseError:
+            return out
+        for at in atoms_of(node):
+            if at.kind == "flag":
+                out.add(at.ident)
+        return out if "NOT" in w.upper() else set()
+
+    def prompts_in_phase(phase):
+        """(action id, flags it sets, first deadline) for prompts that can fire here."""
+        out = []
+        for a in case["case_actions"]:
+            pr = a.get("prompt")
+            if not pr:
+                continue
+            assign = {("phase", phase): True}
+            tag = None
+            for r in a["tag"]:
+                if r.get("when") is None or evaluate(parse_condition(r["when"])[0], assign):
+                    tag = r["value"]
+                    break
+            if tag != "critical":
+                continue
+            if pr.get("guard") and not evaluate(parse_condition(pr["guard"])[0], assign):
+                continue
+            out.append((a["catalog_id"], set(a.get("flags_set") or []), pr["deadline_seconds"],
+                        (pr.get("escalation") or {}).get("deadline_seconds", pr["deadline_seconds"])))
+        return out
+
+    time_edges = []
+    for ph in case["phases"]:
+        timed = [t for t in ph.get("transitions", []) if "after_seconds" in t]
+        for i, tr in enumerate(ph.get("transitions", [])):
+            if "after_seconds" not in tr:
+                continue
+            loc = f"{ph['id']}/transitions[{i}]"
+            n = tr["after_seconds"]
+
+            if not isinstance(n, int) or n < FLOOR_ERROR:
+                errors.append(f"[time] {loc}: after_seconds {n!r} is below the {FLOOR_ERROR}s "
+                              f"floor. A deterioration the resident could not plausibly have "
+                              f"prevented tests reflexes, not medicine")
+            elif n < FLOOR_WARN:
+                warnings.append(f"[time] {loc}: after_seconds {n} is under {FLOOR_WARN}s")
+
+            mf = tr.get("measured_from", "phase_entry")
+            if mf not in ("phase_entry", "guard_true"):
+                errors.append(f"[time] {loc}: measured_from {mf!r} is not phase_entry or guard_true")
+            if mf == "guard_true" and tr.get("when") is None:
+                errors.append(f"[time] {loc}: measured_from guard_true requires a guard")
+
+            for f in ("narration", "debrief_note", "author_rationale"):
+                if not tr.get(f):
+                    errors.append(f"[time] {loc}: missing {f}")
+
+            if tr.get("when") is None and not tr.get("unguarded_rationale"):
+                errors.append(f"[time] {loc}: a transition nothing can prevent is a scripted "
+                              f"trajectory and needs an unguarded_rationale")
+
+            dest = next((x for x in case["phases"] if x["id"] == tr["to"]), None)
+            if dest is None:
+                continue
+            if dest.get("terminal"):
+                if not tr.get("allow_time_to_terminal"):
+                    errors.append(f"[time] {loc}: ends the case on the clock without "
+                                  f"allow_time_to_terminal. Ending a case because nothing was "
+                                  f"done is the strongest statement this system makes and must "
+                                  f"never happen because a phase id was reused")
+                elif not tr.get("terminal_opt_in_rationale"):
+                    errors.append(f"[time] {loc}: allow_time_to_terminal without a rationale")
+                if tr["to"] == "halted":
+                    errors.append(f"[time] {loc}: a time-driven ending must not reuse the shared "
+                                  f"halted phase, which carries a harmful action's halt reason. "
+                                  f"Attributing an omission to a commission teaches the learner "
+                                  f"something false about their own run")
+            elif not dest.get("transitions"):
+                errors.append(f"[time] {loc}: destination {tr['to']!r} has no exit")
+
+            gf = guard_flags(tr)
+            for f in gf:
+                if f not in settable_flags:
+                    errors.append(f"[time] {loc}: guard names flag {f!r}, which no action sets")
+                    continue
+                helpers = [x for x in prompts_in_phase(ph["id"])
+                           if f in x[1] and x[2] <= n - PROMPT_LEAD]
+                if not helpers:
+                    any_p = [x for x in prompts_in_phase(ph["id"]) if f in x[1]]
+                    if any_p:
+                        errors.append(f"[time] {loc}: fires at {n}s on flag {f!r}, but the only "
+                                      f"prompt that sets it is at {min(x[2] for x in any_p)}s, "
+                                      f"less than {PROMPT_LEAD}s of lead")
+                    else:
+                        errors.append(f"[time] {loc}: fires at {n}s on flag {f!r} and no action "
+                                      f"prompting in this phase sets it. A deterioration nobody "
+                                      f"was warned about is a trap rather than a lesson")
+            time_edges.append((ph["id"], tr["to"]))
+
+        if timed:
+            earliest = min(t["after_seconds"] for t in timed)
+            for aid, _flags, first, last in prompts_in_phase(ph["id"]):
+                if first >= earliest:
+                    warnings.append(f"[time] {aid} prompts at {first}s in {ph['id']!r}, which has "
+                                    f"a time-guarded exit at {earliest}s, so it can never fire")
+                elif last >= earliest:
+                    warnings.append(f"[time] {aid} escalates at {last}s in {ph['id']!r}, which "
+                                    f"has a time-guarded exit at {earliest}s")
+
+    adj = {}
+    for a, b in time_edges:
+        adj.setdefault(a, set()).add(b)
+    seen, stack = set(), []
+
+    def _cycle(node):
+        if node in stack:
+            errors.append("[time] cycle composed only of time edges: "
+                          + " -> ".join(stack[stack.index(node):] + [node])
+                          + ". A loop with no resident involvement is a case that plays itself")
+            return
+        if node in seen:
+            return
+        seen.add(node); stack.append(node)
+        for nxt in adj.get(node, ()):
+            _cycle(nxt)
+        stack.pop()
+
+    for node in list(adj):
+        _cycle(node)
+
+    # -- F: harmful tags carry a halt reason
     for a in case["case_actions"]:
         if any(r.get("value") == "harmful" for r in a["tag"]) and not a.get("halt_reason"):
             errors.append(f"[halt] {a['catalog_id']}: tag can evaluate to harmful but no halt_reason")

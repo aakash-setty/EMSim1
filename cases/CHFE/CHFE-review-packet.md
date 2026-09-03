@@ -487,14 +487,23 @@ intended path, and each is rendered in a separate group so the gap stays visible
 
 **Harm that is escapable. Partly fixed.** The fluid bolus now covers all four crystalloid
 entries through the catalog's `crystalloid_bolus` equivalence group, and **all four halt the
-case**, verified. Two escapes remain: ipratropium alone escapes the bronchodilator trap, and a
-ketamine infusion does not satisfy the post-intubation sedation follow-up. A harmful tag has to
-cover every route to the harm, and at the moment it covers
-one route each.
+case**. That is now walked rather than asserted: `sim_runner.py` learned to resolve
+`also_covers`, which it previously could not, so three scenarios walk the covered siblings
+to the same halt. Two escapes remain: ipratropium alone escapes the bronchodilator trap,
+and a ketamine infusion does not satisfy the post-intubation sedation follow-up. A harmful
+tag has to cover every route to the harm, and at the moment it covers one route each.
 
-**CPAP and BiPAP are one catalog entry.** The case tags them separately; the interface can
-offer only one button, so BiPAP is unreachable. The prototype says so on screen rather than
-dropping it silently.
+**CPAP and BiPAP are one catalog entry. Fixed.** The case used to tag them as two actions
+bound to the same entry, and because one catalog entry resolves to one case action the
+second was never in the action surface at all: its tag, its debrief note and its two
+references were unreachable, and a scenario step naming it was silently discarded rather
+than blocked, so that scenario had been passing for the wrong reason. They are now a
+single action, `niv_bipap_cpap`, whose note carries both teaching points including the one
+previously lost, that bilevel and continuous pressure are equivalent here and that bilevel
+is often preferred in the hypercapnic patient this one is. See `consolidate_niv.py` in
+this folder. If the catalog ever splits the two modes into separate entries, the fix is to
+add them to the `non_invasive_ventilation` equivalence group and bind this action to the
+group, not to reintroduce two case actions.
 
 **Diagnoses: fixed, and worth knowing how it was found.** The case named its diagnoses in
 its own ids, and the builder had a fallback that guessed the correct one by looking for
@@ -658,9 +667,9 @@ reviewer and a second case would have had none. Read the short labels: the resid
 them for the whole run.
 
 **Renames.** "Place two large-bore peripheral IVs" is now "Insert IV", matching the catalog.
-CPAP is now "Positive pressure ventilation (CPAP/BIPAP)", which also resolves the display half
-of the shadowing problem in section 12: one button now honestly describes both modes, even
-though the case still scores them as two actions.
+CPAP is now "Positive pressure ventilation (BiPAP/CPAP)". That resolved the display half of
+the shadowing problem in section 12 at the time; the scoring half is resolved too now that
+the two actions have been merged into one.
 
 **Stabilization ordering.** The ungrouped stabilization entries (monitor, IV, compressions)
 now sort to the top of that tab, ahead of vascular access, oxygen, intubation and the rest.
@@ -817,3 +826,26 @@ only in this packet and in the case file's provenance block, so **the packet is 
 reader will encounter it.**
 
 Actions with no catalog entry are still shown in their own labelled group, as requested.
+
+
+---
+
+## Addendum: what changed when the engine moved to v0.6
+
+This case authors no time-guarded transitions and is unaffected by the mechanism. Three
+things did change for it, none clinical.
+
+**Three phantom entries left its omissions list.** `also_covers` was handing every covered
+crystalloid entry the covering action's critical expectation as well as its tag, so the
+debrief counted four expected actions where the resident performs one act. Covered entries
+now inherit the tag, the halt reason and the debrief note only.
+
+**Its NIV actions were consolidated**, recorded in section 12 above and in
+`consolidate_niv.py`.
+
+**Its scenario list grew from ten to thirteen**, and one of the original ten had been
+passing for the wrong reason. Two of the three new ones walk crystalloid siblings; the
+third walks the last.
+
+Nothing in the clinical content of this case was reviewed or changed as part of that work,
+so the sign-off checklist stands exactly where it did.
