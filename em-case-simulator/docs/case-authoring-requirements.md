@@ -1,6 +1,6 @@
 # Case Authoring Requirements
 
-**Version 0.3 | Aligned to System Design v0.4**
+**Version 0.4 | Aligned to System Design v0.5**
 
 What must be provided to produce one complete, playable, clinically valid case.
 
@@ -10,13 +10,21 @@ This document has two audiences. The **case author** is an emergency physician w
 
 **A case is now a folder, not a file.** Everything you author for one case lives in `cases/<PREFIX>/` with a shared prefix, and every tool takes that folder as its argument. `python3 engine/new_case.py <PREFIX>` scaffolds it, including a copy of the seed template and the exam routing map. See section 16 and the repository README.
 
+**Changed from v0.3.** One change matters more than the rest: **the resident no longer starts with a background paragraph.** The Patient tab is gone, there are seven tabs, and what the resident is handed at the start is two sentences of arrival handover, plus a splash line naming the room. Everything else about the patient must be asked for. Concretely, for the author:
+
+- Section 3.2 now asks for a structured `arrival` block (`mode`, `location`) and a separately authored **two-sentence handover**, written to be mediocre on purpose. The old free-prose "how the patient reached you" is no longer what the runtime shows.
+- The splash screen no longer shows the handover or the arrival mode. Do not write scene-setting expecting it to appear there.
+- The interview now carries the weight the Patient tab used to carry, so **section 10.2 topic coverage is no longer a nicety.** A topic you did not author is a question the resident cannot get an answer to, and there is no fallback paragraph behind it.
+- Vitals ramp over five seconds at phase boundaries. This changes nothing you author; section 6 notes the one consequence.
+- Section 10.6 carries new measurements of the interview matcher, and the matcher itself has changed.
+
 If you are authoring your first case, read section 0, then jump to **section 16** and follow it. The rest of this document is the reference it points into.
 
 ---
 
 ## 0. How the case runs
 
-Understanding the runtime is necessary to author for it. Ten facts govern everything below.
+Understanding the runtime is necessary to author for it. Twelve facts govern everything below.
 
 1. **The case moves through phases.** A phase is a clinically distinct patient status. Interventions move the patient between phases.
 2. **A clock runs, but it does not change the patient.** Time governs when results arrive, when the nurse prompts, and timing feedback in the debrief. There are no time-driven phase transitions and vitals do not drift. An untreated patient does not deteriorate.
@@ -28,6 +36,8 @@ Understanding the runtime is necessary to author for it. Ten facts govern everyt
 8. **The resident sees the whole catalog, not your case's actions.** Every drug, study and maneuver in the product is on the menu whether or not you referenced it.
 9. **Orders on the action tabs are selected then submitted as a batch.** Exams, interview questions and consults fire immediately.
 10. **The case ends** when the resident confirms a handoff, when a harmful action halts it, or when the resident ends it early.
+11. **The resident is given almost nothing at the start.** A splash line naming the room, then age, sex, chief complaint and a two-sentence arrival handover at the top of the History tab. There is no Patient tab and no background paragraph. Everything else is reachable only by asking.
+12. **Vitals ramp to the new phase over five seconds** when a phase changes. This is display only. A result ordered during the ramp still freezes at the phase's authored numbers, so the monitor and a simultaneous blood gas can disagree for a few seconds.
 
 ---
 
@@ -100,8 +110,48 @@ Supplied before any AI drafting begins. For a case the author knows well this sh
 - Age, sex, weight, relevant background
 - Presenting vital signs
 - Presenting appearance in one or two sentences
-- **How the patient reached you**: ambulance, walk-in, transfer, police, and the handover as it would be given
 - **The care setting**, if it is not a quaternary Level 1 centre with everything available. This is not scene-setting: the correct disposition depends on it, and a case written for a hospital with no cardiology on site has a different right answer
+- **How the patient arrived**, as three separate fields, described below
+
+**Arrival. Changed in v0.4 and this is the change most likely to catch out an author who has written a case before.**
+
+Through v0.3 arrival was free prose, it was shown on the splash screen, and it was shown again on a Patient tab alongside a structured background. The splash section is gone and so is the Patient tab. What the runtime now uses:
+
+```json
+"metadata": {
+  "arrival": {
+    "mode": "ems",
+    "location": "resuscitation_bay",
+    "line": "Brought in by EMS. Handover given on arrival in the resuscitation bay."
+  }
+},
+"patient": {
+  "arrival_handover": "Sixty-five year old man, breathing trouble that's been getting worse over the last few days. Family called us this morning when he couldn't manage the stairs."
+}
+```
+
+- **`mode`** is `ems` or `triage`, and nothing else. It decides who is speaking: an EMS crew handing over, or a triage nurse reporting what the patient told them at the desk. Legacy values (`Ambulance`, `Walk-in`, `Transfer`, `Police`) still load and produce a validator warning; convert them.
+- **`location`** is `resuscitation_bay`, `trauma_bay` or `patient_room`. The splash screen renders `Patient brought to the Resuscitation Bay` from it. This is the **only** arrival information the resident sees before pressing Begin, and it is generated, not authored prose.
+- **`line`** is a one-sentence internal description used in the chart header and the debrief. It is not the handover.
+- **`patient.arrival_handover`** is the two sentences the resident reads at the top of the History tab.
+
+**Rules for the handover, all enforced by the validator except the last two.**
+
+- **Exactly two sentences.** More than two is an error. Roughly 45 words is the practical ceiling and the validator warns beyond it.
+- **No vital signs.** They are on the monitor. Quoting them in the handover is a warning.
+- **No past medical history, no medication list, no allergies.** Every one of those is an interview topic. Putting it in the handover means the resident gets it without asking, which is the failure the Patient tab was removed to prevent.
+- **No pertinent negatives.** "Denies chest pain" hands over the single most useful discriminator in most dyspnoea cases.
+- **No diagnosis, and no word that names one.** Not "CHF exacerbation", not "fluid overloaded", not "septic". A crew radioing in may say those things; a case that says them has ended the case.
+- **Write it badly on purpose.** This is the hard part and it is not enforceable. A real handover from a busy crew is vague, partly wrong about timing, and organised around what was visible rather than what matters. Aim for that. The temptation is to write a competent summary, and a competent summary is worse than no handover, because it teaches that the handover can be trusted.
+
+**What a triage handover sounds like, versus an EMS one.** The triage nurse has the patient's own account and a set of observations from the waiting room; the crew has the scene, the family and what happened in the ambulance. Neither has a chart.
+
+| mode | example |
+|---|---|
+| `ems` | "Sixty-five year old man, breathing trouble that's been getting worse over the last few days. Family called us this morning when he couldn't manage the stairs." |
+| `triage` | "Fifty-eight year old woman walked up to the desk saying her chest has felt tight since last night. She looked pale enough that I brought her straight through." |
+
+**The background did not go away.** Section 3.7 interview ground truth is still required in full, and it is now the only route to any of it. Removing the tab raised the cost of an unauthored topic from "slightly less convenient" to "unanswerable", which is why section 10.2 coverage now matters more than it did.
 
 **3.3 Phases (three to six clinical phases, plus terminals)**
 For each: a short label, a one-line clinical description, and the vital signs in that phase. At least one must be a resolution phase. At least one should be a deterioration phase if deterioration is clinically plausible.
@@ -211,6 +261,11 @@ If a case needs an appearance feature outside this list, that is a request to ex
 **Saturation and heart rate are now audible.** The heartbeat runs at the authored rate and its pitch falls with the authored saturation. A saturation chosen loosely because it was "about right" will be heard, not just read. Choose the numbers as deliberately as you would for the monitor.
 
 **Consequence to accept:** vitals are static within a phase and change at phase boundaries. Small cosmetic variance is added by the renderer so the monitor does not look frozen, but that variance carries no clinical meaning and no rule reads it.
+
+**Phase boundaries now ramp over five seconds.** Rather than replacing every number at once, the renderer interpolates heart rate, both pressures, saturation, respiratory rate and temperature from the previous displayed values to the new phase's authored values across five seconds, and the heartbeat audio follows. Two consequences for the author:
+
+- **Author the endpoints, not the path.** You still supply one set of numbers per phase. There is no way to author a trajectory, and the ramp is not one: it is a straight interpolation between two authored plateaus. A case that clinically requires a rise over minutes still needs an extra phase.
+- **A result ordered during a ramp freezes at the phase's authored numbers**, not the ramped ones, per fact 7. So a blood gas ordered one second after a transition returns the new phase's values while the monitor is still showing something in between. This is a real inconsistency, it lasts up to five seconds, and it was accepted rather than fixed, because the alternatives are ramping state (which breaks result freezing) or delaying results (which makes the clock lie). It is not worth authoring around; it is worth knowing about if a reviewer reports it as a bug.
 
 ---
 
@@ -417,6 +472,8 @@ At minimum: onset, timing and progression, character, location, radiation, sever
 
 Consider also code status and goals of care where the presentation makes them live.
 
+**This list stopped being a minimum and became the case.** Through v0.3 a resident who could not get an interview answer still had the Patient tab's background paragraph. That is gone (section 3.2). An unauthored topic is now a dead end, and a resident who hits three of them in a row concludes the simulator is broken rather than that they asked the wrong questions. Author the full list even where a topic is clinically irrelevant here, because the denial is itself the teaching (10.3).
+
 ### 10.3 Three distinct response types
 
 Mandatory, and a common failure point.
@@ -454,15 +511,60 @@ Specify the out-of-scope fallback in this patient's voice.
 
 **Matching accuracy is the highest technical risk in the case system**, because a mismatch delivers a clinically wrong answer with full confidence, and unlike a fallthrough it is invisible to the learner.
 
-Measured on one case with 34 topics at ten variants each, using inverse-document-frequency weighted matching with a rare-token override: **23 of 25 held-out phrasings matched correctly, 1 matched the wrong topic, 1 fell through. Out-of-scope questions were misrouted 2 times in 5.** A plain bag-of-words matcher on the same bank scored 18 of 25 with 5 wrong topics, two of them clinically opposite: "any calf pain" matched the chest pain topic, and "does anything make it better" matched aggravating factors.
+#### What the matcher is, as of v0.4
 
-Two things follow.
+Two stages. The architecture is in system design section 20; what an author needs to know:
 
-**The number to watch is the wrong-topic rate on topics whose answers change management**, not overall accuracy. A fallthrough is visible to the learner; a wrong topic is not. Expand variants first on the topics where a wrong answer changes the workup.
+**Stage one, lexical, always runs.** IDF-weighted overlap between the typed question and your authored variants. It gained three extensions in this version, all aimed at the gap between how residents type and how patients speak:
 
-**Measure it, and measure the shipped matcher.** Each case pack should carry a `<PREFIX>-matcher-eval.js` holding held-out phrasings that appear in no variant list, and it should extract the matcher from the built prototype rather than reimplementing it. A second copy of the matching logic drifts, and then the evaluation reports on a matcher nobody runs. Do not tune the matcher against the held-out set and then quote the result; that measures memorisation rather than coverage.
+- a clinical abbreviation lexicon (`pnd`, `orthopnea`, `pmh`, `sob`, roughly ninety entries) rewritten into the lay words your variants actually contain, and **only** where your case has not itself authored that word
+- single-edit typo repair against your case's own vocabulary
+- compound-question splitting on `and`, `or`, commas and similar, gated so that a clause is only accepted if it scores comparably to the whole question
 
-**Out-of-scope handling is the weakest part.** Two in five unrelated questions receive a confident, specific, wrong answer. Until that improves, assume any question your case does not cover may be answered as though it were a different question.
+**Stage two, an embedding model, is optional and may never load.** all-MiniLM-L6-v2, about 23 MB, fetched from a CDN and cached in the browser. It fuses with stage one when ready and is skipped when it is not. **Author as though it will never load**, because on a hospital network it often will not, and a case that is only playable with the model is a case that is sometimes unplayable.
+
+#### Measured accuracy
+
+Two evaluation sets exist for the reference case (34 topics, 340 variants, threshold 0.32) and they say different things. Both numbers are on the shipped lexical stage with the model off.
+
+**Set A, `cases/CHFE/CHFE-matcher-eval.js`, 25 held-out phrasings plus 5 out-of-scope, written by the case author.**
+
+| | correct | wrong topic | fell through | out-of-scope refused |
+|---|---|---|---|---|
+| v0.3 matcher | 23/25 | 1 | 1 | 3/5 |
+| v0.4 matcher | 23/25 | 1 | 1 | 3/5 |
+
+**The v0.4 work made no difference at all on the author's own set.** That is not a failure of the work and it is not a reason to trust the work either. Set A is written entirely in lay register, in full grammatical sentences, correctly spelled, one question at a time. The v0.3 matcher already handled that, and the lexicon, the typo repair and the splitting have nothing to act on.
+
+**Set B, `engine/eval/interview-eval-CHFE.json`, 49 in-scope plus 5 out-of-scope, stratified by register.**
+
+| category | v0.3 | v0.4 |
+|---|---|---|
+| paraphrase | 21/25 | 22/25 |
+| shorthand | 5/12 | 12/12 |
+| typo | 1/4 | 4/4 |
+| compound | 0/3 | 3/3 |
+| conversational | 3/5 | 3/5 |
+| out-of-scope refused | 3/5 | 3/5 |
+| **total** | **33/54** | **47/54** |
+
+**Read set B with its provenance in front of you.** It was written by an AI assistant, not by the case author, and the expected topic on each row is that assistant's judgement. It is a characterisation of failure modes, not a validated instrument, and it should be replaced with author-written questions before any number from it is quoted outside this document. The out-of-scope arm (n=5) is far too small to conclude anything; 30 would be a floor.
+
+**What the two sets together support, and what they do not.** They support the claim that the v0.4 extensions help with shorthand, typos and compound questions and are neutral elsewhere. They do not support any claim about how residents actually type, because neither set was collected from residents. The honest summary is that a known gap was closed and the size of the gap in real use is unmeasured.
+
+#### The rules that follow from this
+
+**The number to watch is the wrong-topic rate on topics whose answers change management**, not overall accuracy. A fallthrough is visible to the learner; a wrong topic is not. Expand variants first on the topics where a wrong answer changes the workup. Both harnesses report this number separately for that reason.
+
+**Out-of-scope handling is the weakest part and did not improve.** Two in five unrelated questions still receive a confident, specific, wrong answer. "What is your favourite colour" returns the cough and sputum answer. Assume any question your case does not cover may be answered as though it were a different question.
+
+**A veto rule exists and is switched off.** The fusion could suppress a lexical match when the embedding model scores it very low, which would cut false answers. It is disabled because the brief for this simulator is maximum recall: the resident has no other source of context now that the Patient tab is gone, so a stall costs more than a wrong answer. **This is a deliberate trade against the paragraph above**, and an author who thinks their case is more harmed by wrong answers than by stalls should say so rather than assume the default fits.
+
+**Measure it, and measure the shipped matcher.** Each case pack carries a `<PREFIX>-matcher-eval.js` holding held-out phrasings that appear in no variant list, and it extracts the matcher from the built prototype rather than reimplementing it. A second copy of the matching logic drifts, and then the evaluation reports on a matcher nobody runs. Do not tune the matcher against the held-out set and then quote the result; that measures memorisation rather than coverage.
+
+**The extraction is fragile in a specific way and has broken twice.** The harness slices the built file between two marker comments and evaluates everything in between. Anything semantic-related placed inside that region throws `ReferenceError: SEM is not defined`, because the embedding module is not loaded in the harness. If your case's eval harness dies that way, the fix is in the engine, not in your case. See system design 20.3.
+
+**Write held-out questions in the register you expect, not the register you write variants in.** Set A is the cautionary example: it is a good test that was measuring a part of the system nothing had changed. If every question in your held-out set is a well-formed lay sentence, your set will report that the matcher is fine no matter what you do to it.
 
 ---
 
@@ -650,6 +752,16 @@ Blocked attempts are surfaced in the debrief but not penalized, since the system
 **Silent normals**
 - A study named in a condition or tagged critical but unauthored warns, naming the default that will be served
 
+**Arrival**
+- `metadata.arrival.mode` is `ems` or `triage`; a legacy prose value warns
+- `metadata.arrival.location` is `resuscitation_bay`, `trauma_bay` or `patient_room`
+- `patient.arrival_handover` exists and is not still the scaffold TODO
+- The handover is at most two sentences (error) and about 45 words (warning)
+- The handover does not quote vital signs (warning)
+- The validator prints an arrival note giving the mode, the room, the sentence count and the word count
+
+What the validator **cannot** check is everything that matters most about the handover: whether it names a diagnosis in lay words, whether it contains a pertinent negative, and whether it is too competent. Those are review-checklist items (14.3).
+
 **Handoff**
 - The correct diagnosis and every authored alternative resolve to real catalog ids
 
@@ -681,7 +793,16 @@ Per-key enumeration can produce combinations unreachable in the real case, for e
 - [ ] Exam findings sit where the routing map puts them, and the general status line matches the patient
 - [ ] Every diagnosis, correct and alternative, is a real catalog id
 
+**Arrival handover**
+- [ ] It names no diagnosis, in clinical or lay words
+- [ ] It contains no past history, no medication, no allergy, no pertinent negative, no vital sign
+- [ ] It is vague and incomplete in the way a real busy handover is, rather than a competent summary
+- [ ] It is in the right voice for `mode`: a crew who saw the scene, or a triage nurse who saw the waiting room
+- [ ] Read cold, it gives a resident somewhere to start and nowhere to finish
+
 **Interview**
+- [ ] Every topic in the 10.2 minimum list is authored, including the ones this case does not turn on
+- [ ] The case has been played through the History tab alone, asking only what a resident would think to ask, to check that the case opens at all without the old background paragraph
 - [ ] The patient never reveals the diagnosis or reports information they could not know
 - [ ] Pertinent negatives are authored as denials, not left to the out-of-scope fallback
 - [ ] Interview answers are correct at every alertness level, and every topic has a distressed-phase answer where the case needs one
@@ -715,8 +836,9 @@ The last item is not ceremonial. Both the validator and the review matrix read t
 - **Serial testing cannot be represented.** A repeat study in an unchanged state returns the same value.
 - **One vitals block per terminal phase.** Every halt shows the same numbers whatever the mechanism.
 - **Turnaround times are compressed** and do not reflect real clinical waits.
-- **Vitals are static within a phase.** The monitor steps at phase boundaries.
-- **The interview matcher is lexical**, with the error rates in section 10.6.
+- **Vitals are static within a phase.** The monitor holds one authored set per phase and ramps to the next over five seconds. You author plateaus, not trajectories.
+- **The interview matcher can only return what you authored.** No stage of it invents an answer. With the Patient tab gone, an unauthored topic is a dead end rather than an inconvenience. Error rates in section 10.6.
+- **There is no background paragraph.** Two sentences of arrival handover is everything the resident is given. See section 3.2.
 
 Each is a deliberate trade for version one. The rule structure migrates cleanly when continuous variables are added, because rule lists keep the same shape and only the predicate set becomes richer.
 
@@ -740,6 +862,8 @@ The skeleton deliberately fails the validator. The error list is your to-do list
 About an hour for a case you know well. Nothing downstream can be right if this is wrong or thin.
 
 **Before you write the action spine, open the catalog** and check that the actions your case turns on actually exist. This is the cheapest possible moment to discover that the rescue for your deterioration branch is not in the product.
+
+**Write the arrival block and the two-sentence handover here, not later.** Section 3.2. The handover is the only thing the resident has before they start asking, so it is a clinical decision about how hard the case opens, and it is the one piece of prose in the seed where writing it well makes the case worse. Deciding it at the end, after you have the full history in front of you, reliably produces a handover that summarises the case.
 
 ### Step 3. Bind to the catalog (section 7.2). AUTHOR-ONLY sign-off.
 Produce a binding row per action. The AI proposes; you accept each `mapped` row. Any `unmatched` row is a decision: request a catalog entry, or change the case.

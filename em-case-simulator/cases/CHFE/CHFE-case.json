@@ -70,7 +70,8 @@
    "provenance": "Setting is a deployment property, not a clinical fact. It is authored per case so that a case written for a critical access hospital can say so, because the correct disposition depends on it."
   },
   "arrival": {
-   "mode": "Ambulance",
+   "mode": "ems",
+   "location": "resuscitation_bay",
    "line": "Brought in by EMS. Handover given on arrival in the resuscitation bay."
   }
  },
@@ -82,7 +83,8 @@
   "background": "Ischaemic cardiomyopathy with HFrEF, LVEF 25-30% on echocardiogram eight months ago. Anterior STEMI six years ago treated with a drug-eluting stent to the left anterior descending artery. Hypertension. Type 2 diabetes mellitus. Chronic kidney disease stage 3 with a baseline creatinine of 1.4 mg/dL. Ex-smoker, 30 pack-years, stopped at the time of his infarct. Untreated obstructive sleep apnoea (declined CPAP two years ago). Home medications: furosemide 40 mg daily, carvedilol 12.5 mg twice daily, sacubitril/valsartan 49/51 mg twice daily, spironolactone 25 mg daily, empagliflozin 10 mg daily, atorvastatin 40 mg nightly, aspirin 81 mg daily, metformin 1000 mg twice daily.",
   "presenting_vitals_source": "Inherited from phase 'presentation'. EMS applied a nasal cannula at 6 L/min en route and established no intravenous access.",
   "presenting_appearance": "A heavy-set older man sitting bolt upright on the EMS stretcher, gripping the rails, visibly sweating and speaking in two or three word bursts. He will not lie flat and pushes the trolley back up when it is lowered.",
-  "ems_handover_text": "Sixty-five year old man, known heart failure, three or four days of worsening breathlessness, much worse since about four this morning. Family called when he could not get up the stairs. Sats were 84 percent on room air at the house, 87 on six litres now. Pressure has been running high the whole way in, last was 190 over 100. He has not had any of his own medications for the last few days. No chest pain that he will admit to. Nothing given en route apart from oxygen."
+  "ems_handover_text": "Sixty-five year old man, known heart failure, three or four days of worsening breathlessness, much worse since about four this morning. Family called when he could not get up the stairs. Sats were 84 percent on room air at the house, 87 on six litres now. Pressure has been running high the whole way in, last was 190 over 100. He has not had any of his own medications for the last few days. No chest pain that he will admit to. Nothing given en route apart from oxygen.",
+  "arrival_handover": "Sixty-five year old man, breathing trouble that's been getting worse over the last few days. Family called us this morning when he couldn't manage the stairs."
  },
  "phase_notes": {
   "count_justification": "Five clinical phases plus two terminal phases. Section 3.3 of the authoring requirements asks for three to six phases. If terminal phases are counted the case exceeds that ceiling by one. Flagged for the design owner in the review packet: the guidance should state whether terminal phases count toward the limit.",

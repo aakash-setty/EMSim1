@@ -8,177 +8,423 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ============================================================
+   PALETTE — daylight
+
+   The room photograph sits behind everything, blurred and lit. Every surface
+   above it is a frosted white pane, so the page reads as a bright bay rather
+   than a control room.
+
+   The one deliberately dark object is the monitor. A bedside monitor IS a dark
+   screen with luminous traces, and the vital colours only separate properly
+   against black: green, cyan, amber and red at the saturations that make HR
+   distinguishable from SpO2 at a glance all fail on white. So the monitor keeps
+   its screen, in the header and again in the expanded chart header, and
+   everything around it is daylight.
+
+   COLOUR CODING. One hue means one thing, everywhere it appears:
+
+     blue    information that came back — results, labs, imaging, readouts
+     green   done, and done correctly
+     amber   in flight — ordered, pending, waiting on a clock
+     red     harm, abnormality, or a critical action missed
+     violet  a person speaking — the nurse, the patient, a consultant
+     slate   structure, and anything not yet acted on
+
+   The neutrals carry a slight blue bias taken from the wainscot in the
+   photograph, so the panes sit in the room rather than on top of it.
+   ============================================================ */
 :root{
-  --bay:#0A1014; --bay2:#111A21; --bayline:#22303B;
-  --hr:#35D07F; --bp:#F0685A; --spo2:#54C7F0; --rr:#FFD24A; --temp:#DDE4E9;
-  --paper:#DFE3E7; --surface:#FFFFFF; --surface2:#F4F6F8;
-  --ink:#12171C; --ink2:#5C666F; --ink3:#8A939B;
-  --rule:#C3CAD1; --rule2:#E2E6EA;
-  --act:#17466B; --actl:#E7EEF5;
-  --harm:#9E2B22; --harml:#FBEAE8;
-  --ok:#1B6B48; --okl:#E6F2EC;
-  --warn:#8A5A00; --warnl:#FBF1DE;
+  /* monitor screen and its traces: read against --screen only */
+  --screen:#0C1922; --screen2:#16262F;
+  --hr:#3FE39A; --bp:#FF8A7E; --spo2:#63CCFF; --rr:#FFD34D; --temp:#DCE7EE;
+
+  --paper:#E7EDF1;
+  --pane:rgba(255,255,255,.88);      /* reading surfaces            */
+  --pane2:rgba(255,255,255,.62);     /* controls sitting on a pane  */
+  --sunk:rgba(21,48,66,.05);         /* inset wells                 */
+  --solid:#FFFFFF;                   /* where translucency can't stack */
+  --ink:#16242E; --ink2:#46606F; --ink3:#78909F;
+  --rule:rgba(21,48,66,.17); --rule2:rgba(21,48,66,.09);
+  --shadow:rgba(21,48,66,.16);
+
+  --act:#1F6FB2;  --actl:rgba(31,111,178,.10);  --actb:rgba(31,111,178,.40);
+  --harm:#C0302A; --harml:rgba(192,48,42,.10);  --harmb:rgba(192,48,42,.40);
+  --ok:#1A7A55;   --okl:rgba(26,122,85,.11);
+  --warn:#A16A05; --warnl:rgba(161,106,5,.13);
+  --voice:#6A4CA6; --voicel:rgba(106,76,166,.10);
+
   --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+
+  --rail:88px;                /* fixed icon rail, always on screen  */
+  --rdock:360px;              /* right panel, docked width          */
+  --rwide:70vw;               /* right panel, expanded width        */
+  --lwidth:60vw;              /* left panel, open width             */
+  --top:96px;                 /* set from the header height by JS   */
+  --ease:cubic-bezier(.32,.72,.24,1);
+  --glass:blur(16px) saturate(1.4);
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
+html,body{margin:0;padding:0;height:100%;overflow:hidden}
 body{
   background:var(--paper); color:var(--ink); font-family:var(--sans);
   font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
 }
 button{font:inherit;color:inherit}
-.wrap{max-width:1180px;margin:0 auto;padding:0 0 64px}
 
-/* ---------- the bay: dark strip, monitor + nurse ---------- */
-.stick{position:sticky;top:0;z-index:40}
-.bay{
-  background:linear-gradient(180deg,var(--bay2),var(--bay));
-  color:var(--temp); border-bottom:1px solid var(--bayline);
-}
-.bayin{max-width:1180px;margin:0 auto;padding:12px 20px 14px;
-  display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start}
-.nurse{min-width:0}
-.nurselab{font-size:11.5px;color:#6E828F;letter-spacing:.02em;margin-bottom:3px}
-.nurseline{font-size:15.5px;line-height:1.45;color:#E9F0F4;min-height:2.9em}
+/* ---------- the room ----------
+   __ROOM_BG__ is replaced at build time by the contents of engine/room-bg.txt,
+   a base64 JPEG data URI. The asset is derived, not authored, so it is not
+   checked in as a blob inside this file. Regenerate it from the source image
+   with:
+
+     python3 -c "
+     import base64,io; from PIL import Image, ImageFilter
+     im=Image.open('SOURCE.png').convert('RGB'); w=1280
+     t=im.resize((w,round(im.height*w/im.width)),Image.LANCZOS).filter(ImageFilter.GaussianBlur(3))
+     b=io.BytesIO(); t.save(b,'JPEG',quality=66,optimize=True,progressive=True)
+     open('engine/room-bg.txt','w').write('data:image/jpeg;base64,'+base64.b64encode(b.getvalue()).decode())"
+
+   Most of the blur is baked in there rather than done in CSS: a 1280px JPEG
+   that is already soft compresses to about 78 KB, where the same picture kept
+   sharp for the browser to blur costs several times that in every build. The
+   CSS blur below only softens the upscale. scale() past the viewport hides the
+   soft edge the filter leaves. If the replacement never happens the URL is
+   invalid and the room falls back to flat --paper, which is degraded but not
+   broken. */
+.room{position:fixed;inset:0;z-index:0;background:var(--paper) center/cover no-repeat;
+  background-image:url("__ROOM_BG__");
+  filter:blur(3px) saturate(.92) brightness(1.02);transform:scale(1.06)}
+/* A white scrim rather than a black one: enough to lift the photograph away
+   from the panes and keep the gaps between them quiet, not so much that the
+   room stops reading as a room. Brightest at the top, where the header sits,
+   so the nurse line never lands on the ceiling lights. */
+.roomtint{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(130% 100% at 50% 22%,rgba(255,255,255,.00),rgba(226,235,241,.38) 82%),
+    linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,.02) 34%,rgba(219,230,238,.40))}
+
+/* ============================================================
+   HEADER: nurse, monitor, clock. Fixed, full width, never occluded by a
+   panel at any state, which is the whole reason it was not moved into the
+   room as a floating slab.
+   ============================================================ */
+.stick{position:fixed;top:0;left:0;right:0;z-index:60}
+.bay{background:rgba(255,255,255,.80);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  border-bottom:1px solid var(--rule);box-shadow:0 8px 26px -20px var(--shadow)}
+.bayin{padding:12px 20px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+
+/* The nurse speaks, so she carries the voice hue, the same violet the patient
+   and every consultant use further down the page. */
+.nurse{min-width:0;border-left:3px solid var(--voice);padding-left:13px}
+.nurselab{font-size:10.5px;color:var(--voice);letter-spacing:.09em;text-transform:uppercase;
+  font-weight:600;margin-bottom:2px}
+.nurseline{font-size:15.5px;line-height:1.45;color:var(--ink);min-height:2.9em;max-width:70ch}
 .nurseline.fresh{animation:nfade .5s ease}
 @keyframes nfade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
-.nursemeta{font-family:var(--mono);font-size:11px;color:#5E7280;margin-top:4px}
+.nursemeta{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:3px}
+.soundrow{display:flex;align-items:center;gap:10px;margin-top:7px}
+.soundbtn{background:var(--pane2);border:1px solid var(--rule);color:var(--ink2);
+  border-radius:3px;padding:3px 10px;font-size:12px;cursor:pointer}
+.soundbtn:hover{border-color:var(--actb);color:var(--act);background:var(--actl)}
+.soundbtn[aria-pressed="true"]{border-color:var(--ok);color:var(--ok);background:var(--okl)}
 
+/* the one dark object on the page */
+.monwrap{background:var(--screen);border:1px solid rgba(255,255,255,.07);border-radius:7px;
+  padding:11px 18px 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 20px -14px var(--shadow)}
 .mon{display:flex;gap:18px;align-items:flex-end}
 .vit{text-align:right;min-width:78px}
-.vitlab{font-size:10.5px;color:#677B88;font-family:var(--mono);letter-spacing:.04em}
+.vitlab{font-size:10px;color:#83A0AF;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
 .vitval{font-family:var(--mono);font-weight:600;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
-.vitunit{font-size:11px;color:#677B88;font-family:var(--mono)}
+.vitunit{font-size:11px;color:#83A0AF;font-family:var(--mono)}
 .v-hr{color:var(--hr)} .v-bp{color:var(--bp)} .v-spo2{color:var(--spo2)}
 .v-rr{color:var(--rr)} .v-temp{color:var(--temp)}
-.clockbox{text-align:right;border-left:1px solid var(--bayline);padding-left:16px}
-.clock{font-family:var(--mono);font-size:26px;font-weight:500;color:#B9C6CE;font-variant-numeric:tabular-nums}
-.phasechip{font-size:11px;color:#8FA3AF;font-family:var(--mono);margin-top:2px;
+.clockbox{text-align:right;border-left:1px solid rgba(255,255,255,.14);padding-left:16px}
+.clock{font-family:var(--mono);font-size:26px;font-weight:500;color:#CBD9E1;font-variant-numeric:tabular-nums}
+.phasechip{font-size:11px;color:#8FA8B6;font-family:var(--mono);margin-top:2px;
   max-width:190px;margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.trace{height:22px;margin-top:6px;opacity:.85}
+.trace{height:22px;margin-top:5px;opacity:.95}
 
-.soundrow{display:flex;align-items:center;gap:10px;margin-top:8px}
-.soundbtn{background:none;border:1px solid var(--bayline);color:#9FB2BE;border-radius:2px;
-  padding:3px 10px;font-size:12px;cursor:pointer}
-.soundbtn:hover{border-color:#3C5262;color:#D5E1E8}
-.soundbtn[aria-pressed="true"]{border-color:var(--hr);color:var(--hr)}
+/* ============================================================
+   TAB RAIL: fixed at the left edge, present in every state. The content
+   panel slides out from behind it and tucks back under it, so the rail
+   itself never moves and the eight destinations are always one click away.
+   ============================================================ */
+.tabdock{position:fixed;top:var(--top);left:0;bottom:0;width:var(--rail);z-index:50;
+  background:rgba(255,255,255,.86);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  border-right:1px solid var(--rule);
+  display:flex;flex-direction:column;gap:2px;padding:10px 0;overflow-y:auto;overflow-x:hidden}
+.tabdock::-webkit-scrollbar{width:0}
+.tabbtn{position:relative;background:none;border:0;width:100%;padding:9px 4px 8px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ink3);
+  transition:color .16s ease,background .16s ease}
+.tabbtn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+/* 9px uppercase so the longest label, Investigations, clears the rail width
+   without abbreviating it. Abbreviations in a teaching tool cost more than
+   two pixels of type do. */
+.tabbtn .lb{font-size:9px;letter-spacing:.02em;text-transform:uppercase;line-height:1.15;
+  text-align:center;overflow-wrap:anywhere}
+.tabbtn:hover{color:var(--ink2);background:var(--sunk)}
+.tabbtn[aria-selected="true"]{color:var(--act);background:var(--actl)}
+.tabbtn[aria-selected="true"] .lb{font-weight:600}
+.tabbtn[aria-selected="true"]::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;
+  background:var(--act);border-radius:0 3px 3px 0}
+/* amber, because a pending study is in flight — the same amber as the
+   countdown bar it refers to */
+.tabbtn .badge{position:absolute;top:5px;right:12px;background:var(--warn);color:#fff;
+  border-radius:9px;font-family:var(--mono);font-size:9.5px;font-weight:600;padding:0 4px;line-height:14px}
 
-/* ---------- splash ---------- */
-.splash{position:fixed;inset:0;z-index:100;background:var(--paper);overflow:auto;
-  display:flex;align-items:flex-start;justify-content:center;padding:40px 20px}
+/* ============================================================
+   LEFT PANEL: the workspace. Slides out from behind the rail.
+   ============================================================ */
+.lpanel{position:fixed;top:var(--top);left:var(--rail);bottom:0;z-index:30;
+  width:min(var(--lwidth),calc(100vw - var(--rail) - var(--rdock) - 20px));
+  background:var(--pane);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  border-right:1px solid var(--rule);
+  box-shadow:20px 0 50px -34px var(--shadow);
+  display:flex;flex-direction:column;
+  transition:transform .42s var(--ease),opacity .3s ease;will-change:transform}
+body[data-left="closed"] .lpanel{transform:translateX(-100%);opacity:0;pointer-events:none}
+.lp-scroll{flex:1;min-height:0;overflow-y:auto;padding:18px 22px 40px}
+.lp-collapse{position:absolute;top:10px;right:10px;z-index:2;width:26px;height:26px;
+  background:var(--pane2);border:1px solid var(--rule);border-radius:3px;color:var(--ink3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.lp-collapse:hover{color:var(--act);border-color:var(--actb);background:var(--actl)}
+.lp-collapse svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* ============================================================
+   RIGHT PANEL: Pending and Chart. Docked by default; clicking it, or the
+   expand control in its top-left corner, widens it to 70% and closes the
+   left panel. Minimising restores both and returns the left panel to Patient.
+   ============================================================ */
+.rpanel{position:fixed;top:var(--top);right:0;bottom:0;z-index:40;width:var(--rdock);
+  background:var(--pane);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  border-left:1px solid var(--rule);
+  box-shadow:-20px 0 50px -34px var(--shadow);
+  display:flex;flex-direction:column;cursor:zoom-in;
+  transition:width .42s var(--ease),background .3s ease;will-change:width}
+body[data-right="wide"] .rpanel{width:min(var(--rwide),calc(100vw - var(--rail)));cursor:default;
+  background:rgba(255,255,255,.94)}
+.rpanel:hover{border-left-color:var(--actb)}
+body[data-right="wide"] .rpanel:hover{border-left-color:var(--rule)}
+.rp-head{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 10px;
+  border-bottom:1px solid var(--rule2);min-height:46px}
+.rp-toggle{width:26px;height:26px;flex:0 0 auto;background:var(--pane2);
+  border:1px solid var(--rule);border-radius:3px;color:var(--ink2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;padding:0}
+.rp-toggle:hover{color:var(--act);border-color:var(--actb);background:var(--actl)}
+.rp-toggle svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round}
+.rp-title{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.rp-hint{margin-left:auto;font-size:11px;color:var(--ink3);font-family:var(--mono);white-space:nowrap}
+body[data-right="wide"] .rp-hint{display:none}
+/* Mini vitals ride along inside the expanded panel, so reading a long chart
+   never means looking away from the numbers. They keep the monitor's screen
+   behind them: the vital hues are calibrated for black and nothing else. */
+.rp-mini{display:none;margin-left:auto;gap:15px;align-items:baseline;font-family:var(--mono);
+  background:var(--screen);border-radius:5px;padding:6px 13px}
+body[data-right="wide"] .rp-mini{display:flex}
+.rp-mini .m{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--temp)}
+.rp-mini .m b{font-weight:600}
+.rp-mini .k{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#83A0AF;margin-right:4px}
+.rp-body{flex:1;min-height:0;overflow-y:auto;padding:12px 14px 24px;display:flex;flex-direction:column}
+body[data-right="wide"] .rp-body{padding:16px 22px 30px}
+
+.railbox{background:var(--sunk);border:1px solid var(--rule2);border-radius:4px;padding:12px 14px}
+.railbox + .railbox{margin-top:12px}
+.feedbox{display:flex;flex-direction:column;min-height:0;flex:1}
+#feed{overflow-y:auto;min-height:0;flex:1;scroll-behavior:smooth}
+.feedcount{float:right;font-family:var(--mono);font-weight:400;color:var(--ink3);font-size:11px}
+.railh{font-size:11px;color:var(--ink3);margin:0 0 9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+/* amber: ordered, not back yet */
+.pendrow{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;font-family:var(--mono)}
+.pendrow .cd{color:var(--warn);font-weight:600}
+.bar{height:3px;background:rgba(21,48,66,.12);border-radius:2px;overflow:hidden;margin-top:2px}
+.bar i{display:block;height:100%;background:var(--warn)}
+.emptyline{font-size:12.5px;color:var(--ink3)}
+
+/* Chart entries. The left edge carries the hue, so the type of every entry is
+   legible down the gutter without reading a word of it. */
+.fitem{border-left:2.5px solid var(--rule);padding:0 0 0 10px;margin:0 0 11px}
+.fitem:last-child{margin-bottom:2px}
+.fitem .fh{display:flex;gap:6px;align-items:baseline;margin-bottom:2px}
+.fitem .ft{font-family:var(--mono);font-size:10.5px;color:var(--ink3)}
+.fitem .fn{font-size:12.5px;font-weight:600;line-height:1.3}
+.fitem .fb{font-size:12px;color:var(--ink2);line-height:1.45}
+.fitem .fb .ab{all:unset}
+.fitem.k-lab{border-left-color:var(--act)}         /* information came back  */
+.fitem.k-imaging{border-left-color:var(--act)}
+.fitem.k-exam{border-left-color:var(--act)}
+.fitem.k-consult{border-left-color:var(--voice)}   /* someone spoke          */
+.fitem.k-speech{border-left-color:var(--voice)}
+.fitem.k-action{border-left-color:var(--ok)}       /* something was done     */
+/* An "Ordered: X" line is bookkeeping, not a finding. It stays recessive so
+   the results either side of it carry the eye. Amber belongs to things still
+   in flight, and by the time this line is on the chart the order has been
+   sent, so amber here would make a normal chart look alarming. */
+.fitem.k-order{border-left-color:var(--rule2)}
+.fitem.k-order .fn{font-weight:400;color:var(--ink3)}
+.fitem.k-harm{border-left-color:var(--harm)}
+.fitem.k-blocked{border-left-color:var(--harm);border-left-style:dashed}
+.fitem td.abn{color:var(--harm);font-weight:600}
+.fitem .fb.abn{color:inherit}
+.fitem.abnormal{border-left-color:var(--harm)}
+.fitem.abnormal .fn::after{content:" \25CF";color:var(--harm);font-size:9px;vertical-align:2px}
+.fitem table{border-collapse:collapse;width:100%;margin-top:2px}
+.fitem td{font-size:11.5px;padding:1px 0;vertical-align:top}
+.fitem td.lb{color:var(--ink2);padding-right:6px}
+.fitem td.vl{font-family:var(--mono);text-align:right;white-space:nowrap}
+/* Expanded, the chart flows into as many columns as the width allows.
+   The scroll moves up to .rp-body and #feed itself stops scrolling: a
+   multi-column box that scrolls internally paginates SIDEWAYS, which would
+   turn the chart into a horizontal scroller and hide the newest entry. With
+   the height left to grow, the browser balances the columns instead, so there
+   are no ragged gaps and no wasted space, which is the point of expanding. */
+body[data-right="wide"] #feed{overflow:visible;flex:0 0 auto;
+  column-width:330px;column-gap:32px;column-rule:1px solid var(--rule2)}
+body[data-right="wide"] .fitem{margin-bottom:15px;break-inside:avoid;
+  -webkit-column-break-inside:avoid;page-break-inside:avoid}
+body[data-right="wide"] .fitem .fn{font-size:13.5px}
+body[data-right="wide"] .fitem .fb{font-size:12.5px}
+body[data-right="wide"] .fitem td{font-size:12.5px}
+body[data-right="wide"] .fitem .ft{font-size:11px}
+
+/* ---------- splash and picker ---------- */
+.splash{position:fixed;inset:0;z-index:100;overflow:auto;
+  background:rgba(231,238,242,.52);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-start;justify-content:center;padding:44px 20px}
 .splash.hidden{display:none}
-.splashcard{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-  max-width:640px;width:100%;padding:30px 34px 34px}
-.splashcard .setting{font-family:var(--mono);font-size:11.5px;color:var(--ink3);
-  letter-spacing:.03em;margin-bottom:14px}
-.splashcard h1{font-size:22px;line-height:1.3;margin:0 0 14px;font-weight:600;letter-spacing:-.01em}
-.splashcard .cc{border-left:3px solid var(--act);background:var(--actl);padding:12px 15px;
-  font-size:16px;border-radius:2px;margin-bottom:6px}
+/* Narrower and shorter than it was. With the arrival narrative removed the card
+   holds a title, a quote, a mode choice and a button, and a 660px box around
+   that much content reads as a page with a hole in it. */
+.splashcard{background:rgba(255,255,255,.96);border:1px solid var(--rule);border-radius:6px;
+  max-width:560px;width:100%;padding:26px 30px 28px;box-shadow:0 32px 70px -40px var(--shadow)}
+.splashcard .setting{font-family:var(--mono);font-size:11px;color:var(--ink3);
+  letter-spacing:.09em;text-transform:uppercase;margin-bottom:14px}
+.splashcard h1{font-size:21px;line-height:1.32;margin:0 0 10px;font-weight:600;letter-spacing:-.01em;
+  text-wrap:balance;max-width:34ch}
+/* The one line of scene the learner gets before pressing Begin. Set as a small
+   meta row rather than a section, because it is a fact about the room and not
+   part of the history. */
+.arrival{font-size:12.5px;color:var(--ink2);margin:0 0 14px;
+  display:flex;align-items:center;gap:7px}
+.arrival::before{content:"";width:6px;height:6px;border-radius:50%;
+  background:var(--act);flex:0 0 auto}
+.splashcard .cc{border-left:3px solid var(--voice);background:var(--voicel);padding:12px 15px;
+  font-size:16px;border-radius:3px;margin-bottom:2px}
 .splashsec{margin-top:22px}
-.splashsec h2{font-size:12.5px;color:var(--ink2);font-weight:600;margin:0 0 7px;letter-spacing:0}
+.splashactions{display:flex;gap:10px;align-items:center;margin-top:26px;flex-wrap:wrap}
+.splashactions .btn.begin{margin-top:0}
+.splashactions .btn.ghost{padding:12px 20px}
+.splashsec h2{font-size:11px;color:var(--ink3);font-weight:600;margin:0 0 7px;
+  letter-spacing:.08em;text-transform:uppercase}
 .splashsec p{margin:0;font-size:14.5px;color:var(--ink)}
 .modes{display:flex;gap:10px;flex-wrap:wrap}
-.mode{flex:1 1 220px;text-align:left;background:var(--surface2);border:1px solid var(--rule);
-  border-left:3px solid var(--rule);border-radius:2px;padding:11px 13px;cursor:pointer;font-size:14.5px}
-.mode:hover{background:#fff;border-color:var(--act)}
-.mode[aria-checked="true"]{background:var(--actl);border-color:var(--act);border-left-color:var(--act);
+.mode{flex:1 1 220px;text-align:left;background:var(--pane2);border:1px solid var(--rule);
+  border-radius:3px;padding:11px 13px;cursor:pointer;font-size:14.5px}
+.mode:hover{background:var(--actl);border-color:var(--actb)}
+.mode[aria-checked="true"]{background:var(--actl);border-color:var(--act);
   box-shadow:inset 0 0 0 1px var(--act)}
 .mode b{display:block;font-weight:600;margin-bottom:2px}
 .mode span{display:block;font-size:12.5px;color:var(--ink2);line-height:1.4}
-.modenote{font-size:12.5px;color:var(--ink3);margin:9px 0 0}
 .btn.begin{margin-top:26px;padding:12px 30px;font-size:16px}
-.splashwarn{font-size:12.5px;color:var(--harm);margin:16px 0 0;line-height:1.5}
 .pknote{font-size:12.5px;color:var(--ink3);margin:16px 0 0}
 .cardlist{display:flex;flex-direction:column;gap:10px;margin-top:6px}
-.casecard{display:block;width:100%;text-align:left;background:var(--surface2);
-  border:1px solid var(--rule);border-left:3px solid var(--act);border-radius:2px;
+.casecard{display:block;width:100%;text-align:left;background:var(--pane2);
+  border:1px solid var(--rule);border-left:3px solid var(--act);border-radius:3px;
   padding:14px 16px;cursor:pointer}
-.casecard:hover{background:#fff;border-color:var(--act)}
-.casecard .pk{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.04em}
+.casecard:hover{background:var(--actl);border-color:var(--actb);border-left-color:var(--act)}
+.casecard .pk{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.06em}
 .casecard .ti{display:block;font-size:16px;font-weight:600;margin:3px 0 5px;line-height:1.35}
 .casecard .cc{display:block;font-size:14px;color:var(--ink2);margin-bottom:7px}
 .casecard .mt{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
 .casecard .flagred{color:var(--harm)}
 
-/* ---------- tabs ---------- */
-.tabbar{background:var(--surface);border-bottom:1px solid var(--rule)}
-.tabbarin{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;gap:2px;overflow-x:auto}
-.tab{background:none;border:0;border-bottom:2px solid transparent;padding:11px 14px;
-  cursor:pointer;color:var(--ink2);white-space:nowrap;font-size:14.5px}
-.tab:hover{color:var(--ink);background:var(--surface2)}
-.tab[aria-selected="true"]{color:var(--act);border-bottom-color:var(--act);font-weight:500}
-.tab .badge{display:inline-block;margin-left:6px;background:var(--act);color:#fff;border-radius:9px;
-  font-family:var(--mono);font-size:10.5px;padding:0 5px;vertical-align:1px}
-
-/* ---------- layout ---------- */
-.cols{display:grid;grid-template-columns:1fr 320px;gap:20px;padding:20px}
-.panel{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:18px 20px}
-.panel + .panel{margin-top:14px}
-h2{font-size:17px;margin:0 0 3px;font-weight:600;letter-spacing:-.01em}
-h3{font-size:13.5px;margin:20px 0 8px;font-weight:600;color:var(--ink2)}
+/* ---------- panels inside the workspace ---------- */
+/* Not everything is a card. The workspace pane is already a surface, so the
+   sections inside it are separated by a rule and by space rather than by a
+   second box drawn on top of the first. The only sections that keep a surface
+   are the ones that are readouts in their own right: general appearance, a
+   result, a conversation, a block message. */
+.panel{background:none;border:0;padding:0}
+.panel + .panel{margin-top:24px;padding-top:20px;border-top:1px solid var(--rule2)}
+h2{font-size:17px;margin:0 0 3px;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
+h3{font-size:11.5px;margin:20px 0 8px;font-weight:600;color:var(--ink3);
+  letter-spacing:.08em;text-transform:uppercase}
 h3:first-child{margin-top:0}
 .sub{color:var(--ink2);font-size:13.5px;margin:0 0 14px}
 p{margin:0 0 10px;max-width:72ch}
 
-/* ---------- action buttons ---------- */
+/* ---------- action buttons ----------
+   The left edge is the state: nothing means untouched, amber means ordered and
+   waiting, blue means the result is back, green means done, red means it was
+   the wrong thing to do. */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:8px}
-.ab{position:relative;display:block;width:100%;text-align:left;background:var(--surface2);
-  border:1px solid var(--rule);border-left:3px solid var(--rule);border-radius:2px;
-  padding:9px 22px 9px 11px;cursor:pointer;line-height:1.35;font-size:14px}
-.ab:hover{background:#fff;border-color:var(--act);border-left-color:var(--act)}
+.ab{position:relative;display:block;width:100%;text-align:left;background:rgba(255,255,255,.78);
+  border:1px solid var(--rule);border-left:3px solid var(--rule);border-radius:3px;
+  padding:9px 22px 9px 11px;cursor:pointer;line-height:1.35;font-size:14px;
+  transition:background .12s ease,border-color .12s ease,box-shadow .12s ease}
+.ab:hover{background:#fff;border-color:var(--actb);border-left-color:var(--act);
+  box-shadow:0 2px 8px -4px var(--shadow)}
 .ab:active{transform:translateY(1px)}
 .ab:disabled{opacity:.5;cursor:default}
-.ab:disabled:hover{background:var(--surface2);border-color:var(--rule);border-left-color:var(--rule)}
+.ab:disabled:hover{background:rgba(255,255,255,.78);border-color:var(--rule);
+  border-left-color:var(--rule);box-shadow:none}
 .ab .sm{display:block;font-size:11.5px;color:var(--ink3);font-family:var(--mono);margin-top:2px}
 .ab.done{border-left-color:var(--ok);background:var(--okl)}
 .ab.pend{border-left-color:var(--warn);background:var(--warnl)}
 .ab.blocked{border-left-color:var(--harm)}
 .ab.hasres{border-left-color:var(--act);background:var(--actl)}
-
-.searchwrap{position:relative;display:inline-block}
-.filter{margin-bottom:0;width:260px;padding-right:30px}
-/* Absolutely positioned so showing and hiding it never moves the toolbar. */
-.clearfilter{position:absolute;right:1px;top:1px;bottom:1px;width:26px;
-  background:none;border:0;border-radius:0 2px 2px 0;cursor:pointer;
-  color:var(--ink3);font-size:17px;line-height:1;padding:0}
-.clearfilter:hover{color:var(--ink);background:var(--surface2)}
-.ab,h3,.read,.speech,.opt{scroll-margin-top:calc(var(--hdr,140px) + 16px)}
-.ab.orphan{border-left-color:var(--warn);border-style:dashed}
-.grouphdr{display:flex;width:100%;align-items:center;gap:11px;text-align:left;
-  background:var(--surface2);border:1px solid var(--rule);border-radius:2px;
-  padding:13px 15px;margin:0 0 9px;cursor:pointer;font-size:17px;font-weight:600;
-  letter-spacing:-.01em}
-.grouphdr:hover{background:#fff;border-color:var(--act)}
-.grouphdr[aria-expanded="true"]{background:var(--actl);border-color:var(--act)}
-.grouphdr .chev{font-family:var(--mono);font-size:13px;color:var(--ink3);width:14px}
-.grouphdr[aria-expanded="true"] .chev{color:var(--act)}
-.grouphdr .n{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:var(--ink3);font-weight:400}
-.grouphdr .picks{font-family:var(--mono);font-size:12.5px;color:var(--act);font-weight:400}
-.groupbody{margin:0 0 14px}
+.ab.orphan{border-left-color:var(--harm);border-style:dashed}
 .ab.picked,.ab.picked:hover{background:var(--actl);border-color:var(--act);
   border-left-color:var(--act);box-shadow:inset 0 0 0 1px var(--act);font-weight:500}
 .ab.picked::after{content:"\2713";position:absolute;top:5px;right:8px;
   font-size:12px;line-height:1;color:var(--act);font-weight:700}
 .ab.unread{box-shadow:inset 0 0 0 1px var(--act)}
+.ab,h3,.read,.speech,.opt{scroll-margin-top:16px}
+
+.searchwrap{position:relative;display:inline-block}
+.filter{margin-bottom:0;width:260px;padding-right:30px}
+.clearfilter{position:absolute;right:1px;top:1px;bottom:1px;width:26px;
+  background:none;border:0;border-radius:0 3px 3px 0;cursor:pointer;
+  color:var(--ink3);font-size:17px;line-height:1;padding:0}
+.clearfilter:hover{color:var(--harm);background:var(--harml)}
+.grouphdr{display:flex;width:100%;align-items:center;gap:11px;text-align:left;
+  background:var(--pane2);border:1px solid var(--rule);border-radius:3px;
+  padding:12px 15px;margin:0 0 9px;cursor:pointer;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.grouphdr:hover{background:#fff;border-color:var(--actb)}
+.grouphdr[aria-expanded="true"]{background:var(--actl);border-color:var(--actb)}
+.grouphdr .chev{font-family:var(--mono);font-size:13px;color:var(--ink3);width:14px}
+.grouphdr[aria-expanded="true"] .chev{color:var(--act)}
+.grouphdr .n{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:var(--ink3);font-weight:400}
+.grouphdr .picks{font-family:var(--mono);font-size:12.5px;color:var(--act);font-weight:600}
+.groupbody{margin:0 0 14px}
 .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
-.basket{background:var(--actl);border:1px solid var(--act);border-radius:2px;
-  padding:9px 12px;margin-bottom:16px;font-size:13.5px;color:var(--act)}
-/* Rendered even when empty so picking an item does not shift the grid under the
-   cursor and turn the next click into a misclick. */
-.basket.empty{background:var(--surface2);border-color:var(--rule2);color:var(--ink3)}
-.panel.gs{padding:14px 20px}
-.panel.gs h2{font-size:13.5px;color:var(--ink2);font-weight:600;margin-bottom:6px;letter-spacing:0}
+.basket{background:var(--actl);border:1px solid var(--actb);border-radius:3px;
+  padding:9px 12px;margin-bottom:16px;font-size:13.5px;color:#124A78}
+.basket.empty{background:var(--sunk);border-color:var(--rule2);color:var(--ink3)}
+/* The general appearance line is the one exam finding the learner cannot skip,
+   so it keeps a surface of its own at the top of the tab. When it is abnormal
+   it takes a red keyline rather than red text: a whole sentence set in red
+   shouts, and this line is abnormal in most cases that are worth writing. */
+.panel.gs{background:var(--sunk);border:1px solid var(--rule2);border-radius:5px;
+  padding:13px 16px;margin-bottom:4px}
+.panel.gs + .panel{border-top:0;padding-top:0;margin-top:22px}
+.panel.gs h2{font-size:11.5px;color:var(--ink3);font-weight:600;margin-bottom:6px;
+  letter-spacing:.08em;text-transform:uppercase}
 .gsline{font-size:15px;line-height:1.5}
-.gsline.abn{color:var(--harm)}
+.gsline.abn{border-left:3px solid var(--harm);padding-left:11px;margin-left:-1px}
 .panel.gs .meta{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:6px}
 
 /* ---------- readouts ---------- */
-.read{border-left:3px solid var(--act);background:var(--actl);padding:10px 13px;margin:8px 0;border-radius:2px}
+.read{border-left:3px solid var(--act);background:var(--actl);padding:10px 13px;margin:8px 0;border-radius:3px}
 .read h4{margin:0 0 4px;font-size:13px;font-weight:600}
 .read .body{font-family:var(--mono);font-size:13px;line-height:1.6;white-space:pre-wrap}
 .read .meta{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:6px}
-table.labtbl{border-collapse:collapse;font-family:var(--mono);font-size:13px;width:100%;max-width:520px}
+table.labtbl{border-collapse:collapse;font-family:var(--mono);font-size:13px;width:100%;max-width:560px}
 table.labtbl td{padding:2px 10px 2px 0;vertical-align:baseline}
 table.labtbl td.lab{color:var(--ink2)}
 table.labtbl td.val{font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -187,131 +433,131 @@ table.labtbl tr.abn td.val{color:var(--harm);font-weight:600}
 table.labtbl tr.abn td.lab{color:var(--harm)}
 table.labtbl tr.abn td.val::after{content:" \2691";font-size:10px}
 .abn-report{border-left:2px solid var(--harm);padding-left:9px}
-.verify{font-size:11.5px;color:var(--warn);background:var(--warnl);border-radius:2px;
+.verify{font-size:11.5px;color:var(--warn);background:var(--warnl);border-radius:3px;
   padding:6px 9px;margin-top:7px;line-height:1.45}
+.speech{border-left:3px solid var(--voice);background:var(--voicel);padding:10px 13px;
+  margin:8px 0;border-radius:3px;font-size:14.5px}
+.speech .who{font-size:11px;color:var(--voice);font-family:var(--mono);margin-bottom:3px;font-weight:500}
 .speech .meta{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:6px}
+/* The handover. Two sentences, at the top of History, styled as something
+   somebody said rather than as a chart entry, because that is what it is. */
+.handover{border-left:3px solid var(--voice);background:var(--voicel);
+  padding:11px 14px;margin:0 0 20px;border-radius:3px;font-size:14.5px;line-height:1.5}
+.handover .who{font-size:10.5px;color:var(--voice);font-family:var(--mono);
+  letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:4px}
+.blockmsg{border-left:3px solid var(--harm);background:var(--harml);padding:10px 13px;margin:8px 0;border-radius:3px}
 .blockmsg .meta{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:5px}
 .hit .syn{display:block;font-size:11px;color:var(--ink3);font-family:var(--mono)}
-.speech{border-left:3px solid #6B5B95;background:#F1EFF7;padding:10px 13px;margin:8px 0;border-radius:2px;font-size:14.5px}
-.speech .who{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-bottom:3px}
-.blockmsg{border-left:3px solid var(--harm);background:var(--harml);padding:10px 13px;margin:8px 0;border-radius:2px}
 
-/* ---------- record rail ---------- */
-.rail{position:sticky;top:calc(var(--hdr,132px) + 12px);align-self:start;display:flex;flex-direction:column;
-  max-height:calc(100vh - var(--hdr,132px) - 28px)}
-.railbox{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:12px 14px}
-/* Running chart: every output the case has produced, newest last, always on screen.
-   Findings scroll off the tab you were on; this does not. */
-.feedbox{display:flex;flex-direction:column;min-height:0;flex:1}
-#feed{overflow-y:auto;min-height:0;flex:1;scroll-behavior:smooth}
-.feedcount{float:right;font-family:var(--mono);font-weight:400;color:var(--ink3);font-size:11px}
-.fitem{border-left:2px solid var(--rule2);padding:0 0 0 9px;margin:0 0 11px}
-.fitem:last-child{margin-bottom:2px}
-.fitem .fh{display:flex;gap:6px;align-items:baseline;margin-bottom:2px}
-.fitem .ft{font-family:var(--mono);font-size:10.5px;color:var(--ink3)}
-.fitem .fn{font-size:12.5px;font-weight:600;line-height:1.3}
-.fitem .fb{font-size:12px;color:var(--ink2);line-height:1.45}
-.fitem .fb .ab{all:unset}
-.fitem.k-lab{border-left-color:var(--act)}
-.fitem.k-imaging{border-left-color:var(--act)}
-.fitem.k-exam{border-left-color:var(--rule2)}
-.fitem.k-consult{border-left-color:#7A5C9E}
-.fitem.k-action{border-left-color:var(--ok)}
-.fitem.k-order{border-left-color:var(--rule2)}
-.fitem.k-order .fn{font-weight:400;color:var(--ink2)}
-.fitem.k-speech{border-left-color:var(--rule2)}
-.fitem.k-harm{border-left-color:var(--harm)}
-.fitem.k-blocked{border-left-color:var(--warn)}
-.fitem td.abn{color:var(--harm);font-weight:600}
-.fitem .fb.abn{color:inherit}
-.fitem.abnormal{border-left-color:var(--harm)}
-.fitem table{border-collapse:collapse;width:100%;margin-top:2px}
-.fitem td{font-size:11.5px;padding:1px 0;vertical-align:top}
-.fitem td.lb{color:var(--ink2);padding-right:6px}
-.fitem td.vl{font-family:var(--mono);text-align:right;white-space:nowrap}
-.railbox + .railbox{margin-top:12px}
-.railh{font-size:12px;color:var(--ink2);margin:0 0 8px;font-weight:600}
-.logrow{display:grid;grid-template-columns:44px 1fr;gap:8px;font-size:12.5px;padding:3px 0;
-  border-top:1px solid var(--rule2);line-height:1.4}
-.logrow:first-of-type{border-top:0}
-.logrow .t{font-family:var(--mono);color:var(--ink3);font-size:11.5px}
-.logrow.blk .txt{color:var(--harm)}
-.logrow.obs .txt{color:var(--ink2)}
-.pendrow{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;font-family:var(--mono)}
-.pendrow .cd{color:var(--warn)}
-.bar{height:3px;background:var(--rule2);border-radius:2px;overflow:hidden;margin-top:2px}
-.bar i{display:block;height:100%;background:var(--warn)}
+/* How the patient is understanding questions right now. Slate while it is only
+   matching wording, green once the embedding model is doing the work. It is
+   information, not an alert, so even the failed state is neutral rather than
+   red: nothing is broken when the enhanced matcher is unavailable. */
+.semchip{display:flex;align-items:baseline;gap:8px;margin-top:10px;
+  font-size:12px;color:var(--ink3);line-height:1.4;flex-wrap:wrap}
+.semchip b{font-weight:600;color:var(--ink2)}
+.semchip .dot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;
+  background:var(--ink3);align-self:center}
+.semchip.s-loading .dot{background:var(--warn);animation:sempulse 1.5s ease-in-out infinite}
+.semchip.s-ready .dot{background:var(--ok)}
+.semchip.s-ready b{color:var(--ok)}
+@keyframes sempulse{0%,100%{opacity:.35}50%{opacity:1}}
 
 /* ---------- forms ---------- */
-input[type=text],select{font:inherit;padding:8px 10px;border:1px solid var(--rule);border-radius:2px;
+input[type=text],select{font:inherit;padding:8px 10px;border:1px solid var(--rule);border-radius:3px;
   background:#fff;width:100%;color:var(--ink)}
+input[type=text]::placeholder{color:var(--ink3)}
 input:focus,select:focus,button:focus-visible{outline:2px solid var(--act);outline-offset:1px}
-.btn{background:var(--act);color:#fff;border:0;border-radius:2px;padding:9px 16px;cursor:pointer}
-.btn:hover{background:#0F3550}
-.btn.ghost{background:none;color:var(--act);border:1px solid var(--rule)}
-.btn.ghost:hover{background:var(--actl)}
-.btn.danger{background:var(--harm)} .btn.danger:hover{background:#7E211A}
-.btn:disabled{background:var(--ink3);cursor:default}
-.opt{display:block;width:100%;text-align:left;background:var(--surface2);border:1px solid var(--rule);
-  border-radius:2px;padding:10px 12px;margin-bottom:6px;cursor:pointer;font-size:14px}
-.opt:hover{border-color:var(--act);background:#fff}
-.opt[aria-pressed="true"]{background:var(--actl);border-color:var(--act);border-left:3px solid var(--act)}
-.hits{border:1px solid var(--rule);border-top:0;max-height:210px;overflow:auto;background:#fff}
+.btn{background:var(--act);color:#fff;font-weight:600;border:0;border-radius:3px;
+  padding:9px 16px;cursor:pointer;box-shadow:0 2px 8px -4px var(--shadow)}
+.btn:hover{background:#175C97}
+.btn.ghost{background:#fff;color:var(--act);border:1px solid var(--rule);font-weight:500;box-shadow:none}
+.btn.ghost:hover{background:var(--actl);border-color:var(--actb)}
+.btn.danger{background:var(--harm);color:#fff} .btn.danger:hover{background:#A62822}
+.btn:disabled{background:rgba(21,48,66,.10);color:var(--ink3);cursor:default;box-shadow:none}
+.btn.ghost:disabled{background:none;color:var(--ink3);border-color:var(--rule2)}
+.opt{display:block;width:100%;text-align:left;background:var(--pane2);border:1px solid var(--rule);
+  border-radius:3px;padding:10px 12px;margin-bottom:6px;cursor:pointer;font-size:14px}
+.opt:hover{border-color:var(--actb);background:#fff}
+.opt[aria-pressed="true"]{background:var(--actl);border-color:var(--act);
+  box-shadow:inset 0 0 0 1px var(--act);font-weight:500}
+.hits{border:1px solid var(--rule);border-top:0;max-height:210px;overflow:auto;background:var(--solid);
+  border-radius:0 0 3px 3px;box-shadow:0 8px 22px -16px var(--shadow)}
 .hit{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--rule2);
   padding:8px 10px;cursor:pointer;font-size:14px}
 .hit:hover{background:var(--actl)}
 
 /* ---------- halt / debrief ---------- */
-.halt{background:var(--harml);border:1px solid var(--harm);border-left:5px solid var(--harm);
-  border-radius:3px;padding:18px 20px;margin:20px}
+.endview{position:fixed;top:var(--top);left:0;right:0;bottom:0;z-index:45;overflow-y:auto}
+.endwrap{max-width:1000px;margin:0 auto;padding:0 20px 70px}
+.halt{background:var(--harml);border:1px solid var(--harmb);border-left:5px solid var(--harm);
+  border-radius:5px;padding:18px 20px;margin:22px 0 0}
 .halt h2{color:var(--harm)}
-.dbf{padding:20px}
-.dbsec{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:18px 20px;margin-bottom:14px}
+.dbf{padding:22px 0 0}
+.dbsec{background:rgba(255,255,255,.93);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  border:1px solid var(--rule2);border-radius:5px;padding:18px 20px;margin-bottom:14px;
+  box-shadow:0 10px 34px -26px var(--shadow)}
 .item{border-top:1px solid var(--rule2);padding:11px 0}
 .item:first-of-type{border-top:0}
 .item .hd{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
 .item .nm{font-weight:600;font-size:14.5px}
 .item .note{font-size:13.5px;color:var(--ink2);margin-top:4px;max-width:78ch}
 .item .refs{font-size:12px;color:var(--ink3);margin-top:5px;font-family:var(--mono)}
-/* Teaching notes collapse behind a per-action expander, so the list of what was done
-   and missed stays readable and the reasoning is one click away. */
 details.teach summary{list-style:none;cursor:pointer}
 details.teach summary::-webkit-details-marker{display:none}
 details.teach summary .expand{margin-left:auto;font-family:var(--mono);font-size:11px;
-  color:var(--act);border:1px solid var(--rule);border-radius:2px;padding:2px 8px;
+  color:var(--act);border:1px solid var(--rule);border-radius:3px;padding:2px 8px;
   white-space:nowrap;font-weight:400}
-details.teach summary:hover .expand{background:var(--actl);border-color:var(--act)}
+details.teach summary:hover .expand{background:var(--actl);border-color:var(--actb)}
 details.teach[open] summary .expand::after{content:"\00A0\25B4"}
 details.teach:not([open]) summary .expand::after{content:"\00A0\25BE"}
-.pill{font-size:11px;font-family:var(--mono);padding:1px 7px;border-radius:9px;border:1px solid}
-.p-crit{color:var(--act);border-color:var(--act);background:var(--actl)}
-.p-harm{color:var(--harm);border-color:var(--harm);background:var(--harml)}
-.p-ok{color:var(--ok);border-color:var(--ok);background:var(--okl)}
-.p-warn{color:var(--warn);border-color:var(--warn);background:var(--warnl)}
-.p-neu{color:var(--ink2);border-color:var(--rule);background:var(--surface2)}
+.pill{font-size:11px;font-family:var(--mono);padding:1px 7px;border-radius:9px;border:1px solid;font-weight:500}
+.p-crit{color:var(--act);border-color:var(--actb);background:var(--actl)}
+.p-harm{color:var(--harm);border-color:var(--harmb);background:var(--harml)}
+.p-ok{color:var(--ok);border-color:rgba(26,122,85,.4);background:var(--okl)}
+.p-warn{color:var(--warn);border-color:rgba(161,106,5,.4);background:var(--warnl)}
+.p-neu{color:var(--ink2);border-color:var(--rule);background:var(--sunk)}
 table.dom{width:100%;border-collapse:collapse;font-size:13.5px}
 table.dom td,table.dom th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--rule2)}
-table.dom th{color:var(--ink2);font-weight:600;font-size:12.5px}
-table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap}
+table.dom th{color:var(--ink3);font-weight:600;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 
-.note{background:var(--surface2);border-left:3px solid var(--rule);padding:10px 13px;
-  font-size:13px;color:var(--ink2);margin:12px 0;border-radius:2px}
+.note{background:var(--sunk);border-left:3px solid var(--rule);padding:10px 13px;
+  font-size:13px;color:var(--ink2);margin:12px 0;border-radius:3px}
 .note b{color:var(--ink)}
 .foot{padding:0 20px;font-size:12.5px;color:var(--ink3);max-width:80ch}
 .hidden{display:none !important}
-@media (max-width:900px){
-  .cols{grid-template-columns:1fr}
-  .rail{position:static;max-height:none}
-  .bayin{grid-template-columns:1fr;gap:12px}
-  .mon{flex-wrap:wrap;justify-content:flex-start}
-  .vit{text-align:left;min-width:64px}
-  .vitval{font-size:24px}
+
+*::-webkit-scrollbar{width:9px;height:9px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:rgba(21,48,66,.20);border-radius:5px}
+*::-webkit-scrollbar-thumb:hover{background:rgba(21,48,66,.34)}
+
+@media (max-width:1000px){
+  :root{--rdock:300px}
+  .lpanel{width:calc(100vw - var(--rail) - 12px);z-index:44}
+}
+@media (max-width:760px){
+  :root{--rail:72px;--rdock:calc(100vw - var(--rail));--rwide:calc(100vw - var(--rail))}
+  .bayin{grid-template-columns:1fr;gap:12px;padding:10px 14px}
+  .monwrap{padding:9px 12px 7px}
+  .mon{flex-wrap:wrap;justify-content:flex-start;gap:14px}
+  .vit{text-align:left;min-width:62px}
+  .vitval{font-size:23px}
   .clockbox{border-left:0;padding-left:0;text-align:left}
+  .phasechip{margin-left:0}
+  .tabbtn .lb{font-size:8.5px}
+  .lpanel{width:calc(100vw - var(--rail))}
+  .lp-scroll{padding:14px 14px 40px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
-<body>
+<body data-left="open" data-right="dock">
+
+<div class="room" aria-hidden="true"></div>
+<div class="roomtint" aria-hidden="true"></div>
+
 <div id="picker" class="splash">
   <div class="splashcard">
     <div class="setting">EM Case Simulator</div>
@@ -325,13 +571,15 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap}
   <div class="splashcard">
     <div class="setting" id="sp-setting"></div>
     <h1 id="sp-title"></h1>
+    <div class="arrival" id="sp-arrival"></div>
     <div class="cc" id="sp-cc"></div>
-    <div class="splashsec"><h2>How they got to you</h2><p id="sp-arrival"></p></div>
     <div class="splashsec"><h2>Mode</h2>
       <div class="modes" id="sp-modes" role="radiogroup" aria-label="Difficulty"></div>
     </div>
-    <button class="btn begin" id="beginbtn">Begin</button>
-    <button class="btn ghost" id="backtopicker" style="margin-top:26px;margin-left:8px;padding:12px 20px">Choose a different case</button>
+    <div class="splashactions">
+      <button class="btn begin" id="beginbtn">Begin</button>
+      <button class="btn ghost" id="backtopicker">Choose a different case</button>
+    </div>
   </div>
 </div>
 
@@ -344,37 +592,51 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap}
       <div class="nursemeta" id="nursemeta"></div>
       <div class="soundrow">
         <button id="soundbtn" class="soundbtn" aria-pressed="false">Enable sound</button>
-        
       </div>
     </div>
-    <div>
+    <div class="monwrap">
       <div class="mon" id="monitor"></div>
       <svg class="trace" id="trace" viewBox="0 0 420 22" preserveAspectRatio="none" aria-hidden="true"></svg>
     </div>
   </div>
 </div>
-
-<div class="tabbar"><div class="tabbarin" id="tabbar" role="tablist"></div></div>
 </header>
 
-<div class="wrap">
-  <div id="playview">
-    <div class="cols">
-      <div id="tabpanel" role="tabpanel"></div>
-      <div class="rail">
-        <div class="railbox">
-          <div class="railh">Pending</div>
-          <div id="pendlist"><div style="font-size:12.5px;color:var(--ink3)">Nothing ordered.</div></div>
-        </div>
-        <div class="railbox feedbox">
-          <div class="railh">Chart<span class="feedcount" id="feedcount"></span></div>
-          <div id="feed"></div>
-        </div>
+<div id="playview">
+
+  <nav class="tabdock" id="tabbar" role="tablist" aria-label="Case sections"></nav>
+
+  <aside class="lpanel" id="leftpanel" aria-label="Workspace">
+    <button class="lp-collapse" id="lp-collapse" title="Collapse this panel" aria-label="Collapse this panel">
+      <svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6"/></svg>
+    </button>
+    <div class="lp-scroll"><div id="tabpanel" role="tabpanel"></div></div>
+  </aside>
+
+  <aside class="rpanel" id="rightpanel" aria-label="Pending and chart">
+    <div class="rp-head">
+      <button class="rp-toggle" id="rp-toggle" title="Expand the chart" aria-label="Expand the chart" aria-expanded="false">
+        <svg viewBox="0 0 24 24" id="rp-icon"><path d="M15 4h5v5M20 4l-7 7M9 20H4v-5M4 20l7-7"/></svg>
+      </button>
+      <span class="rp-title">Record</span>
+      <span class="rp-hint">click to expand</span>
+      <div class="rp-mini" id="rp-mini"></div>
+    </div>
+    <div class="rp-body">
+      <div class="railbox">
+        <div class="railh">Pending</div>
+        <div id="pendlist"><div class="emptyline">Nothing ordered.</div></div>
+      </div>
+      <div class="railbox feedbox">
+        <div class="railh">Chart<span class="feedcount" id="feedcount"></span></div>
+        <div id="feed"></div>
       </div>
     </div>
-  </div>
-  <div id="endview" class="hidden"></div>
+  </aside>
+
 </div>
+
+<div id="endview" class="endview hidden"></div>
 
 <script type="application/json" id="shared-data">__SHARED_JSON__</script>
 <script type="application/json" id="cases-data">__CASES_JSON__</script>

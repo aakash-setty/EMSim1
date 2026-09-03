@@ -1,8 +1,8 @@
 # Spec addendum: structured results, catalog binding, and audio
 
 Proposed against `system-design-v2.md` v0.3 and `case-authoring-requirements.md` v0.2.
-**Superseded:** these changes are now folded into `system-design-v2.md` v0.4 and
-`case-authoring-requirements.md` v0.3. This document is retained as the rationale record,
+**Superseded:** these changes are now folded into `system-design-v2.md` (now v0.5) and
+`case-authoring-requirements.md` (now v0.4). This document is retained as the rationale record,
 alongside `action-catalog.json` v0.1-draft and `diagnosis-catalog.json` v0.1-draft.
 
 **Note on the catalog.** The `action-catalog.json` supplied in the project was stale relative

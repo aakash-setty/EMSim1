@@ -1,6 +1,6 @@
 # EM Case Simulator: System Design
 
-**Version 0.4 | Supersedes v0.3**
+**Version 0.5 | Supersedes v0.4**
 
 ---
 
@@ -27,6 +27,22 @@
 | Engine and case content interleaved | Separated: `engine/`, `catalog/`, `cases/<PREFIX>/` |
 
 Sections 3, 4, 6, 8, 11, 13 and 15 have substantive changes. Sections 16, 17, 18 and 19 are new.
+
+**v0.5 changes what the resident is given at the start, and how the interview is matched.** Four changes, all of which came out of watching the prototype run rather than out of the design.
+
+| v0.4 | v0.5 |
+|---|---|
+| Splash screen shows how the patient arrived and the handover | Splash shows one line naming the room; the handover moved into the case |
+| A Patient tab holding handover, appearance and background | No Patient tab. Seven tabs. A two-sentence arrival handover sits under the History tab |
+| Arrival described in prose per case | `metadata.arrival` is structured: `mode` (`ems` or `triage`), `location`, `line` |
+| Vitals step instantly at a phase boundary | Vitals ramp to the new phase over five seconds, at the rendering layer only |
+| Interview matching is lexical only | Lexical matcher plus an optional in-browser embedding model, fused; the lexical matcher gains a clinical lexicon, typo repair and compound-question splitting |
+
+Sections 8, 15, 17 and 18 change. The authoring consequences are in `case-authoring-requirements.md` v0.4, sections 3.2 and 10.6.
+
+**The reason for removing the Patient tab.** It held a full structured background, and a resident who opened it first was handed most of the history without asking for it. The information is still authored, because the interview answers are built from it, but it is now reachable only by asking. What replaces it is a deliberately mediocre arrival handover, two sentences, of the quality a real EMS crew or triage nurse gives when they are busy: enough to start, not enough to diagnose.
+
+**This is a trade, not a free improvement.** A resident who cannot think of the right question now gets nothing, where before they got a paragraph. That is the intended pressure, but it puts more weight on interview matching than v0.4 did, which is why the matcher work in the same version is not a coincidence. If matching fails, the case becomes unplayable rather than merely harder. Section 15 and authoring section 10.6 carry the measured accuracy.
 
 ---
 
@@ -394,6 +410,16 @@ Two interface requirements, both learned by getting them wrong:
 
 **8.4 The dead monitor problem.** Vitals are static within a phase, so with a clock running the monitor will look frozen and broken. Add small cosmetic variance at the rendering layer only, on the order of a beat or two of heart rate and a point of saturation. This must live in the client renderer and never enter state, or it will corrupt result freezing and rule evaluation.
 
+**8.4a The phase-boundary ramp.** A phase transition replaces every vital at once, and an instantaneous jump from 128 to 96 reads as a rendering fault rather than as a patient responding. The renderer interpolates from the previous phase's displayed numbers to the new phase's authored numbers over **five seconds**, using a smoothstep curve so the movement eases in and out rather than sliding linearly.
+
+Six values ramp: heart rate, systolic and diastolic pressure, saturation, respiratory rate, temperature. Everything else switches at the boundary.
+
+**The same constraint as the cosmetic variance applies, and it is the one that matters here.** The ramp is a display value. It is computed on each render from the phase's authored vitals and never written to state, never folded, and never read by a condition. `study S resulted` freezing (5.4) captures the authored numbers, not the ramped ones, so a saturation captured during a ramp is the phase's value and not an intermediate. A resident who orders a blood gas one second into a ramp gets the phase's authored gas, and the monitor beside it will disagree with that gas for four more seconds. That is a real inconsistency and it is accepted deliberately: the alternative is either ramping the state, which breaks freezing and rule evaluation, or holding results until the ramp ends, which makes the clock lie.
+
+**Audio follows the ramp.** The heartbeat interval and pitch are derived from the ramped values, because a beat that jumps while the number slides is worse than either alone.
+
+**Five seconds is a guess.** It was chosen to be long enough to read as movement and short enough not to delay the resident. It has not been tested against residents and should be treated as configuration, not as a finding.
+
 ### 8.5 Audio
 
 Two channels, both derived from the current phase's authored vitals and neither stored.
@@ -520,6 +546,7 @@ Case-agnostic. No clinical knowledge, no case names, no drug behavior. An `if` s
 | **Transition checker** | Evaluates the current phase's transition rules after each state-changing action |
 | **Prerequisite checker** | Merges catalog and case prerequisites, evaluates them, returns the failure message |
 | **Debrief generator** | Folds the log against case data to produce narrative, teaching points, and score |
+| **Interview matcher** | Maps a typed question to an authored topic, or to nothing; lexical, with an optional embedding stage fused on top |
 
 **The folder is not independent of the resolver and transition checker.** Phase changes come from transition rules, and results freeze at order-time state, both computed during the chronological walk. Implementing fold-then-resolve produces a system that appears correct while silently breaking result freezing, showing an early gas with the improved value. Build it as one ordered replay.
 
@@ -590,14 +617,15 @@ Two categories, both belonging on the human checklist:
 
 - **Flags are binary and permanent.** A single dose fixes something for the rest of the case. Cases cannot depend on redosing or titration, and partial response cannot be represented. Stopping an infusion sets its own flag rather than clearing the running flag, so a case can tell that a drip was started and then stopped, but not that it is currently running.
 - **Permanent flags can shadow phase-correct content.** A patient who received non-invasive ventilation, then deteriorated, still carries the `on_niv` flag. A key keyed on that flag returns the improved value in the deteriorated phase. **Phase rules must precede flag rules in any list where both appear.** This is the most easily missed consequence of flag permanence and has already produced a wrong result in review.
-- **Vitals are static within a phase.** The monitor steps at phase boundaries. Cosmetic variance disguises this but does not fix it.
+- **Vitals are static within a phase.** The monitor holds one authored set per phase. Cosmetic variance and the five-second boundary ramp (8.4a) disguise this but do not fix it: between boundaries nothing moves, and the ramp is a rendering effect with no state behind it. A case cannot author a trajectory, only a sequence of plateaus.
 - **The patient does not deteriorate.** Time affects information availability and prompting only. A resident who ignores every prompt reaches the same patient state as one who acts immediately, and sees the difference only in the debrief.
 - **Order cannot be expressed in conditions,** beyond what prerequisites enforce.
 - **Serial testing cannot be represented.** A repeat study in an unchanged state returns an identical value, so a rising troponin cannot be taught without gating on an unrelated flag, which would be dishonest. A predicate such as `study S ordered at least N times` would fix this and would stay enumerable in the review matrix.
 - **Stopping an infusion is a separate action, not a toggle.** Every persistent infusion has a matching stop entry, so a rescue that depends on withdrawing a drip is now authorable, but the case must author the stop as its own step and gate the transition on the flag it sets. Restarting the same infusion afterwards is not represented.
 - **One vitals block per terminal phase.** Every halt displays the same numbers regardless of the mechanism. Making vitals optional per halt reason would fix it.
 - **Turnaround times are compressed** and teach a false tempo unless a simulated clock is displayed.
-- **Interview matching is lexical.** See `case-authoring-requirements.md` section 10.6 for measured accuracy.
+- **Interview matching is bounded by what the case anticipated.** The shipped matcher is an IDF-weighted lexical matcher, extended in v0.5 with a clinical abbreviation lexicon, single-edit typo repair against the case's own vocabulary, and compound-question splitting. An optional embedding model (all-MiniLM-L6-v2, roughly 23 MB, loaded from a CDN and cached in IndexedDB) fuses with it when it loads and is skipped entirely when it does not, so the case is playable either way. None of this creates an answer the author did not write: an unanticipated question still falls through. See `case-authoring-requirements.md` section 10.6 for measured accuracy and for what the measurements do and do not cover.
+- **The arrival handover carries almost nothing.** Removing the Patient tab means the resident starts from two authored sentences. This is intended, but it means a matcher failure is no longer a nuisance, it is a stall. The failure mode to watch for is a resident who asks reasonable questions, gets nothing back, and concludes the case is broken rather than that their phrasing missed.
 
 Each is a deliberate trade for version one. The rule structure migrates cleanly when continuous variables are added, because rule lists keep their shape and only the predicate set becomes richer.
 
@@ -702,9 +730,25 @@ It shows, all from the case file:
 
 - the care setting, as a header
 - the working title and the chief complaint in the patient's words
-- how the patient reached the department, and the handover
+- one line naming where the patient was brought: `Patient brought to the Resuscitation Bay`, `the Trauma Bay`, or `the Patient Room`
 - the difficulty toggle
 - the provenance warning, if the case carries one
+
+**What it deliberately does not show.** Through v0.4 the splash carried a section headed
+"How they got to you" holding the arrival mode and the full handover. It was removed in
+v0.5. It told the resident, before the clock started and without their asking, a large
+part of what the interview is for. What remains is the room, because the room is scene
+rather than history: it sets the expected acuity and it is the one thing a clinician
+walking in genuinely knows before speaking to anyone.
+
+**The room line is generated, not authored prose.** `metadata.arrival.location` takes one
+of `resuscitation_bay`, `trauma_bay`, `patient_room`, and the engine renders the sentence.
+An author cannot write a different sentence there, which is the point: the moment it is
+free text it accumulates clinical detail again.
+
+**The handover did not disappear, it moved.** It is now `patient.arrival_handover`,
+displayed at the top of the History tab under the History heading, and it is capped at two
+sentences. See section 18 and authoring section 3.2.
 
 **Care setting is authored per case, not per deployment.** It reads as a property of the
 institution, but the correct disposition depends on it: a case written for a critical
@@ -744,14 +788,25 @@ The tabs are defined by catalog `placements`, not by the engine. The current set
 
 | Tab | Contents | Behaviour |
 |---|---|---|
-| Patient | Handover, appearance, background | Read only |
-| History | Free-text interview | Fires on submit |
+| History | Demographics, the arrival handover, then the free-text interview | Fires on submit |
 | Exam | General status line, then the 14 maneuvers | Fires on click |
 | Stabilization | Access, airway, oxygen, intubation, fluids, pacing | Order batch |
 | Investigations | Bedside, labs, imaging | Order batch |
 | Interventions | All medications, procedures, blood products | Order batch |
 | Consults | All consultants | Fires on click |
 | Handoff | Disposition, diagnosis, confirm | Terminal |
+
+**Seven tabs, not eight.** v0.4 opened on a Patient tab holding the handover, the
+appearance and a structured background. It is gone. The engine keeps a `HIDDEN_TABS` set
+containing `patient`, so a catalog placement pointing at it resolves without error and
+renders nowhere, which lets existing catalog rows stay valid through the change. New
+placements should not target it.
+
+**What the History tab shows before the first question.** Age, sex, and the chief complaint
+in the patient's words, then the arrival handover: two sentences attributed either to the
+EMS crew or to the triage nurse, depending on `metadata.arrival.mode`. Nothing else. The
+appearance and background that used to sit on the Patient tab are still authored and are
+still what the interview answers are built from, but they are reachable only by asking.
 
 **Every catalog entry in a tab is rendered**, whether or not this case references it. An entry with no case content is inert, neutral, and returns the catalog default. A resident must choose from the real menu, not from a menu of the answers.
 
@@ -800,3 +855,97 @@ Two defects that any implementation will hit, stated as requirements rather than
 
 - **Selecting must not move anything.** If the pending-order bar or a Clear control appears on the first selection, the grid shifts under the cursor and the next click lands on the wrong item. Render the bar and the controls unconditionally, disabled when empty.
 - **The selected marker must not change the button's height**, for the same reason. Use an absolutely positioned marker rather than a label in flow.
+
+---
+
+## 20. Interview matching
+
+New in v0.5. The clinical rules for authoring against this are in
+`case-authoring-requirements.md` section 10.6; this section is the architecture.
+
+The problem: the resident types free text, the case holds a fixed list of topics each with
+an authored answer and a list of phrasings, and something has to choose one topic or none.
+Choosing wrongly is worse than choosing nothing, because a wrong topic returns a
+confidently worded clinical answer to a question the resident did not ask, and nothing on
+screen marks it as a substitution.
+
+### 20.1 Two stages, either of which can run alone
+
+**Stage one is lexical and always present.** IDF-weighted Dice overlap between the query's
+tokens and each authored variant, with the per-case weight table built when the case is
+selected. It runs in about a millisecond and needs nothing from the network.
+
+Three extensions were added in v0.5, all of them aimed at the same gap: residents type
+clinical shorthand, and the authored variants are in lay register because they are what
+the patient would recognise.
+
+- **A clinical lexicon**, roughly ninety entries, rewriting abbreviations and clinical
+  terms into the words the banks actually contain: `pnd` to `wake night gasping breath`,
+  `orthopnea` to `lie flat pillows sleep lying down prop`, `pmh` to `medical problems
+  history conditions diagnosed`. The rewrite is applied per token and **only where the
+  case's own vocabulary does not already contain that token**, so a case that authored
+  `orthopnea` as a variant is not rewritten out of its own match.
+- **Single-edit typo repair** against the case's vocabulary, using optimal string
+  alignment so a transposition costs one rather than two. Words shorter than five
+  characters are never repaired, because at four characters a one-edit neighbourhood
+  contains most of the short English vocabulary. Ties break lexicographically so the
+  result is deterministic.
+- **Compound splitting.** A question is split on `and`, `or`, `also`, `plus`, commas,
+  semicolons and ampersands, and each clause matched separately. The whole question is
+  matched first and its score sets the bar: a clause is only accepted if it clears that
+  score times a tolerance. Without that gate, splitting produced spurious second answers
+  on ordinary single questions that happen to contain the word "and".
+
+**Stage two is an embedding model and is optional.** all-MiniLM-L6-v2, int8, roughly
+23 MB, fetched from a CDN and cached in IndexedDB. It loads in the background after the
+case starts. The state machine is `idle` to `loading` to either `ready` or `unavailable`,
+and `unavailable` is terminal with no retry, because a model that failed once on a given
+network will usually fail again and a retry loop is worse than a missing feature.
+
+**The case is fully playable while stage two is loading or after it has failed.** This is
+the reason the two stages are ordered this way rather than the model being a prerequisite.
+
+### 20.2 The fusion rule
+
+```
+lex = lexical(q)
+if the model is not ready:            return lex
+sem = semantic(q)
+if sem.score >= ACCEPT:               return sem      (0.62)
+if sem.score >= AGREE and sem.topic == lex.topic:  return sem   (0.45)
+return lex
+```
+
+A veto branch exists, where a very low semantic score suppresses a lexical match, and it
+is **disabled in the shipped configuration** (`VETO = 0`). It was disabled deliberately:
+the brief for this simulator is that the resident should get as many answers as the case
+can honestly give, because no context is available anywhere else, and a veto trades
+recall for precision in the wrong direction for that brief. A deployment that cares more
+about false answers than about stalls should raise it.
+
+**The thresholds are not measured.** 0.62 and 0.45 were chosen by inspection of a small
+sweep and have not been validated against resident-typed questions. Treat them as
+configuration with a plausible starting value, not as findings. The sweep tooling is in
+`engine/matcher_eval.mjs` under `--semantic --sweep`.
+
+### 20.3 The extraction contract, which has broken twice
+
+Both evaluation harnesses read the shipped matcher out of `build/simulator.html` rather
+than reimplementing it, so that the numbers describe the matcher that actually runs. They
+locate it by marker comments:
+
+```
+start:  const STOP=new Set(
+end:    /* ---------- fusion of the lexical and semantic matchers ----------
+```
+
+**Anything placed between those markers is evaluated by the harnesses**, in a context
+where `semantic.js` is not loaded. A top-level `SEM.init(...)` inside that region throws
+`ReferenceError: SEM is not defined` and the harness dies. This has now happened twice,
+once in each harness, and the fix both times was to move the semantic wiring out of the
+region rather than to change the markers. Engine-side semantic wiring lives in
+`bindCase()`, after the fusion marker.
+
+This is exactly the drift failure that authoring section 10.6 warns about, arriving from
+the opposite direction: not a second copy of the matcher going stale, but the extraction
+boundary silently moving.

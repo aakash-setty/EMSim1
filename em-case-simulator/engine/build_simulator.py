@@ -32,14 +32,23 @@ sys.path.insert(0, HERE)
 from paths import CasePack, catalog_path, list_packs, BUILD_DIR, ROOT
 
 OUT = os.path.join(BUILD_DIR, "simulator.html")
+# The same bytes again as build/index.html, so that build/ can be uploaded to any
+# static host and served at the root without renaming anything. Every tool and test
+# in this repo addresses build/simulator.html, so that name has to stay; a web server
+# looking for a directory index has to find index.html. Writing both is a megabyte on
+# disk and removes an unforced deployment error.
+SITE_INDEX = os.path.join(BUILD_DIR, "index.html")
 
 catalog = json.load(open(catalog_path("action-catalog.json")))
 dxcat = json.load(open(catalog_path("diagnosis-catalog.json")))
 CE = {x["id"]: x for x in catalog["entries"]}
 
-TAB_ORDER = ["patient", "history", "exam", "stabilization",
+# The Patient tab was removed. It printed the whole authored background before the
+# learner had asked for any of it; the two-sentence EMS or triage handover now sits at
+# the top of History. See docs/arrival-and-history-change.md.
+TAB_ORDER = ["history", "exam", "stabilization",
              "investigations", "interventions", "consultations", "handoff"]
-TAB_LABEL = {"patient": "Patient", "history": "History", "exam": "Exam",
+TAB_LABEL = {"history": "History", "exam": "Exam",
              "investigations": "Investigations", "stabilization": "Stabilization",
              "interventions": "Interventions", "consultations": "Consults",
              "handoff": "Handoff"}
@@ -272,20 +281,31 @@ def main():
         return json.dumps(o, ensure_ascii=False).replace("<", "\\u003c").replace("\u2028", "\\u2028")
 
     shell = open(os.path.join(HERE, "shell.html")).read()
+    # The blurred room background. Derived from a source image rather than authored,
+    # so it lives beside the shell as a data URI rather than inline in it; the command
+    # that regenerates it is in a comment at the top of the .room rule.
+    room_bg = open(os.path.join(HERE, "room-bg.txt")).read().strip()
+    # semantic.js declares `const SEM` and ui.js registers a listener on it at top
+    # level, so it MUST come before ui.js. Reversed, the bundle throws before the
+    # first render and the page is blank.
     bundle = ("/*__ENGINE_START__*/\n" + open(os.path.join(HERE, "engine.js")).read() +
               "\n/*__ENGINE_END__*/\n" + open(os.path.join(HERE, "audio.js")).read() +
+              "\n" + open(os.path.join(HERE, "semantic.js")).read() +
               "\n" + open(os.path.join(HERE, "ui.js")).read() + "\n")
 
     title = "EM Case Simulator" if len(packs) != 1 else packs[0]["card"]["title"]
     shell = shell.replace("__TITLE__", title.replace("<", ""))
+    shell = shell.replace("__ROOM_BG__", room_bg)
     shell = shell.replace("__SHARED_JSON__", jsafe(shared))
     shell = shell.replace("__CASES_JSON__", jsafe(packs))
     shell = shell.replace("</script>\n</body>", bundle + "</script>\n</body>")
 
     os.makedirs(BUILD_DIR, exist_ok=True)
     open(OUT, "w").write(shell)
+    open(SITE_INDEX, "w").write(shell)
 
-    print("wrote", os.path.relpath(OUT, ROOT), round(len(shell) / 1024), "KB")
+    print("wrote", os.path.relpath(OUT, ROOT), round(len(shell) / 1024), "KB",
+          "(and", os.path.relpath(SITE_INDEX, ROOT) + ")")
     print("catalog:", len(CE), "actions,", len(shared["diagnoses"]), "diagnoses")
     for p in packs:
         print(f"  {p['prefix']:<8} {p['id']:<20} bindings {len(p['bindings']):>3}  "

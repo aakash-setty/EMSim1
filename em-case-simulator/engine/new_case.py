@@ -55,9 +55,13 @@ def skeleton(prefix, title):
                            "site. Change this if the case depends on a resource-limited setting, "
                            "because the correct disposition depends on it."),
             },
+            # mode chooses the heading above the two-sentence handover on the History
+            # tab; location sets the one line of scene on the splash screen. Nothing
+            # else reads either. See docs/arrival-and-history-change.md.
             "arrival": {
-                "mode": todo("3.2", "Ambulance | Walk-in | Transfer | Police"),
-                "line": todo("3.2", "one line on how they reached you"),
+                "mode": todo("3.2", "ems | triage"),
+                "location": todo("3.2", "resuscitation_bay | trauma_bay | patient_room"),
+                "line": todo("3.2", "one line on how they reached you (author reference, not shown)"),
             },
         },
         "tag_vocabulary": {
@@ -66,9 +70,19 @@ def skeleton(prefix, title):
         },
         "patient": {
             "age": None, "sex": None, "weight_kg": None,
-            "background": todo("3.2", "relevant history in one paragraph"),
+            "background": todo("3.2", "relevant history in one paragraph (NOT shown to the learner)"),
             "presenting_appearance": todo("3.2", "one or two sentences"),
-            "ems_handover_text": todo("3.2", "the handover as it would be given"),
+            # The only history the learner is given without asking for it.
+            "arrival_handover": todo("3.2", "EXACTLY TWO SENTENCES, shown to the learner. "
+                                            "Age and sex, the problem, a rough duration, and one "
+                                            "circumstance that explains why they came in today. "
+                                            "No past history, no medications, no pertinent "
+                                            "negatives, no vital sign numbers, nothing naming the "
+                                            "diagnosis or the precipitant. If a competent resident "
+                                            "could not still get this case wrong after reading it, "
+                                            "it says too much."),
+            "ems_handover_text": todo("3.2", "the full handover as it would really be given "
+                                             "(author reference and review packet, not shown)"),
         },
         "phases": [
             {
@@ -261,10 +275,15 @@ Fill this in before any drafting. Section numbers refer to
 
 ## 3.2 Patient
 - Age, sex, weight:
-- Background:
+- Background (NOT shown to the learner, but the debrief and review packet need it):
 - Presenting vitals:
 - Presenting appearance:
-- How they arrived, and the care setting if it is not a quaternary centre:
+- Arrival: EMS or triage, and which room (resuscitation bay, trauma bay, patient room):
+- **The two-sentence handover the learner will see.** Age and sex, the problem, a
+  rough duration, one circumstance. No past history, no medications, no pertinent
+  negatives, no vitals, nothing naming the diagnosis or the precipitant:
+- The full handover, for the review packet only:
+- The care setting, if it is not a quaternary centre:
 
 ## 3.3 Phases (three to six clinical, plus the two terminals)
 For each: label, one-line description, and the six vital signs.

@@ -81,7 +81,12 @@ const AUDIO = (() => {
   function currentVitals() {
     if (!CASE) return null;
     const p = PHASE[ST ? ST.phase : CASE.phases[0].id];
-    const v = p ? p.vitals : null;
+    let v = p ? p.vitals : null;
+    /* The monitor travels to the new phase's numbers over five seconds. The
+       heartbeat travels with it, because a beat that jumps to the new rate
+       while the displayed rate is still moving sounds like a fault. Guarded by
+       typeof so this file keeps working without the UI layer. */
+    if (typeof rampedVitals === 'function') { const r = rampedVitals(); if (r) v = r; }
     /* An unauthored case has null vitals. There is no tempo and no pitch to derive,
        so play nothing rather than guessing at a rate. */
     if (!v || typeof v.heart_rate !== 'number' || typeof v.oxygen_saturation !== 'number') return null;
@@ -94,7 +99,11 @@ const AUDIO = (() => {
     if (!on || !ctx) return;
     const v = currentVitals();
     if (!v) return;
-    const key = v.heart_rate + ':' + v.oxygen_saturation;
+    /* Quantised. During a ramp the raw values change every frame, and
+       rescheduling the beat three hundred times over five seconds restarts the
+       interval on each pass and sounds like stumbling. Two beats per minute and
+       one percent are below what the ear picks out anyway. */
+    const key = (Math.round(v.heart_rate / 2) * 2) + ':' + Math.round(v.oxygen_saturation);
     if (key !== lastRateKey) {
       lastRateKey = key;
       schedule();

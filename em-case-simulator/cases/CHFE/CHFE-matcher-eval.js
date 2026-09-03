@@ -35,8 +35,15 @@ global.PROTO = { matchThreshold: SHARED.matchThreshold };
 /* Pull the shipped matcher out of the UI block. If this extraction fails the file
    should be fixed rather than the matcher reimplemented here, because a second copy
    would drift and then report on a matcher nobody runs. */
+/* The end marker is the fusion block, NOT the events block. Between the lexical
+   matcher and the events handler now sit the semantic fusion rule and a top-level
+   `SEM.onChange(...)` registration, and evaluating those here throws
+   `ReferenceError: SEM is not defined` because semantic.js is not loaded. Ending at
+   the fusion comment takes exactly the lexical matcher and nothing else, which is
+   also what this file is measuring: the matcher that runs before, and instead of,
+   the embedding model. */
 const start = html.indexOf('const STOP=new Set(');
-const end = html.indexOf('/* ---------- events ---------- */');
+const end = html.indexOf('/* ---------- fusion of the lexical and semantic matchers ----------');
 if (start < 0 || end < 0 || end < start) {
   console.error('could not locate the matcher block in the prototype');
   process.exit(2);

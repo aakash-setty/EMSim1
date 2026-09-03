@@ -716,6 +716,46 @@ def run_checks(case):
             errors.append(f"[interview] phase {p['id']!r} has alertness "
                           f"{p['appearance']['alertness_level']} but is not covered by a global answer rule")
 
+    # -- N: arrival and the two-sentence handover (section 3.2) -------------
+    # The handover is the only history the learner is given without asking for it,
+    # so its length is a clinical constraint rather than a style preference. The
+    # Patient tab used to print the whole background; it is gone, and everything
+    # not in these two sentences now has to be elicited.
+    ar = (case.get("metadata") or {}).get("arrival") or {}
+    mode = str(ar.get("mode", "")).lower()
+    if mode not in ("ems", "triage"):
+        if any(k in mode for k in ("ambulance", "walk", "transfer", "police")):
+            warnings.append(f"[arrival] mode {ar.get('mode')!r} uses the pre-0.5 vocabulary; "
+                            f"use 'ems' or 'triage'. The reader normalises it, but new cases "
+                            f"should author the new values")
+        else:
+            errors.append("[arrival] metadata.arrival.mode must be 'ems' or 'triage'; it selects "
+                          "the heading above the handover")
+
+    loc = ar.get("location")
+    if loc not in ("resuscitation_bay", "trauma_bay", "patient_room"):
+        errors.append("[arrival] metadata.arrival.location must be one of resuscitation_bay, "
+                      "trauma_bay, patient_room; without it the splash screen shows no arrival line")
+
+    h = (case.get("patient") or {}).get("arrival_handover")
+    if not h or str(h).startswith("TODO"):
+        errors.append("[arrival] patient.arrival_handover is required; it is the only history "
+                      "the learner is given without asking")
+    else:
+        h = str(h).strip()
+        sentences = [s for s in re.split(r"(?<=[.!?])\s+", h) if s.strip()]
+        if len(sentences) > 2:
+            errors.append(f"[arrival] arrival_handover is {len(sentences)} sentences; "
+                          f"section 3.2 allows two")
+        if len(h.split()) > 45:
+            warnings.append(f"[arrival] arrival_handover is {len(h.split())} words; two sentences "
+                            f"of handover is usually under 40")
+        if re.search(r"\b\d{2,3}\s*(bpm|mmHg|%)", h) or re.search(r"\bsats?\b", h, re.I):
+            warnings.append("[arrival] arrival_handover quotes vital signs; they are on the monitor "
+                            "and will be stale within a minute of the case starting")
+        notes.append(f"arrival: {mode or 'unset'} to {loc or 'unset'}; handover "
+                     f"{len(sentences)} sentence(s), {len(h.split())} words")
+
     return errors, warnings, notes
 
 
