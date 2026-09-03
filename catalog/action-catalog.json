@@ -58,6 +58,7 @@
     ],
     "derived_by_convention": [
       "id (snake_case of display_name)",
+      "reveals_vitals",
       "category",
       "state_changing",
       "dose_required",
@@ -111,7 +112,9 @@
     "Fluid boluses made explicit in agent and volume (NS and LR, 1L and 500mL). The generic crystalloid bolus is gone; see equivalence_groups.",
     "Bumetanide removed. Furosemide carries its dose in the display name.",
     "Catalog prerequisites rewritten with the mandatory trailing keyword so they parse in the section 4 grammar.",
-    "Nitroglycerin sublingual added as a separate route variant on author instruction."
+    "Nitroglycerin sublingual added as a separate route variant on author instruction.",
+    "Nursing group added under Stabilization on author instruction, not from a screenshot: droplet, contact and airborne precautions, warming measures and cooling measures. Each sets a flag of its own name and asserts nothing clinical.",
+    "attach_monitor carries reveals_vitals. The interface shows no vitals and plays no heartbeat until an action carrying this flag has been taken."
   ],
   "known_gaps": [
     "Meds - Respiratory truncated in screenshot: only Albuterol and Ipratropium visible, list continues.",
@@ -136,7 +139,6 @@
     "furosemide_iv": "furosemide_40_mg_iv",
     "dobutamine_infusion": "dobutamine_drip",
     "niv_bipap_cpap": "non_invasive_positive_pressure_ventilation",
-    
     "cardiac_monitor": "attach_monitor",
     "crystalloid_bolus_1l": "equivalence group crystalloid_bolus (four entries)",
     "cxr_portable": "xr_chest (catalog does not distinguish portable)",
@@ -526,7 +528,8 @@
       "turnaround_class": null,
       "narration_template": null,
       "default_prerequisites": [],
-      "flags_set_default": []
+      "flags_set_default": [],
+      "reveals_vitals": true
     },
     {
       "id": "start_chest_compressions",
@@ -1332,6 +1335,106 @@
         }
       ],
       "flags_set_default": []
+    },
+    {
+      "id": "droplet_precautions",
+      "display_name": "Droplet Precautions",
+      "placements": [
+        {
+          "tab": "stabilization",
+          "group": "Nursing"
+        }
+      ],
+      "category": "stabilization",
+      "state_changing": true,
+      "dose_required": false,
+      "turnaround_class": null,
+      "narration_template": "{name} are in place.",
+      "default_prerequisites": [],
+      "flags_set_default": [
+        "droplet_precautions"
+      ],
+      "repeatable": true
+    },
+    {
+      "id": "contact_precautions",
+      "display_name": "Contact Precautions",
+      "placements": [
+        {
+          "tab": "stabilization",
+          "group": "Nursing"
+        }
+      ],
+      "category": "stabilization",
+      "state_changing": true,
+      "dose_required": false,
+      "turnaround_class": null,
+      "narration_template": "{name} are in place.",
+      "default_prerequisites": [],
+      "flags_set_default": [
+        "contact_precautions"
+      ],
+      "repeatable": true
+    },
+    {
+      "id": "airborne_precautions",
+      "display_name": "Airborne Precautions",
+      "placements": [
+        {
+          "tab": "stabilization",
+          "group": "Nursing"
+        }
+      ],
+      "category": "stabilization",
+      "state_changing": true,
+      "dose_required": false,
+      "turnaround_class": null,
+      "narration_template": "{name} are in place.",
+      "default_prerequisites": [],
+      "flags_set_default": [
+        "airborne_precautions"
+      ],
+      "repeatable": true
+    },
+    {
+      "id": "warming_measures",
+      "display_name": "Warming Measures",
+      "placements": [
+        {
+          "tab": "stabilization",
+          "group": "Nursing"
+        }
+      ],
+      "category": "stabilization",
+      "state_changing": true,
+      "dose_required": false,
+      "turnaround_class": null,
+      "narration_template": "{name} are in place.",
+      "default_prerequisites": [],
+      "flags_set_default": [
+        "warming_measures"
+      ],
+      "repeatable": true
+    },
+    {
+      "id": "cooling_measures",
+      "display_name": "Cooling Measures",
+      "placements": [
+        {
+          "tab": "stabilization",
+          "group": "Nursing"
+        }
+      ],
+      "category": "stabilization",
+      "state_changing": true,
+      "dose_required": false,
+      "turnaround_class": null,
+      "narration_template": "{name} are in place.",
+      "default_prerequisites": [],
+      "flags_set_default": [
+        "cooling_measures"
+      ],
+      "repeatable": true
     },
     {
       "id": "doppler",

@@ -112,6 +112,52 @@ sat is dropping."
 
 These are ordered by how likely I think you are to disagree.
 
+**4.0 Diuresis now moves the saturation by nothing, and this is new in engine v0.7.** Read
+this one first; it is the newest and the least settled.
+
+Oxygenation in this case used to be carried entirely by the phases: 87 on arrival, 93 once
+the patient was on positive pressure with a nitrate running, 96 after furosemide. Actions
+can now carry a `vital_effect`, and on author instruction the arc was rebuilt so that the
+number on the monitor is driven by the treatment rather than by the phase:
+
+| Action | Effect on saturation |
+|---|---|
+| Positive pressure ventilation | +3 points, for as long as the mask is on |
+| Nitroglycerin, infusion or sublingual | +5 points for 30 seconds, then back. Repeating repeats it; the two routes share one key and do not stack |
+| Furosemide 40 mg IV | nothing at all |
+
+To make that arithmetic honest the phase baselines had to be rebased to the unsupported
+value, so `stabilizing` and `improving` now both carry a saturation of 87 rather than 93
+and 96. The other vitals still improve on each phase change: after furosemide the heart
+rate falls to 92, the pressure to 138/84 and the respiratory rate to 18, and the
+saturation stays where the mask put it.
+
+**The teaching argument.** This makes learning objective 2, sequencing positive pressure
+and vasodilation ahead of diuresis, something the resident watches happen rather than
+something the debrief tells them afterwards. Give the diuretic first and the number they
+are watching does not move.
+
+**The argument against, which you may find stronger.** Diuresis in a patient four
+kilograms above his stated dry weight, five days off his loop diuretic, does improve
+oxygenation. The case now says it improves it by zero. The defence is the horizon: this is
+an eight-minute encounter and the diuretic's effect on oxygenation is not an eight-minute
+effect. That defence is reasonable and it is still an approximation, and a resident who
+has learned "furosemide does nothing to the sat" has learned something that is true only
+inside this time window. If you want the improving phase to carry some gain, the change is
+one number in one phase, and it should be a gain you can defend at eight minutes rather
+than one chosen to look right.
+
+**The deltas are teaching choices, not measurements.** Three points and five points are
+authored figures. No trial supports a specific number, and nothing in the simulator is
+modelling gas exchange. Change them freely; they are one field each.
+
+**One more thing to check.** A resident who never attaches a monitor now never sees any of
+this, because vitals and the heartbeat are gated on `attach_monitor` from v0.7. The NIV
+prompt still says "his sat is sitting at 87 on six litres", which is the nurse telling
+them a number rather than the resident reading one, and that is deliberate. Confirm you
+are happy with a nurse who volunteers a saturation to a resident who has not put a probe
+on the patient.
+
 **4.1 Dobutamine as a halting harmful action.** The physiology is defensible: an inotrope in a
 hypertensive, warm, well-perfused patient with an ischaemic cardiomyopathy adds myocardial oxygen
 demand and arrhythmic risk with nothing to gain. Modelling a single order as immediately fatal is
@@ -849,3 +895,27 @@ third walks the last.
 
 Nothing in the clinical content of this case was reviewed or changed as part of that work,
 so the sign-off checklist stands exactly where it did.
+
+
+## Addendum: what changed when the engine moved to v0.7
+
+**Clinical, and it needs your judgement: section 4.0 above.** The oxygenation arc is now
+driven by actions rather than by phases, and the phase baselines were rebased to match.
+Nothing else in the clinical content was reviewed or changed.
+
+**The monitor is dark until it is attached.** No vitals and no heartbeat until
+`attach_monitor` is taken. This is display gating: the fold computes the numbers from the
+first second, every transition and every result behaves as before, and the debrief is not
+gated, so a resident who never attached anything still sees everything the case recorded.
+The nurse's prompt tone is not gated either.
+
+**A question the patient did not understand no longer appears in the running chart.** It
+stays on the History tab so the resident can see which phrasing failed. Engine-level and
+case-agnostic; nothing in this case's interview content changed.
+
+**Stabilization opens by default and gained a Nursing group.** Droplet, contact and
+airborne precautions, warming measures and cooling measures. This case binds none of them,
+so they render untagged and neutral, which is correct for it.
+
+The sign-off checklist stands exactly where it did, with one addition: authoring 14.3 now
+carries a vital-effects block, and this case uses the mechanism.

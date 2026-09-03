@@ -56,6 +56,13 @@ function bind(i) {
   selectCase(i);
   const st = engineState();
   for (const k of ['CASE', 'PROTO', 'PACK', 'PHASE', 'ACT', 'FU', 'CK', 'CONTENT']) global[k] = st[k];
+  /* A is rebound here rather than captured once. selectCase builds a NEW actions object
+     on every call, and the "every packed case binds" section below binds each pack in
+     turn, so a reference taken at the top of this file points at the first pack's map
+     for the rest of the run. Everything read off it happened to be identical across
+     packs, so nothing failed and the staleness was invisible until a test tried to WRITE
+     to it. Live binding rather than a stale copy. */
+  global.A = st.ACT;
   return st;
 }
 bind(packIdx);
@@ -71,8 +78,7 @@ global.section = name => console.log('\n-- ' + name + ' --');
 global.mk = steps => steps.map((s, i) =>
   Array.isArray(s) ? { seq: i, t: s[0], actionId: s[1] } : Object.assign({ seq: i }, s));
 
-/* ids discovered from the loaded data, never hard-coded */
-const A = PROTO.actions;
+/* ids discovered from the loaded data, never hard-coded. A is set by bind(), above. */
 const idsWhere = f => Object.keys(A).filter(id => f(A[id]));
 global.EXAMS = idsWhere(a => a.category === 'exam');
 global.STUDIES = idsWhere(a => a.category === 'investigation');
@@ -250,6 +256,23 @@ section('tab presentation');
   const flat = PROTO.tabOrder.filter(t => !PROTO.collapsibleTabs.includes(t));
   const wrongly = flat.filter(t => Object.keys(groupsOf(t)).length > 3);
   chk('no many-grouped tab is left flat', wrongly.length === 0, wrongly.join(', '));
+
+  /* A group named as opening by default has to exist on that tab and that tab has to
+     be collapsible, or the setting is silently doing nothing. */
+  const de = PROTO.defaultExpanded || {};
+  for (const tab of Object.keys(de)) {
+    chk('default-expanded tab ' + tab + ' is collapsible', PROTO.collapsibleTabs.includes(tab));
+    const have = Object.keys(groupsOf(tab));
+    const ghost = de[tab].filter(g => !have.includes(g));
+    chk('every default-expanded group on ' + tab + ' exists', ghost.length === 0, ghost.join(', '));
+  }
+  /* Ordered groups likewise: a name in groupOrder that no entry uses is a rename that
+     was made in the catalog and not here, and it silently loses its position. */
+  for (const tab of Object.keys(PROTO.groupOrder || {})) {
+    const have = Object.keys(groupsOf(tab));
+    const ghost = PROTO.groupOrder[tab].filter(g => !have.includes(g));
+    chk('every ordered group on ' + tab + ' exists', ghost.length === 0, ghost.join(', '));
+  }
 }
 
 section('difficulty modes');
@@ -366,6 +389,288 @@ section('stop actions');
   const missing = persistent.filter(id =>
     !Object.keys(SHARED.actionsBase).some(s => SHARED.actionsBase[s].stops === id));
   chk('every persistent infusion has a stop action', missing.length === 0, missing.join(', '));
+}
+
+section('interview readouts');
+{
+  /* The chart shows what was learned about the patient. An unmatched question is
+     answered by the case's fallback, and the readout records that by leaving `matched`
+     null, which is what the interface filters on. If a matched answer ever came back
+     with a null topic the filter would swallow real history. */
+  const topic = CASE.interview.topics[0].topic;
+  const asked = fold(mk([{ t: 1, kind: 'interview', topic, q: CASE.interview.topics[0].canonical },
+                          { t: 2, kind: 'interview', topic: null, q: 'zzzz' }]), 10);
+  const sp = asked.readouts.filter(r => r.kind === 'speech');
+  chk('both questions produced a readout', sp.length === 2, String(sp.length));
+  chk('a matched question records its topic', sp[0].matched === topic, String(sp[0].matched));
+  chk('an unmatched question records no topic', sp[1].matched === null, String(sp[1].matched));
+  chk('the unmatched answer is the case fallback',
+      sp[1].body === resolve((CASE.interview.global_answer_rules || [])
+                             .concat(CASE.interview.out_of_scope_fallback), asked));
+  /* The filter itself lives in ui.js, outside the engine block this harness evaluates,
+     so it is asserted against the built file rather than executed. */
+  chk('the chart feed filters on matched',
+      /r\.kind===\'speech\'&&r\.matched/.test(html.replace(/\s+/g, '')),
+      'ui.js feedItems');
+}
+
+section('monitor gating');
+{
+  /* Case-agnostic: whichever action carries reveals_vitals, and there must be exactly
+     one route to it or a resident can be shown vitals by an act that is not attaching
+     a monitor. */
+  const revealers = Object.keys(A).filter(id => A[id].reveals_vitals);
+  chk('exactly one action reveals the vitals', revealers.length === 1, revealers.join(', '));
+  const rid = revealers[0];
+  chk('nothing is monitored before it is taken', fold(mk([]), 60).monitoring === null);
+  if (rid) {
+    const on = fold(mk([[2, rid]]), 60);
+    chk('taking it starts the monitoring', !!on.monitoring && on.monitoring.id === rid);
+    chk('the monitoring records when it started', on.monitoring.t === 2);
+    /* Monitoring is a fact about the resident's equipment, not about the patient, so
+       nothing a case authors may switch it back off. */
+    chk('monitoring never turns off again',
+        !!fold(mk([[2, rid], [4, EXAMS[0]]]), 300).monitoring);
+  }
+  chk('vitals are derived whether or not anyone is watching',
+      !!fold(mk([]), 30).vitals, 'the fold computes them; the interface hides them');
+}
+
+section('vital effects');
+{
+  const START = CASE.phases[0].id;
+  const base = PHASE[START].vitals;
+  const withFx = Object.keys(A).filter(id => (A[id].vital_effects || []).length);
+  chk('no effect is active before anything is done', fold(mk([]), 30).vitalEffects.length === 0);
+  chk('with no effect the vitals are the phase baseline verbatim',
+      JSON.stringify(fold(mk([]), 30).vitals) === JSON.stringify(base));
+  if (!withFx.length) {
+    chk('this case authors no vital effects, so there is nothing further to check', true);
+  } else {
+    /* Pick an effect whose action is takeable at t=0 in the start phase with no
+       prerequisites, so the assertion is about the effect and not about the block. */
+    const id = withFx.find(x => !(A[x].prerequisites || []).length) || withFx[0];
+    const fx = A[id].vital_effects[0];
+    const pre = (A[id].prerequisites || []).length;
+    if (!pre) {
+      const st = fold(mk([[1, id]]), 3);
+      const moved = st.vitals[fx.vital] - PHASE[st.phase].vitals[fx.vital];
+      chk('an effect moves its vital off the phase baseline', moved !== 0,
+          id + ' ' + fx.vital + ' ' + moved);
+      /* Repeat dosing refreshes rather than stacks: two administrations sharing a key
+         must not double the delta. */
+      const twice = fold(mk([[1, id], [2, id]]), 3);
+      chk('the same action twice does not stack',
+          twice.vitals[fx.vital] === fold(mk([[2, id]]), 3).vitals[fx.vital]);
+      chk('effects sharing a key collapse to one',
+          twice.vitalEffects.filter(e => e.key === (fx.key || id)).length === 1);
+      if (fx.duration_seconds) {
+        const during = fold(mk([[1, id]]), 1 + fx.duration_seconds - 1);
+        const after  = fold(mk([[1, id]]), 1 + fx.duration_seconds + 1);
+        chk('a timed effect is acting inside its window',
+            during.vitalEffects.some(e => e.key === (fx.key || id)));
+        chk('a timed effect has lapsed after it',
+            !after.vitalEffects.some(e => e.key === (fx.key || id)));
+        chk('the vital returns to baseline when it lapses',
+            after.vitals[fx.vital] === PHASE[after.phase].vitals[fx.vital]);
+      }
+    } else {
+      chk('every effect-bearing action in this case has a prerequisite, checked in the pack', true);
+    }
+    /* The whole point of separating effects from phases is that they are display and
+       audio only. Nothing about them may reach the condition language. */
+    chk('vitals do not enter the condition language',
+        !/case 'vital'/.test(String(evalCond)));
+  }
+  /* Terminal phases author the numbers a reader is left looking at. */
+  const term = CASE.phases.filter(p => p.terminal).map(p => p.id);
+  chk('every case has at least one terminal phase', term.length > 0, term.join(', '));
+}
+
+section('the running chart');
+{
+  /* feedItems lives in ui.js, outside the engine block this harness evaluates, so the
+     ordering and the filter are asserted against the built file. What IS asserted against
+     the engine is the vocabulary they depend on: the chart selects nurse utterances by
+     kind, so renaming a kind in the fold would empty the chart of prompts without any
+     test failing. These two halves have to be checked together or neither is worth much. */
+  const flat = html.replace(/\s+/g, '');
+  chk('the chart sorts newest first', /out\.sort\(\(a,b\)=>b\.t-a\.t\|\|b\.seq-a\.seq\)/.test(flat));
+  chk('the chart follows the newest entry to the top, not the bottom',
+      /if\(f\)f\.scrollTop=0;/.test(flat));
+  chk('the chart selects nurse lines by kind',
+      /constNURSE_IN_CHART=\{prompt:1,deterioration:1\}/.test(flat));
+
+  /* The kinds the fold actually emits. A prompt is the one the chart exists for. */
+  const promptAction = CRITICAL.find(id => A[id].prompt);
+  if (promptAction) {
+    const d = A[promptAction].prompt.deadline_seconds;
+    const st = fold(mk([]), d + 2, 1);
+    const kinds = new Set(st.nurse.map(n => n.kind));
+    chk('the fold emits a nurse line of kind "prompt"', kinds.has('prompt'),
+        [...kinds].join(', '));
+  }
+  {
+    /* And of kind "deterioration", where the case has a timed transition that narrates.
+       Emitted on its own kind so the no-trajectory assertion on prompts stays valid. */
+    const timed = CASE.phases.some(p => (p.transitions || [])
+      .some(t => t.after_seconds !== undefined && t.narration));
+    if (timed) {
+      const long = fold(mk([]), 4000, 1);
+      chk('the fold emits a nurse line of kind "deterioration"',
+          long.nurse.some(n => n.kind === 'deterioration'));
+    } else {
+      chk('this case authors no narrated timed transition, so that kind is not exercised here',
+          true);
+    }
+  }
+  /* A blocked attempt has to carry its message where the chart can reach it, since the
+     chart now renders the reason rather than only the fact. */
+  {
+    /* A prerequisite that HOLDS at the start blocks nothing, so search for one that
+       actually blocks rather than for one that merely exists. CHFE's first gated action
+       is guarded on NOT being intubated, which is true on arrival. */
+    const gated = Object.keys(A).find(id => (A[id].prerequisites || []).length &&
+                                            A[id].category !== 'exam' &&
+                                            fold(mk([[1, id]]), 10).blocked.length === 1);
+    if (gated) {
+      const st = fold(mk([[1, gated]]), 10);
+      chk('a blocked attempt records a message the chart can render',
+          !!st.blocked[0].message && st.blocked[0].t === 1 && st.blocked[0].id === gated,
+          gated);
+    } else {
+      chk('no action in this case blocks from the arrival state', true);
+    }
+  }
+}
+
+section('expiring flags and delayed onset');
+{
+  /* Neither case authors these yet, and a mechanic no case uses is a mechanic nobody has
+     run. So the harness authors one: a synthetic action and a synthetic transition are
+     installed on the loaded case, exercised, and removed. Nothing is written to a case
+     file and the assertions below this block see the case exactly as it was. */
+  const START = CASE.phases[0].id;
+  const P = PHASE[START];
+  const savedTransitions = P.transitions ? P.transitions.slice() : [];
+  const target = CASE.phases.find(p => p.id !== START && !p.terminal);
+  /* Heart rate rather than saturation. Saturation is bounded at 100 and MGCA arrives at
+     98, so a +4 probe clamped and the assertion failed for the right reason on the wrong
+     case. Heart rate has 280 points of headroom above any authored value, so the probe
+     measures the mechanism rather than the bound. The bound gets its own check below. */
+  const VIT = 'heart_rate';
+  const baseline = P.vitals ? P.vitals[VIT] : null;
+
+  A.__probe_drug = {
+    id: '__probe_drug', name: 'Probe drug', tab: 'interventions', group: 'Probe',
+    category: 'medication', state_changing: true, repeatable: true, prerequisites: [],
+    flags_set: [], flags_set_timed: [{ flag: '__probe_acting', duration_seconds: 30 }],
+    vital_effects: [{ vital: VIT, delta: 4, key: '__probe_fx',
+                      while: 'flag __probe_acting set' }]
+  };
+  A.__probe_slow = {
+    id: '__probe_slow', name: 'Probe slow drug', tab: 'interventions', group: 'Probe',
+    category: 'medication', state_changing: true, repeatable: true, prerequisites: [],
+    flags_set: [], flags_set_timed: [],
+    vital_effects: [{ vital: VIT, delta: 6, key: '__probe_slow_fx',
+                      onset_seconds: 20, duration_seconds: 60 }]
+  };
+  A.__probe_perm = {
+    id: '__probe_perm', name: 'Probe permanent', tab: 'interventions', group: 'Probe',
+    category: 'medication', state_changing: true, repeatable: true, prerequisites: [],
+    flags_set: ['__probe_acting'], flags_set_timed: []
+  };
+
+  /* --- the flag itself --- */
+  chk('a timed flag is set when the action is taken',
+      fold(mk([[1, '__probe_drug']]), 5).flags.has('__probe_acting'));
+  chk('it is still set one second before it lapses',
+      fold(mk([[1, '__probe_drug']]), 30).flags.has('__probe_acting'));
+  chk('it is gone one second after',
+      !fold(mk([[1, '__probe_drug']]), 33).flags.has('__probe_acting'));
+  chk('the lapse is recorded with its time',
+      (() => { const e = fold(mk([[1, '__probe_drug']]), 40).flagExpiries;
+               return e.length === 1 && e[0].flag === '__probe_acting' && e[0].t === 31; })());
+
+  /* --- a repeat dose refreshes rather than shortening --- */
+  {
+    const twice = fold(mk([[1, '__probe_drug'], [20, '__probe_drug']]), 40);
+    chk('a repeat dose extends the flag past the first expiry',
+        twice.flags.has('__probe_acting'), 'still set at 40s');
+    chk('the first expiry does not fire while a later grant stands',
+        twice.flagExpiries.length === 0);
+    chk('and it lapses at the later deadline',
+        !fold(mk([[1, '__probe_drug'], [20, '__probe_drug']]), 55).flags.has('__probe_acting'));
+  }
+
+  /* --- a permanent grant absorbs a timed one, in either order --- */
+  chk('a permanent grant taken after a timed one stops it expiring',
+      fold(mk([[1, '__probe_drug'], [5, '__probe_perm']]), 60).flags.has('__probe_acting'));
+  chk('a permanent grant taken before a timed one is not cancelled by it',
+      fold(mk([[1, '__probe_perm'], [5, '__probe_drug']]), 60).flags.has('__probe_acting'));
+
+  /* --- an effect guarded on the flag dies with it --- */
+  if (typeof baseline === 'number') {
+    chk('an effect guarded on a timed flag acts while the flag stands',
+        fold(mk([[1, '__probe_drug']]), 10).vitals[VIT] === baseline + 4);
+    chk('and stops when the flag lapses',
+        fold(mk([[1, '__probe_drug']]), 40).vitals[VIT] === baseline);
+
+    /* --- onset --- */
+    chk('an effect with an onset has not started before it',
+        fold(mk([[1, '__probe_slow']]), 10).vitals[VIT] === baseline);
+    chk('it is acting after the onset',
+        fold(mk([[1, '__probe_slow']]), 30).vitals[VIT] === baseline + 6);
+    chk('and its duration is measured from the administration, not from the onset',
+        fold(mk([[1, '__probe_slow']]), 60).vitals[VIT] === baseline + 6 &&
+        fold(mk([[1, '__probe_slow']]), 62).vitals[VIT] === baseline);
+
+    /* The clamp. A saturation cannot be driven above 100 by an effect, however large the
+       delta or however many effects stack, and a case that would need it to has authored
+       the wrong baseline rather than discovered a new physiology. */
+    A.__probe_huge = {
+      id: '__probe_huge', name: 'Probe huge', tab: 'interventions', group: 'Probe',
+      category: 'medication', state_changing: true, repeatable: true, prerequisites: [],
+      flags_set: [], flags_set_timed: [],
+      vital_effects: [{ vital: 'oxygen_saturation', delta: 50, key: '__probe_huge_a' },
+                      { vital: 'oxygen_saturation', delta: 50, key: '__probe_huge_b' }]
+    };
+    chk('effects cannot drive a saturation above 100',
+        fold(mk([[1, '__probe_huge']]), 5).vitals.oxygen_saturation === 100);
+    A.__probe_huge.vital_effects = [{ vital: 'oxygen_saturation', delta: -400,
+                                      key: '__probe_huge_a' }];
+    chk('nor below zero',
+        fold(mk([[1, '__probe_huge']]), 5).vitals.oxygen_saturation === 0);
+    delete A.__probe_huge;
+  } else {
+    chk('this case authors no vitals, so the effect half is not exercised', true);
+  }
+
+  /* --- the point of the whole mechanism: a lapse can move the case --- */
+  if (target) {
+    P.transitions = [{ when: 'action __probe_drug taken AND NOT flag __probe_acting set',
+                       to: target.id }];
+    const held = fold(mk([[1, '__probe_drug']]), 20);
+    chk('the case does not move while the drug is acting', held.phase === START, held.phase);
+    const lapsed = fold(mk([[1, '__probe_drug']]), 40);
+    chk('the case moves when the drug wears off, with no further action taken',
+        lapsed.phase === target.id, lapsed.phase);
+    chk('the move happens at the lapse, not at the next render',
+        lapsed.phaseSeq.length === 2 && lapsed.phaseSeq[1].t === 31,
+        JSON.stringify(lapsed.phaseSeq));
+    /* A resident who redoses before the deadline should not be overtaken by it. */
+    chk('redosing before the deadline holds the case where it was',
+        fold(mk([[1, '__probe_drug'], [25, '__probe_drug']]), 40).phase === START);
+  } else {
+    chk('this case has only terminal phases beyond the first, so the lapse-transition '
+        + 'assertion is not made here', true);
+  }
+
+  P.transitions = savedTransitions;
+  delete A.__probe_drug; delete A.__probe_slow; delete A.__probe_perm;
+  chk('the harness left the case as it found it',
+      JSON.stringify(PHASE[START].transitions) === JSON.stringify(savedTransitions) &&
+      !A.__probe_drug);
 }
 
 section('no unread state');

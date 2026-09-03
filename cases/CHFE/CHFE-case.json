@@ -86,7 +86,7 @@
   "presenting_vitals_source": "Inherited from phase 'presentation'. EMS applied a nasal cannula at 6 L/min en route and established no intravenous access.",
   "presenting_appearance": "A heavy-set older man sitting bolt upright on the EMS stretcher, gripping the rails, visibly sweating and speaking in two or three word bursts. He will not lie flat and pushes the trolley back up when it is lowered.",
   "ems_handover_text": "Sixty-five year old man, known heart failure, three or four days of worsening breathlessness, much worse since about four this morning. Family called when he could not get up the stairs. Sats were 84 percent on room air at the house, 87 on six litres now. Pressure has been running high the whole way in, last was 190 over 100. He has not had any of his own medications for the last few days. No chest pain that he will admit to. Nothing given en route apart from oxygen.",
-  "arrival_handover": "Sixty-five year old man, breathing trouble that's been getting worse over the last few days. Family called us this morning when he couldn't manage the stairs."
+  "arrival_handover": "Sixty-five year old man, breathing trouble that's been getting worse over the last few days. Family called us this morning when he couldn't manage the stairs, and he's still only holding 87% on six litres by nasal cannula."
  },
  "phase_notes": {
   "count_justification": "Five clinical phases plus two terminal phases. Section 3.3 of the authoring requirements asks for three to six phases. If terminal phases are counted the case exceeds that ceiling by one. Flagged for the design owner in the review packet: the guidance should state whether terminal phases count toward the limit.",
@@ -139,7 +139,7 @@
     "systolic_bp": 156,
     "diastolic_bp": 90,
     "respiratory_rate": 26,
-    "oxygen_saturation": 93,
+    "oxygen_saturation": 87,
     "temperature_c": 36.8
    },
    "appearance": {
@@ -174,7 +174,7 @@
     "systolic_bp": 138,
     "diastolic_bp": 84,
     "respiratory_rate": 18,
-    "oxygen_saturation": 96,
+    "oxygen_saturation": 87,
     "temperature_c": 36.8
    },
    "appearance": {
@@ -286,7 +286,7 @@
     "systolic_bp": 138,
     "diastolic_bp": 84,
     "respiratory_rate": 18,
-    "oxygen_saturation": 96,
+    "oxygen_saturation": 90,
     "temperature_c": 36.8
    },
    "appearance": {
@@ -360,7 +360,16 @@
     "Gray A, Goodacre S, Newby DE, Masson M, Sampson F, Nicholl J; 3CPO Trialists. Noninvasive ventilation in acute cardiogenic pulmonary edema. N Engl J Med. 2008;359(2):142-51. [PubMed record checked]",
     "Masip J, Roque M, Sanchez B, et al. Noninvasive ventilation in acute cardiogenic pulmonary edema: systematic review and meta-analysis. JAMA. 2005;294(24):3124-30. [citation seen in secondary sources; verify]"
    ],
-   "binding_note": "Formerly two case actions, niv_cpap and niv_bipap, both bound to the single catalog entry non_invasive_positive_pressure_ventilation. Because one catalog entry resolves to one case action, the second was unreachable: its tag, debrief note and references never rendered, and a scenario step naming it was silently discarded. Merged into one action whose note carries both teaching points. If the catalog ever splits continuous and bilevel into separate entries, add them to the non_invasive_ventilation equivalence group and bind this action to the group with also_covers_group, rather than reintroducing two case actions."
+   "binding_note": "Formerly two case actions, niv_cpap and niv_bipap, both bound to the single catalog entry non_invasive_positive_pressure_ventilation. Because one catalog entry resolves to one case action, the second was unreachable: its tag, debrief note and references never rendered, and a scenario step naming it was silently discarded. Merged into one action whose note carries both teaching points. If the catalog ever splits continuous and bilevel into separate entries, add them to the non_invasive_ventilation equivalence group and bind this action to the group with also_covers_group, rather than reintroducing two case actions.",
+   "vital_effects": [
+    {
+     "vital": "oxygen_saturation",
+     "delta": 3,
+     "key": "positive_pressure_spo2",
+     "while": "NOT flag intubated set",
+     "note": "Three points, held for as long as the mask is on. Alveolar recruitment and the reduction in work of breathing are the mechanism, and they persist rather than wearing off, which is why there is no duration here. The guard removes it at intubation: the mask comes off, and the ventilator phases author their own saturation. The size is an author's teaching choice, not a measured quantity, and no trial supports a specific number."
+    }
+   ]
   },
   {
    "catalog_id": "nitroglycerin_infusion",
@@ -406,6 +415,16 @@
    "references": [
     "Cotter G, Metzkor E, Kaluski E, et al. Randomised trial of high-dose isosorbide dinitrate plus low-dose furosemide versus high-dose furosemide plus low-dose isosorbide dinitrate in severe pulmonary oedema. Lancet. 1998;351(9100):389-93. [PubMed record checked]",
     "Heidenreich PA, et al. 2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure. Circulation. 2022;145(18):e895-e1032. [UNVERIFIED, confirm before release]"
+   ],
+   "vital_effects": [
+    {
+     "vital": "oxygen_saturation",
+     "delta": 5,
+     "duration_seconds": 30,
+     "key": "nitrate_spo2",
+     "while": "NOT flag intubated set",
+     "note": "Five points for thirty seconds, then back to baseline. Redistribution of pulmonary blood volume is fast and, at a fixed rate with no titration modelled, transient. Repeating the drug repeats the same excursion rather than adding to it: the key is shared with the sublingual route, so the two cannot be stacked into an improvement neither would produce. Deliberately unsatisfying, and the point of the case is that the durable gain comes from the mask."
+    }
    ]
   },
   {
@@ -425,7 +444,17 @@
     "nitro_sl_given"
    ],
    "halt_reason": "You gave sublingual nitroglycerin to a patient whose blood pressure was already dependent on vasopressor support after intubation; further vasodilation dropped his coronary perfusion pressure and he arrested.",
-   "debrief_note": "A reasonable bridge while an infusion is being mixed, and repeated sublingual dosing is a legitimate strategy when a pump is not immediately available. It is not a substitute for a titratable infusion in a patient who is going to need sustained afterload reduction, because the effect is short-lived and cannot be dialled back if the pressure falls too far. Credit here is partial: the right idea, an incomplete execution."
+   "debrief_note": "A reasonable bridge while an infusion is being mixed, and repeated sublingual dosing is a legitimate strategy when a pump is not immediately available. It is not a substitute for a titratable infusion in a patient who is going to need sustained afterload reduction, because the effect is short-lived and cannot be dialled back if the pressure falls too far. Credit here is partial: the right idea, an incomplete execution.",
+   "vital_effects": [
+    {
+     "vital": "oxygen_saturation",
+     "delta": 5,
+     "duration_seconds": 30,
+     "key": "nitrate_spo2",
+     "while": "NOT flag intubated set",
+     "note": "Same excursion as the infusion, same key, so the two routes do not stack."
+    }
+   ]
   },
   {
    "catalog_id": "nitroglycerin_stop",
@@ -502,7 +531,8 @@
    "references": [
     "Felker GM, Lee KL, Bull DA, et al. Diuretic strategies in patients with acute decompensated heart failure. N Engl J Med. 2011;364(9):797-805. [PubMed record checked]",
     "Cotter G, et al. Lancet. 1998;351(9100):389-93. [PubMed record checked]"
-   ]
+   ],
+   "no_vital_effect_note": "Deliberate. Furosemide moves this patient into the improving phase, which lowers his heart rate, blood pressure and respiratory rate, and it carries no vital_effect, so the saturation on the monitor does not move at all. A resident who gives the diuretic first and watches the number sees nothing happen. That is the lesson."
   },
   {
    "catalog_id": "iv_access_peripheral",
@@ -3826,5 +3856,5 @@
   "restructure_exam",
   "consolidate_niv"
  ],
- "phases_note": "label is the full clinical description used in the debrief; short_label is what fits on the monitor beside the vitals. Keep short_label to a few words."
+ "phases_note": "label is the full clinical description used in the debrief; short_label is what fits on the monitor beside the vitals. Keep short_label to a few words. v0.7: oxygen_saturation is authored as the UNSUPPORTED baseline in every non-terminal phase, and is 87 in presentation, stabilizing and improving. What the monitor reads is that baseline plus whatever vital_effects are acting, so the only things that raise this patient's saturation are positive pressure and, briefly, a nitrate. Diuresis moves heart rate, blood pressure and respiratory rate and moves the saturation by nothing, which is the case's second learning objective made mechanical rather than asserted. The terminal phases are exempt from effects and read exactly as authored. case_complete is one authored snapshot regardless of the path taken to it, as it always was. It now reads 90, the number a patient on positive pressure has been showing for most of the run, so handing off does not jump the monitor six points on the way to the debrief."
 }

@@ -5,3 +5,7 @@ __pycache__/
 # build/ is deliberately NOT ignored. The built simulator.html and index.html are the
 # deployable artifact: a static host serves build/ as the site root with no build step.
 # Ignoring it would mean the repository could not be deployed from a clone.
+
+# The Claude desktop app drops files it delivers into the conversation here. They are
+# screenshots and scratch, not repository content.
+Claude outputs/

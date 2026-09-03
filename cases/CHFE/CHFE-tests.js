@@ -83,3 +83,72 @@ st=fold(mk([[1,'iv_access_peripheral'],[6,'niv_bipap_cpap'],[20,'nitroglycerin_i
 chk('handoff completes the case',st.phase==='case_complete'&&st.complete);
 chk('payload recorded',st.handoff&&st.handoff.disposition==='icu_or_ccu');
 chk('expected actions collected',st.expected.size>0,String(st.expected.size));
+
+section('oxygenation is action-driven, not phase-driven');
+{
+  /* The whole arc in one place. The authored baseline is 87 in every non-terminal
+     phase a resident can reach without intubating, and the only things that move the
+     number on the screen are positive pressure and, for thirty seconds, a nitrate. */
+  const SP='oxygen_saturation';
+  const spo2=(steps,at)=>fold(mk(steps),at).vitals[SP];
+  const IV=[1,'iv_access_peripheral'], MON=[2,'cardiac_monitor'];
+
+  chk('arrival saturation is 87',spo2([IV,MON],5)===87);
+
+  chk('positive pressure adds three points',spo2([IV,MON,[6,'niv_bipap_cpap']],10)===90);
+  chk('positive pressure does not wear off',spo2([IV,MON,[6,'niv_bipap_cpap']],400)===90);
+  chk('positive pressure alone does not change the phase',
+      fold(mk([IV,MON,[6,'niv_bipap_cpap']]),10).phase==='presentation');
+
+  /* Five points for thirty seconds, from either route, and no more from both. */
+  chk('a nitrate adds five points',spo2([IV,MON,[6,'nitroglycerin_infusion']],20)===92);
+  chk('the nitrate has lapsed at thirty seconds',
+      spo2([IV,MON,[6,'nitroglycerin_infusion']],40)===87);
+  chk('a repeat nitrate does the same thing again',
+      spo2([IV,MON,[6,'nitroglycerin_infusion'],[50,'nitroglycerin_infusion']],60)===92);
+  chk('the two nitrate routes do not stack',
+      spo2([IV,MON,[6,'nitroglycerin_infusion'],[7,'nitroglycerin_sublingual']],20)===92);
+
+  /* Mask plus nitrate is the phase change, and the two effects add on the new
+     baseline: 87 + 3 + 5 during the window, 87 + 3 after it. */
+  const both=[IV,MON,[6,'niv_bipap_cpap'],[8,'nitroglycerin_infusion']];
+  chk('mask and nitrate move to stabilizing',fold(mk(both),20).phase==='stabilizing');
+  chk('mask and nitrate read 95 during the nitrate window',spo2(both,20)===95);
+  chk('and 90 once the nitrate lapses',spo2(both,60)===90);
+
+  /* The point of the change: diuresis moves everything except the saturation. */
+  const beforeFuro=fold(mk(both),60), afterFuro=fold(mk(both.concat([[70,'furosemide_iv']])),90);
+  chk('furosemide moves to improving',afterFuro.phase==='improving');
+  chk('furosemide changes the saturation by nothing',
+      afterFuro.vitals[SP]===beforeFuro.vitals[SP],
+      beforeFuro.vitals[SP]+' -> '+afterFuro.vitals[SP]);
+  chk('furosemide still slows the heart rate',
+      afterFuro.vitals.heart_rate<beforeFuro.vitals.heart_rate);
+  chk('furosemide still drops the respiratory rate',
+      afterFuro.vitals.respiratory_rate<beforeFuro.vitals.respiratory_rate);
+  chk('furosemide carries no vital effect at all',
+      !(PROTO.actions.furosemide_iv.vital_effects||[]).length);
+
+  /* Intubation takes the mask off, so its effect stops applying and the ventilator
+     phases read exactly as authored. */
+  const tubed=fold(mk([IV,MON,[6,'niv_bipap_cpap'],[8,'etomidate_iv'],[9,'rocuronium_iv'],
+                       [10,'intubation_rsi']]),20);
+  chk('intubation ends the positive pressure effect',
+      tubed.phase==='post_intubation_hypotension'&&tubed.vitals[SP]===91,
+      tubed.phase+' '+tubed.vitals[SP]);
+
+  /* A terminal phase is a written ending and is exempt from every effect. */
+  const halt=fold(mk([IV,MON,[6,'niv_bipap_cpap'],[8,'crystalloid_bolus_1l']]),20);
+  chk('a halted case reads its authored numbers, effects and all',
+      halt.phase==='halted'&&halt.vitals[SP]===PHASE.halted.vitals[SP]);
+}
+
+section('the monitor is what shows the vitals');
+{
+  chk('cardiac_monitor is the action that reveals them',
+      PROTO.actions.cardiac_monitor.reveals_vitals===true);
+  chk('a resident who never attaches it is never monitored',
+      fold(mk([[1,'iv_access_peripheral'],[6,'niv_bipap_cpap']]),300).monitoring===null);
+  chk('attaching it is enough on its own',
+      !!fold(mk([[2,'cardiac_monitor']]),5).monitoring);
+}

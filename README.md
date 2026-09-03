@@ -29,6 +29,7 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `new_case.py` | Scaffolds `cases/<PREFIX>/`, including the seed template |
 | `bind_catalog.py` | Resolves a case's binding map against the action catalog |
 | `validate_case.py` | Structural and conformance checks. Runs against half-authored cases |
+| `validator-tests.py` | Negative tests for the validator: break a clean case one way, assert the rule fires |
 | `sim_runner.py` | Walks the authored scenarios end to end, headless |
 | `engine-tests.js` | Case-agnostic engine assertions against a built file |
 | `matcher_eval.mjs` | Interview matcher evaluation, with `--semantic --sweep` for thresholds |
@@ -41,6 +42,8 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `room-bg.txt` | The blurred room background as a data URI |
 | `hero-bg.txt` | The welcome screen photograph as a data URI |
 | `avatar-male.txt`, `avatar-female.txt` | Patient silhouettes, used as CSS masks so they follow the theme |
+| `nurse-avatar.txt` | The nurse's portrait, beside the line she speaks. Full colour, not a mask |
+| `assets/` | Sources for the derived assets above, kept so a crop can be redone |
 
 The bundle order in `build_simulator.py` is load-bearing: `semantic.js` declares `SEM`
 and `ui.js` registers on it at top level, so reversing them produces a blank page.
@@ -127,6 +130,64 @@ the seven tabs work, and the interview answers, with the matcher chip reading
 endpoint, and no way for one learner's run to reach anyone else. The only browser
 storage is the model cache.
 
+## Time, and the four ways to use it
+
+Four constructs touch time or move a number. They are not interchangeable, and reaching
+for the wrong one is the mistake this section exists to prevent. The question that
+separates them is **what else in the case has to know**.
+
+| Reach for | When | What can read it |
+|---|---|---|
+| A **phase** | The patient has genuinely changed clinical state | Everything |
+| **`after_seconds`** on a transition | The lesson is that something had to happen sooner | Everything, since it changes the phase |
+| **`flags_set_timed`** | Something is true for a while and then is not, and the case must react | Everything in the condition language |
+| **`vital_effects`** | A number on the monitor moves and nothing else does | Nothing. Display and audio only |
+
+An **expiring flag** is the mechanism for something that stops working. The fold removes
+the flag when its duration lapses and re-checks transitions, so a case can author "when
+the drug is no longer acting, and nothing else was done, deteriorate" and have it fire
+with the resident sitting still. A permanent grant of the same flag absorbs a timed one
+in either order, a repeat dose extends rather than replaces, and a lapse costs nothing
+and appears in no timeline, because it is a thing that stopped being true while the
+resident was doing something else.
+
+A **vital effect** moves one number off the phase baseline over `[onset, duration)`, both
+measured from the administration. Effects sharing a key do not stack. They are display
+and audio only.
+
+The two are designed to be used together: put the clock in the flag, guard the effect on
+the flag, and there is one deadline rather than two that drift apart. Authoring section
+6.4 sets out the choice with worked examples; design section 2.9 and authoring 6.5 state
+what none of it can do, which is worth reading first, since each of those looks
+authorable until it is tried.
+
+## The monitor, and what an action can do to a vital
+
+Two things a resident used to get for free.
+
+**The monitor is dark until they attach one.** Every vital cell reads a dash and there is
+no heartbeat until an action carrying the catalog capability `reveals_vitals` has been
+taken, which is `attach_monitor` and nothing else. The fold computes the vitals from the
+first second and no rule is affected; what is gated is the display. No case can move the
+gate, because the capability is a catalog field rather than a case flag. The nurse's
+prompt tone is not gated: it is a person speaking rather than equipment.
+
+**An action can move a vital off the phase baseline.** `vital_effects` on a case action
+carries a delta, an optional duration, an optional guard in the ordinary condition
+language, and a key that decides what does not stack. A phase is entered once and holds,
+so it cannot express thirty seconds, cannot express an effect that ends when the drip is
+stopped, and cannot express a drug that changes the patient without changing the number
+being watched.
+
+Vitals do not enter the condition language, for the same reason time does not. Effects
+are display and audio only, exactly as the phase-boundary ramp is.
+
+**The cost is a rebasing, and it is the mistake to expect.** Once an action supplies the
+gain, a phase's authored vitals have to be the unsupported baseline or the number is
+counted twice. CHFE's `stabilizing` and `improving` therefore carry the arrival
+saturation of 87. Validator rule V catches the arithmetic half of that and cannot catch
+the clinical half. See `docs/decisions/monitor-gating-and-vital-effects.md`.
+
 ## The clock
 
 Through v0.5 the clock governed information and prompting and nothing else, and an
@@ -160,6 +221,7 @@ python3 engine/validate_case.py  cases/PE
 python3 engine/build_simulator.py
 python3 engine/sim_runner.py     cases/PE
 node    engine/engine-tests.js   build/simulator.html cases/PE/PE-tests.js PE
+python3 engine/validator-tests.py cases/PE
 node    cases/PE/PE-matcher-eval.js
 ```
 
@@ -183,27 +245,28 @@ copy was stale and missing the exam defaults and the routing map.
 
 | File | What it is |
 |---|---|
-| `docs/system-design-v2.md` | The system design. **v0.6 is current** |
-| `docs/case-authoring-requirements.md` | What an author must supply. **v0.5 is current** |
+| `docs/system-design-v2.md` | The system design. **v0.8 is current** |
+| `docs/case-authoring-requirements.md` | What an author must supply. **v0.7 is current** |
 | `docs/spec-addendum.md` | Superseded. Its content is folded into the two above |
 | `docs/decisions/` | One record per change: why it was made and what was rejected |
 
 `docs/decisions/` holds `time-driven-transitions.md`, `welcome-integration.md`,
-`ui-redesign-notes.md`, `arrival-and-history-change.md` and `interview-matching-plan.md`.
+`ui-redesign-notes.md`, `arrival-and-history-change.md`, `interview-matching-plan.md`
+and `monitor-gating-and-vital-effects.md`.
 They are kept because they record what was rejected, which the current documents state
 only as conclusions. They are not a source of truth for how the system behaves.
 
 ## Status
 
-Both cases pass the validator with no errors. CHFE walks 13 authored scenarios and passes
-91 engine assertions; MGCA walks 26 and passes 118. Each carries one warning, in both
+Both cases pass the validator with no errors. CHFE walks 13 authored scenarios and MGCA
+walks 26; each passes 163 engine assertions and 26 validator negative tests. Each carries one warning, in both
 cases about actions the catalog does not hold, which the prototype renders anyway so the
 gap stays visible. Those are catalog change requests rather than defects.
 
 That is a structural claim only.
 
 **Nothing here has been reviewed by a physician**: not the reference case, not the
-290-entry action catalog, and not the 488-entry diagnosis catalog, which was generated
+295-entry action catalog, and not the 488-entry diagnosis catalog, which was generated
 from model memory with no source consulted. The interface no longer displays that
 warning, so `cases/CHFE/CHFE-review-packet.md` is the only place a reader will
 encounter it. Read it before using any of this with a learner.

@@ -10,7 +10,11 @@ const FILTERS={}, BASKET={};
 /* Expanded state for collapsible groups, per tab, so leaving and returning to a tab
    leaves the accordion exactly as it was. */
 const EXPANDED={};
-const expandedOf = t => (EXPANDED[t]=EXPANDED[t]||new Set());
+/* Seeded once per tab from SHARED.defaultExpanded, then left alone. A learner who
+   collapses a group that opened by default keeps it collapsed for the rest of the run,
+   because the set exists from the first call and is never re-seeded. */
+const expandedOf = t => (EXPANDED[t]=EXPANDED[t]
+  || new Set(((PROTO&&PROTO.defaultExpanded)||{})[t]||[]));
 let MODE='easy', STARTED=false;
 /* ---------- panel state ----------
    Two booleans describe the whole layout. The tab rail is fixed and never
@@ -85,23 +89,33 @@ const el = id => document.getElementById(id);
 
    The ramp starts from what is currently on screen rather than from the
    previous phase's authored numbers, so a second transition landing mid-ramp
-   continues smoothly from where the display actually was. */
+   continues smoothly from where the display actually was.
+
+   v0.7: the target is ST.vitals, the phase baseline with any active vital effect
+   already applied, so an effect starting or lapsing travels exactly as a phase change
+   does. The re-arm test is the target itself rather than the phase id, because an
+   effect changes the numbers without changing the phase. */
 const RAMP_MS=5000;
 const RAMP_KEYS=['heart_rate','systolic_bp','diastolic_bp','oxygen_saturation',
                  'respiratory_rate','temperature_c'];
-let RAMP_FROM=null, RAMP_T0=0, RAMP_PHASE=null, RAMP_SHOWN=null;
-function resetRamp(){ RAMP_FROM=null; RAMP_T0=0; RAMP_PHASE=null; RAMP_SHOWN=null; }
-function rampedVitals(){
+let RAMP_FROM=null, RAMP_T0=0, RAMP_KEY=null, RAMP_SHOWN=null;
+function resetRamp(){ RAMP_FROM=null; RAMP_T0=0; RAMP_KEY=null; RAMP_SHOWN=null; }
+function targetVitals(){
   if(!ST||!PHASE) return null;
+  if(ST.vitals) return ST.vitals;
   const p=PHASE[ST.phase];
-  const target=p?p.vitals:null;
+  return p?p.vitals:null;
+}
+function rampedVitals(){
+  const target=targetVitals();
   if(!target) return target;
-  if(RAMP_PHASE!==ST.phase){
+  const key=ST.phase+'|'+RAMP_KEYS.map(k=>target[k]).join(',');
+  if(RAMP_KEY!==key){
     /* First paint of a case shows the arrival vitals outright: there is nothing
        to travel from, and a five second climb from nowhere would be a lie. */
-    RAMP_FROM = (RAMP_PHASE===null||!RAMP_SHOWN) ? target : RAMP_SHOWN;
+    RAMP_FROM = (RAMP_KEY===null||!RAMP_SHOWN) ? target : RAMP_SHOWN;
     RAMP_T0 = Date.now();
-    RAMP_PHASE = ST.phase;
+    RAMP_KEY = key;
   }
   /* The case is over, so show where it ended rather than freezing part way. */
   if(ENDED){ RAMP_SHOWN=target; return target; }
@@ -123,20 +137,27 @@ function rampedVitals(){
 function jitter(v,amp){ return v + Math.round((Math.sin(Date.now()/1300+v)+Math.sin(Date.now()/770+v*2))/2*amp); }
 function renderMonitor(){
   const p=PHASE[ST.phase];
-  const v=rampedVitals()||(p?p.vitals:{})||{};
+  const v=rampedVitals()||targetVitals()||{};
   const halted = ST.halted||ST.complete||ST.earlyExit;
   const j = halted ? (x=>x) : jitter;
+  /* Nothing is on the screen until the patient is on a monitor. The numbers exist in
+     the fold from the first second; what the resident is missing is the equipment that
+     would show them to them, which is a decision they have to make rather than a
+     starting condition they are given. Every cell reads as an unauthored one does,
+     because "no monitor" and "no numbers" look the same to a reader and the dash is
+     already the interface's word for both. */
+  const on = !!ST.monitoring;
   /* A case still being authored has null vitals. Show a dash rather than crashing:
      the picker offers skeletons on purpose, and a skeleton that white-screens is
      worse than one that reads as obviously unfinished. */
-  const num=(x,amp)=>typeof x==='number'?j(x,amp||0):'\u2013';
+  const num=(x,amp)=>(on&&typeof x==='number')?j(x,amp||0):'\u2013';
   const cells=[
     ['HR',   num(v.heart_rate,2),                            'min\u207B\u00B9','hr'],
-    ['BP',   (typeof v.systolic_bp==='number'&&typeof v.diastolic_bp==='number')
+    ['BP',   (on&&typeof v.systolic_bp==='number'&&typeof v.diastolic_bp==='number')
                ? v.systolic_bp+'/'+v.diastolic_bp : '\u2013',  'mmHg','bp'],
     ['SpO\u2082', num(v.oxygen_saturation,1),                 '%','spo2'],
     ['RR',   num(v.respiratory_rate,1),                      'min\u207B\u00B9','rr'],
-    ['T',    typeof v.temperature_c==='number'?v.temperature_c.toFixed(1):'\u2013','\u00B0C','temp']
+    ['T',    (on&&typeof v.temperature_c==='number')?v.temperature_c.toFixed(1):'\u2013','\u00B0C','temp']
   ];
   /* The header carries the full monitor at every panel state, so vitals are
      never occluded. The expanded record panel additionally carries a compact
@@ -160,7 +181,7 @@ function renderMonitor(){
      only a cache key. Feed it the phase's authored rate rather than the ramping
      one so it redraws on a phase change instead of on every frame for five
      seconds. */
-  renderTrace(p&&p.vitals?p.vitals.heart_rate:undefined);
+  renderTrace(on&&p&&p.vitals?p.vitals.heart_rate:undefined);
   renderSound();
   AUDIO.sync();
 }
@@ -180,7 +201,12 @@ function renderTrace(hr){
 }
 function renderSound(){
   const b=el('soundbtn'); if(!b) return;
-  b.textContent = AUDIO.running ? 'Sound on' : (AUDIO.enabled ? 'Enable sound' : 'Sound off');
+  /* Four states, not three. Sound can be on and the room still be silent, because the
+     heartbeat is the monitor's and there is no monitor yet. Saying "Sound on" over
+     silence reads as a fault, so the button says which of the two is missing. */
+  b.textContent = AUDIO.running
+    ? (ST&&ST.monitoring ? 'Sound on' : 'Sound on, no monitor')
+    : (AUDIO.enabled ? 'Enable sound' : 'Sound off');
   b.setAttribute('aria-pressed', AUDIO.running?'true':'false');
 
 }
@@ -219,10 +245,28 @@ function renderRail(){
 
    Results enter the feed at the moment they RESULT, not when they were ordered, so the
    order here is the order the resident actually learned things. */
+/* ---------- the running chart ----------
+   NEWEST FIRST. The chart is read while the case is running, to answer "what just
+   happened", and the answer to that is at one end of the list. Oldest-first put it at
+   the far end of a scroller that grows all case, and in the expanded multi-column layout
+   it put the newest entry at the bottom of the LAST column, which is the hardest place
+   on the panel to find. Reversed, the thing a resident is looking for is at the top of
+   the first column and the panel needs no scrolling at all to answer that question.
+
+   Ties are broken by push order, reversed with everything else, so several things landing
+   in the same second still read newest-first rather than in an arbitrary order. */
 function feedItems(){
   const out=[];
+  const add=o=>{ o.seq=out.length; out.push(o); };
+  /* A blocked attempt carries the reason the nurse gave. It used to be a bare "Blocked:
+     X" row, with the reason only in the header line that scrolls away and in the debrief
+     at the end. The reason is the teaching. */
+  const blockMsg={};
+  for(const b of ST.blocked) blockMsg[b.t+'|'+b.id]=b.message;
   for(const x of ST.timeline){
-    if(x.type==='blocked'){ out.push({t:x.t,kind:'blocked',name:x.label}); continue; }
+    if(x.type==='blocked'){
+      add({t:x.t,kind:'blocked',name:x.label,body:blockMsg[x.t+'|'+x.id]||''}); continue;
+    }
     /* Observational entries are already represented by the readout they produced, and
        the interview and review entries would just duplicate it. */
     if(x.type==='observational') continue;
@@ -230,20 +274,52 @@ function feedItems(){
     /* A study appears twice: once when it is sent, once when it results. Same name on
        both reads as a duplicate, so the order is labelled as an order. */
     const isStudy=catOf(x.id)==='investigation';
-    out.push({t:x.t,kind:x.tag==='harmful'?'harm':(isStudy?'order':'action'),
-              name:isStudy?('Ordered: '+x.label):x.label});
+    add({t:x.t,kind:x.tag==='harmful'?'harm':(isStudy?'order':'action'),
+         name:isStudy?('Ordered: '+x.label):x.label});
   }
   for(const r of ST.readouts){
-    if(r.kind==='exam')    out.push({t:r.t,kind:'exam',name:r.title,payload:r.body});
-    if(r.kind==='consult') out.push({t:r.t,kind:'consult',name:r.title,body:r.body});
-    if(r.kind==='speech')  out.push({t:r.t,kind:'speech',name:r.title,body:r.body});
+    if(r.kind==='exam')    add({t:r.t,kind:'exam',name:r.title,payload:r.body});
+    if(r.kind==='consult') add({t:r.t,kind:'consult',name:r.title,body:r.body});
+    /* An unmatched question is answered by the case's out_of_scope_fallback: the
+       patient says they do not understand. That is feedback on the phrasing, not a
+       finding, and a chart is a record of what was learned about the patient. It stays
+       on the History tab, where the resident can see which of their questions did not
+       land, and it does not go in the chart. r.matched is the topic the matcher chose,
+       and is null exactly when the fallback answered. */
+    if(r.kind==='speech'&&r.matched) add({t:r.t,kind:'speech',name:r.title,body:r.body});
+  }
+  /* What the nurse said, but not everything she said.
+
+     Her line is the only thing in the interface that is overwritten rather than added to:
+     the header holds one utterance and the next one replaces it. A resident working a tab
+     loses every prompt they did not happen to be looking at, which is the one kind of
+     information in this product that had nowhere to be read back. So it goes in the
+     chart.
+
+     Four of her six kinds are left out, and each for its own reason. `narration` echoes an
+     action that is already a row ("Insert IV" then "Okay: insert iv."). `result` echoes a
+     result that is already a row, with its payload. `blocked` is folded into the blocked
+     row above, where it reads as the reason rather than as a second entry. And `halt` is
+     said at the instant the case ends, which is the instant finish() hides this whole
+     panel, so a halt row would be written into something nobody can look at; its reason
+     is on the halt card and in the debrief, which is where a resident reads it.
+
+     Two kinds are left, and neither has anywhere else to be read:
+
+       prompt         she asked for something. Nowhere else at all
+       deterioration  the one place a nurse line may describe a trajectory, and it
+                      narrates a change the resident may not have been watching for */
+  const NURSE_IN_CHART={prompt:1,deterioration:1};
+  for(const n of ST.nurse){
+    if(!NURSE_IN_CHART[n.kind]) continue;
+    add({t:n.t,kind:n.kind==='prompt'?'nurse':'nursealert',name:'Nurse',body:n.text});
   }
   Object.keys(ST.orders).forEach(id=>ST.orders[id].forEach(o=>{
     if(o.value===null) return;                      /* still pending, lives in the rail above */
-    out.push({t:o.dueT,kind:catOf(id)==='investigation'?'lab':'imaging',
-              name:dispName(id),payload:o.value});
+    add({t:o.dueT,kind:catOf(id)==='investigation'?'lab':'imaging',
+         name:dispName(id),payload:o.value});
   }));
-  out.sort((a,b)=>a.t-b.t);
+  out.sort((a,b)=>b.t-a.t||b.seq-a.seq);
   return out;
 }
 
@@ -269,14 +345,16 @@ function renderFeed(){
      </div>`).join('')
     : '<div class="emptyline">Nothing yet.</div>';
   /* Follow the newest entry only when something has actually been added, so a reader
-     scrolled back through earlier results is not yanked to the bottom every tick. */
+     scrolled down through earlier results is not yanked back every tick. The newest
+     entry is now at the TOP, so following it means scrolling to zero rather than to the
+     full height. */
   if(items.length!==FEED_N){
     FEED_N=items.length;
     /* Which element actually scrolls depends on the panel state: docked, the
        feed scrolls inside its box; expanded, the feed is a multi-column block
        of natural height and the panel body around it is the scroller. */
     const f = RIGHT_WIDE ? document.querySelector('.rp-body') : el('feed');
-    if(f) f.scrollTop=f.scrollHeight;
+    if(f) f.scrollTop=0;
   }
 }
 
@@ -390,11 +468,22 @@ function renderActionTab(tab,intro){
   const names=groupNames(tab,groups);
   const collapsible=(PROTO.collapsibleTabs||[]).includes(tab);
   const open=expandedOf(tab);
+  /* A filter forces every surviving group open for as long as it is set. Typing a
+     filter and being shown nine collapsed headers is not a search result.
+
+     This used to be done by adding the matched groups to the expanded set AFTER the
+     markup had been built, which had two faults: the effect landed one render late, so
+     a filter set in a single stroke showed collapsed headers until something else
+     repainted the tab, and the set kept every group that had ever matched a filter, so
+     clearing the box left the accordion open on groups the learner had never touched.
+     Forcing it here instead leaves the learner's own accordion state alone: clear the
+     filter and the tab is exactly as they left it. */
+  const forced=collapsible&&!!filterOf(tab);
   let html='';
   for(const g of names){
     const picked=groups[g].filter(id=>basketOf(tab).has(id)).length;
     if(collapsible){
-      const isOpen=open.has(g);
+      const isOpen=forced||open.has(g);
       html+=`<button class="grouphdr" data-group="${esc(g)}" data-tabof="${tab}"
         aria-expanded="${isOpen}"><span class="chev">${isOpen?'\u25BC':'\u25B6'}</span>
         <span>${esc(g)}</span>
@@ -411,7 +500,6 @@ function renderActionTab(tab,intro){
     if(collapsible) html+='</div>';
   }
   if(!names.length) html='<p class="sub">Nothing matches that filter.</p>';
-  if(collapsible&&filterOf(tab)) names.forEach(g=>open.add(g));
   const orderable=PROTO.orderableTabs.includes(tab);
   const basket=[...basketOf(tab)];
   return `<div class="panel"><h2>${esc(PROTO.tabLabel[tab])}</h2>
@@ -1210,6 +1298,31 @@ function debriefHTML(){
 
   const defaults=[...ST.defaultsServed];
 
+  /* What ran out. Timed mechanics are the one thing in the debrief a resident cannot
+     reconstruct from the chart: an effect that lapsed and a flag that expired leave no
+     entry anywhere, because nothing was done at the moment they happened, which is the
+     point of them. Without this block a case whose lesson is "you had thirty seconds and
+     used them on the wrong thing" ends with the resident none the wiser.
+
+     One row per administration, not per effect, so a repeated drug reads as the repeated
+     act it was. Rendered only when the case uses the mechanics, so a case that authors
+     none is unchanged. */
+  const wore=(function(){
+    const rows=[];
+    for(const fx of ST.vitalFx){
+      const from=fx.t+(fx.onset||0), to=fx.duration===null?null:fx.t+fx.duration;
+      rows.push({t:fx.t,
+        what:dispName(fx.id),
+        detail:(fx.delta>0?'+':'')+fx.delta+' '+fx.vital.replace(/_/g,' ')
+              +', '+(to===null
+                     ? (fx.guard?'while its condition held':'for the rest of the case')
+                     : 'from '+mmss(from)+' to '+mmss(to))});
+    }
+    for(const ex of ST.flagExpiries)
+      rows.push({t:ex.t,what:ex.flag.replace(/_/g,' '),detail:'stopped acting at '+mmss(ex.t)});
+    return rows.sort((a,b)=>a.t-b.t);
+  })();
+
   /* Critical actions lead. They are what the case is about, and a resident reading top
      to bottom should meet the medicine before the scoreboard. */
   return `<div class="dbf">
@@ -1233,6 +1346,14 @@ function debriefHTML(){
       <table class="dom"><tr><th>Domain</th><th class="n">Done</th><th class="n"></th></tr>${domRows}</table>
       <div style="margin-top:16px"><button class="btn" id="restart">Replay this case</button>
       ${CASES.length>1?'<button class="btn ghost" id="pickanother" style="margin-left:8px">Choose a different case</button>':''}</div></div>
+
+    ${wore.length?`<div class="dbsec"><h2>What was acting, and for how long</h2>
+      <p class="sub">Some of what you gave worked for a fixed time and then stopped. Nothing
+      appears in the chart at the moment it wears off, because nothing was done then.</p>
+      ${wore.map(r=>`<div class="item"><div class="hd">
+        <span class="nm">${esc(r.what)}</span>
+        <span class="pill p-warn">${mmss(r.t)}</span>
+        <span class="pill p-neu">${esc(r.detail)}</span></div></div>`).join('')}</div>`:''}
 
     ${traps.length?`<div class="dbsec"><h2>Things that looked reasonable and were not</h2>
       ${traps.map(x=>item(x.id,'no benefit here','p-neu')).join('')}
@@ -1450,6 +1571,7 @@ function renderSplash(){
   const arr=el('sp-arrival');
   arr.textContent = room ? 'Patient brought to the '+room : '';
   arr.classList.toggle('hidden', !room);
+  renderSplashVitals();
   const D=PROTO.difficulty;
   el('sp-modes').innerHTML=Object.keys(D.modes).map(k=>{
     const md=D.modes[k];
@@ -1458,6 +1580,43 @@ function renderSplash(){
   }).join('');
 
 }
+/* The arrival vitals, on the card, before Begin.
+
+   This is a handover artifact, not the monitor, and the distinction is the whole reason
+   it is safe to show. A crew hands over the numbers they measured; that is what the two
+   sentences above it are. What the resident still does not have is the CURRENT number
+   and the trend, which is what a monitor is for and what attaching one buys them. So
+   these are static, carry no jitter, and are drawn on a pale panel rather than in the
+   monitor's dark.
+
+   There is deliberately no caption explaining that they are not live. "Vitals on
+   arrival" is past tense and the empty monitor a second later says the rest; a resident
+   who needs to be told in a sentence that a number from before they walked in is not a
+   live reading has been handed the lesson instead of learning it.
+
+   Read from the first authored phase rather than from ST, so the card shows the same
+   numbers whichever case is selected and shows them before the clock has started. A
+   half-authored case with null vitals hides the section rather than printing dashes:
+   the picker offers skeletons on purpose and an empty panel teaches nothing. */
+function renderSplashVitals(){
+  const sec=el('sp-vitalsec'), box=el('sp-vitals');
+  if(!sec||!box) return;
+  const v=(CASE&&CASE.phases&&CASE.phases[0])?CASE.phases[0].vitals:null;
+  const num=x=>typeof x==='number';
+  if(!v||!num(v.heart_rate)){ sec.classList.add('hidden'); box.innerHTML=''; return; }
+  sec.classList.remove('hidden');
+  const cells=[
+    ['HR', num(v.heart_rate)?String(v.heart_rate):'\u2013', 'min\u207B\u00B9'],
+    ['BP', (num(v.systolic_bp)&&num(v.diastolic_bp))?v.systolic_bp+'/'+v.diastolic_bp:'\u2013','mmHg'],
+    ['SpO\u2082', num(v.oxygen_saturation)?String(v.oxygen_saturation):'\u2013','%'],
+    ['RR', num(v.respiratory_rate)?String(v.respiratory_rate):'\u2013','min\u207B\u00B9'],
+    ['T',  num(v.temperature_c)?v.temperature_c.toFixed(1):'\u2013','\u00B0C']
+  ];
+  box.innerHTML=cells.map(c=>`<div class="spvitcell"><div class="spvitlab">${c[0]}</div>
+    <div class="spvitval">${esc(c[1])}</div>
+    <div class="spvitunit">${c[2]}</div></div>`).join('');
+}
+
 function begin(){
   STARTED=true; T0=Date.now();
   el('splash').classList.add('hidden');

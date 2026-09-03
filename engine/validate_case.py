@@ -265,8 +265,16 @@ def run_checks(case):
     phase_ids = {p["id"] for p in case["phases"]}
     action_ids = {a["catalog_id"] for a in case["case_actions"]}
     settable_flags = set()
+    timed_flags = {}          # flag -> [(action id, duration)], grants that lapse
+    perm_flags = set()        # flags some action grants for good
     for a in case["case_actions"]:
         settable_flags.update(a.get("flags_set", []) or [])
+        perm_flags.update(a.get("flags_set", []) or [])
+        for tf in (a.get("flags_set_timed") or []):
+            f = tf.get("flag")
+            if isinstance(f, str) and f:
+                settable_flags.add(f)
+                timed_flags.setdefault(f, []).append((a["catalog_id"], tf.get("duration_seconds")))
 
     ck = case["content_keys"]
     study_ids = set()
@@ -386,7 +394,10 @@ def run_checks(case):
                 continue
             if pr.get("guard") and not evaluate(parse_condition(pr["guard"])[0], assign):
                 continue
-            out.append((a["catalog_id"], set(a.get("flags_set") or []), pr["deadline_seconds"],
+            sets = set(a.get("flags_set") or [])
+            sets.update(tf["flag"] for tf in (a.get("flags_set_timed") or [])
+                        if isinstance(tf.get("flag"), str))
+            out.append((a["catalog_id"], sets, pr["deadline_seconds"],
                         (pr.get("escalation") or {}).get("deadline_seconds", pr["deadline_seconds"])))
         return out
 
@@ -600,6 +611,163 @@ def run_checks(case):
             errors.append(f"[vitals] {p['id']}: bad pupil_size")
         if ap.get("pupil_reactivity") not in ("reactive", "sluggish", "fixed"):
             errors.append(f"[vitals] {p['id']}: bad pupil_reactivity")
+
+    # -- V: vital effects (design 2.3, authoring 5.2) -----------------------
+    # Six rules, and the reason for each is that the mechanism is easy to author into
+    # a trap. An effect is invisible in the review matrix, which enumerates what a key
+    # resolves to in a phase and knows nothing about the clock, so anything the matrix
+    # cannot show has to be caught here or it is not caught at all.
+    VITAL_KEYS = set(RANGES)
+    fx_keys = {}
+    windows = []
+    for a in case["case_actions"]:
+        for i, fx in enumerate(a.get("vital_effects") or []):
+            loc = f"[vital_effect] {a['catalog_id']}[{i}]"
+            if fx.get("vital") not in VITAL_KEYS:
+                errors.append(f"{loc}: vital {fx.get('vital')!r} is not one of {sorted(VITAL_KEYS)}")
+            if not isinstance(fx.get("delta"), (int, float)) or isinstance(fx.get("delta"), bool):
+                errors.append(f"{loc}: delta is {fx.get('delta')!r}, not a number")
+            elif fx["delta"] == 0:
+                warnings.append(f"{loc}: delta is 0, so the effect does nothing")
+            ons = fx.get("onset_seconds")
+            if ons is not None and (not isinstance(ons, (int, float)) or isinstance(ons, bool)
+                                    or ons < 0):
+                errors.append(f"{loc}: onset_seconds is {ons!r}, expected a number of seconds "
+                              f"at or above zero")
+                ons = None
+            dur = fx.get("duration_seconds")
+            if dur is not None and (not isinstance(dur, (int, float)) or isinstance(dur, bool)
+                                    or dur <= 0):
+                errors.append(f"{loc}: duration_seconds is {dur!r}, expected a positive number")
+                dur = None
+            # Both windows are measured from the administration, so a duration that does
+            # not outlast its onset is an effect that never acts. This is the mistake the
+            # single-origin rule makes possible, so it is checked rather than explained.
+            if ons is not None and dur is not None and dur <= ons:
+                errors.append(f"{loc}: duration_seconds {dur} does not outlast onset_seconds "
+                              f"{ons}; both are measured from the administration, so this "
+                              f"effect would never act")
+            elif ons is not None or dur is not None:
+                windows.append(f"{a['catalog_id']}/{fx.get('vital')} acts "
+                               f"{ons or 0}s to {dur if dur is not None else 'the end'}s "
+                               f"after each administration")
+            if fx.get("while"):
+                try:
+                    parse_condition(fx["while"])
+                except Exception as e:
+                    errors.append(f"{loc}: unparseable while condition: {e}")
+            # Two actions sharing a key do not stack, which is the point of a key, but
+            # two actions sharing a key on DIFFERENT vitals silently discard one of them.
+            key = fx.get("key") or a["catalog_id"]
+            prev = fx_keys.get(key)
+            if prev and prev != fx.get("vital"):
+                errors.append(f"{loc}: key {key!r} is already used for vital {prev!r}")
+            fx_keys[key] = fx.get("vital")
+        # An effect on an action that is not state-changing never fires: the fold
+        # returns before it records one.
+        if a.get("vital_effects") and a.get("state_changing") is False:
+            errors.append(f"[vital_effect] {a['catalog_id']}: state_changing is false, "
+                          f"so the effect can never be recorded")
+    if windows:
+        notes.append("vital effect windows: " + "; ".join(windows))
+
+    # -- W: expiring flags (design 2.7, authoring 6.3) ----------------------
+    # A flag that lapses is the only way a case can react to something wearing off, so
+    # the failure modes are all silent: the flag is never read, or it can never expire
+    # because something else grants it for good, or it expires and nothing is authored
+    # to notice. The first two are checkable and are checked here.
+    cond_flags = set()
+    tag_flags = set()
+    for _loc, _cond in collect_all_conditions(case):
+        try:
+            _node, _ = parse_condition(_cond)
+        except ParseError:
+            continue
+        here = {at.ident for at in atoms_of(_node) if at.kind == "flag"}
+        cond_flags.update(here)
+        if _loc.startswith("action_tag/"):
+            tag_flags.update(here)
+
+    for a in case["case_actions"]:
+        own_perm = set(a.get("flags_set") or [])
+        for i, tf in enumerate(a.get("flags_set_timed") or []):
+            loc = f"[timed_flag] {a['catalog_id']}[{i}]"
+            f = tf.get("flag")
+            if not isinstance(f, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", f or ""):
+                errors.append(f"{loc}: flag {f!r} is not a bare identifier; the condition "
+                              f"grammar splits on whitespace and could not name it")
+                continue
+            d = tf.get("duration_seconds")
+            if not isinstance(d, (int, float)) or isinstance(d, bool) or d <= 0:
+                errors.append(f"{loc}: duration_seconds is {d!r}, expected a positive number")
+            if f in own_perm:
+                errors.append(f"{loc}: {f!r} is also in this action's flags_set, which grants "
+                              f"it permanently; a permanent grant absorbs a timed one, so the "
+                              f"duration would never take effect")
+            if a.get("state_changing") is False:
+                errors.append(f"{loc}: state_changing is false, so the flag is never granted")
+            if f not in cond_flags:
+                warnings.append(f"{loc}: nothing in this case reads flag {f!r}. A flag that "
+                                f"expires and that no transition, tag, prompt guard, "
+                                f"prerequisite or content rule tests changes nothing at all")
+    # The critical-action expectation is computed once, on entry to a phase, from the tag
+    # each action resolves to at that instant. A tag that reads a flag which later
+    # EXPIRES therefore flips without the expectation flipping with it: the action can
+    # become critical in the middle of a phase and never appear in the debrief's missed
+    # list. Permanent flags have a milder version of this and always have, but they only
+    # ever move one way, so a timed flag is where it actually bites.
+    for f in sorted(timed_flags):
+        if f in tag_flags:
+            warnings.append(f"[timed_flag] a clinical tag reads {f!r}, which expires. Tags are "
+                            f"re-resolved whenever an action is taken, but the set of CRITICAL "
+                            f"actions a phase expects is fixed on entry to that phase, so an "
+                            f"action that becomes critical because this flag lapsed will not be "
+                            f"listed as missed. Put the consequence on a transition instead")
+
+    for f, grants in timed_flags.items():
+        if f in perm_flags:
+            other = [a["catalog_id"] for a in case["case_actions"] if f in (a.get("flags_set") or [])]
+            warnings.append(f"[timed_flag] {f!r} is granted with a duration by "
+                            f"{', '.join(g[0] for g in grants)} and permanently by "
+                            f"{', '.join(other)}. Once the permanent grant is taken the flag "
+                            f"stops expiring, and nothing on screen says so")
+    if timed_flags:
+        notes.append("expiring flags: " + "; ".join(
+            f"{f} ({', '.join(str(g[1]) + 's from ' + g[0] for g in gs)})"
+            for f, gs in sorted(timed_flags.items())))
+
+    # An effect whose baseline plus delta leaves the plausible range in some phase is
+    # almost always a phase that was never rebased when the effect was added.
+    #
+    # This is checked only for UNGUARDED effects. A `while` condition can make a phase
+    # unreachable for the effect -- CHFE's nitrate effect is guarded on NOT intubated
+    # and so cannot reach either ventilator phase -- and deciding that statically means
+    # deciding reachability, which this validator does not do anywhere else either.
+    # Guarded effects are reported as a note saying the check was not made, rather than
+    # as a warning that is wrong most of the time. A rule that cries wolf gets ignored,
+    # and this one exists to catch exactly the mistake an author makes once.
+    unchecked = []
+    for a in case["case_actions"]:
+        for fx in (a.get("vital_effects") or []):
+            k = fx.get("vital")
+            if k not in VITAL_KEYS or not isinstance(fx.get("delta"), (int, float)):
+                continue
+            if fx.get("while"):
+                unchecked.append(f"{a['catalog_id']}/{k}")
+                continue
+            lo, hi = RANGES[k]
+            for ph in case["phases"]:
+                if ph.get("terminal"):
+                    continue          # terminal phases are exempt from effects
+                base = ph["vitals"].get(k)
+                if isinstance(base, (int, float)) and not (lo <= base + fx["delta"] <= hi):
+                    warnings.append(
+                        f"[vital_effect] {a['catalog_id']}: {k} {base}{fx['delta']:+g} in phase "
+                        f"{ph['id']} leaves the plausible range {lo}-{hi}; the effect is "
+                        f"clamped, so the phase baseline is probably not the unsupported one")
+    if unchecked:
+        notes.append(f"vital effects with a while guard, range not checked against every "
+                     f"phase: {', '.join(sorted(set(unchecked)))}")
 
     # -- N: result payload shape (action catalog default_result_contract) ---
     def check_payload(where, v):
@@ -889,9 +1057,27 @@ def run_checks(case):
         if len(h.split()) > 45:
             warnings.append(f"[arrival] arrival_handover is {len(h.split())} words; two sentences "
                             f"of handover is usually under 40")
-        if re.search(r"\b\d{2,3}\s*(bpm|mmHg|%)", h) or re.search(r"\bsats?\b", h, re.I):
-            warnings.append("[arrival] arrival_handover quotes vital signs; they are on the monitor "
-                            "and will be stale within a minute of the case starting")
+        # Until v0.7 this warned about any vital sign in the handover, on the grounds
+        # that the monitor carried the same numbers and would contradict them within a
+        # minute. That reason stopped being true when the monitor was gated on being
+        # attached: a handover is now the ONLY place a resident gets a number before
+        # they have put equipment on the patient, and a crew reporting what they
+        # measured is what a handover is. So the blanket warning is a note.
+        #
+        # What is still worth catching is the contradiction the old rule was really
+        # aiming at: a saturation quoted in the handover that disagrees with the one the
+        # case starts from. That is checkable, and it is a genuine authoring slip.
+        quoted = re.findall(r"(\d{2,3})\s*(?:%|percent)", h, re.I)
+        if quoted or re.search(r"\bsats?\b", h, re.I):
+            notes.append("arrival_handover quotes vital signs. Since the monitor is dark until "
+                         "it is attached this is often the right call, but write them as what "
+                         "was measured on the way in, not as a live reading: nothing updates them")
+        start_spo2 = (case["phases"][0].get("vitals") or {}).get("oxygen_saturation")
+        if quoted and isinstance(start_spo2, (int, float)):
+            if not any(int(q) == int(start_spo2) for q in quoted):
+                warnings.append(f"[arrival] arrival_handover quotes {', '.join(quoted)} percent "
+                                f"but the case starts at {start_spo2}. A resident who attaches a "
+                                f"monitor will read a number the handover just contradicted")
         notes.append(f"arrival: {mode or 'unset'} to {loc or 'unset'}; handover "
                      f"{len(sentences)} sentence(s), {len(h.split())} words")
 

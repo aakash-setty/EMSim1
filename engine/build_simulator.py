@@ -83,7 +83,10 @@ def action_base(ce):
                    ("persistent", "persistent"), ("repeatable", "repeatable"),
                    # which infusion this action stops; the engine needs it to relate a
                    # stop action to the drip it withdraws
-                   ("stops", "stops")]:
+                   ("stops", "stops"),
+                   # true on the act that puts numbers on the screen. The interface
+                   # shows no vitals and plays no heartbeat until one has been taken
+                   ("reveals_vitals", "reveals_vitals")]:
         if ce.get(k) not in (None, [], False):
             rec[out] = ce[k]
     return rec
@@ -105,8 +108,15 @@ shared = {
     # reason Interventions collapses. Exams and Consults stay flat: 14 and 17 entries
     # in a single group each, where an accordion would add a click and hide nothing.
     "collapsibleTabs": ["interventions", "investigations", "stabilization"],
-    "groupOrder": {"stabilization": ["Stabilization", "Vascular Access", "Oxygen", "Intubation",
-                                     "Intubation Drugs", "Fluids", "Pacer/Defib"]},
+    "groupOrder": {"stabilization": ["Stabilization", "Nursing", "Vascular Access", "Oxygen",
+                                     "Intubation", "Intubation Drugs", "Fluids", "Pacer/Defib"]},
+    # Groups that render already open the first time their tab is opened. Stabilization
+    # holds the three acts that come first in any resuscitation, and one of them now
+    # gates the monitor, so making the resident click a header to find them buries the
+    # thing the case needs them to do. Everything else stays collapsed. A learner who
+    # collapses it keeps it collapsed for the rest of the run: this seeds the accordion,
+    # it does not force it.
+    "defaultExpanded": {"stabilization": ["Stabilization"]},
     "matchThreshold": 0.32,
     "nurseIdle": "He's all yours. Tell me what you want and I'll get it.",
     "globalNormalExam": "No abnormality detected on this examination.",
@@ -295,6 +305,17 @@ def main():
     hero_bg = open(os.path.join(HERE, "hero-bg.txt")).read().strip()
     avatar_m = open(os.path.join(HERE, "avatar-male.txt")).read().strip()
     avatar_f = open(os.path.join(HERE, "avatar-female.txt")).read().strip()
+    # The nurse's portrait, beside the line she speaks. Unlike the patient silhouettes
+    # this is a full-colour image rather than a CSS mask, because it is a person rather
+    # than a diagram of one, and the interface has no other picture of a human in it.
+    # Source kept beside it so the crop can be redone rather than reverse-engineered:
+    #   python3 -c "from PIL import Image; im=Image.open('assets/nurse-avatar-source.png');\
+    #     im.quantize(colors=96, method=Image.FASTOCTREE).convert('RGBA')\
+    #       .save('/tmp/a.png', optimize=True)"
+    #   base64 -w0 /tmp/a.png > nurse-avatar.txt
+    # 240px square, quantised to 96 colours: 32 KB, against 56 KB for the unquantised
+    # crop, and the difference is invisible at the 62px it renders at.
+    nurse_av = open(os.path.join(HERE, "nurse-avatar.txt")).read().strip()
     # semantic.js declares `const SEM` and ui.js registers a listener on it at top
     # level, so it MUST come before ui.js. Reversed, the bundle throws before the
     # first render and the page is blank.
@@ -309,6 +330,7 @@ def main():
     shell = shell.replace("__HERO_BG__", "data:image/jpeg;base64," + hero_bg)
     shell = shell.replace("__AVATAR_M__", "data:image/png;base64," + avatar_m)
     shell = shell.replace("__AVATAR_F__", "data:image/png;base64," + avatar_f)
+    shell = shell.replace("__NURSE_AVATAR__", "data:image/png;base64," + nurse_av)
     shell = shell.replace("__SHARED_JSON__", jsafe(shared))
     shell = shell.replace("__CASES_JSON__", jsafe(packs))
     shell = shell.replace("</script>\n</body>", bundle + "</script>\n</body>")

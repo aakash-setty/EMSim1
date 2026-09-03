@@ -1,0 +1,231 @@
+#!/usr/bin/env python3
+"""
+Negative tests for the case validator. Case-agnostic.
+
+    python3 engine/validator-tests.py [cases/CHFE]
+
+A validator rule that has never fired is a rule nobody has run, and the rules are the
+only thing standing between a future case author and a mechanic that fails silently.
+Every check here takes a real case that passes cleanly, breaks it in ONE specific way,
+and asserts the rule that is supposed to catch it says so.
+
+The case is loaded, mutated in memory and thrown away. Nothing on disk is touched, and
+the review matrix is not regenerated, because run_checks does not write it.
+
+A test that expects a message reports the message it got when it fails, since a rule
+that fires with wrong wording is as unhelpful as one that does not fire.
+"""
+import copy
+import json
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+sys.argv = [sys.argv[0]] + ([sys.argv[1]] if len(sys.argv) > 1 else [])
+import validate_case as V                                   # noqa: E402
+
+BASE = V.build_case()
+FIRST_PHASE = BASE["phases"][0]["id"]
+FAILS = []
+COUNT = 0
+
+
+def run(mutate):
+    case = copy.deepcopy(BASE)
+    mutate(case)
+    return V.run_checks(case)
+
+
+def act(case, cid=None):
+    """A state-changing case action to hang a mechanic on, by id or the first one."""
+    for a in case["case_actions"]:
+        if cid and a["catalog_id"] == cid:
+            return a
+        if not cid and a.get("state_changing") is not False and not a["catalog_id"].startswith(
+                ("exam_", "interview_topic_")):
+            return a
+    raise SystemExit("no usable case action")
+
+
+def expect(name, mutate, needle, where="errors"):
+    global COUNT
+    COUNT += 1
+    errors, warnings, notes = run(mutate)
+    pool = {"errors": errors, "warnings": warnings, "notes": notes}[where]
+    hit = [m for m in pool if needle in m]
+    if hit:
+        print(f"  ok   {name}")
+    else:
+        print(f"  FAIL {name}")
+        print(f"       expected {where} containing {needle!r}")
+        for m in pool[:6]:
+            print(f"       got: {m}")
+        FAILS.append(name)
+
+
+def expect_clean(name, mutate, needle, where="errors"):
+    """The rule must NOT fire. Guards against a rule that shouts at correct authoring."""
+    global COUNT
+    COUNT += 1
+    errors, warnings, notes = run(mutate)
+    pool = {"errors": errors, "warnings": warnings, "notes": notes}[where]
+    hit = [m for m in pool if needle in m]
+    if hit:
+        print(f"  FAIL {name}")
+        for m in hit[:3]:
+            print(f"       unexpected {where[:-1]}: {m}")
+        FAILS.append(name)
+    else:
+        print(f"  ok   {name}")
+
+
+print("=" * 70)
+print(f"VALIDATOR NEGATIVE TESTS  ({os.path.basename(V.PACK.case)})")
+print("=" * 70)
+
+# The premise. Everything below asserts that ONE change breaks ONE rule, which is only
+# meaningful if the unmutated case is clean.
+e0, w0, n0 = V.run_checks(copy.deepcopy(BASE))
+COUNT += 1
+if e0:
+    print("  FAIL the unmutated case is clean")
+    for m in e0[:5]:
+        print(f"       {m}")
+    FAILS.append("baseline clean")
+else:
+    print("  ok   the unmutated case is clean")
+
+print("\n-- rule V: vital effects --")
+expect("an unknown vital is rejected",
+       lambda c: act(c).__setitem__("vital_effects",
+                                    [{"vital": "cardiac_output", "delta": 3}]),
+       "is not one of")
+expect("a non-numeric delta is rejected",
+       lambda c: act(c).__setitem__("vital_effects",
+                                    [{"vital": "heart_rate", "delta": "a lot"}]),
+       "not a number")
+expect("a zero delta warns",
+       lambda c: act(c).__setitem__("vital_effects",
+                                    [{"vital": "heart_rate", "delta": 0}]),
+       "delta is 0", "warnings")
+expect("a negative duration is rejected",
+       lambda c: act(c).__setitem__("vital_effects",
+                                    [{"vital": "heart_rate", "delta": 3,
+                                      "duration_seconds": -5}]),
+       "expected a positive number")
+expect("a negative onset is rejected",
+       lambda c: act(c).__setitem__("vital_effects",
+                                    [{"vital": "heart_rate", "delta": 3,
+                                      "onset_seconds": -1}]),
+       "at or above zero")
+expect("a duration that does not outlast its onset is rejected",
+       lambda c: act(c).__setitem__("vital_effects",
+                                    [{"vital": "heart_rate", "delta": 3,
+                                      "onset_seconds": 60, "duration_seconds": 30}]),
+       "would never act")
+expect("an unparseable while condition is rejected",
+       lambda c: act(c).__setitem__("vital_effects",
+                                    [{"vital": "heart_rate", "delta": 3,
+                                      "while": "flag AND AND"}]),
+       "unparseable while condition")
+expect("one key on two different vitals is rejected",
+       lambda c: act(c).__setitem__("vital_effects",
+                                    [{"vital": "heart_rate", "delta": 3, "key": "k"},
+                                     {"vital": "respiratory_rate", "delta": 3, "key": "k"}]),
+       "is already used for vital")
+expect("an effect on a non-state-changing action is rejected",
+       lambda c: act(c).update({"state_changing": False,
+                                "vital_effects": [{"vital": "heart_rate", "delta": 3}]}),
+       "can never be recorded")
+expect("an unguarded effect that leaves the plausible range warns",
+       lambda c: act(c).__setitem__("vital_effects",
+                                    [{"vital": "oxygen_saturation", "delta": 40}]),
+       "leaves the plausible range", "warnings")
+expect_clean("a guarded effect is not warned about, since its phases may be unreachable",
+             lambda c: act(c).__setitem__("vital_effects",
+                                          [{"vital": "oxygen_saturation", "delta": 40,
+                                            "while": "phase is " + FIRST_PHASE}]),
+             "leaves the plausible range", "warnings")
+
+print("\n-- rule W: expiring flags --")
+
+
+def timed(c, **kw):
+    a = act(c)
+    tf = {"flag": "probe_flag", "duration_seconds": 30}
+    tf.update(kw)
+    a["flags_set_timed"] = [tf]
+    return a
+
+
+expect("a flag that is not a bare identifier is rejected",
+       lambda c: timed(c, flag="probe flag"), "not a bare identifier")
+expect("a missing duration is rejected",
+       lambda c: timed(c, duration_seconds=None), "expected a positive number")
+expect("a zero duration is rejected",
+       lambda c: timed(c, duration_seconds=0), "expected a positive number")
+expect("granting the same flag permanently on the same action is rejected",
+       lambda c: timed(c).__setitem__("flags_set",
+                                      list(act(c).get("flags_set") or []) + ["probe_flag"]),
+       "absorbs a timed one")
+expect("a timed flag on a non-state-changing action is rejected",
+       lambda c: timed(c).__setitem__("state_changing", False), "never granted")
+expect("a timed flag nothing reads warns",
+       lambda c: timed(c), "nothing in this case reads flag", "warnings")
+
+
+def timed_and_read(c):
+    """Grant a timed flag and have a transition read it, which is the intended shape."""
+    timed(c)
+    ph = next(p for p in c["phases"] if p["id"] == FIRST_PHASE)
+    tgt = next(p for p in c["phases"] if p["id"] != FIRST_PHASE and not p.get("terminal"))
+    ph.setdefault("transitions", []).insert(
+        0, {"when": "NOT flag probe_flag set AND flag probe_flag set", "to": tgt["id"]})
+
+
+expect_clean("a timed flag a transition reads is not warned about",
+             timed_and_read, "nothing in this case reads flag", "warnings")
+def timed_in_tag(c):
+    """A tag that reads an expiring flag: legal, and a trap the expectation set cannot see."""
+    a = timed(c)
+    a["tag"] = [{"when": "flag probe_flag set", "value": "recommended"},
+                {"when": None, "value": "critical"}]
+
+
+expect("a tag that reads an expiring flag warns about the expectation set",
+       timed_in_tag, "fixed on entry to that phase", "warnings")
+expect_clean("a transition that reads an expiring flag does not draw that warning",
+             timed_and_read, "fixed on entry to that phase", "warnings")
+expect("a flag granted both timed here and permanently elsewhere warns",
+       lambda c: (timed_and_read(c),
+                  c["case_actions"][-1].__setitem__(
+                      "flags_set",
+                      list(c["case_actions"][-1].get("flags_set") or []) + ["probe_flag"]))[0],
+       "stops expiring", "warnings")
+
+print("\n-- rule N: the arrival handover --")
+expect("a saturation in the handover that contradicts the starting phase warns",
+       lambda c: c["patient"].__setitem__(
+           "arrival_handover", "Sixty-five year old man, short of breath for days. "
+                               "He was 62% on arrival."),
+       "just contradicted", "warnings")
+expect_clean("a saturation that agrees with the starting phase does not warn",
+             lambda c: c["patient"].__setitem__(
+                 "arrival_handover",
+                 "Sixty-five year old man, short of breath for days. He is holding %d%% on six "
+                 "litres." % c["phases"][0]["vitals"]["oxygen_saturation"]),
+             "just contradicted", "warnings")
+
+print("\n-- rules that predate this pass, spot-checked --")
+expect("a condition naming an unsettable flag is rejected",
+       lambda c: act(c).__setitem__("tag", [{"when": "flag never_set_anywhere set",
+                                             "value": "neutral"},
+                                            {"when": None, "value": "neutral"}]),
+       "is not set by any action")
+expect("an implausible vital is rejected",
+       lambda c: c["phases"][0]["vitals"].__setitem__("temperature_c", 96.0),
+       "outside plausible range")
+
+print(f"\n  {COUNT} checks, " + (f"{len(FAILS)} FAILURES" if FAILS else "all passed"))
+sys.exit(1 if FAILS else 0)

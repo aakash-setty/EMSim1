@@ -84,6 +84,13 @@ STAB_TOP = ["Insert IV", "Attach Monitor", "Start Chest Compressions"]
 for d in STAB_TOP:
     add(d, "stabilization", None, category="stabilization")
 
+# Attaching the monitor is what puts numbers on the screen. Before it, the
+# simulator shows no vitals and plays no heartbeat, because the resident has no
+# monitor to read them from. That is a property of the act, not of any case, so
+# it lives here rather than in a case file. It is a capability flag, not a
+# clinical judgement: it says the act reveals the numbers, and says nothing
+# about whether attaching the monitor was the right thing to do.
+
 STAB = {
     "Oxygen": ["Nasal Cannula Oxygen", "Non-Rebreather Mask",
                "Non-Invasive Positive Pressure Ventilation", "Bag Valve Mask"],
@@ -107,6 +114,15 @@ STAB = {
     "Intubation Drugs": ["Lidocaine bolus", "Midazolam bolus", "Etomidate bolus",
                          "Ketamine bolus", "Propofol bolus", "Succinylcholine bolus",
                          "Rocuronium bolus", "Phenylephrine bolus"],
+    # Author-supplied, not transcribed from a screenshot. Recorded in
+    # resolved_since_v0.1_draft below so the provenance stays visible. These are
+    # nursing acts a resident orders and the nurse performs: they change the state
+    # of the room rather than of the patient, so each one sets a flag and none of
+    # them carries a result, a turnaround or a vital effect. Whether isolation was
+    # indicated, and whether warming or cooling helped, is a case's judgement to
+    # make through its tags.
+    "Nursing": ["Droplet Precautions", "Contact Precautions", "Airborne Precautions",
+                "Warming Measures", "Cooling Measures"],
 }
 for group, items in STAB.items():
     for d in items:
@@ -125,12 +141,17 @@ for group, items in STAB.items():
             kw.update(flags_set_default=["pacing_pads_placed"])
         if d == "Insert IV" or d == "Second IV":
             kw.update(flags_set_default=["iv_access"])
+        if group == "Nursing":
+            kw.update(flags_set_default=[sid(d)], repeatable=True,
+                      narration_template="{name} are in place.")
         add(d, "stabilization", group, **kw)
 
 # add flags to top-level stabilization entries that need them
 for e in ENTRIES:
     if e["id"] == "insert_iv":
         e["flags_set_default"] = ["iv_access"]
+    if e["id"] == "attach_monitor":
+        e["reveals_vitals"] = True
     if e["id"] == "central_venous_catheter_cordis" or e["id"] == "central_venous_catheter_triple_lumen":
         e["flags_set_default"] = ["central_access"]
     if e["id"] == "intraosseous_line":
@@ -425,6 +446,7 @@ CATALOG = {
         "transcribed_from_screenshots": ["display_name", "placements.tab",
                                          "placements.group", "short_code"],
         "derived_by_convention": ["id (snake_case of display_name)",
+                                  "reveals_vitals",
                                   "category", "state_changing", "dose_required",
                                   "route_class", "repeatable", "stoppable",
                                   "narration_template"],
@@ -459,6 +481,11 @@ CATALOG = {
         "Bumetanide removed. Furosemide carries its dose in the display name.",
         "Catalog prerequisites rewritten with the mandatory trailing keyword so they parse in the section 4 grammar.",
         "Nitroglycerin sublingual added as a separate route variant on author instruction.",
+        "Nursing group added under Stabilization on author instruction, not from a screenshot: "
+        "droplet, contact and airborne precautions, warming measures and cooling measures. "
+        "Each sets a flag of its own name and asserts nothing clinical.",
+        "attach_monitor carries reveals_vitals. The interface shows no vitals and plays no "
+        "heartbeat until an action carrying this flag has been taken.",
     ],
     "known_gaps": [
         "Meds - Respiratory truncated in screenshot: only Albuterol and Ipratropium visible, list continues.",

@@ -1,10 +1,26 @@
 # EM Case Simulator: System Design
 
-**Version 0.6 | Supersedes v0.5**
+**Version 0.8 | Supersedes v0.7**
 
 ---
 
 ## 0. What changed
+
+**v0.8 finishes what v0.7 started, and the reason is that v0.7 was half a mechanism.** An effect with a `duration_seconds` changed a number on a screen and nothing else. Nothing in the case could react to a drug wearing off, because the condition language could not see it, so "it stopped working" was a rendering event rather than a clinical one and a case whose lesson is a closing window was still unauthorable.
+
+A case action may now grant a flag that **lapses**: `flags_set_timed`. When it lapses the fold removes it and re-checks transitions, so a case can author "when the drug is no longer acting, and nothing else was done, deteriorate" and have it fire with the resident sitting still. Everything in the condition language reads it, which is the point: one mechanism, and tags, prompts, prerequisites, transitions, consultant tiers and content keys all see it for free. Section 2.7.
+
+Vital effects also gained `onset_seconds`, so a drug can take time to work rather than only time to stop. Section 2.6. And section 2.8 is the part an author actually needs: four mechanisms now touch time or parameters, and choosing the wrong one is the failure mode, so they are set out side by side with the question that separates them.
+
+The splash screen shows the arrival vitals (section 17), which is a handover artifact and not the monitor.
+
+**v0.7 separates what the patient is from what the resident can see, and what a phase is from what an action does.** Two changes, and they are related: both take something the interface had been asserting for free and make it something the resident has to earn.
+
+The monitor is no longer on when the case opens. Vitals and the heartbeat appear only once an action carrying the catalog's new `reveals_vitals` capability has been taken, which in the shipped catalog is `attach_monitor` and nothing else. Until then every cell reads as a dash and the room is silent. The numbers exist in the fold from the first second and every rule that reads them is unaffected; what is gated is the display.
+
+An action may now carry `vital_effects`, which move one authored vital off the phase baseline for as long as the effect is acting. A phase is a clinical state entered once, so it cannot express "for the next thirty seconds", cannot express an effect that ends when a drip is stopped, and cannot distinguish a drug that changes the number from a drug that changes the patient without changing the number. Section 2.6.
+
+Neither mechanism enters the condition language. Section 4's exclusion of time now covers vitals as well, for the same reason and with the same consequence: the per-key review matrix is unchanged in shape, because the matrix enumerates what a key resolves to in a phase and neither the clock nor a vital is a key.
 
 **v0.2 reintroduced time.** The clock governs result availability, nurse prompting, and timing feedback. It does not change the patient.
 
@@ -229,6 +245,95 @@ Elapsed time runs from case start to handoff confirmation or halt. Behaviour on 
 
 ---
 
+### 2.6 Vital effects
+
+A phase authors the patient's **baseline**. An action may move one number off that baseline for as long as it is acting. What the monitor reads, and what the heartbeat is derived from, is the sum.
+
+```json
+"vital_effects": [
+  {"vital": "oxygen_saturation", "delta": 3, "key": "positive_pressure_spo2",
+   "while": "NOT flag intubated set"},
+  {"vital": "oxygen_saturation", "delta": 5, "duration_seconds": 30, "key": "nitrate_spo2"}
+]
+```
+
+Three fields govern it and there is nothing else to the mechanism.
+
+**`duration_seconds` and `onset_seconds`, both measured from the administration.** The active window is `[t + onset, t + duration)`. Absent a duration the effect lasts as long as its guard holds; absent an onset it starts at once. One origin for both is one rule rather than two, and the cost of that choice is that an author can write a duration that does not outlast its onset and get an effect that never acts, so the validator refuses it and prints the resulting window for every effect in the case.
+
+Neither bound is an event: nothing is scheduled, the fold simply stops counting the effect once the clock has passed it, so an effect starts and expires correctly on replay from any starting point.
+
+**`while`, an ordinary section 4 condition.** Evaluated against the state as it now stands, not as it stood when the action was taken. This is how an effect ends when the mask comes off or the drip is stopped, without the case having to author a second action whose only job is to undo the first.
+
+**`key`, defaulting to the action id.** Effects sharing a key do not stack; the most recent administration wins. Repeating a drug therefore repeats its effect rather than doubling it, which is the behaviour every drug in the catalog actually has and no drug in the catalog would have by summation. Two routes to the same drug must be given the same explicit key, for the same reason a harmful tag has to cover every route to the same act (3.7a): a mechanism that a sibling entry escapes is not a mechanism.
+
+**Terminal phases are exempt.** `halted` and `case_complete` author the numbers a reader is meant to be left looking at. An effect still running when the case ends would edit the ending, and the halt card would disagree with the debrief above it.
+
+**Effects are display and audio only, exactly as the ramp is (8.4a).** They do not enter the condition language, do not affect transitions, and do not affect result freezing: a blood gas still reports the phase's authored numbers for the moment it was ordered. This is the same accepted inconsistency the ramp already carries, now reachable in one more way, and the reason is the same one: the alternative is a state layer whose vitals move continuously, which breaks freezing and makes every rule that reads a phase read a moving target instead.
+
+**An effect is not a clinical event.** The number moves and nothing else happens. If the case must DO something when a drug starts or stops working, the effect is the wrong tool on its own: pair it with an expiring flag (2.7) and guard the effect on that flag, so the clock lives in one place and everything can read it.
+
+**What this asks of an author is a rebasing, and it is the mistake to expect.** Once oxygenation is action-driven, a phase's authored saturation has to be the **unsupported** one, or the phase change and the effect both fire and the number is counted twice. In CHFE this meant dropping `stabilizing` and `improving` from 93 and 96 to the arrival value of 87, so that positive pressure supplies the only durable gain and diuresis supplies none. That is not a cosmetic edit: it changes what the case teaches by making the second learning objective mechanical rather than asserted. Validator rule V catches the arithmetic half of this and cannot catch the clinical half.
+
+### 2.7 Expiring flags
+
+A case action may grant a flag for a fixed time:
+
+```json
+"flags_set_timed": [{"flag": "nitrate_acting", "duration_seconds": 30}]
+```
+
+When the clock passes the deadline the fold removes the flag and **re-checks transitions**, which is the entire reason the mechanism exists. Without that re-check a case could author "when the drug is no longer acting, deteriorate" and it would fire only if the resident happened to press something afterwards, which is a bug that looks like flakiness.
+
+Three rules govern grants, and all three exist because a flag is shared state that more than one action can write.
+
+**A permanent grant is absorbing.** Once any action has set a flag through the ordinary `flags_set`, no timed grant can take it away, in either order. A drip that is running is running; a bolus of the same drug does not schedule its removal.
+
+**A timed grant extends rather than replaces.** A second dose moves the expiry to the later of its own deadline and any deadline already standing. The earlier expiry event still arrives, sees that a later grant stands, and does nothing. So redosing refreshes, and a resident who redoses two seconds before the deadline is not overtaken by it.
+
+**A lapse is not an action.** It appears in no timeline, produces no nurse line of its own, and costs nothing in the debrief's scoring. It is a thing that stopped being true while the resident was doing something else. If the case wants the resident told, it authors the consequence as a transition, and a transition may carry narration.
+
+**The trap, and it is checked.** A clinical tag may read an expiring flag, and tags are re-resolved on every action, so that part works. But the set of CRITICAL actions a phase expects is computed once, on entry to that phase. An action that becomes critical because a flag lapsed mid-phase will therefore never appear in the debrief's missed list, and nothing else would ever say so. The validator warns and tells the author to put the consequence on a transition instead.
+
+**Why a flag rather than a new predicate.** A predicate such as `drug D acting` would have been narrower, would have needed its own grammar, its own review-matrix column and its own validator rules, and would have expressed exactly one thing. A flag that expires is the existing flag, the existing predicate and the existing matrix, with a deadline attached. Section 4 is unchanged, which is the test any addition here has to pass.
+
+### 2.8 Choosing among the four
+
+Four mechanisms now touch time or move a number, and the failure mode is not that one of them is broken, it is that an author reaches for the wrong one. The question that separates them is **what else in the case has to know**.
+
+| Reach for | When | What can read it |
+|---|---|---|
+| A **phase** | The patient has genuinely changed clinical state | Everything. It is the axis the whole case projects over |
+| **`after_seconds`** on a transition | The lesson is that something had to happen sooner | It changes the phase, so everything |
+| **`flags_set_timed`** | Something is true for a while and then is not, and the case must react | Everything in the condition language |
+| **`vital_effects`** | A number on the monitor moves and nothing else does | Nothing. Display and audio only |
+
+Read down that last column and the choice usually makes itself. Two consequences worth stating outright:
+
+**The two bottom rows are designed to be used together.** An expiring flag holds the clock and a vital effect guarded on it holds the number:
+
+```json
+"flags_set_timed": [{"flag": "nitrate_acting", "duration_seconds": 30}],
+"vital_effects": [{"vital": "oxygen_saturation", "delta": 5,
+                   "key": "nitrate_spo2", "while": "flag nitrate_acting set"}]
+```
+
+The saturation rises, the case can test whether the nitrate is still acting, and there is exactly one deadline. Authoring the same 30 seconds twice, once as a duration and once as a flag, is two deadlines that will drift the first time one of them is edited.
+
+**A phase is not expensive and is often the right answer.** It is the only construct a reviewing physician can see in the per-key matrix, and it is the only one that can change a finding, a lab, a consultant's advice or what the patient says. If the patient is genuinely worse, that is a phase, not a negative delta on a heart rate.
+
+### 2.9 What none of them can do
+
+Stated plainly, because each of these looks authorable until it is tried.
+
+- **Nothing depends on dose.** Doses are not implemented anywhere in the product; `{dose}` is dropped from narration rather than faked. Two boluses are two administrations of the same thing.
+- **Vitals cannot be tested.** No condition can ask whether the saturation is below 90. The condition language projects over phase, flags and study state, and that is what keeps the review matrix finite and reviewable. If a case needs to branch on a number, the number has to be a phase.
+- **Effects do not reach results.** A blood gas reports the phase's authored payload for the moment it was ordered. A gas drawn while an effect is running will disagree with the monitor beside it, for up to the length of the effect. This is the inconsistency the five-second ramp already carried, and it is accepted for the same reason.
+- **Effects do not compound or ramp.** They add, they clamp at physiological bounds, and they snap on and off. The renderer travels between values over five seconds, which is a display courtesy and not a model of anything.
+- **Content keys cannot vary with time.** An exam finding, a lab, a consultant tier and a patient answer change with phase, flags and study state, never with the clock. A finding that must change after five minutes needs a phase, and a phase reached on a clock is exactly what 2.1a is for.
+
+---
+
 ## 3. Data layer
 
 ### 3.1 Global action catalog
@@ -247,6 +352,7 @@ Every drug, exam maneuver, lab, imaging study, ECG, consultant, stabilization ta
 | `default_prerequisites` | Standard gating, applied to every case unless waived |
 | `flags_set_default` | Flags the action sets everywhere, for example `insert_iv` sets `iv_access` |
 | `default_result` | For investigations and exams: the normal finding, see 3.2 |
+| `reveals_vitals` | v0.7. True on the act that puts numbers on the screen. See 8.4b |
 | `persistent`, `repeatable`, `dose_required` | Display and behaviour hints |
 
 No clinical judgment lives here, because appropriateness is case-dependent. Every value that is not transcribed from the interface should record its provenance, because a field derived by convention and a field taken from a real menu need different levels of scrutiny.
@@ -562,14 +668,23 @@ A cap on prompts per phase avoids nagging and should be configurable.
 
 **Do not print the turnaround value on the button.** It tells the resident the simulator's clock rather than anything clinical and invites ordering in an order that games the timer. Pending and resulted state carry the information a resident actually needs.
 
-**8.3 The running chart.** Every output the case produces goes to a panel that is on screen at all times: results as they return, exam findings, consultant replies, what the patient said, and every action performed or blocked, in the order the resident learned them. A result enters the chart when it **results**, not when it was ordered, so the chart is a record of what was known and when.
+**8.3 The running chart.** Every output the case produces goes to a panel that is on screen at all times: results as they return, exam findings, consultant replies, what the patient said, what the nurse asked for, and every action performed or blocked. A result enters the chart when it **results**, not when it was ordered, so the chart is a record of what was known and when.
+
+**Newest first** (v0.8). The chart is read while the case is running, to answer "what just happened", and the answer to that is at one end of the list. Oldest-first put it at the far end of a scroller that grows all case, and in the expanded multi-column layout it put the newest entry at the bottom of the LAST column, which is the hardest place on the panel to find. Reversed, what a resident is looking for is at the top of the first column and the expanded panel needs no scrolling to answer that question at all. Ties are broken so that several things landing in the same second still read newest-first rather than in an arbitrary order.
+
+**The nurse is in the chart, but not everything she says** (v0.8). Her line is the only thing in the interface that is overwritten rather than added to: the header holds one utterance and the next replaces it, so a resident working in a tab loses every prompt they were not looking at. That was the one kind of information in the product with nowhere to be read back.
+
+Four of her six utterance kinds stay out, each for its own reason, and the reasoning is the 8.3 duplicate rule applied consistently rather than a preference. `narration` echoes an action that is already a row. `result` echoes a result that is already a row, with its payload. `blocked` is folded into the blocked row, which now carries the prerequisite message as its body rather than only the words "Blocked: X"; the reason is the teaching, and it used to live only in a header line that scrolls away. `halt` is said at the instant the case ends, which is the instant the panel is hidden, so it would be written somewhere nobody can look; its reason is on the halt card and in the debrief.
+
+What is left is the two that have no other home: a **prompt**, which appears nowhere else at all, and a **deterioration narration**, which is the one place a nurse line may describe a trajectory (2.2) and is narrating a change the resident may not have been watching for. The two are styled apart, because being asked for something and being told the patient is worse are not the same utterance and the second should not be skimmed past as if it were.
 
 **This removes the unread state, and with it a measurement.** An earlier design tracked whether each result had been read, warned at handoff about unread results, and reported them in the debrief. That was meaningful when a finding was visible only on the tab that produced it. With a chart that cannot be scrolled away from, a returned result has been shown to the resident whether or not they attended to it, and asserting otherwise would be a claim the interface cannot support. What remains measurable is a study that never came back, and that is still reported.
 
 Two interface requirements, both learned by getting them wrong:
 
 - **A study appears twice**, once when sent and once when it returns. Under the same name that reads as a duplicate, so the order entry is labelled as an order.
-- **Auto-scroll only on change.** Following the newest entry every render pulls a reader scrolled back through earlier results to the bottom repeatedly. Scroll when the item count changes, not every tick.
+- **Auto-scroll only on change.** Following the newest entry every render pulls a reader who has scrolled away through earlier results back repeatedly. Scroll when the item count changes, not every tick. With newest-first that means scrolling to zero rather than to the full height.
+- **A question the patient did not understand is not a chart entry.** v0.7. When the matcher finds no topic, the case's `out_of_scope_fallback` answers and the patient says they do not follow. That is feedback about the phrasing, not something learned about the patient, and a chart of "I don't know what you mean" three times over buries the history that was actually taken. The exchange stays on the History tab, where the resident can see which of their questions did not land and rephrase, and it does not enter the chart. The readout records the matched topic and is `null` exactly when the fallback answered, so this is one test and not a string comparison against the fallback text.
 
 **8.4 The dead monitor problem.** Vitals are static within a phase, so with a clock running the monitor will look frozen and broken. Add small cosmetic variance at the rendering layer only, on the order of a beat or two of heart rate and a point of saturation. This must live in the client renderer and never enter state, or it will corrupt result freezing and rule evaluation.
 
@@ -583,9 +698,19 @@ Six values ramp: heart rate, systolic and diastolic pressure, saturation, respir
 
 **Five seconds is a guess.** It was chosen to be long enough to read as movement and short enough not to delay the resident. It has not been tested against residents and should be treated as configuration, not as a finding.
 
+**8.4b No monitor, no numbers.** The simulator opens with every vital cell reading a dash and with no heartbeat. Both appear the moment an action carrying `reveals_vitals` is taken, which in the shipped catalog is `attach_monitor` alone.
+
+This is display gating and only display gating. `st.vitals` is computed by the fold from the first second whether or not anyone is watching, every transition and every result behaves identically, and a case cannot switch the gate off or move it to another action: the capability is a catalog field, so no case names it.
+
+**Why it is worth the friction.** Attaching a monitor was previously a recommended action that changed nothing a resident could perceive, which is the definition of an action a learner is entitled to skip. The numbers were on screen before anyone had done anything to obtain them, which taught that vitals are a property of arriving in a room. They are a property of putting equipment on a patient, and a resident who has not done it should be looking at a patient rather than at a monitor.
+
+**Two things this deliberately does not do.** It does not distinguish "no monitor" from "unauthored vitals": both read as a dash, because the dash is already the interface's word for "no number here" and a reader is not helped by two kinds of nothing. And it does not silence the nurse's prompt trill, which is a person speaking rather than equipment and fires from the first prompt whether or not anything is attached. The sound control says which of the two is missing rather than reading "Sound on" over silence.
+
+**The debrief is not gated.** A resident who never attached a monitor still sees, in the debrief, everything the case recorded. Withholding the debrief would punish the omission twice and would remove the only place the omission can be explained.
+
 ### 8.5 Audio
 
-Two channels, both derived from the current phase's authored vitals and neither stored.
+Two channels, both derived from the current phase's authored vitals with any active vital effect applied (2.6), and neither stored. The heartbeat is additionally gated on the monitor (8.4b); the prompt tone is not.
 
 **Continuous heartbeat.** A two-thump beat at an interval of `60 / heart_rate` seconds, pitched by oxygen saturation:
 
@@ -736,6 +861,8 @@ Case-agnostic. No clinical knowledge, no case names, no drug behavior. An `if` s
 | **Prerequisite checker** | Merges catalog and case prerequisites, evaluates them, returns the failure message |
 | **Debrief generator** | Folds the log against case data to produce narrative, teaching points, and score |
 | **Interview matcher** | Maps a typed question to an authored topic, or to nothing; lexical, with an optional embedding stage fused on top |
+| **Vital effect resolver** | v0.7. Reduces the recorded administrations to the effects acting now, one per key, and adds them to the phase baseline. Nothing schedules an expiry; the resolver is a function of the clock |
+| **Flag grant ledger** | v0.8. Records, per flag, whether an action has granted it permanently and the latest deadline any timed grant runs to. A lapse is a scheduled event that removes the flag and re-checks transitions, so a case can react to something wearing off |
 
 **The folder is not independent of the resolver and transition checker.** Phase changes come from transition rules, and results freeze at order-time state, both computed during the chronological walk. Implementing fold-then-resolve produces a system that appears correct while silently breaking result freezing, showing an early gas with the improved value. Build it as one ordered replay.
 
@@ -777,6 +904,22 @@ earliest time-guarded exit can never fire, and warns.
 **Handoff.** The correct diagnosis and every authored alternative resolve to a real diagnosis catalog id.
 
 **Flag namespace.** Catalog-owned flags are shared and reserved; case-owned flags are prefixed and checked for collisions. A blanket rule forbidding all cross-case flag collisions is incompatible with catalog prerequisites, which must reference the same flag names everywhere.
+
+**Vital effects (rule V, v0.7).** The vital named is one of the six authored per phase. The delta is a number, and a zero delta warns rather than errors, since it is more often a half-finished edit than a deliberate no-op. A duration is positive. A `while` condition parses. Two effects sharing a key must name the same vital, or one of them is silently discarded. An effect on an action the case marks `state_changing: false` errors, because the fold returns before it would record one.
+
+**The rebasing check is a warning and is only made for unguarded effects.** If a phase's baseline plus the delta leaves the plausible range, the phase was almost certainly never rebased when the effect was added. A guarded effect is skipped and reported as a note saying the check was not made, because deciding whether a guard makes a phase unreachable is deciding reachability, which this validator does not attempt anywhere else. CHFE's nitrate effect is guarded on `NOT flag intubated set` and cannot reach either ventilator phase; warning about it would have been wrong on the first case that used the feature, and a rule that cries wolf on its first outing is a rule nobody reads afterwards.
+
+**Expiring flags (rule W, v0.8).** The flag is a bare identifier, since the condition grammar splits on whitespace and could not name anything else. The duration is positive. The same action does not also grant the flag permanently, which would absorb the timed grant and make the duration dead. The action is state-changing, or the flag is never granted at all. **Something in the case reads the flag**: a flag that expires and that no transition, tag, prompt guard, prerequisite or content rule tests changes nothing, and that is the most likely way this mechanism is mis-authored. A flag granted with a duration by one action and permanently by another warns, because taking the second one silently stops the first from ever expiring. And a clinical tag that reads an expiring flag warns, for the reason in 2.7: the expectation set is fixed at phase entry and will not follow the tag.
+
+**What rule V cannot check.** Whether the delta is the right size, whether the duration matches the drug, and whether the rebased baseline is still the patient the case describes. None of that is decidable without clinical knowledge, and the per-key review matrix cannot show any of it either, because the matrix enumerates what a key resolves to in a phase and an effect is neither a key nor a phase. It is a human review item, listed in authoring 14.3.
+
+### 13.1a Negative tests for the validator
+
+`engine/validator-tests.py`. The validator is the only thing standing between a future case author and a mechanic that fails silently, and a rule that has never fired is a rule nobody has run. The harness loads a real case that passes cleanly, breaks it in one specific way, and asserts that the rule meant to catch it says so, then throws the mutated copy away. Nothing on disk is touched.
+
+Half the checks are the inverse: a rule must NOT fire on correct authoring. That half is the one that matters over time. A validator that shouts at a legitimate case teaches authors to ignore it, after which it protects nothing, and the guarded-effect range check in rule V would have shipped doing exactly that if it had not been written down as a test.
+
+It found a real defect on its first run, though not in the validator: the engine test harness captured its action map once, while `selectCase` rebuilds that map on every call and the suite binds every packed case in turn. Every read off the stale map happened to agree with the live one, so nothing failed and the staleness was invisible until a test tried to write to it.
 
 ### 13.2 Per-key review matrix
 
@@ -982,8 +1125,26 @@ It shows, all from the case file:
 - the care setting, as a header
 - the working title and the chief complaint in the patient's words
 - one line naming where the patient was brought: `Patient brought to the Resuscitation Bay`, `the Trauma Bay`, or `the Patient Room`
+- **the arrival vitals** (v0.8), read from the first authored phase
 - the difficulty toggle
 - the provenance warning, if the case carries one
+
+**The arrival vitals are a handover artifact, not the monitor, and that distinction is
+the whole reason showing them does not undo 8.4b.** A crew hands over the numbers they
+measured; that is what a handover is, and the two sentences of it on the History tab are
+the same thing in prose. What the resident still does not have is the current number and
+the trend, which is what a monitor is for and what attaching one buys them.
+
+So the strip is styled as figures on a pale panel rather than in the monitor's dark, the
+numbers are static, and they carry none of the cosmetic variance the monitor adds. There
+is no caption saying they are not live: the heading is past tense and the empty monitor a
+few seconds later says the rest. A resident who has to be told in a sentence that a
+number from before they walked in is not a live reading has been handed the lesson
+instead of learning it.
+
+A case whose first phase has no authored vitals hides the section rather than printing a
+row of dashes. The picker offers half-authored cases on purpose and an empty panel
+teaches nothing.
 
 **What it deliberately does not show.** Through v0.4 the splash carried a section headed
 "How they got to you" holding the arrival mode and the full handover. It was removed in

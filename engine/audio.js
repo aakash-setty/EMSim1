@@ -1,10 +1,15 @@
 /* ============================================================
    Audio. Two channels:
 
-   1. A continuous heartbeat. Tempo follows the heart rate from the current
-      phase's authored vitals. Pitch follows oxygen saturation: A5 at the
-      reference saturation, one semitone lower per percent below it.
-   2. A short two-note trill whenever the nurse issues a prompt.
+   1. A continuous heartbeat. Tempo follows the heart rate on the monitor and
+      pitch follows its oxygen saturation: A5 at the reference saturation, one
+      semitone lower per percent below it. It is the monitor's sound, so it does
+      not exist until the monitor is on the patient. Before that there is no
+      heartbeat at all, which is the same silence the resident would be standing
+      in, and it is the audible half of the empty screen.
+   2. A short two-note trill whenever the nurse issues a prompt. This is a person
+      speaking rather than equipment, so it is not gated on the monitor and fires
+      from the first prompt whether or not anything is attached.
 
    The pitch mapping makes desaturation audible before the resident looks at
    the monitor, which is the intended effect but is also a teaching decision
@@ -80,8 +85,13 @@ const AUDIO = (() => {
 
   function currentVitals() {
     if (!CASE) return null;
-    const p = PHASE[ST ? ST.phase : CASE.phases[0].id];
-    let v = p ? p.vitals : null;
+    /* No monitor, no monitor sound. ST.monitoring is set by the fold the moment an
+       action carrying the catalog's reveals_vitals capability is taken. */
+    if (!ST || !ST.monitoring) return null;
+    /* The phase baseline with any active vital effect already applied, so a thirty
+       second rise in saturation is heard as well as seen. */
+    let v = ST.vitals;
+    if (!v) { const p = PHASE[ST.phase]; v = p ? p.vitals : null; }
     /* The monitor travels to the new phase's numbers over five seconds. The
        heartbeat travels with it, because a beat that jumps to the new rate
        while the displayed rate is still moving sounds like a fault. Guarded by

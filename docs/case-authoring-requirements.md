@@ -1,12 +1,16 @@
 # Case Authoring Requirements
 
-**Version 0.5 | Aligned to System Design v0.6**
+**Version 0.7 | Aligned to System Design v0.8**
 
 What must be provided to produce one complete, playable, clinically valid case.
 
 This document has two audiences. The **case author** is an emergency physician who supplies clinical ground truth and reviews everything. The **drafting AI** expands that ground truth into the full case file. Sections marked AUTHOR-ONLY cannot be delegated. Sections marked AI-DRAFTABLE can be generated and then reviewed.
 
 **Changed from v0.2.** The global catalogs now exist, and a case is written against them rather than alongside them. Concretely: actions are named by catalog id; the exam maneuver set is closed at 14 with a fixed routing map; results are structured payloads with abnormal flags rather than prose; catalog prerequisites merge with case prerequisites rather than being replaced; there is a fifth clinical tag, `discouraged`; a case now supplies its care setting and arrival mode for the splash screen; and section 16 gives the end-to-end authoring workflow, which did not previously exist as a sequence.
+
+**Changed from v0.6.** An action can now grant a flag that expires (`flags_set_timed`, section 6.3), which is what lets a case react to something wearing off rather than only showing it wearing off, and vital effects gained `onset_seconds` so a drug can take time to start. Read **section 6.4 first**: four mechanisms now touch time or move a number, and picking the wrong one is the mistake, not using them wrongly.
+
+**Changed from v0.5.** Two things an author now has to decide that v0.5 decided for them. Oxygenation and any other vital can be moved by an action rather than only by a phase, through `vital_effects` (section 6.1), which means a phase's authored vitals have to be the **unsupported** baseline or the number is counted twice. And the resident no longer sees any vitals until they attach a monitor (section 6.2), which changes what an arrival prompt can assume the resident is looking at.
 
 **A case is now a folder, not a file.** Everything you author for one case lives in `cases/<PREFIX>/` with a shared prefix, and every tool takes that folder as its argument. `python3 engine/new_case.py <PREFIX>` scaffolds it, including a copy of the seed template and the exam routing map. See section 16 and the repository README.
 
@@ -408,6 +412,132 @@ If a case needs an appearance feature outside this list, that is a request to ex
 
 - **Author the endpoints, not the path.** You still supply one set of numbers per phase. There is no way to author a trajectory, and the ramp is not one: it is a straight interpolation between two authored plateaus. A case that clinically requires a rise over minutes still needs an extra phase.
 - **A result ordered during a ramp freezes at the phase's authored numbers**, not the ramped ones, per fact 7. So a blood gas ordered one second after a transition returns the new phase's values while the monitor is still showing something in between. This is a real inconsistency, it lasts up to five seconds, and it was accepted rather than fixed, because the alternatives are ramping state (which breaks result freezing) or delaying results (which makes the clock lie). It is not worth authoring around; it is worth knowing about if a reviewer reports it as a bug.
+
+### 6.1 Moving a vital with an action, not a phase
+
+A phase is entered once and holds until something moves the case out of it. That makes it the wrong tool for three ordinary clinical facts: an effect that lasts thirty seconds and then is gone, an effect that ends when the drip is stopped or the mask comes off, and a drug that changes the patient without changing the number the resident is watching. Author those on the action:
+
+```json
+{
+  "catalog_id": "niv_bipap_cpap",
+  "vital_effects": [
+    {"vital": "oxygen_saturation", "delta": 3,
+     "key": "positive_pressure_spo2",
+     "while": "NOT flag intubated set"}
+  ]
+}
+```
+
+| Field | Required | What it does |
+|---|---|---|
+| `vital` | yes | One of the six authored per phase |
+| `delta` | yes | Added to the phase baseline. May be negative |
+| `duration_seconds` | no | Omit for an effect that lasts as long as its guard holds |
+| `while` | no | An ordinary section 4 condition, re-evaluated continuously |
+| `key` | no | Defaults to the action id. Effects sharing a key do not stack |
+
+**Rebase your phases, or the number is counted twice.** This is the mistake, it is easy to make, and the validator catches only the half of it that leaves the plausible range. If positive pressure adds three points and the phase a resident reaches by applying positive pressure also raises the saturation, the resident sees both. Every non-terminal phase's authored vitals must be what the patient would show **with nothing running**. In CHFE that meant `stabilizing` and `improving` both carry the arrival saturation of 87, and the only durable gain in the case comes from the mask.
+
+**Decide deliberately which vitals a treatment does not move.** The reason to author this at all is usually the thing that does *not* happen. CHFE's furosemide carries no effect, so a resident who reaches for the diuretic first and watches the saturation sees nothing move, while the heart rate, pressure and respiratory rate all improve on the phase change. That is the case's second learning objective stated as behaviour instead of as a sentence in the debrief. If every treatment in your case raises the number, you have authored a case in which sequencing does not matter.
+
+**Give two routes to the same drug the same key.** Sublingual and infused nitroglycerin share `nitrate_spo2` in CHFE, so a resident cannot stack them into an improvement neither route would produce. This is the same obligation as covering every route with a harmful tag, and it fails the same way if you forget: the lesson has a sibling entry that walks around it.
+
+**Sizes are teaching choices and should be labelled as such.** Three points for positive pressure and five for a nitrate are authored numbers. No trial supports a specific figure, the patient in front of you is not the mean of a trial population, and the review packet should say so rather than implying the simulator is modelling physiology. Put the reasoning in a `note` on the effect; the field is carried through and printed nowhere, which is what a note to a reviewer should be.
+
+**What is out of reach.** Effects add; they do not multiply, ramp, titrate, or depend on a dose, because doses are not implemented. An effect cannot read another effect. Nothing in the condition language can test a vital, so you cannot author "if the saturation is below 90, then". If your case needs any of that, it needs a phase.
+
+### 6.2 Expiring flags: something that stops being true
+
+An ordinary flag, once set, is set for the rest of the case. A flag granted with a duration is removed when the duration lapses, and the case can react to that:
+
+```json
+{
+  "catalog_id": "nitroglycerin_sublingual",
+  "flags_set_timed": [{"flag": "nitrate_acting", "duration_seconds": 300}]
+}
+```
+
+Then anything in the condition language can ask whether it is still acting. A transition:
+
+```json
+{"when": "action nitroglycerin_sublingual taken AND NOT flag nitrate_acting set",
+ "to": "pressure_rebounds",
+ "narration": "His pressure is climbing again, 178 over 98."}
+```
+
+That transition fires **on its own**, at the moment the flag lapses, with the resident sitting still. That is the whole point, and it is the thing `duration_seconds` on a vital effect cannot do.
+
+**How grants combine.** Three rules, and you need all three because more than one action can write the same flag.
+
+- **A permanent grant wins, in either order.** If `nitroglycerin_infusion` sets `nitrate_acting` through the ordinary `flags_set` and the sublingual dose grants it for 300 seconds, then once the drip is running the flag never expires. That is usually right, and it is the shape to reach for when a drip and a bolus are the same drug. The validator warns so that it is a decision rather than a surprise.
+- **A repeat dose refreshes.** A second administration moves the deadline to the later of the two. Giving the drug again 10 seconds before it runs out buys the full duration again, not 10 seconds.
+- **A lapse is not an action.** It costs nothing, appears in no timeline, and the nurse says nothing about it. If the resident should be told, author the consequence as a transition and put the words in its `narration`, which is the one place a nurse line may describe a trajectory.
+
+**Do not put an expiring flag in a clinical tag.** It is legal, tags are re-resolved on every action, and it still will not do what you want: the set of critical actions a phase expects is computed once, when the phase is entered, so an action that becomes critical because a flag lapsed is never listed as missed in the debrief. The validator warns. Put the consequence on a transition.
+
+**Every timed flag must be read by something.** A flag that expires and that no transition, tag, prompt guard, prerequisite or content rule tests changes nothing at all. This is the most common way the mechanism is mis-authored, and the validator warns rather than letting it look like it works.
+
+### 6.3 Delayed onset
+
+`onset_seconds` on a vital effect delays its start. Both it and `duration_seconds` are measured **from the administration**, so the effect acts over `[onset, duration)`:
+
+```json
+{"vital": "systolic_bp", "delta": -25, "onset_seconds": 45, "duration_seconds": 600}
+```
+
+A duration that does not outlast its onset is an effect that never acts, and the validator refuses it rather than letting you find out by playing the case. It also prints every effect's window as a note, so the arithmetic is in front of you at validation time.
+
+### 6.4 Choosing among the four, which is the part to get right
+
+Four constructs touch time or move a number. None of them is hard to use; the mistake is reaching for the wrong one. The question that separates them is **what else in the case has to know**.
+
+| Reach for | When | What can read it |
+|---|---|---|
+| A **phase** | The patient has genuinely changed clinical state | Everything |
+| **`after_seconds`** on a transition (5.1) | The lesson is that something had to happen sooner | Everything, since it changes the phase |
+| **`flags_set_timed`** (6.2) | Something is true for a while and then is not, and the case must react | Everything in the condition language |
+| **`vital_effects`** (6.1) | A number on the monitor moves and nothing else does | Nothing. Display and audio only |
+
+Worked examples of the choice, all of them things an author will actually want:
+
+- *"BiPAP raises the saturation while the mask is on."* One vital effect, guarded on not being intubated. Nothing else in the case needs to know, so nothing else is involved.
+- *"Sublingual nitrate raises the saturation for thirty seconds."* One vital effect with a duration. No flag: nothing reacts to it running out.
+- *"The nitrate wears off and the pressure rebounds, and the resident has to notice."* An expiring flag, plus a transition guarded on it, plus a `narration` on that transition. The rebound is a phase, because the patient really is different.
+- *"Steroids take twenty minutes to do anything."* An onset. And be honest about whether a twenty-minute onset means anything in an eight-minute case: usually it means the case should not model it at all.
+- *"The patient deteriorates if nobody gives antibiotics."* A time-guarded transition, section 5.1, with all six of its fairness rules.
+
+**The two bottom rows are designed to be used together.** When a drug both shows on the monitor and changes what the case will do, put the clock in the flag and guard the effect on the flag:
+
+```json
+"flags_set_timed": [{"flag": "nitrate_acting", "duration_seconds": 30}],
+"vital_effects": [{"vital": "oxygen_saturation", "delta": 5,
+                   "key": "nitrate_spo2", "while": "flag nitrate_acting set"}]
+```
+
+One deadline in one place. Writing the 30 seconds twice, once as a duration and once as a flag, gives you two deadlines that drift apart the first time either is edited.
+
+**A phase is not expensive, and reviewers can only see phases.** It is the only construct the per-key review matrix shows, and the only one that can change an exam finding, a lab, a consultant's advice or what the patient says. If the patient is genuinely worse, that is a phase, not a negative delta on a heart rate.
+
+### 6.5 What none of this can do
+
+Each of these looks authorable until you try it.
+
+- **Nothing depends on dose.** Doses are not implemented. Two boluses are two administrations of the same thing.
+- **No condition can test a vital.** You cannot author "if the saturation is below 90". The condition language sees phase, flags and study state, which is what keeps the review matrix finite. Branching on a number means the number has to be a phase.
+- **A result never sees an effect.** A gas ordered while an effect is running reports the phase's authored payload and will disagree with the monitor beside it. Do not author around it; know about it when a reviewer calls it a bug.
+- **Effects add, clamp and snap.** No compounding, no titration, no gradient. The five-second travel between values is a display courtesy, not a model.
+- **Exams, labs, consultants and patient answers never vary with the clock.** They vary with phase, flags and study state. A finding that must change after five minutes needs a phase, reached on a clock.
+
+### 6.6 The resident sees no vitals until they attach a monitor
+
+The monitor is dark when the case opens: every cell reads a dash, and there is no heartbeat. Both arrive when the resident takes the action carrying the catalog's `reveals_vitals` capability, which is `attach_monitor`. Nothing you author changes this and no case can turn it off.
+
+**The splash screen does show the arrival vitals**, read from your first phase, as figures on a pale panel. That is a handover artifact, not the monitor: it is what somebody measured before the resident walked in. What the resident still has to earn is the current number and the trend. Two things follow for you: the first phase's vitals are now read by a learner before the case starts, so they are the numbers the case is introduced by; and a handover that quotes a saturation should quote **that** one. The validator warns if the two disagree.
+
+Two consequences for authoring, and the first is easy to get wrong:
+
+- **An arrival-phase prompt must not assume the resident can see a number they have not obtained.** CHFE's NIV prompt says "his sat is sitting at 87 on six litres", which is the nurse telling the resident something, and that is fine and is now doing more work than it was. A prompt reading "his sat has dropped" would be worse: it implies the resident is watching a trend on a screen that may still be dark.
+- **Attaching the monitor is worth tagging.** It was previously an action with no perceptible consequence, which is an action a learner is entitled to skip. It now gates the whole monitor, so give it a tag and a debrief note rather than leaving it neutral.
 
 ---
 
@@ -1025,7 +1155,8 @@ reached by nobody doing anything. The timeline has three parts:
 
 **Arrival handover**
 - [ ] It names no diagnosis, in clinical or lay words
-- [ ] It contains no past history, no medication, no allergy, no pertinent negative, no vital sign
+- [ ] It contains no past history, no medication, no allergy and no pertinent negative
+- [ ] Any vital sign in it is what was measured on the way in, is written that way, and agrees with the first phase. It is no longer forbidden: since the monitor is dark until it is attached, the handover may be the only number the resident has, which is what a real handover is
 - [ ] It is vague and incomplete in the way a real busy handover is, rather than a competent summary
 - [ ] It is in the right voice for `mode`: a crew who saw the scene, or a triage nurse who saw the waiting room
 - [ ] Read cold, it gives a resident somewhere to start and nowhere to finish
@@ -1045,6 +1176,23 @@ reached by nobody doing anything. The timeline has three parts:
 - [ ] The do-nothing trajectory is clinically right from end to end, not only at the first hop
 - [ ] If the clock can end the case, you intended that, and the `timeout_reason` attributes it to the omission rather than to anything the resident did
 - [ ] No prompt in a timed phase is stranded past the exit
+
+**Timed mechanics**, where the case uses them
+- [ ] For each one you have asked "what else has to know", and the answer picked the construct (6.4)
+- [ ] Every expiring flag is read by something, and the thing that reads it is a transition rather than a tag
+- [ ] A drug that both moves a number and changes the case holds its clock in ONE place, not in a duration and a flag both
+- [ ] You have played the case doing nothing after the drug, and watched the consequence of it wearing off actually arrive
+- [ ] Every duration is a clinical claim you will defend: this drug, this patient, acts about this long
+- [ ] Where a drip and a bolus of the same drug both grant the flag, you intended the drip to stop it expiring
+
+**Vital effects**, where the case uses them
+- [ ] Every non-terminal phase's authored vitals are the **unsupported** baseline, so nothing is counted twice
+- [ ] You have played the case with each effect-bearing action alone and read the number off the monitor, rather than trusting the arithmetic
+- [ ] Every route to the same drug shares one key, and no two keys name the same act
+- [ ] Every delta and duration is a teaching choice you are willing to have called a teaching choice in the review packet, and none of them is presented as a modelled quantity
+- [ ] The treatments that move nothing move nothing on purpose, and the debrief says why
+- [ ] The terminal phases read correctly, remembering that they ignore every effect
+- [ ] Every onset and duration window in the validator's note is the window you meant
 
 **Structure and sequencing**
 - [ ] Consultant advice never references a study that was not ordered, or one still pending

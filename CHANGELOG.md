@@ -5,6 +5,221 @@ is usable with learners.
 
 ---
 
+## System design v0.8, authoring requirements v0.7
+
+**Flags can expire, and this is the change that matters.** v0.7 gave a vital effect a
+`duration_seconds`, which moved a number on a screen and nothing else: no condition could
+see it, so "the drug stopped working" was a rendering event rather than a clinical one and
+a case whose lesson is a closing window was still unauthorable.
+
+A case action may now grant a flag with a duration through `flags_set_timed`. When the
+clock passes it the fold removes the flag and **re-checks transitions**, so a case can
+author "when the drug is no longer acting, and nothing else was done, deteriorate" and
+have it fire with the resident sitting still. Everything in the condition language reads
+it, which is the point: one mechanism, and tags, prompts, prerequisites, transitions,
+consultant tiers and content keys all see it without any of them being touched. Section 4
+is unchanged, which is the test any addition here has to pass.
+
+Grants combine by three rules, all of them because a flag is shared state more than one
+action can write: a permanent grant absorbs a timed one in either order; a timed grant
+extends to the later deadline, so a repeat dose refreshes rather than shortening; a lapse
+is not an action, costs nothing, and appears in no timeline.
+
+**Vital effects gained `onset_seconds`,** so a drug can take time to work and not only
+time to stop. It and `duration_seconds` are both measured from the administration, which
+is one rule rather than two, and the validator refuses a duration that does not outlast
+its onset and prints every effect's window as a note.
+
+**Design 2.8 and authoring 6.4 are the part a future author needs.** Four constructs now
+touch time or move a number, and the failure mode is not that one is broken but that an
+author reaches for the wrong one. They are set out side by side against the question that
+separates them, which is what else in the case has to know, with worked examples of the
+choice. Design 2.9 and authoring 6.5 state plainly what none of them can do: no dose
+dependence, no condition can test a vital, results never see an effect, and content keys
+never vary with the clock.
+
+**The chart reads newest first, and carries what the nurse asked for.** The panel is read
+during the case to answer "what just happened", and oldest-first put that answer at the
+far end of a growing scroller, or at the bottom of the last column in the expanded
+multi-column layout, which is the hardest place on it to find.
+
+Her line is the only thing in the interface that is overwritten rather than added to, so a
+resident working in a tab lost every prompt they were not looking at. Prompts and
+deterioration narrations now enter the chart; the four kinds that would have doubled an
+existing row do not. A blocked attempt gained the prerequisite message as its body, which
+had lived only in the header line that scrolls away.
+
+**The debrief says what was acting and for how long.** Timed mechanics are the one thing a
+resident cannot reconstruct from the chart, because nothing is entered at the moment
+something wears off. Rendered only when the case uses them.
+
+**The splash screen shows the arrival vitals,** read from the first authored phase. A
+handover artifact, not the monitor: static, no cosmetic variance, on a pale panel rather
+than in the monitor's dark, and with no caption saying they are not live, since the
+heading is past tense and the dark monitor a few seconds later says the rest.
+
+**CHFE's EMS handover now reports the saturation** ("still only holding 87% on six litres
+by nasal cannula"), and validator rule N was rewritten to allow it. The rule used to warn
+about any vital sign in a handover because the monitor carried the same numbers and would
+contradict them within a minute; that reason stopped being true when the monitor was gated
+on being attached. The blanket warning is now a note, and in its place is the check the
+old rule was really aiming at: a saturation quoted in the handover that disagrees with the
+one the case starts from.
+
+Rationale record: `docs/decisions/timed-mechanics.md`.
+
+Sections changed: design 0, 2.6, 2.7, 2.8, 2.9, 12, 13.1, 13.1a, 17. Authoring 0, 6.2,
+6.3, 6.4, 6.5, 6.6, 14.3.
+
+## engine/
+
+**`engine.js`: the flag grant ledger.** `st.flagGrants` records, per flag, whether an
+action has granted it permanently and the latest deadline any timed grant runs to; the
+flag is removed only when no live grant remains. A `flag_expire` event joins the same
+schedule as prompts, results and deadlines, and re-checks transitions when it fires.
+`st.flagExpiries` is what the debrief and the tests read.
+
+**`engine.js`: completion is recorded in one place.** Pre-existing defect found while
+adding the above. `st.complete` was set after the `checkTransitions` call in `applyLog`
+only, so a case authoring a time-guarded transition into `case_complete` reached the phase
+without the run ever being marked complete, and every new kind of timed event reopened the
+same hole. It now lives in `enterPhase`.
+
+**`engine-tests.js`: the action map is rebound rather than captured.** Pre-existing
+defect. `selectCase` builds a new actions object on every call and the suite binds every
+packed case in turn, so a reference taken at the top of the file pointed at the first
+pack's map for the rest of the run. Everything read off it agreed with the live map, so
+nothing failed and the staleness was invisible until a test tried to write to it.
+
+**`engine-tests.js`: mechanics no case uses yet are exercised anyway.** The harness
+installs a synthetic action and a synthetic transition on the loaded case, runs the
+assertions, and removes them, asserting at the end that it left the case as it found it.
+Expiring flags, onset, refresh-on-redose, permanent absorption in both orders, the clamp
+at 0 and 100, and a transition firing on a lapse with no further action taken, plus the chart's ordering, its nurse-kind filter and the vocabulary that
+filter depends on. 163 checks against each case, up from 136.
+
+**`validator-tests.py` is new.** Negative tests for the validator: break a clean case one
+way, assert the rule fires, throw the copy away. Half the checks are the inverse, that a
+rule must NOT fire on correct authoring, and that half is the one that matters over time,
+since a validator that shouts at a legitimate case teaches authors to ignore it. 26 checks
+against each case. It is what found the stale action map.
+
+**`validate_case.py`: rule W, and rule N rewritten.** Rule W covers expiring flags: bare
+identifier, positive duration, no permanent grant of the same flag on the same action,
+state-changing, and something in the case actually reads the flag. It warns when a flag is
+granted with a duration by one action and permanently by another, and when a clinical tag
+reads an expiring flag, since the critical-action expectation is fixed at phase entry and
+will not follow the tag.
+
+**`ui.js`: arrival vitals on the splash, and a debrief block for timed mechanics.**
+
+---
+
+## System design v0.7, authoring requirements v0.6
+
+**The monitor is dark until the resident attaches one.** Vitals and the heartbeat appear
+only after an action carrying the action catalog's new `reveals_vitals` capability has
+been taken, which is `attach_monitor` and nothing else. Before that every cell reads a
+dash and the room is silent. Attaching a monitor had been a recommended action with no
+perceptible consequence, which is an action a learner is entitled to skip; the numbers
+were on screen before anyone had done anything to obtain them.
+
+This is display gating only. The fold computes the vitals from the first second, every
+transition and every result is unaffected, and no case can move the gate or switch it
+off, because the capability is a catalog field rather than a case flag. The nurse's
+prompt tone is not gated: it is a person speaking rather than equipment.
+
+**An action may move a vital.** `vital_effects` on a case action adds a delta to one
+authored vital for as long as the effect is acting, with an optional `duration_seconds`,
+an optional `while` guard in the ordinary condition language, and a `key` that decides
+what does not stack. A phase is entered once and holds, so it could not express thirty
+seconds, could not express an effect that ends when the drip is stopped, and could not
+express a drug that changes the patient without changing the number being watched.
+
+Vitals do not enter the condition language, for the reason time does not: the per-key
+review matrix stays reviewable only while every rule projects over phase, flags and
+study state. Effects are display and audio only, exactly as the phase-boundary ramp
+already was, and carry the same accepted inconsistency: a result freezes at the phase's
+authored numbers while the monitor beside it shows the effect.
+
+**CHFE's oxygenation arc was rebased, and this changes what the case teaches.**
+`stabilizing` and `improving` come down from 93 and 96 to the arrival value of 87, so
+positive pressure supplies the only durable gain (+3, while not intubated), a nitrate
+supplies a five-point excursion for thirty seconds from either route on one shared key,
+and furosemide supplies none. A resident who reaches for the diuretic first watches the
+saturation not move while the heart rate, pressure and respiratory rate improve. That is
+the case's second learning objective made mechanical. It is also an approximation over
+an eight-minute horizon and a reviewing physician should be given the chance to reject
+it.
+
+**A question the patient did not understand is no longer a chart entry.** The fallback
+answer stays on the History tab, where the resident can see which phrasing failed, and
+does not enter the running chart. Case-agnostic: the readout already recorded the
+matched topic and is null exactly when the fallback answered.
+
+**The nurse has a face.** A portrait sits to the left of her line in the header. It is
+the only picture of a person in the interface: the patient stays a silhouette used as a
+CSS mask, because a drawn patient face would assert an appearance the case did not
+author, and nothing clinical is read off the nurse. The portrait sits outside the violet
+voice rule rather than inside it, because that rule marks speech and marks the same
+thing in the chart feed where there is no portrait; the picture answers who and the rule
+answers what. `engine/nurse-avatar.txt`, 240px square quantised to 96 colours, 32 KB,
+with the source kept in `engine/assets/` and the crop command in `build_simulator.py`.
+
+**Stabilization opens by default.** One entry in a new `defaultExpanded` map, so the
+three acts that begin a resuscitation, one of which now gates the monitor, are not
+behind a click. A **Nursing** group was added below it in the catalog with droplet,
+contact and airborne precautions, warming measures and cooling measures. Author-supplied
+rather than transcribed; each sets a flag of its own name and asserts nothing clinical.
+
+Rationale record, including everything rejected:
+`docs/decisions/monitor-gating-and-vital-effects.md`.
+
+Sections changed: design 0, 2.6, 3.1, 8.3, 8.4b, 8.5, 12, 13.1. Authoring 0, 6.1, 6.2,
+14.3.
+
+## engine/
+
+**`engine.js`: monitoring and vital effects in the fold.** `st.monitoring` is set the
+first time an action carrying `reveals_vitals` is taken. `st.vitalFx` records one entry
+per administration of an effect-bearing action; `activeEffects` reduces those to what is
+acting now, one per key, and `effectiveVitals` adds them to the phase baseline and
+clamps. Terminal phases are exempt. Nothing schedules an expiry, so an effect lapses
+correctly on replay from any starting point.
+
+**`ui.js`: the ramp now tracks the effective vitals.** The re-arm test is the target
+itself rather than the phase id, because an effect changes the numbers without changing
+the phase, so an effect starting or lapsing travels over five seconds exactly as a phase
+change does. Vital cells and the trace are gated on `ST.monitoring`. The chart feed
+drops speech readouts with no matched topic. `expandedOf` seeds from
+`SHARED.defaultExpanded`.
+
+**`ui.js`: a filter now opens its groups on the same render.** Pre-existing defect. The
+expansion was applied after the markup was built, so it landed one render late, and it
+mutated the expanded set, so clearing the filter left groups open that the learner had
+never opened. A filter now forces its surviving groups open while it is set and mutates
+nothing.
+
+**`audio.js`: the heartbeat is the monitor's sound.** Silent until `ST.monitoring`, and
+derived from `ST.vitals` so a transient rise in saturation is heard as well as seen. The
+prompt trill is unchanged.
+
+**`validate_case.py`: rule V.** Vital named, delta numeric, duration positive, `while`
+parses, no key shared across two vitals, no effect on a non-state-changing action. The
+rebasing check warns only for unguarded effects and reports guarded ones as a note,
+because deciding whether a guard makes a phase unreachable is deciding reachability.
+
+**`engine-tests.js`:** monitor gating, vital effects, interview readout shape, and the
+`defaultExpanded` and `groupOrder` maps naming groups that exist. 136 checks against each
+case, up from 91 and 118.
+
+## catalog/
+
+**`reveals_vitals` on `attach_monitor`**, and a **Nursing** group of five entries under
+Stabilization. 295 entries, up from 290.
+
+---
+
 ## System design v0.6, authoring requirements v0.5
 
 **Time-guarded phase transitions.** A transition rule may carry `after_seconds` and fires

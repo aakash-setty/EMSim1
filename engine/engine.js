@@ -118,6 +118,8 @@ function mergeAction(eff, base, caseAct, extra){
     prerequisite_waived:waived,
     flags_set:flags,
     default_result:base.default_result||null,
+    /* Catalog capability: this act is what puts numbers on the monitor. */
+    reveals_vitals:!!base.reveals_vitals,
     bound:!!caseAct.catalog_id,
     orphan:!!(extra&&extra.orphan),
     shadowed:(extra&&extra.shadowed)||[],
@@ -130,6 +132,8 @@ function mergeAction(eff, base, caseAct, extra){
     rec.references=caseAct.references;
     rec.halt_reason=caseAct.halt_reason;
     rec.follow_ups_triggered=caseAct.follow_ups_triggered;
+    rec.vital_effects=caseAct.vital_effects;
+    rec.flags_set_timed=caseAct.flags_set_timed;
   }
   return rec;
 }
@@ -265,7 +269,21 @@ function fold(log, now, difficultyMultiplier){
     /* v0.6. guardTrue records when a measured_from:"guard_true" rule first held, so a
        delayed consequence is timed from the action rather than from phase entry.
        timeFires is what the debrief reads to name the deadline that expired. */
-    guardTrue:{}, timeFires:[]
+    guardTrue:{}, timeFires:[],
+    /* v0.7. monitoring is the moment an action carrying the catalog's reveals_vitals
+       capability was taken. Until then the interface has no numbers to show and no
+       heartbeat to play, because the resident has not put a monitor on the patient.
+       It is derived, not authored: no case names it and no case can turn it off. */
+    monitoring:null,
+    /* v0.7. One record per administration of an action carrying vital_effects, in log
+       order. What is ACTIVE at a given moment is derived from these by activeEffects
+       below, so a thirty-second effect expires without anything having to be scheduled. */
+    vitalFx:[], vitalEffects:[], vitals:null,
+    /* v0.8. A flag that lapses. flagGrants records, per flag, whether some action has
+       granted it permanently and the latest moment a timed grant runs to; the flag is
+       removed only when no live grant remains. flagExpiries is what the debrief and the
+       tests read to name the moment something wore off. See expiringFlags below. */
+    flagGrants:{}, flagExpiries:[]
   };
   st.phaseEntry[st.phase]=0;
   st.phaseSeq.push({id:st.phase,t:0});
@@ -317,6 +335,11 @@ function fold(log, now, difficultyMultiplier){
     st.phaseEntry[to]=t;
     st.phaseSeq.push({id:to,t});
     if(!PHASE[to].terminal) onPhaseEntry(to,t);
+    /* Completion is recorded here rather than after each call site. It used to be
+       tested only in applyLog, so a case that authored a time-guarded transition into
+       case_complete reached the phase without the run ever being marked complete, and
+       the same hole opened again for every new kind of timed event. One place. */
+    if(to==='case_complete') st.complete={t};
   }
   /* v0.6: a transition rule may carry after_seconds. It matches only when its guard
      holds AND the deadline has passed, measured from phase entry by default or from
@@ -371,6 +394,21 @@ function fold(log, now, difficultyMultiplier){
 
   function narrate(t,text,kind){ if(text) st.nurse.push({t,text,kind:kind||'narration'}); }
 
+  /* ---------- flag grants (design 2.7) ----------
+     A permanent grant is absorbing: once any action has set a flag without a duration,
+     no later timed grant can take it away, because the permanent one is still true. A
+     timed grant extends the flag to the later of its own expiry and any expiry already
+     standing, so a second dose refreshes rather than shortening. */
+  function grantFlag(f,t,duration){
+    st.flags.add(f);
+    const g=st.flagGrants[f]||(st.flagGrants[f]={permanent:false,until:-Infinity});
+    if(duration===null||duration===undefined){ g.permanent=true; return; }
+    if(g.permanent) return;
+    const until=t+duration;
+    if(until>g.until) g.until=until;
+    push({t:until,kind:'flag_expire',flag:f});
+  }
+
   function applyLog(entry,t){
     const id=entry.actionId;
     const a=ACT[id];
@@ -407,6 +445,10 @@ function fold(log, now, difficultyMultiplier){
 
     st.taken.add(id);
 
+    /* Catalog capability, checked before the state-changing split so an act that
+       reveals the vitals does so whether or not it changes the patient. */
+    if(a.reveals_vitals && !st.monitoring) st.monitoring={t,id};
+
     if(!stateChanging(id)){
       if(IS_EXAM(id)){
         const r=CONTENT[id]?{value:resolve(CONTENT[id],st),source:'case'}
@@ -436,7 +478,18 @@ function fold(log, now, difficultyMultiplier){
     if(tag==='recommended') st.recommendedTaken.add(id);
     narrate(t,narrationFor(id),'narration');
 
-    (a.flags_set||[]).forEach(f=>st.flags.add(f));
+    (a.flags_set||[]).forEach(f=>grantFlag(f,t,null));
+    for(const tf of (a.flags_set_timed||[])) grantFlag(tf.flag,t,tf.duration_seconds);
+
+    /* An administration, not an effect. Whether it is still acting is decided later,
+       against the clock and against its guard, so a repeat dose refreshes rather than
+       stacks and a stopped drip stops mattering without a second log entry. */
+    for(const fx of (a.vital_effects||[]))
+      st.vitalFx.push({t,id,vital:fx.vital,delta:fx.delta,
+                       key:fx.key||id,
+                       onset:fx.onset_seconds===undefined?null:fx.onset_seconds,
+                       duration:fx.duration_seconds===undefined?null:fx.duration_seconds,
+                       guard:fx.while===undefined?null:fx.while});
 
     if(IS_CONSULT(id)){
       st.readouts.push({t,kind:'consult',key:id,title:dispName(id),
@@ -461,7 +514,6 @@ function fold(log, now, difficultyMultiplier){
     if(id==='handoff_submit') st.handoff=entry.payload||null;
 
     checkTransitions(t);
-    if(st.phase==='case_complete') st.complete={t};
   }
 
   function applyEvent(e,t){
@@ -489,6 +541,23 @@ function fold(log, now, difficultyMultiplier){
       return;
     }
     if(e.kind==='deadline'){ checkTransitions(t); return; }
+    /* A flag lapsing is a state change with no log entry behind it, which is the whole
+       point: the resident did nothing and something stopped working. It has to re-check
+       transitions for the same reason a deadline does, or a case could author "when the
+       drug is no longer acting, deteriorate" and have it fire only if the resident
+       happened to press something afterwards. */
+    if(e.kind==='flag_expire'){
+      const g=st.flagGrants[e.flag];
+      if(!g||g.permanent) return;
+      /* A later grant supersedes this expiry. The superseding grant pushed its own
+         event, so nothing is lost by returning here. */
+      if(g.until>t) return;
+      if(!st.flags.has(e.flag)) return;
+      st.flags.delete(e.flag);
+      st.flagExpiries.push({t,flag:e.flag});
+      checkTransitions(t);
+      return;
+    }
     if(e.kind==='followup'){
       const f=FU[e.fid];
       if(f.applies_when&&!test(f.applies_when,st)) return;
@@ -509,7 +578,70 @@ function fold(log, now, difficultyMultiplier){
     const f=FU[fid];
     if(f.satisfied_by&&f.satisfied_by.some(x=>st.taken.has(x))) st.fuOutstanding.delete(fid);
   });
+  st.vitalEffects = activeEffects(st, now);
+  st.vitals = effectiveVitals(st);
   return st;
+}
+
+/* ---------- vital effects (design 2.3) ----------
+   A phase authors the patient's baseline. An action may move one number off that
+   baseline for as long as it is acting. The two are separate on purpose: a phase is a
+   clinical state and is entered once, so it cannot express "for the next thirty
+   seconds", and it cannot express an effect that is undone when the drip is stopped or
+   when the patient is intubated.
+
+   Three rules, and they are the whole mechanism:
+
+   DURATION. duration_seconds absent means the effect lasts as long as its guard holds.
+   Present, it lapses that many seconds after the administration.
+
+   GUARD. `while` is an ordinary section 4 condition, evaluated against the state as it
+   now stands. An effect whose guard has gone false is simply not in the list.
+
+   KEY. Effects sharing a key do not stack: the most recent administration wins. The key
+   defaults to the action id, so giving the same drug twice refreshes its effect rather
+   than doubling it. Two routes to the same drug should be given the same explicit key,
+   for the same reason a harmful tag has to cover every route to the same act.
+
+   Terminal phases are exempt. halted and case_complete author the numbers a reader is
+   meant to be left looking at, and an effect still running when the case ends would
+   edit the ending. */
+const VITAL_BOUNDS={heart_rate:[0,300],systolic_bp:[0,300],diastolic_bp:[0,300],
+                    oxygen_saturation:[0,100],respiratory_rate:[0,80],temperature_c:[25,45]};
+function activeEffects(st, now){
+  const byKey=new Map();
+  for(const fx of st.vitalFx){
+    /* Both windows are measured from the administration, which is one rule rather than
+       two and is why the validator refuses a duration that does not outlast its onset.
+       The active window is [t + onset, t + duration). */
+    if(fx.onset!==null && now-fx.t < fx.onset) continue;
+    if(fx.duration!==null && now-fx.t >= fx.duration) continue;
+    if(fx.guard){
+      let ok; try{ ok=test(fx.guard,st); }catch(e){ ok=true; }
+      if(!ok) continue;
+    }
+    const prev=byKey.get(fx.key);
+    if(!prev||fx.t>=prev.t) byKey.set(fx.key,fx);
+  }
+  return [...byKey.values()];
+}
+/* What the monitor should read. Display and audio both take their numbers from here;
+   nothing else in the engine does, because vitals do not enter the condition language
+   and a study still reports the phase baseline for the moment it was ordered. */
+function effectiveVitals(st){
+  const p=PHASE[st.phase];
+  const base=p?p.vitals:null;
+  if(!base) return null;
+  if(p.terminal||!st.vitalEffects.length) return base;
+  const out={};
+  for(const k in base) out[k]=base[k];
+  for(const fx of st.vitalEffects){
+    if(typeof out[fx.vital]!=='number') continue;
+    const b=VITAL_BOUNDS[fx.vital]||[-Infinity,Infinity];
+    out[fx.vital]=Math.min(b[1],Math.max(b[0],out[fx.vital]+fx.delta));
+  }
+  if(typeof out.temperature_c==='number') out.temperature_c=Math.round(out.temperature_c*10)/10;
+  return out;
 }
 
 function narrationFor(id){

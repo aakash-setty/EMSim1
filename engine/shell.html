@@ -115,9 +115,25 @@ button{font:inherit;color:inherit}
   border-bottom:1px solid var(--rule);box-shadow:0 8px 26px -20px var(--shadow)}
 .bayin{padding:12px 20px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
 
-/* The nurse speaks, so she carries the voice hue, the same violet the patient
-   and every consultant use further down the page. */
-.nurse{min-width:0;border-left:3px solid var(--voice);padding-left:13px}
+/* The nurse speaks, so the block carries the voice hue, the same violet the patient
+   and every consultant use further down the page.
+
+   The portrait sits OUTSIDE that rule rather than inside it. The rule marks speech,
+   and it marks the same thing in the chart feed further down the page where there is
+   no portrait to go with it; putting the picture inside would make the rule mean
+   "the nurse" in one place and "someone spoke" in another. The picture answers who,
+   the rule answers what.
+
+   It is the only photograph of a person in the interface. The patient is a silhouette
+   used as a CSS mask, deliberately, because a drawn face would assert an appearance the
+   case did not author. The nurse is not the patient: nothing clinical is read off her,
+   she has the same voice in every case, and a face beside a line of dialogue is what
+   makes it read as somebody talking rather than as system output. */
+.nurse{min-width:0;display:flex;align-items:flex-start;gap:14px}
+.nurseface{flex:0 0 auto;width:62px;height:62px;margin-top:1px;border-radius:50%;
+  object-fit:cover;background:var(--voicel);border:1px solid var(--rule2);
+  box-shadow:0 3px 10px -6px var(--shadow);-webkit-user-select:none;user-select:none}
+.nursesays{min-width:0;flex:1 1 auto;border-left:3px solid var(--voice);padding-left:13px}
 .nurselab{font-size:10.5px;color:var(--voice);letter-spacing:.09em;text-transform:uppercase;
   font-weight:600;margin-bottom:2px}
 .nurseline{font-size:15.5px;line-height:1.45;color:var(--ink);min-height:2.9em;max-width:70ch}
@@ -260,6 +276,18 @@ body[data-right="wide"] .rp-body{padding:16px 22px 30px}
 .fitem.k-exam{border-left-color:var(--act)}
 .fitem.k-consult{border-left-color:var(--voice)}   /* someone spoke          */
 .fitem.k-speech{border-left-color:var(--voice)}
+/* The nurse. Same voice hue as everyone else who speaks, and the same hue as the rule
+   beside her line in the header, so a prompt read here and a prompt read up there are
+   recognisably the same thing. Her name is the row title, since unlike a consultant or
+   the patient she says many things and the title would otherwise be a repeated quote. */
+.fitem.k-nurse{border-left-color:var(--voice)}
+.fitem.k-nurse .fn{color:var(--voice)}
+/* A deterioration narration or a halt is the nurse saying the patient changed, which is
+   not the same kind of utterance as being asked for something and should not be skimmed
+   past as if it were. */
+.fitem.k-nursealert{border-left-color:var(--harm);background:var(--harml);
+  padding:6px 0 6px 10px;border-radius:0 3px 3px 0}
+.fitem.k-nursealert .fn{color:var(--harm)}
 .fitem.k-action{border-left-color:var(--ok)}       /* something was done     */
 /* An "Ordered: X" line is bookkeeping, not a finding. It stays recessive so
    the results either side of it carry the eye. Amber belongs to things still
@@ -454,6 +482,23 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .splashcard .cc{border-left:3px solid var(--voice);background:var(--voicel);padding:12px 15px;
   font-size:16px;border-radius:3px;margin-bottom:2px}
 .splashsec{margin-top:22px}
+/* The arrival vitals, and deliberately NOT the monitor. The monitor is the one dark
+   object in the product and is dark until the resident attaches it; if this strip were
+   styled to match, the case would open by showing a live monitor that does not exist.
+   So it is a set of figures on a pale panel, which is what a handover is: numbers
+   somebody else measured, on paper, already going out of date. */
+.spvit{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:2px;
+  background:var(--rule2);border:1px solid var(--rule2);border-radius:3px;overflow:hidden}
+.spvitcell{background:var(--pane2);padding:9px 11px}
+.spvitlab{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink3)}
+/* Unit under the value rather than beside it, which is how the header monitor sets the
+   same five figures. Beside it, "188/104" plus "mmHg" overran the cell and the unit was
+   clipped; a blood pressure is the widest of the five and would have set the width of
+   all of them. */
+.spvitval{font-family:var(--mono);font-size:19px;font-weight:600;color:var(--ink);
+  line-height:1.2;font-variant-numeric:tabular-nums;margin-top:1px}
+.spvitunit{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:1px}
 .splashactions{display:flex;gap:10px;align-items:center;margin-top:26px;flex-wrap:wrap}
 .splashactions .btn.begin{margin-top:0}
 .splashactions .btn.ghost{padding:12px 20px}
@@ -678,6 +723,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 @media (max-width:760px){
   :root{--rail:72px;--rdock:calc(100vw - var(--rail));--rwide:calc(100vw - var(--rail))}
   .bayin{grid-template-columns:1fr;gap:12px;padding:10px 14px}
+  .nurse{gap:10px}
+  .nurseface{width:44px;height:44px}
   .monwrap{padding:9px 12px 7px}
   .mon{flex-wrap:wrap;justify-content:flex-start;gap:14px}
   .vit{text-align:left;min-width:62px}
@@ -756,6 +803,9 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
     <h1 id="sp-title"></h1>
     <div class="arrival" id="sp-arrival"></div>
     <div class="cc" id="sp-cc"></div>
+    <div class="splashsec" id="sp-vitalsec"><h2>Vitals on arrival</h2>
+      <div class="spvit" id="sp-vitals"></div>
+    </div>
     <div class="splashsec"><h2>Mode</h2>
       <div class="modes" id="sp-modes" role="radiogroup" aria-label="Difficulty"></div>
     </div>
@@ -769,11 +819,16 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 <div class="bay">
   <div class="bayin">
     <div class="nurse">
-      <div class="nurselab">Nurse</div>
-      <div class="nurseline" id="nurseline">Ready when you are.</div>
-      <div class="nursemeta" id="nursemeta"></div>
-      <div class="soundrow">
-        <button id="soundbtn" class="soundbtn" aria-pressed="false">Enable sound</button>
+      <!-- alt is empty on purpose: the portrait repeats the "Nurse" label beside it and
+           carries nothing a screen reader needs said twice. -->
+      <img class="nurseface" src="__NURSE_AVATAR__" alt="" draggable="false">
+      <div class="nursesays">
+        <div class="nurselab">Nurse</div>
+        <div class="nurseline" id="nurseline">Ready when you are.</div>
+        <div class="nursemeta" id="nursemeta"></div>
+        <div class="soundrow">
+          <button id="soundbtn" class="soundbtn" aria-pressed="false">Enable sound</button>
+        </div>
       </div>
     </div>
     <div class="monwrap">
