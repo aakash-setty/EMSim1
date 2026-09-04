@@ -143,12 +143,31 @@ shared = {
                                      "whether you would have acted unaided.")},
         },
     },
+    # How the debrief opens, and how long the monitor holds on a terminal phase before
+    # the run ends. Both are presentation, not fairness: the five seconds are there so a
+    # resident sees the arrest happen rather than being thrown straight to a debrief, and
+    # they are deliberately outside the validator's 30-second floor on after_seconds
+    # because that floor governs how long a resident has to act, and by this point there
+    # is nothing left to act on.
+    "ending": {
+        "terminalGraceSeconds": 5,
+        "_note": ("Seconds the interface waits after the case walks into a terminal phase "
+                  "by the clock before it ends the run and shows the debrief. A harmful "
+                  "action still ends the case immediately, because its halt card is the "
+                  "teaching."),
+    },
     "audio": {
-        "baseHz": 880.0, "baseNote": "A5", "spo2Reference": 100, "semitonesPerPercent": 1.0,
-        "assumption": ("The brief says A5 and one half step lower per percent of SpO2 'below'. The "
-                       "reference point is not stated, so 100% is used: A5 at full saturation, one "
-                       "semitone down per percent. At 87% that is 13 semitones below A5, about "
-                       "415 Hz. Change spo2Reference to move the anchor."),
+        "baseHz": 1760.0, "baseNote": "A6", "spo2Reference": 100, "semitonesPerPercent": 1.0,
+        "assumption": ("One half step lower per percent of SpO2 'below'. The reference point is "
+                       "not stated in the brief, so 100% is used: the anchor note at full "
+                       "saturation, one semitone down per percent. At 87% that is 13 semitones "
+                       "below, about 831 Hz. Change spo2Reference to move the anchor.\n\n"
+                       "The anchor was A5 (880 Hz) and was raised to A6 (1760 Hz) on the author's "
+                       "instruction after playing a case. It is worth knowing what that costs: the "
+                       "beat is now well inside the band the ear is most sensitive to, so it "
+                       "carries further over room noise and is more tiring over a fifteen-minute "
+                       "case, and a desaturated patient at 76% sits at 440 Hz where before he sat "
+                       "at 220. The mapping is unchanged; only the anchor moved."),
         # The closed vocabulary a phase's `rhythm` may name. It is here rather than in a
         # case because it is a property of how the monitor sounds, not of any diagnosis:
         # the engine has no idea which conditions produce which rhythm, exactly as it has

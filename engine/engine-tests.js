@@ -548,6 +548,60 @@ section('the running chart');
   chk('the ambience asset is embedded', /id="ambience-data"/.test(html) &&
       /data:audio\/mpeg;base64,/.test(html));
 
+  /* The case clock is wall-clock time, so a window nobody is looking at has to stop it or
+     every deadline a case authors becomes a claim about a browser tab. Asserted against
+     the built file: both signals, a clock that subtracts the time away, and a resume that
+     is a deliberate click rather than something that happens on its own. */
+  chk('a hidden window pauses the case',
+      /addEventListener\('visibilitychange'/.test(flat) && /document\.hidden\)pauseSim/.test(flat));
+  chk('a window that loses focus pauses too',
+      /addEventListener\('blur',pauseSim\)/.test(flat));
+  chk('the clock subtracts the time away',
+      /PAUSED\?PAUSED_AT:Date\.now\(\)\)-T0-PAUSED_MS/.test(flat));
+  chk('resuming is a click and never automatic',
+      /getElementById\('resumebtn'\)|el\('resumebtn'\)/.test(flat.replace(/\s/g,'')) ||
+      /resumebtn/.test(flat));
+  chk('the paused case makes no sound', /pauseSim\(\)\{[^}]*AUDIO\.setScene\('idle'\)/.test(flat));
+
+  /* Leaving. What is interceptable gets the case's own dialog; the browser's own reload
+     control reaches only beforeunload, which is why that is registered as well. */
+  chk('a keyboard refresh is caught before it happens',
+      /e\.key==='F5'/.test(flat) && /askLeave\('reload'\)/.test(flat));
+  chk('the back button is caught', /addEventListener\('popstate'/.test(flat) &&
+      /askLeave\('back'\)/.test(flat));
+  chk('and a guard entry is pushed when a case begins',
+      /history\.pushState\(\{emsim:1\}/.test(flat));
+  chk('beforeunload still covers the paths a page cannot intercept',
+      /addEventListener\('beforeunload'/.test(flat));
+  chk('both overlays are in the markup',
+      /id="pauseview"/.test(html) && /id="leaveview"/.test(html) &&
+      /id="resumebtn"/.test(html) && /id="leaveok"/.test(html));
+
+  /* Doses are not implemented, so the word is dropped. Dropping it and leaving the
+     preposition behind produced "Giving of ceftriaxone". */
+  const dosed = Object.keys(A).filter(id => A[id].narration_template &&
+                                            /\{dose\}/.test(A[id].narration_template));
+  chk('every narration template has a dose slot to drop', dosed.length > 0, String(dosed.length));
+  const bad = dosed.map(id => narrationFor(id))
+                   .filter(t => / of | at |\{dose\}|  /.test(t));
+  chk('no narration reads "giving of" or leaves a dangling preposition',
+      bad.length === 0, bad.slice(0, 3).join(' | '));
+  /* A display name is Title Case because it is a button. Lowering it wholesale broke
+     units, acronyms and proper nouns; lowering only ordinary Title Case tokens fixes
+     both halves. Templates that lead with the name still have to start with a capital. */
+  const lines = Object.keys(A).map(id => narrationFor(id)).filter(Boolean);
+  chk('every narration starts with a capital',
+      lines.every(t => !/^[a-z]/.test(t)),
+      lines.filter(t => /^[a-z]/.test(t)).slice(0, 3).join(' | '));
+  const unit = Object.keys(A).find(id => /\d(?:L|mL|mg)\b/.test(A[id].name || ''));
+  if (unit) chk('a unit in a display name keeps its capital',
+                new RegExp(A[unit].name.match(/\d(?:L|mL|mg)\b/)[0]).test(narrationFor(unit)),
+                narrationFor(unit));
+  const acro = Object.keys(A).find(id => /\b[A-Z]{2,}\b/.test(A[id].name || ''));
+  if (acro) chk('an acronym in a display name keeps its capitals',
+                new RegExp(A[acro].name.match(/\b[A-Z]{2,}\b/)[0]).test(narrationFor(acro)),
+                narrationFor(acro));
+
   /* The kinds the fold actually emits. A prompt is the one the chart exists for. */
   const promptAction = CRITICAL.find(id => A[id].prompt);
   if (promptAction) {
@@ -718,6 +772,55 @@ section('expiring flags and delayed onset');
   chk('the harness left the case as it found it',
       JSON.stringify(PHASE[START].transitions) === JSON.stringify(savedTransitions) &&
       !A.__probe_drug);
+}
+
+section('the clock\'s ending');
+{
+  /* The third ending. `halted` is a harmful action and `complete` is a handoff; a case
+     that authors allow_time_to_terminal had neither, and before this the run reached its
+     terminal phase and then carried on with the clock running. Case-agnostic: the
+     harness installs its own transition into whichever terminal phase the loaded case
+     has that is not the completion phase, exercises it, and puts the case back. */
+  const START = CASE.phases[0].id;
+  const P = PHASE[START];
+  const saved = P.transitions ? P.transitions.slice() : [];
+  const term = CASE.phases.find(p => p.terminal && p.id !== 'case_complete');
+
+  chk('a fresh run is not failed', fold(mk([]), 5).failed === null);
+
+  if (term) {
+    A.__probe_end = { id: '__probe_end', name: 'Probe ending', tab: 'interventions',
+                      group: 'Probe', category: 'medication', state_changing: true,
+                      repeatable: false, prerequisites: [], flags_set: ['__probe_end_flag'],
+                      flags_set_timed: [] };
+    P.transitions = [{ when: 'flag __probe_end_flag set', to: term.id,
+                       allow_time_to_terminal: true }];
+
+    const before = fold(mk([]), 5);
+    chk('a run still in a live phase is not failed', before.failed === null, before.phase);
+
+    const after = fold(mk([[7, '__probe_end']]), 20);
+    chk('walking into a terminal phase marks the run failed',
+        !!after.failed, after.phase);
+    chk('it names the phase that ended it',
+        after.failed && after.failed.phase === term.id,
+        after.failed && after.failed.phase);
+    chk('it timestamps the phase entry, not the moment it was read',
+        after.failed && after.failed.t === 7, after.failed && String(after.failed.t));
+    chk('it carries the phase\'s own timeout reason, or an empty string if the case '
+        + 'authors none',
+        after.failed && typeof after.failed.reason === 'string');
+    chk('a failed run is not also marked complete', after.complete === null);
+
+    delete A.__probe_end;
+  } else {
+    chk('this case authors no terminal phase other than the completion phase, so the '
+        + 'clock ending is not exercised here', true);
+  }
+
+  P.transitions = saved;
+  chk('the harness left the case as it found it',
+      JSON.stringify(PHASE[START].transitions) === JSON.stringify(saved) && !A.__probe_end);
 }
 
 section('no unread state');
@@ -899,7 +1002,16 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
     const realOsc = stubCtx.createOscillator;
     stubCtx.createOscillator = () => { beats++; return realOsc(); };
 
+    /* Nothing sounds outside a running case, so the scene has to say one is running
+       before there is a beat to measure. */
+    AUDIO.setScene('case');
     AUDIO.start();
+    chk('no beat outside a case', (() => {
+      AUDIO.setScene('idle'); AUDIO.sync();
+      const quiet = pending.length === 0;
+      AUDIO.setScene('case'); AUDIO.sync();
+      return quiet;
+    })());
     advance(60000);
     /* Two oscillators per beat, the lub and the dub. */
     const n60 = beats / 2;
@@ -926,7 +1038,7 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
     chk('no monitor, no pending beat', pending.length === 0, String(pending.length));
     beats = 0; advance(now + 5000);
     chk('and nothing sounds while it is off', beats === 0, String(beats / 2));
-    ST.monitoring = { t: 0 }; AUDIO.sync();
+    ST.monitoring = { t: 0 }; AUDIO.setScene('case'); AUDIO.sync();
     chk('reattaching restarts it', pending.length === 1, String(pending.length));
     AUDIO.stop();
     chk('stop leaves nothing pending', pending.length === 0, String(pending.length));
@@ -935,7 +1047,8 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
     chk('the ambience decoded once, not twice',
         AUDIO.ambience.state === 'ready' && decodes === 1,
         AUDIO.ambience.state + ', ' + decodes + ' decodes');
-    chk('it is silent until a case begins',
+    AUDIO.setScene('idle');
+    chk('it is silent whenever a case is not running',
         !AUDIO.ambience.playing && AUDIO.ambience.scene === 'idle',
         JSON.stringify(AUDIO.ambience));
     AUDIO.setScene('case');

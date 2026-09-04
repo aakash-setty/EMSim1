@@ -359,6 +359,11 @@ const AUDIO = (() => {
      than in two-beat-per-minute steps. */
   function sync() {
     if (!on || !ctx) return;
+    /* Nothing sounds outside a running case. The room stops because it is the room and
+       the case is over; the heartbeat stops for the same reason, and it has to be checked
+       here rather than only in setScene, because sync() runs sixty times a second and
+       would otherwise start the chain again on the next frame. */
+    if (scene !== 'case') { stopBeat(); stopAmbience(); return; }
     ambienceUpkeep();
     /* stopBeat, not stop. Losing the monitor silences the heartbeat and must not silence
        the room: the resident has taken equipment off a patient, not left the ward. */

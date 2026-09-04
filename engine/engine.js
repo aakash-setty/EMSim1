@@ -312,6 +312,14 @@ function fold(log, now, difficultyMultiplier){
        what keeps the per-key review matrix finite. */
     adminCount:{},
     orders:{}, phaseEntry:{}, phaseSeq:[], halted:null, complete:null, earlyExit:null,
+    /* The third ending. `halted` is a harmful action, `complete` is a handoff, and
+       `failed` is the clock walking the case into a terminal phase that is neither.
+       Before this existed a case authoring allow_time_to_terminal reached its arrest
+       phase and then simply kept running: the monitor showed the last numbers before
+       output was lost, the clock carried on, and the interface never noticed the
+       patient had died. Set in the fold from the phase table, so no engine code names
+       a phase and no case implements an ending. */
+    failed:null,
     nurse:[], readouts:[], blocked:[], timeline:[], prompted:new Set(),
     promptFires:[], fuFires:[], fuOutstanding:new Set(), handoff:null, now:now, dm:DM,
     expected:new Set(), expectedByPhase:{}, recommendedTaken:new Set(), defaultsServed:new Set(),
@@ -643,7 +651,8 @@ function fold(log, now, difficultyMultiplier){
       const a=ACT[e.id]||{};
       const tmpl={lab:'{name} is back.',imaging:'{name} is up on the screen.',
                   ecg:'{name} is up.',bedside:'{name} is done.'}[a.turnaround_class]||'{name} is back.';
-      narrate(t,tmpl.replace('{name}',dispName(e.id)),'result');
+      /* Leads with the name, so it goes through the same sentence rule as the rest. */
+      narrate(t,sentence(tmpl.replace('{name}',dispName(e.id))),'result');
       return;
     }
     if(e.kind==='prompt'){
@@ -698,6 +707,15 @@ function fold(log, now, difficultyMultiplier){
   });
   st.vitalEffects = activeEffects(st, now);
   st.vitals = effectiveVitals(st);
+  /* Terminal by the clock. Tested after everything else so `halted`, `complete` and
+     `earlyExit` win: those three carry their own reason and their own debrief, and a
+     run that ended by one of them is not additionally a failure. The interface decides
+     how long to hold the monitor on the terminal numbers before it ends the run; the
+     engine only reports that the run is over and when the phase was entered. */
+  if(!st.halted && !st.complete && !st.earlyExit
+     && PHASE[st.phase] && PHASE[st.phase].terminal)
+    st.failed={phase:st.phase, t:st.phaseEntry[st.phase],
+               reason:PHASE[st.phase].timeout_reason||''};
   return st;
 }
 
@@ -762,15 +780,46 @@ function effectiveVitals(st){
   return out;
 }
 
+/* A catalog display name is Title Case because it is a button, and a button's label
+   shouts when it is dropped into the middle of a sentence. Lowercasing the whole of it
+   was the first fix and it broke the other half: "Normal Saline 1L bolus" became "1l",
+   "Furosemide 40 mg IV" became "iv", and "Ringer's" lost a proper noun.
+
+   Only tokens that are ordinary Title Case are lowered. A token carrying a digit, an
+   internal capital, an apostrophe or a slash is left exactly as the catalog wrote it,
+   because every one of those is a unit, an acronym or a name, and none of them was
+   capitalised to look like a button. A hyphenated pair of ordinary words is Title Case
+   too, so "Non-Invasive" lowers and "BiPAP/CPAP" does not. */
+function softLower(name){
+  return String(name||'').split(' ')
+    .map(w => /^[A-Z][a-z]+(-[A-Z][a-z]+)*$/.test(w) ? w.toLowerCase() : w)
+    .join(' ');
+}
+
+/* Some templates lead with the name, so the first word of the sentence is whatever
+   softLower left behind. A sentence starts with a capital. */
+function sentence(t){
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : t;
+}
+
 function narrationFor(id){
   const a=ACT[id]||{};
   if(a.narration_override) return a.narration_override;
   if(a.narration_template){
-    /* Dose entry is not implemented, so {dose} is dropped rather than faked. */
-    return a.narration_template.replace('{name}',a.name.toLowerCase())
-                               .replace('{dose}','').replace(/\s{2,}/g,' ')
-                               .replace(' of .','.').replace(' at .','.').trim();
+    /* Dose entry is not implemented, so {dose} is dropped rather than faked. Dropping the
+       word and leaving the grammar around it produced "Giving of ceftriaxone", because the
+       preposition belongs to the dose and not to the drug. The slot is removed together
+       with whatever joins it to the name, in both directions, so "Giving {dose} of {name}"
+       becomes "Giving ceftriaxone" and "Starting {name} at {dose}" becomes "Starting
+       noradrenaline". If doses are ever implemented, this collapse is the thing to remove
+       rather than to work around. */
+    return sentence(a.narration_template
+             .replace(/\{dose\}\s+of\s+/g,'')
+             .replace(/\s+at\s+\{dose\}/g,'')
+             .replace(/\{dose\}/g,'')
+             .replace('{name}',softLower(a.name))
+             .replace(/\s{2,}/g,' ').trim());
   }
-  if(IS_STUDY(id)) return dispName(id)+' is away.';
-  return 'Okay: '+dispName(id).toLowerCase()+'.';
+  if(IS_STUDY(id)) return sentence(dispName(id))+' is away.';
+  return 'Okay: '+softLower(dispName(id))+'.';
 }

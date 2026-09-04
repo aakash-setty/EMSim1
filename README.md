@@ -178,6 +178,38 @@ the flag, and there is one deadline rather than two that drift apart. Authoring 
 what none of it can do, which is worth reading first, since each of those looks
 authorable until it is tried.
 
+## Pausing, and leaving
+
+**A window that loses focus or is hidden pauses the case**, on `visibilitychange` or
+`blur`. The clock is wall-clock time and the deadlines a case authors are claims about a
+patient, so time spent in another window is subtracted rather than charged. It never
+resumes on its own: a case that ran while nobody watched is worse than one that waited, so
+resuming is a click on an overlay, and the sound stops and starts with it.
+
+**Leaving is guarded as far as a page is allowed to guard it.** Keyboard refresh and the
+back button are interceptable and raise the simulator's own dialog. A click on the
+browser's own reload control is not: the only hook is `beforeunload`, whose wording no
+browser has let a page choose for over a decade, so that path gets the native dialog
+instead. The two look different because the platform makes them different.
+
+## How a case ends, and what the debrief shows first
+
+There are three endings and the interface treats them as three. A harmful action halts the
+case immediately and shows its halt reason. A handoff completes it. A time-guarded transition
+into a terminal phase, which a case has to opt into explicitly, ends it five seconds later:
+the delay is there so the arrest is something the resident watches happen on the monitor
+rather than something a debrief informs them of afterwards. Until v0.8 that third ending did
+not end anything, and a case that arrested on the clock carried on with a dead patient and a
+running timer.
+
+The debrief then opens on a single screen carrying the verdict, *All Critical Actions
+Achieved!*, *Critical Actions Missed* or *Case Failed*, the halt or arrest reason where there
+is one, and the critical actions that were completed. Nothing else: the missed list, the
+domain table, the handoff verdict and every teaching note are the answer key, and they sit
+behind **Reveal Case Answers** so a resident can replay the case without scrolling past the
+answers to reach the button. A run that halted on a harmful action is grouped with the arrest
+as *Case Failed* rather than being scored on its critical actions alone.
+
 ## The room
 
 A 45-second loop of ward ambience runs under everything at a very low level, from the
@@ -323,7 +355,7 @@ only as conclusions. They are not a source of truth for how the system behaves.
 ## Status
 
 All three cases pass the validator with no errors. CHFE walks 13 authored scenarios,
-MGCA 26 and AFRVR 31. CHFE passes 231 engine assertions, MGCA 241 and AFRVR 315, which is
+MGCA 26 and AFRVR 31. CHFE passes 255 engine assertions, MGCA 265 and AFRVR 339, which is
 the same case-agnostic suite plus each pack's own; each passes 39 validator negative
 tests. Each carries one warning, in every case about actions the catalog does not
 hold, which the prototype renders anyway so the gap stays visible. Those are catalog change

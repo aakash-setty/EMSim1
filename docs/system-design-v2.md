@@ -719,7 +719,7 @@ Three channels. The heartbeat and the nurse's tones are derived from the current
 frequency = BASE_HZ * 2 ^ (-(SPO2_REFERENCE - saturation) / SEMITONES_PER_PERCENT_DIVISOR)
 ```
 
-The shipped configuration is A5 (880 Hz) at 100 percent saturation, one semitone lower per percent below. At 87 percent that is 13 semitones down, about 415 Hz.
+The shipped configuration is A6 (1760 Hz) at 100 percent saturation, one semitone lower per percent below. At 87 percent that is 13 semitones down, about 831 Hz. The anchor was A5 and was raised on the author's instruction; the cost is that the beat now sits inside the band the ear is most sensitive to, so it carries further over room noise and is more tiring across a fifteen-minute case.
 
 **The reference point and the step size are configuration, and both are teaching decisions.** A real pulse oximeter's pitch drop is neither linear in semitones nor anchored at 100 percent. The shipped mapping is more dramatic than the bedside sound a resident will actually work with, which makes it a better alarm and a worse simulation. If transfer to real practice matters more than in-simulator salience, match the device convention instead. Whichever is chosen, the interface should state the mapping rather than hide it.
 
@@ -757,6 +757,14 @@ An uneven rhythm additionally varies the loudness of each beat with the length o
 **It changes 8.4b, and the change is an improvement.** The room is no longer silent before a monitor is attached: what is missing then is the monitor's sound, which is the whole of the point being made, and a ward that fell silent until somebody attached a monitor was the less truthful half of it. Nothing else about 8.4b moves.
 
 **The asset is derived, normalised and optional.** It is peak-normalised at build time so the gain figure means something against a known reference rather than against whatever a particular recording happened to be; it is crossfaded so it repeats without a seam; it is decoded once from base64 in the page and looped as a buffer with loop points set inside the encoder padding. Every failure path ends in a silent room rather than an error, and a build made without the asset is a working simulator that is smaller. **No case should depend on it**, which is the same rule as nothing depending on sound at all.
+
+### 8.6 Pausing, and leaving
+
+**A window nobody is looking at stops the case.** The clock is wall-clock time and every deadline a case authors is a claim about a patient, so charging a resident for the minutes they spent in another window would make those claims false. Both signals are used, because they cover different things: `visibilitychange` catches a hidden tab and a minimised window, `blur` catches a window still on screen with the focus elsewhere. Time away is accumulated and subtracted, so the clock freezes rather than jumping.
+
+**It never resumes on its own.** Coming back to a case that has been running without you is worse than coming back to one that waited, so resuming is a deliberate click on an overlay that covers the workspace. Sound stops with the clock, through the same scene mechanism the debrief uses.
+
+**Leaving is guarded as far as a page is allowed to guard it, and no further.** A refresh or a back throws the run away, and the run is the only copy: there is no server and nothing is stored. Keyboard refresh and the back button are interceptable and raise the case's own dialog. **A click on the browser's own reload control is not.** The only hook there is `beforeunload`, whose wording no browser has let a page choose for over a decade, so that path gets the native dialog and the two look different. That is a platform constraint and should be documented rather than worked around, because every technique that claims to work around it either fails silently or relies on blocking the main thread.
 
 **Constraints.** Browsers will not start audio without a user gesture, so the context is created on the first interaction and the control reports actual state rather than intent. Muting must persist across subsequent interactions. Nothing in the interface may depend on sound alone; the monitor carries the same information visually and must continue to.
 
@@ -815,11 +823,67 @@ Clinical tags are rule lists, not fixed values, so the same action can be harmfu
 
 **The halted phase has one vitals block for every halt reason.** A metoprolol arrest and a fluid-overload decompensation display identical numbers. This is a known limitation; see section 15.
 
+### 10.1 The clock's ending has to actually end the run
+
+Between v0.6 and v0.8 a case could author `allow_time_to_terminal`, reach its terminal phase, and
+then keep running. The fold recorded the phase change, the nurse said the line, the monitor dropped
+to the phase's vitals, and nothing else happened: `halted` was null because no harmful action had
+been taken and `complete` was null because no handoff had been submitted, so the interface had no
+signal that the case was over. MGCA's arrest phase read as a live patient with a systolic of 44 and
+a clock still counting.
+
+The fold now derives a third ending, `failed`, from the phase table: the current phase is terminal
+and the run is neither halted, complete nor exited early. It carries the phase id, the phase entry
+time, and the phase's own `timeout_reason`. No engine code names a phase and no case implements an
+ending, which is the same separation `halted` and `complete` already keep.
+
+**The interface waits before it ends the run.** `SHARED.ending.terminalGraceSeconds`, five seconds,
+is the pause between entering the terminal phase and the debrief appearing. The nurse's line and
+the monitor falling are the moment the case is teaching, and cutting to a debrief on the same frame
+throws that away. It is presentation, not fairness, and it deliberately sits below the validator's
+30-second floor on `after_seconds`: that floor governs how long a resident has to act, and by this
+point the phase has no exits and there is nothing left to act on. A harmful action still ends the
+case immediately, because its halt card is the teaching rather than the monitor.
+
+A run that halts on a harmful action and a run that arrests on the clock are both presented as
+failures on the debrief's first screen, described in 11.0a, though the full debrief keeps them
+distinct exactly as the table above requires.
+
 ---
 
 ## 11. Debrief
 
 The debrief is the product. Design it explanation-first, score second.
+
+### 11.0a The debrief opens twice
+
+The debrief now has a first screen that is not the debrief. It answers the only question a resident
+asks the instant a case ends, and nothing else:
+
+| Ending | Title |
+|---|---|
+| Every critical action satisfied, no halt and no arrest | All Critical Actions Achieved! |
+| One or more critical actions unsatisfied | Critical Actions Missed |
+| Harmful halt, or a terminal phase reached on the clock | Case Failed |
+
+Under the title, the halt reason or the phase's `timeout_reason` where there is one, then the
+critical actions that **were** completed, by name, with no pill, no expander and no teaching note.
+Then three buttons: replay, **Reveal Case Answers**, and choose a different case.
+
+**What is deliberately not on that screen** is the rest of section 11.1: the missed actions, the
+domain table, the handoff verdict, the teaching notes. All of it is the answer key. A resident who
+wants to replay the case before reading the answers should not have to scroll past them to reach
+the replay button, and a resident who has just failed should get the verdict before the scoreboard.
+Reveal Case Answers replaces the screen in place with the full debrief below.
+
+**A halt is grouped with the arrest rather than scored against the critical actions.** A resident
+who completed every critical action and then gave something that stopped the case has not had a
+clean run, and a first screen reading "All Critical Actions Achieved!" over a halt reason would be
+the interface congratulating him on the way to the morgue.
+
+**The completed list is the honest half of a missed run.** Showing what was done under a title
+saying what was missed is not softening the verdict; it is the difference between "you failed" and
+"you did these four things and not those two", and only the second is reviewable.
 
 ### 11.1 Contents
 
@@ -835,12 +899,24 @@ The debrief is the product. Design it explanation-first, score second.
 3. **Recommended actions** that were done
 4. **Summary**, the domain table and the score
 5. **Discouraged actions**, meaning traps that were wrong but not lethal
-6. **Blocked attempts**, framed as sequence teaching, naming whether the block was a case or catalog prerequisite
-7. **Handoff accuracy**, with an explanation for an incorrect disposition or diagnosis
-8. **Answered by a default**, listing every study, exam or consultant that returned the catalog normal because this case authors nothing for it
-9. **Studies still pending** at completion
-10. **Independent versus prompted**, as self-knowledge
-11. **References** per teaching note, optional per author
+6. **Handoff accuracy**, with an explanation for an incorrect disposition or diagnosis
+7. **Answered by a default**, listing every study, exam or consultant that returned the catalog normal because this case authors nothing for it
+8. **Studies still pending** at completion
+9. **References** per teaching note, optional per author
+
+**Two further sections were removed in v0.8, on the author's instruction.** *Blocked attempts* is
+gone because the teaching it carried already happened, in the interface, at the moment the
+prerequisite refused the action and said why; repeating it in the debrief was a second telling of
+something the resident had already been told and could not have done differently. *Independent
+versus prompted* is gone because as a table it read as a scoreboard, and the same information
+survives as a `prompted` pill on the action it belongs to, where it reads as information. Both are
+still folded: `st.blocked` still drives the refusal and `st.prompted` still drives the pill. Only
+the sections are gone.
+
+**The missed list is headed "Non-Critical Missed Actions".** That label was specified by the author
+and it is worth recording that it does not describe the list's contents: the list holds critical
+actions that were not satisfied, which is what makes the first screen say "Critical Actions Missed".
+Anyone revisiting this should decide whether the label or the list is what should change.
 
 **Item 1a is the reason the log needs a `time_transition` entry type.** Without it the debrief can
 say the patient ended up in a bad phase but not why, and "you missed the antibiotic" and "she
@@ -864,7 +940,7 @@ Points exist to direct review, not to rank. Report by clinical domain, for examp
 | Discouraged actions | Minor cost, with explanation. Wrong but not lethal |
 | Recommended actions | Minor credit; minor cost for omission |
 | Follow-up requirements | Credit or omission |
-| Blocked attempts | Surfaced as teaching, not penalized. The system already corrected the learner in the moment |
+| Blocked attempts | Not penalized and, since v0.8, not reported in the debrief either. The system already corrected the learner in the moment |
 | Neutral actions | No effect |
 | Handoff accuracy | Disposition and diagnosis scored separately |
 | Studies never resulted | Flagged |

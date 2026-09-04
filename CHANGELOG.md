@@ -5,6 +5,95 @@ is usable with learners.
 
 ---
 
+## The debrief opens twice, and the clock's ending actually ends the case
+
+**The debrief now starts with a verdict and nothing else.** One line: *All Critical Actions
+Achieved!*, *Critical Actions Missed*, or *Case Failed*; under it the halt or arrest reason
+where there is one; under that the critical actions that were completed, by name, with no
+teaching note attached. Then replay, **Reveal Case Answers**, and choose a different case.
+Everything the debrief used to open with, the missed list, the domain table, the handoff
+verdict, the notes, is the answer key, and a resident who wants to run the case again before
+reading the answers had to scroll past all of it to reach the replay button. Reveal replaces
+the screen in place with the full debrief.
+
+A run that halted on a harmful action is presented as *Case Failed* alongside the arrest
+rather than being scored against the critical actions. A resident who did all six and then
+gave something that stopped the case should not be met with a congratulation over a halt
+reason.
+
+**Two sections are gone.** *Blocked attempts* carried teaching that had already happened, in
+the interface, at the moment the prerequisite refused the action and said why. *Independent
+versus prompted* read as a scoreboard, and the same fact survives as a `prompted` pill on the
+action it belongs to. Both are still folded; only the sections are gone.
+
+**In the section that remains**, "Critical actions" is set at 24px and the missed list, now
+headed "Non-Critical Missed Actions", at 19px, and every listed action is indented 20px so
+the headings read as headings rather than as the first line of the list. The new heading is
+recorded in the design document with a note that it does not describe the list's contents:
+the list holds critical actions that were not satisfied. That is the author's label, kept as
+specified, and flagged rather than silently corrected.
+
+**A case that arrests on the clock now ends.** This is a real defect, not a refinement. Since
+time-guarded transitions landed, a case could author `allow_time_to_terminal`, reach its
+terminal phase, and then simply keep running: the nurse said her line, the monitor fell to the
+phase's vitals, and nothing ended, because `halted` means a harmful action and `complete`
+means a handoff and this was neither. In the meningococcaemia case that showed as a patient
+sitting at 44/24 with the clock still counting.
+
+The fold now derives a third ending, `failed`, from the phase table, carrying the phase, its
+entry time and its authored `timeout_reason`. The interface waits five seconds
+(`SHARED.ending.terminalGraceSeconds`) before showing the debrief, so the arrest is something
+the resident watches happen rather than something a debrief informs them of. Those five
+seconds sit below the validator's 30-second floor on `after_seconds` on purpose: that floor
+governs how long a resident has to act, and by then the phase has no exits.
+
+Nothing in the engine names a phase and nothing in a case implements an ending. Eight new
+case-agnostic assertions cover it, and they run against all three packs.
+
+---
+
+## The case waits for you, and does not let you throw it away by accident
+
+**A window nobody is looking at pauses the case**, on either signal the browser gives:
+`visibilitychange` for a hidden tab or a minimised window, `blur` for a window still on
+screen with the focus somewhere else. Time away is accumulated and subtracted from the case
+clock, so it freezes rather than jumping. That matters more than it sounds: the clock is
+wall-clock time and the deadlines a case authors are claims about how long a patient
+tolerates something, so charging a resident for minutes spent in another window made those
+claims false. **It never resumes on its own.** Coming back to a case that ran without you is
+worse than coming back to one that waited, so resuming is a deliberate click on an overlay,
+and the sound stops and starts with it through the scene mechanism the debrief already used.
+
+**Refresh and back now ask first.** The run is the only copy; there is no server and nothing
+is stored. Keyboard refresh and the back button are interceptable and raise the simulator's
+own dialog. **A click on the browser's own reload control is not**, and this is worth
+stating plainly rather than hiding: the only hook there is `beforeunload`, whose wording no
+browser has let a page choose for over a decade. That path gets the native dialog, the two
+look different, and every technique that claims otherwise either fails silently or blocks
+the main thread. The back guard falls back to returning to the case list if there is nothing
+behind the page, so a resident who asks to leave is never left looking at the case they
+asked to leave.
+
+**The heartbeat anchor moved from A5 to A6** on the author's instruction. The mapping is
+unchanged and only the anchor moved, so a patient at 88 percent now sits at 880 Hz where he
+sat at 440. The cost is recorded beside the setting: the beat is now inside the band the ear
+is most sensitive to, so it carries further and is more tiring across a case.
+
+**Nothing sounds outside a running case.** The scene gate was already stopping the room; it
+now stops the heartbeat too, checked in `sync()` rather than only in `setScene`, because
+`sync()` runs sixty times a second and would otherwise restart the chain on the next frame.
+
+**"Giving of ceftriaxone" is fixed, and so are the two defects underneath it.** Doses are
+not implemented, so `{dose}` is dropped from the narration template, and dropping the word
+while leaving the grammar around it produced a dangling preposition. The slot is now removed
+together with whatever joins it to the name, in both directions. Fixing that exposed the
+second: display names are Title Case because they are buttons, and lowercasing them
+wholesale turned "1L" into "1l", "IV" into "iv" and "Ringer's" into a common noun. Only
+ordinary Title Case tokens are lowered now, so units, acronyms and proper nouns survive. And
+the third: templates that lead with the name produced sentences starting in lower case.
+
+---
+
 ## The room has a sound, and it stops when the case does
 
 **Ward ambience loops under everything at a very low level while a case is running.** The

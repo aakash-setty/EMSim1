@@ -67,7 +67,14 @@ const dxLabel   = id => (SHARED.diagnoses.find(d=>d.id===id)||{}).label
                      || (id?id.replace(/^dx_/,'').replace(/_/g,' '):'not recorded');
 const dispLabel = id => (PROTO.dispLabels||{})[id] || (id?id.replace(/_/g,' '):'not recorded');
 
-const now = ()=> ENDED ? ST.now : (STARTED ? (Date.now()-T0)/1000 : 0);
+/* The case clock, with time the resident was not looking at it removed. PAUSED_MS is
+   what has already been given back and the second term is the pause in progress, so the
+   clock freezes rather than jumping when it resumes. A resident who answers a page is not
+   charged for it, and the deterioration deadlines in a case are claims about how long a
+   patient tolerates something rather than about how long a browser tab was open. */
+let PAUSED=false, PAUSED_AT=0, PAUSED_MS=0;
+const elapsedMs = ()=> (PAUSED?PAUSED_AT:Date.now()) - T0 - PAUSED_MS;
+const now = ()=> ENDED ? ST.now : (STARTED ? Math.max(0,elapsedMs())/1000 : 0);
 function log(e){ e.seq=SEQ++; e.t=now(); LOG.push(e); refold(); }
 function refold(){ ST=fold(LOG,now(),DM()); }
 
@@ -134,7 +141,11 @@ function rampedVitals(){
 }
 
 /* ---------- monitor (section 6, 8.4) ---------- */
-function jitter(v,amp){ return v + Math.round((Math.sin(Date.now()/1300+v)+Math.sin(Date.now()/770+v*2))/2*amp); }
+/* Cosmetic variance so the monitor does not look frozen. It reads the wall clock rather
+   than the case clock, which is right while a case is running and wrong while it is
+   paused: numbers wobbling behind a Paused overlay say the case is still going. */
+function jitter(v,amp){ return PAUSED ? v
+  : v + Math.round((Math.sin(Date.now()/1300+v)+Math.sin(Date.now()/770+v*2))/2*amp); }
 function renderMonitor(){
   const p=PHASE[ST.phase];
   const v=rampedVitals()||targetVitals()||{};
@@ -1109,7 +1120,7 @@ SEM.onChange(()=>{ if(!ENDED && TAB==='history') renderTab(); });
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],'
-    +'#askbtn,#submitho,#earlyexit,#restart,#soundbtn,#submitorder,#clearorder,#clearfilter,'
+    +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
     +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,'
     +'#rp-toggle,#lp-collapse');
   if(t&&t.id==='soundbtn'){ AUDIO.toggle(); renderSound(); return; }
@@ -1179,6 +1190,7 @@ document.addEventListener('click',e=>{
   if(t.id==='submitho'){ log({actionId:'handoff_submit',payload:{...PENDING_HANDOFF}}); finish(); return; }
   if(t.id==='earlyexit'){ log({actionId:'early_exit',kind:'early_exit'}); finish(); return; }
   if(t.id==='restart'){ restart(); return; }
+  if(t.id==='revealanswers'){ revealAnswers(); return; }
   if(t.id==='pickanother'){ toPickerFromDebrief(); return; }
 });
 document.addEventListener('keydown',e=>{
@@ -1224,10 +1236,16 @@ async function ask(q){
 /* ---------- loop ---------- */
 let lastFold=0;
 function tick(){
-  if(!ENDED){
+  if(!ENDED&&!PAUSED){
     const t=Date.now();
     if(t-lastFold>100){ lastFold=t; refold(); } else { ST.now=now(); }
     if(ST.halted){ finish(); return; }
+    /* A terminal phase reached by the clock ends the run, but not at the instant it is
+       reached. The nurse's line and the monitor dropping to the terminal numbers are the
+       moment the case is teaching; cutting to a debrief on the same frame throws that
+       away. The wait is fixed and short, and nothing the resident does during it can
+       change the ending, since the phase has no exits. */
+    if(ST.failed && ST.now >= ST.failed.t + GRACE_S){ finish(); return; }
   }
   renderMonitor(); renderNurse(); renderRail();
   requestAnimationFrame(tick);
@@ -1250,14 +1268,94 @@ setInterval(()=>{
 },300);
 
 /* ---------- ending ---------- */
+const GRACE_S = (SHARED.ending&&SHARED.ending.terminalGraceSeconds) || 5;
+
+/* The debrief now opens twice. The first screen answers the only question a resident
+   asks the instant a case ends: did I do the things that had to be done. It carries the
+   verdict, the critical actions that were completed, and two ways out. Everything else,
+   the missed actions, the teaching notes, the domain table, the handoff verdict, is the
+   answer key, and a resident who wants to replay the case before reading it should not
+   have to scroll past it to reach the replay button. `Reveal Case Answers` opens the
+   full debrief in place.
+
+   REVEALED is not persisted across a replay: restart() clears it through finish() being
+   called again, and a new run should start from the gate. */
+let REVEALED=false;
+
+/* Which of the three endings this was, in the order that matters clinically. A run that
+   walked into a terminal phase is a failure whatever else was completed, because the
+   patient arrested; a run that completed every critical action and did not arrest is the
+   only one that gets the affirmative. */
+function endingKind(){
+  /* A harmful action is grouped with the clock's ending rather than scored against the
+     critical actions. A resident who completed every critical action and then gave
+     something that stopped the case has not had a clean run, and a first screen reading
+     "All Critical Actions Achieved!" over a halt reason would be the interface
+     congratulating him on the way to the morgue. Both endings put their own reason
+     directly under the title. */
+  if(ST.failed||ST.halted) return 'failed';
+  return [...ST.expected].every(id=>ST.satisfied.has(id)) ? 'all' : 'missed';
+}
+const GATE_TITLE={failed:'Case Failed',
+                  all:'All Critical Actions Achieved!',
+                  missed:'Critical Actions Missed'};
+
+function gateHTML(){
+  const kind=endingKind();
+  const done=[...ST.expected].filter(id=>ST.satisfied.has(id));
+  const dispExp=id=>((ACT[id]||{}).expectation_label)||dispName(id);
+  /* Names only. No pill, no expander, no teaching note: a note attached to a completed
+     action is still an answer, and this screen is deliberately not the answer key. */
+  return `<div class="dbf">
+    <div class="dbsec gate">
+      <h2 class="gatetitle ${kind==='all'?'g-ok':'g-bad'}">${esc(GATE_TITLE[kind])}</h2>
+      ${ST.failed&&ST.failed.reason?`<p class="sub">${esc(ST.failed.reason)}</p>`:''}
+      ${ST.halted&&ST.halted.reason?`<p class="sub">${esc(ST.halted.reason)}</p>`:''}
+      <h3 class="gatesub">Critical actions you completed</h3>
+      ${done.length
+        ? `<div class="gatelist">${done.map(id=>
+            `<div class="gitem">${esc(dispExp(id))}</div>`).join('')}</div>`
+        : `<p class="sub">None of this case's critical actions were completed.</p>`}
+      <div class="gatebtns">
+        <button class="btn" id="restart">Replay this case</button>
+        <button class="btn ghost" id="revealanswers">Reveal Case Answers</button>
+        ${CASES.length>1?'<button class="btn ghost" id="pickanother">Choose a different case</button>':''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function revealAnswers(){
+  REVEALED=true;
+  const v=el('endview');
+  v.innerHTML='<div class="endwrap">'
+    +(ST.halted?haltCard():'')+(ST.failed?failCard():'')+debriefHTML()+'</div>';
+  v.scrollTop=0;
+}
+
+/* The clock's equivalent of haltCard. A harmful action names itself; a terminal phase
+   reached by the clock has no action to name, so the phase's own timeout_reason is the
+   whole explanation and it is authored for exactly this. */
+function failCard(){
+  return `<div class="halt"><h2>The case ended here</h2>
+    <p><b>${esc(PHASE[ST.failed.phase].label||ST.failed.phase)}</b> at ${mmss(ST.failed.t)}.</p>
+    ${ST.failed.reason?`<p>${esc(ST.failed.reason)}</p>`:''}
+    <p style="color:var(--ink2);font-size:13.5px">Nothing you did before this is lost.
+    It is all below.</p></div>`;
+}
+
 function finish(){
   /* The room goes quiet with the case. A debrief is reading rather than resuscitating,
      and ambience still humming under it is the interface not noticing the case is over.
      setScene('idle') stops the heartbeat and the room together. */
   refold(); ENDED=true; AUDIO.setScene('idle');
+  /* Neither overlay belongs over a debrief. The case is over, so there is nothing to
+     resume and nothing left to lose by leaving. */
+  el('pauseview').classList.add('hidden'); closeLeave(); PAUSED=false;
   el('playview').classList.add('hidden');
   const v=el('endview'); v.classList.remove('hidden');
-  v.innerHTML='<div class="endwrap">'+(ST.halted?haltCard():'')+debriefHTML()+'</div>';
+  REVEALED=false;
+  v.innerHTML='<div class="endwrap">'+gateHTML()+'</div>';
   v.scrollTop=0;
 }
 function restart(){
@@ -1267,6 +1365,8 @@ function restart(){
   Object.keys(BASKET).forEach(k=>delete BASKET[k]);
   Object.keys(EXPANDED).forEach(k=>delete EXPANDED[k]);
   PENDING_HANDOFF={disposition:null,diagnosis:null};
+  PAUSED=false; PAUSED_MS=0; PAUSED_AT=0;
+  el('pauseview').classList.add('hidden'); closeLeave();
   AUDIO.setScene('idle');
   el('endview').classList.add('hidden'); el('playview').classList.remove('hidden');
   el('splash').classList.remove('hidden');
@@ -1384,9 +1484,9 @@ function debriefHTML(){
   return `<div class="dbf">
     ${ST.halted?`<div class="dbsec"><h2>Harmful action</h2>${item(ST.halted.id,'harmful','p-harm')}</div>`:''}
 
-    <div class="dbsec"><h2>Critical actions</h2>
+    <div class="dbsec"><h2 class="crith">Critical actions</h2>
       ${done.length?done.map(id=>item(id,'critical','p-crit',dispExp(id))).join(''):'<p>No critical action was completed.</p>'}
-      ${omit.length?'<h3>Missed</h3>'+omit.map(id=>item(id,'not done','p-harm',dispExp(id))).join(''):''}
+      ${omit.length?'<h3 class="misshd">Non-Critical Missed Actions</h3>'+omit.map(id=>item(id,'not done','p-harm',dispExp(id))).join(''):''}
       ${[...ST.fuOutstanding].length?'<h3>Follow-up obligations left open</h3>'+[...ST.fuOutstanding].map(fid=>
         `<div class="item"><div class="hd"><span class="nm">${esc(fid.replace(/_/g,' '))}</span>
         <span class="pill p-harm">not done</span></div>
@@ -1422,12 +1522,10 @@ function debriefHTML(){
       ${traps.map(x=>item(x.id,'no benefit here','p-neu')).join('')}
       </div>`:''}
 
-    ${ST.blocked.length?`<div class="dbsec"><h2>Blocked attempts</h2>
-      <p class="sub">Sequence teaching, not penalised. The system already corrected you at the time.</p>
-      ${ST.blocked.map(b=>`<div class="item"><div class="hd"><span class="nm">${esc(dispName(b.id))}</span>
-        <span class="pill p-warn">${mmss(b.t)}</span>
-        <span class="pill p-neu">${b.source==='catalog_default'?'catalog prerequisite':'case prerequisite'}</span></div>
-        <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(b.message)}</div></div>`).join('')}</div>`:''}
+    /* The blocked-attempts section was removed on the author's instruction. The
+       teaching it carried already happened, in the interface, at the moment the
+       prerequisite refused the action and said why. ST.blocked is still folded and
+       still drives that refusal; only the debrief section is gone. */
 
     ${ho}
 
@@ -1441,14 +1539,9 @@ function debriefHTML(){
       ${stillPending.length?`<p>Still pending when the case ended: ${stillPending.map(i=>esc(dispName(i))).join(', ')}.</p>`:''}
       <p class="sub">Handing over with a result you never looked at is a real handover failure.</p></div>`:''}
 
-    <div class="dbsec"><h2>Independent and prompted</h2>
-      <table class="dom"><tr><th>Critical action</th><th>How it happened</th></tr>
-      ${[...ST.expected].map(id=>{
-        const s2=ST.satisfied.has(id)?(ST.prompted.has(id)?['after a prompt','p-warn']:['on your own','p-ok']):['omitted','p-harm'];
-        return `<tr><td>${esc(dispExp(id))}</td><td><span class="pill ${s2[1]}">${s2[0]}</span></td></tr>`;
-      }).join('')}</table>
-      <div class="note">A prompted action counts as done. This is here so you know where you needed help,
-      not as a penalty.</div></div>
+    /* The independent-and-prompted table was removed on the author's instruction.
+       ST.prompted still exists and still shows as a "prompted" pill on the action it
+       belongs to, which is where it reads as information rather than as a scoreboard. */
 
     <div class="dbsec"><h2>Points to carry out of this case</h2>
       ${(CASE.debrief_configuration.cross_cutting_teaching_points||[]).map(p=>
@@ -1682,7 +1775,11 @@ function renderSplashVitals(){
 }
 
 function begin(){
-  STARTED=true; T0=Date.now();
+  STARTED=true; T0=Date.now(); PAUSED=false; PAUSED_MS=0; PAUSED_AT=0;
+  /* A history entry to pop, so the back button has something to catch. It can throw on a
+     file:// URL in some browsers, and a simulator that will not start because the history
+     API refused would be a poor trade for a guard. */
+  try{ history.pushState({emsim:1},''); }catch(err){}
   el('splash').classList.add('hidden');
   AUDIO.unlock();
   /* The room starts here rather than on the splash. A case that has been chosen and not
@@ -1704,10 +1801,103 @@ const setHdr=()=>{
 if(window.ResizeObserver) new ResizeObserver(setHdr).observe(hdr);
 window.addEventListener('resize',setHdr); setHdr();
 
-/* Escape backs out of the expanded chart, the one state that hides the
-   workspace. Nothing else is modal, so nothing else needs a key. */
+/* ---------- pause, and leaving ----------
+   Two situations where the simulator has to stop being a thing that runs on its own.
+
+   The window losing focus is the easy one. The case clock is wall-clock time and the
+   deadlines in a case are claims about a patient, so charging a resident for the minutes
+   they spent in another window would make those claims false. It pauses on either signal
+   the browser gives, because they cover different things: visibilitychange catches a
+   hidden tab and a minimised window, and blur catches a window that is still on screen
+   with the focus somewhere else.
+
+   It never resumes on its own. Coming back to a case that has been running without you
+   is worse than coming back to one that waited, so resuming is a deliberate click. */
+const inCase = ()=> STARTED && !ENDED;
+
+function pauseSim(){
+  if(PAUSED||!inCase()) return;
+  PAUSED=true; PAUSED_AT=Date.now();
+  AUDIO.setScene('idle');
+  el('pauseview').classList.remove('hidden');
+}
+function resumeSim(){
+  if(!PAUSED) return;
+  const away=Date.now()-PAUSED_AT;
+  PAUSED_MS+=away;
+  /* A vitals ramp in flight resumes where it was rather than arriving while nobody was
+     watching. It is measured from the wall clock, so it needs the same offset. */
+  RAMP_T0+=away;
+  PAUSED=false;
+  el('pauseview').classList.add('hidden');
+  AUDIO.unlock(); AUDIO.setScene('case');
+  render();
+}
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) pauseSim(); });
+window.addEventListener('blur',pauseSim);
+el('resumebtn').addEventListener('click',resumeSim);
+
+/* Leaving. A refresh or a back throws the run away, and the run is the only copy: there
+   is no server and nothing is stored, which is the whole architecture rather than an
+   oversight.
+
+   WHAT THIS CAN AND CANNOT COVER, because the difference is not a design choice.
+   Keyboard refresh and the back button are interceptable and get the dialog below. A
+   click on the browser's own reload control is not: the only hook is beforeunload, whose
+   wording no browser has let a page choose for over a decade. So that path gets the
+   native dialog, and the two look different because the platform makes them different. */
+let LEAVING=false, LEAVE_ACT=null;
+
+function askLeave(action){
+  if(!inCase()||LEAVING) return false;
+  LEAVE_ACT=action;
+  el('leaveview').classList.remove('hidden');
+  el('leavecancel').focus();
+  return true;
+}
+function closeLeave(){ el('leaveview').classList.add('hidden'); LEAVE_ACT=null; }
+
+el('leavecancel').addEventListener('click',closeLeave);
+el('leaveok').addEventListener('click',()=>{
+  const act=LEAVE_ACT;
+  closeLeave();
+  LEAVING=true;
+  if(act==='reload'){ location.reload(); return; }
+  /* Back. The guard entry pushed at Begin is popped here. A file opened directly may have
+     nothing behind it, in which case the browser does nothing at all and a resident who
+     asked to leave would be stuck looking at the case they asked to leave. So if the
+     document is still here a moment later, leaving means what it means inside a
+     single-page simulator: end the case and go back to the list. */
+  const before=location.href;
+  history.back();
+  setTimeout(()=>{
+    if(location.href===before&&document.getElementById('playview')){
+      LEAVING=false; restart(); backToPicker();
+    }
+  },260);
+});
+
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'&&RIGHT_WIDE&&!ENDED) minimiseRecord();
+  if(e.key==='Escape'&&!el('leaveview').classList.contains('hidden')){ closeLeave(); return; }
+  const reload=(e.key==='F5')||((e.key==='r'||e.key==='R')&&(e.ctrlKey||e.metaKey)&&!e.altKey);
+  if(reload&&inCase()&&!LEAVING){ e.preventDefault(); askLeave('reload'); }
+});
+window.addEventListener('popstate',()=>{
+  if(LEAVING||!inCase()) return;
+  /* Put the guard back so the page stays where it is while the resident decides. */
+  try{ history.pushState({emsim:1},''); }catch(err){}
+  askLeave('back');
+});
+window.addEventListener('beforeunload',e=>{
+  if(LEAVING||!inCase()) return;
+  e.preventDefault(); e.returnValue='';
+});
+
+/* Escape backs out of the expanded chart, the one state that hides the
+   workspace. The leave dialog takes Escape first, above. */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&RIGHT_WIDE&&!ENDED&&el('leaveview').classList.contains('hidden'))
+    minimiseRecord();
 });
 
 /* ---------- boot ----------
