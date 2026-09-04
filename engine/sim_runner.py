@@ -133,7 +133,15 @@ class Run:
                     continue
                 if not evaluate(parse_condition(tr["when"])[0], self.assign()):
                     continue
-                gap = tr["after_seconds"] - (self.t - self.entry_t)
+                # guard_true rules are timed from the moment the guard first held, not
+                # from phase entry. Measuring both from entry made the runner skip past
+                # a delayed consequence, or fire it early, depending on the ordering.
+                if tr.get("measured_from", "phase_entry") == "guard_true":
+                    k = (self.phase, i)
+                    self.guard_true.setdefault(k, self.t)
+                    gap = tr["after_seconds"] - (self.t - self.guard_true[k])
+                else:
+                    gap = tr["after_seconds"] - (self.t - self.entry_t)
                 if gap >= 0:
                     pending.append(gap)
             if not pending or self.t + min(pending) > target:

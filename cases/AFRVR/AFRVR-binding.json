@@ -1,0 +1,492 @@
+{
+ "binding_version": "0.1",
+ "case_id": "afib-rvr-hfref-01",
+ "catalog_version": "0.2-draft",
+ "status": "DRAFT. Every mapped row is an author judgement and needs review.",
+ "counts": {
+  "exact": 74,
+  "mapped": 0,
+  "unmatched": 1
+ },
+ "group_coverage": {
+  "digoxin_bolus": [
+   "amiodarone_bolus_infusion",
+   "metoprolol_bolus"
+  ],
+  "apixaban": [
+   "enoxaparin",
+   "heparin_bolus_drip"
+  ],
+  "normal_saline_1l_bolus": [
+   "lactated_ringer_s_1l_bolus",
+   "lactated_ringer_s_500ml_bolus",
+   "normal_saline_500ml_bolus"
+  ]
+ },
+ "blocking": [],
+ "rows": [
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "non_invasive_positive_pressure_ventilation",
+   "catalog_id": "non_invasive_positive_pressure_ventilation",
+   "status": "exact",
+   "note": "Continuous and bilevel positive pressure are one catalog entry and one decision. The display name is overridden because the catalog's name is too long for a button and does not say CPAP or BiPAP, which is what a resident is looking for."
+  },
+  {
+   "case_id": "nasal_cannula_oxygen",
+   "catalog_id": "nasal_cannula_oxygen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "non_rebreather_mask",
+   "catalog_id": "non_rebreather_mask",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intubate_rapid_sequence",
+   "catalog_id": "intubate_rapid_sequence",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "etomidate_bolus",
+   "catalog_id": "etomidate_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_bolus",
+   "catalog_id": "ketamine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "midazolam_bolus",
+   "catalog_id": "midazolam_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propofol_bolus",
+   "catalog_id": "propofol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "rocuronium_bolus",
+   "catalog_id": "rocuronium_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "succinylcholine_bolus",
+   "catalog_id": "succinylcholine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propofol_infusion",
+   "catalog_id": "propofol_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_infusion",
+   "catalog_id": "ketamine_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fentanyl_bolus",
+   "catalog_id": "fentanyl_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "preoxygenate_for_intubation",
+   "catalog_id": "preoxygenate_for_intubation",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "position_for_intubation",
+   "catalog_id": "position_for_intubation",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "place_pads_for_monitoring",
+   "catalog_id": "place_pads_for_monitoring",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "synchronized_cardioversion",
+   "catalog_id": "synchronized_cardioversion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "unsynchronized_cardioversion",
+   "catalog_id": "unsynchronized_cardioversion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "digoxin_bolus",
+   "catalog_id": "digoxin_bolus",
+   "status": "exact",
+   "note": "This case scores the act of rate control rather than one agent, because the author's brief accepts digoxin, amiodarone or an appropriately selected beta blocker and says the choice should follow the patient's physiology. Coverage gives all three the same tag, the same flag and the same teaching note, so any of them satisfies the critical action and none of them is an unscored route around it. The cost is that the three are not scored differently from each other, and the differences between them are real; they are carried in the shared debrief note instead, and the debrief names the act rather than the drug through expectation_label. Esmolol and propranolol are deliberately NOT in this group: each is authored as its own discouraged action with its own reasoning.",
+   "also_covers": [
+    "amiodarone_bolus_infusion",
+    "metoprolol_bolus"
+   ]
+  },
+  {
+   "case_id": "diltiazem_bolus",
+   "catalog_id": "diltiazem_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "adenosine_bolus",
+   "catalog_id": "adenosine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propranolol_bolus",
+   "catalog_id": "propranolol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "esmolol_drip",
+   "catalog_id": "esmolol_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "procainamide_drip",
+   "catalog_id": "procainamide_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "furosemide_40_mg_iv",
+   "catalog_id": "furosemide_40_mg_iv",
+   "status": "exact",
+   "note": "Bound to the group so that if the catalog ever gains a second loop diuretic the critical action does not silently stop covering it. The group currently holds only this entry."
+  },
+  {
+   "case_id": "magnesium_sulfate_bolus",
+   "catalog_id": "magnesium_sulfate_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "potassium_chloride_kcl",
+   "catalog_id": "potassium_chloride_kcl",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "nitroglycerin_drip",
+   "catalog_id": "nitroglycerin_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "nitroglycerin_sublingual",
+   "catalog_id": "nitroglycerin_sublingual",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "dobutamine_drip",
+   "catalog_id": "dobutamine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "norepinephrine_drip",
+   "catalog_id": "norepinephrine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "apixaban",
+   "catalog_id": "apixaban",
+   "status": "exact",
+   "note": "Same reasoning as the rate-control group. The author's brief prefers a direct oral anticoagulant and accepts enoxaparin or a heparin infusion, so all three satisfy the critical action and the shared note carries the choice between them. Apixaban and enoxaparin were added to the action catalog for this case on the author's instruction and are marked source=author-supplied there; before this case the catalog's only anticoagulant was heparin.",
+   "also_covers": [
+    "enoxaparin",
+    "heparin_bolus_drip"
+   ]
+  },
+  {
+   "case_id": "aspirin",
+   "catalog_id": "aspirin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "clopidogrel",
+   "catalog_id": "clopidogrel",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "status": "exact",
+   "note": "Harmful here. The catalog offers four crystalloid boluses and every one of them reaches the same harm in a patient with an ejection fraction of 30 to 35 percent and a flooded lung, so the tag covers the whole equivalence group rather than one entry. A harmful tag on saline alone would leave Ringer's as an unguarded route to the same death.",
+   "also_covers": [
+    "lactated_ringer_s_1l_bolus",
+    "lactated_ringer_s_500ml_bolus",
+    "normal_saline_500ml_bolus"
+   ]
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ultrasound_cardiac",
+   "catalog_id": "ultrasound_cardiac",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ultrasound_lung",
+   "catalog_id": "ultrasound_lung",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "xr_chest",
+   "catalog_id": "xr_chest",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "troponin_t",
+   "catalog_id": "troponin_t",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "pro_bnp",
+   "catalog_id": "pro_bnp",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "magnesium_level",
+   "catalog_id": "magnesium_level",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "complete_blood_count_cbc",
+   "catalog_id": "complete_blood_count_cbc",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "tsh",
+   "catalog_id": "tsh",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lactate",
+   "catalog_id": "lactate",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d_dimer",
+   "catalog_id": "d_dimer",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ct_pulmonary_embolus",
+   "catalog_id": "ct_pulmonary_embolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ultrasound_lower_extremity_venous",
+   "catalog_id": "ultrasound_lower_extremity_venous",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urinalysis",
+   "catalog_id": "urinalysis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insert_foley_catheter",
+   "catalog_id": "insert_foley_catheter",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_cardiology",
+   "catalog_id": "consult_cardiology",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_pulmonology",
+   "catalog_id": "consult_pulmonology",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_abd",
+   "catalog_id": "exam_abd",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "The catalog has no handoff tab and no handoff action; it is listed in the catalog's own known_gaps. Rendered anyway so the case is playable."
+  },
+  {
+   "case_id": "second_iv",
+   "catalog_id": "second_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "central_venous_catheter_triple_lumen",
+   "catalog_id": "central_venous_catheter_triple_lumen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "central_venous_catheter_cordis",
+   "catalog_id": "central_venous_catheter_cordis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intraosseous_line",
+   "catalog_id": "intraosseous_line",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "arterial_line",
+   "catalog_id": "arterial_line",
+   "status": "exact",
+   "note": null
+  }
+ ]
+}

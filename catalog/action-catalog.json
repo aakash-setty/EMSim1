@@ -1,5 +1,5 @@
 {
-  "catalog_version": "0.1-draft",
+  "catalog_version": "0.2-draft",
   "result_resolution_order": [
     "1. case study_results[<action_id>] for the current phase, if authored",
     "2. entry.default_result in this catalog",
@@ -98,7 +98,8 @@
     ],
     "loop_diuretic": [
       "furosemide_40_mg_iv"
-    ]
+    ],
+    "_anticoagulation_note": "There is deliberately no anticoagulation equivalence group. Apixaban, enoxaparin and a heparin infusion are interchangeable for the purpose of 'was this patient anticoagulated', but a case that teaches the choice between them scores them differently, and a group would flatten that into one tag. Cases requiring only the act should list all three as satisfiers instead."
   },
   "resolved_since_v0.1_draft": [
     "Meds - Allergy, Tox, Psych, Miscellaneous transcribed from the second screenshot batch.",
@@ -113,6 +114,7 @@
     "Bumetanide removed. Furosemide carries its dose in the display name.",
     "Catalog prerequisites rewritten with the mandatory trailing keyword so they parse in the section 4 grammar.",
     "Nitroglycerin sublingual added as a separate route variant on author instruction.",
+    "Digoxin bolus, Apixaban and Enoxaparin added to Meds - Cardiac on author instruction for the atrial fibrillation case. Not transcribed from any screenshot; each carries source=author-supplied. Apixaban and enoxaparin are in NON_IV, so neither requires vascular access.",
     "Nursing group added under Stabilization on author instruction, not from a screenshot: droplet, contact and airborne precautions, warming measures and cooling measures. Each sets a flag of its own name and asserts nothing clinical.",
     "attach_monitor carries reveals_vitals. The interface shows no vitals and plays no heartbeat until an action carrying this flag has been taken."
   ],
@@ -4652,6 +4654,25 @@
       "persistent": true
     },
     {
+      "id": "apixaban",
+      "display_name": "Apixaban",
+      "placements": [
+        {
+          "tab": "interventions",
+          "group": "Meds - Cardiac"
+        }
+      ],
+      "category": "medication",
+      "state_changing": true,
+      "dose_required": true,
+      "turnaround_class": null,
+      "narration_template": "Giving {dose} of {name}.",
+      "default_prerequisites": [],
+      "flags_set_default": [],
+      "route_class": "non_iv",
+      "source": "author-supplied, not in screenshots"
+    },
+    {
       "id": "aspirin",
       "display_name": "Aspirin",
       "placements": [
@@ -4706,6 +4727,31 @@
       "route_class": "non_iv"
     },
     {
+      "id": "digoxin_bolus",
+      "display_name": "Digoxin bolus",
+      "placements": [
+        {
+          "tab": "interventions",
+          "group": "Meds - Cardiac"
+        }
+      ],
+      "category": "medication",
+      "state_changing": true,
+      "dose_required": true,
+      "turnaround_class": null,
+      "narration_template": "Giving {dose} of {name}.",
+      "default_prerequisites": [
+        {
+          "when": "flag iv_access set OR flag central_access set OR flag io_access set",
+          "failure_message": "He doesn't have a line yet. Do you want me to get IV access first?",
+          "source": "derived"
+        }
+      ],
+      "flags_set_default": [],
+      "route_class": "iv_bolus",
+      "source": "author-supplied, not in screenshots"
+    },
+    {
       "id": "diltiazem_bolus",
       "display_name": "Diltiazem bolus",
       "placements": [
@@ -4728,6 +4774,25 @@
       ],
       "flags_set_default": [],
       "route_class": "iv_bolus"
+    },
+    {
+      "id": "enoxaparin",
+      "display_name": "Enoxaparin",
+      "placements": [
+        {
+          "tab": "interventions",
+          "group": "Meds - Cardiac"
+        }
+      ],
+      "category": "medication",
+      "state_changing": true,
+      "dose_required": true,
+      "turnaround_class": null,
+      "narration_template": "Giving {dose} of {name}.",
+      "default_prerequisites": [],
+      "flags_set_default": [],
+      "route_class": "non_iv",
+      "source": "author-supplied, not in screenshots"
     },
     {
       "id": "heparin_bolus_drip",

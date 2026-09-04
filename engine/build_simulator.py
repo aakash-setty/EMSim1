@@ -228,10 +228,16 @@ def build_pack(pack):
         notes.append("the correct diagnosis does not resolve to a diagnosis catalog id, so the "
                      "handoff cannot be scored")
     alt_dx = {}
+    alt_dx_defensible = []
     for a in h.get("alternative_diagnoses", []):
         hit = resolve_dx(a.get("catalog_id")) or resolve_dx(a.get("label"))
         if hit:
             alt_dx[hit] = a["explanation"]
+            # A case whose formulation has two halves has two catalog ids that are both
+            # defensible answers, and the engine scores one. Marking the other outright
+            # incorrect teaches a learner who understood the case that they did not.
+            if a.get("verdict") == "acceptable_with_qualification":
+                alt_dx_defensible.append(hit)
         else:
             notes.append("alternative diagnosis %r does not resolve to a catalog id"
                          % a.get("label", a.get("catalog_id")))
@@ -280,6 +286,7 @@ def build_pack(pack):
         "correctDxId": correct_dx,
         "correctDxExplanation": h["correct_diagnosis"].get("explanation", ""),
         "altDx": alt_dx,
+        "altDxDefensible": alt_dx_defensible,
         "promptCap": case.get("prompt_cap_recommendation", {}).get("per_phase", 3),
         "buildNotes": notes,
     }

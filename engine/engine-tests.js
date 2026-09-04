@@ -364,6 +364,13 @@ section('equivalence group coverage');
   const byCase = {};
   covered.forEach(id => (byCase[PACK.covers[id]] = byCase[PACK.covers[id]] || []).push(id));
   let allHalt = true, why = '';
+  /* The vascular-access action is discovered from the loaded pack rather than named.
+     It used to be hard-coded to the reference case's id, so in any other pack the line
+     was never inserted, every intravenous member was blocked by its prerequisite
+     instead of halting, and the assertion failed for a reason that had nothing to do
+     with the group. A case name in the case-agnostic suite is a defect on its own. */
+  const ivAct = Object.keys(ACT)
+    .find(id => (ACT[id].flags_set || []).includes('iv_access'));
   for (const caseId in byCase) {
     const members = byCase[caseId].concat([
       Object.keys(PACK.bindings).find(c => PACK.bindings[c] === caseId) ? caseId : null
@@ -371,7 +378,7 @@ section('equivalence group coverage');
     for (const m of members) {
       if (tagOf(m, { phase: START_PHASE, flags: new Set(['iv_access']), ordered: new Set(),
                      resulted: new Set(), taken: new Set() }) !== 'harmful') continue;
-      const st = fold(mk([[1, 'iv_access_peripheral'], [5, m]]), 20);
+      const st = fold(mk(ivAct ? [[1, ivAct], [5, m]] : [[5, m]]), 20);
       if (!st.halted || st.halted.id !== m) { allHalt = false; why = m; }
     }
   }

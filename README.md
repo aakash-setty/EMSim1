@@ -11,7 +11,7 @@ before using any of it with a learner.
 ```
 engine/     case-agnostic code and tools. No clinical content, no case names.
 catalog/    global action and diagnosis catalogs, and their generators.
-cases/      one folder per case. CHFE is the reference case; MGCA is the second.
+cases/      one folder per case. CHFE is the reference case; MGCA and AFRVR follow it.
 docs/       specification, and decisions/ holding one rationale record per change.
 build/      generated. simulator.html and an identical index.html.
 ```
@@ -33,6 +33,7 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `sim_runner.py` | Walks the authored scenarios end to end, headless |
 | `engine-tests.js` | Case-agnostic engine assertions against a built file |
 | `matcher_eval.mjs` | Interview matcher evaluation, with `--semantic --sweep` for thresholds |
+| `deterioration_timeline.py` | Section 14.2c's artifact for a case that uses a clock |
 | `eval/` | Evaluation sets. Read the `provenance` field in each before quoting a number |
 | `shell.html` | The page: markup, the palette, and the layout |
 | `engine.js` | The fold, the condition evaluator, the resolvers |
@@ -70,10 +71,17 @@ A case that uses time-guarded transitions carries one more generated file,
 that precede it, the trajectory a resident sees if they do nothing at all, and every
 narration line collected to be read against the vitals it introduces. The per-key matrix
 cannot show any of that, because it enumerates what a key resolves to in a phase rather
-than how the phase was reached. See `cases/MGCA/`.
+than how the phase was reached. Generate it with `engine/deterioration_timeline.py`; see
+`cases/MGCA/` and `cases/AFRVR/`. Run against a case with no clock it writes a one-line
+stub saying so, which is a record that the artifact was checked for rather than
+forgotten.
 
-Migration scripts that were run once against this case live in the pack too, since
-their content is case-specific: `restructure_exam.py`, `structure_results.py`.
+A pack may also hold the scripts that produced its files. `cases/CHFE/` keeps three
+one-shot migrations; `cases/AFRVR/` keeps `build_case.py` and five `case_*.py` modules,
+which is how its 190 KB case file was written and how it should be edited. Nothing in
+those scripts is derived from anything: they are the JSON in readable Python, so that
+changing a deadline or a debrief note is a one-line edit rather than a search through
+indented braces.
 
 ## Building
 
@@ -223,6 +231,7 @@ python3 engine/sim_runner.py     cases/PE
 node    engine/engine-tests.js   build/simulator.html cases/PE/PE-tests.js PE
 python3 engine/validator-tests.py cases/PE
 node    cases/PE/PE-matcher-eval.js
+python3 engine/deterioration_timeline.py cases/PE
 ```
 
 Every tool takes a case pack and defaults to the only one present. None of them
@@ -258,24 +267,35 @@ only as conclusions. They are not a source of truth for how the system behaves.
 
 ## Status
 
-Both cases pass the validator with no errors. CHFE walks 13 authored scenarios and MGCA
-walks 26; each passes 163 engine assertions and 26 validator negative tests. Each carries one warning, in both
-cases about actions the catalog does not hold, which the prototype renders anyway so the
-gap stays visible. Those are catalog change requests rather than defects.
+All three cases pass the validator with no errors. CHFE walks 13 authored scenarios,
+MGCA 26 and AFRVR 30. CHFE and MGCA pass 165 engine assertions each and AFRVR 196, which
+is the same case-agnostic suite plus more case-specific ones; each passes 26 validator
+negative tests. Each carries one warning, in every case about actions the catalog does not
+hold, which the prototype renders anyway so the gap stays visible. Those are catalog change
+requests rather than defects.
 
 That is a structural claim only.
 
 **Nothing here has been reviewed by a physician**: not the reference case, not the
-295-entry action catalog, and not the 488-entry diagnosis catalog, which was generated
-from model memory with no source consulted. The interface no longer displays that
-warning, so `cases/CHFE/CHFE-review-packet.md` is the only place a reader will
-encounter it. Read it before using any of this with a learner.
+298-entry action catalog, and not the 488-entry diagnosis catalog, which was generated
+from model memory with no source consulted. AFRVR is the closest to an exception and is
+not one: a physician supplied its clinical seed, and everything expanded from that seed,
+including every reference interval and every reference, is unsigned. The interface no
+longer displays the warning, so the review packets are the only place a reader will
+encounter it. Read the one for whichever case you are about to use.
 
-**The interview matcher's accuracy is measured on small sets and the second case scores
-badly.** CHFE returns 23 of 25 held-out phrasings correctly; MGCA returns 22 of 37, with
-four wrong topics on topics that change management. The two are not comparable, because
-CHFE's set is 25 well-formed lay sentences and MGCA's was written deliberately in the
-registers that section 10.6 says an author's own set misses. Neither was collected from
-residents, so neither characterises how they actually type. Authoring section 10.6 and
-`cases/MGCA/MGCA-review-packet.md` section 10 state what the numbers do and do not
+**The interview matcher's accuracy is measured on small sets and it gets worse as cases
+get bigger.** CHFE returns 23 of 25 held-out phrasings correctly; MGCA 22 of 37, with four
+wrong topics on topics that change management; AFRVR 31 of 47, with nine. The three are not
+comparable, because CHFE's set is 25 well-formed lay sentences and the other two were
+written deliberately in the registers that section 10.6 says an author's own set misses.
+None was collected from residents, so none characterises how they actually type.
+
+**Out-of-scope handling is the weakest part of the system and AFRVR is the first pack with
+enough questions to say so.** Section 10.6 puts the floor for that arm at thirty; CHFE has
+five and MGCA six. AFRVR has thirty, and nineteen of them receive a confident, specific,
+wrong answer: "have you noticed any blood in your stool" returns the leg-swelling answer.
+Assume any question a case does not cover may be answered as though it were a different
+question. Authoring section 10.6, `cases/MGCA/MGCA-review-packet.md` section 10 and
+`cases/AFRVR/AFRVR-review-packet.md` section 7 state what the numbers do and do not
 support.

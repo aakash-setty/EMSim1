@@ -469,8 +469,14 @@ def run_checks(case):
                                       f"was warned about is a trap rather than a lesson")
             time_edges.append((ph["id"], tr["to"]))
 
-        if timed:
-            earliest = min(t["after_seconds"] for t in timed)
+        # Only a deadline measured from PHASE ENTRY can strand a prompt, because prompt
+        # deadlines are measured from phase entry too. A guard_true rule's clock starts
+        # when its guard first holds, which is usually later and may never happen, so
+        # comparing a prompt's deadline against it warns about prompts that fire
+        # perfectly well. A validator that cries wolf trains authors to skim it.
+        entry_timed = [t for t in timed if (t.get("measured_from") or "phase_entry") == "phase_entry"]
+        if entry_timed:
+            earliest = min(t["after_seconds"] for t in entry_timed)
             for aid, _flags, first, last in prompts_in_phase(ph["id"]):
                 if first >= earliest:
                     warnings.append(f"[time] {aid} prompts at {first}s in {ph['id']!r}, which has "

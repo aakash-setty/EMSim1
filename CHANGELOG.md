@@ -5,6 +5,88 @@ is usable with learners.
 
 ---
 
+## Third case: AFRVR, and eight engine defects it found
+
+**A third case pack.** `cases/AFRVR/`: atrial fibrillation with a rapid ventricular
+response in a man with a previously undiagnosed reduced ejection fraction, drafted from a
+real physician seed rather than the other way round. It is the first pack whose
+AUTHOR-ONLY fields mostly came from an author, and the first to carry a `_SEED.md` that
+records what did and did not.
+
+The case is built around one decision: the standard treatment for the visible problem is
+contraindicated by an invisible one that takes a minute with an ultrasound probe to find.
+It uses all five tag tiers, two coverage groups on critical actions, two time-guarded
+deterioration transitions, two delayed-consequence transitions, and a vital effect
+authored as four staged steps so a number climbs over a minute rather than jumping.
+
+**It found eight defects, seven of them older than the case.** Each is in `engine/` and
+none names a case.
+
+*`discouraged` was scored by nothing.* The fifth tag tier was defined in the specification,
+authored by MGCA on thirty-one tag rules, recorded on the timeline, and then read by
+nothing at all: the debrief surfaced critical, recommended, harmful and the neutral traps,
+so a discouraged action produced no output. A tier that carries no weight is the defect
+the tier was added to fix. It now has its own debrief section.
+
+*A covered sibling did not satisfy the covering action's expectation.* `also_covers` gave
+a sibling the covering action's tag, flags and note, so it advanced the case and could not
+escape a harmful tag, and then the debrief reported the critical action as missed because
+`st.taken` recorded the button that was pressed. A resident who gave Ringer's in MGCA was
+told they had not given fluid. Coverage is the case asserting the two acts are the same
+act, and recording both is what that assertion means.
+
+*A `guard_true` transition scheduled no deadline of its own.* Deadlines were pushed at
+phase entry, where a guard_true guard is usually still false, so the rule could only ever
+fire on the resident's next action. A case authoring "this drug takes a minute to work"
+left a resident who gave the drug and then waited watching nothing happen. Now scheduled
+at phase entry when the guard already holds, and at the moment it first holds otherwise.
+`sim_runner.py` had the mirror-image bug: it measured guard_true deadlines from phase entry
+in `wait()` while handling them correctly in `due()`.
+
+*The validator warned about stranded prompts that were not stranded.* Any timed exit in a
+phase was treated as the phase's earliest end, including a `guard_true` one whose clock has
+a different origin entirely. Nine wrong warnings on this case. A validator that cries wolf
+trains authors to skim it.
+
+*The case-agnostic engine suite hard-coded a case id.* Its equivalence-group assertion
+inserted `iv_access_peripheral`, which is CHFE's id for the line, so in any other pack the
+line was never inserted, every intravenous group member was blocked by its prerequisite
+rather than halting, and the assertion failed for a reason unrelated to what it tests.
+
+*The debrief could not name an act, only a drug.* `expectation_label` was added, so a case
+that scores "rate control" as one act through a coverage group can say so instead of
+telling a resident who gave amiodarone that they completed "Digoxin bolus".
+
+*A diagnosis could only be right or wrong.* Dispositions have had
+`acceptable_with_qualification` since the reference case. Diagnoses had not, so a case
+whose formulation has two halves marked the other half incorrect. `alternative_diagnoses`
+now takes the same verdict and the debrief shows "defensible".
+
+*Section 14.2c's artifact had no tool.* The deterioration timeline is required for any case
+using a time-guarded transition and MGCA's was written by hand, which means it could
+disagree with the case file silently. `engine/deterioration_timeline.py` generates it: every
+timed exit with its guard and preceding prompts, the do-nothing trajectory with vitals at
+each hop, and every narration line against the vitals it introduces. Run against this case
+it immediately found two narration lines that contradicted the monitor.
+
+**Catalog 0.2-draft.** Three entries added to Meds - Cardiac on author instruction and
+marked `source: author-supplied, not in screenshots`: **Digoxin bolus**, **Apixaban** and
+**Enoxaparin**. Before this the catalog held no rate-control agent for a patient in whom
+calcium channel blockade is contraindicated, and no anticoagulant but heparin. Apixaban and
+enoxaparin are in `NON_IV`, so neither requires vascular access. There is deliberately no
+anticoagulation equivalence group, and `equivalence_groups` now says why.
+
+**The out-of-scope arm finally has enough questions to mean something, and the answer is
+bad.** `AFRVR-matcher-eval-questions.json` carries thirty out-of-scope questions, which is
+the floor authoring section 10.6 sets and which neither earlier pack meets. Nineteen of the
+thirty receive a confident, specific, wrong answer. In scope the case returns 31 of 47
+held-out phrasings with nine wrong topics on management-changing topics. This is the
+strongest evidence yet for section 10.6's suggestion that a larger variant space trades
+out-of-scope rejection for recall: 570 variants across 38 topics is more than either
+earlier case and more surface for a spurious lexical match to land on.
+
+---
+
 ## System design v0.8, authoring requirements v0.7
 
 **Flags can expire, and this is the change that matters.** v0.7 gave a vital effect a

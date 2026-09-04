@@ -1,0 +1,191 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "afib-rvr-hfref-01",
+ "note": "End-to-end paths. The first is the intended run. The next group walks the author's three wrong paths. Then the harmful halt and every blocked prerequisite, then the coverage groups, which exist to prove that a covered sibling reaches the same place as the action covering it. The last group exercises the clock: doing nothing at all, each deficit treated alone, the sixty-second delay on rate control, and a rescue inside the last window against one taken too late.",
+ "scenarios": [
+  {
+   "name": "Intended path: monitor, access, ECG, both POCUS views, positive pressure, diuretic, rate control, anticoagulation",
+   "steps": ["attach_monitor", "insert_iv", "ecg_12_lead", "ultrasound_cardiac", "ultrasound_lung",
+             "non_invasive_positive_pressure_ventilation", "furosemide_40_mg_iv",
+             "basic_chemistry_chem_7", "magnesium_level", "magnesium_sulfate_bolus",
+             "digoxin_bolus", {"wait": 70}, "apixaban", "consult_cardiology",
+             "consult_critical_care", "handoff_submit"],
+   "expect_phase": "case_complete"
+  },
+  {
+   "name": "Intended path reaches stabilised before the handoff",
+   "steps": ["attach_monitor", "insert_iv", "ultrasound_cardiac",
+             "non_invasive_positive_pressure_ventilation", "digoxin_bolus", {"wait": 70},
+             "furosemide_40_mg_iv", "apixaban"],
+   "expect_phase": "stabilized"
+  },
+
+  {
+   "name": "Wrong path 1: the rate is treated and the lung is not",
+   "steps": ["attach_monitor", "insert_iv", "ecg_12_lead", "digoxin_bolus", {"wait": 70},
+             "apixaban"],
+   "expect_phase": "rate_controlled_congested",
+   "note": "A competent arrhythmia resuscitation and nothing for the pulmonary oedema."
+  },
+  {
+   "name": "Wrong path 1 continued: rate controlled, still nothing for the breathing, and he tires",
+   "steps": ["insert_iv", "digoxin_bolus", {"wait": 70}, {"wait": 250}],
+   "expect_phase": "respiratory_failure"
+  },
+  {
+   "name": "Wrong path 2: diltiazem given after the ejection fraction is known",
+   "steps": ["attach_monitor", "insert_iv", "ultrasound_cardiac", "ultrasound_lung",
+             "non_invasive_positive_pressure_ventilation", "diltiazem_bolus", {"wait": 70},
+             "furosemide_40_mg_iv"],
+   "expect_phase": "stabilized",
+   "note": "Discouraged, not harmful, and the case still advances. The consequence is a systolic pressure twenty points lower than it would otherwise be, which is a vital effect rather than a phase."
+  },
+  {
+   "name": "Wrong path 3: positive pressure never applied",
+   "steps": ["attach_monitor", "insert_iv", "ecg_12_lead", "ultrasound_cardiac",
+             "nasal_cannula_oxygen", {"wait": 250}],
+   "expect_phase": "respiratory_failure"
+  },
+  {
+   "name": "Wrong path 3 rescued: positive pressure applied late still works",
+   "steps": ["insert_iv", {"wait": 250}, "non_invasive_positive_pressure_ventilation"],
+   "expect_phase": "breathing_supported"
+  },
+  {
+   "name": "Wrong path 3 rescued with rate control already in: straight to stabilised",
+   "steps": ["insert_iv", "digoxin_bolus", {"wait": 70}, {"wait": 250},
+             "non_invasive_positive_pressure_ventilation"],
+   "expect_phase": "stabilized"
+  },
+  {
+   "name": "Rate control given in respiratory failure does not improve the breathing",
+   "steps": ["insert_iv", {"wait": 250}, "digoxin_bolus", {"wait": 120}],
+   "expect_phase": "respiratory_failure"
+  },
+
+  {
+   "name": "Intubation from arrival",
+   "steps": ["insert_iv", "etomidate_bolus", "rocuronium_bolus", "intubate_rapid_sequence"],
+   "expect_phase": "intubated"
+  },
+  {
+   "name": "Intubation from respiratory failure",
+   "steps": ["insert_iv", {"wait": 250}, "ketamine_bolus", "succinylcholine_bolus",
+             "intubate_rapid_sequence", "propofol_infusion", "xr_chest"],
+   "expect_phase": "intubated"
+  },
+
+  {
+   "name": "Harmful: a crystalloid bolus in florid pulmonary oedema halts the case",
+   "steps": ["attach_monitor", "insert_iv", "normal_saline_1l_bolus"],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Harmful: Ringer's reaches the same halt through the equivalence group",
+   "steps": ["insert_iv", "lactated_ringer_s_1l_bolus"],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Harmful: the 500 mL bag is not an escape hatch either",
+   "steps": ["insert_iv", "normal_saline_500ml_bolus"],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "The same bolus once he is stabilised is discouraged rather than lethal",
+   "steps": ["insert_iv", "non_invasive_positive_pressure_ventilation", "digoxin_bolus",
+             {"wait": 70}, "normal_saline_1l_bolus"],
+   "expect_phase": "stabilized"
+  },
+
+  {
+   "name": "Blocked: an intravenous drug before there is a line",
+   "steps": ["attach_monitor", "digoxin_bolus"],
+   "expect_phase": "presentation"
+  },
+  {
+   "name": "Blocked prerequisite satisfied by an intraosseous needle instead of a vein",
+   "steps": ["intraosseous_line", "digoxin_bolus", {"wait": 70}],
+   "expect_phase": "rate_controlled_congested"
+  },
+  {
+   "name": "Blocked: cardioversion of a patient who is awake and talking",
+   "steps": ["insert_iv", "place_pads_for_monitoring", "synchronized_cardioversion"],
+   "expect_phase": "presentation"
+  },
+  {
+   "name": "Blocked: the mask on a patient who already has a tube",
+   "steps": ["insert_iv", "etomidate_bolus", "rocuronium_bolus", "intubate_rapid_sequence",
+             "non_invasive_positive_pressure_ventilation"],
+   "expect_phase": "intubated"
+  },
+
+  {
+   "name": "Coverage: amiodarone satisfies rate control",
+   "steps": ["insert_iv", "non_invasive_positive_pressure_ventilation",
+             "amiodarone_bolus_infusion", {"wait": 70}],
+   "expect_phase": "stabilized"
+  },
+  {
+   "name": "Coverage: metoprolol satisfies rate control",
+   "steps": ["insert_iv", "non_invasive_positive_pressure_ventilation", "metoprolol_bolus",
+             {"wait": 70}],
+   "expect_phase": "stabilized"
+  },
+  {
+   "name": "Coverage: enoxaparin and heparin are accepted anticoagulants",
+   "steps": ["insert_iv", "non_invasive_positive_pressure_ventilation", "enoxaparin",
+             "heparin_bolus_drip", "digoxin_bolus", {"wait": 70}],
+   "expect_phase": "stabilized"
+  },
+
+  {
+   "name": "Clock: nothing done at all",
+   "steps": [{"wait": 1200}],
+   "expect_phase": "respiratory_failure",
+   "note": "The do-nothing trajectory ends here and not in an arrest. Deliberate: this case authors no time-driven route to a terminal phase."
+  },
+  {
+   "name": "Clock: positive pressure before the first deadline, then nothing else for a long time",
+   "steps": ["non_invasive_positive_pressure_ventilation", {"wait": 1200}],
+   "expect_phase": "breathing_supported",
+   "note": "No deadline ever fires. Positive pressure alone leaves an uncontrolled rate, which the case does not deteriorate on."
+  },
+  {
+   "name": "Clock: rescued inside the last window",
+   "steps": ["insert_iv", {"wait": 200}, "non_invasive_positive_pressure_ventilation"],
+   "expect_phase": "breathing_supported"
+  },
+  {
+   "name": "Clock: the same rescue one step too late",
+   "steps": ["insert_iv", {"wait": 245}, "non_invasive_positive_pressure_ventilation"],
+   "expect_phase": "breathing_supported",
+   "note": "The pair to the scenario above. Both end on positive pressure, and the difference is that this one went through respiratory failure to get there and the debrief records the deterioration. Lateness costs a phase and does not cost the patient."
+  },
+  {
+   "name": "Clock: a slow but complete resident is not punished for thinking",
+   "steps": ["attach_monitor", {"wait": 40}, "insert_iv", "ecg_12_lead", {"wait": 60},
+             "ultrasound_cardiac", "ultrasound_lung", {"wait": 50},
+             "non_invasive_positive_pressure_ventilation", "furosemide_40_mg_iv", "digoxin_bolus",
+             {"wait": 90}, "apixaban", {"wait": 400}],
+   "expect_phase": "stabilized",
+   "note": "Pauses of 40, 60 and 50 seconds still reach the arrival phase's 240-second deadline with room to spare."
+  },
+  {
+   "name": "Clock: rate control does not take effect the instant it is given",
+   "steps": ["insert_iv", "non_invasive_positive_pressure_ventilation", "digoxin_bolus",
+             {"wait": 30}],
+   "expect_phase": "breathing_supported",
+   "note": "Thirty seconds after the drug he is still in the breathing-supported phase at a rate of 152. The pair to the scenario above it, which waits seventy."
+  },
+  {
+   "name": "Clock: a harmful action still halts after a deadline has passed",
+   "steps": ["insert_iv", {"wait": 300}, "normal_saline_1l_bolus"],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Handoff from the deterioration branch still completes the case",
+   "steps": ["insert_iv", {"wait": 250}, "handoff_submit"],
+   "expect_phase": "case_complete"
+  }
+ ]
+}

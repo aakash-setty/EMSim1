@@ -1,0 +1,333 @@
+{
+ "map_version": "0.1",
+ "case_id": "afib-rvr-hfref-01",
+ "status": "DRAFT. Every row whose catalog_id differs from case_id, and every also_covers row, is an author judgement and needs review.",
+ "how_to_read": {
+  "catalog_id equals case_id": "exact; nothing to review",
+  "catalog_id null": "unmatched; a catalog change request",
+  "also_covers / also_covers_group": "this case action claims several catalog entries, so its tag, flags, halt reason and debrief note apply to every route to the same act. Every one of these is a clinical claim that the entries are the same act for this case's purposes."
+ },
+ "rows": [
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor"
+  },
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv"
+  },
+  {
+   "case_id": "non_invasive_positive_pressure_ventilation",
+   "catalog_id": "non_invasive_positive_pressure_ventilation",
+   "note": "Continuous and bilevel positive pressure are one catalog entry and one decision. The display name is overridden because the catalog's name is too long for a button and does not say CPAP or BiPAP, which is what a resident is looking for."
+  },
+  {
+   "case_id": "nasal_cannula_oxygen",
+   "catalog_id": "nasal_cannula_oxygen"
+  },
+  {
+   "case_id": "non_rebreather_mask",
+   "catalog_id": "non_rebreather_mask"
+  },
+  {
+   "case_id": "intubate_rapid_sequence",
+   "catalog_id": "intubate_rapid_sequence"
+  },
+  {
+   "case_id": "etomidate_bolus",
+   "catalog_id": "etomidate_bolus"
+  },
+  {
+   "case_id": "ketamine_bolus",
+   "catalog_id": "ketamine_bolus"
+  },
+  {
+   "case_id": "midazolam_bolus",
+   "catalog_id": "midazolam_bolus"
+  },
+  {
+   "case_id": "propofol_bolus",
+   "catalog_id": "propofol_bolus"
+  },
+  {
+   "case_id": "rocuronium_bolus",
+   "catalog_id": "rocuronium_bolus"
+  },
+  {
+   "case_id": "succinylcholine_bolus",
+   "catalog_id": "succinylcholine_bolus"
+  },
+  {
+   "case_id": "propofol_infusion",
+   "catalog_id": "propofol_infusion"
+  },
+  {
+   "case_id": "ketamine_infusion",
+   "catalog_id": "ketamine_infusion"
+  },
+  {
+   "case_id": "fentanyl_bolus",
+   "catalog_id": "fentanyl_bolus"
+  },
+  {
+   "case_id": "preoxygenate_for_intubation",
+   "catalog_id": "preoxygenate_for_intubation"
+  },
+  {
+   "case_id": "position_for_intubation",
+   "catalog_id": "position_for_intubation"
+  },
+  {
+   "case_id": "place_pads_for_monitoring",
+   "catalog_id": "place_pads_for_monitoring"
+  },
+  {
+   "case_id": "synchronized_cardioversion",
+   "catalog_id": "synchronized_cardioversion"
+  },
+  {
+   "case_id": "unsynchronized_cardioversion",
+   "catalog_id": "unsynchronized_cardioversion"
+  },
+  {
+   "case_id": "digoxin_bolus",
+   "catalog_id": "digoxin_bolus",
+   "also_covers": [
+    "amiodarone_bolus_infusion",
+    "metoprolol_bolus"
+   ],
+   "note": "This case scores the act of rate control rather than one agent, because the author's brief accepts digoxin, amiodarone or an appropriately selected beta blocker and says the choice should follow the patient's physiology. Coverage gives all three the same tag, the same flag and the same teaching note, so any of them satisfies the critical action and none of them is an unscored route around it. The cost is that the three are not scored differently from each other, and the differences between them are real; they are carried in the shared debrief note instead, and the debrief names the act rather than the drug through expectation_label. Esmolol and propranolol are deliberately NOT in this group: each is authored as its own discouraged action with its own reasoning."
+  },
+  {
+   "case_id": "diltiazem_bolus",
+   "catalog_id": "diltiazem_bolus"
+  },
+  {
+   "case_id": "adenosine_bolus",
+   "catalog_id": "adenosine_bolus"
+  },
+  {
+   "case_id": "propranolol_bolus",
+   "catalog_id": "propranolol_bolus"
+  },
+  {
+   "case_id": "esmolol_drip",
+   "catalog_id": "esmolol_drip"
+  },
+  {
+   "case_id": "procainamide_drip",
+   "catalog_id": "procainamide_drip"
+  },
+  {
+   "case_id": "furosemide_40_mg_iv",
+   "catalog_id": "furosemide_40_mg_iv",
+   "also_covers_group": "loop_diuretic",
+   "note": "Bound to the group so that if the catalog ever gains a second loop diuretic the critical action does not silently stop covering it. The group currently holds only this entry."
+  },
+  {
+   "case_id": "magnesium_sulfate_bolus",
+   "catalog_id": "magnesium_sulfate_bolus"
+  },
+  {
+   "case_id": "potassium_chloride_kcl",
+   "catalog_id": "potassium_chloride_kcl"
+  },
+  {
+   "case_id": "nitroglycerin_drip",
+   "catalog_id": "nitroglycerin_drip"
+  },
+  {
+   "case_id": "nitroglycerin_sublingual",
+   "catalog_id": "nitroglycerin_sublingual"
+  },
+  {
+   "case_id": "dobutamine_drip",
+   "catalog_id": "dobutamine_drip"
+  },
+  {
+   "case_id": "norepinephrine_drip",
+   "catalog_id": "norepinephrine_drip"
+  },
+  {
+   "case_id": "apixaban",
+   "catalog_id": "apixaban",
+   "also_covers": [
+    "enoxaparin",
+    "heparin_bolus_drip"
+   ],
+   "note": "Same reasoning as the rate-control group. The author's brief prefers a direct oral anticoagulant and accepts enoxaparin or a heparin infusion, so all three satisfy the critical action and the shared note carries the choice between them. Apixaban and enoxaparin were added to the action catalog for this case on the author's instruction and are marked source=author-supplied there; before this case the catalog's only anticoagulant was heparin."
+  },
+  {
+   "case_id": "aspirin",
+   "catalog_id": "aspirin"
+  },
+  {
+   "case_id": "clopidogrel",
+   "catalog_id": "clopidogrel"
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "also_covers_group": "crystalloid_bolus",
+   "note": "Harmful here. The catalog offers four crystalloid boluses and every one of them reaches the same harm in a patient with an ejection fraction of 30 to 35 percent and a flooded lung, so the tag covers the whole equivalence group rather than one entry. A harmful tag on saline alone would leave Ringer's as an unguarded route to the same death."
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead"
+  },
+  {
+   "case_id": "ultrasound_cardiac",
+   "catalog_id": "ultrasound_cardiac"
+  },
+  {
+   "case_id": "ultrasound_lung",
+   "catalog_id": "ultrasound_lung"
+  },
+  {
+   "case_id": "xr_chest",
+   "catalog_id": "xr_chest"
+  },
+  {
+   "case_id": "troponin_t",
+   "catalog_id": "troponin_t"
+  },
+  {
+   "case_id": "pro_bnp",
+   "catalog_id": "pro_bnp"
+  },
+  {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7"
+  },
+  {
+   "case_id": "magnesium_level",
+   "catalog_id": "magnesium_level"
+  },
+  {
+   "case_id": "complete_blood_count_cbc",
+   "catalog_id": "complete_blood_count_cbc"
+  },
+  {
+   "case_id": "tsh",
+   "catalog_id": "tsh"
+  },
+  {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas"
+  },
+  {
+   "case_id": "lactate",
+   "catalog_id": "lactate"
+  },
+  {
+   "case_id": "d_dimer",
+   "catalog_id": "d_dimer"
+  },
+  {
+   "case_id": "ct_pulmonary_embolus",
+   "catalog_id": "ct_pulmonary_embolus"
+  },
+  {
+   "case_id": "ultrasound_lower_extremity_venous",
+   "catalog_id": "ultrasound_lower_extremity_venous"
+  },
+  {
+   "case_id": "urinalysis",
+   "catalog_id": "urinalysis"
+  },
+  {
+   "case_id": "insert_foley_catheter",
+   "catalog_id": "insert_foley_catheter"
+  },
+  {
+   "case_id": "consult_cardiology",
+   "catalog_id": "consult_cardiology"
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care"
+  },
+  {
+   "case_id": "consult_pulmonology",
+   "catalog_id": "consult_pulmonology"
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway"
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath"
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ"
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck"
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card"
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm"
+  },
+  {
+   "case_id": "exam_abd",
+   "catalog_id": "exam_abd"
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk"
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin"
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro"
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych"
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent"
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "note": "The catalog has no handoff tab and no handoff action; it is listed in the catalog's own known_gaps. Rendered anyway so the case is playable.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "I'll put the notes together for the unit."
+  },
+  {
+   "case_id": "second_iv",
+   "catalog_id": "second_iv"
+  },
+  {
+   "case_id": "central_venous_catheter_triple_lumen",
+   "catalog_id": "central_venous_catheter_triple_lumen"
+  },
+  {
+   "case_id": "central_venous_catheter_cordis",
+   "catalog_id": "central_venous_catheter_cordis"
+  },
+  {
+   "case_id": "intraosseous_line",
+   "catalog_id": "intraosseous_line"
+  },
+  {
+   "case_id": "arterial_line",
+   "catalog_id": "arterial_line"
+  }
+ ]
+}

@@ -267,8 +267,17 @@ MEDS = {
 }
 
 # Author-supplied addition: present in the reference case but not in any screenshot.
+#
+# The three anticoagulant and rate-control entries added for the atrial fibrillation
+# case are author instruction, not transcription. Each was requested by name for a case
+# where the alternatives the screenshots do carry are the wrong drug: digoxin because a
+# non-dihydropyridine calcium channel blocker is contraindicated in reduced systolic
+# function and the catalog offered no agent that is not, apixaban because the catalog
+# held heparin as the only anticoagulant, and enoxaparin for the same reason. They carry
+# source=author-supplied so a reader can see they were not seen in the interface.
 AUTHOR_ADDED = {"Meds - Vasoactive Agents": ["Dobutamine drip"],
-                "Meds - Cardiac": ["Nitroglycerin sublingual"]}
+                "Meds - Cardiac": ["Nitroglycerin sublingual", "Digoxin bolus",
+                                   "Apixaban", "Enoxaparin"]}
 for g, items in AUTHOR_ADDED.items():
     MEDS.setdefault(g, [])
     MEDS[g] = sorted(set(MEDS[g] + items))
@@ -278,7 +287,10 @@ for g, items in AUTHOR_ADDED.items():
 NON_IV = {"Prednisone", "Epinephrine (Intramuscular)", "Activated Charcoal",
           "Colchicine", "Propylthiouracil", "TDaP", "Potassium Iodide & Iodine",
           "Aspirin", "Atorvastatin", "Clopidogrel", "Misoprostol", "Methergine",
-          "Albuterol", "Ipratropium", "Nitroglycerin sublingual"}
+          "Albuterol", "Ipratropium", "Nitroglycerin sublingual",
+          # Apixaban is oral and enoxaparin is subcutaneous. Neither needs a line, and
+          # gating either on vascular access would teach a sequence that does not exist.
+          "Apixaban", "Enoxaparin"}
 ROUTE_AMBIGUOUS = {"Acetaminophen", "Ibuprofen", "Dexamethasone", "Diphenhydramine",
                    "Ondansetron", "Metoclopramide", "Thiamine", "Oxytocin IM/IV",
                    "RhoGAM", "Haloperidol", "Olanzapine", "Ziprasidone",
@@ -398,7 +410,7 @@ if orphan:
     raise SystemExit("default_results with no catalog entry: " + ", ".join(sorted(orphan)))
 
 CATALOG = {
-    "catalog_version": "0.1-draft",
+    "catalog_version": "0.2-draft",
     "result_resolution_order": [
         "1. case study_results[<action_id>] for the current phase, if authored",
         "2. entry.default_result in this catalog",
@@ -467,6 +479,13 @@ CATALOG = {
                               "lactated_ringer_s_1l_bolus", "lactated_ringer_s_500ml_bolus"],
         "non_invasive_ventilation": ["non_invasive_positive_pressure_ventilation"],
         "loop_diuretic": ["furosemide_40_mg_iv"],
+        "_anticoagulation_note": "There is deliberately no anticoagulation equivalence "
+                                 "group. Apixaban, enoxaparin and a heparin infusion are "
+                                 "interchangeable for the purpose of 'was this patient "
+                                 "anticoagulated', but a case that teaches the choice "
+                                 "between them scores them differently, and a group "
+                                 "would flatten that into one tag. Cases requiring only "
+                                 "the act should list all three as satisfiers instead.",
     },
     "resolved_since_v0.1_draft": [
         "Meds - Allergy, Tox, Psych, Miscellaneous transcribed from the second screenshot batch.",
@@ -481,6 +500,10 @@ CATALOG = {
         "Bumetanide removed. Furosemide carries its dose in the display name.",
         "Catalog prerequisites rewritten with the mandatory trailing keyword so they parse in the section 4 grammar.",
         "Nitroglycerin sublingual added as a separate route variant on author instruction.",
+        "Digoxin bolus, Apixaban and Enoxaparin added to Meds - Cardiac on author "
+        "instruction for the atrial fibrillation case. Not transcribed from any "
+        "screenshot; each carries source=author-supplied. Apixaban and enoxaparin are "
+        "in NON_IV, so neither requires vascular access.",
         "Nursing group added under Stabilization on author instruction, not from a screenshot: "
         "droplet, contact and airborne precautions, warming measures and cooling measures. "
         "Each sets a flag of its own name and asserts nothing clinical.",

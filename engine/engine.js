@@ -133,6 +133,11 @@ function mergeAction(eff, base, caseAct, extra){
     rec.halt_reason=caseAct.halt_reason;
     rec.follow_ups_triggered=caseAct.follow_ups_triggered;
     rec.vital_effects=caseAct.vital_effects;
+    /* Optional. Where a case action covers several catalog entries the debrief has to
+       name the act rather than one of its routes, or a resident who gave amiodarone is
+       told they completed 'Digoxin bolus'. The button keeps the catalog's own name;
+       only the critical-action list uses this. */
+    rec.expectation_label=caseAct.expectation_label;
     rec.flags_set_timed=caseAct.flags_set_timed;
   }
   return rec;
@@ -183,6 +188,7 @@ function selectCase(ref){
     correctDxId: PACK.correctDxId,
     correctDxExplanation: PACK.correctDxExplanation,
     altDx: PACK.altDx,
+    altDxDefensible: PACK.altDxDefensible||[],
     promptCap: PACK.promptCap,
     buildNotes: PACK.buildNotes
   });
@@ -266,6 +272,12 @@ function fold(log, now, difficultyMultiplier){
     nurse:[], readouts:[], blocked:[], timeline:[], prompted:new Set(),
     promptFires:[], fuFires:[], fuOutstanding:new Set(), handoff:null, now:now, dm:DM,
     expected:new Set(), expectedByPhase:{}, recommendedTaken:new Set(), defaultsServed:new Set(),
+    /* Section 7.3's fifth tier. It was defined in the spec, authored by MGCA on 31
+       tag rules, recorded on the timeline, and then read by nothing: the debrief
+       surfaced critical, recommended, harmful and the neutral traps, so a
+       discouraged action produced no output at all. A tier that carries no weight
+       is the defect the tier was added to fix. */
+    discouragedTaken:new Set(),
     /* v0.6. guardTrue records when a measured_from:"guard_true" rule first held, so a
        delayed consequence is timed from the action rather than from phase entry.
        timeFires is what the debrief reads to name the deadline that expired. */
@@ -326,8 +338,27 @@ function fold(log, now, difficultyMultiplier){
   function scheduleDeadlines(phase,t){
     const p=PHASE[phase];
     if(!p||!p.transitions) return;
-    for(const tr of p.transitions)
-      if(tr.after_seconds!==undefined) push({t:t+tr.after_seconds,kind:'deadline',phase});
+    for(let i=0;i<p.transitions.length;i++){
+      const tr=p.transitions[i];
+      if(tr.after_seconds===undefined) continue;
+      if((tr.measured_from||'phase_entry')!=='guard_true'){
+        push({t:t+tr.after_seconds,kind:'deadline',phase});
+        continue;
+      }
+      /* A guard_true rule is timed from the moment its guard first holds, which is
+         usually later than phase entry, so a deadline scheduled here would fire at the
+         wrong time. Two cases. If the guard ALREADY holds on entry -- the resident gave
+         the drug in the phase before this one -- the clock starts now and the deadline
+         is real. Otherwise transitionDue schedules it at the moment the guard first
+         holds. Without both, a guard_true transition could only ever fire on the
+         resident's next action, so a case authoring "this takes a minute to work" left
+         a resident who gave the drug and then waited watching nothing happen. */
+      let holds; try{ holds=test(tr.when,st); }catch(e){ holds=false; }
+      if(!holds) continue;
+      const k=phase+'|'+i;
+      if(st.guardTrue[k]===undefined) st.guardTrue[k]=t;
+      push({t:st.guardTrue[k]+tr.after_seconds,kind:'deadline',phase});
+    }
   }
   function enterPhase(to,t){
     cancelPromptsFor(st.phase);
@@ -350,7 +381,12 @@ function fold(log, now, difficultyMultiplier){
     if(tr.after_seconds===undefined) return true;
     if((tr.measured_from||'phase_entry')==='guard_true'){
       const k=st.phase+'|'+idx;
-      if(st.guardTrue[k]===undefined) st.guardTrue[k]=t;
+      if(st.guardTrue[k]===undefined){
+        st.guardTrue[k]=t;
+        /* The deadline this rule needs did not exist until now, because at phase entry
+           the guard was false. Scheduled once, on the first check that finds it true. */
+        push({t:t+tr.after_seconds,kind:'deadline',phase:st.phase});
+      }
       return t-st.guardTrue[k] >= tr.after_seconds;
     }
     return t-(st.phaseEntry[st.phase]||0) >= tr.after_seconds;
@@ -444,6 +480,14 @@ function fold(log, now, difficultyMultiplier){
     }
 
     st.taken.add(id);
+    /* An entry covered through also_covers borrows the covering action's tag, flags and
+       note, so it already advances the case and is scored the same way. It was not
+       recorded as having satisfied the covering action itself, which meant the debrief
+       listed the critical action as missed by a resident who had performed it by another
+       route, and `action X taken` was false after a sibling. Coverage is the case
+       asserting the two acts are the same act; recording both is what that assertion
+       means. */
+    if(a.covered_by) st.taken.add(a.covered_by);
 
     /* Catalog capability, checked before the state-changing split so an act that
        reveals the vitals does so whether or not it changes the patient. */
@@ -476,6 +520,7 @@ function fold(log, now, difficultyMultiplier){
       return;
     }
     if(tag==='recommended') st.recommendedTaken.add(id);
+    if(tag==='discouraged') st.discouragedTaken.add(id);
     narrate(t,narrationFor(id),'narration');
 
     (a.flags_set||[]).forEach(f=>grantFlag(f,t,null));

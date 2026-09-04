@@ -1238,6 +1238,7 @@ function debriefHTML(){
   const done=[],omit=[];
   ST.expected.forEach(id=>{ (ST.taken.has(id)?done:omit).push(id); });
   const rec=[...ST.recommendedTaken];
+  const dis=[...ST.discouragedTaken];
   const traps=ST.timeline.filter(x=>x.tag==='neutral'&&PROTO.traps.includes(x.id));
   const stillPending=ST.pending.map(p=>p.id);
   const noteOf=id=>(ACT[id]||{}).debrief_note;
@@ -1252,9 +1253,10 @@ function debriefHTML(){
      one sits behind its own expander and the list of what was done and missed stays
      readable at a glance. Native <details> rather than a scripted toggle, so the open
      state survives re-render and needs no click handling. */
-  const item=(id,pill,pillcls)=>{
+  const dispExp=id=>((ACT[id]||{}).expectation_label)||dispName(id);
+  const item=(id,pill,pillcls,label)=>{
     const note=noteOf(id), refs=refsOf(id);
-    const head=`<span class="nm">${esc(dispName(id))}</span><span class="pill ${pillcls}">${pill}</span>
+    const head=`<span class="nm">${esc(label||dispName(id))}</span><span class="pill ${pillcls}">${pill}</span>
       ${ST.prompted.has(id)?'<span class="pill p-warn">prompted</span>':''}`;
     if(!note&&!refs.length) return `<div class="item"><div class="hd">${head}</div></div>`;
     return `<div class="item"><details class="teach">
@@ -1282,13 +1284,15 @@ function debriefHTML(){
     const dExp=dOK?h.correct_disposition.explanation:(dAlt?dAlt.explanation:'');
     const dV=dOK?['correct','p-ok']:(dAlt&&dAlt.verdict==='acceptable_with_qualification'?['defensible','p-warn']:['incorrect','p-harm']);
     const xOK=xId===PROTO.correctDxId;
+    const xDef=!xOK&&(PROTO.altDxDefensible||[]).includes(xId);
     const xExp=xOK?PROTO.correctDxExplanation:(PROTO.altDx[xId]||PROTO.unlistedDxNote);
+    const xV=xOK?['correct','p-ok']:(xDef?['defensible','p-warn']:['incorrect','p-harm']);
     ho=`<div class="dbsec"><h2>Handoff</h2>
       <div class="item"><div class="hd"><span class="nm">Level of care: ${esc(dispLabel(dId))}</span>
         <span class="pill ${dV[1]}">${dV[0]}</span></div>
         <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(dExp)}</div></div>
       <div class="item"><div class="hd"><span class="nm">Diagnosis: ${esc(dxLabel(xId))}</span>
-        <span class="pill ${xOK?'p-ok':'p-harm'}">${xOK?'correct':'incorrect'}</span></div>
+        <span class="pill ${xV[1]}">${xV[0]}</span></div>
         <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(xExp)}</div></div></div>`;
   } else if(ST.earlyExit){
     ho=`<div class="dbsec"><h2>Handoff</h2><p>You ended the case early, so this debrief is marked incomplete.</p></div>`;
@@ -1329,8 +1333,8 @@ function debriefHTML(){
     ${ST.halted?`<div class="dbsec"><h2>Harmful action</h2>${item(ST.halted.id,'harmful','p-harm')}</div>`:''}
 
     <div class="dbsec"><h2>Critical actions</h2>
-      ${done.length?done.map(id=>item(id,'critical','p-crit')).join(''):'<p>No critical action was completed.</p>'}
-      ${omit.length?'<h3>Missed</h3>'+omit.map(id=>item(id,'not done','p-harm')).join(''):''}
+      ${done.length?done.map(id=>item(id,'critical','p-crit',dispExp(id))).join(''):'<p>No critical action was completed.</p>'}
+      ${omit.length?'<h3>Missed</h3>'+omit.map(id=>item(id,'not done','p-harm',dispExp(id))).join(''):''}
       ${[...ST.fuOutstanding].length?'<h3>Follow-up obligations left open</h3>'+[...ST.fuOutstanding].map(fid=>
         `<div class="item"><div class="hd"><span class="nm">${esc(fid.replace(/_/g,' '))}</span>
         <span class="pill p-harm">not done</span></div>
@@ -1338,6 +1342,13 @@ function debriefHTML(){
 
     ${rec.length?`<div class="dbsec"><h2>Also worth doing</h2>
       ${rec.map(id=>item(id,'recommended','p-ok')).join('')}</div>`:''}
+
+    ${dis.length?`<div class="dbsec"><h2>Wrong here, and worth understanding why</h2>
+      <p class="sub">These did not stop the case and some of them will have moved a number
+      in the direction you wanted. Being wrong is not the same as being dangerous, and a
+      drug that produces the effect you asked for can still be the wrong drug for the
+      disease underneath it.</p>
+      ${dis.map(id=>item(id,'discouraged','p-warn')).join('')}</div>`:''}
 
     <div class="dbsec"><h2>Summary</h2>
       <p class="sub">${ST.halted?'Halted':(ST.earlyExit?'Ended early, incomplete':'Completed')} at ${mmss(ST.now)},
@@ -1382,7 +1393,7 @@ function debriefHTML(){
       <table class="dom"><tr><th>Critical action</th><th>How it happened</th></tr>
       ${[...ST.expected].map(id=>{
         const s2=ST.taken.has(id)?(ST.prompted.has(id)?['after a prompt','p-warn']:['on your own','p-ok']):['omitted','p-harm'];
-        return `<tr><td>${esc(dispName(id))}</td><td><span class="pill ${s2[1]}">${s2[0]}</span></td></tr>`;
+        return `<tr><td>${esc(dispExp(id))}</td><td><span class="pill ${s2[1]}">${s2[0]}</span></td></tr>`;
       }).join('')}</table>
       <div class="note">A prompted action counts as done. This is here so you know where you needed help,
       not as a penalty.</div></div>
