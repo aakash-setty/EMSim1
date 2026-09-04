@@ -1,5 +1,5 @@
 /* ============================================================
-   Audio. Two channels:
+   Audio. Three channels:
 
    1. A continuous heartbeat. Tempo follows the heart rate on the monitor and
       pitch follows its oxygen saturation: A5 at the reference saturation, one
@@ -21,9 +21,23 @@
       existed. `irregularly_irregular` draws every R-R interval independently, so
       there is no underlying periodicity for a listener to lock onto, which is
       the thing that distinguishes it from a regular beat with jitter added.
-   2. A short two-note trill whenever the nurse issues a prompt. This is a person
-      speaking rather than equipment, so it is not gated on the monitor and fires
-      from the first prompt whether or not anything is attached.
+   2. A short two-note trill whenever the nurse issues a prompt, and a shorter,
+      softer cue for every other nurse line. These are a person speaking rather
+      than equipment, so neither is gated on the monitor and both fire from the
+      first line whether or not anything is attached.
+   3. Ward ambience, looping under everything at a very low level. It is the room
+      rather than the patient or the nurse, so it is gated on neither the monitor
+      nor anything clinical: it runs from the moment a case begins until the moment
+      it ends, and it is silent everywhere else, which means the welcome screen,
+      the splash, and the debrief. That last one is deliberate. The debrief is
+      reading rather than resuscitating, and a room that is still humming while a
+      learner reads about what they missed is the interface failing to notice that
+      the case is over.
+
+      It changes one thing that was previously load-bearing: the room is no longer
+      silent before the monitor is attached. What is missing then is the MONITOR's
+      sound, which is the point being made, and a ward that was silent until
+      somebody attached a monitor was always the less truthful half of it.
 
    The pitch mapping makes desaturation audible before the resident looks at
    the monitor, which is the intended effect but is also a teaching decision
@@ -42,8 +56,44 @@ const AUDIO = (() => {
      prevMs is the interval that has just elapsed, which is what the loudness of the
      next beat is derived from. */
   let ctx = null, master = null, on = true, beatTimer = null, prevMs = null;
+  /* The room. `scene` is the only thing that decides whether it plays, and it is set by
+     the interface at the two moments that matter rather than inferred from anything the
+     patient is doing. */
+  let ambBuffer = null, ambSource = null, ambGain = null, ambState = 'unloaded';
+  let scene = 'idle';
 
   const HR_MIN = 20, HR_MAX = 220;   /* the validator's plausible range for a phase */
+
+  /* Output levels, in one place because they are relative to each other rather than
+     absolute, and every adjustment so far has been to the balance rather than to a single
+     sound. All three were set by ear while playing a case; the beat was halved and the
+     cue doubled on the author's instruction after doing so.
+
+     **Peak gain is not perceived loudness and these numbers should not be read as a
+     ranking.** The beat is a long low thump with a falling pitch, the cue is two very
+     short components an octave up, and the trill is two sustained tones higher still, so
+     a beat at 0.15 sits under a cue at 0.110 to the ear even though the number is larger.
+     What the numbers are good for is the invariants the test suite checks: the second
+     heart sound stays under the first, the cue is not so far under the beat that a beat
+     landing at the same moment masks it, and nothing is loud enough to dominate.
+
+     The heartbeat is the one that has to be right, because it is the only sound that
+     never stops. A heartbeat pitched to be noticeable on the first beat is unbearable by
+     the two hundredth. */
+  const LEVEL = { beatLub: 0.15, beatDub: 0.001, cueLow: 0.110, cueHigh: 0.056,
+                  trillLow: 0.22, trillHigh: 0.22, ambience: 0.03 };
+  /* beatDub is effectively off, on the author's instruction: the beat is meant to read as
+     one sound rather than as lub-dub. It is left in the graph at a level nobody will hear
+     rather than removed, because the second thump is also what sets the spacing the first
+     one is heard against, and because restoring it is then one number rather than a
+     structural change. Zero is not available: the envelope ramps exponentially and an
+     exponential ramp to zero is undefined. */
+  /* The ambience figure is against a known reference rather than against whatever the
+     recording happened to be: the loop is peak-normalised to 0.95 at build time, so it
+     sits at about -18.6 dBFS on its own and at roughly -51 dBFS once this gain and the
+     master are applied. That is the number to change if the room is too loud or too
+     quiet, and it means something because the asset is normalised. */
+  const AMB_FADE_IN = 1.6, AMB_FADE_OUT = 0.7;
 
   /* ---------- the interval model ----------
      Exposed rather than private, because it is a claim about physiology that a
@@ -112,7 +162,101 @@ const AUDIO = (() => {
     master = ctx.createGain();
     master.gain.value = 0.85;
     master.connect(ctx.destination);
+    /* Its own gain node, so the room can be faded in and out without touching anything
+       else and so a future control could mute it on its own. */
+    ambGain = ctx.createGain();
+    ambGain.gain.value = 0;
+    ambGain.connect(master);
+    loadAmbience();
     return true;
+  }
+
+  /* ---------- the room ----------
+     Decoded once, from base64 in the page rather than from a file, because the whole
+     product is one HTML file and a second request is a second thing that can fail on a
+     hospital network. Every failure path ends at 'absent', which is a simulator with a
+     silent room and nothing else different: a case must never fail to start because a
+     decoder did not like an mp3. */
+  function loadAmbience() {
+    if (ambState !== 'unloaded' || !ctx) return;
+    const uri = (typeof AMBIENCE === 'string') ? AMBIENCE : '';
+    const comma = uri.indexOf(',');
+    if (comma < 0) { ambState = 'absent'; return; }
+    ambState = 'loading';
+    let bytes;
+    try {
+      const bin = atob(uri.slice(comma + 1));
+      bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    } catch (e) { ambState = 'absent'; return; }
+    /* decodeAudioData both returns a promise and calls the callback in current
+       browsers, and only calls the callback in older ones, so both are wired and the
+       handler is idempotent. */
+    const done = buf => {
+      if (ambState !== 'loading') return;
+      ambBuffer = buf; ambState = 'ready';
+      sync();
+    };
+    const failed = () => { if (ambState === 'loading') ambState = 'absent'; };
+    try {
+      const p = ctx.decodeAudioData(bytes.buffer, done, failed);
+      if (p && p.then) p.then(done, failed);
+    } catch (e) { failed(); }
+  }
+
+  function startAmbience() {
+    if (ambState !== 'ready' || ambSource || !on || !ctx || !ambGain) return;
+    const src = ctx.createBufferSource();
+    src.buffer = ambBuffer;
+    src.loop = true;
+    /* Loop points a little inside the buffer. An mp3 decodes with a short run of
+       encoder padding at each end that is not part of the recording, and looping across
+       it is a click. The loop was crossfaded at build time so the material either side
+       of the seam already matches; the material is broadband room noise with no rhythm,
+       so losing fifty milliseconds at each end of forty-five seconds costs nothing and
+       removes the one thing that could make the seam audible. */
+    const pad = Math.min(0.05, src.buffer.duration / 8);
+    src.loopStart = pad;
+    src.loopEnd = Math.max(pad + 0.5, src.buffer.duration - pad);
+    src.connect(ambGain);
+    src.start(0, pad);
+    ambSource = src;
+    ramp(LEVEL.ambience, AMB_FADE_IN);
+  }
+
+  function stopAmbience() {
+    if (!ambSource || !ctx) return;
+    const src = ambSource;
+    ambSource = null;
+    ramp(0.0001, AMB_FADE_OUT);
+    try { src.stop(ctx.currentTime + AMB_FADE_OUT + 0.05); } catch (e) { /* already stopped */ }
+  }
+
+  function ramp(to, secs) {
+    if (!ambGain) return;
+    const t = ctx.currentTime;
+    try {
+      ambGain.gain.cancelScheduledValues(t);
+      ambGain.gain.setValueAtTime(ambGain.gain.value, t);
+      ambGain.gain.linearRampToValueAtTime(to, t + secs);
+    } catch (e) { ambGain.gain.value = to; }
+  }
+
+  /* Started and stopped by the scene and by nothing else. Called from sync(), which the
+     monitor render calls sixty times a second, so it also recovers the room if the
+     context was unlocked or the sound switched on part way through a case. */
+  function ambienceUpkeep() {
+    if (scene === 'case' && on) { loadAmbience(); startAmbience(); }
+    else stopAmbience();
+  }
+
+  /* The interface says which of two situations we are in. Nothing is inferred: a case is
+     running between Begin and the debrief, and everything else, including the splash of
+     a case that has been chosen but not started, is idle. */
+  function setScene(s) {
+    scene = (s === 'case') ? 'case' : 'idle';
+    if (scene === 'idle') { stopBeat(); stopAmbience(); return; }
+    if (on && ctx) { loadAmbience(); startAmbience(); sync(); }
   }
 
   /* A5 at the reference saturation, one semitone per percent below it. */
@@ -158,8 +302,8 @@ const AUDIO = (() => {
   function beat(hz, intervalMs, gain) {
     const t = ctx.currentTime + 0.01;
     const gap = Math.min(0.16, (intervalMs / 1000) * 0.42);
-    thump(hz, t, 0.30 * gain, Math.min(0.14, gap * 0.9));
-    thump(hz * 0.75, t + gap, 0.17 * gain, Math.min(0.11, gap * 0.7));
+    thump(hz, t, LEVEL.beatLub * gain, Math.min(0.14, gap * 0.9));
+    thump(hz * 0.75, t + gap, LEVEL.beatDub * gain, Math.min(0.11, gap * 0.7));
   }
 
   /* One beat, then the next appointment. Everything is read fresh here rather than
@@ -215,28 +359,39 @@ const AUDIO = (() => {
      than in two-beat-per-minute steps. */
   function sync() {
     if (!on || !ctx) return;
-    if (!currentVitals()) { if (beatTimer !== null) stop(); return; }
+    ambienceUpkeep();
+    /* stopBeat, not stop. Losing the monitor silences the heartbeat and must not silence
+       the room: the resident has taken equipment off a patient, not left the ward. */
+    if (!currentVitals()) { if (beatTimer !== null) stopBeat(); return; }
     if (beatTimer === null) tick();
   }
 
-  function stop() {
+  function stopBeat() {
     clearTimeout(beatTimer);
     beatTimer = null;
     prevMs = null;
+  }
+
+  /* Everything. This is what the interface calls when a case ends and when it is torn
+     down, and it is the only thing that has to be right for the requirement that no
+     sound survives into the debrief or back to the welcome screen. */
+  function stop() {
+    stopBeat();
+    stopAmbience();
   }
 
   /* Nurse prompt: a rising two-note trill, deliberately unlike the heartbeat. */
   function trill() {
     if (!on || !ensure()) return;
     const t = ctx.currentTime + 0.01;
-    [[1318.5, 0], [1760.0, 0.09]].forEach(([hz, off]) => {
-      const o = ctx.createOscillator(), g = ctx.createGain();
+    [[1318.5, 0, LEVEL.trillLow], [1760.0, 0.09, LEVEL.trillHigh]].forEach(([hz, off, g]) => {
+      const o = ctx.createOscillator(), gn = ctx.createGain();
       o.type = 'triangle';
       o.frequency.setValueAtTime(hz, t + off);
-      g.gain.setValueAtTime(0.0001, t + off);
-      g.gain.exponentialRampToValueAtTime(0.22, t + off + 0.015);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + off + 0.14);
-      o.connect(g).connect(master);
+      gn.gain.setValueAtTime(0.0001, t + off);
+      gn.gain.exponentialRampToValueAtTime(g, t + off + 0.015);
+      gn.gain.exponentialRampToValueAtTime(0.0001, t + off + 0.14);
+      o.connect(gn).connect(master);
       o.start(t + off);
       o.stop(t + off + 0.16);
     });
@@ -246,10 +401,10 @@ const AUDIO = (() => {
      metoprolol", a result landing, a blocked action. It exists so that a line nobody was
      looking at still registers, and the whole design problem is that it fires far more
      often than the trill does and therefore must not be noticeable enough to irritate.
-     Three things keep it that way: it is brief, it is roughly a fifth of the trill's
-     amplitude, and repeats inside a quarter of a second are dropped, because a submitted
-     basket of orders narrates several lines at one instant and a burst of clicks would
-     read as a fault. Two components a fifth of an octave apart, both decaying inside
+     Three things keep it that way: it is brief, it is about half the trill's amplitude,
+     and repeats inside a quarter of a second are dropped, because a submitted basket of
+     orders narrates several lines at one instant and a burst of clicks would read as a
+     fault. Two components a fifth of an octave apart, both decaying inside
      forty milliseconds, which reads as a soft wooden tick rather than as a tone. */
   let lastCue = 0;
   function cue() {
@@ -258,7 +413,7 @@ const AUDIO = (() => {
     if (wall - lastCue < 250) return;
     lastCue = wall;
     const t = ctx.currentTime + 0.01;
-    [[520, 0.055, 0.030], [780, 0.028, 0.022]].forEach(([hz, g, dur]) => {
+    [[520, LEVEL.cueLow, 0.030], [780, LEVEL.cueHigh, 0.022]].forEach(([hz, g, dur]) => {
       const o = ctx.createOscillator(), gn = ctx.createGain();
       o.type = 'triangle';
       o.frequency.setValueAtTime(hz, t);
@@ -284,10 +439,10 @@ const AUDIO = (() => {
   function start() {
     if (!ensure()) return false;
     on = true;
-    /* Clear first. Calling start() while a beat is already pending would otherwise
-       leave two chains running against each other, and the only symptom would be a
-       beat that sounds subtly doubled. */
-    stop();
+    /* Clear the beat first. Calling start() while one is already pending would leave
+       two chains running against each other, and the only symptom would be a beat that
+       sounds subtly doubled. */
+    stopBeat();
     sync();
     return true;
   }
@@ -304,7 +459,7 @@ const AUDIO = (() => {
   }
 
   return {
-    start, unlock, toggle, sync, trill, cue, stop, intervalModel,
+    start, unlock, toggle, sync, trill, cue, stop, setScene, intervalModel,
     get running() { return on && !!ctx && ctx.state === 'running'; },
     get enabled() { return on; },
     /* exposed so the interface can state the mapping rather than hide it */
@@ -319,6 +474,15 @@ const AUDIO = (() => {
            + (r && r.label ? `, ${r.label}` : '');
     },
     /* The rhythm the beat is currently using, for the interface and for tests. */
-    get rhythm() { return rhythmNow(); }
+    get rhythm() { return rhythmNow(); },
+    /* Exposed for the same reason describe() is: the balance between the sounds is a
+       decision, and a decision nothing can check is a decision that drifts. */
+    get levels() { return Object.assign({}, LEVEL); },
+    /* For the interface and for tests. `state` is unloaded, loading, ready or absent;
+       absent is a build with no ambience asset or a decoder that refused it, and is a
+       working simulator rather than an error. */
+    get ambience() {
+      return { scene, state: ambState, playing: !!ambSource, level: LEVEL.ambience };
+    }
   };
 })();

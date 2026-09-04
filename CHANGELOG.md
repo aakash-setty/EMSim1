@@ -5,6 +5,44 @@ is usable with learners.
 
 ---
 
+## The room has a sound, and it stops when the case does
+
+**Ward ambience loops under everything at a very low level while a case is running.** The
+author supplied the recording; a build step cuts a 45-second loop from a steady stretch of
+it, crossfades the tail onto the head with an equal-power curve so the seam is continuous
+in level as well as in sample value, and peak-normalises it so the gain figure in the audio
+module is against a known reference rather than against whatever that particular recording
+happened to be. `engine/assets/make-ambience.py` records all three decisions; the source
+recording is kept beside it so the loop can be recut.
+
+**It is the room rather than the patient or the nurse**, so it is gated on neither the
+monitor nor anything clinical. It runs from Begin to the debrief and is silent everywhere
+else: the welcome screen, the splash of a case chosen and not started, and the debrief
+itself. That last one is the requirement worth stating as a rule. A debrief is reading
+rather than resuscitating, and a room still humming under a learner reading about what they
+missed is the interface failing to notice the case is over. `AUDIO.setScene` is the whole
+mechanism, called at four sites, and the suite asserts against the built file that all four
+survive, because losing one would be silent in every other test.
+
+**It changes design 8.4b, and for the better.** The room is no longer silent before a
+monitor is attached. What is missing then is the MONITOR's sound, which is the whole of the
+point that gating was making, and a ward that fell silent until somebody attached a monitor
+was the less truthful half of it.
+
+**Nothing depends on it.** It is decoded once from base64 in the page, looped as a buffer
+with loop points set inside the mp3 encoder padding so the seam cannot click, and every
+failure path ends in a silent room rather than an error: a case must never fail to start
+because a decoder disliked an mp3. A checkout without `engine/ambience.txt` builds a
+working simulator that is 360 KB smaller, which matters because it is now by far the
+largest single asset in the file. The build went from 1.8 MB to 2.2 MB.
+
+**The second heart sound is effectively off**, at 0.001, on the author's instruction: the
+beat reads as one sound rather than as lub-dub. It is left in the graph at a level nobody
+will hear rather than removed, because it is also what sets the spacing the first sound is
+heard against, and because restoring it is then one number rather than a structural change.
+
+---
+
 ## One dose is a trial, two is a treatment
 
 **Flags can be granted on the Nth administration.** `flags_set_repeat` on a case action
@@ -41,9 +79,16 @@ rather than on a deadline, and said again on a redose.
 
 **Every nurse line now makes a sound.** A prompt keeps its trill; everything else gets a
 short soft cue. A line nobody was looking at is a line nobody read, and the banner is not
-where a resident's eyes are. The two are exclusive, the cue is about a fifth of the trill's
-amplitude, and repeats inside 250 ms are dropped so a submitted basket does not fire a
-burst of clicks.
+where a resident's eyes are. The two are exclusive, and repeats inside 250 ms are dropped
+so a submitted basket does not fire a burst of clicks.
+
+**The three levels moved into one block and were rebalanced by ear**, the cue doubled and
+the heartbeat halved on the author's instruction after playing a case. They are exposed on
+the audio module, because the balance between them is a decision and a decision nothing can
+check is a decision that drifts. The figures are not a ranking: peak gain is not perceived
+loudness, and a long low thump at 0.15 sits under two short high components at 0.11. The
+suite asserts the invariants instead, which are that the second heart sound stays under the
+first, that a cue cannot be masked by a beat landing on it, and that nothing dominates.
 
 ---
 

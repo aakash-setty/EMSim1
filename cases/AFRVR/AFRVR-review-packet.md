@@ -454,7 +454,7 @@ is yours.
 - [x] 31 authored scenarios walk end to end, including the do-nothing path, both
       deterioration branches, each rescue, every blocked prerequisite, every route to the
       halting action, and both coverage groups
-- [x] 296 engine assertions pass, including the four-step saturation ramp read off the
+- [x] 315 engine assertions pass, including the four-step saturation ramp read off the
       monitor at each step, the diuretic moving nothing, the thirty-second rate-control
       delay firing with no further action taken, a covered sibling satisfying the critical
       action without marking the covering button as pressed, the interval model preserving the mean
@@ -487,6 +487,13 @@ is yours.
 - [ ] the beat sounds irregular enough, and not so irregular that it reads as a fault.
       **Listen to it**, at 160 in the arrival phase and at 104 in the stabilised phase.
       This is the one item on this list that cannot be checked by reading anything
+- [ ] the balance between the sounds is right over a whole case rather than over a few
+      seconds. The heartbeat was halved, its second sound taken down to inaudible so the
+      beat reads as one, the nurse's cue doubled, and ward ambience added underneath at
+      0.03. The beat and the room are the two to judge late rather than early, because
+      they are the only sounds that never stop
+- [ ] the room is silent everywhere it should be: on the welcome screen, on the splash
+      before Begin, and under the debrief, including after a harmful halt
 - [ ] the coverage groups are clinically sound, particularly binding metoprolol to the
       same tag as digoxin
 - [ ] magnesium replacement is correctly recommended rather than critical, or it is not
@@ -575,3 +582,7 @@ a case.
     the running chart. The moment such a line matters is half a minute after it was said.
 19. **Only prompts made a sound.** Every nurse line now does: a prompt trills as before,
     everything else gets a short soft cue, and the two are exclusive.
+20. **The room had no sound at all.** Ward ambience now loops under a running case and
+    stops with it. It is not case content and nothing in this pack depends on it, but it
+    is the reason the silence before the monitor is attached is now the monitor's silence
+    rather than the ward's, which is what that gating was always trying to say.

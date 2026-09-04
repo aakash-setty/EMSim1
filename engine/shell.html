@@ -877,10 +877,17 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 
 <script type="application/json" id="shared-data">__SHARED_JSON__</script>
 <script type="application/json" id="cases-data">__CASES_JSON__</script>
+<!-- The room. A 45-second loop of ward ambience, base64 in its own block rather than in
+     shared-data so that the test harness and anything else parsing the configuration does
+     not carry a third of a megabyte it has no use for. Replaced at build time from
+     engine/ambience.txt, the same way __ROOM_BG__ is, and empty in a build made without
+     that file, which is a build with a silent room and nothing else different. -->
+<script type="application/json" id="ambience-data">__AMBIENCE_JSON__</script>
 <script>
 "use strict";
 const SHARED = JSON.parse(document.getElementById('shared-data').textContent);
 const CASES  = JSON.parse(document.getElementById('cases-data').textContent);
+const AMBIENCE = JSON.parse(document.getElementById('ambience-data').textContent);
 </script>
 </body>
 </html>

@@ -1251,7 +1251,10 @@ setInterval(()=>{
 
 /* ---------- ending ---------- */
 function finish(){
-  refold(); ENDED=true; AUDIO.stop();
+  /* The room goes quiet with the case. A debrief is reading rather than resuscitating,
+     and ambience still humming under it is the interface not noticing the case is over.
+     setScene('idle') stops the heartbeat and the room together. */
+  refold(); ENDED=true; AUDIO.setScene('idle');
   el('playview').classList.add('hidden');
   const v=el('endview'); v.classList.remove('hidden');
   v.innerHTML='<div class="endwrap">'+(ST.halted?haltCard():'')+debriefHTML()+'</div>';
@@ -1264,7 +1267,7 @@ function restart(){
   Object.keys(BASKET).forEach(k=>delete BASKET[k]);
   Object.keys(EXPANDED).forEach(k=>delete EXPANDED[k]);
   PENDING_HANDOFF={disposition:null,diagnosis:null};
-  AUDIO.stop();
+  AUDIO.setScene('idle');
   el('endview').classList.add('hidden'); el('playview').classList.remove('hidden');
   el('splash').classList.remove('hidden');
   setPanels(true,false);
@@ -1609,6 +1612,7 @@ function chooseCase(i){
   renderSplash();
 }
 function backToPicker(){
+  AUDIO.setScene('idle');
   el('splash').classList.add('hidden');
   el('picker').classList.remove('hidden');
   WL_SEL=-1;                          // returning must not land on a stale highlight
@@ -1681,6 +1685,9 @@ function begin(){
   STARTED=true; T0=Date.now();
   el('splash').classList.add('hidden');
   AUDIO.unlock();
+  /* The room starts here rather than on the splash. A case that has been chosen and not
+     started is not a case anybody is in. */
+  AUDIO.setScene('case');
   render();
   requestAnimationFrame(tick);
 }

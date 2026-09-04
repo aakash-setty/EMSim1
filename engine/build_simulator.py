@@ -366,6 +366,16 @@ def main():
     # 240px square, quantised to 96 colours: 32 KB, against 56 KB for the unquantised
     # crop, and the difference is invisible at the 62px it renders at.
     nurse_av = open(os.path.join(HERE, "nurse-avatar.txt")).read().strip()
+    # Ward ambience, base64 mp3. Derived from the author's recording by
+    # engine/assets/make-ambience.py: 45 seconds taken from a steady stretch, the tail
+    # crossfaded onto the head so it repeats without a seam, peak-normalised so that the
+    # gain figure in SHARED.audio.rhythm's neighbour LEVEL block means something, and
+    # encoded mono at 48 kbps because it plays at about -51 dBFS and nobody will ever
+    # hear the codec. Optional: a checkout without it builds a simulator with a silent
+    # room and no other difference, which matters because it is by far the largest single
+    # asset in the file.
+    amb_path = os.path.join(HERE, "ambience.txt")
+    ambience = (open(amb_path).read().strip() if os.path.exists(amb_path) else "")
     # semantic.js declares `const SEM` and ui.js registers a listener on it at top
     # level, so it MUST come before ui.js. Reversed, the bundle throws before the
     # first render and the page is blank.
@@ -386,6 +396,8 @@ def main():
     shell = shell.replace("__AVATAR_M__", "data:image/png;base64," + avatar_m)
     shell = shell.replace("__AVATAR_F__", "data:image/png;base64," + avatar_f)
     shell = shell.replace("__NURSE_AVATAR__", "data:image/png;base64," + nurse_av)
+    shell = shell.replace("__AMBIENCE_JSON__",
+                          jsafe("data:audio/mpeg;base64," + ambience) if ambience else '""')
     shell = shell.replace("__SHARED_JSON__", jsafe(shared))
     shell = shell.replace("__CASES_JSON__", jsafe(packs))
     shell = shell.replace("</script>\n</body>", bundle + "</script>\n</body>")

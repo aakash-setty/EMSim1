@@ -39,12 +39,13 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `engine.js` | The fold, the condition evaluator, the resolvers |
 | `ui.js` | Rendering, the panel state machine, the interview matcher |
 | `semantic.js` | Optional in-browser embedding model. Loads in the background, may never load |
-| `audio.js` | Heartbeat and prompt tones |
+| `audio.js` | Heartbeat, nurse tones and the looping ward ambience |
 | `room-bg.txt` | The blurred room background as a data URI |
 | `hero-bg.txt` | The welcome screen photograph as a data URI |
 | `avatar-male.txt`, `avatar-female.txt` | Patient silhouettes, used as CSS masks so they follow the theme |
 | `nurse-avatar.txt` | The nurse's portrait, beside the line she speaks. Full colour, not a mask |
-| `assets/` | Sources for the derived assets above, kept so a crop can be redone |
+| `ambience.txt` | A 45-second ward ambience loop as base64 mp3. Optional; without it the room is silent |
+| `assets/` | Sources for the derived assets above, kept so a crop or a recut can be redone |
 
 The bundle order in `build_simulator.py` is load-bearing: `semantic.js` declares `SEM`
 and `ui.js` registers on it at top level, so reversing them produces a blank page.
@@ -177,6 +178,31 @@ the flag, and there is one deadline rather than two that drift apart. Authoring 
 what none of it can do, which is worth reading first, since each of those looks
 authorable until it is tried.
 
+## The room
+
+A 45-second loop of ward ambience runs under everything at a very low level, from the
+moment a case begins until the moment it ends. **It is the room rather than the patient or
+the nurse, so it is gated on neither the monitor nor anything clinical**, and it is silent
+everywhere a case is not running: the welcome screen, the splash, and the debrief. That
+last one is deliberate. A debrief is reading rather than resuscitating, and a room still
+humming under it is the interface not noticing the case is over. The interface says which
+of the two situations it is in through `AUDIO.setScene`, at four call sites, and nothing
+is inferred from anything else.
+
+It does change one thing that used to be load-bearing: **the room is no longer silent
+before the monitor is attached.** What is missing then is the monitor's sound, which is the
+point being made, and a ward that was silent until somebody attached a monitor was always
+the less truthful half of it.
+
+The asset is derived from the author's recording by `engine/assets/make-ambience.py`, which
+records the three decisions in it: where the loop is cut from, why the seam is an
+equal-power crossfade rather than a linear one, and why it is peak-normalised, which is
+what makes the gain figure in `audio.js` mean something. It is decoded once from base64 in
+the page and looped as an `AudioBuffer` with the loop points set a little inside the
+buffer, so mp3 encoder padding cannot click. Every failure path ends in a silent room
+rather than an error: a case must never fail to start because a decoder disliked an mp3,
+and a checkout with no `ambience.txt` builds a working simulator that is 360 KB smaller.
+
 ## The heartbeat, and how it is allowed to be uneven
 
 The beat is a chain: each beat reads the current rate, saturation and rhythm and schedules
@@ -297,7 +323,7 @@ only as conclusions. They are not a source of truth for how the system behaves.
 ## Status
 
 All three cases pass the validator with no errors. CHFE walks 13 authored scenarios,
-MGCA 26 and AFRVR 31. CHFE passes 212 engine assertions, MGCA 222 and AFRVR 296, which is
+MGCA 26 and AFRVR 31. CHFE passes 231 engine assertions, MGCA 241 and AFRVR 315, which is
 the same case-agnostic suite plus each pack's own; each passes 39 validator negative
 tests. Each carries one warning, in every case about actions the catalog does not
 hold, which the prototype renders anyway so the gap stays visible. Those are catalog change

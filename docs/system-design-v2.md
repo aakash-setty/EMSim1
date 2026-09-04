@@ -711,7 +711,7 @@ This is display gating and only display gating. `st.vitals` is computed by the f
 
 ### 8.5 Audio
 
-Two channels, both derived from the current phase's authored vitals with any active vital effect applied (2.6), and neither stored. The heartbeat is additionally gated on the monitor (8.4b); the prompt tone is not.
+Three channels. The heartbeat and the nurse's tones are derived from the current phase's authored vitals with any active vital effect applied (2.6), and neither is stored. The heartbeat is additionally gated on the monitor (8.4b); the nurse's tones are not, because she is a person rather than equipment. The third is the room, and it is gated on neither.
 
 **Continuous heartbeat.** A two-thump beat at a mean interval of `60 / heart_rate` seconds, pitched by oxygen saturation:
 
@@ -744,9 +744,19 @@ An uneven rhythm additionally varies the loudness of each beat with the length o
 
 **Prompt tone.** A short two-note trill on nurse prompts and follow-up prompts, timbrally distinct from the heartbeat.
 
-**Utterance cue.** Every other nurse line makes a shorter, softer sound: an action narrating, a result landing, a blocked attempt, a `nurse_alert`. A line nobody was looking at is a line nobody read, and the nurse's banner is not where a resident's eyes are. The design constraint is that it fires far more often than the trill and therefore must not be noticeable enough to irritate: it is brief, roughly a fifth of the trill's amplitude, and repeats inside 250 ms are dropped, because a submitted basket narrates several lines at one instant and a burst of clicks reads as a fault. **The two are exclusive.** A prompt trills and does not cue, because two sounds on one line would be worse than either.
+**Utterance cue.** Every other nurse line makes a shorter, softer sound: an action narrating, a result landing, a blocked attempt, a `nurse_alert`. A line nobody was looking at is a line nobody read, and the nurse's banner is not where a resident's eyes are. The design constraint is that it fires far more often than the trill and therefore must not be noticeable enough to irritate: it is brief, about half the trill's amplitude, and repeats inside 250 ms are dropped, because a submitted basket narrates several lines at one instant and a burst of clicks reads as a fault. **The two are exclusive.** A prompt trills and does not cue, because two sounds on one line would be worse than either.
+
+**Levels are relative and are set by ear.** The three sounds share one gain block in the audio module and are exposed on the module for inspection, because the balance between them is a decision and a decision nothing can check is a decision that drifts. Peak gain is not perceived loudness and the figures should not be read as a ranking: the beat is a long low thump with a falling pitch, the cue two very short components an octave up, the trill two sustained tones higher still. What the figures are good for is the invariants the suite asserts, which are that the second heart sound stays under the first, that a cue cannot be masked by a beat landing at the same instant, and that nothing dominates. **The heartbeat is the one that has to be right**, because it is the only sound that never stops: pitched to be noticeable on the first beat, it is unbearable by the two hundredth.
 
 **This partly undercuts section 2.2 and the decision should be conscious.** Prompt text is forbidden from implying the patient is deteriorating. A distinct alert sound attached only to prompts teaches the resident that the tone means "you have missed something", which is the information the text is not allowed to carry. If that is unacceptable, sound every nurse utterance rather than prompts alone.
+
+**Ward ambience.** A 45-second loop under everything at a very low level, running from the moment a case begins until the moment it ends and silent everywhere else, which means the welcome screen, the splash of a case that has been chosen and not started, and the debrief. The interface declares which of the two situations it is in; nothing about the room is inferred from the patient, the monitor or the clock.
+
+**The debrief being silent is the part worth stating as a rule.** A debrief is reading rather than resuscitating, and continuing to play a room under a learner reading about what they missed is the interface failing to notice the case is over. The same applies to a case that has ended in a halt.
+
+**It changes 8.4b, and the change is an improvement.** The room is no longer silent before a monitor is attached: what is missing then is the monitor's sound, which is the whole of the point being made, and a ward that fell silent until somebody attached a monitor was the less truthful half of it. Nothing else about 8.4b moves.
+
+**The asset is derived, normalised and optional.** It is peak-normalised at build time so the gain figure means something against a known reference rather than against whatever a particular recording happened to be; it is crossfaded so it repeats without a seam; it is decoded once from base64 in the page and looped as a buffer with loop points set inside the encoder padding. Every failure path ends in a silent room rather than an error, and a build made without the asset is a working simulator that is smaller. **No case should depend on it**, which is the same rule as nothing depending on sound at all.
 
 **Constraints.** Browsers will not start audio without a user gesture, so the context is created on the first interaction and the control reports actual state rather than intent. Muting must persist across subsequent interactions. Nothing in the interface may depend on sound alone; the monitor carries the same information visually and must continue to.
 

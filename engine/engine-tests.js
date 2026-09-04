@@ -537,6 +537,17 @@ section('the running chart');
   chk('a prompt trills and every other line cues',
       /if\(LASTNURSE>=0\)\{if\(n\.kind==='prompt'\)AUDIO\.trill\(\);elseAUDIO\.cue\(\);\}/.test(flat));
 
+  /* The room is started and stopped by the interface at four points and by nothing else.
+     Asserted against the built file, because the requirement is that no sound survives
+     into the debrief or back to the welcome screen, and losing one of these calls would
+     be silent in every other test here. */
+  chk('the room starts when a case begins', /AUDIO\.setScene\('case'\)/.test(flat));
+  chk('and stops at the debrief, on restart, and back at the picker',
+      (flat.match(/AUDIO\.setScene\('idle'\)/g) || []).length >= 3,
+      String((flat.match(/AUDIO\.setScene\('idle'\)/g) || []).length));
+  chk('the ambience asset is embedded', /id="ambience-data"/.test(html) &&
+      /data:audio\/mpeg;base64,/.test(html));
+
   /* The kinds the fold actually emits. A prompt is the one the chart exists for. */
   const promptAction = CRITICAL.find(id => A[id].prompt);
   if (promptAction) {
@@ -774,6 +785,24 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
     chk(`${name}: the floor clears the lub-dub gap`, floorMs > 160, String(floorMs));
   }
 
+  /* The balance between the three sounds is a decision, and a decision nothing can check
+     is a decision that drifts. These are the invariants rather than a ranking: peak gain
+     is not perceived loudness, and the beat is long and low where the cue and the trill
+     are short and high, so the numbers do not order the way the ear does. */
+  if (AUDIO.levels) {
+    const L = AUDIO.levels;
+    chk('the prompt trill is the loudest single component',
+        L.trillLow >= L.cueLow && L.trillLow >= L.beatLub, JSON.stringify(L));
+    chk('the second heart sound is quieter than the first', L.beatDub < L.beatLub);
+    chk('the cue is quieter than the trill, since it fires far more often',
+        L.cueLow < L.trillLow, JSON.stringify(L));
+    /* A cue landing on the same instant as a beat must not be swallowed by it. */
+    chk('a cue cannot be masked by a beat', L.cueLow > L.beatLub * 0.6,
+        (L.cueLow / L.beatLub).toFixed(2) + ' of the beat');
+    chk('nothing is loud enough to dominate the mix',
+        Object.values(L).every(v => v > 0 && v < 0.5), JSON.stringify(L));
+  }
+
   /* Whatever the case under test authors has to be a name the vocabulary holds.
      The validator enforces this too; it is repeated here because the validator reads
      the case file and this reads the built artefact, and a build step between them is
@@ -807,15 +836,37 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
   chk('audio available for the loop test', false);
 } else {
   const realST = global.ST, realSetT = global.setTimeout, realClearT = global.clearTimeout;
-  const realWindow = global.window, realPHASE = global.PHASE;
+  const realWindow = global.window, realPHASE = global.PHASE, realAmb = global.AMBIENCE;
   try {
     const sink = { connect: x => x };
     const osc = () => ({ type: '', frequency: { setValueAtTime(){}, exponentialRampToValueAtTime(){} },
                          connect: x => x, start(){}, stop(){} });
-    const gain = () => ({ gain: { value: 0, setValueAtTime(){}, exponentialRampToValueAtTime(){} },
+    const gain = () => ({ gain: { value: 0, setValueAtTime(){}, exponentialRampToValueAtTime(){},
+                                 linearRampToValueAtTime(){}, cancelScheduledValues(){} },
                           connect: x => x });
+    const bufSrc = () => ({ buffer: null, loop: false, loopStart: 0, loopEnd: 0,
+                            connect: x => x, start(){}, stop(){} });
     const stubCtx = { state: 'running', currentTime: 0, destination: sink,
-                      resume(){}, createGain: gain, createOscillator: osc };
+                      resume(){}, createGain: gain, createOscillator: osc,
+                      createBufferSource: bufSrc,
+                      /* No ambience asset reaches the harness, so decoding is never
+                         attempted; present so a call would fail loudly rather than
+                         silently if that ever changed. */
+                      decodeAudioData(){ throw new Error('no decoder in the harness'); } };
+    /* A fake asset and a fake decoder, so the room can be exercised without an mp3 or a
+       real audio context. The decoder deliberately BOTH calls the callback and resolves a
+       promise, which is what a current browser does and which would decode twice if the
+       handler were not idempotent. */
+    let decodes = 0, sources = 0;
+    stubCtx.decodeAudioData = (ab, ok) => {
+      decodes++;
+      const buf = { duration: 45 };
+      if (ok) ok(buf);
+      return Promise.resolve(buf);
+    };
+    const realBufSrc = stubCtx.createBufferSource;
+    stubCtx.createBufferSource = () => { sources++; return realBufSrc(); };
+    global.AMBIENCE = 'data:audio/mpeg;base64,QUJDRA==';
     global.window = { AudioContext: function () { return stubCtx; } };
 
     /* Virtual clock. One pending timer at most is the property under test, so the
@@ -879,9 +930,41 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
     chk('reattaching restarts it', pending.length === 1, String(pending.length));
     AUDIO.stop();
     chk('stop leaves nothing pending', pending.length === 0, String(pending.length));
+
+    /* ---- the room ---- */
+    chk('the ambience decoded once, not twice',
+        AUDIO.ambience.state === 'ready' && decodes === 1,
+        AUDIO.ambience.state + ', ' + decodes + ' decodes');
+    chk('it is silent until a case begins',
+        !AUDIO.ambience.playing && AUDIO.ambience.scene === 'idle',
+        JSON.stringify(AUDIO.ambience));
+    AUDIO.setScene('case');
+    chk('it plays once a case begins', AUDIO.ambience.playing);
+    chk('and at the level the case asked for', AUDIO.ambience.level === AUDIO.levels.ambience);
+    const afterStart = sources;
+    AUDIO.setScene('case'); AUDIO.sync(); AUDIO.sync();
+    chk('only ever one loop is running', sources === afterStart, String(sources - afterStart));
+    /* The room is not the monitor. Taking equipment off a patient is not leaving the ward. */
+    ST.monitoring = null; AUDIO.sync();
+    chk('losing the monitor silences the heartbeat and not the room',
+        pending.length === 0 && AUDIO.ambience.playing);
+    ST.monitoring = { t: 0 };
+    AUDIO.setScene('idle');
+    chk('it stops when the case does', !AUDIO.ambience.playing);
+    chk('and the heartbeat stops with it', pending.length === 0, String(pending.length));
+    AUDIO.setScene('case');
+    AUDIO.stop();
+    chk('stop() silences the room as well as the beat', !AUDIO.ambience.playing);
+    AUDIO.setScene('case');
+    AUDIO.toggle();
+    chk('switching the sound off silences the room', !AUDIO.ambience.playing);
+    AUDIO.toggle();
+    chk('and switching it back on brings it back', AUDIO.ambience.playing);
+    AUDIO.setScene('idle');
+    AUDIO.stop();
   } finally {
     global.ST = realST; global.setTimeout = realSetT; global.clearTimeout = realClearT;
-    global.window = realWindow; global.PHASE = realPHASE;
+    global.window = realWindow; global.PHASE = realPHASE; global.AMBIENCE = realAmb;
   }
 }
 
