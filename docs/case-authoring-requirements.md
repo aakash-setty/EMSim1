@@ -516,9 +516,9 @@ That transition fires **on its own**, at the moment the flag lapses, with the re
 
 A duration that does not outlast its onset is an effect that never acts, and the validator refuses it rather than letting you find out by playing the case. It also prints every effect's window as a note, so the arithmetic is in front of you at validation time.
 
-### 6.4 Choosing among the four, which is the part to get right
+### 6.4 Choosing among the five, which is the part to get right
 
-Four constructs touch time or move a number. None of them is hard to use; the mistake is reaching for the wrong one. The question that separates them is **what else in the case has to know**.
+Five constructs touch time, move a number, or count. None of them is hard to use; the mistake is reaching for the wrong one. The question that separates them is **what else in the case has to know**.
 
 | Reach for | When | What can read it |
 |---|---|---|
@@ -526,6 +526,7 @@ Four constructs touch time or move a number. None of them is hard to use; the mi
 | **`after_seconds`** on a transition (5.1) | The lesson is that something had to happen sooner | Everything, since it changes the phase |
 | **`flags_set_timed`** (6.2) | Something is true for a while and then is not, and the case must react | Everything in the condition language |
 | **`vital_effects`** (6.1) | A number on the monitor moves and nothing else does | Nothing. Display and audio only |
+| **`flags_set_repeat`** (6.5) | The act has to be performed more than once before it works | Everything in the condition language |
 
 Worked examples of the choice, all of them things an author will actually want:
 
@@ -534,6 +535,7 @@ Worked examples of the choice, all of them things an author will actually want:
 - *"The nitrate wears off and the pressure rebounds, and the resident has to notice."* An expiring flag, plus a transition guarded on it, plus a `narration` on that transition. The rebound is a phase, because the patient really is different.
 - *"Steroids take twenty minutes to do anything."* An onset. And be honest about whether a twenty-minute onset means anything in an eight-minute case: usually it means the case should not model it at all.
 - *"The patient deteriorates if nobody gives antibiotics."* A time-guarded transition, section 5.1, with all six of its fairness rules.
+- *"One dose slows him a little and two doses get him where you want him."* A vital effect for the partial response, a repeat-granted flag for the second dose, and the phase guarded on that flag. Plus a `nurse_alert` saying the drug takes time, or the resident reads the partial response as a failed drug and reaches for a different one.
 
 **The two bottom rows are designed to be used together.** When a drug both shows on the monitor and changes what the case will do, put the clock in the flag and guard the effect on the flag:
 
@@ -547,7 +549,35 @@ One deadline in one place. Writing the 30 seconds twice, once as a duration and 
 
 **A phase is not expensive, and reviewers can only see phases.** It is the only construct the per-key review matrix shows, and the only one that can change an exam finding, a lab, a consultant's advice or what the patient says. If the patient is genuinely worse, that is a phase, not a negative delta on a heart rate.
 
-### 6.5 What none of this can do
+### 6.5 Flags granted on the Nth dose, which is the one exception to permanence
+
+Section 15 says flags are binary and permanent and tells you not to build cases that depend on redosing. That holds for everything except the case whose lesson **is** the redose: an act that produces a partial response the first time and works the second. Author it on the action:
+
+```json
+{ "catalog_id": "digoxin_bolus",
+  "flags_set": ["rate_control_given"],
+  "flags_set_repeat": [{"flag": "rate_control_adequate",
+                        "after_administrations": 2,
+                        "counter": "rate_control_doses"}] }
+```
+
+| Field | Required | What it does |
+|---|---|---|
+| `flag` | yes | Granted permanently once the count is reached |
+| `after_administrations` | yes | At least 2. One is what `flags_set` already does |
+| `counter` | no, defaults to the act | The tally this administration adds to |
+
+**The counter is the interesting field and it is a clinical judgement.** Left to default it counts the act, so a sibling covered through `also_covers` adds to the same tally and two routes to one act are two doses. Named explicitly, several separate case actions share one tally, which is what you want when four different drugs are four attempts at the same physiological manoeuvre. Getting it wrong is silent: two actions granting one flag at different totals means whichever tally fills first wins, and the validator warns rather than guessing which you meant.
+
+**Two flags, not one, and both earn their place.** `flags_set` fires on every administration including the first and is what says an attempt has been made; the repeat flag is what says enough attempts have been made. A case usually needs both, the first to drive a vital effect and a follow-up obligation, the second to drive the phase.
+
+**The partial response belongs on a vital effect, not on a phase.** A first dose that moves a number and changes nothing else is exactly what 6.1 is for, and making it a phase costs you a phase for every combination of it with everything else in the case. Guard the effect off in the phases whose authored vitals already carry the controlled number, or it is subtracted twice.
+
+**Say so out loud.** Pair it with a `nurse_alert` (9.1). A partial response with no explanation reads as a failed drug, and what a resident does about a failed drug is reach for a different one, which in a case whose lesson is the redose is precisely the wrong move.
+
+**What it still cannot do.** Nothing counts doses in the condition language and nothing ever will, for the same reason time does not: the per-key review matrix has to stay finite. A case reads the count only through the flag it grants. There is no way to make a third dose differ from the second, no way to decay a tally, and no way to make a dose count for less because it was late.
+
+### 6.6 What none of this can do
 
 Each of these looks authorable until you try it.
 
@@ -557,7 +587,7 @@ Each of these looks authorable until you try it.
 - **Effects add, clamp and snap.** No compounding, no titration, no gradient. The five-second travel between values is a display courtesy, not a model.
 - **Exams, labs, consultants and patient answers never vary with the clock.** They vary with phase, flags and study state. A finding that must change after five minutes needs a phase, reached on a clock.
 
-### 6.6 The resident sees no vitals until they attach a monitor
+### 6.7 The resident sees no vitals until they attach a monitor
 
 The monitor is dark when the case opens: every cell reads a dash, and there is no heartbeat. Both arrive when the resident takes the action carrying the catalog's `reveals_vitals` capability, which is `attach_monitor`. Nothing you author changes this and no case can turn it off.
 
@@ -678,7 +708,12 @@ Each follow-up requires:
 - **deadline** measured from the triggering action
 - **nurse prompt text**
 - **debrief note**
-- **`satisfied_by`**: every catalog action that discharges the obligation
+- **`satisfied_by`**: every catalog action that discharges the obligation, or
+- **`satisfied_when`**: a condition that discharges it, where a list of actions cannot
+
+**One of the two is mandatory.** A follow-up with neither is an obligation the debrief reports as left open however the resident plays, and the validator refuses it.
+
+**`satisfied_when` exists because `satisfied_by` is set membership and cannot express "again".** An obligation to repeat a dose is created by the first dose and would be discharged by it, because the action that would satisfy it is already in the taken set. Author it against the flag the repeat grants instead (6.5). Anything the condition language can say is available, so the same field also covers "unless they intubated instead".
 
 **List every satisfier.** If sedation may be propofol or ketamine and you name only propofol, a resident who chose ketamine is told they left a paralysed patient unsedated.
 
@@ -701,11 +736,13 @@ The nurse sits at top center and has four functions. Three are largely automatic
 | Field | What it does |
 |---|---|
 | `narration_override` | Replaces the catalog line entirely. Use it only where the standard line would be wrong or confusing |
-| `narration_addendum` | A second line, said straight after the catalog's own. Use it where the standard line is correct and there is something to add about the act that was just performed |
+| `nurse_alert` | A second line, said straight after the catalog's own, **coloured and filed in the running chart**. Use it where the standard line is correct and there is something the resident will need again later |
 
-An addendum is the one to reach for when a case has authored a delay. A resident who pushes a rate-controlling drug and watches an unchanged number for thirty seconds will reasonably conclude it did not work and push another; the nurse saying "these agents can take a bit of time to kick in" costs one line and prevents it. It is a narration and not a prompt, so it is said the moment the action is taken rather than on a deadline, it is said again on a repeat dose, and section 9.5's rule that prompt text must not imply a trajectory does not reach it. It must still be true of what the monitor is about to show.
+A `nurse_alert` is the one to reach for when a case has authored a delay or a repeat. A resident who pushes a rate-controlling drug and watches an incompletely controlled rate will reasonably conclude the drug failed; the nurse saying "these agents can take a bit of time to kick in" costs one line and prevents it. **The reason it goes in the chart is that it is needed after it has scrolled away**: the moment it matters is half a minute later, when the resident is deciding whether the drug worked, and by then the nurse's banner has moved on.
 
-Both fields are borrowed by a covered sibling, so an addendum on a coverage group speaks for every route to the act. Write it so that it does: "these agents" rather than "this drug".
+It is emitted on its own kind, so it is not a prompt: it does not consume a prompt slot, it does not trill, it is said the instant the action is taken rather than on a deadline, and it is said again on a repeat dose. Section 9.5's rule that prompt text must not imply a trajectory does not reach it, but it must still be true of what the monitor is about to show.
+
+Both fields are borrowed by a covered sibling, so a line authored on a coverage group speaks for every route to the act. Write it so that it does: "these agents" rather than "this drug".
 
 **Neither of these existed until v0.9**, despite this section having promised the override since v0.2. A case that authored one got the catalog line and no error.
 
@@ -1258,7 +1295,7 @@ The last item is not ceremonial. Both the validator and the review matrix read t
 
 ## 15. Limitations authors must design around
 
-- **Flags are permanent.** A single dose fixes something for the remainder of the case. Do not build cases that depend on redosing or titration.
+- **Flags are permanent, and a dose count is the only exception.** A single dose fixes something for the remainder of the case, except where the case authors `flags_set_repeat` (6.5), which grants a flag on the Nth administration of an act. That covers "it takes two doses" and nothing else: there is no titration, no third dose that differs from the second, and no way for the condition language to read a count directly.
 - **Permanent flags can shadow phase-correct content.** Put phase rules before flag rules in any list where both appear. See section 4.
 - **Flags are binary.** Symptoms and findings switch rather than grade. Partial response cannot be represented.
 - **The patient deteriorates only where the case authored it, and only in steps.** A time-guarded transition moves her from one authored plateau to the next; there is no gradient and no partial deterioration. In a case that authors none, ignoring every nurse prompt still produces the same patient as acting immediately, and most cases should stay that way.

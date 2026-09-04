@@ -74,7 +74,41 @@ than the one at 160. It is set to the same four minutes deliberately, so the cas
 teach that treating the rate buys time that has not been shown to exist. If you disagree,
 lengthen it.
 
-**2.2 Thirty seconds for rate control to work, and a nurse line to go with it.** Both
+**2.2 Two doses, thirty seconds each, and a nurse line to go with them.**
+
+**The first dose is a partial response and the second is what works.** One administration
+of any rate-controlling agent takes twenty-two beats off the ventricular rate, so 160
+becomes 138 and stays there; the phase does not turn over until a second dose. That is the
+author's instruction and it is the clinically honest version: one intravenous dose of any
+of these agents is a trial, and the right response to a partial response is another dose of
+the same drug. **The specific error it is built to catch** is a resident who reads 138 as a
+failed drug and reaches for a different one, because what they reach for in atrial
+fibrillation with a reduced ejection fraction is usually the calcium channel blocker.
+
+Three things carry it. A vital effect for the partial fall, which moves the monitor and
+nothing else. A flag granted on the second administration, which is what the phases read.
+And a nurse obligation at fifty-five seconds, "he's slower than he was but he's still
+running fast, do you want me to draw up another dose", discharged by the second dose and by
+nothing else.
+
+**All six routes share one tally.** Digoxin, amiodarone, metoprolol, esmolol, propranolol
+and diltiazem count toward the same counter, so metoprolol followed by amiodarone is two
+doses rather than one of each. Two attempts at nodal blockade are two attempts whichever
+drugs they were, and a resident stuck at 138 because they varied the agent would be a bug
+rather than a lesson. **Twenty-two beats, two doses, and fifty-five seconds are all
+authored figures.**
+
+Cardiology now says three different things depending on how much is in: with nothing given
+it warns that one dose will not be enough; with one dose it says a partial response asks
+for another dose of the same thing rather than a second drug, warns specifically against
+switching to diltiazem, and says when to stop, which is that a rate that will not come down
+in acute decompensated heart failure is usually being driven by the decompensation; with
+two doses it moves on to anticoagulation, the bed, and the formal echocardiogram. **That
+last teaching point is the one most worth your eye**: it is the case telling a resident
+that the third dose is not the answer, and it is a claim about when to stop treating the
+number.
+
+**2.2a Thirty seconds for each dose to work, and a nurse line to go with it.** Both
 rate-control transitions carry `after_seconds: 30, measured_from: guard_true`, so the
 ventricular rate falls about half a minute after the drug rather than on the click. Thirty
 seconds is a heavy compression: intravenous metoprolol takes several minutes, amiodarone
@@ -417,16 +451,16 @@ is yours.
 
 - [x] validator clean: 0 errors, 1 warning, the same warning both earlier cases carry
       (`handoff_submit` has no catalog entry)
-- [x] 30 authored scenarios walk end to end, including the do-nothing path, both
+- [x] 31 authored scenarios walk end to end, including the do-nothing path, both
       deterioration branches, each rescue, every blocked prerequisite, every route to the
       halting action, and both coverage groups
-- [x] 262 engine assertions pass, including the four-step saturation ramp read off the
+- [x] 296 engine assertions pass, including the four-step saturation ramp read off the
       monitor at each step, the diuretic moving nothing, the thirty-second rate-control
       delay firing with no further action taken, a covered sibling satisfying the critical
       action without marking the covering button as pressed, the interval model preserving the mean
       rate at every rate this case authors, and the beat chain keeping exactly one beat
       pending under sixty renders a second
-- [x] 31 validator negative tests pass
+- [x] 39 validator negative tests pass
 - [x] abnormal flags agree with every parseable reference interval
 - [x] every phase reachable, every non-terminal phase has a satisfiable exit, no cycle of
       time edges, no transition ends the case on the clock
@@ -439,6 +473,13 @@ is yours.
 - [ ] the two 240-second deadlines are claims you will defend
 - [ ] the 30-second rate-control delay is a claim you will defend, and the nurse line
       that accompanies it says what you want it to say
+- [ ] two doses is the right number, twenty-two beats is the right partial response, and
+      the fifty-five second obligation asks at the right moment
+- [ ] all six routes counting toward one tally is what you meant, and metoprolol followed
+      by amiodarone should be two doses rather than one of each
+- [ ] cardiology's advice at each of the three stages is what you would say, particularly
+      the claim that a rate refractory to two doses is being driven by the decompensation
+      and should not have a third
 - [ ] the eight-point saturation gain and its one-minute tempo are what you meant
 - [ ] the twenty-point systolic fall on diltiazem is what you meant
 - [ ] a crystalloid bolus in this patient is genuinely lethal, or it is not and the tag
@@ -520,3 +561,17 @@ a case.
     this case actually needed.
 15. **The monitor labelled per-minute units as `min` with a superscript minus one.** It
     now reads `/minute`, in both the header monitor and the arrival panel.
+16. **A flag could only ever be granted on the first dose.** `flags_set_repeat` grants one
+    on the Nth administration of an act, with a counter a case can share across several
+    actions. It is the one exception to section 15's rule about redosing and it is narrow
+    on purpose: nothing reads a dose count directly, only the flag it grants.
+17. **A follow-up could only be discharged by a list of actions.** That cannot express
+    "again", because the action that would satisfy an obligation to redose is the action
+    that created it. `satisfied_when` takes a condition. A follow-up with neither is now
+    refused, because it is an obligation the debrief reports as open however the resident
+    plays.
+18. **A nurse line the case wanted said had nowhere to be read again.** `nurse_alert`
+    replaces `narration_addendum` and is emitted on its own kind: coloured, and filed in
+    the running chart. The moment such a line matters is half a minute after it was said.
+19. **Only prompts made a sound.** Every nurse line now does: a prompt trills as before,
+    everything else gets a short soft cue, and the two are exclusive.

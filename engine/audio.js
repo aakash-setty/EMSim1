@@ -242,6 +242,36 @@ const AUDIO = (() => {
     });
   }
 
+  /* A short soft cue for a nurse line that is not a prompt: "giving five milligrams of
+     metoprolol", a result landing, a blocked action. It exists so that a line nobody was
+     looking at still registers, and the whole design problem is that it fires far more
+     often than the trill does and therefore must not be noticeable enough to irritate.
+     Three things keep it that way: it is brief, it is roughly a fifth of the trill's
+     amplitude, and repeats inside a quarter of a second are dropped, because a submitted
+     basket of orders narrates several lines at one instant and a burst of clicks would
+     read as a fault. Two components a fifth of an octave apart, both decaying inside
+     forty milliseconds, which reads as a soft wooden tick rather than as a tone. */
+  let lastCue = 0;
+  function cue() {
+    if (!on || !ensure()) return;
+    const wall = Date.now();
+    if (wall - lastCue < 250) return;
+    lastCue = wall;
+    const t = ctx.currentTime + 0.01;
+    [[520, 0.055, 0.030], [780, 0.028, 0.022]].forEach(([hz, g, dur]) => {
+      const o = ctx.createOscillator(), gn = ctx.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(hz, t);
+      o.frequency.exponentialRampToValueAtTime(hz * 0.82, t + dur);
+      gn.gain.setValueAtTime(0.0001, t);
+      gn.gain.exponentialRampToValueAtTime(g, t + 0.006);
+      gn.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(gn).connect(master);
+      o.start(t);
+      o.stop(t + dur + 0.02);
+    });
+  }
+
   /* Called on any user gesture. Creates or resumes the context, but never
      turns the sound back on after the user has switched it off. */
   function unlock() {
@@ -274,7 +304,7 @@ const AUDIO = (() => {
   }
 
   return {
-    start, unlock, toggle, sync, trill, stop, intervalModel,
+    start, unlock, toggle, sync, trill, cue, stop, intervalModel,
     get running() { return on && !!ctx && ctx.state === 'running'; },
     get enabled() { return on; },
     /* exposed so the interface can state the mapping rather than hide it */

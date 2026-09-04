@@ -268,6 +268,9 @@ PROVENANCE = {
    "The 30-second delay on the rate-control transitions, which compresses agents whose real "
    "onsets differ by an order of magnitude into one number, and the nurse line that goes with "
    "it.",
+   "The decision that rate control takes two doses, that a single dose is worth 22 beats, and "
+   "that all six routes to nodal blockade count toward one tally so that metoprolol followed by "
+   "amiodarone is two doses rather than one of each.",
    "The four two-point steps of the positive-pressure saturation effect, both the total of eight "
    "points and the one-minute tempo.",
    "The 20 mmHg systolic and 10 mmHg diastolic fall attributed to diltiazem.",

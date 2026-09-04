@@ -297,7 +297,7 @@ Three rules govern grants, and all three exist because a flag is shared state th
 
 **Why a flag rather than a new predicate.** A predicate such as `drug D acting` would have been narrower, would have needed its own grammar, its own review-matrix column and its own validator rules, and would have expressed exactly one thing. A flag that expires is the existing flag, the existing predicate and the existing matrix, with a deadline attached. Section 4 is unchanged, which is the test any addition here has to pass.
 
-### 2.8 Choosing among the four
+### 2.8 Choosing among the five
 
 Four mechanisms now touch time or move a number, and the failure mode is not that one of them is broken, it is that an author reaches for the wrong one. The question that separates them is **what else in the case has to know**.
 
@@ -307,6 +307,7 @@ Four mechanisms now touch time or move a number, and the failure mode is not tha
 | **`after_seconds`** on a transition | The lesson is that something had to happen sooner | It changes the phase, so everything |
 | **`flags_set_timed`** | Something is true for a while and then is not, and the case must react | Everything in the condition language |
 | **`vital_effects`** | A number on the monitor moves and nothing else does | Nothing. Display and audio only |
+| **`flags_set_repeat`** | The act has to be performed more than once before it works | Everything in the condition language |
 
 Read down that last column and the choice usually makes itself. Two consequences worth stating outright:
 
@@ -742,6 +743,8 @@ An uneven rhythm additionally varies the loudness of each beat with the length o
 **The ECG trace follows the same field.** The trace is decorative and its path does not encode rate, but a monitor drawing evenly spaced complexes with P waves beside an audibly uneven beat is a contradiction on one screen. Under an irregular rhythm the six complexes are unevenly spaced, deterministically per rate so the picture does not shimmer, and the P wave is omitted. It remains decorative: the beats on screen are not the beats being heard.
 
 **Prompt tone.** A short two-note trill on nurse prompts and follow-up prompts, timbrally distinct from the heartbeat.
+
+**Utterance cue.** Every other nurse line makes a shorter, softer sound: an action narrating, a result landing, a blocked attempt, a `nurse_alert`. A line nobody was looking at is a line nobody read, and the nurse's banner is not where a resident's eyes are. The design constraint is that it fires far more often than the trill and therefore must not be noticeable enough to irritate: it is brief, roughly a fifth of the trill's amplitude, and repeats inside 250 ms are dropped, because a submitted basket narrates several lines at one instant and a burst of clicks reads as a fault. **The two are exclusive.** A prompt trills and does not cue, because two sounds on one line would be worse than either.
 
 **This partly undercuts section 2.2 and the decision should be conscious.** Prompt text is forbidden from implying the patient is deteriorating. A distinct alert sound attached only to prompts teaches the resident that the tone means "you have missed something", which is the information the text is not allowed to carry. If that is unacceptable, sound every nurse utterance rather than prompts alone.
 

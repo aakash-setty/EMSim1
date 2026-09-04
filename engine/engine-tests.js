@@ -510,6 +510,15 @@ section('vital effects');
   chk('every case has at least one terminal phase', term.length > 0, term.join(', '));
 }
 
+section('follow-ups can be discharged');
+for (const f of CASE.follow_ups) {
+  chk(f.id + ' has a route to satisfaction',
+      (f.satisfied_by && f.satisfied_by.length) || !!f.satisfied_when,
+      'neither satisfied_by nor satisfied_when');
+  for (const id of (f.satisfied_by || []))
+    chk(f.id + ': satisfier ' + id + ' exists', !!A[id]);
+}
+
 section('the running chart');
 {
   /* feedItems lives in ui.js, outside the engine block this harness evaluates, so the
@@ -522,7 +531,11 @@ section('the running chart');
   chk('the chart follows the newest entry to the top, not the bottom',
       /if\(f\)f\.scrollTop=0;/.test(flat));
   chk('the chart selects nurse lines by kind',
-      /constNURSE_IN_CHART=\{prompt:1,deterioration:1\}/.test(flat));
+      /constNURSE_IN_CHART=\{prompt:1,deterioration:1,alert:1\}/.test(flat));
+  /* Every nurse utterance makes a sound and the two are exclusive, because a trill and a
+     cue on the same line would be worse than neither. */
+  chk('a prompt trills and every other line cues',
+      /if\(LASTNURSE>=0\)\{if\(n\.kind==='prompt'\)AUDIO\.trill\(\);elseAUDIO\.cue\(\);\}/.test(flat));
 
   /* The kinds the fold actually emits. A prompt is the one the chart exists for. */
   const promptAction = CRITICAL.find(id => A[id].prompt);

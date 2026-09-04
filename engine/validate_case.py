@@ -251,6 +251,8 @@ def collect_all_conditions(case):
     for f in case["follow_ups"]:
         if f.get("applies_when"):
             conds.append((f"followup/{f['id']}", f["applies_when"]))
+        if f.get("satisfied_when"):
+            conds.append((f"followup_satisfied/{f['id']}", f["satisfied_when"]))
 
     return conds
 
@@ -266,6 +268,7 @@ def run_checks(case):
     action_ids = {a["catalog_id"] for a in case["case_actions"]}
     settable_flags = set()
     timed_flags = {}          # flag -> [(action id, duration)], grants that lapse
+    repeat_flags = {}         # flag -> [(action id, N, counter)], grants on the Nth dose
     perm_flags = set()        # flags some action grants for good
     for a in case["case_actions"]:
         settable_flags.update(a.get("flags_set", []) or [])
@@ -275,6 +278,15 @@ def run_checks(case):
             if isinstance(f, str) and f:
                 settable_flags.add(f)
                 timed_flags.setdefault(f, []).append((a["catalog_id"], tf.get("duration_seconds")))
+        # Granted on the Nth administration rather than the first. Permanent once granted,
+        # so unlike a timed flag it only ever moves one way.
+        for fr in (a.get("flags_set_repeat") or []):
+            f = fr.get("flag")
+            if isinstance(f, str) and f:
+                settable_flags.add(f)
+                perm_flags.add(f)
+                repeat_flags.setdefault(f, []).append(
+                    (a["catalog_id"], fr.get("after_administrations"), fr.get("counter")))
 
     ck = case["content_keys"]
     study_ids = set()
@@ -572,6 +584,11 @@ def run_checks(case):
         for s in f.get("satisfied_by", []):
             if s not in action_ids:
                 errors.append(f"[followup] {f['id']}: satisfied_by unknown action {s!r}")
+        # An obligation nothing can discharge is an obligation the debrief will always
+        # report as left open, however the resident plays.
+        if not f.get("satisfied_by") and not f.get("satisfied_when"):
+            errors.append(f"[followup] {f['id']}: neither satisfied_by nor satisfied_when, so "
+                          f"nothing can discharge it")
 
     # -- I: time-sensitive critical actions have deadline and prompt text ---
     for a in case["case_actions"]:
@@ -748,6 +765,52 @@ def run_checks(case):
                             f"actions a phase expects is fixed on entry to that phase, so an "
                             f"action that becomes critical because this flag lapsed will not be "
                             f"listed as missed. Put the consequence on a transition instead")
+
+    # -- W2: flags granted on repetition (design 2.10, authoring 6.7) ---------
+    # Section 15 tells authors that flags are binary and permanent and not to build cases
+    # that depend on redosing. This is the one exception, and it is narrow on purpose: an
+    # act that has to be repeated before it works. The failure modes are the same shape as
+    # the expiring flag's, so they are checked the same way.
+    for a in case["case_actions"]:
+        for i, fr in enumerate(a.get("flags_set_repeat") or []):
+            loc = f"[repeat_flag] {a['catalog_id']}[{i}]"
+            f = fr.get("flag")
+            if not isinstance(f, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", f or ""):
+                errors.append(f"{loc}: flag {f!r} is not a bare identifier; the condition "
+                              f"grammar splits on whitespace and could not name it")
+                continue
+            n_ = fr.get("after_administrations")
+            if not isinstance(n_, int) or isinstance(n_, bool) or n_ < 2:
+                errors.append(f"{loc}: after_administrations is {n_!r}; it must be an integer "
+                              f"of at least 2. One is what flags_set already does, and a case "
+                              f"that means 'on the first dose' should say so there")
+            c = fr.get("counter")
+            if c is not None and not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", str(c)):
+                errors.append(f"{loc}: counter {c!r} is not a bare identifier")
+            if f in (a.get("flags_set") or []):
+                errors.append(f"{loc}: {f!r} is also in this action's flags_set, which grants it "
+                              f"on the first administration, so the repeat count would never "
+                              f"take effect")
+            if a.get("state_changing") is False:
+                errors.append(f"{loc}: state_changing is false, so the flag is never granted")
+            if f not in cond_flags:
+                warnings.append(f"{loc}: nothing in this case reads flag {f!r}. A flag granted "
+                                f"on a repeat dose that no transition, tag, prompt guard, "
+                                f"prerequisite, follow-up or content rule tests changes nothing")
+    # Two actions granting the same flag at different counts, or on different counters, is
+    # almost always a slip and is silent: whichever counter reaches its total first wins.
+    for f, grants in repeat_flags.items():
+        counters = {(g[2] or g[0]) for g in grants}
+        totals = {g[1] for g in grants}
+        if len(counters) > 1 or len(totals) > 1:
+            warnings.append(f"[repeat_flag] {f!r} is granted by {len(grants)} actions with "
+                            f"counters {sorted(map(str, counters))} and totals {sorted(map(str, totals))}. "
+                            f"Whichever reaches its total first grants it; if these were meant to "
+                            f"be one act, give them one counter and one total")
+    if repeat_flags:
+        notes.append("flags granted on repetition: " + "; ".join(
+            f"{f} (after {gs[0][1]} of counter '{gs[0][2] or gs[0][0]}')"
+            for f, gs in sorted(repeat_flags.items())))
 
     for f, grants in timed_flags.items():
         if f in perm_flags:

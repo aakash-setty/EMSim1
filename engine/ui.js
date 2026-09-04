@@ -254,11 +254,17 @@ function renderNurse(){
   if(!n){ line.textContent=PROTO.nurseIdle; el('nursemeta').textContent=''; return; }
   if(ST.nurse.length!==LASTNURSE){
     line.classList.remove('fresh'); void line.offsetWidth; line.classList.add('fresh');
-    if(LASTNURSE>=0 && n.kind==='prompt') AUDIO.trill();
+    /* Every nurse utterance makes a sound, because a line nobody noticed is a line
+       nobody read. A prompt keeps the trill it has always had, which is deliberately
+       unlike anything else; everything else gets a short soft cue that says only that
+       she spoke. Two sounds on one line would be worse than none, so they are exclusive.
+       Skipped for the very first line, as the trill always was. */
+    if(LASTNURSE>=0){ if(n.kind==='prompt') AUDIO.trill(); else AUDIO.cue(); }
     LASTNURSE=ST.nurse.length;
   }
   line.textContent=n.text;
-  const lab={prompt:'prompt',blocked:'blocked action',result:'result',halt:'halt',narration:''}[n.kind]||'';
+  const lab={prompt:'prompt',blocked:'blocked action',result:'result',halt:'halt',
+             alert:'note',deterioration:'change',narration:''}[n.kind]||'';
   el('nursemeta').textContent = mmss(n.t) + (lab?'  '+lab:'');
 }
 
@@ -344,8 +350,12 @@ function feedItems(){
 
        prompt         she asked for something. Nowhere else at all
        deterioration  the one place a nurse line may describe a trajectory, and it
-                      narrates a change the resident may not have been watching for */
-  const NURSE_IN_CHART={prompt:1,deterioration:1};
+                      narrates a change the resident may not have been watching for
+       alert          something the case wanted said about an act that was just
+                      performed. It has to be findable again, because a line like "these
+                      agents take a bit of time to work" is useless once it has scrolled
+                      off the nurse's line and the resident is deciding whether to redose */
+  const NURSE_IN_CHART={prompt:1,deterioration:1,alert:1};
   for(const n of ST.nurse){
     if(!NURSE_IN_CHART[n.kind]) continue;
     add({t:n.t,kind:n.kind==='prompt'?'nurse':'nursealert',name:'Nurse',body:n.text});

@@ -320,11 +320,26 @@ IMAGING = {
    "management, and length in a report reads as importance, so a long report about a "
    "negative study is actively misleading."),
 
+ # Five tiers, keyed on how much rate control is on board rather than on the phase,
+ # because that is what decides the rate on the tracing. The two phase-guarded rules come
+ # first, per the rule-ordering guidance: the ventilated phase carries its own rate, and
+ # the respiratory-failure phase is the one place a rate-controlled patient is still fast.
  "ecg_12_lead": {"changes_with_state": True, "result_shape": "structured", "rules": [
-   {"when": "phase is rate_controlled_congested OR phase is stabilized OR phase is intubated",
+   {"when": "phase is intubated",
+    "value": rep("Atrial fibrillation, ventricular rate approximately 118. Irregularly "
+      "irregular, no P waves. Narrow QRS at 92 ms. No ST elevation. QTc 444 ms.")},
+   {"when": "phase is respiratory_failure AND flag rate_control_adequate set",
+    "value": rep("Atrial fibrillation, ventricular rate approximately 130. Irregularly "
+      "irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V5 and "
+      "V6. No ST elevation. QTc 446 ms.")},
+   {"when": "flag rate_control_adequate set",
     "value": rep("Atrial fibrillation, ventricular rate approximately 105. Irregularly "
       "irregular, no P waves. Narrow QRS at 92 ms. Horizontal ST depression 0.5 mm in V5 "
       "and V6, less than on the earlier tracing. No ST elevation. QTc 442 ms.")},
+   {"when": "flag rate_control_given set",
+    "value": rep("Atrial fibrillation, ventricular rate approximately 140. Irregularly "
+      "irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V4 to "
+      "V6, less than on the earlier tracing. No ST elevation. QTc 446 ms.")},
    {"when": None,
     "value": rep("Atrial fibrillation with rapid ventricular response, ventricular rate "
       "approximately 160. Irregularly irregular, no P waves. Narrow QRS at 88 ms, no delta "
@@ -383,6 +398,28 @@ CONSULTANTS = {
    "has not come back."),
 
  "consult_cardiology": [
+  {"when": DX_KNOWN + " AND " + ECG_DONE + " AND flag rate_control_adequate set",
+   "value": "Cardiology fellow: good, that is a rate I can live with, and he does not have to be "
+     "in sinus rhythm today. Nobody can tell me how long he has been in it, so I am not "
+     "cardioverting him and neither should you. Three things before he leaves you. He needs to be "
+     "anticoagulated, and his CHA2DS2-VASc is at least three so there is no argument to have "
+     "about it. He needs a bed that can keep the mask on him and watch the rate, because a "
+     "ventricle at thirty to thirty-five percent that has just been slowed can go the other way "
+     "if the oedema is not treated. And he needs a formal echocardiogram this admission, because "
+     "if this cardiomyopathy turns out to be rate related it may recover once he stays in rhythm, "
+     "and that changes what he goes home on."},
+  {"when": DX_KNOWN + " AND " + ECG_DONE + " AND flag rate_control_given set",
+   "value": "Cardiology fellow: so he has had a dose and he is still up around 140. That is a "
+     "partial response, which is what one dose usually buys you, and the answer is another dose "
+     "of the same thing rather than a second drug. Do not let a partial response push you toward "
+     "diltiazem, because with an ejection fraction of thirty to thirty-five that is the one agent "
+     "you should not use. Give it again and watch the pressure.\n\n"
+     "And know when to stop. If he is still fast after two decent doses, that is telling you "
+     "something rather than asking for a third: a rate that will not come down in acute "
+     "decompensated heart failure is usually being driven by the decompensation. At that point "
+     "the treatment is the oedema and the hypoxaemia, not more nodal blockade in a ventricle that "
+     "is already struggling. Get the positive pressure on him and diurese him, and the rate will "
+     "often follow."},
   {"when": DX_KNOWN + " AND " + ECG_DONE,
    "value": "Cardiology fellow: right, so this is new atrial fibrillation with a rapid ventricular "
      "response and a left ventricle you have just found is running at thirty to thirty-five "
@@ -390,7 +427,8 @@ CONSULTANTS = {
      "inotropes and the guideline is explicit about avoiding them when systolic function is "
      "significantly reduced. Digoxin or amiodarone are the sensible choices, and if you want a "
      "beta blocker use a small dose and only once his oxygenation is sorted out, because he is "
-     "leaning on his sympathetic tone at the moment. Second thing: anticoagulate him. His "
+     "leaning on his sympathetic tone at the moment. Expect to give it twice: one dose will take "
+     "the edge off and will not get him where you want him. Second thing: anticoagulate him. His "
      "CHA2DS2-VASc is at least three and there is nothing stopping you, and I would not cardiovert "
      "him today because nobody can tell me how long he has been in it. Get the positive pressure "
      "on, diurese him, slow him down, and we will see him upstairs. He needs a formal "

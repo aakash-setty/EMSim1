@@ -110,8 +110,8 @@ def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp,
 
 HANDOFF_T = {"when": "action handoff_submit taken", "to": "case_complete"}
 
-RATE_CONTROL_NARRATION = ("His rate's coming down. Still all over the place, but I can actually "
-  "count it now.")
+RATE_CONTROL_NARRATION = ("That second dose has done it. His rate's down and I can actually "
+  "count it now, still all over the place.")
 RATE_CONTROL_ADDENDUM = "These agents can take a bit of time to kick in."
 RATE_CONTROL_NOTE = (
   "The ventricular rate fell about half a minute after the rate-controlling drug was given rather "
@@ -149,7 +149,7 @@ PHASES = [
                       "work of breathing, so this transition is instantaneous. The saturation it "
                       "buys is authored as a staged vital effect rather than as this phase change, "
                       "so the number climbs rather than jumping."},
-      {"when": "flag rate_control_given set", "to": "rate_controlled_congested",
+      {"when": "flag rate_control_adequate set", "to": "rate_controlled_congested",
        "after_seconds": 30, "measured_from": "guard_true",
        "narration": RATE_CONTROL_NARRATION,
        "debrief_note": RATE_CONTROL_NOTE,
@@ -189,16 +189,19 @@ PHASES = [
     "in respiratory failure",
     "Hypoxaemic and hypercapnic respiratory failure from untreated cardiogenic pulmonary oedema. "
     "Drowsy, tachypnoeic, and no longer able to sustain the work of breathing. Still perfusing. "
-    "The authored heart rate here is the UNTREATED one; a patient who reached this phase with "
-    "atrioventricular nodal blockade already on board reads about 35 beats lower, which is a "
-    "vital effect on the rate-control action guarded on this phase.",
+    "The authored heart rate here is the UNTREATED one. A patient who reached this phase with "
+    "one dose of a nodal blocker on board reads about 22 beats lower and one with two doses "
+    "about 35 lower, through two vital effects on the rate-control actions guarded on this "
+    "phase.",
     166, 118, 70, 38, 82, 37.0, 3, 1,
     [
       {"when": "flag intubated set", "to": "intubated"},
-      {"when": "flag on_niv set AND flag rate_control_given set", "to": "stabilized",
-       "author_note": "Rate control was already given in an earlier phase and has had time to act, "
-                      "so adding positive pressure here completes the resuscitation rather than "
-                      "starting a second clock."},
+      {"when": "flag on_niv set AND flag rate_control_adequate set", "to": "stabilized",
+       "author_note": "Both doses of rate control are already in and have had time to act, so "
+                      "adding positive pressure here completes the resuscitation rather than "
+                      "starting a second clock. One dose is not enough: a resident who gave a "
+                      "single dose and then applied the mask reaches the breathing-supported "
+                      "phase and still owes a second dose."},
       {"when": "flag on_niv set", "to": "breathing_supported",
        "author_note": "The rescue. Positive pressure applied late still works; the case does not "
                       "punish lateness beyond the phase it has already cost."},
@@ -220,7 +223,7 @@ PHASES = [
     152, 126, 76, 24, 88, 37.0, 1, 0,
     [
       {"when": "flag intubated set", "to": "intubated"},
-      {"when": "flag rate_control_given set", "to": "stabilized",
+      {"when": "flag rate_control_adequate set", "to": "stabilized",
        "after_seconds": 30, "measured_from": "guard_true",
        "narration": RATE_CONTROL_NARRATION,
        "debrief_note": RATE_CONTROL_NOTE,

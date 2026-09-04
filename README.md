@@ -138,11 +138,11 @@ the seven tabs work, and the interview answers, with the matcher chip reading
 endpoint, and no way for one learner's run to reach anyone else. The only browser
 storage is the model cache.
 
-## Time, and the four ways to use it
+## Time, and the five ways to use it
 
-Four constructs touch time or move a number. They are not interchangeable, and reaching
-for the wrong one is the mistake this section exists to prevent. The question that
-separates them is **what else in the case has to know**.
+Five constructs touch time, move a number, or count. They are not interchangeable, and
+reaching for the wrong one is the mistake this section exists to prevent. The question
+that separates them is **what else in the case has to know**.
 
 | Reach for | When | What can read it |
 |---|---|---|
@@ -150,6 +150,7 @@ separates them is **what else in the case has to know**.
 | **`after_seconds`** on a transition | The lesson is that something had to happen sooner | Everything, since it changes the phase |
 | **`flags_set_timed`** | Something is true for a while and then is not, and the case must react | Everything in the condition language |
 | **`vital_effects`** | A number on the monitor moves and nothing else does | Nothing. Display and audio only |
+| **`flags_set_repeat`** | The act has to be performed more than once before it works | Everything in the condition language |
 
 An **expiring flag** is the mechanism for something that stops working. The fold removes
 the flag when its duration lapses and re-checks transitions, so a case can author "when
@@ -162,6 +163,13 @@ resident was doing something else.
 A **vital effect** moves one number off the phase baseline over `[onset, duration)`, both
 measured from the administration. Effects sharing a key do not stack. They are display
 and audio only.
+
+**`flags_set_repeat`** is the one exception to flags being permanent from the first dose:
+it grants a flag on the Nth administration of an act, which is what a case whose lesson is
+"one dose is a trial, two is a treatment" needs and which nothing else can express. The
+tally is per counter rather than per button, so a case decides whether two routes to one
+act count as two doses. Nothing reads the count directly and nothing ever will, for the
+same reason time does not; a case reads it through the flag.
 
 The two are designed to be used together: put the clock in the flag, guard the effect on
 the flag, and there is one deadline rather than two that drift apart. Authoring section
@@ -289,9 +297,9 @@ only as conclusions. They are not a source of truth for how the system behaves.
 ## Status
 
 All three cases pass the validator with no errors. CHFE walks 13 authored scenarios,
-MGCA 26 and AFRVR 30. CHFE and MGCA pass 201 engine assertions each and AFRVR 262, which
-is the same case-agnostic suite plus more case-specific ones; each passes 31 validator
-negative tests. Each carries one warning, in every case about actions the catalog does not
+MGCA 26 and AFRVR 31. CHFE passes 212 engine assertions, MGCA 222 and AFRVR 296, which is
+the same case-agnostic suite plus each pack's own; each passes 39 validator negative
+tests. Each carries one warning, in every case about actions the catalog does not
 hold, which the prototype renders anyway so the gap stays visible. Those are catalog change
 requests rather than defects.
 

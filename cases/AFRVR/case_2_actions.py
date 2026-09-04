@@ -219,36 +219,61 @@ add(A("unsynchronized_cardioversion", tag=DISCOURAGED, flags=[],
     "a reasoning error, and it is the reason the sync button exists.")))
 
 # ------------------------------------------------------------------ rate control
-# The line the nurse adds when any rate-controlling drug goes in. The phase does not turn
-# over for thirty seconds, and a resident watching an unchanged rate of 160 for thirty
-# seconds after pushing a drug will reasonably conclude it did not work and push another.
-# Saying so is cheaper than shortening the delay and it is what a nurse would actually say.
-RATE_CONTROL_ADDENDUM = "These agents can take a bit of time to kick in."
+# What the nurse says the moment any rate-controlling drug goes in. It is a nurse_alert
+# rather than an ordinary narration, so it is coloured and it goes into the running chart:
+# a resident deciding thirty seconds later whether the drug has failed needs to be able to
+# find this line again, and by then it has scrolled off the nurse's banner.
+#
+# It is load-bearing in this case rather than decorative. The rate does not come fully
+# under control until a second dose, so a resident who reads a partial response as a
+# failed drug is being set up to conclude the wrong thing about the agent rather than the
+# right thing about the dose.
+RATE_CONTROL_ALERT = "These agents can take a bit of time to kick in."
+
+# Shared by every route to rate control, so the four never stack with each other. The
+# first dose moves the number and does not change the case; that is what a vital effect
+# is for. The second dose sets a flag, and the flag is what the phases read.
+RATE_CONTROL_HR_EFFECTS = [
+  {"vital": "heart_rate", "delta": -22, "key": "rate_control_hr_partial",
+   "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
+   "note": (
+     "The partial response to a single dose. Twenty-two beats off the phase baseline, so "
+     "a resident who gives one dose and watches sees 160 become 138 and stay there. That "
+     "is the point: the drug worked, and the patient is still in a rapid ventricular "
+     "response, and the answer is another dose rather than another drug. Guarded on the "
+     "three phases where the rate is not already carried by the phase itself, because in "
+     "the rate-controlled and stabilised phases the authored number is the controlled one "
+     "and this would subtract from it twice. Twenty-two is a teaching choice.")},
+  {"vital": "heart_rate", "delta": -13, "key": "rate_control_hr_in_failure",
+   "while": "phase is respiratory_failure AND flag rate_control_adequate set",
+   "note": (
+     "One vitals block per phase, and respiratory failure is reached by two routes. The "
+     "authored 166 is the untreated patient tiring; a patient who got there with two doses "
+     "of a nodal blocker on board reads 166 minus 22 minus 13, about 131, which is a "
+     "rate-controlled patient with a sympathetic surge rather than an untreated one. It is "
+     "a workaround for the schema rather than physiology, and the review packet says so.")},
+]
+
+# Two pushes, not one. Flags are otherwise binary and permanent and authoring section 15
+# tells you not to build a case that depends on redosing; this is the exception the
+# mechanic was added for. All four routes share one counter, so a resident who gives
+# metoprolol and then amiodarone has made two attempts at nodal blockade and is credited
+# with two, which is the clinically right reading and not merely the convenient one.
+RATE_CONTROL_REPEAT = [{"flag": "rate_control_adequate", "after_administrations": 2,
+                        "counter": "rate_control_doses"}]
 
 add(A("digoxin_bolus",
   tag=CRIT_ALWAYS, flags=["rate_control_given"],
   expectation_label="Rate control for atrial fibrillation (digoxin, amiodarone or metoprolol)",
-  narration_addendum=RATE_CONTROL_ADDENDUM,
+  nurse_alert=RATE_CONTROL_ALERT,
   prerequisites=[PRE_IV],
   prompt={"deadline_seconds": 190,
           "guard": "NOT flag rate_control_given set",
           "text": "His rate's still up and it's all over the place. Do you want to give him "
                   "something to slow it down? I can draw up digoxin, amiodarone or metoprolol."},
-  vital_effects=[
-    {"vital": "heart_rate", "delta": -35, "key": "rate_control_hr_in_failure",
-     "while": "phase is respiratory_failure",
-     "note": (
-       "This exists to stop the monitor contradicting the nurse. The respiratory failure phase "
-       "authors one set of numbers and is reached by two routes: a patient whose rate was never "
-       "controlled, whose heart rate rises from 160 to 166 as he tires, and a patient who was "
-       "rate-controlled at 108 and then left with a flooded lung. Without this effect the second "
-       "patient's rate would jump from 108 to 166 on a screen while a drug that blocks the "
-       "atrioventricular node is running, which is not something that happens. Thirty-five points "
-       "is a teaching choice: it leaves him at about 130, which is a rate-controlled patient with "
-       "a sympathetic surge rather than an untreated one, and it is the number the deterioration "
-       "narration in that phase is written against. Guarded on the phase, so it is invisible "
-       "everywhere else, where the rate is carried by the phase itself. The review packet flags "
-       "this as a workaround for one-vitals-block-per-phase rather than as physiology.")}],
+  vital_effects=RATE_CONTROL_HR_EFFECTS,
+  flags_set_repeat=RATE_CONTROL_REPEAT,
+  follow_ups_triggered=["second_rate_control_dose"],
   debrief_note=(
     "This entry stands for the act of rate control rather than for one drug: digoxin, amiodarone "
     "and metoprolol are bound together, any of the three satisfies the critical action, and all "
@@ -288,7 +313,9 @@ add(A("diltiazem_bolus", tag=[
     {"when": None, "value": "discouraged"}],
   flags=["rate_control_given", "ccb_given"],
   prerequisites=[PRE_IV],
-  narration_addendum=RATE_CONTROL_ADDENDUM,
+  nurse_alert=RATE_CONTROL_ALERT,
+  flags_set_repeat=RATE_CONTROL_REPEAT,
+  follow_ups_triggered=["second_rate_control_dose"],
   vital_effects=[
     {"vital": "systolic_bp", "delta": -20, "key": "ccb_systolic", "onset_seconds": 15,
      "note": ("Twenty points of systolic pressure, coming on over fifteen seconds and not wearing "
@@ -298,7 +325,8 @@ add(A("diltiazem_bolus", tag=[
               "punished with a dramatic collapse, because the realistic version of this error is "
               "a patient whose numbers look acceptable while the drug is doing the wrong thing. "
               "Twenty points is a teaching choice, not a measured quantity.")},
-    {"vital": "diastolic_bp", "delta": -10, "key": "ccb_diastolic", "onset_seconds": 15}],
+    {"vital": "diastolic_bp", "delta": -10, "key": "ccb_diastolic", "onset_seconds": 15}]
+    + RATE_CONTROL_HR_EFFECTS,
   debrief_note=(
     "This is the decision the case is built around, and the tag is discouraged rather than harmful "
     "on purpose.\n\n"
@@ -334,7 +362,10 @@ add(A("adenosine_bolus", tag=DISCOURAGED, flags=[], prerequisites=[PRE_IV],
     "unpleasant in a patient who is already hypoxaemic and frightened.")))
 
 add(A("propranolol_bolus", tag=DISCOURAGED, flags=["rate_control_given"], prerequisites=[PRE_IV],
-  narration_addendum=RATE_CONTROL_ADDENDUM,
+  nurse_alert=RATE_CONTROL_ALERT,
+  flags_set_repeat=RATE_CONTROL_REPEAT,
+  follow_ups_triggered=["second_rate_control_dose"],
+  vital_effects=RATE_CONTROL_HR_EFFECTS,
   debrief_note=(
     "Non-selective beta blockade with a long-acting agent is the least controllable way to slow "
     "this patient. If a beta blocker is the chosen strategy, a short-acting and titratable one is "
@@ -343,7 +374,10 @@ add(A("propranolol_bolus", tag=DISCOURAGED, flags=["rate_control_given"], prereq
     "make.")))
 
 add(A("esmolol_drip", tag=DISCOURAGED, flags=["rate_control_given"], prerequisites=[PRE_IV],
-  narration_addendum=RATE_CONTROL_ADDENDUM,
+  nurse_alert=RATE_CONTROL_ALERT,
+  flags_set_repeat=RATE_CONTROL_REPEAT,
+  follow_ups_triggered=["second_rate_control_dose"],
+  vital_effects=RATE_CONTROL_HR_EFFECTS,
   debrief_note=(
     "The argument for esmolol is that it is titratable and short-acting, so if beta blockade is "
     "poorly tolerated it can be withdrawn in minutes, which is a real advantage in a patient whose "
@@ -762,6 +796,31 @@ FOLLOW_UPS = [
   "debrief_note": (
     "Tube position is confirmed by waveform capnography and the film is for depth and for the lung "
     "underneath it, which in this patient is worth seeing.")},
+ {"id": "second_rate_control_dose",
+  "triggered_by": ["digoxin_bolus", "diltiazem_bolus", "esmolol_drip", "propranolol_bolus"],
+  "applies_when": "flag rate_control_given set AND NOT flag rate_control_adequate set",
+  "deadline_seconds": 55,
+  "satisfied_when": "flag rate_control_adequate set",
+  "nurse_prompt": "He's slower than he was but he's still running fast. Do you want me to draw "
+                  "up another dose?",
+  "debrief_note": (
+    "One dose is a trial, not a treatment. A single intravenous dose of any of the agents this "
+    "case accepts produces a partial fall in the ventricular rate, and the correct response to a "
+    "partial response is another dose of the same agent, not a different agent and not the "
+    "conclusion that the drug failed. That is the specific error this obligation exists to catch: "
+    "a resident who reads 160 becoming 138 as a failure will reach for something else, and what "
+    "they reach for in atrial fibrillation with a reduced ejection fraction is usually the "
+    "calcium channel blocker.\n\n"
+    "It is discharged by a second dose of any of the four routes, because two attempts at "
+    "atrioventricular nodal blockade is two attempts whichever drugs they were. It is not "
+    "discharged by time, and it is not discharged by the first dose, which is why it is authored "
+    "against a condition rather than against a list of actions: the action that would satisfy it "
+    "is the action that created it.\n\n"
+    "Know when to stop. If the rate is still fast after two adequate doses, that is information "
+    "rather than a reason for a third: a ventricular rate that will not come down in acute "
+    "decompensated heart failure is usually being driven by the decompensation, and the "
+    "treatment is the pulmonary oedema and the hypoxaemia rather than more nodal blockade in a "
+    "ventricle that is already struggling.")},
  {"id": "anticoagulation_after_cardioversion",
   "triggered_by": "synchronized_cardioversion",
   "applies_when": "action synchronized_cardioversion taken",

@@ -42,6 +42,8 @@ class Run:
         # v0.6. The clock only matters to time-guarded transitions, so it advances by a
         # nominal cost per action and by explicit waits in the scenario.
         self.t, self.entry_t, self.guard_true = 0, 0, {}
+        # v0.9. Administrations per counter, for flags a case grants only on the Nth dose.
+        self.admin = {}
 
     def assign(self):
         d = {}
@@ -88,6 +90,14 @@ class Run:
             return "halted"
         self.taken.add(aid)
         self.flags.update(act.get("flags_set", []) or [])
+        # A flag granted only once an act has been performed enough times. The counter
+        # defaults to the action, so a case that wants several routes to count toward one
+        # total has to say so, exactly as the engine requires.
+        for fr in act.get("flags_set_repeat") or []:
+            key = fr.get("counter") or aid
+            self.admin[key] = self.admin.get(key, 0) + 1
+            if self.admin[key] >= fr.get("after_administrations", 2):
+                self.flags.add(fr["flag"])
         before = self.phase
         self.step_transitions()
         moved = f"   [{before} -> {self.phase}]" if before != self.phase else ""

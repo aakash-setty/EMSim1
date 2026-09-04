@@ -15,7 +15,8 @@
 section('intended path');
 let st=fold(mk([[1,'attach_monitor'],[2,'insert_iv'],[3,'ecg_12_lead'],[4,'ultrasound_cardiac'],
                 [5,'ultrasound_lung'],[6,'non_invasive_positive_pressure_ventilation'],
-                [8,'furosemide_40_mg_iv'],[10,'digoxin_bolus'],[12,'apixaban']]),120);
+                [8,'furosemide_40_mg_iv'],[10,'digoxin_bolus'],[45,'digoxin_bolus'],
+                [50,'apixaban']]),120);
 chk('reaches the stabilised phase',st.phase==='stabilized',st.phase);
 chk('phase sequence',
     JSON.stringify(st.phaseSeq.map(p=>p.id))==='["presentation","breathing_supported","stabilized"]',
@@ -58,9 +59,9 @@ chk('the effect is guarded off by intubation',
 
 section('the diuretic moves nothing on the monitor, and that is the point');
 const noDiur=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
-                      [3,'digoxin_bolus']]),200);
+                      [3,'digoxin_bolus'],[4,'digoxin_bolus']]),200);
 const withDiur=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
-                        [3,'digoxin_bolus'],[4,'furosemide_40_mg_iv']]),200);
+                        [3,'digoxin_bolus'],[4,'digoxin_bolus'],[6,'furosemide_40_mg_iv']]),200);
 chk('same phase either way',noDiur.phase===withDiur.phase&&withDiur.phase==='stabilized');
 chk('identical vitals with and without the diuretic',
     JSON.stringify(noDiur.vitals)===JSON.stringify(withDiur.vitals),
@@ -94,37 +95,75 @@ chk('still discouraged once the ejection fraction is known',dTag('diltiazem_bolu
 chk('a discouraged action is recorded for the debrief',
     fold(mk([[1,'insert_iv'],[2,'diltiazem_bolus']]),30).discouragedTaken.has('diltiazem_bolus'));
 
-section('rate control takes half a minute, and the nurse says so out loud');
-const rcLog=mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
-                [3,'digoxin_bolus']]);
-st=fold(rcLog,20);
-chk('nothing has changed 17 seconds after the drug',st.phase==='breathing_supported',st.phase);
-chk('and the rate on the monitor is still 152',st.vitals.heart_rate===152,
+section('one push is not enough, and the second one is not instant either');
+/* The vision the case is built to: a single dose produces a partial response and the
+   patient is still in a rapid ventricular response. What changes the case is the second
+   dose, and the flag that carries it is granted on the second administration of the act
+   rather than the first. */
+const rc1=mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+              [3,'digoxin_bolus']]);
+const rc2=mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+              [3,'digoxin_bolus'],[40,'digoxin_bolus']]);
+st=fold(rc1,300);
+chk('one dose sets rate_control_given',st.flags.has('rate_control_given'));
+chk('one dose does NOT make the rate adequate',!st.flags.has('rate_control_adequate'));
+chk('and five minutes later the phase has still not turned over',
+    st.phase==='breathing_supported',st.phase);
+chk('the monitor shows a partial response, 152 down to 130',st.vitals.heart_rate===130,
     String(st.vitals.heart_rate));
-st=fold(rcLog,40);
-chk('the phase turns over at thirty seconds with no further action',st.phase==='stabilized',
-    st.phase);
-chk('the rate on the monitor is now 104',st.vitals.heart_rate===104,String(st.vitals.heart_rate));
+st=fold(rc2,60);
+chk('the second dose sets rate_control_adequate',st.flags.has('rate_control_adequate'));
+chk('seventeen seconds after it, the phase has still not turned over',
+    st.phase==='breathing_supported',st.phase);
+st=fold(rc2,75);
+chk('thirty seconds after the second dose it does, with no further action',
+    st.phase==='stabilized',st.phase);
+chk('and the rate on the monitor is 104',st.vitals.heart_rate===104,String(st.vitals.heart_rate));
 chk('the delayed transition is recorded for the debrief',
     st.timeFires.some(f=>f.to==='stabilized'&&f.after===30));
-/* The line that stops a resident redosing a drug that has not had time to work. It is a
-   narration rather than a prompt, so it is said the moment the drug goes in and it is
-   said again on a repeat dose. */
-const said=t=>fold(rcLog,t).nurse.filter(x=>/take a bit of time to kick in/i.test(x.text));
-chk('the nurse says it when the drug is given',said(20).length===1,String(said(20).length));
-chk('it is a narration, not a prompt',said(20).every(x=>x.kind==='narration'),
-    said(20).map(x=>x.kind).join(','));
+/* Two different agents are two attempts at the same act, because they share one counter. */
+chk('metoprolol then amiodarone is two doses, not one of each',
+    fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+             [3,'metoprolol_bolus'],[5,'amiodarone_bolus_infusion']]),60)
+      .flags.has('rate_control_adequate'));
+chk('one metoprolol on its own is not',
+    !fold(mk([[1,'insert_iv'],[2,'metoprolol_bolus']]),60).flags.has('rate_control_adequate'));
+chk('a third dose changes nothing further',
+    fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+             [3,'digoxin_bolus'],[5,'digoxin_bolus'],[7,'digoxin_bolus']]),60)
+      .flags.has('rate_control_adequate'));
+
+section('the nurse says the agents take time, in red and in the chart');
+const said=t=>fold(rc1,t).nurse.filter(x=>/take a bit of time to kick in/i.test(x.text));
+chk('she says it when the drug is given',said(20).length===1,String(said(20).length));
+chk("it is an alert, so it is coloured and it goes into the running chart",
+    said(20).every(x=>x.kind==='alert'),said(20).map(x=>x.kind).join(','));
+chk('it is not a prompt, so it does not consume a prompt slot and does not trill',
+    said(20).every(x=>x.kind!=='prompt'));
+chk('the action still narrates normally as well',
+    fold(rc1,20).nurse.some(x=>x.kind==='narration'&&/digoxin/i.test(x.text)));
 chk('and every route to rate control says it',
     ['diltiazem_bolus','metoprolol_bolus','amiodarone_bolus_infusion','esmolol_drip',
      'propranolol_bolus'].every(id=>
       fold(mk([[1,'insert_iv'],[2,id]]),20).nurse
-        .some(x=>/take a bit of time to kick in/i.test(x.text))),
-    ['diltiazem_bolus','metoprolol_bolus','amiodarone_bolus_infusion','esmolol_drip',
-     'propranolol_bolus'].filter(id=>!fold(mk([[1,'insert_iv'],[2,id]]),20).nurse
-        .some(x=>/take a bit of time to kick in/i.test(x.text))).join(', '));
-chk('a repeat dose says it again',
-    fold(mk([[1,'insert_iv'],[2,'digoxin_bolus'],[10,'digoxin_bolus']]),20).nurse
-      .filter(x=>/take a bit of time to kick in/i.test(x.text)).length===2);
+        .some(x=>x.kind==='alert'&&/take a bit of time to kick in/i.test(x.text))));
+chk('a repeat dose says it again',said(60).length===1&&
+    fold(rc2,60).nurse.filter(x=>/take a bit of time to kick in/i.test(x.text)).length===2);
+
+section('the nurse asks for the second dose, and stops once it is in');
+st=fold(rc1,300);
+chk('the obligation fires',st.fuFires.some(f=>f.fid==='second_rate_control_dose'));
+chk('and stays open while only one dose is in',
+    [...st.fuOutstanding].includes('second_rate_control_dose'),
+    [...st.fuOutstanding].join(', '));
+st=fold(rc2,300);
+chk('the second dose discharges it',
+    ![...st.fuOutstanding].includes('second_rate_control_dose'),
+    [...st.fuOutstanding].join(', '));
+chk('it never fires at all if the second dose came first',
+    !fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+              [3,'digoxin_bolus'],[4,'digoxin_bolus']]),300)
+       .fuFires.some(f=>f.fid==='second_rate_control_dose'));
 
 section('time-guarded deterioration, and where it stops');
 st=fold([],1200);
@@ -141,13 +180,17 @@ chk('nothing fires before the deadline',st.phase==='presentation',st.phase);
 st=fold(mk([[1,'non_invasive_positive_pressure_ventilation']]),1200);
 chk('positive pressure cancels the deterioration for the rest of the case',
     st.phase==='breathing_supported',st.phase);
-st=fold(mk([[1,'insert_iv'],[2,'digoxin_bolus']]),1200);
+st=fold(mk([[1,'insert_iv'],[2,'digoxin_bolus'],[4,'digoxin_bolus']]),1200);
 chk('rate control alone still deteriorates, through the congested phase',
     st.phase==='respiratory_failure',st.phase);
 chk('and it went the long way round',
     JSON.stringify(st.phaseSeq.map(p=>p.id))===
     '["presentation","rate_controlled_congested","respiratory_failure"]',
     JSON.stringify(st.phaseSeq.map(p=>p.id)));
+chk('one dose alone never leaves the arrival phase before the clock does',
+    JSON.stringify(fold(mk([[1,'insert_iv'],[2,'digoxin_bolus']]),1200).phaseSeq.map(p=>p.id))===
+    '["presentation","respiratory_failure"]',
+    JSON.stringify(fold(mk([[1,'insert_iv'],[2,'digoxin_bolus']]),1200).phaseSeq.map(p=>p.id)));
 
 section('the respiratory failure phase reads differently depending on how it was reached');
 /* One vitals block per phase, and two routes into this one. The authored rate is the
@@ -156,13 +199,18 @@ section('the respiratory failure phase reads differently depending on how it was
    blockade running. */
 st=fold([],300);
 chk('untreated, the rate rises as he tires',st.vitals.heart_rate===166,String(st.vitals.heart_rate));
-st=fold(mk([[1,'insert_iv'],[2,'digoxin_bolus']]),500);
+chk('one dose on board, the same phase reads 144',
+    fold(mk([[1,'insert_iv'],[2,'digoxin_bolus']]),500).vitals.heart_rate===144,
+    String(fold(mk([[1,'insert_iv'],[2,'digoxin_bolus']]),500).vitals.heart_rate));
+st=fold(mk([[1,'insert_iv'],[2,'digoxin_bolus'],[4,'digoxin_bolus']]),500);
 chk('rate-controlled, he reaches the same phase',st.phase==='respiratory_failure',st.phase);
 chk('and the monitor reads about 130 rather than 166',st.vitals.heart_rate===131,
     String(st.vitals.heart_rate));
-chk('the effect is invisible in every other phase',
-    fold(mk([[1,'insert_iv'],[2,'digoxin_bolus']]),90).vitals.heart_rate===108,
-    String(fold(mk([[1,'insert_iv'],[2,'digoxin_bolus']]),90).vitals.heart_rate));
+chk('the partial effect is invisible where the phase carries the rate',
+    fold(mk([[1,'insert_iv'],[2,'digoxin_bolus'],[4,'digoxin_bolus']]),90)
+      .vitals.heart_rate===108,
+    String(fold(mk([[1,'insert_iv'],[2,'digoxin_bolus'],[4,'digoxin_bolus']]),90)
+      .vitals.heart_rate));
 
 section('fairness: the nurse warns before the clock');
 st=fold([],1200);
@@ -191,7 +239,7 @@ for(const bag of ['normal_saline_1l_bolus','normal_saline_500ml_bolus',
   chk(bag+' carries a halt reason',!!(s.halted&&s.halted.reason&&s.halted.reason.length>20));
 }
 st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
-            [3,'digoxin_bolus'],[80,'normal_saline_1l_bolus']]),120);
+            [3,'digoxin_bolus'],[5,'digoxin_bolus'],[80,'normal_saline_1l_bolus']]),120);
 chk('the same bolus once stabilised is discouraged rather than lethal',
     !st.halted&&st.phase==='stabilized',st.phase);
 st=fold(mk([[1,'insert_iv'],[400,'normal_saline_1l_bolus']]),500);
@@ -223,7 +271,7 @@ section('coverage groups satisfy the critical action they cover');
    digoxin up as well, which told the resident they had given a drug they had not. */
 for(const agent of ['amiodarone_bolus_infusion','metoprolol_bolus']){
   const s=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
-                   [3,agent]]),60);
+                   [3,agent],[5,agent]]),60);
   chk(agent+' reaches the stabilised phase',s.phase==='stabilized',s.phase);
   chk(agent+' satisfies the covering critical action',s.satisfied.has('digoxin_bolus'));
   chk(agent+' does NOT mark the covering button as pressed',!s.taken.has('digoxin_bolus'));
@@ -263,8 +311,18 @@ chk('a tracing taken before rate control still reads 160 when it is read afterwa
     /rate approximately 160/.test(st.orders.ecg_12_lead[0].value.report));
 st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
             [3,'digoxin_bolus'],[100,'ecg_12_lead']]),140);
-chk('a repeat tracing after rate control reads about 105',
+chk('a tracing after ONE dose reads about 140, not 105',
+    /rate approximately 140/.test(st.orders.ecg_12_lead[0].value.report),
+    st.orders.ecg_12_lead[0].value.report.slice(0,60));
+st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+            [3,'digoxin_bolus'],[40,'digoxin_bolus'],[100,'ecg_12_lead']]),140);
+chk('a repeat tracing after the second dose reads about 105',
     /rate approximately 105/.test(st.orders.ecg_12_lead[0].value.report));
+chk('the ventilated phase has a tracing of its own',
+    /rate approximately 118/.test(
+      fold(mk([[1,'insert_iv'],[2,'etomidate_bolus'],[3,'rocuronium_bolus'],
+               [4,'intubate_rapid_sequence'],[6,'ecg_12_lead']]),40)
+        .orders.ecg_12_lead[0].value.report));
 
 section('the consultants do not discuss studies that have not come back');
 st=fold(mk([[1,'insert_iv'],[2,'consult_cardiology']]),10);
@@ -277,6 +335,23 @@ st=fold(mk([[1,'insert_iv'],[2,'ecg_12_lead'],[3,'ultrasound_cardiac'],
             [30,'consult_cardiology']]),40);
 const cardio2=st.readouts.filter(r=>r.key==='consult_cardiology').pop().body;
 chk('with both in hand it names the drug to avoid',/diltiazem/i.test(cardio2));
+chk('and warns that one dose will not be enough',/twice|another dose|second/i.test(cardio2));
+/* And it says something different once a dose is in, and different again once two are. */
+const cardioAfter=n=>{
+  const steps=[[1,'insert_iv'],[2,'ecg_12_lead'],[3,'ultrasound_cardiac']];
+  for(let i=0;i<n;i++) steps.push([5+i,'digoxin_bolus']);
+  steps.push([30,'consult_cardiology']);
+  return fold(mk(steps),40).readouts.filter(r=>r.key==='consult_cardiology').pop().body;
+};
+chk('after one dose it says a partial response asks for another dose of the same thing',
+    /partial response/i.test(cardioAfter(1))&&/another dose/i.test(cardioAfter(1)));
+chk('and warns against switching to the calcium channel blocker',
+    /diltiazem/i.test(cardioAfter(1)));
+chk('and says when to stop giving more',/know when to stop/i.test(cardioAfter(1)));
+chk('after two doses it moves on to disposition and anticoagulation',
+    /anticoagulated/i.test(cardioAfter(2))&&/echocardiogram/i.test(cardioAfter(2)));
+chk('and it does not ask for a rate he no longer has',
+    !/still up around 140/i.test(cardioAfter(2)));
 
 section('the patient cannot give a history once he is intubated');
 st=fold(mk([[1,'insert_iv'],[2,'etomidate_bolus'],[3,'rocuronium_bolus'],
@@ -320,7 +395,8 @@ if (typeof AUDIO !== 'undefined' && AUDIO.intervalModel) {
 }
 
 section('handoff');
-st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],[3,'digoxin_bolus']])
+st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+            [3,'digoxin_bolus'],[5,'digoxin_bolus']])
         .concat([{seq:9,t:100,actionId:'handoff_submit',
                   payload:{disposition:'icu_or_ccu',diagnosis:PROTO.correctDxId}}]),140);
 chk('handoff completes the case',st.phase==='case_complete'&&st.complete);

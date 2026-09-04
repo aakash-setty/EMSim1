@@ -578,12 +578,20 @@ Single unconditional rule; nothing to enumerate.
 
 ### `imaging/ecg_12_lead`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| intubated | rule 0 (phase is rate_controlled_congested OR phase is stabilized OR phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 105. Irregularly i... | plausible |
-| rate_controlled_congested | rule 0 (phase is rate_controlled_congested OR phase is stabilized OR phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 105. Irregularly i... | plausible |
-| stabilized | rule 0 (phase is rate_controlled_congested OR phase is stabilized OR phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 105. Irregularly i... | plausible |
-| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Atrial fibrillation with rapid ventricular response, ventricular rate ... | plausible |
+| phase | rate_control_adequate | rate_control_given | resolves to | reachable? |
+|---|---|---|---|---|
+| intubated | no | no | rule 0 (phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 118. Irregularly i... | plausible |
+| intubated | no | yes | rule 0 (phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 118. Irregularly i... | plausible |
+| intubated | yes | no | rule 0 (phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 118. Irregularly i... | plausible |
+| intubated | yes | yes | rule 0 (phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 118. Irregularly i... | plausible |
+| respiratory_failure | no | no | rule 4 (default) &rarr; ABNORMAL: Atrial fibrillation with rapid ventricular response, ventricular rate ... | plausible |
+| respiratory_failure | no | yes | rule 3 (flag rate_control_given set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 140. Irregularly i... | plausible |
+| respiratory_failure | yes | no | rule 1 (phase is respiratory_failure AND flag rate_control_adequate set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 130. Irregularly i... | plausible |
+| respiratory_failure | yes | yes | rule 1 (phase is respiratory_failure AND flag rate_control_adequate set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 130. Irregularly i... | plausible |
+| «any other phase» | no | no | rule 4 (default) &rarr; ABNORMAL: Atrial fibrillation with rapid ventricular response, ventricular rate ... | plausible |
+| «any other phase» | no | yes | rule 3 (flag rate_control_given set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 140. Irregularly i... | plausible |
+| «any other phase» | yes | no | rule 2 (flag rate_control_adequate set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 105. Irregularly i... | plausible |
+| «any other phase» | yes | yes | rule 2 (flag rate_control_adequate set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 105. Irregularly i... | plausible |
 
 
 ### `imaging/ultrasound_cardiac`
@@ -618,17 +626,44 @@ Single unconditional rule; nothing to enumerate.
 
 ### `consultant/consult_cardiology`
 
-| phase | ecg_12_lead | ultrasound_cardiac | resolves to | reachable? |
-|---|---|---|---|---|
-| «any phase» | not_ordered | not_ordered | rule 4 (default) | plausible |
-| «any phase» | not_ordered | pending | rule 4 (default) | plausible |
-| «any phase» | not_ordered | resulted | rule 1 (study ultrasound_cardiac resulted) | plausible |
-| «any phase» | pending | not_ordered | rule 3 (study ecg_12_lead ordered) | plausible |
-| «any phase» | pending | pending | rule 3 (study ecg_12_lead ordered) | plausible |
-| «any phase» | pending | resulted | rule 1 (study ultrasound_cardiac resulted) | plausible |
-| «any phase» | resulted | not_ordered | rule 2 (study ecg_12_lead resulted) | plausible |
-| «any phase» | resulted | pending | rule 2 (study ecg_12_lead resulted) | plausible |
-| «any phase» | resulted | resulted | rule 0 (study ultrasound_cardiac resulted AND study ecg_12_lead resulted) | plausible |
+| phase | rate_control_adequate | rate_control_given | ecg_12_lead | ultrasound_cardiac | resolves to | reachable? |
+|---|---|---|---|---|---|---|
+| «any phase» | no | no | not_ordered | not_ordered | rule 6 (default) | plausible |
+| «any phase» | no | no | not_ordered | pending | rule 6 (default) | plausible |
+| «any phase» | no | no | not_ordered | resulted | rule 3 (study ultrasound_cardiac resulted) | plausible |
+| «any phase» | no | no | pending | not_ordered | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any phase» | no | no | pending | pending | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any phase» | no | no | pending | resulted | rule 3 (study ultrasound_cardiac resulted) | plausible |
+| «any phase» | no | no | resulted | not_ordered | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any phase» | no | no | resulted | pending | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any phase» | no | no | resulted | resulted | rule 2 (study ultrasound_cardiac resulted AND study ecg_12_lead resulted) | plausible |
+| «any phase» | no | yes | not_ordered | not_ordered | rule 6 (default) | plausible |
+| «any phase» | no | yes | not_ordered | pending | rule 6 (default) | plausible |
+| «any phase» | no | yes | not_ordered | resulted | rule 3 (study ultrasound_cardiac resulted) | plausible |
+| «any phase» | no | yes | pending | not_ordered | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any phase» | no | yes | pending | pending | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any phase» | no | yes | pending | resulted | rule 3 (study ultrasound_cardiac resulted) | plausible |
+| «any phase» | no | yes | resulted | not_ordered | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any phase» | no | yes | resulted | pending | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any phase» | no | yes | resulted | resulted | rule 1 (study ultrasound_cardiac resulted AND study ecg_12_lead resulted AND flag rate_control_given set) | plausible |
+| «any phase» | yes | no | not_ordered | not_ordered | rule 6 (default) | plausible |
+| «any phase» | yes | no | not_ordered | pending | rule 6 (default) | plausible |
+| «any phase» | yes | no | not_ordered | resulted | rule 3 (study ultrasound_cardiac resulted) | plausible |
+| «any phase» | yes | no | pending | not_ordered | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any phase» | yes | no | pending | pending | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any phase» | yes | no | pending | resulted | rule 3 (study ultrasound_cardiac resulted) | plausible |
+| «any phase» | yes | no | resulted | not_ordered | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any phase» | yes | no | resulted | pending | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any phase» | yes | no | resulted | resulted | rule 0 (study ultrasound_cardiac resulted AND study ecg_12_lead resulted AND flag rate_control_adequate set) | plausible |
+| «any phase» | yes | yes | not_ordered | not_ordered | rule 6 (default) | plausible |
+| «any phase» | yes | yes | not_ordered | pending | rule 6 (default) | plausible |
+| «any phase» | yes | yes | not_ordered | resulted | rule 3 (study ultrasound_cardiac resulted) | plausible |
+| «any phase» | yes | yes | pending | not_ordered | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any phase» | yes | yes | pending | pending | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any phase» | yes | yes | pending | resulted | rule 3 (study ultrasound_cardiac resulted) | plausible |
+| «any phase» | yes | yes | resulted | not_ordered | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any phase» | yes | yes | resulted | pending | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any phase» | yes | yes | resulted | resulted | rule 0 (study ultrasound_cardiac resulted AND study ecg_12_lead resulted AND flag rate_control_adequate set) | plausible |
 
 
 ### `consultant/consult_critical_care`

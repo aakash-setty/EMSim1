@@ -227,6 +227,50 @@ expect("an implausible vital is rejected",
        lambda c: c["phases"][0]["vitals"].__setitem__("temperature_c", 96.0),
        "outside plausible range")
 
+print("\n-- flags granted on a repeat dose --")
+
+
+def repeat(c, also_first=False, **kw):
+    """Hang a repeat-granted flag on whichever action this pack offers."""
+    a = act(c)
+    spec = {"flag": "second_dose_in", "after_administrations": 2}
+    spec.update(kw)
+    a["flags_set_repeat"] = [spec]
+    if also_first:
+        a["flags_set"] = list(a.get("flags_set") or []) + [spec["flag"]]
+    return a
+
+
+expect("a repeat count below two is rejected",
+       lambda c: repeat(c, after_administrations=1),
+       "at least 2")
+expect("a non-integer repeat count is rejected",
+       lambda c: repeat(c, after_administrations="two"),
+       "at least 2")
+expect("a repeat flag that is not a bare identifier is rejected",
+       lambda c: repeat(c, flag="second dose"),
+       "not a bare identifier")
+expect("a counter that is not a bare identifier is rejected",
+       lambda c: repeat(c, counter="rate control"),
+       "counter")
+# The silent one. A flag also in flags_set is granted on the first administration, so the
+# count never takes effect and the case looks like it works.
+expect("a repeat flag that is also granted on the first dose is rejected",
+       lambda c: repeat(c, also_first=True),
+       "would never take effect")
+expect("a repeat flag nothing reads is warned about",
+       lambda c: repeat(c), "nothing in this case reads flag", "warnings")
+
+print("\n-- follow-ups --")
+expect("a follow-up nothing can discharge is rejected",
+       lambda c: [c["follow_ups"][0].pop("satisfied_by", None),
+                  c["follow_ups"][0].pop("satisfied_when", None)],
+       "nothing can discharge it")
+expect_clean("a follow-up satisfied only by a condition passes",
+             lambda c: (c["follow_ups"][0].pop("satisfied_by", None),
+                        c["follow_ups"][0].__setitem__("satisfied_when", "flag iv_access set")),
+             "nothing can discharge it")
+
 print("\n-- rhythm --")
 # An unknown value would fall back to a regular beat and say nothing, which in a case
 # whose teaching point is the rhythm is the monitor giving the wrong answer out loud.

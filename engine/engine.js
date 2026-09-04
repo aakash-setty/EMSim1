@@ -148,13 +148,21 @@ function mergeAction(eff, base, caseAct, extra){
     rec.expectation_label=caseAct.expectation_label;
     /* Authoring 9.1 has always said a case may override the catalog's narration where
        the standard line would be wrong or confusing. Nothing read it, so the promise was
-       not kept. Two fields rather than one, because the two things an author wants are
-       different: an override replaces the line, and an addendum is a second thing the
-       nurse says after it, which is what you want when the catalog's line is correct and
-       there is something to add about the drug that was just given. Both are borrowed by
-       a covered sibling, so an addendum on a coverage group speaks for every route. */
+       not kept. Both this and nurse_alert below are borrowed by a covered sibling, so a
+       line authored on a coverage group speaks for every route to the act. */
     rec.narration_override=caseAct.narration_override;
-    rec.narration_addendum=caseAct.narration_addendum;
+    /* A line the nurse volunteers after the action's own narration. It is rendered red
+       and it goes into the running chart, because it is the kind of thing a resident has
+       to be able to find again: "these agents take time to work" is useless if it has
+       scrolled off the nurse's line by the time they wonder whether the drug failed. */
+    rec.nurse_alert=caseAct.nurse_alert;
+    /* Flags granted only on the Nth administration of an act. Flags are otherwise
+       binary and permanent and section 15 tells authors not to build cases that depend
+       on redosing, which is true of everything EXCEPT the one thing this expresses: an
+       act that has to be repeated before it works. Counting is per counter rather than
+       per action id, so a case can decide whether two doses of one drug and one dose
+       each of two drugs are the same thing. */
+    rec.flags_set_repeat=caseAct.flags_set_repeat;
     rec.flags_set_timed=caseAct.flags_set_timed;
   }
   return rec;
@@ -299,6 +307,10 @@ function fold(log, now, difficultyMultiplier){
        names it, suppress its prompt and make `action X taken` true. None of that means
        the other two buttons were pressed. */
     satisfied:new Set(),
+    /* How many times each counter has been administered. Not in the condition language
+       and not in the snapshot: a case reads it only through the flag it grants, which is
+       what keeps the per-key review matrix finite. */
+    adminCount:{},
     orders:{}, phaseEntry:{}, phaseSeq:[], halted:null, complete:null, earlyExit:null,
     nurse:[], readouts:[], blocked:[], timeline:[], prompted:new Set(),
     promptFires:[], fuFires:[], fuOutstanding:new Set(), handoff:null, now:now, dm:DM,
@@ -461,6 +473,19 @@ function fold(log, now, difficultyMultiplier){
 
   function narrate(t,text,kind){ if(text) st.nurse.push({t,text,kind:kind||'narration'}); }
 
+  /* An obligation is discharged when a listed action has been performed, or when an
+     authored condition holds. The second exists because `satisfied_by` is set
+     membership and cannot express "again": an obligation to repeat a dose is already
+     satisfied by the dose that created it. Either alone is enough; a follow-up with
+     neither is never satisfiable and the validator refuses it. */
+  function fuSatisfied(f,state){
+    if(f.satisfied_by&&f.satisfied_by.some(x=>state.satisfied.has(x))) return true;
+    if(f.satisfied_when){
+      try{ return test(f.satisfied_when,state); }catch(e){ return false; }
+    }
+    return false;
+  }
+
   /* ---------- flag grants (design 2.7) ----------
      A permanent grant is absorbing: once any action has set a flag without a duration,
      no later timed grant can take it away, because the permanent one is still true. A
@@ -558,12 +583,20 @@ function fold(log, now, difficultyMultiplier){
     if(tag==='recommended') st.recommendedTaken.add(id);
     if(tag==='discouraged') st.discouragedTaken.add(id);
     narrate(t,narrationFor(id),'narration');
-    /* A second line, on its own kind so the assertion that no PROMPT describes a
-       trajectory is unaffected by it. It is said once per administration, which is
-       right: a resident who redoses should hear it again. */
-    if(a.narration_addendum) narrate(t,a.narration_addendum,'narration');
+    /* On its own kind, so the assertion that no PROMPT describes a trajectory is
+       unaffected by it and so the interface can colour it and file it in the chart. Said
+       once per administration, which is right: a resident who redoses should hear it
+       again. */
+    if(a.nurse_alert) narrate(t,a.nurse_alert,'alert');
 
     (a.flags_set||[]).forEach(f=>grantFlag(f,t,null));
+    for(const fr of (a.flags_set_repeat||[])){
+      /* The counter defaults to the act rather than to the button, so a sibling covered
+         through also_covers counts toward the same total. */
+      const key=fr.counter||a.covered_by||id;
+      st.adminCount[key]=(st.adminCount[key]||0)+1;
+      if(st.adminCount[key]>=fr.after_administrations) grantFlag(fr.flag,t,null);
+    }
     for(const tf of (a.flags_set_timed||[])) grantFlag(tf.flag,t,tf.duration_seconds);
 
     /* An administration, not an effect. Whether it is still acting is decided later,
@@ -646,7 +679,7 @@ function fold(log, now, difficultyMultiplier){
     if(e.kind==='followup'){
       const f=FU[e.fid];
       if(f.applies_when&&!test(f.applies_when,st)) return;
-      if(f.satisfied_by&&f.satisfied_by.some(x=>st.satisfied.has(x))) return;
+      if(fuSatisfied(f,st)) return;
       promptCount[st.phase]=(promptCount[st.phase]||0)+1;
       narrate(t,f.nurse_prompt,'prompt');
       st.fuFires.push({t,fid:e.fid});
@@ -661,7 +694,7 @@ function fold(log, now, difficultyMultiplier){
   }));
   st.fuOutstanding.forEach(fid=>{
     const f=FU[fid];
-    if(f.satisfied_by&&f.satisfied_by.some(x=>st.satisfied.has(x))) st.fuOutstanding.delete(fid);
+    if(fuSatisfied(f,st)) st.fuOutstanding.delete(fid);
   });
   st.vitalEffects = activeEffects(st, now);
   st.vitals = effectiveVitals(st);

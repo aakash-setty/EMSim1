@@ -5,6 +5,48 @@ is usable with learners.
 
 ---
 
+## One dose is a trial, two is a treatment
+
+**Flags can be granted on the Nth administration.** `flags_set_repeat` on a case action
+takes a flag, an `after_administrations` count of at least two, and an optional `counter`.
+It is the one exception to section 15's rule that flags are permanent from the first dose,
+and it exists for the case whose lesson **is** the redose: an act that produces a partial
+response the first time and works the second. AFRVR is that case. A single dose of any
+rate-controlling agent now takes twenty-two beats off the ventricular rate and changes
+nothing else; the phase turns over on the second.
+
+**The counter is the clinical judgement in it.** Left to default it counts the act, so a
+sibling covered through `also_covers` adds to the same tally. Named explicitly, several
+separate case actions share one tally, which is what AFRVR does: digoxin, amiodarone,
+metoprolol, esmolol, propranolol and diltiazem all count toward `rate_control_doses`,
+because two attempts at atrioventricular nodal blockade are two attempts whichever drugs
+they were. Two actions granting one flag at different totals is silent and the validator
+warns.
+
+**Nothing counts doses in the condition language and nothing will**, for the same reason
+time does not: the per-key review matrix has to stay finite. A case reads the count only
+through the flag.
+
+**Follow-ups gained `satisfied_when`.** `satisfied_by` is set membership and cannot express
+"again": an obligation to repeat a dose is created by the first dose and is discharged by
+it, because the action that would satisfy it is already in the taken set. A condition can
+say what a list cannot. One of the two is now mandatory, because a follow-up with neither
+is an obligation the debrief reports as open however the resident plays.
+
+**`narration_addendum` became `nurse_alert`**, and is emitted on its own nurse kind. It is
+coloured and it goes into the running chart, because the moment such a line matters is
+half a minute after it was said, when the resident is deciding whether the drug worked and
+the nurse's banner has moved on. It is not a prompt: no slot, no trill, said on the action
+rather than on a deadline, and said again on a redose.
+
+**Every nurse line now makes a sound.** A prompt keeps its trill; everything else gets a
+short soft cue. A line nobody was looking at is a line nobody read, and the banner is not
+where a resident's eyes are. The two are exclusive, the cue is about a fifth of the trill's
+amplitude, and repeats inside 250 ms are dropped so a submitted basket does not fire a
+burst of clicks.
+
+---
+
 ## Reports state findings, not conclusions
 
 **A note addressed to the reviewing physician was being printed to the learner.** A
