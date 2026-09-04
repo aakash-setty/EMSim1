@@ -237,6 +237,16 @@ and a checkout with no `ambience.txt` builds a working simulator that is 360 KB 
 
 ## The heartbeat, and how it is allowed to be uneven
 
+**One beat is a soft beep**: a sine at a fixed frequency under a gated envelope, 8 ms rise,
+45 ms held at full gain, 25 ms fall, with a faint octave partial on a shorter window under
+it. It used to be a thump, a sine whose pitch fell a major sixth over 140 ms under an
+exponential tail, and both halves of that read as percussion. The hold is what makes the
+difference: a tone that sustains before it stops is heard as a tone, where one that decays
+from its first instant is heard as something being hit. Fixing the pitch also made the
+saturation mapping honest, since the perceived pitch of a glide sits somewhere between its
+endpoints. The onset stays fast on purpose, because the same sound has to carry the rhythm
+below.
+
 The beat is a chain: each beat reads the current rate, saturation and rhythm and schedules
 the next one. Exactly one is ever pending. That is what lets the tempo follow the
 five-second ramp between phases continuously rather than in quantised steps, and it is
@@ -355,7 +365,7 @@ only as conclusions. They are not a source of truth for how the system behaves.
 ## Status
 
 All three cases pass the validator with no errors. CHFE walks 13 authored scenarios,
-MGCA 26 and AFRVR 31. CHFE passes 255 engine assertions, MGCA 265 and AFRVR 339, which is
+MGCA 26 and AFRVR 31. CHFE passes 268 engine assertions, MGCA 278 and AFRVR 352, which is
 the same case-agnostic suite plus each pack's own; each passes 39 validator negative
 tests. Each carries one warning, in every case about actions the catalog does not
 hold, which the prototype renders anyway so the gap stays visible. Those are catalog change

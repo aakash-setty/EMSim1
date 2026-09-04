@@ -713,13 +713,44 @@ This is display gating and only display gating. `st.vitals` is computed by the f
 
 Three channels. The heartbeat and the nurse's tones are derived from the current phase's authored vitals with any active vital effect applied (2.6), and neither is stored. The heartbeat is additionally gated on the monitor (8.4b); the nurse's tones are not, because she is a person rather than equipment. The third is the room, and it is gated on neither.
 
-**Continuous heartbeat.** A two-thump beat at a mean interval of `60 / heart_rate` seconds, pitched by oxygen saturation:
+**Continuous heartbeat.** A soft beep at a mean interval of `60 / heart_rate` seconds, pitched by oxygen saturation:
 
 ```
 frequency = BASE_HZ * 2 ^ (-(SPO2_REFERENCE - saturation) / SEMITONES_PER_PERCENT_DIVISOR)
 ```
 
 The shipped configuration is A6 (1760 Hz) at 100 percent saturation, one semitone lower per percent below. At 87 percent that is 13 semitones down, about 831 Hz. The anchor was A5 and was raised on the author's instruction; the cost is that the beat now sits inside the band the ear is most sensitive to, so it carries further over room noise and is more tiring across a fifteen-minute case.
+
+**The shape of one beat, since v0.8.** A sine at a fixed frequency under a gated envelope:
+an 8 ms raised-cosine rise, 45 ms held at full gain, a 25 ms raised-cosine fall, 78 ms in
+total. A faint octave partial at ten percent of the body's gain runs under it on a shorter
+44 ms window, so it colours the arrival and is gone before the body ends. The duration is
+fixed rather than derived from the interval, so the beat is the same sound at 60 and at 180
+and only the spacing changes.
+
+Until v0.8 it was a thump: a sine whose pitch fell a major sixth over 140 ms under a 12 ms
+attack and an exponential tail. Both halves of that read as percussion. **A falling pitch is
+the acoustic signature of a struck object, and an envelope that decays from its first instant
+is heard as something being hit rather than as a tone.** The hold is what changes the percept:
+a tone that sustains before it stops is heard as a tone.
+
+The old glide also made the pitch mapping below approximate. The perceived pitch of a glide
+sits somewhere between its endpoints, so "one semitone per percent" was true of the number
+fed to the oscillator and not of what anyone heard. With a fixed frequency the mapping is
+literally what the ear gets.
+
+Two properties are asserted from the rendered graph rather than from the configuration,
+because configuration can claim things the graph does not do: no beat schedules a frequency
+ramp of any kind, and the gain envelope is a value curve that reaches true zero at both ends
+and holds at full gain across the middle. The old exponential ramps stopped at 0.0001 rather
+than zero, which left a small step on every beat, three times a second for a whole case.
+
+**The onset has to stay sharp** because this one sound does two jobs. It displays saturation
+as pitch, and it carries the rhythm: the irregularly irregular model in 8.5a is legible only
+if each beat has a definite moment to be early or late against, and the beat-to-beat loudness
+variation that makes an uneven rhythm sound like a heart needs an onset to be loud or soft.
+A softer, slower attack would sound gentler and would cost the rhythm. 8 ms is the compromise,
+and the suite holds it at 15 ms or less.
 
 **The reference point and the step size are configuration, and both are teaching decisions.** A real pulse oximeter's pitch drop is neither linear in semitones nor anchored at 100 percent. The shipped mapping is more dramatic than the bedside sound a resident will actually work with, which makes it a better alarm and a worse simulation. If transfer to real practice matters more than in-simulator salience, match the device convention instead. Whichever is chosen, the interface should state the mapping rather than hide it.
 
@@ -746,7 +777,7 @@ An uneven rhythm additionally varies the loudness of each beat with the length o
 
 **Utterance cue.** Every other nurse line makes a shorter, softer sound: an action narrating, a result landing, a blocked attempt, a `nurse_alert`. A line nobody was looking at is a line nobody read, and the nurse's banner is not where a resident's eyes are. The design constraint is that it fires far more often than the trill and therefore must not be noticeable enough to irritate: it is brief, about half the trill's amplitude, and repeats inside 250 ms are dropped, because a submitted basket narrates several lines at one instant and a burst of clicks reads as a fault. **The two are exclusive.** A prompt trills and does not cue, because two sounds on one line would be worse than either.
 
-**Levels are relative and are set by ear.** The three sounds share one gain block in the audio module and are exposed on the module for inspection, because the balance between them is a decision and a decision nothing can check is a decision that drifts. Peak gain is not perceived loudness and the figures should not be read as a ranking: the beat is a long low thump with a falling pitch, the cue two very short components an octave up, the trill two sustained tones higher still. What the figures are good for is the invariants the suite asserts, which are that the second heart sound stays under the first, that a cue cannot be masked by a beat landing at the same instant, and that nothing dominates. **The heartbeat is the one that has to be right**, because it is the only sound that never stops: pitched to be noticeable on the first beat, it is unbearable by the two hundredth.
+**Levels are relative and are set by ear.** The three sounds share one gain block in the audio module and are exposed on the module for inspection, because the balance between them is a decision and a decision nothing can check is a decision that drifts. Peak gain is not perceived loudness and the figures should not be read as a ranking: the beat is a held tone at the saturation pitch, the cue two very short components an octave up, the trill two sustained tones higher still. What the figures are good for is the invariants the suite asserts, which are that the beat's octave partial stays well under its body, that a cue cannot be masked by a beat landing at the same instant, and that nothing dominates. **The heartbeat is the one that has to be right**, because it is the only sound that never stops: pitched to be noticeable on the first beat, it is unbearable by the two hundredth.
 
 **This partly undercuts section 2.2 and the decision should be conscious.** Prompt text is forbidden from implying the patient is deteriorating. A distinct alert sound attached only to prompts teaches the resident that the tone means "you have missed something", which is the information the text is not allowed to carry. If that is unacceptable, sound every nurse utterance rather than prompts alone.
 

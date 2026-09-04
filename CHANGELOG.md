@@ -5,6 +5,49 @@ is usable with learners.
 
 ---
 
+## The heartbeat is a soft beep rather than a knock
+
+The beat was a thump: a sine whose pitch fell a major sixth over 140 ms under a 12 ms attack
+and an exponential tail. Both halves of that read as percussion. A falling pitch is the
+acoustic signature of a struck object, and an envelope that decays from its first instant is
+heard as something being hit rather than as a tone.
+
+**It is now a gated tone at a fixed frequency**: 8 ms rise, 45 ms held at full gain, 25 ms
+fall, 78 ms in total, both edges a raised cosine. The hold is the part that does the work. A
+tone that sustains before it stops is heard as a tone; a tone that decays from its first
+instant is heard as a strike. The duration is fixed rather than derived from the interval, so
+the beat is the same sound at 60 and at 180 and only the spacing changes.
+
+A faint octave partial at ten percent of the body runs under it on a shorter 44 ms window, so
+it colours the arrival and is gone before the body ends. That is what keeps a bare sine from
+sounding like a test tone. A partial running the full length would only make the beat
+brighter; one that leaves early makes it soft.
+
+Two smaller things came with it. The envelope is one value curve rather than a pair of ramps,
+so it reaches true zero at both ends where the old exponential ramps stopped at 0.0001 and
+left a step on every beat, three times a second for a whole case. And the lub-dub is gone
+rather than held at an inaudible 0.001: there is one sound per beat, so the second oscillator
+now carries the octave instead of a second heart sound nobody could hear.
+
+**The pitch mapping is more honest than it was.** The perceived pitch of a glide sits
+somewhere between its endpoints, so "one semitone per percent of saturation" described the
+number fed to the oscillator and not what anyone heard. With a fixed frequency it describes
+the sound.
+
+**What was deliberately not done.** A slower, softer attack would sound gentler still and
+would cost the rhythm. This one sound does two jobs: it displays saturation as pitch and it
+carries the beat, and the irregularly irregular model is legible only if each beat has a
+definite moment to be early or late against. 8 ms is the compromise and the suite holds it
+at 15 ms or less.
+
+Seventeen new assertions cover it, and the important ones read the rendered audio graph
+rather than the configuration, because configuration can claim a fixed pitch that the graph
+does not deliver: no beat schedules a frequency ramp of any kind, every oscillator is a sine,
+the two frequencies are exactly an octave apart, and the gain curve starts at zero, rises
+into a hold at full gain, and returns to zero.
+
+---
+
 ## The debrief opens twice, and the clock's ending actually ends the case
 
 **The debrief now starts with a verdict and nothing else.** One line: *All Critical Actions

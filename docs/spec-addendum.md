@@ -357,9 +357,11 @@ behaviour is reviewable rather than incidental.
 
 ### 9.1 Continuous heartbeat
 
-A two-thump beat, pitched, at an interval of `60 / heart_rate` seconds, taken from the
-current phase's authored vitals. Rate and pitch are derived, never stored; changing phase
-changes the sound because it changes the vitals.
+A soft beep, pitched, at an interval of `60 / heart_rate` seconds, taken from the current
+phase's authored vitals. Rate and pitch are derived, never stored; changing phase changes
+the sound because it changes the vitals. One beat is a fixed-frequency sine under a gated
+envelope, 8 ms rise, 45 ms hold, 25 ms fall, with a faint octave partial on a shorter
+window; design 8.5 carries the reasoning and what it replaced.
 
 ### 9.2 Pitch mapping
 

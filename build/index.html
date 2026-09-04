@@ -1867,24 +1867,57 @@ const AUDIO = (() => {
      cue doubled on the author's instruction after doing so.
 
      **Peak gain is not perceived loudness and these numbers should not be read as a
-     ranking.** The beat is a long low thump with a falling pitch, the cue is two very
-     short components an octave up, and the trill is two sustained tones higher still, so
-     a beat at 0.15 sits under a cue at 0.110 to the ear even though the number is larger.
-     What the numbers are good for is the invariants the test suite checks: the second
-     heart sound stays under the first, the cue is not so far under the beat that a beat
-     landing at the same moment masks it, and nothing is loud enough to dominate.
+     ranking.** The beat is a held tone at the saturation pitch, the cue is two very short
+     components an octave up, and the trill is two sustained tones higher still, so a beat
+     at 0.15 sits under a cue at 0.110 to the ear even though the number is larger. What
+     the numbers are good for is the invariants the test suite checks: the octave partial
+     stays well under the body of the beat, the cue is not so far under the beat that a
+     beat landing at the same moment masks it, and nothing is loud enough to dominate.
 
      The heartbeat is the one that has to be right, because it is the only sound that
      never stops. A heartbeat pitched to be noticeable on the first beat is unbearable by
      the two hundredth. */
-  const LEVEL = { beatLub: 0.15, beatDub: 0.001, cueLow: 0.110, cueHigh: 0.056,
+  const LEVEL = { beatBody: 0.15, beatOctave: 0.015, cueLow: 0.110, cueHigh: 0.056,
                   trillLow: 0.22, trillHigh: 0.22, ambience: 0.03 };
-  /* beatDub is effectively off, on the author's instruction: the beat is meant to read as
-     one sound rather than as lub-dub. It is left in the graph at a level nobody will hear
-     rather than removed, because the second thump is also what sets the spacing the first
-     one is heard against, and because restoring it is then one number rather than a
-     structural change. Zero is not available: the envelope ramps exponentially and an
-     exponential ramp to zero is undefined. */
+
+  /* ---------- the shape of one beat ----------
+     Timing only. The two gains live in LEVEL with everything else, because the balance
+     between the sounds is one decision and splitting it across two blocks is how it
+     drifts.
+
+     The beat was a thump until v0.8: a sine whose pitch fell a major sixth over 140 ms
+     under a 12 ms attack and an exponential tail. Both halves of that read as percussion.
+     A falling pitch is the acoustic signature of a struck object, and an envelope that
+     starts decaying the instant it arrives is heard as something being hit rather than as
+     a tone. It also made the pitch mapping approximate: the perceived pitch of a glide
+     sits somewhere between its endpoints, so "one semitone per percent of saturation" was
+     true of the number fed to the oscillator and not of what anybody heard.
+
+     What replaces it is a gated tone at a fixed frequency. Rise, hold, fall, and the hold
+     is the part that matters: a tone that sustains before it stops is heard as a tone,
+     where a tone that decays from its first instant is heard as a strike. The duration is
+     fixed rather than derived from the interval, so the beat is the same sound at 60 and
+     at 180 and only the spacing between beats changes.
+
+     The envelope is a raised cosine written as a single value curve rather than as a pair
+     of ramps. That buys two things. It reaches true zero at both ends, where the old
+     exponential ramps stopped at 0.0001 and left a small step on every beat, three times
+     a second for a whole case. And the curve has no corner at the top, so the transition
+     into the hold does not itself click.
+
+     The octave partial is what stops a bare sine sounding like a test tone. It is faint,
+     ten percent of the fundamental, and it uses a SHORTER window than the body, so it
+     colours the arrival and is gone before the hold ends. A partial that ran the full
+     length would just make the beat brighter; one that leaves early makes it soft. */
+  const BEAT = {
+    durMs: 78, riseMs: 8, fallMs: 25,          /* hold is the remainder, 45 ms */
+    octaveDurMs: 44, octaveRiseMs: 8, octaveFallMs: 20,
+    /* No beat may occupy more than this fraction of the interval it sits in. Nothing in
+       the authored range comes close, since the shortest interval the rhythm model will
+       produce is the 240 ms refractory floor and 78 ms is a third of it. It is here so a
+       future case authoring a faster rate cannot make one beat overlap the next. */
+    maxDutyCycle: 0.45,
+  };
   /* The ambience figure is against a known reference rather than against whatever the
      recording happened to be: the loop is peak-normalised to 0.95 at build time, so it
      sits at about -18.6 dBFS on its own and at roughly -51 dBFS once this gain and the
@@ -2062,19 +2095,37 @@ const AUDIO = (() => {
     return CFG.baseHz * Math.pow(2, -steps / 12);
   }
 
-  /* One thump: a short pitched blip with a percussive envelope. */
-  function thump(hz, at, gain, dur) {
+  /* A rise, a hold and a fall as one array of gain values, both edges shaped as a raised
+     cosine. Sampled at a fixed rate rather than a fixed point count, so a longer window
+     gets more points instead of a coarser curve. The first and last values are exactly
+     zero, which is what keeps the beat free of the step the old exponential ramps left. */
+  function window_(durS, riseS, fallS, peak) {
+    const n = Math.max(32, Math.round(durS * 8000));
+    const a = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const t = (i / (n - 1)) * durS;
+      let k;
+      if (t < riseS)               k = 0.5 - 0.5 * Math.cos(Math.PI * (t / riseS));
+      else if (t > durS - fallS)   k = 0.5 - 0.5 * Math.cos(Math.PI * ((durS - t) / fallS));
+      else                         k = 1;
+      a[i] = peak * k;
+    }
+    a[0] = 0; a[n - 1] = 0;
+    return a;
+  }
+
+  /* One partial: a sine at a fixed frequency under one of those windows. No pitch
+     movement of any kind, which is the whole difference between a beep and a knock. */
+  function partial(hz, at, durS, riseS, fallS, peak) {
     const o = ctx.createOscillator();
     const g = ctx.createGain();
     o.type = 'sine';
     o.frequency.setValueAtTime(hz, at);
-    o.frequency.exponentialRampToValueAtTime(Math.max(40, hz * 0.55), at + dur);
-    g.gain.setValueAtTime(0.0001, at);
-    g.gain.exponentialRampToValueAtTime(gain, at + 0.012);
-    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    g.gain.setValueAtTime(0, at);
+    g.gain.setValueCurveAtTime(window_(durS, riseS, fallS, peak), at, durS);
     o.connect(g).connect(master);
     o.start(at);
-    o.stop(at + dur + 0.02);
+    o.stop(at + durS + 0.02);
   }
 
   /* In an uneven rhythm the first heart sound varies in intensity from beat to beat,
@@ -2091,16 +2142,21 @@ const AUDIO = (() => {
     return Math.min(r.gainCeiling || 1.3, Math.max(r.gainFloor || 0.7, g));
   }
 
-  /* lub-dub: the second sound is quieter, lower and close behind the first.
-     The gap is 160 ms except where the interval about to elapse is short enough that
-     160 ms would put the dub on top of the next lub. At the rates the two earlier
-     cases author it is always 160 ms, so their sound is unchanged; it only starts to
-     compress above about 155 beats per minute, which is where this case begins. */
+  /* One beat: the body, plus a faint octave that leaves before the body does.
+     `intervalMs` is the interval this beat sits in, and it is read only by the duty-cycle
+     guard. Under every rate any case can author the guard is inactive and the beat is the
+     same length every time, which is the point of it. */
   function beat(hz, intervalMs, gain) {
     const t = ctx.currentTime + 0.01;
-    const gap = Math.min(0.16, (intervalMs / 1000) * 0.42);
-    thump(hz, t, LEVEL.beatLub * gain, Math.min(0.14, gap * 0.9));
-    thump(hz * 0.75, t + gap, LEVEL.beatDub * gain, Math.min(0.11, gap * 0.7));
+    const room = (intervalMs / 1000) * BEAT.maxDutyCycle;
+    const k = Math.min(1, room / (BEAT.durMs / 1000));
+    partial(hz, t,
+            (BEAT.durMs / 1000) * k, (BEAT.riseMs / 1000) * k, (BEAT.fallMs / 1000) * k,
+            LEVEL.beatBody * gain);
+    partial(hz * 2, t,
+            (BEAT.octaveDurMs / 1000) * k, (BEAT.octaveRiseMs / 1000) * k,
+            (BEAT.octaveFallMs / 1000) * k,
+            LEVEL.beatOctave * gain);
   }
 
   /* One beat, then the next appointment. Everything is read fresh here rather than
@@ -2280,6 +2336,11 @@ const AUDIO = (() => {
     /* Exposed for the same reason describe() is: the balance between the sounds is a
        decision, and a decision nothing can check is a decision that drifts. */
     get levels() { return Object.assign({}, LEVEL); },
+    /* The beat's envelope, for the interface and for the assertion that no beat can run
+       into the next one. Timing in milliseconds, as authored. */
+    get beatShape() {
+      return Object.assign({ holdMs: BEAT.durMs - BEAT.riseMs - BEAT.fallMs }, BEAT);
+    },
     /* For the interface and for tests. `state` is unloaded, loading, ready or absent;
        absent is a build with no ambience asset or a decoder that refused it, and is a
        working simulator rather than an error. */

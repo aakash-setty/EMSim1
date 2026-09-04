@@ -883,9 +883,12 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
     const fast = stats(273, name, 120000), slow = stats(1579, name, 120000);
     chk(`${name}: the spread is narrower at a fast rate than at a slow one`,
         fast.cv < slow.cv, fast.cv.toFixed(3) + ' against ' + slow.cv.toFixed(3));
-    /* No interval can be short enough for one beat's second sound to land on the next
-       beat's first. The lub-dub gap is 160 ms and is itself compressed below that. */
-    chk(`${name}: the floor clears the lub-dub gap`, floorMs > 160, String(floorMs));
+    /* No interval can be short enough for one beat to still be sounding when the next
+       one starts. The beat is a fixed-length gated tone, so this is one comparison rather
+       than a claim about a compressed gap. */
+    const shape = AUDIO.beatShape || { durMs: 0 };
+    chk(`${name}: the floor clears a whole beat`, floorMs > shape.durMs,
+        floorMs + ' ms floor against a ' + shape.durMs + ' ms beat');
   }
 
   /* The balance between the three sounds is a decision, and a decision nothing can check
@@ -895,15 +898,39 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
   if (AUDIO.levels) {
     const L = AUDIO.levels;
     chk('the prompt trill is the loudest single component',
-        L.trillLow >= L.cueLow && L.trillLow >= L.beatLub, JSON.stringify(L));
-    chk('the second heart sound is quieter than the first', L.beatDub < L.beatLub);
+        L.trillLow >= L.cueLow && L.trillLow >= L.beatBody, JSON.stringify(L));
+    chk('the octave partial sits well under the body of the beat',
+        L.beatOctave < L.beatBody * 0.25,
+        (L.beatOctave / L.beatBody).toFixed(3) + ' of the body');
     chk('the cue is quieter than the trill, since it fires far more often',
         L.cueLow < L.trillLow, JSON.stringify(L));
     /* A cue landing on the same instant as a beat must not be swallowed by it. */
-    chk('a cue cannot be masked by a beat', L.cueLow > L.beatLub * 0.6,
-        (L.cueLow / L.beatLub).toFixed(2) + ' of the beat');
+    chk('a cue cannot be masked by a beat', L.cueLow > L.beatBody * 0.6,
+        (L.cueLow / L.beatBody).toFixed(2) + ' of the beat');
     chk('nothing is loud enough to dominate the mix',
         Object.values(L).every(v => v > 0 && v < 0.5), JSON.stringify(L));
+  }
+
+  /* The beat's envelope. The claim being made is that it is a held tone rather than a
+     decaying one, and the thing that makes it held is that there is a stretch in the
+     middle at full gain. A rise and a fall that between them consume the whole duration
+     would be a bell, which is a different sound and would undo the change. */
+  if (AUDIO.beatShape) {
+    const B = AUDIO.beatShape;
+    chk('the beat holds at full gain between its edges', B.holdMs > 0,
+        B.riseMs + ' + ' + B.fallMs + ' of ' + B.durMs + ' ms');
+    chk('the hold is the largest part of the beat',
+        B.holdMs > B.riseMs && B.holdMs > B.fallMs, JSON.stringify(B));
+    chk('the onset is fast enough to time a beat by', B.riseMs <= 15, String(B.riseMs));
+    chk('the octave partial leaves before the body does',
+        B.octaveDurMs < B.durMs, B.octaveDurMs + ' against ' + B.durMs);
+    /* The duty-cycle guard is a backstop, not a working part. If it is active at a rate a
+       case can author then the beat is no longer the same length every time, which is the
+       property the change was made for. */
+    const fastest = 60000 / 220;
+    chk('no rate a case can author engages the duty-cycle guard',
+        B.durMs <= fastest * B.maxDutyCycle,
+        B.durMs + ' ms against ' + (fastest * B.maxDutyCycle).toFixed(0) + ' ms of room');
   }
 
   /* Whatever the case under test authors has to be a name the vocabulary holds.
@@ -942,10 +969,25 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
   const realWindow = global.window, realPHASE = global.PHASE, realAmb = global.AMBIENCE;
   try {
     const sink = { connect: x => x };
-    const osc = () => ({ type: '', frequency: { setValueAtTime(){}, exponentialRampToValueAtTime(){} },
-                         connect: x => x, start(){}, stop(){} });
+    /* The stub records what was scheduled rather than discarding it. The beat's shape is
+       a claim about what the ear hears, and the only place that claim is actually made is
+       in the calls on the graph: a frequency ramp is a glide whatever the config says, and
+       an envelope is a held tone only if the curve really holds. */
+    const SCHED = { freqRamps: 0, freqSets: [], curves: [], oscTypes: [] };
+    const osc = () => {
+      const o = { type: '', connect: x => x, start(){}, stop(){},
+        frequency: { setValueAtTime(v){ SCHED.freqSets.push(v); },
+                     exponentialRampToValueAtTime(){ SCHED.freqRamps++; },
+                     linearRampToValueAtTime(){ SCHED.freqRamps++; } } };
+      /* `type` is set after creation, so it is read at start() rather than here. */
+      const realStart = o.start;
+      o.start = t => { SCHED.oscTypes.push(o.type); realStart(t); };
+      return o;
+    };
     const gain = () => ({ gain: { value: 0, setValueAtTime(){}, exponentialRampToValueAtTime(){},
-                                 linearRampToValueAtTime(){}, cancelScheduledValues(){} },
+                                 linearRampToValueAtTime(){}, cancelScheduledValues(){},
+                                 setValueCurveAtTime(c, at, dur){
+                                   SCHED.curves.push({ c: Array.from(c), at, dur }); } },
                           connect: x => x });
     const bufSrc = () => ({ buffer: null, loop: false, loopStart: 0, loopEnd: 0,
                             connect: x => x, start(){}, stop(){} });
@@ -1013,7 +1055,7 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
       return quiet;
     })());
     advance(60000);
-    /* Two oscillators per beat, the lub and the dub. */
+    /* Two oscillators per beat: the body and its octave partial. */
     const n60 = beats / 2;
     chk('sixty seconds at 160 bpm gives about 160 beats', Math.abs(n60 - 160) <= 12,
         n60.toFixed(0));
@@ -1042,6 +1084,42 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
     chk('reattaching restarts it', pending.length === 1, String(pending.length));
     AUDIO.stop();
     chk('stop leaves nothing pending', pending.length === 0, String(pending.length));
+
+    /* ---- what the beat actually scheduled ----
+       Read off the graph rather than off the config. The config can say the pitch is
+       fixed; only the absence of a frequency ramp makes it true. */
+    chk('no beat schedules a pitch glide', SCHED.freqRamps === 0, String(SCHED.freqRamps));
+    chk('every beat sets a frequency and holds it', SCHED.freqSets.length > 0);
+    chk('every oscillator in the beat is a sine',
+        SCHED.oscTypes.every(t => t === 'sine'),
+        [...new Set(SCHED.oscTypes)].join(', '));
+    /* The saturation pitch and its octave, and nothing in between. At SpO2 88 with an A6
+       anchor that is 880 Hz and 1760 Hz. The ratio is what is asserted, not the values,
+       so moving the anchor does not break this. */
+    {
+      const uniq = [...new Set(SCHED.freqSets.map(v => Math.round(v)))].sort((a, b) => a - b);
+      const pairs = uniq.length === 2 && Math.abs(uniq[1] / uniq[0] - 2) < 1e-6;
+      chk('the beat is a fundamental and one octave above it', pairs, uniq.join(' and '));
+    }
+    if (SCHED.curves.length) {
+      const body = SCHED.curves.filter(c => c.dur === Math.max(...SCHED.curves.map(x => x.dur)));
+      const c = body[0].c, peak = Math.max(...c);
+      chk('the envelope starts and ends at true zero',
+          c[0] === 0 && c[c.length - 1] === 0, c[0] + ' .. ' + c[c.length - 1]);
+      /* The hold is what makes it a tone rather than a strike, and it has to be visible
+         in the curve itself: a run of samples at full gain, not a single apex. */
+      const atPeak = c.filter(v => v >= peak * 0.999).length / c.length;
+      chk('the envelope holds at full gain across the middle of the beat',
+          atPeak > 0.4, (atPeak * 100).toFixed(0) + '% of the window at peak');
+      /* And it rises before it holds. A curve whose first sample is already at peak is a
+         gate, which clicks. */
+      chk('the envelope rises into the hold rather than switching on',
+          c[1] > 0 && c[1] < peak * 0.5, String(c[1] / peak));
+      chk('the rise and the fall are shaped, not linear ramps',
+          Math.abs(c[Math.round(c.length * 0.5)] - peak) < 1e-6);
+    } else {
+      chk('the beat schedules a value curve for its envelope', false, 'no curves recorded');
+    }
 
     /* ---- the room ---- */
     chk('the ambience decoded once, not twice',
