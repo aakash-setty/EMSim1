@@ -414,7 +414,15 @@ def run_checks(case):
                 errors.append(f"[time] {loc}: after_seconds {n!r} is below the {FLOOR_ERROR}s "
                               f"floor. A deterioration the resident could not plausibly have "
                               f"prevented tests reflexes, not medicine")
-            elif n < FLOOR_WARN:
+            # The soft floor is a FAIRNESS rule and applies only to the two patterns where
+            # something happens TO the resident: a deterioration on inaction, whose guard
+            # requires a flag to be unset, and an unguarded scheduled natural history. The
+            # third pattern, a delayed consequence of an action they took, has nothing to
+            # prevent and no reflex to test: it is a case saying how long a drug takes to
+            # work, and warning that a drug acts too quickly is not a fairness question. A
+            # rule that fires on correct authoring gets skimmed, and then it protects
+            # nothing, which is why this is scoped rather than blanket.
+            elif n < FLOOR_WARN and (tr.get("when") is None or guard_flags(tr)):
                 warnings.append(f"[time] {loc}: after_seconds {n} is under {FLOOR_WARN}s")
 
             mf = tr.get("measured_from", "phase_entry")
@@ -588,6 +596,7 @@ def run_checks(case):
     # -- J: vitals plausibility (catches transcription slips) ---------------
     RANGES = {"heart_rate": (20, 220), "systolic_bp": (40, 260), "diastolic_bp": (20, 160),
               "respiratory_rate": (4, 60), "oxygen_saturation": (50, 100), "temperature_c": (28.0, 43.0)}
+    RHYTHMS = {"regular", "irregularly_irregular"}
     for p in case["phases"]:
         v = p["vitals"]
         # A terminal phase may legitimately record arrest: zero is a real value there,
@@ -617,6 +626,16 @@ def run_checks(case):
             errors.append(f"[vitals] {p['id']}: bad pupil_size")
         if ap.get("pupil_reactivity") not in ("reactive", "sluggish", "fixed"):
             errors.append(f"[vitals] {p['id']}: bad pupil_reactivity")
+        # The heartbeat's evenness. Optional, and absent means regular, so every case
+        # written before this existed is unaffected. The vocabulary is closed and the
+        # authoritative copy is SHARED.audio.rhythm in build_simulator.py; it is
+        # restated here rather than read from there for the same reason the pupil sizes
+        # above are, which is that the validator holds no clinical knowledge and this is
+        # a spelling check. An unknown value would fall back to a regular beat silently,
+        # so it is an error rather than a warning.
+        if "rhythm" in p and p["rhythm"] not in RHYTHMS:
+            errors.append(f"[vitals] {p['id']}: rhythm {p['rhythm']!r} is not one of "
+                          f"{sorted(RHYTHMS)}; an unknown value sounds regular and says nothing")
 
     # -- V: vital effects (design 2.3, authoring 5.2) -----------------------
     # Six rules, and the reason for each is that the mechanism is easy to author into

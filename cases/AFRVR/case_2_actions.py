@@ -219,9 +219,16 @@ add(A("unsynchronized_cardioversion", tag=DISCOURAGED, flags=[],
     "a reasoning error, and it is the reason the sync button exists.")))
 
 # ------------------------------------------------------------------ rate control
+# The line the nurse adds when any rate-controlling drug goes in. The phase does not turn
+# over for thirty seconds, and a resident watching an unchanged rate of 160 for thirty
+# seconds after pushing a drug will reasonably conclude it did not work and push another.
+# Saying so is cheaper than shortening the delay and it is what a nurse would actually say.
+RATE_CONTROL_ADDENDUM = "These agents can take a bit of time to kick in."
+
 add(A("digoxin_bolus",
   tag=CRIT_ALWAYS, flags=["rate_control_given"],
   expectation_label="Rate control for atrial fibrillation (digoxin, amiodarone or metoprolol)",
+  narration_addendum=RATE_CONTROL_ADDENDUM,
   prerequisites=[PRE_IV],
   prompt={"deadline_seconds": 190,
           "guard": "NOT flag rate_control_given set",
@@ -281,6 +288,7 @@ add(A("diltiazem_bolus", tag=[
     {"when": None, "value": "discouraged"}],
   flags=["rate_control_given", "ccb_given"],
   prerequisites=[PRE_IV],
+  narration_addendum=RATE_CONTROL_ADDENDUM,
   vital_effects=[
     {"vital": "systolic_bp", "delta": -20, "key": "ccb_systolic", "onset_seconds": 15,
      "note": ("Twenty points of systolic pressure, coming on over fifteen seconds and not wearing "
@@ -326,6 +334,7 @@ add(A("adenosine_bolus", tag=DISCOURAGED, flags=[], prerequisites=[PRE_IV],
     "unpleasant in a patient who is already hypoxaemic and frightened.")))
 
 add(A("propranolol_bolus", tag=DISCOURAGED, flags=["rate_control_given"], prerequisites=[PRE_IV],
+  narration_addendum=RATE_CONTROL_ADDENDUM,
   debrief_note=(
     "Non-selective beta blockade with a long-acting agent is the least controllable way to slow "
     "this patient. If a beta blocker is the chosen strategy, a short-acting and titratable one is "
@@ -334,6 +343,7 @@ add(A("propranolol_bolus", tag=DISCOURAGED, flags=["rate_control_given"], prereq
     "make.")))
 
 add(A("esmolol_drip", tag=DISCOURAGED, flags=["rate_control_given"], prerequisites=[PRE_IV],
+  narration_addendum=RATE_CONTROL_ADDENDUM,
   debrief_note=(
     "The argument for esmolol is that it is titratable and short-acting, so if beta blockade is "
     "poorly tolerated it can be withdrawn in minutes, which is a real advantage in a patient whose "

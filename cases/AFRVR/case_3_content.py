@@ -8,12 +8,16 @@ def rep(text, abnormal=True):
     return {"kind": "report", "abnormal": abnormal, "report": text}
 def c(label, value, unit, ref, abn):
     return {"label": label, "value": value, "unit": unit, "reference_range": ref, "abnormal": abn}
-def panel(comps, comment=None, kind="panel"):
+def panel(comps, comment=None, kind="panel", verify=None):
     d = {"kind": kind, "abnormal": any(x["abnormal"] for x in comps), "components": comps}
     if comment: d["comment"] = comment
+    # `comment` is rendered under the result. `verify` is not rendered anywhere and is
+    # where a note addressed to the reviewing physician belongs, the same way the
+    # catalog's own defaults use it.
+    if verify: d["verify"] = verify
     return d
-def val(comps, comment=None):
-    return panel(comps, comment, kind="value")
+def val(comps, comment=None, verify=None):
+    return panel(comps, comment, kind="value", verify=verify)
 
 VENT = "phase is intubated"
 RF   = "phase is respiratory_failure"
@@ -221,12 +225,15 @@ LABS = {
      c("NT-proBNP", "3480", "pg/mL", "under 300 (age-adjusted cut-offs apply)", True)],
      comment="Markedly raised. Supportive of acute heart failure and not diagnostic of it: atrial "
              "fibrillation raises natriuretic peptides independently through atrial wall stress, "
-             "and the two contributions cannot be separated in this patient. Most useful when low. "
-             "ASSAY NOTE for the reviewer: the catalog entry is named 'pro-BNP' and this payload "
-             "is written as NT-proBNP with an NT-proBNP reference interval. BNP and NT-proBNP have "
-             "different units and different cut-offs and are not interchangeable, so which assay "
-             "this case is modelling is a decision the author has to make and the value and the "
-             "interval both change with it.")}]},
+             "and the two contributions cannot be separated in this patient. Most useful when low.",
+     verify="ASSAY NOTE, for the reviewer and not for the learner. The catalog entry is named "
+            "'pro-BNP' and this payload is written as NT-proBNP with an NT-proBNP reference "
+            "interval. BNP and NT-proBNP have different units and different cut-offs and are not "
+            "interchangeable, so which assay this case models is a decision the author has to "
+            "make, and the value and the interval both change with it. This sits in `verify` "
+            "rather than in `comment` because `comment` is rendered to the learner: a note "
+            "addressed to a reviewing physician, printed under a result, tells a resident to "
+            "distrust the number they were just given.")}]},
 
  "complete_blood_count_cbc": {"changes_with_state": False, "rules": [
    {"when": None, "value": panel([
@@ -298,85 +305,73 @@ LABS = {
 }
 
 IMAGING = {
- "authoring_note": ("Section 11.4. Reports freeze at the state in which they were ordered, so a "
-   "tracing taken before rate control still reads 160 when it arrives after."),
+ "authoring_note": (
+   "Section 11.4. Reports freeze at the state in which they were ordered, so a tracing "
+   "taken before rate control still reads 160 when it arrives after.\n\n"
+   "FINDINGS ONLY. No report in this case carries an interpretation line, and that is an "
+   "authoring decision rather than an oversight. Naming the rhythm, calling the ST "
+   "depression rate-related, or concluding that the B-lines are cardiogenic is the "
+   "resident's work, and a report that does it for them removes the task the case exists "
+   "to set. The reasoning that used to sit at the end of these reports has not been lost; "
+   "it is in the debrief note on each study, which is where a learner reads it after they "
+   "have committed to an answer rather than before.\n\n"
+   "They are also deliberately short. A resident who has to read eight sentences to find "
+   "the ejection fraction is spending attention on comprehension rather than on "
+   "management, and length in a report reads as importance, so a long report about a "
+   "negative study is actively misleading."),
 
  "ecg_12_lead": {"changes_with_state": True, "result_shape": "structured", "rules": [
    {"when": "phase is rate_controlled_congested OR phase is stabilized OR phase is intubated",
-    "value": rep("Atrial fibrillation, ventricular rate approximately 105. Irregularly irregular "
-      "with no P waves; fibrillatory baseline activity best seen in V1. Narrow QRS at 92 ms, no "
-      "delta wave. The lateral ST depression seen on the earlier tracing has largely resolved, "
-      "leaving 0.5 mm of horizontal depression in V5 and V6. No ST elevation. Left ventricular "
-      "hypertrophy by voltage criteria. QTc 442 ms. Interpretation: rate-related repolarisation "
-      "change, now improved with rate control, which is the point of repeating the tracing.")},
+    "value": rep("Atrial fibrillation, ventricular rate approximately 105. Irregularly "
+      "irregular, no P waves. Narrow QRS at 92 ms. Horizontal ST depression 0.5 mm in V5 "
+      "and V6, less than on the earlier tracing. No ST elevation. QTc 442 ms.")},
    {"when": None,
     "value": rep("Atrial fibrillation with rapid ventricular response, ventricular rate "
-      "approximately 160. Irregularly irregular R-R intervals with no discernible P waves and a "
-      "coarse fibrillatory baseline in V1. Narrow QRS at 88 ms with no delta wave and no "
-      "pre-excitation. Up to 1.5 mm of horizontal ST depression in V4 to V6 with T wave flattening. "
-      "No ST elevation in any territory, no reciprocal change, no Q waves. Left ventricular "
-      "hypertrophy by voltage criteria. QTc 448 ms. Interpretation: atrial fibrillation with a "
-      "rapid ventricular response. The lateral ST depression is a rate-related repolarisation "
-      "change rather than an acute coronary occlusion pattern and should be re-examined on a "
-      "repeat tracing once the rate is controlled.")}]},
+      "approximately 160. Irregularly irregular, no P waves. Narrow QRS at 88 ms, no delta "
+      "wave. Horizontal ST depression up to 1.5 mm in V4 to V6. No ST elevation, no Q "
+      "waves. QTc 448 ms.")}]},
 
  "ultrasound_cardiac": {"changes_with_state": False, "result_shape": "structured", "rules": [
    {"when": None,
-    "value": rep("Parasternal long axis, parasternal short axis, apical four chamber and "
-      "subcostal views obtained; image quality adequate. Globally reduced left ventricular "
-      "systolic function with global hypokinesis and no obvious regional wall motion abnormality. "
-      "Visually estimated ejection fraction 30 to 35 percent. Reduced mitral valve E-point septal "
-      "separation and reduced fractional shortening, both consistent with that estimate. Left "
-      "ventricle mildly dilated. No pericardial effusion. Right ventricle not dilated, with a "
-      "normal right-to-left ventricular ratio and no septal flattening. Inferior vena cava dilated "
-      "at approximately 2.3 cm with minimal respiratory variation. Interpretation: newly "
-      "recognised moderately to severely reduced left ventricular systolic function with a high "
-      "central venous pressure. No pericardial tamponade and no right heart strain pattern.")}]},
+    "value": rep("Globally reduced left ventricular systolic function with global "
+      "hypokinesis and no regional wall motion abnormality. Visually estimated ejection "
+      "fraction 30 to 35 percent. Left ventricle mildly dilated. No pericardial effusion. "
+      "Right ventricle not dilated, no septal flattening. Inferior vena cava 2.3 cm with "
+      "minimal respiratory variation.")}]},
 
  "ultrasound_lung": {"changes_with_state": True, "result_shape": "structured", "rules": [
    {"when": "flag diuretic_given set AND flag on_niv set",
-    "value": rep("Eight-zone scan repeated. B-lines reduced in number and now confined to the "
-      "dependent posterolateral zones, with A-lines returning anteriorly on both sides. Lung "
-      "sliding present throughout. Small bilateral pleural effusions unchanged. Interpretation: "
-      "improving interstitial oedema. This is where the response to the diuretic and the positive "
-      "pressure is visible, and it is not on the monitor.")},
+    "value": rep("B-lines reduced in number and now confined to the dependent "
+      "posterolateral zones, with A-lines returning anteriorly on both sides. Lung sliding "
+      "present. Small bilateral pleural effusions, unchanged.")},
    {"when": "flag diuretic_given set",
-    "value": rep("Eight-zone scan repeated. B-lines slightly reduced anteriorly and still "
-      "confluent in the lower zones bilaterally. Lung sliding present throughout. Small bilateral "
-      "pleural effusions. Interpretation: interstitial oedema, marginally improved.")},
+    "value": rep("B-lines reduced in number anteriorly, still confluent in the lower zones "
+      "on both sides. Lung sliding present. Small bilateral pleural effusions.")},
    {"when": None,
-    "value": rep("Eight-zone scan. Diffuse bilateral B-lines, three or more per field in every "
-      "zone examined, confluent in the lower zones. Symmetrical. Lung sliding present throughout "
-      "with no pneumothorax. Small bilateral pleural effusions. No focal consolidation, no "
-      "sub-pleural consolidation, no dynamic air bronchograms. Interpretation: diffuse bilateral "
-      "interstitial syndrome, symmetrical and with a smooth pleural line, which in this context is "
-      "cardiogenic pulmonary oedema rather than pneumonia or an obstructive exacerbation.")}]},
+    "value": rep("Diffuse bilateral B-lines, three or more per field in every zone and "
+      "confluent at the bases. Symmetrical. Lung sliding present throughout. Small "
+      "bilateral pleural effusions. No consolidation.")}]},
 
  "xr_chest": {"changes_with_state": False, "result_shape": "structured", "rules": [
    {"when": None,
-    "value": rep("Portable anteroposterior semi-erect film. Cardiomegaly with a cardiothoracic "
-      "ratio of about 0.58, limited by the projection. Upper zone vascular redistribution. "
-      "Perihilar alveolar and interstitial opacity in a bat's wing distribution with septal "
-      "Kerley B lines at both bases. Small bilateral pleural effusions with blunting of both "
-      "costophrenic angles. No focal lobar consolidation. No pneumothorax. Interpretation: "
-      "pulmonary oedema with cardiomegaly and small effusions.")}]},
+    "value": rep("Portable semi-erect film. Cardiomegaly, cardiothoracic ratio about 0.58. "
+      "Upper zone vascular redistribution. Perihilar interstitial and alveolar opacity with "
+      "Kerley B lines at both bases. Small bilateral pleural effusions. No focal "
+      "consolidation. No pneumothorax.")}]},
 
  "ct_pulmonary_embolus": {"changes_with_state": False, "result_shape": "structured", "rules": [
    {"when": None,
-    "value": rep("No filling defect in the main, lobar, segmental or subsegmental pulmonary "
-      "arteries. No pulmonary embolus. Cardiomegaly with left atrial enlargement. Bilateral "
-      "ground-glass opacity with smooth interlobular septal thickening in a perihilar "
-      "distribution, and small bilateral pleural effusions, in keeping with pulmonary oedema. "
-      "Coronary artery calcification. No consolidation, no mass, no lymphadenopathy. "
-      "Interpretation: no pulmonary embolus. Findings of pulmonary oedema.")}]},
+    "value": rep("No filling defect in the pulmonary arteries to subsegmental level. "
+      "Cardiomegaly with left atrial enlargement. Bilateral ground-glass opacity with "
+      "smooth interlobular septal thickening in a perihilar distribution. Small bilateral "
+      "pleural effusions. Coronary artery calcification. No consolidation.")}]},
 
  "ultrasound_lower_extremity_venous": {"changes_with_state": False, "result_shape": "structured",
   "rules": [
    {"when": None,
-    "value": rep("Bilateral two-point compression at the common femoral and popliteal veins. Both "
-      "veins fully compressible on both sides. No echogenic intraluminal material. Symmetrical "
-      "subcutaneous oedema of both calves. Interpretation: no proximal deep vein thrombosis "
-      "identified.", abnormal=False)}]},
+    "value": rep("Common femoral and popliteal veins fully compressible on both sides. No "
+      "echogenic intraluminal material. Symmetrical subcutaneous oedema of both calves.",
+      abnormal=False)}]},
 }
 
 DX_KNOWN = "study ultrasound_cardiac resulted"

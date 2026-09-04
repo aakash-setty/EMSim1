@@ -345,6 +345,11 @@ rule.
 
 1. **Thirty-second floor**, with a warning below sixty. A deterioration the resident could not
    plausibly have prevented teaches nothing about medicine and a great deal about reflexes.
+   The floor is absolute; **the warning applies only to the two patterns where something
+   happens TO the resident**, which is a deterioration on inaction and an unguarded
+   scheduled natural history. A delayed consequence of an action they took has nothing to
+   prevent and no reflex to test: it is the case saying how long a drug takes to work, and
+   thirty seconds there is a statement about pharmacology rather than a trap.
 2. **A prompt must come first.** For every flag your guard requires to be unset, some action that
    sets that flag must prompt in that phase, at least twenty seconds before the deadline. This is
    section 1's framing made mechanical: the nurse exists to teach, and a deterioration nobody warned
@@ -406,11 +411,35 @@ If a case needs an appearance feature outside this list, that is a request to ex
 
 **Saturation and heart rate are now audible.** The heartbeat runs at the authored rate and its pitch falls with the authored saturation. A saturation chosen loosely because it was "about right" will be heard, not just read. Choose the numbers as deliberately as you would for the monitor.
 
+### 6.0a The rhythm, which is authored on the phase and not in the appearance block
+
+A phase may carry a `rhythm`, a sibling of `vitals` and `appearance` rather than a member of either, because it is neither one of the six numbers nor one of the appearance values. It is optional and it has exactly two permitted values.
+
+| `rhythm` | What it does |
+|---|---|
+| `regular` | Even intervals. The default, and what a phase with no `rhythm` field sounds like |
+| `irregularly_irregular` | Every R-R interval drawn independently, so there is no underlying period for the ear to lock onto |
+
+```json
+{ "id": "presentation", "vitals": { "heart_rate": 160, "...": "..." },
+  "appearance": { "...": "..." },
+  "rhythm": "irregularly_irregular" }
+```
+
+**Author it wherever the rhythm is part of the finding.** The heartbeat is the only channel through which a resident can perceive a rhythm before they order a tracing, and in a case that turns on recognising one, a regular beat is the monitor telling them the wrong answer out loud. It also has to agree with everything else the case says: an ECG report describing irregularly irregular R-R intervals over a metronomic beat is the same class of contradiction as a nurse prompt describing a trajectory over static vitals, and no validator can see it either.
+
+**The heart rate stays the heart rate.** The interval model preserves the mean exactly, so the number on the monitor is the true average rate however uneven the individual beats are. Do not compensate for the irregularity when choosing the number.
+
+**Two things it is not.** It is not a description of a diagnosis: the engine has no idea which conditions produce which rhythm, in the same way it has no idea which drugs are harmful, and `irregularly_irregular` names a finding that atrial fibrillation is the commonest but not the only cause of. And it is not a physiological model. The interval distribution, its spread, and the beat-to-beat variation in loudness are all authored parameters in `SHARED.audio.rhythm`, with a provenance note there saying so. **No case should be described as modelling a rhythm.**
+
+Adding a third value, for a regularly irregular beat such as bigeminy or Wenckebach, is a request to extend the global audio module. It would need its own model rather than different parameters for this one, so escalate rather than reaching for the nearest existing value.
+
 **Consequence to accept:** vitals are static within a phase and change at phase boundaries. Small cosmetic variance is added by the renderer so the monitor does not look frozen, but that variance carries no clinical meaning and no rule reads it.
 
 **Phase boundaries now ramp over five seconds.** Rather than replacing every number at once, the renderer interpolates heart rate, both pressures, saturation, respiratory rate and temperature from the previous displayed values to the new phase's authored values across five seconds, and the heartbeat audio follows. Two consequences for the author:
 
 - **Author the endpoints, not the path.** You still supply one set of numbers per phase. There is no way to author a trajectory, and the ramp is not one: it is a straight interpolation between two authored plateaus. A case that clinically requires a rise over minutes still needs an extra phase.
+- **The tempo follows the ramp continuously.** The beat reads the current rate when it schedules the next beat, so a heart rate sliding from 160 to 108 over five seconds is heard sliding rather than in steps. Nothing to author; worth knowing when you choose the two endpoints.
 - **A result ordered during a ramp freezes at the phase's authored numbers**, not the ramped ones, per fact 7. So a blood gas ordered one second after a transition returns the new phase's values while the monitor is still showing something in between. This is a real inconsistency, it lasts up to five seconds, and it was accepted rather than fixed, because the alternatives are ramping state (which breaks result freezing) or delaying results (which makes the clock lie). It is not worth authoring around; it is worth knowing about if a reviewer reports it as a bug.
 
 ### 6.1 Moving a vital with an action, not a phase
@@ -667,7 +696,18 @@ Each follow-up requires:
 
 The nurse sits at top center and has four functions. Three are largely automatic; one needs authoring.
 
-**9.1 Action narration.** Generated from the catalog template, for example "Giving {dose} of {name}." Supply a case-specific override only where the standard line would be wrong or confusing. Exams and interview questions are not narrated.
+**9.1 Action narration.** Generated from the catalog template, for example "Giving {dose} of {name}." Exams and interview questions are not narrated. Two case fields change it, and the difference between them is which of the two things you want.
+
+| Field | What it does |
+|---|---|
+| `narration_override` | Replaces the catalog line entirely. Use it only where the standard line would be wrong or confusing |
+| `narration_addendum` | A second line, said straight after the catalog's own. Use it where the standard line is correct and there is something to add about the act that was just performed |
+
+An addendum is the one to reach for when a case has authored a delay. A resident who pushes a rate-controlling drug and watches an unchanged number for thirty seconds will reasonably conclude it did not work and push another; the nurse saying "these agents can take a bit of time to kick in" costs one line and prevents it. It is a narration and not a prompt, so it is said the moment the action is taken rather than on a deadline, it is said again on a repeat dose, and section 9.5's rule that prompt text must not imply a trajectory does not reach it. It must still be true of what the monitor is about to show.
+
+Both fields are borrowed by a covered sibling, so an addendum on a coverage group speaks for every route to the act. Write it so that it does: "these agents" rather than "this drug".
+
+**Neither of these existed until v0.9**, despite this section having promised the override since v0.2. A case that authored one got the catalog line and no error.
 
 **9.2 Result announcements.** Automatic. No authoring.
 
@@ -967,6 +1007,10 @@ Results are structured, not prose:
 ```
 
 `kind` is `panel` for multi-analyte results, `value` for single ones, `report` for imaging and ECG narrative.
+
+**Author findings, not conclusions, and keep them short.** A report that ends "interpretation: cardiogenic pulmonary oedema", or a tracing that explains that the ST depression is rate-related, has done the work the case was setting. Put that reasoning in the study's debrief note instead, where the learner meets it after committing to an answer rather than before. Length is the same problem in a quieter form: a resident who reads eight sentences to find the ejection fraction is spending attention on comprehension rather than on management, and because length reads as importance, a long report about a negative study misleads. Cut the views obtained, the secondary measures that merely agree with the primary one, and the negatives nobody asked about.
+
+**`comment` is rendered to the learner. `verify` is not.** A note addressed to the reviewing physician goes in `verify`, alongside the reference interval you are unsure of. Putting it in `comment` prints it under the result, which tells a learner to distrust the number they were just given.
 
 **You set the abnormal flag; the renderer does not compute it.** Flagged components display distinctly, currently in red. Two reasons the renderer stays out of it: reference intervals are assay- and institution-specific, and the interpretation is often not the number, since a pO2 of 95 is normal on room air and alarming on a non-rebreather.
 

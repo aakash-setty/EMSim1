@@ -8,34 +8,34 @@
    "steps": ["attach_monitor", "insert_iv", "ecg_12_lead", "ultrasound_cardiac", "ultrasound_lung",
              "non_invasive_positive_pressure_ventilation", "furosemide_40_mg_iv",
              "basic_chemistry_chem_7", "magnesium_level", "magnesium_sulfate_bolus",
-             "digoxin_bolus", {"wait": 70}, "apixaban", "consult_cardiology",
+             "digoxin_bolus", {"wait": 40}, "apixaban", "consult_cardiology",
              "consult_critical_care", "handoff_submit"],
    "expect_phase": "case_complete"
   },
   {
    "name": "Intended path reaches stabilised before the handoff",
    "steps": ["attach_monitor", "insert_iv", "ultrasound_cardiac",
-             "non_invasive_positive_pressure_ventilation", "digoxin_bolus", {"wait": 70},
+             "non_invasive_positive_pressure_ventilation", "digoxin_bolus", {"wait": 40},
              "furosemide_40_mg_iv", "apixaban"],
    "expect_phase": "stabilized"
   },
 
   {
    "name": "Wrong path 1: the rate is treated and the lung is not",
-   "steps": ["attach_monitor", "insert_iv", "ecg_12_lead", "digoxin_bolus", {"wait": 70},
+   "steps": ["attach_monitor", "insert_iv", "ecg_12_lead", "digoxin_bolus", {"wait": 40},
              "apixaban"],
    "expect_phase": "rate_controlled_congested",
    "note": "A competent arrhythmia resuscitation and nothing for the pulmonary oedema."
   },
   {
    "name": "Wrong path 1 continued: rate controlled, still nothing for the breathing, and he tires",
-   "steps": ["insert_iv", "digoxin_bolus", {"wait": 70}, {"wait": 250}],
+   "steps": ["insert_iv", "digoxin_bolus", {"wait": 40}, {"wait": 250}],
    "expect_phase": "respiratory_failure"
   },
   {
    "name": "Wrong path 2: diltiazem given after the ejection fraction is known",
    "steps": ["attach_monitor", "insert_iv", "ultrasound_cardiac", "ultrasound_lung",
-             "non_invasive_positive_pressure_ventilation", "diltiazem_bolus", {"wait": 70},
+             "non_invasive_positive_pressure_ventilation", "diltiazem_bolus", {"wait": 40},
              "furosemide_40_mg_iv"],
    "expect_phase": "stabilized",
    "note": "Discouraged, not harmful, and the case still advances. The consequence is a systolic pressure twenty points lower than it would otherwise be, which is a vital effect rather than a phase."
@@ -53,7 +53,7 @@
   },
   {
    "name": "Wrong path 3 rescued with rate control already in: straight to stabilised",
-   "steps": ["insert_iv", "digoxin_bolus", {"wait": 70}, {"wait": 250},
+   "steps": ["insert_iv", "digoxin_bolus", {"wait": 40}, {"wait": 250},
              "non_invasive_positive_pressure_ventilation"],
    "expect_phase": "stabilized"
   },
@@ -93,7 +93,7 @@
   {
    "name": "The same bolus once he is stabilised is discouraged rather than lethal",
    "steps": ["insert_iv", "non_invasive_positive_pressure_ventilation", "digoxin_bolus",
-             {"wait": 70}, "normal_saline_1l_bolus"],
+             {"wait": 40}, "normal_saline_1l_bolus"],
    "expect_phase": "stabilized"
   },
 
@@ -104,7 +104,7 @@
   },
   {
    "name": "Blocked prerequisite satisfied by an intraosseous needle instead of a vein",
-   "steps": ["intraosseous_line", "digoxin_bolus", {"wait": 70}],
+   "steps": ["intraosseous_line", "digoxin_bolus", {"wait": 40}],
    "expect_phase": "rate_controlled_congested"
   },
   {
@@ -122,19 +122,19 @@
   {
    "name": "Coverage: amiodarone satisfies rate control",
    "steps": ["insert_iv", "non_invasive_positive_pressure_ventilation",
-             "amiodarone_bolus_infusion", {"wait": 70}],
+             "amiodarone_bolus_infusion", {"wait": 40}],
    "expect_phase": "stabilized"
   },
   {
    "name": "Coverage: metoprolol satisfies rate control",
    "steps": ["insert_iv", "non_invasive_positive_pressure_ventilation", "metoprolol_bolus",
-             {"wait": 70}],
+             {"wait": 40}],
    "expect_phase": "stabilized"
   },
   {
    "name": "Coverage: enoxaparin and heparin are accepted anticoagulants",
    "steps": ["insert_iv", "non_invasive_positive_pressure_ventilation", "enoxaparin",
-             "heparin_bolus_drip", "digoxin_bolus", {"wait": 70}],
+             "heparin_bolus_drip", "digoxin_bolus", {"wait": 40}],
    "expect_phase": "stabilized"
   },
 
@@ -173,9 +173,9 @@
   {
    "name": "Clock: rate control does not take effect the instant it is given",
    "steps": ["insert_iv", "non_invasive_positive_pressure_ventilation", "digoxin_bolus",
-             {"wait": 30}],
+             {"wait": 15}],
    "expect_phase": "breathing_supported",
-   "note": "Thirty seconds after the drug he is still in the breathing-supported phase at a rate of 152. The pair to the scenario above it, which waits seventy."
+   "note": "Fifteen seconds after the drug he is still in the breathing-supported phase at a rate of 152. The pair to the scenario above it, which waits forty."
   },
   {
    "name": "Clock: a harmful action still halts after a deadline has passed",

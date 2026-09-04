@@ -5,6 +5,106 @@ is usable with learners.
 
 ---
 
+## Reports state findings, not conclusions
+
+**A note addressed to the reviewing physician was being printed to the learner.** A
+laboratory payload's `comment` is rendered under the result. AFRVR's natriuretic peptide
+carried an assay caveat written for the reviewer in that field, so a resident was told to
+distrust a number they had just been handed. Reviewer-addressed notes belong in `verify`,
+which nothing renders and which the catalog's own defaults already use for exactly this.
+
+**AFRVR's imaging reports lost their interpretation lines and about two thirds of their
+length.** An editorial decision in the case rather than an engine change, recorded here
+because the argument generalises. A report that ends "interpretation: cardiogenic pulmonary
+oedema" has done the work the case exists to set; the reasoning belongs in the debrief note
+for that study, where a learner meets it after committing to an answer. And length in a
+report reads as importance, so a long report about a negative study actively misleads. The
+tracing went from about a hundred words to forty-three, the cardiac ultrasound from a
+hundred and twenty to forty-six.
+
+---
+
+## Four fixes from playing the third case
+
+**A covered sibling lit up the covering action's button.** The other half of the coverage
+defect below, and introduced by its fix: recording the covering action in `taken` made the
+debrief score correctly and made the action grid draw digoxin as already given to a
+resident who had pressed metoprolol. There are now two sets, and the difference between
+them is the whole point. **`taken`** is which buttons were pressed and is what the grid
+reads. **`satisfied`** is what has been accomplished, `taken` plus the covering action of
+anything performed through an also_covers group, and is what the debrief, the follow-up
+satisfiers, the prompt suppression and `action X taken` read. `evalCond` degrades to
+`taken` where `satisfied` is absent, so a hand-built state still resolves.
+
+**`narration_override` never existed.** Authoring section 9.1 has promised it since v0.2
+and nothing read the field, so a case that authored one got the catalog line and no error.
+Implemented, together with **`narration_addendum`**, a second nurse line said straight
+after the catalog's own. The addendum is the field a case wants when it has authored a
+delay: a resident who pushes a drug and watches an unchanged number will reasonably
+conclude it did not work and push another, and one line from the nurse prevents it.
+
+**The soft floor on a timed transition was firing on the wrong pattern.** The 60-second
+warning is a fairness rule, and fairness is about things that happen TO a resident: a
+deterioration on inaction, or an unguarded natural history. A delayed consequence of an
+action they took has nothing to prevent and no reflex to test, so warning that a drug acts
+too quickly is not a fairness question. Scoped to negative-guard and unguarded rules, the
+same way the mandatory-prompt rule already was. The hard 30-second floor is unchanged and
+applies to everything.
+
+**The monitor read `min` with a superscript minus one.** It now reads `/minute`.
+
+---
+
+## The heartbeat can be uneven
+
+**A phase may declare a `rhythm`.** `regular`, which is the default and is bit-identical to
+what came before, or `irregularly_irregular`, which draws every R-R interval independently
+so there is no period for the ear to lock onto. It exists because the third case is atrial
+fibrillation: its ECG report said the rhythm was irregularly irregular, its examination
+said the first heart sound varied beat to beat, its entire management turned on
+recognising the rhythm, and the monitor beat a metronome. Sound was the more immediate of
+the two channels and it was saying the wrong thing.
+
+The vocabulary is closed and global. **The engine holds no association between a rhythm and
+a diagnosis**, in the same way the catalog holds no appropriateness judgement about a drug;
+a case chooses a name and nothing else. A boolean was rejected because regularly irregular
+rhythms are a real and audibly different third thing, and deriving the rhythm from the
+diagnosis was rejected because it would have put clinical knowledge in `engine/`.
+
+Intervals are a shifted exponential, `mean * (s + (1 - s) * Exp(1))`. **The mean is
+preserved exactly**, which matters more than it sounds: the monitor shows a heart rate, and
+if the average sounded interval were not that rate the case would be showing one number and
+sounding another. The refractory fraction is raised where a fixed floor would be breached
+rather than the draw being clamped, because clamping would push a third of the beats at 220
+bpm onto the floor and move the mean off the authored rate. The floor also guarantees no
+beat's second sound can land on the next beat's first, which the suite asserts rather than
+assumes.
+
+**The beat is now a self-rescheduling chain rather than a fixed interval**, each beat
+reading the current vitals and choosing its successor's delay. The rate quantisation that
+existed to stop a five-second ramp restarting the interval three hundred times is gone with
+it, because there is nothing left to restart, and the tempo now follows the ramp exactly
+rather than in two-beat-per-minute steps. Both earlier cases sound the same, slightly
+smoother across a phase change.
+
+The ECG trace follows the same field: unevenly spaced complexes and no P wave, deterministic
+per rate so it does not shimmer. It is still decorative and the note says so.
+
+**Every parameter here is a teaching choice and none is measured**, and the provenance note
+in `SHARED.audio.rhythm` says so in those words. No case models a rhythm.
+
+Three things turned up on the way. A `const` declared inside a direct `eval` does not leak
+into the calling scope the way `engine.js`'s function declarations do, so the test harness
+saw no audio module and reported a missing fence; the block hands its binding back
+explicitly now. The lub-dub gap was a fixed 160 ms, which at the 220 bpm the validator
+permits would have put one beat's second sound on the next beat's first, and no case had
+been fast enough to expose it. And the decorative trace was about to draw P waves next to
+an uneven beat.
+
+See `docs/decisions/rhythm-and-the-heartbeat-chain.md`.
+
+---
+
 ## Third case: AFRVR, and eight engine defects it found
 
 **A third case pack.** `cases/AFRVR/`: atrial fibrillation with a rapid ventricular

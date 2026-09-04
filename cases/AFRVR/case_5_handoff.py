@@ -265,8 +265,9 @@ PROVENANCE = {
    "Every reference interval in content_keys.labs, none of which came from a laboratory reference.",
    "The two 240-second deterioration deadlines, which are clinical claims about how long this "
    "patient tolerates untreated respiratory failure.",
-   "The 60-second delay on the rate-control transitions, which compresses agents whose real "
-   "onsets differ by an order of magnitude into one number.",
+   "The 30-second delay on the rate-control transitions, which compresses agents whose real "
+   "onsets differ by an order of magnitude into one number, and the nurse line that goes with "
+   "it.",
    "The four two-point steps of the positive-pressure saturation effect, both the total of eight "
    "points and the one-minute tempo.",
    "The 20 mmHg systolic and 10 mmHg diastolic fall attributed to diltiazem.",
@@ -276,6 +277,10 @@ PROVENANCE = {
    "The decision to tag magnesium replacement recommended rather than critical, against the "
    "author's brief. See the note on that action and section 4 of the review packet.",
    "The decision that a crystalloid bolus is the only halting action in this case.",
+   "The decision that every non-terminal phase carries an irregularly irregular heartbeat, "
+   "and the shape and spread of the interval model that sounds it. The parameters are "
+   "global rather than case-level, so changing them changes every future case that uses "
+   "the same rhythm.",
    "The choice of a single correct diagnosis catalog id where the formulation has two halves.",
    "Every reference, all of which are marked unverified in the case file.",
  ],

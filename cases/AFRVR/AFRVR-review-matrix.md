@@ -595,10 +595,10 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | diuretic_given | on_niv | resolves to | reachable? |
 |---|---|---|---|---|
-| «any phase» | no | no | rule 2 (default) &rarr; ABNORMAL: Eight-zone scan. Diffuse bilateral B-lines, three or more per field in... | plausible |
-| «any phase» | no | yes | rule 2 (default) &rarr; ABNORMAL: Eight-zone scan. Diffuse bilateral B-lines, three or more per field in... | plausible |
-| «any phase» | yes | no | rule 1 (flag diuretic_given set) &rarr; ABNORMAL: Eight-zone scan repeated. B-lines slightly reduced anteriorly and stil... | plausible |
-| «any phase» | yes | yes | rule 0 (flag diuretic_given set AND flag on_niv set) &rarr; ABNORMAL: Eight-zone scan repeated. B-lines reduced in number and now confined t... | plausible |
+| «any phase» | no | no | rule 2 (default) &rarr; ABNORMAL: Diffuse bilateral B-lines, three or more per field in every zone and c... | plausible |
+| «any phase» | no | yes | rule 2 (default) &rarr; ABNORMAL: Diffuse bilateral B-lines, three or more per field in every zone and c... | plausible |
+| «any phase» | yes | no | rule 1 (flag diuretic_given set) &rarr; ABNORMAL: B-lines reduced in number anteriorly, still confluent in the lower zon... | plausible |
+| «any phase» | yes | yes | rule 0 (flag diuretic_given set AND flag on_niv set) &rarr; ABNORMAL: B-lines reduced in number and now confined to the dependent posterolat... | plausible |
 
 
 ### `imaging/xr_chest`

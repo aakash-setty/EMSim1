@@ -43,10 +43,26 @@ global.SHARED = grab('shared-data');
 global.CASES = grab('cases-data');
 global.window = {};
 global.document = { querySelector: () => ({ offsetHeight: 0 }) };
+/* ui.js declares ST and is not loaded here. Declaring it null rather than leaving it
+   undefined is the honest state for a harness with no run in progress, and it keeps the
+   audio module's guards on a value rather than on a missing identifier. */
+global.ST = null;
 
 const eng = html.match(/\/\*__ENGINE_START__\*\/([\s\S]*?)\/\*__ENGINE_END__\*\//);
 if (!eng) { console.error('engine block not found in ' + HTML_PATH); process.exit(2); }
 eval(eng[1]);
+
+/* audio.js is fenced separately in the bundle. It is evaluated here because the
+   heartbeat's interval model is a claim about physiology rather than a rendering
+   detail, and a claim that nothing can check is a claim nobody should trust. Nothing
+   in it touches an AudioContext until a gesture creates one, so it is inert in node. */
+const aud = html.match(/\/\*__AUDIO_START__\*\/([\s\S]*?)\/\*__AUDIO_END__\*\//);
+/* audio.js binds its module with `const AUDIO = ...`, and a const declared inside a
+   direct eval does not leak into the calling scope the way engine.js's function
+   declarations do. The trailing expression hands the binding back explicitly rather
+   than leaving the harness to discover that AUDIO is undefined and report it as a
+   missing fence, which is what happened the first time this was written. */
+if (aud) global.AUDIO = eval(aud[1] + '\n;AUDIO');
 
 /* Bind the case under test. With one pack it is chosen automatically. */
 const WANT = process.argv[4] || null;
@@ -684,6 +700,177 @@ section('no unread state');
 chk('results carry no viewed flag',
     Object.keys(ST_SAMPLE.orders).every(id =>
       ST_SAMPLE.orders[id].every(o => !('viewed' in o))));
+
+section('the heartbeat interval model');
+if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
+  chk('audio block is present in the build', false, 'no __AUDIO_START__ fence');
+} else {
+  const RH = SHARED.audio.rhythm || {};
+  const names = Object.keys(RH).filter(k => k[0] !== '_');
+  chk('the rhythm vocabulary exists and includes regular', names.includes('regular'),
+      names.join(', '));
+
+  /* A regular rhythm must be exactly the mean, not nearly it. Anything else would
+     mean the two cases written before this existed had their beat quietly changed. */
+  let exact = true;
+  for (const m of [273, 375, 500, 577, 1579, 3000]) {
+    for (let i = 0; i < 200; i++) if (AUDIO.intervalModel(m, 'regular') !== m) exact = false;
+  }
+  chk('a regular rhythm returns the mean interval exactly', exact);
+  chk('an unknown rhythm name falls back to the mean',
+      AUDIO.intervalModel(500, 'no_such_rhythm') === 500 &&
+      AUDIO.intervalModel(500, undefined) === 500);
+
+  /* Statistics over a large sample. The mean is the load-bearing property: the rate on
+     the monitor and the average rate in the ear have to be the same number, or the case
+     is showing one thing and sounding another. */
+  const stats = (mean, rhythm, n) => {
+    let s = 0, ss = 0, lo = Infinity, hi = -Infinity, bad = 0;
+    for (let i = 0; i < n; i++) {
+      const v = AUDIO.intervalModel(mean, rhythm);
+      if (!isFinite(v) || v <= 0) { bad++; continue; }
+      s += v; ss += v * v; if (v < lo) lo = v; if (v > hi) hi = v;
+    }
+    const m = s / n;
+    return { m, sd: Math.sqrt(ss / n - m * m), lo, hi, bad, cv: Math.sqrt(ss / n - m * m) / m };
+  };
+
+  for (const [name, cfg] of Object.entries(RH)) {
+    if (name[0] === '_' || !(cfg.refractoryFraction > 0)) continue;
+    const floorMs = cfg.absoluteFloorMs || 0;
+    for (const mean of [273, 375, 577, 1579]) {
+      const st = stats(mean, name, 120000);
+      chk(`${name} at ${mean} ms: no bad draws`, st.bad === 0, String(st.bad));
+      chk(`${name} at ${mean} ms: the mean is preserved within one percent`,
+          Math.abs(st.m - mean) / mean < 0.01,
+          st.m.toFixed(1) + ' against ' + mean);
+      chk(`${name} at ${mean} ms: nothing shorter than the ${floorMs} ms floor`,
+          st.lo >= floorMs - 1e-9, st.lo.toFixed(1));
+      chk(`${name} at ${mean} ms: nothing longer than the ceiling`,
+          st.hi <= mean * (cfg.ceilingMultiple || 3) + 1e-9, st.hi.toFixed(1));
+      chk(`${name} at ${mean} ms: audibly uneven`, st.cv > 0.08, st.cv.toFixed(3));
+    }
+    /* The spread narrows as the rate rises, because the fixed refractory floor eats
+       into the variable part. That is the property that keeps the mean honest at fast
+       rates instead of clamping a third of the beats onto the floor. */
+    const fast = stats(273, name, 120000), slow = stats(1579, name, 120000);
+    chk(`${name}: the spread is narrower at a fast rate than at a slow one`,
+        fast.cv < slow.cv, fast.cv.toFixed(3) + ' against ' + slow.cv.toFixed(3));
+    /* No interval can be short enough for one beat's second sound to land on the next
+       beat's first. The lub-dub gap is 160 ms and is itself compressed below that. */
+    chk(`${name}: the floor clears the lub-dub gap`, floorMs > 160, String(floorMs));
+  }
+
+  /* Whatever the case under test authors has to be a name the vocabulary holds.
+     The validator enforces this too; it is repeated here because the validator reads
+     the case file and this reads the built artefact, and a build step between them is
+     where a value could still be lost. */
+  const badRhythm = CASE.phases.filter(p => p.rhythm && !names.includes(p.rhythm));
+  chk('every phase names a rhythm the build knows', badRhythm.length === 0,
+      badRhythm.map(p => p.id + '=' + p.rhythm).join(', '));
+
+  /* The extremes of the draw, which is where an infinity or a zero would hide. */
+  const real = Math.random;
+  try {
+    Math.random = () => 0;
+    chk('the shortest possible draw is the floor and is finite',
+        isFinite(AUDIO.intervalModel(375, 'irregularly_irregular')) &&
+        AUDIO.intervalModel(375, 'irregularly_irregular') >= 240);
+    Math.random = () => 1 - Number.EPSILON / 4;   /* rounds to 1: -log(0) is Infinity */
+    const v = AUDIO.intervalModel(375, 'irregularly_irregular');
+    chk('the longest possible draw is clamped and is finite', isFinite(v) && v > 0,
+        String(v));
+  } finally { Math.random = real; }
+}
+
+section('the heartbeat loop');
+/* The interval model above is arithmetic and easy to check. The loop around it is
+   where the real hazards are: a chain that schedules itself twice beats double, a
+   chain that captures the rate when it starts stops following the monitor, and a
+   chain that is restarted by every render stutters. None of that is visible in a unit
+   of arithmetic, so the loop is driven here against a virtual clock and a stub audio
+   context. Everything is restored afterwards. */
+if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
+  chk('audio available for the loop test', false);
+} else {
+  const realST = global.ST, realSetT = global.setTimeout, realClearT = global.clearTimeout;
+  const realWindow = global.window, realPHASE = global.PHASE;
+  try {
+    const sink = { connect: x => x };
+    const osc = () => ({ type: '', frequency: { setValueAtTime(){}, exponentialRampToValueAtTime(){} },
+                         connect: x => x, start(){}, stop(){} });
+    const gain = () => ({ gain: { value: 0, setValueAtTime(){}, exponentialRampToValueAtTime(){} },
+                          connect: x => x });
+    const stubCtx = { state: 'running', currentTime: 0, destination: sink,
+                      resume(){}, createGain: gain, createOscillator: osc };
+    global.window = { AudioContext: function () { return stubCtx; } };
+
+    /* Virtual clock. One pending timer at most is the property under test, so the
+       queue is asserted rather than assumed. */
+    let now = 0, pending = [], nextId = 1, maxPending = 0;
+    global.setTimeout = (fn, ms) => {
+      pending.push({ id: nextId, at: now + ms, fn });
+      maxPending = Math.max(maxPending, pending.length);
+      return nextId++;
+    };
+    global.clearTimeout = id => { pending = pending.filter(t => t.id !== id); };
+    const advance = to => {
+      let guard = 0;
+      while (guard++ < 200000) {
+        const due = pending.filter(t => t.at <= to).sort((a, b) => a.at - b.at)[0];
+        if (!due) break;
+        pending = pending.filter(t => t !== due);
+        now = due.at; stubCtx.currentTime = now / 1000;
+        due.fn();
+      }
+      now = to; stubCtx.currentTime = to / 1000;
+    };
+
+    const phaseId = CASE.phases[0].id;
+    global.PHASE = { [phaseId]: { id: phaseId, rhythm: 'irregularly_irregular', vitals: {} } };
+    global.ST = { phase: phaseId, monitoring: { t: 0 },
+                  vitals: { heart_rate: 160, oxygen_saturation: 88 } };
+
+    let beats = 0;
+    const realOsc = stubCtx.createOscillator;
+    stubCtx.createOscillator = () => { beats++; return realOsc(); };
+
+    AUDIO.start();
+    advance(60000);
+    /* Two oscillators per beat, the lub and the dub. */
+    const n60 = beats / 2;
+    chk('sixty seconds at 160 bpm gives about 160 beats', Math.abs(n60 - 160) <= 12,
+        n60.toFixed(0));
+    chk('only ever one beat is pending', maxPending <= 1, String(maxPending));
+
+    /* Sixty renders a second must not disturb it. This is the regression the removed
+       quantisation used to paper over. */
+    beats = 0; const before = pending.length;
+    for (let i = 0; i < 600; i++) AUDIO.sync();
+    chk('calling sync repeatedly schedules nothing extra',
+        pending.length === before && beats === 0, String(pending.length));
+
+    /* The rate is read per beat, so changing it changes the tempo without a restart. */
+    beats = 0; ST.vitals.heart_rate = 60;
+    advance(now + 60000);
+    const slow = beats / 2;
+    chk('the tempo follows a change in the heart rate', Math.abs(slow - 60) <= 8,
+        slow.toFixed(0));
+
+    /* Losing the monitor stops the beat; regaining it starts it again. */
+    ST.monitoring = null; AUDIO.sync();
+    chk('no monitor, no pending beat', pending.length === 0, String(pending.length));
+    beats = 0; advance(now + 5000);
+    chk('and nothing sounds while it is off', beats === 0, String(beats / 2));
+    ST.monitoring = { t: 0 }; AUDIO.sync();
+    chk('reattaching restarts it', pending.length === 1, String(pending.length));
+    AUDIO.stop();
+    chk('stop leaves nothing pending', pending.length === 0, String(pending.length));
+  } finally {
+    global.ST = realST; global.setTimeout = realSetT; global.clearTimeout = realClearT;
+    global.window = realWindow; global.PHASE = realPHASE;
+  }
+}
 
 section('determinism');
 const L = mk([[1, anyStudy], [3, EXAMS[0]], [8, anyStudy]]);

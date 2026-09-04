@@ -94,18 +94,37 @@ chk('still discouraged once the ejection fraction is known',dTag('diltiazem_bolu
 chk('a discouraged action is recorded for the debrief',
     fold(mk([[1,'insert_iv'],[2,'diltiazem_bolus']]),30).discouragedTaken.has('diltiazem_bolus'));
 
-section('rate control takes a minute, and the case says so');
-st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
-            [3,'digoxin_bolus']]),40);
-chk('nothing has changed 37 seconds after the drug',st.phase==='breathing_supported',st.phase);
+section('rate control takes half a minute, and the nurse says so out loud');
+const rcLog=mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+                [3,'digoxin_bolus']]);
+st=fold(rcLog,20);
+chk('nothing has changed 17 seconds after the drug',st.phase==='breathing_supported',st.phase);
 chk('and the rate on the monitor is still 152',st.vitals.heart_rate===152,
     String(st.vitals.heart_rate));
-st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
-            [3,'digoxin_bolus']]),70);
-chk('the phase turns over at sixty seconds with no further action',st.phase==='stabilized',st.phase);
+st=fold(rcLog,40);
+chk('the phase turns over at thirty seconds with no further action',st.phase==='stabilized',
+    st.phase);
 chk('the rate on the monitor is now 104',st.vitals.heart_rate===104,String(st.vitals.heart_rate));
 chk('the delayed transition is recorded for the debrief',
-    st.timeFires.some(f=>f.to==='stabilized'&&f.after===60));
+    st.timeFires.some(f=>f.to==='stabilized'&&f.after===30));
+/* The line that stops a resident redosing a drug that has not had time to work. It is a
+   narration rather than a prompt, so it is said the moment the drug goes in and it is
+   said again on a repeat dose. */
+const said=t=>fold(rcLog,t).nurse.filter(x=>/take a bit of time to kick in/i.test(x.text));
+chk('the nurse says it when the drug is given',said(20).length===1,String(said(20).length));
+chk('it is a narration, not a prompt',said(20).every(x=>x.kind==='narration'),
+    said(20).map(x=>x.kind).join(','));
+chk('and every route to rate control says it',
+    ['diltiazem_bolus','metoprolol_bolus','amiodarone_bolus_infusion','esmolol_drip',
+     'propranolol_bolus'].every(id=>
+      fold(mk([[1,'insert_iv'],[2,id]]),20).nurse
+        .some(x=>/take a bit of time to kick in/i.test(x.text))),
+    ['diltiazem_bolus','metoprolol_bolus','amiodarone_bolus_infusion','esmolol_drip',
+     'propranolol_bolus'].filter(id=>!fold(mk([[1,'insert_iv'],[2,id]]),20).nurse
+        .some(x=>/take a bit of time to kick in/i.test(x.text))).join(', '));
+chk('a repeat dose says it again',
+    fold(mk([[1,'insert_iv'],[2,'digoxin_bolus'],[10,'digoxin_bolus']]),20).nurse
+      .filter(x=>/take a bit of time to kick in/i.test(x.text)).length===2);
 
 section('time-guarded deterioration, and where it stops');
 st=fold([],1200);
@@ -198,17 +217,31 @@ chk('the mask is blocked once there is a tube',
     st.blocked.some(b=>b.id==='non_invasive_positive_pressure_ventilation')&&!st.flags.has('on_niv'));
 
 section('coverage groups satisfy the critical action they cover');
+/* Two sets, and the difference between them is the whole point. `satisfied` is what has
+   been accomplished and is what the debrief scores; `taken` is which buttons were
+   pressed and is what the action grid draws as used. Pressing metoprolol used to light
+   digoxin up as well, which told the resident they had given a drug they had not. */
 for(const agent of ['amiodarone_bolus_infusion','metoprolol_bolus']){
   const s=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
-                   [3,agent]]),90);
+                   [3,agent]]),60);
   chk(agent+' reaches the stabilised phase',s.phase==='stabilized',s.phase);
-  chk(agent+' is credited with the covering critical action',s.taken.has('digoxin_bolus'));
+  chk(agent+' satisfies the covering critical action',s.satisfied.has('digoxin_bolus'));
+  chk(agent+' does NOT mark the covering button as pressed',!s.taken.has('digoxin_bolus'));
+  chk(agent+' marks its own button as pressed',s.taken.has(agent));
   chk(agent+' keeps its own button name',A[agent].name!==A['digoxin_bolus'].name);
 }
 for(const ac of ['enoxaparin','heparin_bolus_drip']){
   const s=fold(mk([[1,'insert_iv'],[2,ac]]),20);
   chk(ac+' anticoagulates',s.flags.has('anticoagulated'));
-  chk(ac+' is credited with the covering critical action',s.taken.has('apixaban'));
+  chk(ac+' satisfies the covering critical action',s.satisfied.has('apixaban'));
+  chk(ac+' does NOT mark the apixaban button as pressed',!s.taken.has('apixaban'));
+}
+/* And the covering action itself still behaves normally when it is the one pressed. */
+{
+  const s=fold(mk([[1,'insert_iv'],[2,'digoxin_bolus']]),20);
+  chk('pressing digoxin marks digoxin and nothing else',
+      s.taken.has('digoxin_bolus')&&!s.taken.has('metoprolol_bolus')&&
+      !s.taken.has('amiodarone_bolus_infusion'));
 }
 chk('the debrief names the act rather than one of its drugs',
     !!A['digoxin_bolus'].expectation_label&&
@@ -250,6 +283,41 @@ st=fold(mk([[1,'insert_iv'],[2,'etomidate_bolus'],[3,'rocuronium_bolus'],
             [4,'intubate_rapid_sequence'],{seq:9,t:10,kind:'interview',topic:'onset',q:'when did this start'}]),20);
 const ans=st.readouts.filter(r=>r.kind==='speech').pop().body;
 chk('the global alertness rule wins over the topic answer',/intubated and sedated/i.test(ans),ans);
+
+section('the beat is irregularly irregular, in every phase he is still in the rhythm');
+const RH_OF = Object.fromEntries(CASE.phases.map(p => [p.id, p.rhythm]));
+chk('he arrives in it',RH_OF.presentation==='irregularly_irregular',String(RH_OF.presentation));
+chk('rate control does not convert him',
+    RH_OF.rate_controlled_congested==='irregularly_irregular'&&
+    RH_OF.stabilized==='irregularly_irregular',
+    RH_OF.rate_controlled_congested+', '+RH_OF.stabilized);
+chk('he is handed over still in it',RH_OF.case_complete==='irregularly_irregular',
+    String(RH_OF.case_complete));
+chk('every non-terminal phase is irregular',
+    CASE.phases.filter(p=>!p.terminal).every(p=>p.rhythm==='irregularly_irregular'),
+    CASE.phases.filter(p=>!p.terminal&&p.rhythm!=='irregularly_irregular')
+      .map(p=>p.id).join(', '));
+chk('the generic peri-arrest block is regular, because it is not his rhythm',
+    RH_OF.halted==='regular',String(RH_OF.halted));
+
+/* The rates this case actually authors, against the model that will sound them. The
+   floor has to clear the lub-dub gap at the fastest rate in the case, and the average
+   has to be the rate on the monitor at every one of them. */
+if (typeof AUDIO !== 'undefined' && AUDIO.intervalModel) {
+  for (const ph of CASE.phases) {
+    if (ph.rhythm !== 'irregularly_irregular') continue;
+    const mean = 60000 / ph.vitals.heart_rate;
+    let sum = 0, lo = Infinity;
+    for (let i = 0; i < 40000; i++) {
+      const v = AUDIO.intervalModel(mean, 'irregularly_irregular');
+      sum += v; if (v < lo) lo = v;
+    }
+    chk(`${ph.id} at ${ph.vitals.heart_rate} bpm averages the authored rate`,
+        Math.abs(60000 / (sum / 40000) - ph.vitals.heart_rate) < 1,
+        (60000 / (sum / 40000)).toFixed(2));
+    chk(`${ph.id}: no two beats closer than the lub-dub gap`, lo > 200, lo.toFixed(1));
+  }
+}
 
 section('handoff');
 st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],[3,'digoxin_bolus']])

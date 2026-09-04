@@ -54,7 +54,15 @@ function evalCond(n,st){
     case 'flag':     return st.flags.has(n.v);
     case 'ordered':  return st.ordered.has(n.v);
     case 'resulted': return st.resulted.has(n.v);
-    case 'taken':    return st.taken.has(n.v);
+    /* `satisfied` rather than `taken`: a case that has declared two catalog entries to
+       be the same act through also_covers is asserting exactly that, so a condition
+       naming either of them has to see the other. `taken` stays the set of buttons the
+       resident actually pressed and is what the interface reads. */
+    /* `satisfied` falling back to `taken`. A hand-built state -- the test harness, or
+       anything outside the fold that wants to resolve one rule -- has no reason to know
+       about a second set, and `satisfied` is always a superset of `taken`, so degrading
+       to it is exactly right rather than merely safe. */
+    case 'taken':    return (st.satisfied||st.taken).has(n.v);
   }
   return false;
 }
@@ -138,6 +146,15 @@ function mergeAction(eff, base, caseAct, extra){
        told they completed 'Digoxin bolus'. The button keeps the catalog's own name;
        only the critical-action list uses this. */
     rec.expectation_label=caseAct.expectation_label;
+    /* Authoring 9.1 has always said a case may override the catalog's narration where
+       the standard line would be wrong or confusing. Nothing read it, so the promise was
+       not kept. Two fields rather than one, because the two things an author wants are
+       different: an override replaces the line, and an addendum is a second thing the
+       nurse says after it, which is what you want when the catalog's line is correct and
+       there is something to add about the drug that was just given. Both are borrowed by
+       a covered sibling, so an addendum on a coverage group speaks for every route. */
+    rec.narration_override=caseAct.narration_override;
+    rec.narration_addendum=caseAct.narration_addendum;
     rec.flags_set_timed=caseAct.flags_set_timed;
   }
   return rec;
@@ -253,7 +270,8 @@ function resolveResult(id,snap){
 /* ---------- the fold (section 5.2) ---------- */
 function snapshot(st){
   return {phase:st.phase,flags:new Set(st.flags),ordered:new Set(st.ordered),
-          resulted:new Set(st.resulted),taken:new Set(st.taken)};
+          resulted:new Set(st.resulted),taken:new Set(st.taken),
+          satisfied:new Set(st.satisfied)};
 }
 /* difficultyMultiplier scales every nurse prompt deadline, including escalations
    and follow-up prompts. It scales nothing else: result turnaround, transitions and
@@ -268,6 +286,19 @@ function fold(log, now, difficultyMultiplier){
   const DM = difficultyMultiplier || 1;
   const st={
     phase:CASE.phases[0].id, flags:new Set(), ordered:new Set(), resulted:new Set(), taken:new Set(),
+    /* Two sets, because they answer two different questions and conflating them put a
+       pressed highlight on a button nobody had pressed.
+
+       `taken` is what the resident did: one entry per button, and it is what the action
+       grid reads to draw a control as already used.
+
+       `satisfied` is what has been accomplished: `taken`, plus the covering action of
+       anything performed through an also_covers group. A case that binds digoxin,
+       amiodarone and metoprolol into one act is asserting that any of them discharges
+       it, so giving one has to satisfy the critical action, discharge a follow-up that
+       names it, suppress its prompt and make `action X taken` true. None of that means
+       the other two buttons were pressed. */
+    satisfied:new Set(),
     orders:{}, phaseEntry:{}, phaseSeq:[], halted:null, complete:null, earlyExit:null,
     nurse:[], readouts:[], blocked:[], timeline:[], prompted:new Set(),
     promptFires:[], fuFires:[], fuOutstanding:new Set(), handoff:null, now:now, dm:DM,
@@ -462,7 +493,10 @@ function fold(log, now, difficultyMultiplier){
         label:entry.topic?('Asked about '+entry.topic.replace(/_/g,' ')):'Question not understood'});
       st.readouts.push({t,kind:'speech',key:entry.topic||'unmatched',title:entry.q,body:ans,
         matched:entry.topic||null});
-      if(entry.topic&&ACT['interview_topic_'+entry.topic]) st.taken.add('interview_topic_'+entry.topic);
+      if(entry.topic&&ACT['interview_topic_'+entry.topic]){
+        st.taken.add('interview_topic_'+entry.topic);
+        st.satisfied.add('interview_topic_'+entry.topic);
+      }
       return;
     }
     if(!a) return;
@@ -480,14 +514,16 @@ function fold(log, now, difficultyMultiplier){
     }
 
     st.taken.add(id);
+    st.satisfied.add(id);
     /* An entry covered through also_covers borrows the covering action's tag, flags and
        note, so it already advances the case and is scored the same way. It was not
        recorded as having satisfied the covering action itself, which meant the debrief
        listed the critical action as missed by a resident who had performed it by another
        route, and `action X taken` was false after a sibling. Coverage is the case
        asserting the two acts are the same act; recording both is what that assertion
-       means. */
-    if(a.covered_by) st.taken.add(a.covered_by);
+       means. It goes only into `satisfied`: putting it into `taken` as well drew the
+       covering action's button as though the resident had pressed that one too. */
+    if(a.covered_by) st.satisfied.add(a.covered_by);
 
     /* Catalog capability, checked before the state-changing split so an act that
        reveals the vitals does so whether or not it changes the patient. */
@@ -522,6 +558,10 @@ function fold(log, now, difficultyMultiplier){
     if(tag==='recommended') st.recommendedTaken.add(id);
     if(tag==='discouraged') st.discouragedTaken.add(id);
     narrate(t,narrationFor(id),'narration');
+    /* A second line, on its own kind so the assertion that no PROMPT describes a
+       trajectory is unaffected by it. It is said once per administration, which is
+       right: a resident who redoses should hear it again. */
+    if(a.narration_addendum) narrate(t,a.narration_addendum,'narration');
 
     (a.flags_set||[]).forEach(f=>grantFlag(f,t,null));
     for(const tf of (a.flags_set_timed||[])) grantFlag(tf.flag,t,tf.duration_seconds);
@@ -574,7 +614,7 @@ function fold(log, now, difficultyMultiplier){
       return;
     }
     if(e.kind==='prompt'){
-      if(st.taken.has(e.id)) return;
+      if(st.satisfied.has(e.id)) return;
       const a=ACT[e.id];
       if(a.prompt.guard&&!test(a.prompt.guard,st)) return;
       promptCount[e.phase]=(promptCount[e.phase]||0);
@@ -606,7 +646,7 @@ function fold(log, now, difficultyMultiplier){
     if(e.kind==='followup'){
       const f=FU[e.fid];
       if(f.applies_when&&!test(f.applies_when,st)) return;
-      if(f.satisfied_by&&f.satisfied_by.some(x=>st.taken.has(x))) return;
+      if(f.satisfied_by&&f.satisfied_by.some(x=>st.satisfied.has(x))) return;
       promptCount[st.phase]=(promptCount[st.phase]||0)+1;
       narrate(t,f.nurse_prompt,'prompt');
       st.fuFires.push({t,fid:e.fid});
@@ -621,7 +661,7 @@ function fold(log, now, difficultyMultiplier){
   }));
   st.fuOutstanding.forEach(fid=>{
     const f=FU[fid];
-    if(f.satisfied_by&&f.satisfied_by.some(x=>st.taken.has(x))) st.fuOutstanding.delete(fid);
+    if(f.satisfied_by&&f.satisfied_by.some(x=>st.satisfied.has(x))) st.fuOutstanding.delete(fid);
   });
   st.vitalEffects = activeEffects(st, now);
   st.vitals = effectiveVitals(st);
@@ -691,6 +731,7 @@ function effectiveVitals(st){
 
 function narrationFor(id){
   const a=ACT[id]||{};
+  if(a.narration_override) return a.narration_override;
   if(a.narration_template){
     /* Dose entry is not implemented, so {dose} is dropped rather than faked. */
     return a.narration_template.replace('{name}',a.name.toLowerCase())

@@ -712,7 +712,7 @@ This is display gating and only display gating. `st.vitals` is computed by the f
 
 Two channels, both derived from the current phase's authored vitals with any active vital effect applied (2.6), and neither stored. The heartbeat is additionally gated on the monitor (8.4b); the prompt tone is not.
 
-**Continuous heartbeat.** A two-thump beat at an interval of `60 / heart_rate` seconds, pitched by oxygen saturation:
+**Continuous heartbeat.** A two-thump beat at a mean interval of `60 / heart_rate` seconds, pitched by oxygen saturation:
 
 ```
 frequency = BASE_HZ * 2 ^ (-(SPO2_REFERENCE - saturation) / SEMITONES_PER_PERCENT_DIVISOR)
@@ -721,6 +721,25 @@ frequency = BASE_HZ * 2 ^ (-(SPO2_REFERENCE - saturation) / SEMITONES_PER_PERCEN
 The shipped configuration is A5 (880 Hz) at 100 percent saturation, one semitone lower per percent below. At 87 percent that is 13 semitones down, about 415 Hz.
 
 **The reference point and the step size are configuration, and both are teaching decisions.** A real pulse oximeter's pitch drop is neither linear in semitones nor anchored at 100 percent. The shipped mapping is more dramatic than the bedside sound a resident will actually work with, which makes it a better alarm and a worse simulation. If transfer to real practice matters more than in-simulator salience, match the device convention instead. Whichever is chosen, the interface should state the mapping rather than hide it.
+
+**The beat is a self-rescheduling chain, not a fixed interval.** Each beat reads the current rate, saturation and rhythm when it schedules its successor. That is what lets the tempo follow the five-second ramp continuously instead of being restarted whenever a quantised rate crosses a step, and it is what makes an uneven rhythm expressible at all. Exactly one beat is ever pending; the render loop starts the chain and stops it and does nothing else.
+
+**Rhythm.** A phase may declare `rhythm`, from a closed vocabulary held in `SHARED.audio.rhythm`. `regular` is the default and is bit-identical to the behaviour before this existed. `irregularly_irregular` draws each interval independently as a shifted exponential:
+
+```
+interval = mean * (s + (1 - s) * Exp(1))
+```
+
+A fraction `s` of the mean is refractory and the remainder is exponentially distributed, which is right-skewed and therefore produces the occasional long pause that makes such a rhythm recognisable. Two properties are enforced and asserted:
+
+- **The mean is preserved exactly.** `E[Exp(1)] = 1`, so the expected interval is the authored one. The rate on the monitor and the average rate in the ear are the same number.
+- **The spread narrows as the rate rises.** `s` is raised wherever a fixed refractory floor would otherwise be breached, rather than clamping the draw, which would push a third of the beats at 220 bpm onto the floor and move the mean off the authored rate. The coefficient of variation is `1 - s`. The floor also guarantees that one beat's second sound can never land on the next beat's first.
+
+An uneven rhythm additionally varies the loudness of each beat with the length of the interval preceding it, because a long diastole fills the ventricle more. Without it the ear hears mistimed identical beats rather than a heart.
+
+**Every one of those parameters is a teaching choice and none is measured.** They live in `SHARED.audio.rhythm` with a provenance note saying so. The engine holds no association between a rhythm and a diagnosis, exactly as it holds no appropriateness judgement about a drug.
+
+**The ECG trace follows the same field.** The trace is decorative and its path does not encode rate, but a monitor drawing evenly spaced complexes with P waves beside an audibly uneven beat is a contradiction on one screen. Under an irregular rhythm the six complexes are unevenly spaced, deterministically per rate so the picture does not shimmer, and the P wave is omitted. It remains decorative: the beats on screen are not the beats being heard.
 
 **Prompt tone.** A short two-note trill on nurse prompts and follow-up prompts, timbrally distinct from the heartbeat.
 

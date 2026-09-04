@@ -10,12 +10,12 @@ Two questions per row. Would this patient really deteriorate in that time if tha
 
 Vitals in this phase: HR 160, BP 132/78, RR 30, SpO2 88%, T 37.0
 
-**Rule 2: at 60s (measured from guard_true) → `rate_controlled_congested`**
+**Rule 2: at 30s (measured from guard_true) → `rate_controlled_congested`**
 
 - guard: `flag rate_control_given set`
 - destination vitals: HR 108, BP 118/70, RR 32, SpO2 86%, T 37.0
 - narration: “His rate's coming down. Still all over the place, but I can actually count it now.”
-- author rationale: AUTHOR: sixty seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act.
+- author rationale: AUTHOR: thirty seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It sits on the validator's hard 30-second floor, which is deliberate: the author's judgement was that a minute felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 are heard):
 
@@ -53,12 +53,12 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 Vitals in this phase: HR 152, BP 126/76, RR 24, SpO2 88%, T 37.0
 
-**Rule 1: at 60s (measured from guard_true) → `stabilized`**
+**Rule 1: at 30s (measured from guard_true) → `stabilized`**
 
 - guard: `flag rate_control_given set`
 - destination vitals: HR 104, BP 124/74, RR 20, SpO2 89%, T 37.0
 - narration: “His rate's coming down. Still all over the place, but I can actually count it now.”
-- author rationale: AUTHOR: sixty seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act.
+- author rationale: AUTHOR: thirty seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It sits on the validator's hard 30-second floor, which is deliberate: the author's judgement was that a minute felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 are heard):
 
@@ -111,9 +111,9 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 
 | from | at | to | vitals immediately after | the line |
 |---|---|---|---|---|
-| `presentation` | 60s | `rate_controlled_congested` | HR 108, BP 118/70, RR 32, SpO2 86%, T 37.0 | “His rate's coming down. Still all over the place, but I can actually count it now.” |
+| `presentation` | 30s | `rate_controlled_congested` | HR 108, BP 118/70, RR 32, SpO2 86%, T 37.0 | “His rate's coming down. Still all over the place, but I can actually count it now.” |
 | `presentation` | 240s | `respiratory_failure` | HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0 | “He's wearing out. He's stopped talking to me and his sat has dropped since you came in.” |
-| `breathing_supported` | 60s | `stabilized` | HR 104, BP 124/74, RR 20, SpO2 89%, T 37.0 | “His rate's coming down. Still all over the place, but I can actually count it now.” |
+| `breathing_supported` | 30s | `stabilized` | HR 104, BP 124/74, RR 20, SpO2 89%, T 37.0 | “His rate's coming down. Still all over the place, but I can actually count it now.” |
 | `rate_controlled_congested` | 240s | `respiratory_failure` | HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0 | “His rate's crept up again and he's working much harder than he was. His sat has come down.” |
 
 Compare each line with the row before it in section 2, not only with the destination: a line saying a number has fallen must be preceded by a phase in which it was higher.

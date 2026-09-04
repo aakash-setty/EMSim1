@@ -85,14 +85,24 @@ PATIENT = {
 # pressure adds up to eight points through four staged vital effects, and supplemental
 # oxygen adds three or five, so any of these numbers with a mask on will read higher.
 # Authoring 6.1: if a phase is rebased wrongly the gain is counted twice.
+# Every phase in this case defaults to an irregularly irregular beat, because the
+# patient is in atrial fibrillation from the moment he arrives and is still in it when
+# he is handed over: not converting is explicitly not a failure here, so there is no
+# phase in which the rhythm becomes regular. The one exception is the halted phase, and
+# the reason is in its own note. The heartbeat is the only place a resident can perceive
+# the rhythm before they order a tracing, and in a case whose whole management hinges on
+# recognising the rhythm, a regular beat would be the monitor telling them the wrong
+# answer out loud.
 def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp,
-          distress, alert, transitions, terminal=False, pupil="normal", react="reactive", **kw):
+          distress, alert, transitions, terminal=False, pupil="normal", react="reactive",
+          rhythm="irregularly_irregular", **kw):
     d = {
       "id": pid, "label": label, "short_label": short, "clinical_description": desc,
       "vitals": {"heart_rate": hr, "systolic_bp": sbp, "diastolic_bp": dbp,
                  "respiratory_rate": rr, "oxygen_saturation": spo2, "temperature_c": temp},
       "appearance": {"distress_level": distress, "alertness_level": alert,
                      "pupil_size": pupil, "pupil_reactivity": react},
+      "rhythm": rhythm,
       "terminal": terminal, "transitions": transitions,
     }
     d.update(kw)
@@ -102,22 +112,27 @@ HANDOFF_T = {"when": "action handoff_submit taken", "to": "case_complete"}
 
 RATE_CONTROL_NARRATION = ("His rate's coming down. Still all over the place, but I can actually "
   "count it now.")
+RATE_CONTROL_ADDENDUM = "These agents can take a bit of time to kick in."
 RATE_CONTROL_NOTE = (
-  "The ventricular rate fell about a minute after the rate-controlling drug was given rather than "
-  "the moment it was pushed. None of the three agents this case accepts works instantly: "
-  "intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably "
-  "longer than either, so sixty seconds is already a compression rather than a delay. The reason it "
-  "is not instant is that a resident who watches the number change on the same click as the "
-  "injection learns that rate control is a button, and then gives a second dose thirty seconds "
-  "later because the first one appeared not to work.")
+  "The ventricular rate fell about half a minute after the rate-controlling drug was given rather "
+  "than the moment it was pushed. None of the three agents this case accepts works instantly: "
+  "intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin "
+  "considerably longer than either, so thirty seconds is a heavy compression rather than a delay. "
+  "The reason it is not instant is that a resident who watches the number change on the same "
+  "click as the injection learns that rate control is a button, and then gives a second dose "
+  "because the first one appeared not to work. The nurse says so out loud when the drug goes in, "
+  "which is the part of this that will actually stop somebody redosing.")
 RATE_CONTROL_RATIONALE = (
-  "AUTHOR: sixty seconds of game time stands in for the several minutes an intravenous "
-  "rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a "
-  "teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three "
-  "agents in the group even though their real onsets differ by an order of magnitude. If the "
-  "reviewing physician wants the difference between agents represented, that needs three separate "
-  "case actions and three separate transitions, and the cost is that the critical action can no "
-  "longer be 'rate control' as a single act.")
+  "AUTHOR: thirty seconds of game time stands in for the several minutes an intravenous "
+  "rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is "
+  "a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three "
+  "agents in the group even though their real onsets differ by an order of magnitude. It sits on "
+  "the validator's hard 30-second floor, which is deliberate: the author's judgement was that a "
+  "minute felt like a fault rather than like a drug taking effect, and the nurse's line about the "
+  "agents needing time carries what the delay was there to teach. If the reviewing physician wants "
+  "the difference between agents represented, that needs three separate case actions and three "
+  "separate transitions, and the cost is that the critical action can no longer be 'rate control' "
+  "as a single act.")
 
 PHASES = [
   phase("presentation",
@@ -135,7 +150,7 @@ PHASES = [
                       "buys is authored as a staged vital effect rather than as this phase change, "
                       "so the number climbs rather than jumping."},
       {"when": "flag rate_control_given set", "to": "rate_controlled_congested",
-       "after_seconds": 60, "measured_from": "guard_true",
+       "after_seconds": 30, "measured_from": "guard_true",
        "narration": RATE_CONTROL_NARRATION,
        "debrief_note": RATE_CONTROL_NOTE,
        "author_rationale": RATE_CONTROL_RATIONALE},
@@ -206,7 +221,7 @@ PHASES = [
     [
       {"when": "flag intubated set", "to": "intubated"},
       {"when": "flag rate_control_given set", "to": "stabilized",
-       "after_seconds": 60, "measured_from": "guard_true",
+       "after_seconds": 30, "measured_from": "guard_true",
        "narration": RATE_CONTROL_NARRATION,
        "debrief_note": RATE_CONTROL_NOTE,
        "author_rationale": RATE_CONTROL_RATIONALE},
@@ -273,9 +288,15 @@ PHASES = [
     "Terminal phase entered directly when a harmful action is taken, carrying that action's halt "
     "reason. Not reached through transition rules.",
     38, 62, 34, 6, 76, 36.8, 0, 3, [], terminal=True, pupil="large", react="sluggish",
+    rhythm="regular",
     schema_gap_note=(
       "Generic peri-arrest numbers. This case has one halting action, so unlike CHFE there is no "
-      "second physiology these numbers have to cover.")),
+      "second physiology these numbers have to cover. The rhythm here is regular rather than "
+      "irregularly irregular, and that is deliberate: these are not this patient's numbers, they "
+      "are the generic peri-arrest block every halt shows, and asserting that a man who has just "
+      "been killed by a fluid bolus is still in atrial fibrillation at 38 beats per minute would "
+      "be a clinical claim the case has no basis for. In practice the beat is stopped the moment "
+      "the case ends, so almost nobody hears it either way.")),
 
   phase("case_complete", "Handoff confirmed", "handed over",
     "Terminal phase entered when the resident confirms a handoff. The debrief is generated from here.",

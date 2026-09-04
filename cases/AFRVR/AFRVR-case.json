@@ -14,12 +14,13 @@
   "author_only_fields_pending_signoff": [
    "Every reference interval in content_keys.labs, none of which came from a laboratory reference.",
    "The two 240-second deterioration deadlines, which are clinical claims about how long this patient tolerates untreated respiratory failure.",
-   "The 60-second delay on the rate-control transitions, which compresses agents whose real onsets differ by an order of magnitude into one number.",
+   "The 30-second delay on the rate-control transitions, which compresses agents whose real onsets differ by an order of magnitude into one number, and the nurse line that goes with it.",
    "The four two-point steps of the positive-pressure saturation effect, both the total of eight points and the one-minute tempo.",
    "The 20 mmHg systolic and 10 mmHg diastolic fall attributed to diltiazem.",
    "The decision to bind digoxin, amiodarone and metoprolol as one act, which means a learner who gives metoprolol to a man in active pulmonary oedema is credited with the critical action and reads the caveat only in the expander.",
    "The decision to tag magnesium replacement recommended rather than critical, against the author's brief. See the note on that action and section 4 of the review packet.",
    "The decision that a crystalloid bolus is the only halting action in this case.",
+   "The decision that every non-terminal phase carries an irregularly irregular heartbeat, and the shape and spread of the interval model that sounds it. The parameters are global rather than case-level, so changing them changes every future case that uses the same rhythm.",
    "The choice of a single correct diagnosis catalog id where the formulation has two halves.",
    "Every reference, all of which are marked unverified in the case file."
   ],
@@ -72,7 +73,7 @@
  "phase_notes": {
   "count_justification": "Six clinical phases, which is the ceiling in section 3.3, and each one is a state a learner can actually reach and a reviewer has to read. They are the two axes of this case crossed: whether the breathing is supported and whether the rate is controlled, giving arrival, breathing supported alone, rate controlled alone, and both; plus the deterioration branch for a patient whose breathing was never supported, and the ventilated phase.",
   "deterioration_path": "Two time-guarded transitions, both at 240 seconds and both guarded on positive pressure not having been applied, one from arrival and one from the rate-controlled-but-congested phase. Both land in respiratory failure, which has exits and is not terminal. The clock cannot end this case: a learner who does nothing at all reaches respiratory failure and stays there. That was the author's explicit instruction and it is the reason no transition in this case carries allow_time_to_terminal.",
-  "rate_control_delay": "The two transitions that follow rate control carry a 60-second guard_true delay, so the ventricular rate falls about a minute after the drug rather than on the click. Without it the case teaches that rate control is instantaneous, and a learner who sees nothing happen immediately redoses."
+  "rate_control_delay": "The two transitions that follow rate control carry a 30-second guard_true delay, so the ventricular rate falls about half a minute after the drug rather than on the click. Without it the case teaches that rate control is instantaneous. The delay is paired with a nurse line said the moment the drug goes in, because a delay on its own reads as the drug having failed and invites a second dose; the line is what carries the lesson and the delay is what stops the number being a button. Thirty seconds sits on the validator's hard floor, which is deliberate and is recorded in the transition rationale."
  },
  "phases": [
   {
@@ -94,6 +95,7 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "rhythm": "irregularly_irregular",
    "terminal": false,
    "transitions": [
     {
@@ -109,11 +111,11 @@
     {
      "when": "flag rate_control_given set",
      "to": "rate_controlled_congested",
-     "after_seconds": 60,
+     "after_seconds": 30,
      "measured_from": "guard_true",
      "narration": "His rate's coming down. Still all over the place, but I can actually count it now.",
-     "debrief_note": "The ventricular rate fell about a minute after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so sixty seconds is already a compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose thirty seconds later because the first one appeared not to work.",
-     "author_rationale": "AUTHOR: sixty seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
+     "debrief_note": "The ventricular rate fell about half a minute after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so thirty seconds is a heavy compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose because the first one appeared not to work. The nurse says so out loud when the drug goes in, which is the part of this that will actually stop somebody redosing.",
+     "author_rationale": "AUTHOR: thirty seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It sits on the validator's hard 30-second floor, which is deliberate: the author's judgement was that a minute felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
     },
     {
      "when": "NOT flag on_niv set",
@@ -149,6 +151,7 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "rhythm": "irregularly_irregular",
    "terminal": false,
    "transitions": [
     {
@@ -191,6 +194,7 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "rhythm": "irregularly_irregular",
    "terminal": false,
    "transitions": [
     {
@@ -200,11 +204,11 @@
     {
      "when": "flag rate_control_given set",
      "to": "stabilized",
-     "after_seconds": 60,
+     "after_seconds": 30,
      "measured_from": "guard_true",
      "narration": "His rate's coming down. Still all over the place, but I can actually count it now.",
-     "debrief_note": "The ventricular rate fell about a minute after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so sixty seconds is already a compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose thirty seconds later because the first one appeared not to work.",
-     "author_rationale": "AUTHOR: sixty seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
+     "debrief_note": "The ventricular rate fell about half a minute after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so thirty seconds is a heavy compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose because the first one appeared not to work. The nurse says so out loud when the drug goes in, which is the part of this that will actually stop somebody redosing.",
+     "author_rationale": "AUTHOR: thirty seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It sits on the validator's hard 30-second floor, which is deliberate: the author's judgement was that a minute felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
     },
     {
      "when": "action handoff_submit taken",
@@ -231,6 +235,7 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "rhythm": "irregularly_irregular",
    "terminal": false,
    "transitions": [
     {
@@ -275,6 +280,7 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "rhythm": "irregularly_irregular",
    "terminal": false,
    "transitions": [
     {
@@ -306,6 +312,7 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "rhythm": "irregularly_irregular",
    "terminal": false,
    "transitions": [
     {
@@ -334,9 +341,10 @@
     "pupil_size": "large",
     "pupil_reactivity": "sluggish"
    },
+   "rhythm": "regular",
    "terminal": true,
    "transitions": [],
-   "schema_gap_note": "Generic peri-arrest numbers. This case has one halting action, so unlike CHFE there is no second physiology these numbers have to cover."
+   "schema_gap_note": "Generic peri-arrest numbers. This case has one halting action, so unlike CHFE there is no second physiology these numbers have to cover. The rhythm here is regular rather than irregularly irregular, and that is deliberate: these are not this patient's numbers, they are the generic peri-arrest block every halt shows, and asserting that a man who has just been killed by a fluid bolus is still in atrial fibrillation at 38 beats per minute would be a clinical claim the case has no basis for. In practice the beat is stopped the moment the case ends, so almost nobody hears it either way."
   },
   {
    "id": "case_complete",
@@ -357,6 +365,7 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "rhythm": "irregularly_irregular",
    "terminal": true,
    "transitions": [],
    "schema_gap_note": "Placeholder, as in the reference case. A completion phase should inherit the vitals of the phase the resident handed off from and the schema cannot express that. The saturation of 95 assumes the intended path with positive pressure running; a resident who hands over from the rate-controlled-and-congested phase sees a number here that is better than the patient they handed over."
@@ -753,6 +762,7 @@
     "rate_control_given"
    ],
    "expectation_label": "Rate control for atrial fibrillation (digoxin, amiodarone or metoprolol)",
+   "narration_addendum": "These agents can take a bit of time to kick in.",
    "prerequisites": [
     {
      "when": "flag iv_access set OR flag central_access set OR flag io_access set",
@@ -803,6 +813,7 @@
      "source": "catalog_default_retained"
     }
    ],
+   "narration_addendum": "These agents can take a bit of time to kick in.",
    "vital_effects": [
     {
      "vital": "systolic_bp",
@@ -859,6 +870,7 @@
      "source": "catalog_default_retained"
     }
    ],
+   "narration_addendum": "These agents can take a bit of time to kick in.",
    "debrief_note": "Non-selective beta blockade with a long-acting agent is the least controllable way to slow this patient. If a beta blocker is the chosen strategy, a short-acting and titratable one is the safer route in a ventricle whose function you have only just measured. The flag is set, so the rate does come down, which is the point: it works and it is still not the choice to make."
   },
   {
@@ -879,6 +891,7 @@
      "source": "catalog_default_retained"
     }
    ],
+   "narration_addendum": "These agents can take a bit of time to kick in.",
    "debrief_note": "The argument for esmolol is that it is titratable and short-acting, so if beta blockade is poorly tolerated it can be withdrawn in minutes, which is a real advantage in a patient whose ventricle you do not trust. The argument against it here is that this patient has active pulmonary oedema and beta blockade in acute decompensation removes compensation along with rate. Reasonable clinicians differ. It is tagged discouraged rather than recommended because in a patient at a saturation of 88 percent with diffuse B-lines it is not the first thing to reach for, and because there are two agents on the menu with a better risk profile in this specific physiology."
   },
   {
@@ -2041,7 +2054,8 @@
          "abnormal": true
         }
        ],
-       "comment": "Markedly raised. Supportive of acute heart failure and not diagnostic of it: atrial fibrillation raises natriuretic peptides independently through atrial wall stress, and the two contributions cannot be separated in this patient. Most useful when low. ASSAY NOTE for the reviewer: the catalog entry is named 'pro-BNP' and this payload is written as NT-proBNP with an NT-proBNP reference interval. BNP and NT-proBNP have different units and different cut-offs and are not interchangeable, so which assay this case is modelling is a decision the author has to make and the value and the interval both change with it."
+       "comment": "Markedly raised. Supportive of acute heart failure and not diagnostic of it: atrial fibrillation raises natriuretic peptides independently through atrial wall stress, and the two contributions cannot be separated in this patient. Most useful when low.",
+       "verify": "ASSAY NOTE, for the reviewer and not for the learner. The catalog entry is named 'pro-BNP' and this payload is written as NT-proBNP with an NT-proBNP reference interval. BNP and NT-proBNP have different units and different cut-offs and are not interchangeable, so which assay this case models is a decision the author has to make, and the value and the interval both change with it. This sits in `verify` rather than in `comment` because `comment` is rendered to the learner: a note addressed to a reviewing physician, printed under a result, tells a resident to distrust the number they were just given."
       }
      }
     ]
@@ -2331,7 +2345,7 @@
    }
   },
   "imaging": {
-   "authoring_note": "Section 11.4. Reports freeze at the state in which they were ordered, so a tracing taken before rate control still reads 160 when it arrives after.",
+   "authoring_note": "Section 11.4. Reports freeze at the state in which they were ordered, so a tracing taken before rate control still reads 160 when it arrives after.\n\nFINDINGS ONLY. No report in this case carries an interpretation line, and that is an authoring decision rather than an oversight. Naming the rhythm, calling the ST depression rate-related, or concluding that the B-lines are cardiogenic is the resident's work, and a report that does it for them removes the task the case exists to set. The reasoning that used to sit at the end of these reports has not been lost; it is in the debrief note on each study, which is where a learner reads it after they have committed to an answer rather than before.\n\nThey are also deliberately short. A resident who has to read eight sentences to find the ejection fraction is spending attention on comprehension rather than on management, and length in a report reads as importance, so a long report about a negative study is actively misleading.",
    "ecg_12_lead": {
     "changes_with_state": true,
     "result_shape": "structured",
@@ -2341,7 +2355,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Atrial fibrillation, ventricular rate approximately 105. Irregularly irregular with no P waves; fibrillatory baseline activity best seen in V1. Narrow QRS at 92 ms, no delta wave. The lateral ST depression seen on the earlier tracing has largely resolved, leaving 0.5 mm of horizontal depression in V5 and V6. No ST elevation. Left ventricular hypertrophy by voltage criteria. QTc 442 ms. Interpretation: rate-related repolarisation change, now improved with rate control, which is the point of repeating the tracing."
+       "report": "Atrial fibrillation, ventricular rate approximately 105. Irregularly irregular, no P waves. Narrow QRS at 92 ms. Horizontal ST depression 0.5 mm in V5 and V6, less than on the earlier tracing. No ST elevation. QTc 442 ms."
       }
      },
      {
@@ -2349,7 +2363,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Atrial fibrillation with rapid ventricular response, ventricular rate approximately 160. Irregularly irregular R-R intervals with no discernible P waves and a coarse fibrillatory baseline in V1. Narrow QRS at 88 ms with no delta wave and no pre-excitation. Up to 1.5 mm of horizontal ST depression in V4 to V6 with T wave flattening. No ST elevation in any territory, no reciprocal change, no Q waves. Left ventricular hypertrophy by voltage criteria. QTc 448 ms. Interpretation: atrial fibrillation with a rapid ventricular response. The lateral ST depression is a rate-related repolarisation change rather than an acute coronary occlusion pattern and should be re-examined on a repeat tracing once the rate is controlled."
+       "report": "Atrial fibrillation with rapid ventricular response, ventricular rate approximately 160. Irregularly irregular, no P waves. Narrow QRS at 88 ms, no delta wave. Horizontal ST depression up to 1.5 mm in V4 to V6. No ST elevation, no Q waves. QTc 448 ms."
       }
      }
     ]
@@ -2363,7 +2377,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Parasternal long axis, parasternal short axis, apical four chamber and subcostal views obtained; image quality adequate. Globally reduced left ventricular systolic function with global hypokinesis and no obvious regional wall motion abnormality. Visually estimated ejection fraction 30 to 35 percent. Reduced mitral valve E-point septal separation and reduced fractional shortening, both consistent with that estimate. Left ventricle mildly dilated. No pericardial effusion. Right ventricle not dilated, with a normal right-to-left ventricular ratio and no septal flattening. Inferior vena cava dilated at approximately 2.3 cm with minimal respiratory variation. Interpretation: newly recognised moderately to severely reduced left ventricular systolic function with a high central venous pressure. No pericardial tamponade and no right heart strain pattern."
+       "report": "Globally reduced left ventricular systolic function with global hypokinesis and no regional wall motion abnormality. Visually estimated ejection fraction 30 to 35 percent. Left ventricle mildly dilated. No pericardial effusion. Right ventricle not dilated, no septal flattening. Inferior vena cava 2.3 cm with minimal respiratory variation."
       }
      }
     ]
@@ -2377,7 +2391,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Eight-zone scan repeated. B-lines reduced in number and now confined to the dependent posterolateral zones, with A-lines returning anteriorly on both sides. Lung sliding present throughout. Small bilateral pleural effusions unchanged. Interpretation: improving interstitial oedema. This is where the response to the diuretic and the positive pressure is visible, and it is not on the monitor."
+       "report": "B-lines reduced in number and now confined to the dependent posterolateral zones, with A-lines returning anteriorly on both sides. Lung sliding present. Small bilateral pleural effusions, unchanged."
       }
      },
      {
@@ -2385,7 +2399,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Eight-zone scan repeated. B-lines slightly reduced anteriorly and still confluent in the lower zones bilaterally. Lung sliding present throughout. Small bilateral pleural effusions. Interpretation: interstitial oedema, marginally improved."
+       "report": "B-lines reduced in number anteriorly, still confluent in the lower zones on both sides. Lung sliding present. Small bilateral pleural effusions."
       }
      },
      {
@@ -2393,7 +2407,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Eight-zone scan. Diffuse bilateral B-lines, three or more per field in every zone examined, confluent in the lower zones. Symmetrical. Lung sliding present throughout with no pneumothorax. Small bilateral pleural effusions. No focal consolidation, no sub-pleural consolidation, no dynamic air bronchograms. Interpretation: diffuse bilateral interstitial syndrome, symmetrical and with a smooth pleural line, which in this context is cardiogenic pulmonary oedema rather than pneumonia or an obstructive exacerbation."
+       "report": "Diffuse bilateral B-lines, three or more per field in every zone and confluent at the bases. Symmetrical. Lung sliding present throughout. Small bilateral pleural effusions. No consolidation."
       }
      }
     ]
@@ -2407,7 +2421,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Portable anteroposterior semi-erect film. Cardiomegaly with a cardiothoracic ratio of about 0.58, limited by the projection. Upper zone vascular redistribution. Perihilar alveolar and interstitial opacity in a bat's wing distribution with septal Kerley B lines at both bases. Small bilateral pleural effusions with blunting of both costophrenic angles. No focal lobar consolidation. No pneumothorax. Interpretation: pulmonary oedema with cardiomegaly and small effusions."
+       "report": "Portable semi-erect film. Cardiomegaly, cardiothoracic ratio about 0.58. Upper zone vascular redistribution. Perihilar interstitial and alveolar opacity with Kerley B lines at both bases. Small bilateral pleural effusions. No focal consolidation. No pneumothorax."
       }
      }
     ]
@@ -2421,7 +2435,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "No filling defect in the main, lobar, segmental or subsegmental pulmonary arteries. No pulmonary embolus. Cardiomegaly with left atrial enlargement. Bilateral ground-glass opacity with smooth interlobular septal thickening in a perihilar distribution, and small bilateral pleural effusions, in keeping with pulmonary oedema. Coronary artery calcification. No consolidation, no mass, no lymphadenopathy. Interpretation: no pulmonary embolus. Findings of pulmonary oedema."
+       "report": "No filling defect in the pulmonary arteries to subsegmental level. Cardiomegaly with left atrial enlargement. Bilateral ground-glass opacity with smooth interlobular septal thickening in a perihilar distribution. Small bilateral pleural effusions. Coronary artery calcification. No consolidation."
       }
      }
     ]
@@ -2435,7 +2449,7 @@
       "value": {
        "kind": "report",
        "abnormal": false,
-       "report": "Bilateral two-point compression at the common femoral and popliteal veins. Both veins fully compressible on both sides. No echogenic intraluminal material. Symmetrical subcutaneous oedema of both calves. Interpretation: no proximal deep vein thrombosis identified."
+       "report": "Common femoral and popliteal veins fully compressible on both sides. No echogenic intraluminal material. Symmetrical subcutaneous oedema of both calves."
       }
      }
     ]
@@ -3966,5 +3980,5 @@
   "prose_field": "Not used in this case. Every authored result is a structured payload.",
   "unverified": "Reference intervals in this pack are model output. Where the catalog carries a default for the same analyte the case uses the catalog's interval so the two agree."
  },
- "phases_note": "Read the transition lists in order, because first match wins and two of the rules in the arrival phase are timed. Intubation is checked first everywhere, so a learner who intubates from any state reaches the ventilated phase rather than an improvement phase. Positive pressure is checked before rate control in the arrival phase, so a learner who gives both in one batch of orders moves to the breathing-supported phase immediately and then to stabilised sixty seconds later, rather than waiting sixty seconds for either.\n\nThe respiratory failure phase deliberately has no rate-control exit. A learner who arrives there and responds by giving a rate-controlling drug has the flag recorded and the credit given and sees no improvement, because the problem in that phase is the lung. Applying positive pressure afterwards goes straight to the stabilised phase, since the rate control is already in and has had time to work."
+ "phases_note": "Read the transition lists in order, because first match wins and two of the rules in the arrival phase are timed. Intubation is checked first everywhere, so a learner who intubates from any state reaches the ventilated phase rather than an improvement phase. Positive pressure is checked before rate control in the arrival phase, so a learner who gives both in one batch of orders moves to the breathing-supported phase immediately and then to stabilised thirty seconds later, rather than waiting thirty seconds for either.\n\nThe respiratory failure phase deliberately has no rate-control exit. A learner who arrives there and responds by giving a rate-controlling drug has the flag recorded and the credit given and sees no improvement, because the problem in that phase is the lung. Applying positive pressure afterwards goes straight to the stabilised phase, since the rate control is already in and has had time to work."
 }

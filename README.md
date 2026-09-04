@@ -169,6 +169,27 @@ the flag, and there is one deadline rather than two that drift apart. Authoring 
 what none of it can do, which is worth reading first, since each of those looks
 authorable until it is tried.
 
+## The heartbeat, and how it is allowed to be uneven
+
+The beat is a chain: each beat reads the current rate, saturation and rhythm and schedules
+the next one. Exactly one is ever pending. That is what lets the tempo follow the
+five-second ramp between phases continuously rather than in quantised steps, and it is
+what makes an uneven rhythm expressible at all.
+
+A phase may declare a **`rhythm`**, from a closed vocabulary in `SHARED.audio.rhythm`.
+`regular` is the default and is what every phase written before this existed sounds like.
+`irregularly_irregular` draws each interval independently as a shifted exponential, so
+there is no period for a listener to lock onto, and varies the loudness of each beat with
+the interval before it, because a long diastole fills the ventricle more. **The mean is
+preserved exactly**, so the rate on the monitor is the true average rate; the spread
+narrows at fast rates rather than the floor being clamped, which is what keeps that true.
+The ECG trace reads the same field and draws unevenly spaced complexes with no P wave.
+
+The engine holds no association between a rhythm and a diagnosis, exactly as the catalog
+holds no appropriateness judgement about a drug. Every parameter is a teaching choice and
+the provenance note beside them says so: **no case models a rhythm.** See
+`docs/decisions/rhythm-and-the-heartbeat-chain.md` for what was rejected.
+
 ## The monitor, and what an action can do to a vital
 
 Two things a resident used to get for free.
@@ -260,16 +281,16 @@ copy was stale and missing the exam defaults and the routing map.
 | `docs/decisions/` | One record per change: why it was made and what was rejected |
 
 `docs/decisions/` holds `time-driven-transitions.md`, `welcome-integration.md`,
-`ui-redesign-notes.md`, `arrival-and-history-change.md`, `interview-matching-plan.md`
-and `monitor-gating-and-vital-effects.md`.
+`ui-redesign-notes.md`, `arrival-and-history-change.md`, `interview-matching-plan.md`,
+`monitor-gating-and-vital-effects.md` and `rhythm-and-the-heartbeat-chain.md`.
 They are kept because they record what was rejected, which the current documents state
 only as conclusions. They are not a source of truth for how the system behaves.
 
 ## Status
 
 All three cases pass the validator with no errors. CHFE walks 13 authored scenarios,
-MGCA 26 and AFRVR 30. CHFE and MGCA pass 165 engine assertions each and AFRVR 196, which
-is the same case-agnostic suite plus more case-specific ones; each passes 26 validator
+MGCA 26 and AFRVR 30. CHFE and MGCA pass 201 engine assertions each and AFRVR 262, which
+is the same case-agnostic suite plus more case-specific ones; each passes 31 validator
 negative tests. Each carries one warning, in every case about actions the catalog does not
 hold, which the prototype renders anyway so the gap stays visible. Those are catalog change
 requests rather than defects.

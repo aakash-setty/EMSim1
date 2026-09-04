@@ -227,5 +227,25 @@ expect("an implausible vital is rejected",
        lambda c: c["phases"][0]["vitals"].__setitem__("temperature_c", 96.0),
        "outside plausible range")
 
+print("\n-- rhythm --")
+# An unknown value would fall back to a regular beat and say nothing, which in a case
+# whose teaching point is the rhythm is the monitor giving the wrong answer out loud.
+expect("an unknown rhythm is rejected",
+       lambda c: c["phases"][0].__setitem__("rhythm", "irregular"),
+       "is not one of")
+expect("a rhythm that is not a string is rejected",
+       lambda c: c["phases"][0].__setitem__("rhythm", True),
+       "is not one of")
+# The inverse. Both permitted values, and the absence of the field, have to pass, or the
+# rule would break every case written before the field existed. Rule V's range check
+# shipped warning on correct authoring once; the inverse case is written down as a test
+# for the same reason.
+expect_clean("regular passes",
+             lambda c: c["phases"][0].__setitem__("rhythm", "regular"), "rhythm")
+expect_clean("irregularly_irregular passes",
+             lambda c: c["phases"][0].__setitem__("rhythm", "irregularly_irregular"), "rhythm")
+expect_clean("a phase with no rhythm at all passes",
+             lambda c: c["phases"][0].pop("rhythm", None), "rhythm")
+
 print(f"\n  {COUNT} checks, " + (f"{len(FAILS)} FAILURES" if FAILS else "all passed"))
 sys.exit(1 if FAILS else 0)

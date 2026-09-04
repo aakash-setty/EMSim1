@@ -95,6 +95,11 @@ def skeleton(prefix, title):
                            "temperature_c": None},
                 "appearance": {"distress_level": None, "alertness_level": None,
                                "pupil_size": "normal", "pupil_reactivity": "reactive"},
+                # How the heartbeat sounds. "regular" or "irregularly_irregular", and
+                # omitting it means regular. Author it wherever the rhythm is part of
+                # the finding: a resident who can hear that the beat is uneven before
+                # they read the tracing has learned something the monitor cannot show.
+                "rhythm": "regular",
                 "transitions": [
                     {"when": todo("5", "condition on this phase's critical actions"),
                      "to": "improving"},

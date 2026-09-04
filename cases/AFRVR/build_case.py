@@ -63,10 +63,13 @@ CASE = {
      "That was the author's explicit instruction and it is the reason no transition in this case "
      "carries allow_time_to_terminal."),
    "rate_control_delay": (
-     "The two transitions that follow rate control carry a 60-second guard_true delay, so the "
-     "ventricular rate falls about a minute after the drug rather than on the click. Without it "
-     "the case teaches that rate control is instantaneous, and a learner who sees nothing happen "
-     "immediately redoses."),
+     "The two transitions that follow rate control carry a 30-second guard_true delay, so the "
+     "ventricular rate falls about half a minute after the drug rather than on the click. Without "
+     "it the case teaches that rate control is instantaneous. The delay is paired with a nurse "
+     "line said the moment the drug goes in, because a delay on its own reads as the drug having "
+     "failed and invites a second dose; the line is what carries the lesson and the delay is what "
+     "stops the number being a button. Thirty seconds sits on the validator's hard floor, which is "
+     "deliberate and is recorded in the transition rationale."),
  },
  "phases": PHASES,
  "tag_vocabulary": {
@@ -139,7 +142,7 @@ CASE = {
    "from any state reaches the ventilated phase rather than an improvement phase. Positive "
    "pressure is checked before rate control in the arrival phase, so a learner who gives both in "
    "one batch of orders moves to the breathing-supported phase immediately and then to stabilised "
-   "sixty seconds later, rather than waiting sixty seconds for either.\n\n"
+   "thirty seconds later, rather than waiting thirty seconds for either.\n\n"
    "The respiratory failure phase deliberately has no rate-control exit. A learner who arrives "
    "there and responds by giving a rate-controlling drug has the flag recorded and the credit "
    "given and sees no improvement, because the problem in that phase is the lung. Applying "

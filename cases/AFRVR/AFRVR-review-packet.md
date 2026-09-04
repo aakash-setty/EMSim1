@@ -74,14 +74,26 @@ than the one at 160. It is set to the same four minutes deliberately, so the cas
 teach that treating the rate buys time that has not been shown to exist. If you disagree,
 lengthen it.
 
-**2.2 Sixty seconds for rate control to work.** Both rate-control transitions carry
-`after_seconds: 60, measured_from: guard_true`, so the ventricular rate falls about a
-minute after the drug rather than on the click. Sixty seconds is already a compression:
-intravenous metoprolol takes several minutes, amiodarone longer, and digoxin considerably
-longer than either. It is the same number for all three agents even though their real
-onsets differ by an order of magnitude. Representing that difference needs three separate
-case actions and three separate transitions, and the cost is that the critical action can
-no longer be "rate control" as one act. **That is a real trade and it is yours to make.**
+**2.2 Thirty seconds for rate control to work, and a nurse line to go with it.** Both
+rate-control transitions carry `after_seconds: 30, measured_from: guard_true`, so the
+ventricular rate falls about half a minute after the drug rather than on the click. Thirty
+seconds is a heavy compression: intravenous metoprolol takes several minutes, amiodarone
+longer, and digoxin considerably longer than either. It is the same number for all three
+agents even though their real onsets differ by an order of magnitude. Representing that
+difference needs three separate case actions and three separate transitions, and the cost
+is that the critical action can no longer be "rate control" as one act. **That is a real
+trade and it is yours to make.**
+
+It was sixty seconds and was halved on the author's instruction, because a minute of an
+unchanged 160 after pushing a drug reads as the drug having failed rather than as a drug
+taking effect. The line the nurse now says the moment any rate-controlling agent goes in,
+"these agents can take a bit of time to kick in", is what carries the teaching the delay
+was there for, and the delay is what stops the number being a button. Thirty seconds sits
+exactly on the validator's hard floor. The soft warning below sixty was narrowed so it
+does not fire here, and the reasoning is worth checking: that warning is a fairness rule
+about deteriorations the resident could not have prevented, and a delayed consequence of
+an action they took has nothing to prevent and no reflex to test. If you disagree with
+that scoping, it is in `run_checks` in `engine/validate_case.py`.
 
 **2.3 Diltiazem drops the systolic pressure twenty points and the diastolic ten.** Your
 instruction was that a learner who gives it before knowing the ejection fraction must not
@@ -102,7 +114,33 @@ mask on, the stabilised phase reads 97, which is inside the 94 to 97 you specifi
 **If you change a phase's saturation, check whether you meant the number with the mask on
 or off.** Eight points and one minute are both teaching choices.
 
-**2.5 A crystalloid bolus halts the case, and it is the only thing that does.** Your brief
+**2.5 The heartbeat is irregularly irregular in every phase, and the numbers that make
+it so are invented.** He is in atrial fibrillation when he arrives and still in it when he
+is handed over, so every non-terminal phase carries `rhythm: "irregularly_irregular"` and
+none of them converts him. That is your seed, stated as behaviour: not converting is
+explicitly not a failure in this case.
+
+What is not yours is the shape of the unevenness. Intervals are drawn as a shifted
+exponential with a coefficient of variation of 0.20 at ordinary rates, narrowing as the
+rate rises, with a 240 ms floor and a beat-to-beat variation in loudness derived from the
+preceding interval. **The mean is preserved exactly**, so the rate on the monitor is the
+true average rate and you do not have to compensate when choosing it. Everything else
+about the model is an authored figure chosen to be clearly audible as irregular, not a fit
+to published R-R interval data, and it is global rather than case-level, so changing it
+changes every future case that uses the same rhythm. **This case does not model a rhythm
+and should not be described as doing so.**
+
+At 160 beats per minute the beat swings between roughly 120 and 200 instantaneous, with a
+floor at 300 ms and occasional pauses near 500. At 104 it swings between roughly 70 and
+130 with pauses to 850 ms. If either reads as too much or too little irregularity, the
+parameters are in `SHARED.audio.rhythm` in `engine/build_simulator.py`.
+
+The halted phase is the one exception and carries `regular`. Those are the generic
+peri-arrest numbers every halt shows rather than this patient's, and asserting that a man
+killed by a fluid bolus is still fibrillating at 38 beats per minute is a claim the case
+has no basis for. In practice the beat stops when the case ends, so almost nobody hears it.
+
+**2.6 A crystalloid bolus halts the case, and it is the only thing that does.** Your brief
 named no harmful action. Without one the halted phase is unreachable and the case can
 teach nothing about an action that must not be taken, so one was added: a litre of
 crystalloid in a man with an ejection fraction of 30 to 35 percent and a flooded lung. It
@@ -287,6 +325,41 @@ quoting any of these numbers outside this pack.
 
 ---
 
+## 7a. Reports carry findings and no interpretation, and they are short
+
+Every imaging report in this case ends where the findings end. None of them says
+"interpretation: cardiogenic pulmonary oedema", none of them calls the ST depression
+rate-related, and none of them concludes anything. That was the author's instruction and
+the reasoning holds up: naming the rhythm and deciding what the ST depression means is the
+task this case exists to set, and a report that does it first removes the task. Nothing was
+lost, because the reasoning that used to sit at the end of each report is in that study's
+debrief note, which is where a learner reads it after committing to an answer rather than
+before.
+
+They are also much shorter. The tracing went from about a hundred words to forty-three,
+the cardiac ultrasound from a hundred and twenty to forty-six, the lung ultrasound from
+seventy-five to twenty-seven. What went was the scaffolding a real report carries and a
+simulator does not need: the list of views obtained, the secondary measures that agree
+with the primary one, the negatives nobody was asking about. **Length reads as importance**,
+so a long report about a negative study is not neutral, it is misleading.
+
+Two things for you to check. **Whether anything you need is now missing.** The tracing no
+longer mentions left ventricular hypertrophy by voltage criteria or the fibrillatory
+baseline in V1, and the cardiac study no longer reports E-point septal separation or
+fractional shortening. None of them changes management here and all of them are real
+findings in this patient, so if you teach from any of them they should go back. **And
+whether the labs should get the same treatment.** They have not, because you did not ask,
+but the `comment` under a laboratory result is rendered to the learner exactly as a report
+is, and the troponin and natriuretic peptide comments currently explain what the number
+means rather than stating it. That is the same thing the reports were doing. Say the word
+and they get the same edit.
+
+One defect turned up while doing this and is fixed. The natriuretic peptide comment
+carried a note addressed to you, about which assay the case is modelling, and `comment` is
+printed under the result. A learner was being told to distrust a number they had just been
+given. Reviewer-addressed notes now sit in `verify`, which the interface does not render,
+the way the catalog's own defaults already use it.
+
 ## 8. The per-key review matrix
 
 `AFRVR-review-matrix.md`, 148 keys. **Read it in full.** On the reference case, four
@@ -347,10 +420,13 @@ is yours.
 - [x] 30 authored scenarios walk end to end, including the do-nothing path, both
       deterioration branches, each rescue, every blocked prerequisite, every route to the
       halting action, and both coverage groups
-- [x] 196 engine assertions pass, including the four-step saturation ramp read off the
-      monitor at each step, the diuretic moving nothing, and the sixty-second rate-control
-      delay firing with no further action taken
-- [x] 26 validator negative tests pass
+- [x] 262 engine assertions pass, including the four-step saturation ramp read off the
+      monitor at each step, the diuretic moving nothing, the thirty-second rate-control
+      delay firing with no further action taken, a covered sibling satisfying the critical
+      action without marking the covering button as pressed, the interval model preserving the mean
+      rate at every rate this case authors, and the beat chain keeping exactly one beat
+      pending under sixty renders a second
+- [x] 31 validator negative tests pass
 - [x] abnormal flags agree with every parseable reference interval
 - [x] every phase reachable, every non-terminal phase has a satisfiable exit, no cycle of
       time edges, no transition ends the case on the clock
@@ -361,11 +437,15 @@ is yours.
 
 - [ ] every reference interval is right for the assays you are modelling
 - [ ] the two 240-second deadlines are claims you will defend
-- [ ] the 60-second rate-control delay is a claim you will defend
+- [ ] the 30-second rate-control delay is a claim you will defend, and the nurse line
+      that accompanies it says what you want it to say
 - [ ] the eight-point saturation gain and its one-minute tempo are what you meant
 - [ ] the twenty-point systolic fall on diltiazem is what you meant
 - [ ] a crystalloid bolus in this patient is genuinely lethal, or it is not and the tag
       should change
+- [ ] the beat sounds irregular enough, and not so irregular that it reads as a fault.
+      **Listen to it**, at 160 in the arrival phase and at 104 in the stabilised phase.
+      This is the one item on this list that cannot be checked by reading anything
 - [ ] the coverage groups are clinically sound, particularly binding metoprolol to the
       same tag as digoxin
 - [ ] magnesium replacement is correctly recommended rather than critical, or it is not
@@ -410,3 +490,33 @@ a case.
    fraction now reads "defensible" rather than "incorrect".
 8. **`engine/deterioration_timeline.py`** is new. Section 14.2c required the artifact and
    there was no tool; MGCA's was written by hand. Both packs are now generated.
+9. **The heartbeat could only be even.** A phase now carries an optional `rhythm`, the beat
+   is a self-rescheduling chain rather than a fixed interval, and the rate quantisation
+   that existed to stop a ramp restarting the beat is gone with it. Both earlier cases
+   sound the same and follow a phase change slightly more smoothly. See
+   `docs/decisions/rhythm-and-the-heartbeat-chain.md`.
+10. **The lub-dub gap was a fixed 160 ms**, which at the 220 beats per minute the validator
+    permits would have put one beat's second sound on top of the next beat's first. Latent
+    before this case and not reachable by either earlier one.
+11. **A `const` declared inside a direct `eval` does not leak** into the calling scope the
+    way `engine.js`'s function declarations do, so the test harness saw no audio module and
+    reported it as a missing fence. Recorded because the next module extracted this way
+    will hit it.
+12. **The decorative ECG trace drew evenly spaced complexes with P waves.** It reads the
+    same `rhythm` field now. Still decorative: the six beats on screen are not the six
+    beats being heard, and the note in the code says so.
+13. **A covered sibling lit up the covering action's button.** This was the other half of
+    defect 2 and it was introduced by the fix for it: recording the covering action in
+    `taken` made the debrief score correctly and made the action grid draw digoxin as
+    already given to a resident who had pressed metoprolol, which tells them they gave a
+    drug they did not. There are now two sets. `taken` is which buttons were pressed and
+    is what the grid reads; `satisfied` is what has been accomplished, including through a
+    coverage group, and is what the debrief, the follow-up satisfiers, the prompt
+    suppression and `action X taken` read. Both earlier packs are unaffected because
+    neither has a coverage group on an action a resident would notice.
+14. **`narration_override` never existed.** Authoring section 9.1 had promised it since
+    v0.2 and nothing read the field, so a case that authored one got the catalog line and
+    no error. Implemented, along with `narration_addendum`, which is the narrower thing
+    this case actually needed.
+15. **The monitor labelled per-minute units as `min` with a superscript minus one.** It
+    now reads `/minute`, in both the header monitor and the arrival panel.

@@ -149,6 +149,49 @@ shared = {
                        "reference point is not stated, so 100% is used: A5 at full saturation, one "
                        "semitone down per percent. At 87% that is 13 semitones below A5, about "
                        "415 Hz. Change spo2Reference to move the anchor."),
+        # The closed vocabulary a phase's `rhythm` may name. It is here rather than in a
+        # case because it is a property of how the monitor sounds, not of any diagnosis:
+        # the engine has no idea which conditions produce which rhythm, exactly as it has
+        # no idea which drugs are harmful. Adding a third entry here is what it would take
+        # to give a case a regularly irregular beat, and it would need its own model
+        # rather than different parameters for this one.
+        "rhythm": {
+            "_note": ("Keys are the permitted values of phases[].rhythm. A phase with no "
+                      "rhythm, or with one this map does not hold, sounds regular. The "
+                      "validator enforces the same set at authoring time so an unknown "
+                      "value is caught before it becomes a silent fallback."),
+            "regular": {
+                "label": "regular",
+            },
+            "irregularly_irregular": {
+                "label": "irregularly irregular",
+                # interval = mean * (s + (1 - s) * Exp(1)), where s is raised above this
+                # figure wherever absoluteFloorMs would otherwise be breached. The mean is
+                # preserved exactly; the coefficient of variation is (1 - s).
+                "refractoryFraction": 0.80,
+                # No two beats closer than this, whatever the rate. Roughly the
+                # atrioventricular nodal refractory period, and also comfortably longer
+                # than the lub-dub gap, so the second sound of one beat can never land on
+                # the first sound of the next.
+                "absoluteFloorMs": 240,
+                # Truncates a tail of about one draw in a thousand so a pathological
+                # sample cannot leave an audible silence.
+                "ceilingMultiple": 2.6,
+                # Beat-to-beat variation in loudness, derived from the length of the
+                # preceding interval: a long diastole fills the ventricle more.
+                "gainPerRatio": 0.80,
+                "gainFloor": 0.72,
+                "gainCeiling": 1.30,
+                "provenance": (
+                    "AUTHORED, NOT MEASURED. A coefficient of variation of 0.20 at ordinary "
+                    "rates, right-skewed, with the spread narrowing as the rate rises. That "
+                    "is the right shape and the right direction; the specific figures are a "
+                    "teaching choice made to be clearly audible as irregular, not a fit to "
+                    "published R-R interval data, and no case should be described as "
+                    "modelling a rhythm. The loudness variation is the same kind of claim: "
+                    "the mechanism is real and the coefficient is invented."),
+            },
+        },
     },
 }
 
@@ -326,8 +369,13 @@ def main():
     # semantic.js declares `const SEM` and ui.js registers a listener on it at top
     # level, so it MUST come before ui.js. Reversed, the bundle throws before the
     # first render and the page is blank.
+    # audio.js is fenced separately so the test harness can evaluate it without the
+    # engine, and the engine without it. The interval model is a claim about physiology
+    # and has to be assertable.
     bundle = ("/*__ENGINE_START__*/\n" + open(os.path.join(HERE, "engine.js")).read() +
-              "\n/*__ENGINE_END__*/\n" + open(os.path.join(HERE, "audio.js")).read() +
+              "\n/*__ENGINE_END__*/\n"
+              "/*__AUDIO_START__*/\n" + open(os.path.join(HERE, "audio.js")).read() +
+              "\n/*__AUDIO_END__*/\n" +
               "\n" + open(os.path.join(HERE, "semantic.js")).read() +
               "\n" + open(os.path.join(HERE, "ui.js")).read() + "\n")
 

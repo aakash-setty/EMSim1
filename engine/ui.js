@@ -152,11 +152,11 @@ function renderMonitor(){
      worse than one that reads as obviously unfinished. */
   const num=(x,amp)=>(on&&typeof x==='number')?j(x,amp||0):'\u2013';
   const cells=[
-    ['HR',   num(v.heart_rate,2),                            'min\u207B\u00B9','hr'],
+    ['HR',   num(v.heart_rate,2),                            '/minute','hr'],
     ['BP',   (on&&typeof v.systolic_bp==='number'&&typeof v.diastolic_bp==='number')
                ? v.systolic_bp+'/'+v.diastolic_bp : '\u2013',  'mmHg','bp'],
     ['SpO\u2082', num(v.oxygen_saturation,1),                 '%','spo2'],
-    ['RR',   num(v.respiratory_rate,1),                      'min\u207B\u00B9','rr'],
+    ['RR',   num(v.respiratory_rate,1),                      '/minute','rr'],
     ['T',    (on&&typeof v.temperature_c==='number')?v.temperature_c.toFixed(1):'\u2013','\u00B0C','temp']
   ];
   /* The header carries the full monitor at every panel state, so vitals are
@@ -181,21 +181,57 @@ function renderMonitor(){
      only a cache key. Feed it the phase's authored rate rather than the ramping
      one so it redraws on a phase change instead of on every frame for five
      seconds. */
-  renderTrace(on&&p&&p.vitals?p.vitals.heart_rate:undefined);
+  renderTrace(on&&p&&p.vitals?p.vitals.heart_rate:undefined, p?p.rhythm:undefined);
   renderSound();
   AUDIO.sync();
 }
-function renderTrace(hr){
+/* Deterministic pseudo-random, so a redraw of the same phase produces the same
+   picture. Math.random() here would make the trace shimmer on every render, which
+   would read as a fault rather than as a rhythm. */
+function traceRand(seed){
+  let x=seed>>>0||1;
+  return ()=>{ x^=x<<13; x>>>=0; x^=x>>17; x^=x<<5; x>>>=0; return x/4294967296; };
+}
+function renderTrace(hr, rhythm){
   const svg=el('trace');
   if(typeof hr!=='number'){ svg.innerHTML=''; svg.dataset.hr=''; return; }
-  if(svg.dataset.hr===String(hr)) return;
-  svg.dataset.hr=String(hr);
-  const beats=6, w=420, seg=w/beats; let d='';
-  for(let b=0;b<beats;b++){
-    const x=b*seg;
-    d+=`M${x} 14 L${x+seg*0.30} 14 L${x+seg*0.36} 11 L${x+seg*0.42} 14 `
-     + `L${x+seg*0.47} 17 L${x+seg*0.52} 2 L${x+seg*0.57} 20 L${x+seg*0.62} 14 `
-     + `L${x+seg*0.78} 14 L${x+seg*0.84} 9 L${x+seg*0.90} 14 L${x+seg} 14 `;
+  const key=String(hr)+'|'+(rhythm||'regular');
+  if(svg.dataset.hr===key) return;
+  svg.dataset.hr=key;
+  const beats=6, w=420; let d='';
+  if(rhythm==='irregularly_irregular'){
+    /* Two things separate this from the regular trace and both are the finding rather
+       than decoration: the complexes are unevenly spaced, and there is no P wave. The
+       spacing is drawn from the same shifted-exponential shape the audio uses and then
+       normalised to the width, so the picture and the sound tell the same story without
+       either importing the other's code. The complex itself keeps a fixed width and the
+       baseline between complexes absorbs the difference, because a long R-R interval
+       lengthens diastole and does not widen the QRS. Still decorative: the six beats on
+       screen are not the six beats you are hearing. */
+    const rnd=traceRand(Math.round(hr)*2654435761);
+    const raw=[]; for(let b=0;b<beats;b++) raw.push(0.62+0.38*(-Math.log(1-rnd())));
+    const tot=raw.reduce((a,c)=>a+c,0);
+    const cw=32;                       /* complex width in pixels, fixed */
+    let x=0;
+    for(let b=0;b<beats;b++){
+      const seg=w*raw[b]/tot, flat=Math.max(4,seg-cw), c=x+flat;
+      d+=`M${x} 14 L${c} 14 `
+       + `L${c+cw*0.10} 17 L${c+cw*0.22} 2 L${c+cw*0.34} 20 L${c+cw*0.46} 14 `
+       + `L${c+cw*0.62} 14 L${c+cw*0.78} 9 L${c+cw*0.94} 14 L${x+seg} 14 `;
+      x+=seg;
+    }
+  } else {
+    /* Unchanged, so the two cases written before a rhythm existed draw exactly what
+       they drew before. The complex scales with the segment here, which a fixed-width
+       one would not, and there is no reason to redraw a picture nobody complained
+       about. */
+    const seg=w/beats;
+    for(let b=0;b<beats;b++){
+      const x=b*seg;
+      d+=`M${x} 14 L${x+seg*0.30} 14 L${x+seg*0.36} 11 L${x+seg*0.42} 14 `
+       + `L${x+seg*0.47} 17 L${x+seg*0.52} 2 L${x+seg*0.57} 20 L${x+seg*0.62} 14 `
+       + `L${x+seg*0.78} 14 L${x+seg*0.84} 9 L${x+seg*0.90} 14 L${x+seg} 14 `;
+    }
   }
   svg.innerHTML=`<path d="${d}" fill="none" stroke="var(--hr)" stroke-width="1.3"/>`;
 }
@@ -1236,7 +1272,10 @@ function haltCard(){
 /* ---------- debrief (section 11) ---------- */
 function debriefHTML(){
   const done=[],omit=[];
-  ST.expected.forEach(id=>{ (ST.taken.has(id)?done:omit).push(id); });
+  /* `satisfied`, so a critical action performed through a coverage group is not
+     reported as missed. The action grid still reads `taken`, so only the button that
+     was actually pressed is drawn as used. */
+  ST.expected.forEach(id=>{ (ST.satisfied.has(id)?done:omit).push(id); });
   const rec=[...ST.recommendedTaken];
   const dis=[...ST.discouragedTaken];
   const traps=ST.timeline.filter(x=>x.tag==='neutral'&&PROTO.traps.includes(x.id));
@@ -1268,7 +1307,7 @@ function debriefHTML(){
 
   const domRows=CASE.debrief_configuration.clinical_domains.map(d=>{
     const exp=d.actions.filter(a=>ST.expected.has(a));
-    const got=exp.filter(a=>ST.taken.has(a));
+    const got=exp.filter(a=>ST.satisfied.has(a));
     const bad=d.actions.filter(a=>ST.halted&&ST.halted.id===a);
     return `<tr><td>${esc(d.label)}</td><td class="n">${got.length}/${exp.length}</td>
       <td class="n">${bad.length?'<span class="pill p-harm">halted here</span>'
@@ -1392,7 +1431,7 @@ function debriefHTML(){
     <div class="dbsec"><h2>Independent and prompted</h2>
       <table class="dom"><tr><th>Critical action</th><th>How it happened</th></tr>
       ${[...ST.expected].map(id=>{
-        const s2=ST.taken.has(id)?(ST.prompted.has(id)?['after a prompt','p-warn']:['on your own','p-ok']):['omitted','p-harm'];
+        const s2=ST.satisfied.has(id)?(ST.prompted.has(id)?['after a prompt','p-warn']:['on your own','p-ok']):['omitted','p-harm'];
         return `<tr><td>${esc(dispExp(id))}</td><td><span class="pill ${s2[1]}">${s2[0]}</span></td></tr>`;
       }).join('')}</table>
       <div class="note">A prompted action counts as done. This is here so you know where you needed help,
@@ -1617,10 +1656,10 @@ function renderSplashVitals(){
   if(!v||!num(v.heart_rate)){ sec.classList.add('hidden'); box.innerHTML=''; return; }
   sec.classList.remove('hidden');
   const cells=[
-    ['HR', num(v.heart_rate)?String(v.heart_rate):'\u2013', 'min\u207B\u00B9'],
+    ['HR', num(v.heart_rate)?String(v.heart_rate):'\u2013', '/minute'],
     ['BP', (num(v.systolic_bp)&&num(v.diastolic_bp))?v.systolic_bp+'/'+v.diastolic_bp:'\u2013','mmHg'],
     ['SpO\u2082', num(v.oxygen_saturation)?String(v.oxygen_saturation):'\u2013','%'],
-    ['RR', num(v.respiratory_rate)?String(v.respiratory_rate):'\u2013','min\u207B\u00B9'],
+    ['RR', num(v.respiratory_rate)?String(v.respiratory_rate):'\u2013','/minute'],
     ['T',  num(v.temperature_c)?v.temperature_c.toFixed(1):'\u2013','\u00B0C']
   ];
   box.innerHTML=cells.map(c=>`<div class="spvitcell"><div class="spvitlab">${c[0]}</div>
