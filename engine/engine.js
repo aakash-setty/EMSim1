@@ -75,6 +75,12 @@ function resolve(rules,st){
   for(const r of rules){ if(r.when===null||r.when===undefined||test(r.when,st)) return r.value; }
   return null;
 }
+/* An answer field may be a rule list (phase-conditional) or a plain string. */
+function resolveText(v,st){
+  if(v===null||v===undefined) return null;
+  if(typeof v==='string') return v;
+  return resolve(v,st);
+}
 
 /* ---------- case selection and the catalog merge ----------
    PROTO is assembled here rather than at build time so that every case shares one
@@ -112,6 +118,7 @@ function mergeAction(eff, base, caseAct, extra){
     name:((extra&&extra.coveredBy)?null:caseAct.display_name)||base.name||eff.replace(/_/g,' '),
     tab:(extra&&extra.tab)||base.tab,
     group:(extra&&extra.group)||base.group,
+    groups:(extra&&extra.group)?null:(base.groups||null),
     category:base.category||(extra&&extra.category)||orphanCategory(eff),
     state_changing:base.state_changing!==undefined?base.state_changing
                   :(caseAct.state_changing!==undefined?caseAct.state_changing:true),
@@ -214,6 +221,9 @@ function selectCase(ref){
     correctDxExplanation: PACK.correctDxExplanation,
     altDx: PACK.altDx,
     altDxDefensible: PACK.altDxDefensible||[],
+    /* v0.9: the case's additional diagnoses, id to explanation. Appropriate beside the
+       primary, and credited when listed with it. */
+    addlDx: PACK.addlDx||{},
     promptCap: PACK.promptCap,
     buildNotes: PACK.buildNotes
   });
@@ -323,6 +333,14 @@ function fold(log, now, difficultyMultiplier){
     nurse:[], readouts:[], blocked:[], timeline:[], prompted:new Set(),
     promptFires:[], fuFires:[], fuOutstanding:new Set(), handoff:null, now:now, dm:DM,
     expected:new Set(), expectedByPhase:{}, recommendedTaken:new Set(), defaultsServed:new Set(),
+    /* v0.9. The recommended counterpart of `expected`: every action that carried the
+       recommended tag on entry to a phase the run visited. `recommendedTaken` only ever
+       held the ones that were done, so the debrief could praise a recommended act but
+       could not say how many were on offer. The summary scores read both. */
+    recommendedExpected:new Set(),
+    /* v0.9. Every interview topic the resident's questions reached, whether or not the
+       case also binds it as an action. The summary's History score reads it. */
+    askedTopics:new Set(),
     /* Section 7.3's fifth tier. It was defined in the spec, authored by MGCA on 31
        tag rules, recorded on the timeline, and then read by nothing: the debrief
        surfaced critical, recommended, harmful and the neutral traps, so a
@@ -371,6 +389,7 @@ function fold(log, now, difficultyMultiplier){
         st.expected.add(id);
         (st.expectedByPhase[phase]=st.expectedByPhase[phase]||new Set()).add(id);
       }
+      if(a.tag&&tagOf(id,entrySt)==='recommended') st.recommendedExpected.add(id);
       if(!a.prompt) continue;
       if(tagOf(id,entrySt)!=='critical') continue;
       push({t:t+a.prompt.deadline_seconds*DM,kind:'prompt',id,phase,level:1});
@@ -464,6 +483,119 @@ function fold(log, now, difficultyMultiplier){
     }
   }
 
+  /* ---------- the patient's side of the conversation (design 10.7) ----------
+     Everything here is derived, so it replays exactly. Before v0.8 an interview entry
+     produced the topic's paragraph and nothing else: asking twice returned the same
+     paragraph twice, a follow-up had nothing to attach to, and a question the matcher
+     had guessed at was answered with the same confidence as one it was sure of.
+
+     The entry may carry, from the matcher:
+       topic     the topic asked about, or null
+       fact      a sub-question of that topic answered by one authored fact
+       more      "anything else?" against the topic last spoken about
+       clarify   two topics the matcher could not choose between
+       uncertain the match cleared the threshold without much to spare
+
+     What it does with them, in order:
+       clarify   the patient asks which was meant; nothing is marked as asked
+       fact      that fact's text, marked told
+       more      the next untold facts of the topic, or that there are none
+       repeat    a topic already answered gets a short restatement, not the paragraph
+       first ask the topic's answer, with every fact it carries marked told, and an
+                 echo of the topic in front when the match was uncertain */
+  const said={topics:{},facts:new Set()};
+  const IV=CASE.interview, DEF=(PROTO.interviewDefaults||{});
+  const G=IV.global_answer_rules||[];
+  const gated=(rules)=>resolve(G.concat(rules),st);
+  const echoOf=T=>T&&T.echo?T.echo:null;
+  function composeInterview(entry,t){
+    const T=entry.topic?IV.topics.find(x=>x.topic===entry.topic):null;
+    const push=(key,body,matched,label)=>{
+      st.timeline.push({t,id:'interview:'+key,type:'observational',label});
+      st.readouts.push({t,kind:'speech',key,title:entry.q,body,matched});
+    };
+    if(entry.clarify&&entry.clarify.length===2){
+      const [a,b]=entry.clarify.map(id=>IV.topics.find(x=>x.topic===id));
+      const la=(a&&a.echo)||(a?a.topic.replace(/_/g,' '):'that'), lb=(b&&b.echo)||(b?b.topic.replace(/_/g,' '):'that');
+      const tpl=IV.clarify_template||DEF.clarifyTemplate||"'Sorry, do you mean {a}, or {b}?'";
+      const body=gated([{when:null,value:tpl.replace('{a}',la.replace(/\?$/,'')).replace('{b}',lb.replace(/\?$/,''))}]);
+      push('clarify',body,null,'Asked to clarify a question'); return;
+    }
+    if(!T){
+      push('unmatched',gated(IV.out_of_scope_fallback),null,'Question not understood'); return;
+    }
+    const facts=T.facts||[];
+    const key='told:'+T.topic;
+    st.askedTopics.add(T.topic);
+    const count=said.topics[T.topic]||0;
+    const label='Asked about '+T.topic.replace(/_/g,' ');
+    const mark=id=>said.facts.add(T.topic+'#'+id);
+    if(entry.fact){
+      const f=facts.find(x=>x.id===entry.fact);
+      if(f){
+        const body=gated(Array.isArray(f.value)?f.value:[{when:null,value:f.value}]);
+        mark(f.id); said.topics[T.topic]=count+1;
+        push(T.topic,body,T.topic,label+' ('+f.id.replace(/_/g,' ')+')');
+        satisfy(T.topic); return;
+      }
+    }
+    if(entry.more){
+      const untold=facts.filter(f=>!said.facts.has(T.topic+'#'+f.id)).slice(0,2);
+      if(!untold.length){
+        push(T.topic,gated([{when:null,value:IV.nothing_more||DEF.nothingMore||"'No, that's everything, really.'"}]),T.topic,label+' (nothing more)');
+        return;
+      }
+      const parts=untold.map(f=>{ mark(f.id); return gated(Array.isArray(f.value)?f.value:[{when:null,value:f.value}]); }).filter(Boolean);
+      push(T.topic,parts.join(' '),T.topic,label+' (more)'); return;
+    }
+    if(count>0){
+      /* A repeat. The restatement is the fact marked `restate`, else the first fact,
+         else the first sentence of the answer, under a prefix that says it was already
+         said. The prefix rotates so a third ask does not read like the second. */
+      const first=facts.find(f=>f.restate)||facts[0];
+      let core=first?gated(Array.isArray(first.value)?first.value:[{when:null,value:first.value}]):null;
+      if(!core){ const full=gated(T.answer)||''; core=firstSentence(full); }
+      const prefixes=IV.repeat_prefixes||DEF.repeatPrefixes||["'Like I said, {answer}'"];
+      const tpl=prefixes[Math.min(count-1,prefixes.length-1)];
+      said.topics[T.topic]=count+1;
+      push(T.topic,tpl.replace('{answer}',stripQuotes(core)),T.topic,label+' (again)'); return;
+    }
+    /* first ask */
+    let body=gated(T.answer);
+    facts.forEach(f=>{ if(f.in_answer!==false) mark(f.id); });
+    said.topics[T.topic]=1;
+    if(entry.uncertain&&echoOf(T)&&body){
+      const e=echoOf(T);
+      body=quoteJoin(e.charAt(0).toUpperCase()+e.slice(1)+'?',body);
+    }
+    push(T.topic,body,T.topic,label);
+    satisfy(T.topic);
+  }
+  function satisfy(topic){
+    st.askedTopics.add(topic);
+    if(ACT['interview_topic_'+topic]){
+      st.taken.add('interview_topic_'+topic);
+      st.satisfied.add('interview_topic_'+topic);
+    }
+  }
+  /* Answers are authored inside single quotes as the patient's speech. Splicing an echo
+     or a prefix onto one has to respect that, or the transcript shows stray quotes. */
+  function stripQuotes(s){
+    s=String(s||'').trim();
+    for(const q of ["'",'"']) if(s.startsWith(q)&&s.endsWith(q)&&s.length>1) return s.slice(1,-1).trim();
+    return s;
+  }
+  function quoteJoin(echo,body){
+    const b=String(body).trim();
+    for(const q of ["'",'"']) if(b.startsWith(q)) return q+echo+" "+b.slice(1);
+    return echo+' '+b;
+  }
+  function firstSentence(s){
+    const inner=stripQuotes(s);
+    const m=inner.match(/^(.+?[.!?])(\s|$)/);
+    return m?m[1]:inner;
+  }
+
   onPhaseEntry(st.phase,0);
 
   let li=0;
@@ -518,18 +650,7 @@ function fold(log, now, difficultyMultiplier){
       return;
     }
     if(entry.kind==='interview'){
-      const G=CASE.interview.global_answer_rules||[];
-      const T=entry.topic?CASE.interview.topics.find(x=>x.topic===entry.topic):null;
-      const rules=G.concat(T?T.answer:CASE.interview.out_of_scope_fallback);
-      const ans=resolve(rules,st);
-      st.timeline.push({t,id:'interview:'+(entry.topic||'unmatched'),type:'observational',
-        label:entry.topic?('Asked about '+entry.topic.replace(/_/g,' ')):'Question not understood'});
-      st.readouts.push({t,kind:'speech',key:entry.topic||'unmatched',title:entry.q,body:ans,
-        matched:entry.topic||null});
-      if(entry.topic&&ACT['interview_topic_'+entry.topic]){
-        st.taken.add('interview_topic_'+entry.topic);
-        st.satisfied.add('interview_topic_'+entry.topic);
-      }
+      composeInterview(entry,t);
       return;
     }
     if(!a) return;
@@ -637,7 +758,7 @@ function fold(log, now, difficultyMultiplier){
       push({t:t+f.deadline_seconds*DM,kind:'followup',fid});
     });
 
-    if(id==='handoff_submit') st.handoff=entry.payload||null;
+    if(id==='handoff_submit') st.handoff=normaliseHandoff(entry.payload);
 
     checkTransitions(t);
   }
@@ -660,8 +781,17 @@ function fold(log, now, difficultyMultiplier){
       const a=ACT[e.id];
       if(a.prompt.guard&&!test(a.prompt.guard,st)) return;
       promptCount[e.phase]=(promptCount[e.phase]||0);
-      if(promptCount[e.phase]>=PROTO.promptCap) return;
-      promptCount[e.phase]++;
+      /* v0.9. The cap counts the different things the nurse raises in a phase, so
+         that she does not nag about nine of them. An escalation raises nothing new:
+         it is the same warning said harder, and it exists because the fairness rule
+         rests on it (the deterioration's guard depends on the action it names). It
+         therefore neither consumes a slot nor is silenced by one. Before this, moving
+         a first warning later in a busy phase could push its own escalation past the
+         cap and leave the deterioration effectively unwarned. */
+      if(e.level!==2){
+        if(promptCount[e.phase]>=PROTO.promptCap) return;
+        promptCount[e.phase]++;
+      }
       narrate(t,e.level===2?a.prompt.escalation.text:a.prompt.text,'prompt');
       st.prompted.add(e.id);
       st.promptFires.push({t,id:e.id,level:e.level});
@@ -822,4 +952,163 @@ function narrationFor(id){
   }
   if(IS_STUDY(id)) return sentence(dispName(id))+' is away.';
   return 'Okay: '+softLower(dispName(id))+'.';
+}
+
+
+/* ---------- the handoff's diagnoses (v0.9) ----------
+   A handover names a working diagnosis and, usually, the things that are also true of
+   the patient. The payload therefore carries an ordered list, `diagnoses`, whose first
+   entry is the primary. The singular `diagnosis` is kept in step with it for every
+   reader written before the list existed, and a payload that only has the singular
+   (an older log, an older test) is widened to a list of one. */
+function normaliseHandoff(p){
+  if(!p) return null;
+  const out=Object.assign({},p);
+  let list=Array.isArray(p.diagnoses)?p.diagnoses.filter(Boolean):[];
+  if(!list.length&&p.diagnosis) list=[p.diagnosis];
+  list=list.filter((d,i)=>list.indexOf(d)===i);
+  out.diagnoses=list;
+  out.diagnosis=list[0]||null;
+  return out;
+}
+
+/* One verdict per diagnosis the resident listed, plus the authored ones they did not.
+   Verdicts, in the order the debrief prints them:
+     primary_correct     the case's main diagnosis, listed first
+     primary_defensible  an alternative the case marks acceptable_with_qualification, first
+     primary_incorrect   anything else, first
+     main_not_primary    the case's main diagnosis, listed but not first
+     appropriate         one of the case's additional_diagnoses
+     defensible          an acceptable_with_qualification alternative, not first
+     unsupported         anything else
+   and `missed` for additional diagnoses that were authored and not listed. The main
+   diagnosis is never in `missed`: not naming it is the primary verdict's job to say. */
+function scoreDiagnoses(st){
+  const out={rows:[],missed:[]};
+  if(!st.handoff) return out;
+  const list=st.handoff.diagnoses||[];
+  const addl=PROTO.addlDx||{};
+  const alt=PROTO.altDx||{};
+  const defensible=PROTO.altDxDefensible||[];
+  list.forEach((id,i)=>{
+    let verdict, why;
+    if(i===0){
+      if(id===PROTO.correctDxId){ verdict='primary_correct'; why=PROTO.correctDxExplanation; }
+      else if(defensible.includes(id)){ verdict='primary_defensible'; why=alt[id]; }
+      else { verdict='primary_incorrect'; why=alt[id]||addl[id]||PROTO.unlistedDxNote; }
+    } else if(id===PROTO.correctDxId){ verdict='main_not_primary'; why=PROTO.correctDxExplanation; }
+    else if(addl[id]!==undefined){ verdict='appropriate'; why=addl[id]; }
+    else if(defensible.includes(id)){ verdict='defensible'; why=alt[id]; }
+    else { verdict='unsupported'; why=alt[id]||PROTO.unlistedDxNote; }
+    out.rows.push({id,verdict,why:why||''});
+  });
+  for(const id in addl) if(!list.includes(id)) out.missed.push({id,why:addl[id]});
+  return out;
+}
+
+/* ---------- the seven-category summary (v0.9) ----------
+   Points direct review; they do not rank the resident, and the debrief says so. Each
+   category is scored from what the case authored, never from a judgement the engine
+   makes about medicine:
+
+     History         key topics asked. `interview.key_topics` if the case lists them,
+                     otherwise every topic in the bank.
+     Physical        regions examined, out of the exams the case tags critical or
+                     recommended; failing that `debrief_configuration.key_exams`; failing
+                     that every exam the case authors findings for.
+     Stabilization,  critical actions at two points each and recommended at one, out
+     Interventions,  of the critical and recommended actions that were expected on that
+     Investigations, tab in the phases the run visited. Each discouraged action taken
+     Consults        on the tab costs a point. A harmful action that halted the case
+                     zeroes its tab.
+     Handoff         level of care, primary diagnosis, additional diagnoses. See below.
+
+   A tab on which the case expected nothing scores null and prints as not applicable. */
+function summaryScores(st){
+  const rows=[];
+  const pct=(p,m)=>m>0?Math.max(0,Math.min(100,Math.round(100*p/m))):null;
+
+  // History
+  const topics=(CASE.interview&&CASE.interview.topics)||[];
+  const key=(CASE.interview&&Array.isArray(CASE.interview.key_topics)&&CASE.interview.key_topics.length)
+    ? CASE.interview.key_topics.filter(t=>topics.some(x=>x.topic===t))
+    : topics.map(x=>x.topic);
+  const asked=key.filter(t=>st.askedTopics.has(t));
+  rows.push({id:'history',label:'History',points:asked.length,max:key.length,
+             pct:pct(asked.length,key.length),
+             detail:asked.length+' of '+key.length+(CASE.interview&&CASE.interview.key_topics&&CASE.interview.key_topics.length?' key topics asked':' topics asked'),
+             missed:key.filter(t=>!st.askedTopics.has(t))});
+
+  // Physical
+  const examIds=Object.keys(ACT).filter(id=>ACT[id].tab==='exam'&&!ACT[id].covered_by);
+  let keyEx=examIds.filter(id=>st.expected.has(id)||st.recommendedExpected.has(id));
+  let exHow='examined, of the exams this case expects';
+  if(!keyEx.length){
+    const dbg=CASE.debrief_configuration||{};
+    if(Array.isArray(dbg.key_exams)&&dbg.key_exams.length){
+      keyEx=dbg.key_exams.filter(id=>examIds.includes(id)); exHow='of the key examinations';
+    } else {
+      keyEx=examIds.filter(id=>!!CONTENT[id]); exHow='regions examined';
+    }
+  }
+  const exDone=keyEx.filter(id=>st.satisfied.has(id)||st.taken.has(id));
+  rows.push({id:'physical',label:'Physical',points:exDone.length,max:keyEx.length,
+             pct:pct(exDone.length,keyEx.length),
+             detail:exDone.length+' of '+keyEx.length+' '+exHow,
+             missed:keyEx.filter(id=>!(st.satisfied.has(id)||st.taken.has(id)))});
+
+  // The four ordering tabs
+  const TABS=[['stabilization','Stabilization'],['interventions','Interventions'],
+              ['investigations','Investigations'],['consultations','Consults']];
+  for(const [tab,label] of TABS){
+    const crit=[...st.expected].filter(id=>ACT[id]&&ACT[id].tab===tab);
+    const rec=[...st.recommendedExpected].filter(id=>ACT[id]&&ACT[id].tab===tab&&!st.expected.has(id));
+    const critDone=crit.filter(id=>st.satisfied.has(id));
+    const recDone=rec.filter(id=>st.satisfied.has(id));
+    const dis=[...st.discouragedTaken].filter(id=>ACT[id]&&ACT[id].tab===tab);
+    const halted=!!(st.halted&&ACT[st.halted.id]&&ACT[st.halted.id].tab===tab);
+    const max=2*crit.length+rec.length;
+    let points=2*critDone.length+recDone.length-dis.length;
+    if(halted) points=0;
+    const bits=[];
+    if(crit.length) bits.push(critDone.length+' of '+crit.length+' critical');
+    if(rec.length) bits.push(recDone.length+' of '+rec.length+' recommended');
+    if(dis.length) bits.push(dis.length+' discouraged');
+    if(halted) bits.push('halted the case');
+    rows.push({id:tab,label,points:Math.max(0,points),max,pct:max?pct(points,max):null,
+               detail:bits.join(', ')||'nothing expected on this tab',halted,
+               missed:crit.filter(id=>!st.satisfied.has(id)).concat(rec.filter(id=>!st.satisfied.has(id)))});
+  }
+
+  // Handoff
+  const h=st.handoff, H=CASE.handoff;
+  const addl=PROTO.addlDx||{}; const nAddl=Object.keys(addl).length;
+  const W={disp:40, primary:nAddl?40:60, addl:nAddl?20:0};
+  let hp=0; const bits=[];
+  if(h){
+    const dOK=h.disposition===H.correct_disposition.id;
+    const dAlt=(H.alternative_dispositions||[]).find(a=>a.id===h.disposition);
+    const dDef=!dOK&&dAlt&&dAlt.verdict==='acceptable_with_qualification';
+    hp+=dOK?W.disp:(dDef?W.disp/2:0);
+    bits.push('level of care '+(dOK?'correct':(dDef?'defensible':'incorrect')));
+    const dx=scoreDiagnoses(st);
+    const first=dx.rows[0];
+    const mainListed=dx.rows.some(r=>r.verdict==='main_not_primary');
+    if(first&&first.verdict==='primary_correct'){ hp+=W.primary; bits.push('primary diagnosis correct'); }
+    else if(first&&first.verdict==='primary_defensible'){ hp+=W.primary/2; bits.push('primary diagnosis defensible'); }
+    else if(mainListed){ hp+=W.primary/2; bits.push('main diagnosis listed, not as primary'); }
+    else bits.push('primary diagnosis incorrect');
+    if(nAddl){
+      const got=dx.rows.filter(r=>r.verdict==='appropriate').length;
+      hp+=Math.round(W.addl*got/nAddl);
+      bits.push(got+' of '+nAddl+' additional diagnoses');
+    }
+    const bad=dx.rows.filter(r=>r.verdict==='unsupported'||r.verdict==='primary_incorrect').length;
+    if(bad){ hp-=5*bad; bits.push(bad+' unsupported'); }
+  } else {
+    bits.push(st.halted?'no handoff, the case halted':(st.earlyExit?'ended without handing over':'no handoff'));
+  }
+  rows.push({id:'handoff',label:'Handoff',points:Math.max(0,hp),max:100,pct:pct(hp,100),
+             detail:bits.join(', ')});
+  return rows;
 }

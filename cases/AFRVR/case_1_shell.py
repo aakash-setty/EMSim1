@@ -5,13 +5,13 @@ META = {
  "chief_complaint_patient_voice": "My heart won't stop racing and I can't get my breath.",
  "final_diagnosis": ("Atrial fibrillation with rapid ventricular response, complicated by acute "
    "decompensated heart failure with a newly recognised reduced ejection fraction and cardiogenic "
-   "pulmonary oedema. The arrhythmia and the ventricular dysfunction are each plausibly cause and "
+   "pulmonary edema. The arrhythmia and the ventricular dysfunction are each plausibly cause and "
    "consequence of the other, and the case does not require the learner to decide which came first."),
  "target_level": ["intern", "junior_resident", "senior_resident"],
  "estimated_runtime_seconds": 600,
  "learning_objectives": [
    "Recognise atrial fibrillation with a rapid ventricular response on a twelve-lead ECG and separate it from the other narrow-complex tachycardias.",
-   "Identify acute decompensated heart failure and cardiogenic pulmonary oedema in a patient with no prior diagnosis of either.",
+   "Identify acute decompensated heart failure and cardiogenic pulmonary edema in a patient with no prior diagnosis of either.",
    "Use cardiac and lung point-of-care ultrasound to establish reduced left ventricular systolic function at the bedside, and treat that finding as the pivot the rest of the case turns on.",
    "Select a rate-control strategy that accounts for reduced systolic function, and state why a non-dihydropyridine calcium channel blocker is the wrong agent once the ejection fraction is known.",
    "Sequence non-invasive positive pressure ventilation and diuresis alongside rate control rather than after it, and recognise that a lower heart rate is not by itself a resuscitated patient.",
@@ -114,29 +114,31 @@ RATE_CONTROL_NARRATION = ("That second dose has done it. His rate's down and I c
   "count it now, still all over the place.")
 RATE_CONTROL_ADDENDUM = "These agents can take a bit of time to kick in."
 RATE_CONTROL_NOTE = (
-  "The ventricular rate fell about half a minute after the rate-controlling drug was given rather "
+  "The ventricular rate fell about ten seconds after the rate-controlling drug was given rather "
   "than the moment it was pushed. None of the three agents this case accepts works instantly: "
   "intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin "
-  "considerably longer than either, so thirty seconds is a heavy compression rather than a delay. "
+  "considerably longer than either, so ten seconds is a heavy compression rather than a delay. "
   "The reason it is not instant is that a resident who watches the number change on the same "
   "click as the injection learns that rate control is a button, and then gives a second dose "
   "because the first one appeared not to work. The nurse says so out loud when the drug goes in, "
   "which is the part of this that will actually stop somebody redosing.")
 RATE_CONTROL_RATIONALE = (
-  "AUTHOR: thirty seconds of game time stands in for the several minutes an intravenous "
+  "AUTHOR: ten seconds of game time stands in for the several minutes an intravenous "
   "rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is "
   "a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three "
-  "agents in the group even though their real onsets differ by an order of magnitude. It sits on "
-  "the validator's hard 30-second floor, which is deliberate: the author's judgement was that a "
-  "minute felt like a fault rather than like a drug taking effect, and the nurse's line about the "
-  "agents needing time carries what the delay was there to teach. If the reviewing physician wants "
+  "agents in the group even though their real onsets differ by an order of magnitude. It was "
+  "thirty seconds until v0.9 and the author shortened it: the judgement was that thirty felt like "
+  "a fault rather than like a drug taking effect, and the nurse's line about the agents needing "
+  "time carries what the delay was there to teach. The validator's thirty-second floor does not "
+  "apply to this pattern, a delayed consequence of the resident's own action, only a five-second "
+  "one does. If the reviewing physician wants "
   "the difference between agents represented, that needs three separate case actions and three "
   "separate transitions, and the cost is that the critical action can no longer be 'rate control' "
   "as a single act.")
 
 PHASES = [
   phase("presentation",
-    "Atrial fibrillation with rapid ventricular response and cardiogenic pulmonary oedema",
+    "Atrial fibrillation with rapid ventricular response and cardiogenic pulmonary edema",
     "on arrival",
     "Awake, anxious, tachypnoeic and hypoxaemic with an irregularly irregular ventricular rate of "
     "160. Congested and perfusing. The reduced ejection fraction has not yet been found.",
@@ -150,7 +152,7 @@ PHASES = [
                       "buys is authored as a staged vital effect rather than as this phase change, "
                       "so the number climbs rather than jumping."},
       {"when": "flag rate_control_adequate set", "to": "rate_controlled_congested",
-       "after_seconds": 30, "measured_from": "guard_true",
+       "after_seconds": 10, "measured_from": "guard_true",
        "narration": RATE_CONTROL_NARRATION,
        "debrief_note": RATE_CONTROL_NOTE,
        "author_rationale": RATE_CONTROL_RATIONALE},
@@ -163,8 +165,8 @@ PHASES = [
          "positive pressure and no supplemental oxygen that changes anything, and he tired. This is "
          "the commonest way this case is lost: the rate is the visible abnormality, the learner "
          "spends the first four minutes on it, and the problem that was going to kill him first was "
-         "the flooded lung. In acute cardiogenic pulmonary oedema, positive pressure is a treatment "
-         "for the oedema and not merely a support measure while you treat something else. It "
+         "the flooded lung. In acute cardiogenic pulmonary edema, positive pressure is a treatment "
+         "for the edema and not merely a support measure while you treat something else. It "
          "recruits flooded alveoli, reduces the work of breathing, and by raising intrathoracic "
          "pressure it lowers both preload and left ventricular transmural pressure. Applying it in "
          "the first minutes is what keeps most of these patients off a ventilator. Be honest with "
@@ -174,7 +176,7 @@ PHASES = [
          "physiological and symptomatic improvement."),
        "author_rationale": (
          "AUTHOR SIGNATURE REQUIRED. The claim is that a sixty-eight year old man in cardiogenic "
-         "pulmonary oedema at a saturation of 88 percent on room air, a respiratory rate of thirty "
+         "pulmonary edema at a saturation of 88 percent on room air, a respiratory rate of thirty "
          "and a ventricular rate of 160 will begin to tire inside four minutes if nothing is done "
          "for his breathing. Four minutes is compressed against real disease tempo in the same way "
          "the five-second laboratory turnaround is; the honest version of the claim is that he is "
@@ -187,7 +189,7 @@ PHASES = [
   phase("respiratory_failure",
     "Tiring on an untreated flooded lung",
     "in respiratory failure",
-    "Hypoxaemic and hypercapnic respiratory failure from untreated cardiogenic pulmonary oedema. "
+    "Hypoxaemic and hypercapnic respiratory failure from untreated cardiogenic pulmonary edema. "
     "Drowsy, tachypnoeic, and no longer able to sustain the work of breathing. Still perfusing. "
     "The authored heart rate here is the UNTREATED one. A patient who reached this phase with "
     "one dose of a nodal blocker on board reads about 22 beats lower and one with two doses "
@@ -224,7 +226,7 @@ PHASES = [
     [
       {"when": "flag intubated set", "to": "intubated"},
       {"when": "flag rate_control_adequate set", "to": "stabilized",
-       "after_seconds": 30, "measured_from": "guard_true",
+       "after_seconds": 10, "measured_from": "guard_true",
        "narration": RATE_CONTROL_NARRATION,
        "debrief_note": RATE_CONTROL_NOTE,
        "author_rationale": RATE_CONTROL_RATIONALE},
@@ -234,7 +236,7 @@ PHASES = [
   phase("rate_controlled_congested",
     "Ventricular rate controlled, lung still flooded",
     "rate controlled, still congested",
-    "The ventricular rate has come down and nothing has been done for the pulmonary oedema. "
+    "The ventricular rate has come down and nothing has been done for the pulmonary edema. "
     "Tachypnoeic, hypoxaemic, and still working hard to breathe.",
     108, 118, 70, 32, 86, 37.0, 3, 0,
     [
@@ -249,8 +251,8 @@ PHASES = [
          "form: the arrhythmia was the visible problem, it was treated competently, and the flooded "
          "lung underneath it was never addressed. A ventricular rate of 108 in a man at a "
          "saturation of 86 percent breathing 32 times a minute is not a resuscitated patient. Rate "
-         "control and treatment of the pulmonary oedema are parallel tasks in this case, not "
-         "sequential ones, and if anything the oedema is the more urgent of the two."),
+         "control and treatment of the pulmonary edema are parallel tasks in this case, not "
+         "sequential ones, and if anything the edema is the more urgent of the two."),
        "author_rationale": (
          "AUTHOR SIGNATURE REQUIRED. Same claim and same four minutes as the arrival phase, "
          "applied to a patient whose rate is now 108. The rate control is a genuine improvement in "

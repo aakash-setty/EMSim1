@@ -111,16 +111,16 @@ chk('and five minutes later the phase has still not turned over',
     st.phase==='breathing_supported',st.phase);
 chk('the monitor shows a partial response, 152 down to 130',st.vitals.heart_rate===130,
     String(st.vitals.heart_rate));
-st=fold(rc2,60);
+st=fold(rc2,45);
 chk('the second dose sets rate_control_adequate',st.flags.has('rate_control_adequate'));
-chk('seventeen seconds after it, the phase has still not turned over',
+chk('five seconds after it, the phase has still not turned over',
     st.phase==='breathing_supported',st.phase);
-st=fold(rc2,75);
-chk('thirty seconds after the second dose it does, with no further action',
+st=fold(rc2,55);
+chk('ten seconds after the second dose it does, with no further action',
     st.phase==='stabilized',st.phase);
 chk('and the rate on the monitor is 104',st.vitals.heart_rate===104,String(st.vitals.heart_rate));
 chk('the delayed transition is recorded for the debrief',
-    st.timeFires.some(f=>f.to==='stabilized'&&f.after===30));
+    st.timeFires.some(f=>f.to==='stabilized'&&f.after===10));
 /* Two different agents are two attempts at the same act, because they share one counter. */
 chk('metoprolol then amiodarone is two doses, not one of each',
     fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],

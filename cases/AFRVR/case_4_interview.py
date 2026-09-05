@@ -548,3 +548,1228 @@ AUTHORING_NOTES = {
    "Location and radiation of pain are folded into the chest pain topic because the pain being "
    "asked about does not exist, and a denial is the whole content."),
 }
+
+# ---- EXPANDED VARIANTS (generated, do not edit by hand) ----
+# Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 202
+# 6. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphr
+# ase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.
+EXPANDED = {
+  'onset': [
+    'When did this begin?',
+    'What time did it start?',
+    'How long ago did this come on?',
+    'Onset?',
+    'Time of onset?',
+    'When did it come on?',
+    'Was it sudden or did it build up?',
+    'Sudden or gradual onset?',
+    'How long have you had this?',
+    'When did you start feeling like this?',
+    'Where were you when it began?',
+    'Roughly what time yesterday, or today, did this start?',
+    'How many hours or days has this been going on?',
+    'Tell me how it began.',
+    'Take me back to when this started.',
+    'When did things first go wrong?',
+    'Did this start today or before that?',
+    'Sorry to ask, but when did this begin?',
+    'One more thing. When did this begin?',
+    'Can I ask, what time did it start?',
+    'One more thing. How long ago did this come on?',
+    'Okay, how long ago did this come on?',
+  ],
+  'timing_progression': [
+    'Is it getting worse or better?',
+    'How has it changed since it began?',
+    'Constant or does it come and go?',
+    'Intermittent or continuous?',
+    'Progression?',
+    'Is it worse than it was earlier?',
+    'Any change over the last few hours?',
+    'Is it easing off at all?',
+    'Getting worse?',
+    'Has it settled at any point?',
+    'Compared with when it started, how is it now?',
+    'Is this the worst it has been?',
+    'Does it fluctuate?',
+    'Has it been steadily building?',
+    'Better, worse, or the same?',
+    'Has it let up at all?',
+    'And is it getting worse or better?',
+    'Can I ask, is it getting worse or better?',
+    'Right. How has it changed since it began?',
+    'Quick one: how has it changed since it began?',
+    'Before we go on, constant or does it come and go?',
+  ],
+  'character_of_palpitations': [
+    'Describe the heartbeat for me.',
+    'What does the heartbeat feel like?',
+    'Is the rhythm regular?',
+    'Does it feel regular or all over the place?',
+    'Fast, skipping, or thumping?',
+    'Regular or irregular?',
+    'Can you tap out the rhythm on the bed?',
+    'Is it a flutter or a pounding?',
+    'Does it feel like it misses beats?',
+    'Does your heart feel like it is racing?',
+    'Tell me what you feel in your chest.',
+    'Is it like a bird flapping or a drum beating?',
+    'Just so I know, what does the heartbeat feel like?',
+    'I need to know, what does the heartbeat feel like?',
+    'Can I ask, is the rhythm regular?',
+    'Quick one: does it feel regular or all over the place?',
+    'Before we go on, does it feel regular or all over the place?',
+  ],
+  'dyspnea_character': [
+    'Describe the breathlessness.',
+    'What does the breathing feel like?',
+    'Is it hard to breathe in or out?',
+    'Character of the dyspnoea?',
+    'Character of the dyspnea?',
+    'Any wheeze with it?',
+    'Is it a tightness or a smothering feeling?',
+    'Do you feel you are drowning?',
+    'Is it painful to breathe?',
+    'Are you breathing fast or just struggling?',
+    'Can you finish a sentence?',
+    'What does the shortness of breath feel like?',
+    'Are you breathless?',
+    'Short of breath?',
+    'SOB?',
+    'Any shortness of breath?',
+    'Any difficulty breathing?',
+    'Is it hard to breathe?',
+    'Any breathing problems?',
+    'Do you feel you cannot get your breath?',
+    'Dyspnoea?',
+    'Dyspnea?',
+    'Any trouble with your breathing?',
+    'Is your breathing okay?',
+    'Are you getting enough air?',
+    'Okay, what does the breathing feel like?',
+    'Sorry to ask, but is it hard to breathe in or out?',
+    'One more thing. Is it hard to breathe in or out?',
+    'Okay, character of the dyspnoea?',
+    'Just so I know, character of the dyspnoea?',
+  ],
+  'severity': [
+    'Out of ten, how bad is it?',
+    'Rate the pain out of ten.',
+    'Severity?',
+    'On a scale of one to ten?',
+    'Is it the worst you have ever had?',
+    'Ten being the worst pain imaginable, where are you?',
+    'Mild, moderate, or severe?',
+    'How much is it bothering you?',
+    'Can you score it for me?',
+    'Pain score?',
+    'Is it bearable?',
+    'How intense is it?',
+    'Quick one: out of ten, how bad is it?',
+    'Before we go on, out of ten, how bad is it?',
+    'Just so I know, how severe is it?',
+    'Can I ask, on a scale of one to ten?',
+    'Sorry to ask, but on a scale of one to ten?',
+  ],
+  'aggravating_factors': [
+    'Anything that brings it on?',
+    'Does anything set it off?',
+    'Aggravating factors?',
+    'Is it worse with movement?',
+    'Worse with exertion?',
+    'Does anything make it flare up?',
+    'Is it worse at any particular time?',
+    'What aggravates it?',
+    'Does breathing in make it worse?',
+    'Does it get worse when you do anything?',
+    'One more thing. What makes it worse?',
+    'I need to know, anything that brings it on?',
+    'Right. Anything that brings it on?',
+    'Can I ask, does anything set it off?',
+    'Sorry to ask, but does anything set it off?',
+  ],
+  'relieving_factors': [
+    'Relieving factors?',
+    'Anything ease it?',
+    'Have you taken anything for it?',
+    'Did anything you tried make a difference?',
+    'What helps?',
+    'Is there anything that eases it off?',
+    'Any position that helps?',
+    'Does oxygen help?',
+    'Did painkillers help?',
+    'Okay, what makes it better?',
+    'Sorry to ask, but does anything help?',
+    'One more thing. Does anything help?',
+    'Just so I know, relieving factors?',
+    'I need to know, relieving factors?',
+  ],
+  'chest_pain': [
+    'Chest pain?',
+    'Any cp?',
+    'Pain in the chest?',
+    'Is your chest hurting?',
+    'Any tightness in your chest?',
+    'Does your chest hurt at all?',
+    'Chest tightness?',
+    'Any pain across the chest?',
+    'Has there been any chest discomfort?',
+    'Any chest pain with this?',
+    'Any heaviness on your chest?',
+    'Any pain when you breathe in?',
+    'c/o chest pain?',
+    'Just so I know, any chest pain?',
+    'I need to know, any chest pain?',
+    'I need to know, pain in the chest?',
+    'Before we go on, is your chest hurting?',
+    'And is your chest hurting?',
+  ],
+  'syncope_presyncope': [
+    'Have you fainted?',
+    'Did you black out?',
+    'Syncope?',
+    'Any syncope?',
+    'Any collapse?',
+    'Have you lost consciousness at all?',
+    'Have you collapsed?',
+    'LOC?',
+    'Did you faint or nearly faint?',
+    'Have you keeled over?',
+    'I need to know, have you fainted?',
+    'Right. Have you fainted?',
+    'Before we go on, did you black out?',
+    'And did you black out?',
+    'Before we go on, did you pass out?',
+  ],
+  'dizziness_lightheadedness': [
+    'Dizzy at all?',
+    'Lightheaded?',
+    'Presyncope?',
+    'Do you feel like you might pass out?',
+    'Any giddiness?',
+    'One more thing. Any dizziness?',
+    'Okay, any dizziness?',
+    'Right. Do you feel lightheaded?',
+    'Quick one: do you feel lightheaded?',
+    'Okay, do you feel faint?',
+  ],
+  'orthopnea': [
+    'Orthopnoea?',
+    'Can you lie down flat?',
+    'Do you have to sit up to breathe?',
+    'How many pillows?',
+    'Pillows?',
+    'Is it worse when you lie down?',
+    'Can you lie on your back?',
+    'Do you get breathless lying flat?',
+    'Do you need to be upright?',
+    'Does lying down make the breathing worse?',
+    'How do you sleep at night, flat or propped?',
+    'Number of pillows at night?',
+    'Quick one: can you lie down flat?',
+    'Before we go on, can you lie down flat?',
+    'I need to know, do you have to sit up to breathe?',
+    'Before we go on, how many pillows?',
+    'And how many pillows?',
+  ],
+  'paroxysmal_nocturnal_dyspnea': [
+    'Paroxysmal nocturnal dyspnoea?',
+    'Paroxysmal nocturnal dyspnea?',
+    'Do you wake at night breathless?',
+    'Woken up short of breath?',
+    'Do you wake up fighting for breath?',
+    'Do you have to get up at night to catch your breath?',
+    'Any breathlessness waking you?',
+    'Nocturnal dyspnoea?',
+    'Night-time breathlessness?',
+    'Do you sit on the edge of the bed at night to breathe?',
+    'Quick one: paroxysmal nocturnal dyspnoea?',
+    'And paroxysmal nocturnal dyspnea?',
+    'Can I ask, paroxysmal nocturnal dyspnea?',
+    'And do you wake up gasping?',
+    'Can I ask, do you wake up gasping?',
+  ],
+  'leg_swelling': [
+    'Any ankle swelling?',
+    'Ankle oedema?',
+    'Ankle edema?',
+    'Pedal oedema?',
+    'Pedal edema?',
+    'Swollen feet?',
+    'Leg swelling?',
+    'Do your shoes feel tight?',
+    'Have your ankles puffed up?',
+    'Any edema?',
+    'Peripheral oedema?',
+    'Any fluid in the legs?',
+    'Have your calves swollen?',
+    'I need to know, any ankle swelling?',
+    'Right. Any ankle swelling?',
+    'Before we go on, are your legs swollen?',
+    'Quick one: any swelling in your legs?',
+    'Before we go on, any swelling in your legs?',
+  ],
+  'weight_gain': [
+    'Any weight gain?',
+    'Has your weight gone up?',
+    'Weight change?',
+    'Recent weight gain?',
+    'Have you put on any pounds recently?',
+    'Any change in your weight?',
+    'Have you been weighing yourself?',
+    'Has your weight changed over the last week or two?',
+    'Are you heavier than usual?',
+    'Any fluid weight?',
+    'Okay, any weight gain?',
+    'Can I ask, has your weight gone up?',
+    'Sorry to ask, but has your weight gone up?',
+    'I need to know, weight change?',
+    'Right. Weight change?',
+  ],
+  'exercise_tolerance_baseline': [
+    'What is your normal exercise tolerance?',
+    'Exercise tolerance?',
+    'ET?',
+    'Baseline function?',
+    'How far can you normally walk?',
+    'What can you usually do?',
+    'What were you like before this?',
+    'Functional baseline?',
+    'What is your baseline?',
+    'Do you normally get breathless walking?',
+    'What is normal for you?',
+    'Do you manage your own shopping and housework?',
+    'How were you managing before this started?',
+    'Are you usually fit and well?',
+    'DOE at baseline?',
+    'Just so I know, what is your normal exercise tolerance?',
+    'I need to know, what is your normal exercise tolerance?',
+    'One more thing. Exercise tolerance?',
+    'Okay, exercise tolerance?',
+    'Right. Baseline function?',
+  ],
+  'cough_and_sputum': [
+    'Cough?',
+    'Sputum?',
+    'Productive cough?',
+    'Is the cough dry or chesty?',
+    'Coughing anything up?',
+    'Frothy sputum?',
+    'Is there anything coming up when you cough?',
+    'Any pink froth?',
+    'Cough productive?',
+    'Have you got a chesty cough?',
+    'Quick one: have you been coughing?',
+    'Sorry to ask, but are you bringing anything up?',
+    'One more thing. Are you bringing anything up?',
+    'Just so I know, what colour is the sputum?',
+    'I need to know, what colour is the sputum?',
+  ],
+  'fever_and_chills': [
+    'Fever?',
+    'Fevers or chills?',
+    'Fevers, chills, rigors?',
+    'Have you had a temperature?',
+    'Any rigors?',
+    'Have you felt feverish?',
+    'Any shaking chills?',
+    'Have you had the shivers?',
+    'Temp at home?',
+    'Did you measure a temperature?',
+    'Can I ask, fevers or chills?',
+    'Sorry to ask, but fevers or chills?',
+    'I need to know, fevers, chills, rigors?',
+    'Right. Fevers, chills, rigors?',
+    'Okay, any temperature?',
+  ],
+  'prior_afib_or_palpitations': [
+    'Any history of AF?',
+    'Hx of afib?',
+    'Have you had atrial fibrillation before?',
+    'Have you ever had palpitations before?',
+    'Previous AF?',
+    'Any previous episodes?',
+    'Has anyone said your heart was irregular?',
+    'Have you been told you have an irregular heartbeat?',
+    'Any history of an irregular pulse?',
+    'First time this has happened?',
+    'Known AF?',
+    'Previous palpitations?',
+    'Ever been told you have a fast heart rhythm?',
+    'Okay, any history of AF?',
+    'Just so I know, any history of AF?',
+    'And have you had atrial fibrillation before?',
+    'And has this happened before?',
+    'Can I ask, has this happened before?',
+  ],
+  'prior_heart_failure': [
+    'Hx of CHF?',
+    'Known heart failure?',
+    'Have you been told your heart is weak?',
+    'Any heart failure?',
+    'Has anyone said you have a weak heart?',
+    'Have you ever had fluid on the lungs?',
+    'Any previous heart problems?',
+    'History of cardiac failure?',
+    'Has a doctor told you your heart does not pump properly?',
+    'Any known cardiomyopathy?',
+    'Any history of a weak heart muscle?',
+    'Just so I know, any history of heart failure?',
+    'I need to know, any history of heart failure?',
+    'Right. Known heart failure?',
+    'Quick one: known heart failure?',
+    'Quick one: have you been told your heart is weak?',
+  ],
+  'past_medical_history': [
+    'Past medical history?',
+    'Any medical history?',
+    'Any medical problems?',
+    'Do you have any health problems?',
+    'Any past history?',
+    'Do you have any illnesses?',
+    'What are you known to have?',
+    'Any diagnoses?',
+    'Any ongoing health issues?',
+    'Are you known to the hospital for anything?',
+    'Any history of diabetes, high blood pressure, anything like that?',
+    'Medical history?',
+    'Can I ask, past medical history?',
+    'Sorry to ask, but past medical history?',
+    'Right. Any medical history?',
+    'Can I ask, any medical problems?',
+    'Sorry to ask, but any medical problems?',
+  ],
+  'past_surgical_history': [
+    'PSH?',
+    'Past surgical history?',
+    'Any operations?',
+    'Any surgery?',
+    'Ever had surgery?',
+    'Surgical history?',
+    'Any operations in the past?',
+    'Have you been under the knife?',
+    'Any previous surgeries?',
+    'Ever been operated on?',
+    'Have you had anything done surgically?',
+    'Okay, past surgical history?',
+    'Just so I know, past surgical history?',
+    'Sorry to ask, but any operations?',
+    'One more thing. Any operations?',
+    'Right. Ever had surgery?',
+  ],
+  'current_medications': [
+    'What meds are you on?',
+    'Medications?',
+    'Current medications?',
+    'What do you take?',
+    'Any regular medications?',
+    'List your medications.',
+    'Any regular meds?',
+    'Do you take anything regularly?',
+    'Any medicines at home?',
+    'Any OTC medicines?',
+    'What is your medication list?',
+    'Do you take any tablets?',
+    'Just so I know, what meds are you on?',
+    'I need to know, what meds are you on?',
+    'Just so I know, current medications?',
+    'Before we go on, what do you take?',
+    'And what do you take?',
+  ],
+  'anticoagulant_history_and_bleeding': [
+    'Are you on blood thinners?',
+    'Anticoagulated?',
+    'On anticoagulation?',
+    'Any anticoagulant?',
+    'On a DOAC?',
+    'On warfarin or a DOAC?',
+    'Any anticoagulation history?',
+    'Ever been on blood thinners?',
+    'Do you bleed easily?',
+    'Any history of bleeds?',
+    'Are you on aspirin or clopidogrel?',
+    'Antiplatelets or anticoagulants?',
+    'Any bleeding history?',
+    'Before we go on, are you on blood thinners?',
+    'And are you on blood thinners?',
+    'Quick one: anticoagulated?',
+    'One more thing. On anticoagulation?',
+    'Okay, on anticoagulation?',
+  ],
+  'medication_adherence': [
+    'Have you been taking your meds?',
+    'Compliance?',
+    'Adherence?',
+    'Are you taking them as prescribed?',
+    'Did you run out of anything?',
+    'Are you up to date with your tablets?',
+    'Any missed medications?',
+    'Have you been off your tablets?',
+    'When did you last take your medication?',
+    'Do you take them every day?',
+    'Are you compliant with your medications?',
+    'Did you stop your water tablet?',
+    'Have you been taking everything you should?',
+    'Any problems getting your prescriptions?',
+    'One more thing. Have you been taking your meds?',
+    'Quick one: are you taking them as prescribed?',
+    'Before we go on, are you taking them as prescribed?',
+    'Sorry to ask, but have you missed any doses?',
+    'One more thing. Have you missed any doses?',
+  ],
+  'allergies': [
+    'Allergies?',
+    'Allergic to any medications?',
+    'Any allergy to antibiotics?',
+    'Any reactions to medicines?',
+    'Allergic to penicillin?',
+    'What are you allergic to?',
+    'Any medication allergies?',
+    'Drug allergies?',
+    'Any allergies to anything?',
+    'Sorry to ask, but any allergies?',
+    'Okay, any drug allergies?',
+    'Just so I know, any drug allergies?',
+    'Right. Are you allergic to anything?',
+    'Quick one: are you allergic to anything?',
+  ],
+  'alcohol_and_binge': [
+    'Do you drink?',
+    'How much alcohol?',
+    'EtOH?',
+    'Alcohol history?',
+    'Alcohol intake?',
+    'Any alcohol?',
+    'Units per week?',
+    'Have you been drinking heavily?',
+    'Did you have a lot to drink recently?',
+    'Big weekend?',
+    'Any drinking over the weekend?',
+    'Are you a drinker?',
+    'When did you last have a drink?',
+    'Alcohol use?',
+    'One more thing. How much alcohol?',
+    'And alcohol history?',
+    'Can I ask, alcohol history?',
+    'And alcohol intake?',
+    'Can I ask, alcohol intake?',
+  ],
+  'caffeine_and_stimulants': [
+    'Any caffeine?',
+    'How much coffee?',
+    'Energy drinks?',
+    'Any stimulants?',
+    'Do you take anything to keep you going?',
+    'Any cold and flu tablets?',
+    'Any diet pills?',
+    'Do you use cocaine or amphetamines?',
+    'Any recreational stimulants?',
+    'Any pre-workout supplements?',
+    'Have you taken any uppers?',
+    'Any pseudoephedrine?',
+    'Before we go on, how much coffee?',
+    'And how much coffee?',
+    'Before we go on, energy drinks?',
+    'Okay, any stimulants?',
+    'Just so I know, any stimulants?',
+  ],
+  'thyroid_symptoms': [
+    'Thyroid history?',
+    'Thyroid?',
+    'Any thyroid disease?',
+    'Are you on thyroxine?',
+    'Have you lost weight without trying?',
+    'Any change in your neck?',
+    'Any goitre?',
+    'Overactive thyroid?',
+    'Any weight loss or feeling hot?',
+    'Have you been told your thyroid is overactive?',
+    'Just so I know, any thyroid problems?',
+    'I need to know, any thyroid problems?',
+    'Can I ask, thyroid history?',
+    'Sorry to ask, but thyroid history?',
+    'Right. Any thyroid disease?',
+  ],
+  'social_history_smoking': [
+    'Smoker?',
+    'Smoking history?',
+    'Tobacco?',
+    'tob?',
+    'Any smoking?',
+    'Ever smoked?',
+    'Pack years?',
+    'Have you ever been a smoker?',
+    'Cigarettes?',
+    'When did you quit?',
+    'Just so I know, smoking history?',
+    'Sorry to ask, but how many a day?',
+    'One more thing. How many a day?',
+    'Just so I know, are you a smoker?',
+    'I need to know, are you a smoker?',
+  ],
+  'family_history': [
+    'Family history?',
+    'FHx?',
+    'Any family history?',
+    'Any family history of heart disease?',
+    'Did anyone in your family have heart trouble?',
+    'Any relatives with heart problems?',
+    'Did your parents have heart disease?',
+    'Any family history of illness?',
+    'Is there anything that runs in your family?',
+    'Family history of cardiac disease?',
+    'Before we go on, family history?',
+    'Quick one: any family history?',
+    'Before we go on, any family history?',
+    'And any heart problems in the family?',
+    'Can I ask, any heart problems in the family?',
+  ],
+  'last_oral_intake': [
+    'Last oral intake?',
+    'Last PO intake?',
+    'last PO',
+    'When did you last drink?',
+    'NPO since when?',
+    'Have you had anything to eat or drink?',
+    'Last food or drink?',
+    'Anything to eat or drink today?',
+    'When did you last have something to drink?',
+    'Are you eating and drinking?',
+    'How much have you been drinking?',
+    'When did you last eat anything?',
+    'Have you managed any food?',
+    'And when did you last eat?',
+    'Can I ask, when did you last eat?',
+    'Can I ask, last oral intake?',
+    'One more thing. Last PO intake?',
+    'Okay, last PO intake?',
+  ],
+  'recent_illness_or_sick_contacts': [
+    'Any recent infection?',
+    'Recent cold or flu?',
+    'Have you had a bug recently?',
+    'Any coughs or colds lately?',
+    'Any viral illness recently?',
+    'Any recent infections?',
+    'Quick one: have you been unwell recently?',
+    'Before we go on, have you been unwell recently?',
+    'One more thing. Any recent illness?',
+    'Okay, any recent illness?',
+    'One more thing. Any recent infection?',
+  ],
+  'travel_immobility_surgery': [
+    'Any long flights?',
+    'Have you been immobile?',
+    'Any recent surgery?',
+    'Any long journeys recently?',
+    'Been sitting still for long periods?',
+    'Have you been bedbound?',
+    'Any recent operations?',
+    'Recent travel, surgery, or immobility?',
+    'Have you been laid up recently?',
+    'Any recent hospital stays?',
+    'Been abroad?',
+    'Right. Any recent travel?',
+    'Quick one: any recent travel?',
+    'Right. Any long flights?',
+    'Quick one: any long flights?',
+    'I need to know, have you been immobile?',
+  ],
+  'calf_pain_or_asymmetry': [
+    'Calf tenderness?',
+    'Is one calf bigger?',
+    'Any pain in the back of your leg?',
+    'Are your calves sore?',
+    'Any leg pain?',
+    'Any swelling in one leg only?',
+    'Any signs of a DVT?',
+    'Any unilateral leg swelling?',
+    'Any pain when you press your calf?',
+    'One leg worse than the other?',
+    'One more thing. Any calf pain?',
+    'Can I ask, is one leg more swollen than the other?',
+    'Sorry to ask, but is one leg more swollen than the other?',
+    'And any pain in your calves?',
+    'Can I ask, any pain in your calves?',
+  ],
+  'urine_output': [
+    'Are you passing urine?',
+    'Urine output?',
+    'UOP?',
+    'How much urine?',
+    'Passing water okay?',
+    'Have you peed today?',
+    'Any drop in your urine?',
+    'Are you peeing less?',
+    'How often are you going to the toilet?',
+    'Have you been passing less water?',
+    'Any reduction in urine output?',
+    'When did you last go for a wee?',
+    'Are you making urine?',
+    'Have you passed water since this started?',
+    'Just so I know, are you passing urine?',
+    'I need to know, how much urine?',
+    'Right. How much urine?',
+    'I need to know, passing water okay?',
+    'Right. Passing water okay?',
+  ],
+  'nausea_and_vomiting': [
+    'N/V?',
+    'Nausea or vomiting?',
+    'Have you vomited?',
+    'Feeling queasy?',
+    'Been throwing up?',
+    'How many times have you vomited?',
+    'Any sickness?',
+    'Before we go on, nausea or vomiting?',
+    'And nausea or vomiting?',
+    'Just so I know, have you been sick?',
+    'Okay, have you thrown up?',
+    'Just so I know, have you thrown up?',
+  ],
+  'snoring_and_sleep_apnea': [
+    'Any sleep apnea?',
+    'OSA?',
+    'Has anyone said you snore?',
+    'Do you use a CPAP machine?',
+    'Are you tired during the day?',
+    'Sleep apnoea history?',
+    'Has your partner noticed you stop breathing at night?',
+    'Any obstructive sleep apnoea?',
+    'Right. Any sleep apnoea?',
+    'Quick one: any sleep apnoea?',
+    'Can I ask, any sleep apnea?',
+    'Can I ask, do you stop breathing in your sleep?',
+    'Sorry to ask, but do you stop breathing in your sleep?',
+  ],
+  'code_status_goals_of_care': [
+    'Code status?',
+    'Have you thought about resuscitation?',
+    'What would you want if things got worse?',
+    'Any wishes about treatment?',
+    'Full code?',
+    'Have you discussed ceilings of care?',
+    'Any DNR in place?',
+    'What matters most to you if this gets serious?',
+    'Goals of care?',
+    'Have you ever talked about what you would want in an emergency?',
+    'If your heart stopped, what would you want us to do?',
+    'Is there a DNACPR?',
+    'Okay, have you thought about resuscitation?',
+    'Just so I know, have you thought about resuscitation?',
+    'Okay, do you have an advance directive?',
+    'And what would you want if things got worse?',
+    'Can I ask, what would you want if things got worse?',
+  ],
+}
+OUT_OF_SCOPE_BANK = [
+  'Have you ever had a colonoscopy?',
+  'Any blood when you open your bowels?',
+  'Are you constipated?',
+  'Any heartburn?',
+  'Any indigestion after meals?',
+  'Any change in your bowel habit?',
+  'Any diarrhoea at all?',
+  'Any pain in your tummy?',
+  'Have you had piles?',
+  'Any black stools?',
+  'Do you get up at night to pass water?',
+  'Any blood in your urine?',
+  'Any trouble with your prostate?',
+  'Any burning when you pass urine?',
+  'Any kidney stones in the past?',
+  'When was your last smear test?',
+  'Any headaches at all?',
+  'Any seizures or fits?',
+  'Any weakness in your arms or legs?',
+  'Any pins and needles?',
+  'Any problems with your speech?',
+  'Any trouble with your memory?',
+  'Any double vision?',
+  'Have you ever had a stroke?',
+  'Any migraines?',
+  'Any pain in your hands?',
+  'Any pain in your hips?',
+  'Any arthritis?',
+  'Have you broken any bones?',
+  'Any neck pain?',
+  'Any ringing or buzzing in your ears?',
+  'Any earache?',
+  'Do you wear glasses or contact lenses?',
+  'Any blurred vision?',
+  'When did you last have your eyes tested?',
+  'Any sinus trouble?',
+  'Any rash on your skin?',
+  'Any itching?',
+  'Any moles that have changed?',
+  'When did you last see the dentist?',
+  'Any mouth ulcers?',
+  'Any lumps or bumps anywhere?',
+  'Any excessive thirst?',
+  'Have you been feeling low in mood?',
+  'Any anxiety or panic attacks?',
+  'When was your last tetanus?',
+  'Have you had the covid vaccine?',
+  'Have you ever received blood?',
+  'Do you have a blood donor card?',
+  'Who is your GP?',
+  'Do you have health insurance?',
+  'Have you got your NHS number?',
+  'Do you have a pharmacy you usually use?',
+  'Is there anyone we should call for you?',
+  'Who is your next of kin?',
+  'Do you have any pets at home?',
+  'What do you do for a living?',
+  'What did you do before you retired?',
+  'Did you come in by ambulance?',
+  'Is anyone here with you?',
+  'How did you get here today?',
+  'Is it raining outside?',
+  'Do you have children?',
+  'How many kids do you have?',
+  'Where do you live?',
+  'Do you watch much television?',
+  'What do you do to relax?',
+  'Do you have a garden?',
+  'Are you comfortable on that trolley?',
+  'Would you like a blanket?',
+  'Can I get you anything?',
+  'What is your date of birth?',
+  'Can you confirm your name for me?',
+  'What is your address?',
+  'Do you know why you are here?',
+  'Is it okay if the students watch?',
+  'Would you prefer a female doctor?',
+  'Have you been waiting long?',
+  'Is there anything you would like to ask me?',
+  'What year are you in at university?',
+  'Do you get on with your flatmates?',
+  'How much does it cost to park here?',
+  'Who is the prime minister?',
+  'What is the date today?',
+]
+for _t in TOPICS:
+    if EXPANDED.get(_t['topic']):
+        _t['expanded_variants'] = list(EXPANDED[_t['topic']])
+        _t['variants_provenance'] = "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+# ---- END EXPANDED VARIANTS ----
+
+# ---- ECHO AND FACTS (generated, do not edit by hand) ----
+# Written by catalog/author_interview_facts.py (design 10.7). A fact's value restates part
+# of the topic's answer for a follow-up; it adds nothing the paragraph does not say.
+ECHO = {
+ "onset": "when it started",
+ "timing_progression": "whether it's getting worse",
+ "character_of_palpitations": "what the racing feels like",
+ "dyspnea_character": "the breathing",
+ "severity": "how bad it is",
+ "aggravating_factors": "what makes it worse",
+ "relieving_factors": "what helps",
+ "chest_pain": "chest pain",
+ "syncope_presyncope": "whether I've passed out",
+ "dizziness_lightheadedness": "feeling dizzy",
+ "orthopnea": "lying flat",
+ "paroxysmal_nocturnal_dyspnea": "waking up breathless",
+ "leg_swelling": "my legs swelling",
+ "weight_gain": "my weight",
+ "exercise_tolerance_baseline": "what I could do before",
+ "cough_and_sputum": "a cough",
+ "fever_and_chills": "a temperature",
+ "prior_afib_or_palpitations": "whether it's happened before",
+ "prior_heart_failure": "heart failure",
+ "past_medical_history": "my medical history",
+ "past_surgical_history": "operations",
+ "current_medications": "my tablets",
+ "anticoagulant_history_and_bleeding": "blood thinners",
+ "medication_adherence": "whether I take them",
+ "allergies": "allergies",
+ "alcohol_and_binge": "drink",
+ "caffeine_and_stimulants": "coffee and that",
+ "thyroid_symptoms": "my thyroid",
+ "social_history_smoking": "smoking",
+ "family_history": "the family",
+ "last_oral_intake": "when I last ate",
+ "recent_illness_or_sick_contacts": "whether I've been unwell",
+ "travel_immobility_surgery": "travelling",
+ "calf_pain_or_asymmetry": "my calves",
+ "urine_output": "passing water",
+ "nausea_and_vomiting": "feeling sick",
+ "snoring_and_sleep_apnea": "snoring",
+ "code_status_goals_of_care": "what I'd want if it got worse"
+}
+FACTS = {
+ "onset": [
+  {
+   "id": "time",
+   "asks": [
+    "what time",
+    "what time exactly",
+    "when exactly",
+    "roughly what time",
+    "how long ago"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Three... yesterday.'"
+    },
+    {
+     "when": None,
+     "value": "'About three o'clock yesterday afternoon.'"
+    }
+   ],
+   "restate": True
+  },
+  {
+   "id": "how",
+   "asks": [
+    "how did it start",
+    "sudden or gradual",
+    "what were you doing",
+    "did it come on suddenly",
+    "what brought it on"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Sudden. Watching... telly.'"
+    },
+    {
+     "when": None,
+     "value": "'All at once. I was sat watching the television and it just started, like something turned over in my chest.'"
+    }
+   ]
+  },
+  {
+   "id": "breathing_after",
+   "asks": [
+    "when did the breathing start",
+    "did the breathing come at the same time",
+    "which came first",
+    "and the breathing"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Breathing... later.'"
+    },
+    {
+     "when": None,
+     "value": "'The breathing came on after, later in the evening. The heart was first.'"
+    }
+   ]
+  }
+ ],
+ "character_of_palpitations": [
+  {
+   "id": "rhythm",
+   "asks": [
+    "regular or irregular",
+    "is it regular",
+    "does it keep time",
+    "steady or all over the place"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'All over... the place.'"
+    },
+    {
+     "when": None,
+     "value": "'It doesn't keep any kind of time. It just goes and goes and then gives a big thump and carries on.'"
+    }
+   ],
+   "restate": True
+  },
+  {
+   "id": "where_felt",
+   "asks": [
+    "where do you feel it",
+    "can you feel it in your neck",
+    "where in your chest",
+    "do you feel it in your throat"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Throat.'"
+    },
+    {
+     "when": None,
+     "value": "'In my chest, and I can feel it in my throat too.'"
+    }
+   ]
+  }
+ ],
+ "dyspnea_character": [
+  {
+   "id": "sensation",
+   "asks": [
+    "what does it feel like",
+    "tight or heavy",
+    "is it a tightness",
+    "can you get a full breath"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Can't... get enough.'"
+    },
+    {
+     "when": None,
+     "value": "'I can't get a full breath. It's like there's a weight on me and I only get half of what I need each time.'"
+    }
+   ],
+   "restate": True
+  },
+  {
+   "id": "effort",
+   "asks": [
+    "are you breathing fast",
+    "why are you breathing so fast",
+    "are you tired from it",
+    "is it tiring"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Exhausted.'"
+    },
+    {
+     "when": None,
+     "value": "'I have to keep going faster to make up for it. I'm exhausted from it.'"
+    }
+   ]
+  }
+ ],
+ "chest_pain": [
+  {
+   "id": "pain",
+   "asks": [
+    "any pain at all",
+    "is it sore",
+    "does it hurt",
+    "any discomfort"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'No... pain.'"
+    },
+    {
+     "when": None,
+     "value": "'No, no pain. It's not sore. I can feel it thumping and I can feel that I can't breathe, but there's no pain to it.'"
+    }
+   ],
+   "restate": True
+  },
+  {
+   "id": "arm_jaw",
+   "asks": [
+    "anything in your arm",
+    "does it go to your jaw",
+    "any pain in your arm or jaw",
+    "any radiation"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Nothing... arm.'"
+    },
+    {
+     "when": None,
+     "value": "'Nothing in my arm, nothing in my jaw.'"
+    }
+   ]
+  }
+ ],
+ "current_medications": [
+  {
+   "id": "list",
+   "asks": [
+    "what are they",
+    "which tablets",
+    "name them",
+    "what exactly do you take"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Blood pressure... statin... metformin.'"
+    },
+    {
+     "when": None,
+     "value": "'A blood pressure tablet, lisinopril I think, twenty milligrams. A statin at night, atorvastatin. And metformin twice a day.'"
+    }
+   ],
+   "restate": True
+  },
+  {
+   "id": "doses",
+   "asks": [
+    "what dose",
+    "how much of each",
+    "what strength",
+    "how many milligrams"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Twenty... the pressure one.'"
+    },
+    {
+     "when": None,
+     "value": "'The lisinopril is twenty milligrams. The metformin is twice a day. I couldn't tell you the statin dose.'"
+    }
+   ]
+  },
+  {
+   "id": "anything_else",
+   "asks": [
+    "anything else at all",
+    "any inhalers",
+    "anything over the counter",
+    "any other tablets"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'That's... it.'"
+    },
+    {
+     "when": None,
+     "value": "'That's the lot. Nothing else, no inhalers, nothing from the chemist.'"
+    }
+   ]
+  }
+ ],
+ "past_medical_history": [
+  {
+   "id": "conditions",
+   "asks": [
+    "what conditions",
+    "which problems",
+    "what have you got",
+    "blood pressure or diabetes"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Blood pressure. Sugar.'"
+    },
+    {
+     "when": None,
+     "value": "'High blood pressure and diabetes, both for years.'"
+    }
+   ],
+   "restate": True
+  },
+  {
+   "id": "heart_scan",
+   "asks": [
+    "what about your heart",
+    "tell me about the scan",
+    "the furring up",
+    "what did the CT show",
+    "any heart problems"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Scan... arteries. Statin.'"
+    },
+    {
+     "when": None,
+     "value": "'They found some furring up in my heart arteries on a CT scan three years ago. They said it wasn't bad enough to do anything about and just put me on a statin.'"
+    }
+   ]
+  }
+ ],
+ "alcohol_and_binge": [
+  {
+   "id": "usual",
+   "asks": [
+    "how much normally",
+    "what do you usually drink",
+    "during the week",
+    "how many a week"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Few beers. Weekend.'"
+    },
+    {
+     "when": None,
+     "value": "'Two or three beers at the weekend, that's all, and nothing during the week.'"
+    }
+   ],
+   "restate": True
+  },
+  {
+   "id": "saturday",
+   "asks": [
+    "what about saturday",
+    "the barbecue",
+    "how many on saturday",
+    "more than usual recently",
+    "any binge"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'Saturday... four or five.'"
+    },
+    {
+     "when": None,
+     "value": "'I had more than that on Saturday. We had a barbecue for my grandson's birthday and I'd say I had four or five over the afternoon.'"
+    }
+   ]
+  }
+ ],
+ "anticoagulant_history_and_bleeding": [
+  {
+   "id": "thinners",
+   "asks": [
+    "any blood thinner",
+    "warfarin or anything",
+    "aspirin",
+    "any antiplatelet"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'No. Nothing... like that.'"
+    },
+    {
+     "when": None,
+     "value": "'No. I've never been on a blood thinner and I don't even take aspirin.'"
+    }
+   ],
+   "restate": True
+  },
+  {
+   "id": "bleeding",
+   "asks": [
+    "any bleeding",
+    "ever had a bleed",
+    "any ulcers",
+    "any falls"
+   ],
+   "value": [
+    {
+     "when": "phase is respiratory_failure",
+     "value": "'No bleeds.'"
+    },
+    {
+     "when": None,
+     "value": "'I've never had a bleed, never had an ulcer, and I haven't had a fall.'"
+    }
+   ]
+  }
+ ]
+}
+for _t in TOPICS:
+    if _t['topic'] in ECHO: _t['echo'] = ECHO[_t['topic']]
+    if _t['topic'] in FACTS: _t['facts'] = FACTS[_t['topic']]
+# ---- END ECHO AND FACTS ----

@@ -291,5 +291,47 @@ expect_clean("irregularly_irregular passes",
 expect_clean("a phase with no rhythm at all passes",
              lambda c: c["phases"][0].pop("rhythm", None), "rhythm")
 
+print("\n-- the summary's inputs and the handoff's diagnoses (v0.9) --")
+expect("a key topic that is not a topic is rejected",
+       lambda c: c["interview"].__setitem__("key_topics", ["no_such_topic"]),
+       "not a topic in this case")
+expect_clean("key topics drawn from the bank pass",
+             lambda c: c["interview"].__setitem__("key_topics", [c["interview"]["topics"][0]["topic"]]),
+             "key_topics")
+expect("a key exam that is not a case action is rejected",
+       lambda c: c["debrief_configuration"].__setitem__("key_exams", ["exam_nowhere"]),
+       "not a case action")
+expect("a key exam that is not an exam is rejected",
+       lambda c: c["debrief_configuration"].__setitem__("key_exams", [act(c)["catalog_id"]]),
+       "is not an exam")
+expect("an additional diagnosis outside the diagnosis catalog is rejected",
+       lambda c: c["handoff"].__setitem__("additional_diagnoses",
+                                          [{"catalog_id": "dx_made_up", "explanation": "x"}]),
+       "not in the diagnosis catalog")
+expect("the correct diagnosis repeated as an additional one is rejected",
+       lambda c: c["handoff"].__setitem__("additional_diagnoses",
+           [{"catalog_id": c["handoff"]["correct_diagnosis"]["catalog_id"], "explanation": "x"}]),
+       "list it once")
+expect("an additional diagnosis with no explanation warns",
+       lambda c: c["handoff"].__setitem__("additional_diagnoses",
+                                          [{"catalog_id": "dx_hypokalemia"}]),
+       "has no explanation", where="warnings")
+# A delayed consequence of the resident's own action may act in ten seconds; a
+# deterioration on inaction may not. Both directions, so the scoping cannot drift.
+def _consequence(c, n):
+    ph = c["phases"][0]
+    a = act(c)
+    a.setdefault("flags_set", []).append("vt_probe_flag")
+    ph["transitions"].insert(0, {"when": "flag vt_probe_flag set", "to": c["phases"][1]["id"],
+                                 "after_seconds": n, "measured_from": "guard_true"})
+expect_clean("a ten-second consequence of the resident's own action passes",
+             lambda c: _consequence(c, 10), "below the")
+expect("a four-second consequence is a button and is rejected",
+       lambda c: _consequence(c, 4), "below the 5s floor")
+expect("a ten-second deterioration on inaction is still rejected",
+       lambda c: c["phases"][0]["transitions"].insert(0,
+           {"when": "NOT flag iv_access set", "to": c["phases"][1]["id"], "after_seconds": 10}),
+       "below the 30s floor")
+
 print(f"\n  {COUNT} checks, " + (f"{len(FAILS)} FAILURES" if FAILS else "all passed"))
 sys.exit(1 if FAILS else 0)

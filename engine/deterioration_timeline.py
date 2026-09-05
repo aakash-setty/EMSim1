@@ -144,10 +144,15 @@ for pid in PH:
             W("")
         cap = case.get("prompt_cap_recommendation", {}).get("per_phase", 3)
         W(f"All prompts schedulable in this phase, in firing order (per-phase cap is {cap}, "
-          f"so only the first {cap} are heard):")
+          f"so only the first {cap} first warnings are heard; escalations are exempt):")
         W("")
+        firsts = 0
         for n, (d, aid, kind, txt) in enumerate(ps):
-            mark = "" if n < cap else "  **suppressed by the cap**"
+            if kind == "escalation":
+                mark = ""
+            else:
+                mark = "" if firsts < cap else "  **suppressed by the cap**"
+                firsts += 1
             late = "  **AT OR AFTER THE EXIT**" if d >= t["after_seconds"] and mf == "phase_entry" else ""
             W(f"{n+1}. {d}s `{aid}` ({kind}){mark}{late}")
         W("")

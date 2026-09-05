@@ -345,11 +345,14 @@ rule.
 
 1. **Thirty-second floor**, with a warning below sixty. A deterioration the resident could not
    plausibly have prevented teaches nothing about medicine and a great deal about reflexes.
-   The floor is absolute; **the warning applies only to the two patterns where something
-   happens TO the resident**, which is a deterioration on inaction and an unguarded
-   scheduled natural history. A delayed consequence of an action they took has nothing to
-   prevent and no reflex to test: it is the case saying how long a drug takes to work, and
-   thirty seconds there is a statement about pharmacology rather than a trap.
+   **Both the floor and the warning apply to the two patterns where something happens TO
+   the resident**, which is a deterioration on inaction and an unguarded scheduled natural
+   history. A delayed consequence of an action they took (`measured_from: "guard_true"`
+   with a guard that negates no flag) has nothing to prevent and no reflex to test: it is
+   the case saying how long a drug takes to work, and its floor is five seconds, below
+   which the consequence is on the same click as the action and the drug is a button
+   again. (Until v0.9 the thirty-second floor applied to this pattern too; AFRVR's rate
+   control now acts at ten seconds.)
 2. **A prompt must come first.** For every flag your guard requires to be unset, some action that
    sets that flag must prompt in that phase, at least twenty seconds before the deadline. This is
    section 1's framing made mechanical: the nurse exists to teach, and a deterioration nobody warned
@@ -630,7 +633,7 @@ If you write the case in catalog ids, nothing further is needed. If you write it
 
 **Every `mapped` row is a clinical judgement and needs your signature.** Look particularly for:
 
-- **Assay mismatches.** A numeric high-sensitivity troponin I does not transfer to a qualitative troponin T entry. A BNP does not transfer to a pro-BNP entry. Same analyte family, different reference intervals, different numbers.
+- **Assay mismatches.** A numeric high-sensitivity troponin I does not transfer to a qualitative troponin T entry. A BNP does not transfer to an NT-proBNP entry (the catalog carries NT-proBNP, `nt_probnp`, and no BNP). Same analyte family, different reference intervals, different numbers.
 - **Route and formulation splits.** A bolus and an infusion are different catalog entries and often different clinical acts.
 - **Composite actions.** A combined lung and cardiac ultrasound may be two catalog entries. A combination nebuliser may be two drugs. Bind to both or the unbound half is unreachable.
 - **Collapsed entries.** Where the catalog collapses two acts you score separately, the interface can offer only one button and the second is unreachable. Decide which one it should be.
@@ -660,7 +663,7 @@ The five values:
 | `harmful` | Halts the case. Requires a halt reason |
 | `neutral` | No effect |
 
-**Use `discouraged` for traps.** Before v0.3 a trap that was wrong but survivable could only be neutral, which meant it carried no weight and taught only through a note the learner might not read. Morphine in acute pulmonary oedema, a bronchodilator for cardiac asthma, unindicated steroids or antibiotics, an unnecessary CT: these are `discouraged`.
+**Use `discouraged` for traps.** Before v0.3 a trap that was wrong but survivable could only be neutral, which meant it carried no weight and taught only through a note the learner might not read. Morphine in acute pulmonary edema, a bronchodilator for cardiac asthma, unindicated steroids or antibiotics, an unnecessary CT: these are `discouraged`.
 
 **Reserve `harmful` for genuine lethality**, and be honest about the strength of the evidence. Halting the case on an action teaches the strongest possible claim. If the evidence is observational and confounded, `discouraged` with a good note is the honest tag.
 
@@ -792,7 +795,10 @@ whether that prompt survives the per-phase cap. Author nine prompts into a phase
 cap of three and the fourth onwards never fire, so the deterioration arrives unwarned.
 Count the prompts in every phase that has a time-guarded exit, and make sure the ones
 your guards depend on are the earliest. `engine-tests.js` checks this at runtime by
-walking the do-nothing path; the validator cannot.
+walking the do-nothing path; the validator cannot. Since v0.9 an escalation is exempt
+from the cap: it neither consumes a slot nor is silenced by one, because it repeats a
+warning the nurse has already given rather than raising a new one. The first warning
+still has to be inside the cap.
 
 **Prompts must be helpful.** This is a teaching tool. A prompted action counts as done and is not penalized; it is only noted in the debrief so the learner can see where they needed help. Write prompts that would actually rescue a stuck learner.
 
@@ -901,74 +907,61 @@ Specify the out-of-scope fallback in this patient's voice.
 
 **Matching accuracy is the highest technical risk in the case system**, because a mismatch delivers a clinically wrong answer with full confidence, and unlike a fallthrough it is invisible to the learner.
 
-#### What the matcher is, as of v0.4
+#### What the matcher is, as of v0.8
 
-Two stages. The architecture is in system design section 20; what an author needs to know:
+Two stages, fused per topic. The architecture is in system design section 20; what an author needs to know:
 
-**Stage one, lexical, always runs.** IDF-weighted overlap between the typed question and your authored variants. It gained three extensions in this version, all aimed at the gap between how residents type and how patients speak:
+**Stage one, lexical, always runs.** IDF-weighted overlap between the typed question and the variants, with a clinical abbreviation lexicon (`pnd`, `orthopnea`, `pmh`, `nkda`, `hx`, `n/v`, `lmp`, `cp`, roughly a hundred and twenty entries) rewritten into lay words **only** where the case has not itself authored that word, single-edit typo repair against the case's own vocabulary, and compound-question splitting.
 
-- a clinical abbreviation lexicon (`pnd`, `orthopnea`, `pmh`, `sob`, roughly ninety entries) rewritten into the lay words your variants actually contain, and **only** where your case has not itself authored that word
-- single-edit typo repair against your case's own vocabulary
-- compound-question splitting on `and`, `or`, commas and similar, gated so that a clause is only accepted if it scores comparably to the whole question
+**Stage two, an embedding model, is optional and may never load.** all-MiniLM-L6-v2, about 23 MB, fetched from a CDN and cached in the browser. When it is ready the two stages are combined per topic (0.6 on the model, 0.4 on the lexical score) and the best combined score wins if it clears 0.45, with two rescue branches for evidence only one stage can see. **Author as though it will never load.**
 
-**Stage two, an embedding model, is optional and may never load.** all-MiniLM-L6-v2, about 23 MB, fetched from a CDN and cached in the browser. It fuses with stage one when ready and is skipped when it is not. **Author as though it will never load**, because on a hospital network it often will not, and a case that is only playable with the model is a case that is sometimes unplayable.
+**The out-of-scope bank is part of the case.** `interview.out_of_scope_bank` is a list of questions the case has no answer to, and both stages score it like a topic under a reserved id. A question that lands closest to it gets the fallback. Do not hand-write this list: it is generated per case from `catalog/interview_out_of_scope.py` by `catalog/expand_interview_variants.py`, filtered to the concepts the case does not cover, so a case that authors a rash never has "any rash?" in its out-of-scope bank.
 
-#### Measured accuracy
+#### Variants: hand-written, expanded, and withheld
 
-Two evaluation sets exist for the reference case (34 topics, 340 variants, threshold 0.32) and they say different things. Both numbers are on the shipped lexical stage with the model off.
+Your `variants` are yours and are never touched by tooling. Beside them, `catalog/expand_interview_variants.py` writes `expanded_variants` on each topic from the shared library `catalog/interview_phrasings.py`, which is keyed by concept (`onset`, `pmh`, `allergies`, `anticoag`, sixty-odd) and mixes lay paraphrase, clinical shorthand and conversational openers. Each pack maps its topics onto concepts in that script's `MAP`; a new pack needs a new entry there and nothing else. The two lists are merged at build time.
 
-**Set A, `cases/CHFE/CHFE-matcher-eval.js`, 25 held-out phrasings plus 5 out-of-scope, written by the case author.**
+Every sixth generated phrasing per topic is diverted into `<PREFIX>-matcher-tune-questions.json` instead of the bank. That file is the TUNING set: thresholds are swept against it. The held-out set, `<PREFIX>-matcher-eval-questions.json`, is what gets quoted, and the generator refuses to write any phrasing that matches a held-out question. Re-running the generator is idempotent.
 
-| | correct | wrong topic | fell through | out-of-scope refused |
-|---|---|---|---|---|
-| v0.3 matcher | 23/25 | 1 | 1 | 3/5 |
-| v0.4 matcher | 23/25 | 1 | 1 | 3/5 |
+**The library is clinical content and belongs on the review list.** A phrasing that maps a question to the wrong concept produces a confident wrong answer for every case that uses the concept.
 
-**The v0.4 work made no difference at all on the author's own set.** That is not a failure of the work and it is not a reason to trust the work either. Set A is written entirely in lay register, in full grammatical sentences, correctly spelled, one question at a time. The v0.3 matcher already handled that, and the lexicon, the typo repair and the splitting have nothing to act on.
+#### Measured accuracy, v0.8
 
-**Set B, `engine/eval/interview-eval-CHFE.json`, 49 in-scope plus 5 out-of-scope, stratified by register.**
+One harness, `engine/matcher_eval.mjs`, runs every pack against the built prototype. It runs the shipped `matchQuestion`, so compound questions, clause splitting, clarification and the fusion are all measured as they ship, once with the model absent and once with it present. All three packs now carry thirty out-of-scope questions, the floor this section set and which none of them met before. Before and after the v0.8 work, on the held-out sets, model present:
 
-| category | v0.3 | v0.4 |
-|---|---|---|
-| paraphrase | 21/25 | 22/25 |
-| shorthand | 5/12 | 12/12 |
-| typo | 1/4 | 4/4 |
-| compound | 0/3 | 3/3 |
-| conversational | 3/5 | 3/5 |
-| out-of-scope refused | 3/5 | 3/5 |
-| **total** | **33/54** | **47/54** |
+| pack | in-scope correct | wrong topic | fell through | asked to clarify | out-of-scope refused |
+|---|---|---|---|---|---|
+| AFRVR | 39/52 → 46/52 | 6 → 2 | 5 → 1 | 0 → 4 | 11/30 → 24/30 |
+| CHFE | 40/46 → 39/46 | 5 → 4 | 0 → 2 | 0 → 1 | 11/30 → 23/30 |
+| MGCA | 23/37 → 26/37 | 6 → 3 | 5 → 3 | 0 → 3 | 9/30 → 21/30 |
 
-**Read set B with its provenance in front of you.** It was written by an AI assistant, not by the case author, and the expected topic on each row is that assistant's judgement. It is a characterisation of failure modes, not a validated instrument, and it should be replaced with author-written questions before any number from it is quoted outside this document. The out-of-scope arm (n=5) is far too small to conclude anything; 30 would be a floor.
+Read the columns separately, because they are not equally bad. **Wrong topic** is the number this section has always said matters most, and it roughly halved. **Asked to clarify** is new: the patient names the two topics the matcher could not choose between and commits to neither, which costs the learner a turn and is visible, where a wrong topic is neither. Of the eight clarifications on the held-out sets, four had the right topic in the pair, two replaced a wrong answer, two replaced an out-of-scope false accept. **Out-of-scope refused** doubled, and that is almost entirely the bank.
 
-**What the two sets together support, and what they do not.** They support the claim that the v0.4 extensions help with shorthand, typos and compound questions and are neutral elsewhere. They do not support any claim about how residents actually type, because neither set was collected from residents. The honest summary is that a known gap was closed and the size of the gap in real use is unmeasured.
+CHFE moved least because its held-out set was already mostly well-formed lay sentences, which is the register this section warns an author's own set over-represents; its three remaining wrong answers are genuine ambiguities ("does lying flat make it worse" sits between orthopnoea and aggravating factors for both stages).
+
+**What is still unmeasured.** Nothing here was collected from residents. The held-out sets were written by an AI assistant and a case author, and the tuning sets are the library's own withheld phrasings, so they measure the matcher against the registers the library anticipated. An opt-in export of real question logs remains the best evaluation source that exists and does not yet exist here.
 
 #### The rules that follow from this
 
-**The number to watch is the wrong-topic rate on topics whose answers change management**, not overall accuracy. A fallthrough is visible to the learner; a wrong topic is not. Expand variants first on the topics where a wrong answer changes the workup. Both harnesses report this number separately for that reason.
+**The number to watch is the wrong-topic rate on topics whose answers change management.** Each held-out file lists those topics under `management_changing`; the harness reports them separately.
 
-**A second case has now been measured, and it is worse.** MGCA scores 22 of 37 in scope
-with 4 wrong topics on management-changing topics, against a held-out set written
-deliberately in the registers this section says an author's own set misses. The two
-numbers are not comparable, because CHFE's set is 25 well-formed lay sentences and this
-one is not, but the direction is a warning: a case with more topics and more variants did
-not match better.
+**Measure it, and measure the shipped matcher.** `node engine/matcher_eval.mjs --semantic` quotes the held-out sets. `--sweep` reads only the tuning sets and refuses to run without one. Do not tune against the held-out set and then quote it; that measures memorisation rather than coverage.
 
-**A larger variant space may reject less.** The same twelve unrelated questions put to
-both cases were refused 7 of 12 by CHFE, with 340 variants across 34 topics, and 5 of 12
-by MGCA, with 492 across 41. At that n it concludes nothing. It is recorded because if it
-holds, variant expansion trades out-of-scope rejection for recall, and the decision to
-disable the veto rule in favour of recall becomes something each case should make rather
-than a global default.
+**The extraction contract.** The harness slices two regions out of the built file by marker comment (system design 20.3) and evaluates them with a shim for the model. Anything placed in those regions is measured; anything after `bindCase()` is not.
 
-**Out-of-scope handling is the weakest part and did not improve.** Two in five unrelated questions still receive a confident, specific, wrong answer. "What is your favourite colour" returns the cough and sputum answer. Assume any question your case does not cover may be answered as though it were a different question.
+**Write held-out questions in the register you expect, not the register you write variants in.** If every question in your held-out set is a well-formed lay sentence, your set will report that the matcher is fine no matter what you do to it.
 
-**A veto rule exists and is switched off.** The fusion could suppress a lexical match when the embedding model scores it very low, which would cut false answers. It is disabled because the brief for this simulator is maximum recall: the resident has no other source of context now that the Patient tab is gone, so a stall costs more than a wrong answer. **This is a deliberate trade against the paragraph above**, and an author who thinks their case is more harmed by wrong answers than by stalls should say so rather than assume the default fits.
+### 10.7 The patient's side of the conversation
 
-**Measure it, and measure the shipped matcher.** Each case pack carries a `<PREFIX>-matcher-eval.js` holding held-out phrasings that appear in no variant list, and it extracts the matcher from the built prototype rather than reimplementing it. A second copy of the matching logic drifts, and then the evaluation reports on a matcher nobody runs. Do not tune the matcher against the held-out set and then quote the result; that measures memorisation rather than coverage.
+New in v0.8, and the reason "natural" is now partly an authoring property. Each topic may carry two more fields; system design 20.4 has the mechanics.
 
-**The extraction is fragile in a specific way and has broken twice.** The harness slices the built file between two marker comments and evaluates everything in between. Anything semantic-related placed inside that region throws `ReferenceError: SEM is not defined`, because the embedding module is not loaded in the harness. If your case's eval harness dies that way, the fix is in the engine, not in your case. See system design 20.3.
+**`echo`**: a short phrase in the patient's voice naming the topic ("my tablets", "when it started", "the spots"). Used as a prefix when the matcher's confidence was marginal, so a wrong match is visible at once, and inside the clarifying question ("Sorry, do you mean when it started, or whether it's getting worse?"). Every topic should have one; the phrase should read after "do you mean".
 
-**Write held-out questions in the register you expect, not the register you write variants in.** Set A is the cautionary example: it is a good test that was measuring a part of the system nothing had changed. If every question in your held-out set is a well-formed lay sentence, your set will report that the matcher is fine no matter what you do to it.
+**`facts`**: the atomic pieces of the answer, each with its own phrasings and a phase-conditional value, so a follow-up is answered by the piece asked about. The rule that keeps facts and paragraph consistent: **a fact restates part of the paragraph and adds nothing to it.** Mark one fact `restate` to be the short form the patient gives when asked the topic again. Author facts where sub-questions matter: onset (when versus how), medications (what versus dose versus adherence), the presenting complaint's character, anything with a time course. Eight topics per pack carry them so far, written by `catalog/author_interview_facts.py`.
+
+Without facts a topic still gains repeat handling, "anything else?", and the echo. With them it gains follow-ups and partial answers.
+
+**Do not author the scaffolding into answers.** "Like I said", "Sorry, do you mean", "No, that's everything" come from `interviewDefaults` and may be overridden per case under `interview` (`repeat_prefixes`, `clarify_template`, `nothing_more`). An answer that begins "As I said" will read wrongly the first time it is given.
 
 ---
 
@@ -1003,7 +996,7 @@ Because 14 maneuvers cannot cover every region, the catalog supplies **`exam_fin
 | Finding | Owned by |
 |---|---|
 | Jugular venous distension, tracheal position | `exam_neck` |
-| **Peripheral or pedal oedema** | `exam_card` |
+| **Peripheral or pedal edema** | `exam_card` |
 | Capillary refill, skin temperature, pulse quality | `exam_circ` |
 | Extremity findings, distal neurovascular status | `exam_msk` |
 | Accessory muscle use, work of breathing | `exam_breath` |
@@ -1045,7 +1038,7 @@ Results are structured, not prose:
 
 `kind` is `panel` for multi-analyte results, `value` for single ones, `report` for imaging and ECG narrative.
 
-**Author findings, not conclusions, and keep them short.** A report that ends "interpretation: cardiogenic pulmonary oedema", or a tracing that explains that the ST depression is rate-related, has done the work the case was setting. Put that reasoning in the study's debrief note instead, where the learner meets it after committing to an answer rather than before. Length is the same problem in a quieter form: a resident who reads eight sentences to find the ejection fraction is spending attention on comprehension rather than on management, and because length reads as importance, a long report about a negative study misleads. Cut the views obtained, the secondary measures that merely agree with the primary one, and the negatives nobody asked about.
+**Author findings, not conclusions, and keep them short.** A report that ends "interpretation: cardiogenic pulmonary edema", or a tracing that explains that the ST depression is rate-related, has done the work the case was setting. Put that reasoning in the study's debrief note instead, where the learner meets it after committing to an answer rather than before. Length is the same problem in a quieter form: a resident who reads eight sentences to find the ejection fraction is spending attention on comprehension rather than on management, and because length reads as importance, a long report about a negative study misleads. Cut the views obtained, the secondary measures that merely agree with the primary one, and the negatives nobody asked about.
 
 **`comment` is rendered to the learner. `verify` is not.** A note addressed to the reviewing physician goes in `verify`, alongside the reference interval you are unsure of. Putting it in `comment` prints it under the result, which tells a learner to distrust the number they were just given.
 
@@ -1092,6 +1085,17 @@ Supply:
 
 Diagnosis is entered by searching the global catalog rather than choosing from a short case-supplied list, because committing to a diagnosis from a wide field is the cognitive task being taught. With several hundred entries most wrong answers will fall outside your authored alternatives and receive a generic note; that is acceptable for the long tail and not for the common ones.
 
+### 12.1 Several diagnoses (v0.9)
+
+A handover names one working diagnosis and, nearly always, the other things that are true of the patient. Since v0.9 the resident lists as many diagnoses as apply, in order; the first is the primary. Supply:
+
+- **`additional_diagnoses`**, a list of `{catalog_id, label, explanation}`: what is also true of this patient and appropriate to name beside the primary. For an atrial fibrillation case with a flooded lung that is the heart failure, the pulmonary edema, the respiratory failure and the low magnesium. Each earns credit when listed beside the primary, and each one the resident did not name is printed in the debrief under "Also true of this patient, and not named", with your explanation, so write the explanation as the sentence you would say at the bedside about why it belongs in the handover.
+- The existing **`correct_diagnosis`** is still the one the primary is scored against, and the existing **`alternative_diagnoses`** still carry the verdicts for a primary that is not it (`acceptable_with_qualification` is scored as defensible; anything else as incorrect).
+
+A diagnosis may sit in both lists. AFRVR lists acute decompensated heart failure as a defensible alternative (the verdict when it is named as the primary) and as an additional diagnosis (the credit when it is named beside the arrhythmia). A finding the case marks "not a diagnosis on its own" as an alternative, such as MGCA's disseminated intravascular coagulation, is exactly the kind of thing that belongs in the additional list.
+
+How the debrief reads the list: the first entry gets `correct`, `defensible` or `incorrect`; the case's diagnosis listed anywhere but first gets its own flag; every other entry is `appropriate` (in your additional list), `defensible` (an acceptable alternative) or `not supported` (anything else, with your alternative's explanation if you wrote one, or the generic note). The case's own diagnosis is printed at the end whenever the resident did not name it. The validator errors on an additional diagnosis that is not in the diagnosis catalog or that repeats the correct diagnosis, and warns on one with no explanation.
+
 Pending or unviewed results at the moment of handoff are recorded automatically and surfaced in the debrief. No authoring required.
 
 An early-exit option exists for a resident who cannot proceed. It produces a debrief marked incomplete.
@@ -1101,6 +1105,17 @@ An early-exit option exists for a resident who cannot proceed. It produces a deb
 ## 13. Debrief notes
 
 The debrief is the product, so these notes carry most of the teaching load. Every action referenced by the case needs one.
+
+### 13.0 The summary's seven scores (v0.9)
+
+The debrief's Summary prints one score per category: History, Physical, Stabilization, Interventions, Investigations, Consults and Handoff. The engine computes them from what you authored and nothing else, and it prints the arithmetic beside each one. The `clinical_domains` table is no longer printed (the field is still read by the review tooling).
+
+- **History** is key topics asked over key topics listed. Author **`interview.key_topics`**, the topics whose answers change management in your case; without it every topic counts, which makes a thorough resident score 40 percent. AFRVR, CHFE and MGCA seed theirs from the `management_changing` list in their held-out matcher evaluation file.
+- **Physical** is regions examined over the exams your case tags critical or recommended. If none is tagged (CHFE and MGCA tag every exam neutral), author **`debrief_configuration.key_exams`**; failing that every exam you author findings for counts.
+- **The four ordering tabs** score critical actions at two points and recommended at one, over the critical and recommended actions that were expected on that tab in the phases the run visited. A discouraged action taken on the tab costs one point; a harmful action that halted the case zeroes its tab. A recommended tag therefore now carries weight it did not before: it is a point on offer, and a case that tags forty things recommended has diluted its critical actions. Tag recommended what you would actually want said in the debrief.
+- **Handoff** is level of care (40), the primary diagnosis (40, or 60 when the case authors no additional diagnoses), and additional diagnoses named (20, pro rata); a defensible answer earns half, the case's diagnosis listed but not first earns half, and every unsupported diagnosis costs five.
+
+The validator checks that `key_topics` name topics in the bank and `key_exams` name exams in the case. Nothing here is a claim about how residents should be ranked; the text under the table says so.
 
 A good note states what the action does, why it was right or wrong **in this case**, and what should have happened instead. Optionally add a reference.
 

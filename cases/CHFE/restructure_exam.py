@@ -33,7 +33,7 @@ Those three are the only new clinical statements, and each restates something th
 already asserted in another key. They still need physician review like everything else.
 
 ROUTING DECISIONS FORCED BY THE MAP
-  peripheral oedema        -> exam_card   (the map says so; not exam_msk and not exam_circ)
+  peripheral edema        -> exam_card   (the map says so; not exam_msk and not exam_circ)
   jugular venous pressure  -> exam_neck
   hepatojugular reflux     -> exam_neck   (a jugular manoeuvre; no separate entry exists)
   capillary refill,
@@ -141,19 +141,19 @@ EXAM = {
  "exam_card": [
    {"when": HYPO, "value": F(
      "Tachycardic at around 128, regular, heart sounds quiet. A third heart sound is present. Soft "
-     "systolic murmur at the apex. Two plus pitting oedema to the mid-shin bilaterally, symmetrical.")},
+     "systolic murmur at the apex. Two plus pitting edema to the mid-shin bilaterally, symmetrical.")},
    {"when": STAB, "value": F(
      "Regular at around 96. Third heart sound still audible. Grade 2 out of 6 holosystolic murmur at the "
-     "apex. Two plus pitting oedema to the mid-shin bilaterally, symmetrical.")},
+     "apex. Two plus pitting edema to the mid-shin bilaterally, symmetrical.")},
    {"when": PRES + " OR " + RESP, "value": F(
      "Tachycardic and regular. A third heart sound is present at the apex, best heard with the bell in "
      "the left lateral position. Grade 2 out of 6 blowing holosystolic murmur at the apex radiating "
      "toward the axilla. The apex beat is displaced laterally to the anterior axillary line. Two plus "
-     "pitting oedema to the mid-shin bilaterally, symmetrical, with indentation from his sock at the "
+     "pitting edema to the mid-shin bilaterally, symmetrical, with indentation from his sock at the "
      "ankle.")},
    {"when": None, "value": F(
      "Regular, rate around 90. A third heart sound is still audible. Grade 2 out of 6 holosystolic "
-     "murmur at the apex. Apex beat displaced laterally. Two plus pitting oedema to the mid-shin "
+     "murmur at the apex. Apex beat displaced laterally. Two plus pitting edema to the mid-shin "
      "bilaterally, symmetrical.")},
  ],
 
@@ -182,7 +182,7 @@ EXAM = {
    {"when": None, "value": F(
      "No deformity, joint effusion or focal bony tenderness. Compartments soft. No calf tenderness, "
      "asymmetry or palpable cords. Distal sensation and motor function intact in all four limbs. "
-     "Bilateral symmetrical pitting oedema is present; see the cardiovascular examination.",
+     "Bilateral symmetrical pitting edema is present; see the cardiovascular examination.",
      abnormal=False)},
  ],
 
@@ -252,7 +252,7 @@ NEW_ACTION_META = {
    "A third heart sound is one of the few examination findings in dyspnoea with a high positive "
    "likelihood ratio for heart failure. It is insensitive, so its absence proves little, but hearing it "
    "in this context is close to diagnostic. The laterally displaced apex is chronic, not acute. The "
-   "symmetrical pitting oedema measures how long this has been building; it is days of accumulated "
+   "symmetrical pitting edema measures how long this has been building; it is days of accumulated "
    "sodium and water, and it will not resolve in the emergency department however much you diurese."),
  "exam_pulm": ("Perform Pulmonary Exam",
    "Crackles with an overlying expiratory wheeze. Cardiac asthma is the trap: the wheeze is deliberate "
@@ -264,7 +264,7 @@ NEW_ACTION_META = {
    "without peritonism moves an intra-abdominal catastrophe well down the list in a patient who is "
    "tachycardic and unwell."),
  "exam_msk": ("Perform Musculoskeletal Exam",
-   "Here this is a pertinent negative and nothing else. Symmetrical oedema with no calf tenderness, "
+   "Here this is a pertinent negative and nothing else. Symmetrical edema with no calf tenderness, "
    "asymmetry or cords argues against deep vein thrombosis, which is the reasoning that should stop the "
    "D-dimer being sent rather than the D-dimer result stopping it afterwards."),
  "exam_skin": ("Perform Skin Exam",
@@ -278,7 +278,7 @@ NEW_ACTION_META = {
    "against cardiogenic shock. A patient with the same vital signs who has become drowsy is a different "
    "and much more urgent problem."),
  "exam_psych": ("Perform Psychological Exam",
-   "Anxiety in acute pulmonary oedema is a symptom of hypoxaemia and air hunger, not a psychiatric "
+   "Anxiety in acute pulmonary edema is a symptom of hypoxaemia and air hunger, not a psychiatric "
    "finding, and it settles as the physiology settles. Recording it matters because it is the baseline "
    "against which a later change in mental state is judged."),
 }
@@ -318,7 +318,7 @@ def main():
     case["content_keys"]["exam"] = {
         "authoring_note":
             "Bound to the action catalog's closed set of 14 manoeuvres. Findings are placed according to "
-            "the catalog's exam_finding_routing map, not by the author's preference: peripheral oedema "
+            "the catalog's exam_finding_routing map, not by the author's preference: peripheral edema "
             "sits under the cardiovascular exam, jugular venous pressure and hepatojugular reflux under "
             "the neck exam, capillary refill and peripheral temperature under the circulation exam. "
             "exam_heent, exam_gu and exam_back are not authored and inherit the catalog default.",

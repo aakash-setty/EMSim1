@@ -25,7 +25,7 @@ SUPPORTED = "phase is breathing_supported OR phase is stabilized"
 
 EXAM = {
  "authoring_note": ("Section 11.2. Twelve of the fourteen catalog manoeuvres are authored; "
-   "genitourinary and back inherit the catalog default. Peripheral oedema sits on the "
+   "genitourinary and back inherit the catalog default. Peripheral edema sits on the "
    "cardiovascular examination and jugular venous pressure on the neck, per exam_finding_routing, "
    "not where a clinician would instinctively look for them."),
 
@@ -84,18 +84,18 @@ EXAM = {
 
  "exam_card": [
    {"when": VENT, "value": ex("Irregularly irregular, rate around 118. Heart sounds distant "
-      "against the ventilator. Bilateral pitting oedema to mid-shin, unchanged.")},
+      "against the ventilator. Bilateral pitting edema to mid-shin, unchanged.")},
    {"when": "phase is rate_controlled_congested OR phase is stabilized",
     "value": ex("Irregularly irregular at a rate you can now count, around 105. First heart sound "
       "still varies in intensity from beat to beat, which is expected in atrial fibrillation "
       "because the diastolic filling time varies. Apex is displaced laterally to the anterior "
-      "axillary line in the sixth interspace. No murmur audible. Bilateral pitting oedema to "
+      "axillary line in the sixth interspace. No murmur audible. Bilateral pitting edema to "
       "mid-shin, unchanged: days of accumulated fluid do not leave in ten minutes.")},
    {"when": None, "value": ex("Irregularly irregular, far too fast to count accurately by "
       "auscultation, around 160. The first heart sound varies in intensity beat to beat. No "
       "murmur that can be characterised at this rate. A third heart sound cannot be excluded and "
       "cannot be confirmed at 160. Apex beat displaced laterally to the anterior axillary line in "
-      "the sixth interspace, diffuse rather than tapping. Bilateral pitting oedema to mid-shin, "
+      "the sixth interspace, diffuse rather than tapping. Bilateral pitting edema to mid-shin, "
       "symmetrical, pitting to about 2 cm.")},
  ],
 
@@ -108,7 +108,7 @@ EXAM = {
       "unchanged, consistent with small effusions.")},
    {"when": None, "value": ex("Fine inspiratory crackles in both lung fields to the mid-zones, "
       "symmetrical, worse at the bases. Scattered expiratory wheeze in both lower zones, which in "
-      "this patient is peribronchial oedema rather than bronchospasm. Percussion note dull at both "
+      "this patient is peribronchial edema rather than bronchospasm. Percussion note dull at both "
       "bases. No focal consolidation, no pleural rub.")},
  ],
 
@@ -119,7 +119,7 @@ EXAM = {
  ],
 
  "exam_msk": [
-   {"when": None, "value": ex("Symmetrical pitting oedema of both lower limbs to mid-shin. No "
+   {"when": None, "value": ex("Symmetrical pitting edema of both lower limbs to mid-shin. No "
       "unilateral calf swelling, no calf tenderness, no palpable cord, no asymmetry in calf "
       "circumference. Dorsalis pedis and posterior tibial pulses present bilaterally and "
       "irregular. Full range of movement at both ankles and knees.", abnormal=False)},
@@ -131,7 +131,7 @@ EXAM = {
       "Dusky discoloration of the lips and nailbeds. No rash.")},
    {"when": None, "value": ex("Warm to the touch with a light sweat over the forehead and upper "
       "chest. Colour is reasonable centrally with no frank cyanosis. No rash, no petechiae, no "
-      "wounds, no cellulitis. Skin over both shins is taut and shiny with the oedema.")},
+      "wounds, no cellulitis. Skin over both shins is taut and shiny with the edema.")},
  ],
 
  "exam_neuro": [
@@ -220,20 +220,18 @@ LABS = {
              "ventricular rate of 160 with an ejection fraction of 30 to 35 percent, supply-demand "
              "mismatch is the expected explanation. The ECG shows no acute occlusion pattern.")}]},
 
- "pro_bnp": {"changes_with_state": False, "rules": [
+ "nt_probnp": {"changes_with_state": False, "rules": [
    {"when": None, "value": val([
      c("NT-proBNP", "3480", "pg/mL", "under 300 (age-adjusted cut-offs apply)", True)],
      comment="Markedly raised. Supportive of acute heart failure and not diagnostic of it: atrial "
              "fibrillation raises natriuretic peptides independently through atrial wall stress, "
              "and the two contributions cannot be separated in this patient. Most useful when low.",
-     verify="ASSAY NOTE, for the reviewer and not for the learner. The catalog entry is named "
-            "'pro-BNP' and this payload is written as NT-proBNP with an NT-proBNP reference "
-            "interval. BNP and NT-proBNP have different units and different cut-offs and are not "
-            "interchangeable, so which assay this case models is a decision the author has to "
-            "make, and the value and the interval both change with it. This sits in `verify` "
-            "rather than in `comment` because `comment` is rendered to the learner: a note "
-            "addressed to a reviewing physician, printed under a result, tells a resident to "
-            "distrust the number they were just given.")}]},
+     verify="ASSAY NOTE, for the reviewer and not for the learner. The catalog entry is "
+            "NT-proBNP (renamed from 'pro-BNP' in v0.9 so the assay is unambiguous) and this "
+            "payload is written as NT-proBNP with an NT-proBNP reference interval. BNP and "
+            "NT-proBNP have different units and different cut-offs and are not interchangeable. "
+            "This sits in `verify` rather than in `comment` because `comment` is the "
+            "interpretation the debrief shows after the case.")}]},
 
  "complete_blood_count_cbc": {"changes_with_state": False, "rules": [
    {"when": None, "value": panel([
@@ -385,7 +383,7 @@ IMAGING = {
   "rules": [
    {"when": None,
     "value": rep("Common femoral and popliteal veins fully compressible on both sides. No "
-      "echogenic intraluminal material. Symmetrical subcutaneous oedema of both calves.",
+      "echogenic intraluminal material. Symmetrical subcutaneous edema of both calves.",
       abnormal=False)}]},
 }
 
@@ -405,7 +403,7 @@ CONSULTANTS = {
      "anticoagulated, and his CHA2DS2-VASc is at least three so there is no argument to have "
      "about it. He needs a bed that can keep the mask on him and watch the rate, because a "
      "ventricle at thirty to thirty-five percent that has just been slowed can go the other way "
-     "if the oedema is not treated. And he needs a formal echocardiogram this admission, because "
+     "if the edema is not treated. And he needs a formal echocardiogram this admission, because "
      "if this cardiomyopathy turns out to be rate related it may recover once he stays in rhythm, "
      "and that changes what he goes home on."},
   {"when": DX_KNOWN + " AND " + ECG_DONE + " AND flag rate_control_given set",
@@ -417,7 +415,7 @@ CONSULTANTS = {
      "And know when to stop. If he is still fast after two decent doses, that is telling you "
      "something rather than asking for a third: a rate that will not come down in acute "
      "decompensated heart failure is usually being driven by the decompensation. At that point "
-     "the treatment is the oedema and the hypoxaemia, not more nodal blockade in a ventricle that "
+     "the treatment is the edema and the hypoxaemia, not more nodal blockade in a ventricle that "
      "is already struggling. Get the positive pressure on him and diurese him, and the rate will "
      "often follow."},
   {"when": DX_KNOWN + " AND " + ECG_DONE,
@@ -473,7 +471,7 @@ CONSULTANTS = {
   {"when": "flag on_niv set",
    "value": "Intensive care registrar: a patient on non-invasive ventilation is a patient we will "
      "take, but tell me what you are treating. Have you established why he is in pulmonary "
-     "oedema, and specifically does anybody know what his left ventricle looks like? Put a probe "
+     "edema, and specifically does anybody know what his left ventricle looks like? Put a probe "
      "on him before you call me back."},
   {"when": None,
    "value": "Intensive care registrar: from what you are describing he is in respiratory failure "
@@ -485,8 +483,8 @@ CONSULTANTS = {
   {"when": None,
    "value": "Respiratory registrar: I have listened to what you have described and I do not think "
      "this is a primary lung problem. Diffuse symmetrical B-lines, a raised jugular venous "
-     "pressure and peripheral oedema in a man in fast atrial fibrillation is cardiogenic pulmonary "
-     "oedema, and the wheeze you are hearing is oedema around the airways rather than "
+     "pressure and peripheral edema in a man in fast atrial fibrillation is cardiogenic pulmonary "
+     "edema, and the wheeze you are hearing is edema around the airways rather than "
      "bronchospasm. Treat the heart. If you want us later for the sleep apnoea question, that is "
      "an outpatient conversation."},
  ],

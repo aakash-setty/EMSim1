@@ -1,7 +1,7 @@
 {
  "binding_version": "0.1",
  "case_id": "mgc-meningococcemia-adrenal-01",
- "catalog_version": "0.1-draft",
+ "catalog_version": "0.2-draft",
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
   "exact": 123,

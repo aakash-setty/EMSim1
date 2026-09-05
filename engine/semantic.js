@@ -48,9 +48,13 @@
 const SEM = (function () {
   'use strict';
 
-  /* ---------- tuning ---------- */
-  const ACCEPT = 0.62;  // cosine at or above this: the semantic topic wins outright
-  const AGREE  = 0.45;  // between AGREE and ACCEPT: wins only if lexical picked the same topic
+  /* ---------- tuning ----------
+     Since v0.8 the thresholds below are NOT what decides a match. ui.js combines this
+     module's per-topic cosines with the lexical matcher's per-topic scores (see the
+     fusion block there, and FUSE). They are kept so describe() and the harness can
+     still report the model's own confidence, and so an older build reads the same. */
+  const ACCEPT = 0.62;  // cosine at or above this: the model is confident on its own
+  const AGREE  = 0.45;  // between AGREE and ACCEPT: moderate confidence
   /* VETO would withhold an answer where nothing in the bank is close, even if
      the lexical matcher found a token overlap. It is DISABLED (0) by choice,
      not by oversight.
@@ -268,7 +272,11 @@ const SEM = (function () {
       const s = scoreByTopic[t];
       if (s > s1) { s2 = s1; s1 = s; top = t; } else if (s > s2) { s2 = s; }
     }
-    return { topic: top, score: s1, margin: s1 - (s2 < 0 ? 0 : s2) };
+    /* `scores` is what the fusion in ui.js combines with the lexical ranking. The
+       out-of-scope bank, if the case has one, arrives from ui.js as a topic under
+       its reserved id and is scored like any other; it is ui.js that turns a win
+       for it into a fallback. */
+    return { topic: top, score: s1, margin: s1 - (s2 < 0 ? 0 : s2), scores: scoreByTopic };
   }
 
   return {

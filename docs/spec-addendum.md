@@ -114,8 +114,10 @@ own note says the ABG default assumes room air, which this patient is not on.
 
 Three bindings pass structurally and are clinically wrong:
 
-- The case's **BNP 2840, reference under 100** binds to `pro_bnp`. Different assay, different
-  reference interval, and the number is not transferable.
+- The case's **BNP 2840, reference under 100** bound to `pro_bnp`. Different assay, different
+  reference interval, and the number is not transferable. Resolved in v0.9: the catalog entry
+  is now `nt_probnp` (display name NT-proBNP) and the CHFE payload was rewritten as an
+  NT-proBNP value, marked UNVERIFIED.
 - The case's **numeric high-sensitivity troponin I against a stated 99th-percentile URL of 34**
   binds to `troponin_t`, whose catalog default is qualitative ("Unremarkable"). Assay, analyte
   and reporting format all differ.
@@ -235,7 +237,7 @@ reflux, and extremities. Every finding in them was unreachable in the interface.
 **Proposed.** Section 7 of the authoring requirements states that the exam set is closed,
 reproduces the routing map or points at it, and requires authors to follow it. The reason the
 catalog gives for the map is the right one and belongs in the authoring document: without a
-fixed routing an author puts pedal oedema under cardiac in one case and musculoskeletal in
+fixed routing an author puts pedal edema under cardiac in one case and musculoskeletal in
 another, and the learner concludes the tool is arbitrary rather than learning where to look.
 
 **Payload.** Exam findings take the same treatment as study results, with `kind` of

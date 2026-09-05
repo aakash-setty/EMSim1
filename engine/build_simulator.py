@@ -76,6 +76,14 @@ def action_base(ce):
                                 "stabilization": "Stabilization"}.get(tab, "Other")
     rec = {"id": ce["id"], "name": ce["display_name"], "tab": tab, "group": group,
            "category": ce["category"]}
+    # An entry placed under several groups of the same tab (v0.9: magnesium sulfate
+    # under four medication groups) lists them all, so the interface can draw the one
+    # button in each place a resident would look. The first placement stays `group`
+    # for everything that wants a single home.
+    more = [p.get("group") for p in (ce.get("placements") or [])[1:]
+            if p.get("tab") == tab and p.get("group") and p.get("group") != group]
+    if more:
+        rec["groups"] = [group] + more
     for k, out in [("state_changing", "state_changing"), ("turnaround_class", "turnaround_class"),
                    ("narration_template", "narration_template"), ("default_result", "default_result"),
                    ("default_prerequisites", "default_prerequisites"),
@@ -119,6 +127,34 @@ shared = {
     "defaultExpanded": {"stabilization": ["Stabilization"]},
     "matchThreshold": 0.32,
     "nurseIdle": "He's all yours. Tell me what you want and I'll get it.",
+    # The patient's conversational scaffolding (design 10.7). A case may override any
+    # of these under `interview`: repeat_prefixes, nothing_more, clarify_template.
+    # Written in the patient's voice, so they read as speech and not as system text.
+    "interviewDefaults": {
+        "repeatPrefixes": [
+            "'Like I said, {answer}'",
+            "'I did tell you. {answer}'",
+            "'{answer} You've asked me that.'",
+        ],
+        "nothingMore": "'No, that's everything, really.'",
+        "clarifyTemplate": "'Sorry, do you mean {a}, or {b}?'",
+        # Questions that mean "go on" about whatever was last asked. Matched by the
+        # interface before the topic matcher runs, only when a topic has already been
+        # spoken about in this run.
+        "morePhrasings": ["anything else", "what else", "go on", "and", "tell me more",
+                          "more", "is that everything", "is that all", "anything more",
+                          "and then", "carry on", "what happened next", "then what"],
+        # The uncertainty band. A match whose combined score sits under this clears the
+        # threshold without much to spare, so the patient echoes the topic before
+        # answering and a wrong match is visible at once in the transcript.
+        "echoBelow": 0.62,
+        # The matcher asks which topic was meant when the top two combined scores sit
+        # within this margin of each other and both clear the threshold.
+        "clarifyMargin": 0.04,
+        # A short question (this many words or fewer) that matches nothing well is tried
+        # against the last topic's facts before it is given up on.
+        "followUpMaxWords": 6,
+    },
     "globalNormalExam": "No abnormality detected on this examination.",
     "globalConsultant": ("They pick up, listen for a moment, and say they are not sure why they "
                          "have been called about this patient."),
@@ -238,6 +274,18 @@ def build_pack(pack):
     bindmap = json.load(open(pack.binding_map))
     notes = []
 
+    # Interview banks. A topic's hand-written `variants` and its generated
+    # `expanded_variants` (catalog/expand_interview_variants.py) are one bank at
+    # runtime; they are kept apart in the case file so provenance survives and so the
+    # generator can replace its own block without touching the author's. Merged here,
+    # once, and nothing downstream knows there were two lists.
+    for t in case.get("interview", {}).get("topics", []):
+        extra = t.pop("expanded_variants", None) or []
+        have = {v.lower() for v in t.get("variants", [])}
+        for v in extra:
+            if v.lower() not in have:
+                t.setdefault("variants", []).append(v); have.add(v.lower())
+
     rows = {r["case_id"]: r for r in binding["rows"]}
     rev = {}                                   # catalog id -> [case ids], case-file order
     for a in case["case_actions"]:
@@ -304,6 +352,21 @@ def build_pack(pack):
             notes.append("alternative diagnosis %r does not resolve to a catalog id"
                          % a.get("label", a.get("catalog_id")))
 
+    # v0.9. additional_diagnoses: what is also true of the patient and appropriate to
+    # name at handover beside the primary. Resolved the same way; an id that is also
+    # the correct diagnosis is dropped with a note, because the primary is scored on
+    # its own terms and crediting it twice would inflate the handoff score.
+    addl_dx = {}
+    for a in h.get("additional_diagnoses", []) or []:
+        hit = resolve_dx(a.get("catalog_id")) or resolve_dx(a.get("label"))
+        if not hit:
+            notes.append("additional diagnosis %r does not resolve to a catalog id"
+                         % a.get("label", a.get("catalog_id")))
+        elif hit == correct_dx:
+            notes.append("additional diagnosis %r is the correct diagnosis; ignored" % hit)
+        else:
+            addl_dx[hit] = a.get("explanation", "")
+
     disp_labels = {h["correct_disposition"]["id"]: h["correct_disposition"]["label"]}
     for d in h.get("alternative_dispositions", []):
         disp_labels[d["id"]] = d["label"]
@@ -349,6 +412,7 @@ def build_pack(pack):
         "correctDxExplanation": h["correct_diagnosis"].get("explanation", ""),
         "altDx": alt_dx,
         "altDxDefensible": alt_dx_defensible,
+        "addlDx": addl_dx,
         "promptCap": case.get("prompt_cap_recommendation", {}).get("per_phase", 3),
         "buildNotes": notes,
     }

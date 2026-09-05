@@ -235,7 +235,7 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
-### `action_tag/pro_bnp`
+### `action_tag/nt_probnp`
 
 Single unconditional rule; nothing to enumerate.
 
@@ -533,7 +533,7 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
-### `labs/pro_bnp`
+### `labs/nt_probnp`
 
 Single unconditional rule; nothing to enumerate.
 

@@ -2,7 +2,7 @@
 
 `cases/CHFE/`, case id `adhf-hfref-01`
 
-**Acute decompensated HFrEF, hypertensive acute cardiogenic pulmonary oedema**
+**Acute decompensated HFrEF, hypertensive acute cardiogenic pulmonary edema**
 Authored against `case-authoring-requirements.md` v0.3 and `system-design-v2.md` v0.4, the
 revised documents produced from this work.
 Bound to `action-catalog.json` v0.1-draft and `diagnosis-catalog.json` v0.1-draft.
@@ -41,7 +41,7 @@ with four days of progressive breathlessness and an acute worsening since 04:00.
 hypertensive at 188/104, tachycardic at 118, saturating 87 percent on 6 L nasal cannula,
 respiratory rate 32, afebrile. He is warm, well perfused, orthopnoeic, has a raised jugular venous
 pressure, an S3, bilateral crackles with an overlying expiratory wheeze, symmetrical pitting
-oedema, and is four kilograms above his stated dry weight. He ran out of furosemide five days ago
+edema, and is four kilograms above his stated dry weight. He ran out of furosemide five days ago
 and ate a salt load at a family event.
 
 Nohria profile B, warm and wet. The intended path is non-invasive ventilation, then afterload
@@ -201,13 +201,16 @@ words heart failure. I think that is the right line but it is a line, and you sh
 one is likely to do this, and if they did it would be bad. Halting for it may be more punitive
 than instructive.
 
-**4.9 Two results are attached to the wrong assay.** The case's BNP of 2840 against a
-reference under 100 binds to the catalog's pro-BNP entry, and its numeric high-sensitivity
+**4.9 One result is attached to the wrong assay.** The case's numeric high-sensitivity
 troponin I against a 99th-percentile URL of 34 binds to a qualitative troponin T. Structurally
-both bind cleanly. Clinically the numbers are not transferable between those assays. Decide
+it binds cleanly. Clinically the number is not transferable between those assays. Decide
 which assay the case is teaching, then either rewrite the value or ask for the catalog entry.
+The natriuretic peptide no longer has this problem: in v0.9 the catalog entry was renamed
+NT-proBNP and the case's BNP of 2840 was rewritten as an NT-proBNP of 9600 pg/mL against
+an NT-proBNP interval. That conversion is approximate and is marked UNVERIFIED in the case
+file; replace the number with one from your own laboratory.
 
-**4.8 Every specific number.** BNP 2840, high-sensitivity troponin I 62 ng/L against a stated
+**4.8 Every specific number.** NT-proBNP 9600 (converted, see 4.9), high-sensitivity troponin I 62 ng/L against a stated
 reference of 34, creatinine 1.62 against a baseline of 1.4, sodium 133, pH 7.29 with pCO2 54,
 lactate 2.1, D-dimer 0.94, haemoglobin 12.4. These are plausible for the presentation and none is
 verified. Reference intervals in particular are assay-dependent and the troponin reference should
@@ -434,7 +437,7 @@ runs through the same tools without any of them being edited. See the repository
 | `CHFE-binding-map.json` | authored | case id to catalog id, one row per action, with the placement for anything the catalog lacks |
 | `CHFE-scenarios.json` | authored | The ten end-to-end paths the simulator walks |
 | `CHFE-tests.js` | authored | Case-specific engine assertions |
-| `CHFE-matcher-eval.js` | authored | Interview matcher accuracy on held-out phrasings |
+| `CHFE-matcher-eval-questions.json` | authored | Held-out phrasings for the interview matcher, run by `engine/matcher_eval.mjs` |
 | `CHFE-review-packet.md` | authored | This document |
 | `CHFE-binding.json` | generated | The binding with derived statuses |
 | `CHFE-review-matrix.md` | generated | **The main clinical review artifact.** Section 14.2 |
@@ -500,7 +503,7 @@ Ten to twenty variants per topic is not enough for lexical matching, and this ca
 of ten. The number to watch is not overall accuracy but the wrong-topic rate on topics whose answers
 change management, because a fallthrough is visible to the learner and a wrong topic is not.
 
-Reproduce it with `node cases/CHFE/CHFE-matcher-eval.js`. The tool extracts the matcher
+Reproduce it with `node engine/matcher_eval.mjs --semantic --only CHFE` (the per-pack harness is retired in v0.8, and the held-out set now lives in `CHFE-matcher-eval-questions.json` with thirty out-of-scope questions; current numbers are 39 of 46 in scope, 4 wrong topics, 23 of 30 refused). The tool extracts the matcher
 from the built prototype rather than reimplementing it, so the numbers always describe
 what actually ships. **On the current build the single wrong topic is a management-changing
 one**: "what medicines are you on" is matched to medication adherence rather than current
@@ -563,7 +566,7 @@ the seven alternatives, are now bound to real ids and verified scoring correctly
 interface.
 
 **Check the eight bindings.** In particular, the case's correct answer carries a longer label
-than the catalog's ("...with cardiogenic pulmonary oedema" against plain "...reduced ejection
+than the catalog's ("...with cardiogenic pulmonary edema" against plain "...reduced ejection
 fraction"), and the resident now sees the catalog's shorter name. Confirm that is acceptable,
 or ask for a more specific catalog entry.
 
@@ -633,7 +636,7 @@ findings were unreachable. `restructure_exam.py` redistributes them.
 | Accessory muscle use, work of breathing, posture | Breathing | Newly written during redistribution |
 | Capillary refill, peripheral temperature, pulse quality | Circulation | From the old extremities manoeuvre |
 | Jugular venous pressure, hepatojugular reflux, trachea | Neck | Two old manoeuvres merged into one |
-| Third heart sound, murmur, apex beat, **pitting oedema** | Cardiovascular | The map puts oedema here, not under musculoskeletal or circulation |
+| Third heart sound, murmur, apex beat, **pitting edema** | Cardiovascular | The map puts edema here, not under musculoskeletal or circulation |
 | Crackles, wheeze, air entry | Pulmonary | Unchanged content |
 | Tender liver, distension | Abdominal | Unchanged content |
 | Calf tenderness, asymmetry, cords | Musculoskeletal | The deep vein thrombosis pertinent negative |
@@ -656,9 +659,9 @@ not. It is now part of the neck exam and happens automatically whenever the neck
 The teaching note is folded in. Whether that is an acceptable loss is your call; the
 alternative is asking for a catalog entry.
 
-*The oedema placement will look wrong to some readers.* Peripheral oedema under the
+*The edema placement will look wrong to some readers.* Peripheral edema under the
 cardiovascular exam rather than the extremities is the catalog's decision, and the reason it
-gives is sound: without a fixed routing an author puts pedal oedema under cardiac in one case
+gives is sound: without a fixed routing an author puts pedal edema under cardiac in one case
 and musculoskeletal in another, and the learner concludes the tool is arbitrary. The
 musculoskeletal exam carries a cross-reference so a learner who looks there is not stranded.
 

@@ -4,7 +4,7 @@
 
 Atrial fibrillation with a rapid ventricular response, complicated by acute decompensated
 heart failure on a newly recognised reduced ejection fraction and cardiogenic pulmonary
-oedema. Sixty-eight year old man, EMS to the resuscitation bay.
+edema. Sixty-eight year old man, EMS to the resuscitation bay.
 
 **Nothing in this pack has been reviewed by a physician.** The clinical seed came from
 one; the case file did not.
@@ -74,7 +74,7 @@ than the one at 160. It is set to the same four minutes deliberately, so the cas
 teach that treating the rate buys time that has not been shown to exist. If you disagree,
 lengthen it.
 
-**2.2 Two doses, thirty seconds each, and a nurse line to go with them.**
+**2.2 Two doses, ten seconds each, and a nurse line to go with them.**
 
 **The first dose is a partial response and the second is what works.** One administration
 of any rate-controlling agent takes twenty-two beats off the ventricular rate, so 160
@@ -108,9 +108,9 @@ last teaching point is the one most worth your eye**: it is the case telling a r
 that the third dose is not the answer, and it is a claim about when to stop treating the
 number.
 
-**2.2a Thirty seconds for each dose to work, and a nurse line to go with it.** Both
-rate-control transitions carry `after_seconds: 30, measured_from: guard_true`, so the
-ventricular rate falls about half a minute after the drug rather than on the click. Thirty
+**2.2a Ten seconds for each dose to work, and a nurse line to go with it.** Both
+rate-control transitions carry `after_seconds: 10, measured_from: guard_true`, so the
+ventricular rate falls about ten seconds after the drug rather than on the click. Ten
 seconds is a heavy compression: intravenous metoprolol takes several minutes, amiodarone
 longer, and digoxin considerably longer than either. It is the same number for all three
 agents even though their real onsets differ by an order of magnitude. Representing that
@@ -118,16 +118,17 @@ difference needs three separate case actions and three separate transitions, and
 is that the critical action can no longer be "rate control" as one act. **That is a real
 trade and it is yours to make.**
 
-It was sixty seconds and was halved on the author's instruction, because a minute of an
-unchanged 160 after pushing a drug reads as the drug having failed rather than as a drug
-taking effect. The line the nurse now says the moment any rate-controlling agent goes in,
-"these agents can take a bit of time to kick in", is what carries the teaching the delay
-was there for, and the delay is what stops the number being a button. Thirty seconds sits
-exactly on the validator's hard floor. The soft warning below sixty was narrowed so it
-does not fire here, and the reasoning is worth checking: that warning is a fairness rule
-about deteriorations the resident could not have prevented, and a delayed consequence of
-an action they took has nothing to prevent and no reflex to test. If you disagree with
-that scoping, it is in `run_checks` in `engine/validate_case.py`.
+It was sixty seconds, was halved on the author's instruction, and in v0.9 was cut to ten
+on the same instruction, because an unchanged 160 after pushing a drug reads as the drug
+having failed rather than as a drug taking effect. The line the nurse says the moment any
+rate-controlling agent goes in, "these agents can take a bit of time to kick in", is what
+carries the teaching the delay was there for, and the delay is what stops the number being
+a button. Ten seconds is below the validator's thirty-second floor, and the floor was
+scoped in v0.9 rather than the number being forced up: the floor is a fairness rule about
+deteriorations the resident could not have prevented, and a delayed consequence of an
+action they took has nothing to prevent and no reflex to test, so that pattern now has a
+five-second floor. If you disagree with that scoping, it is in `run_checks` in
+`engine/validate_case.py`.
 
 **2.3 Diltiazem drops the systolic pressure twenty points and the diastolic ten.** Your
 instruction was that a learner who gives it before knowing the ejection fraction must not
@@ -217,11 +218,11 @@ than a physiological claim, and it is worth making deliberately.
 ## 4. The three places this case departs from your brief
 
 **4.1 Magnesium replacement is tagged recommended, not critical.** Your critical action
-four bundled correcting the hypomagnesaemia with the loop diuretic. The engine computes
+four bundled correcting the hypomagnesemia with the loop diuretic. The engine computes
 the set of critical actions a phase expects once, on entry to that phase, so a tag that
 only becomes critical after the magnesium level has resulted can never appear in the
 missed list, and an unconditionally critical tag tells a resident who never had reason to
-suspect hypomagnesaemia that they missed a critical action. The teaching is carried in the
+suspect hypomagnesemia that they missed a critical action. The teaching is carried in the
 debrief note and in the laboratory comment instead.
 
 **To overturn this**, change the tag on `magnesium_sulfate_bolus` in `AFRVR-case.json`
@@ -253,7 +254,7 @@ three rate-control agents are not scored differently from each other. A learner 
 metoprolol into a man at a saturation of 88 percent with a respiratory rate of 30, before
 any positive pressure, is credited with the critical action and reads the caveat only if
 they open the expander. Your own brief says aggressive beta blockade in active pulmonary
-oedema is not the goal, and the case cannot express "acceptable, but the least comfortable
+edema is not the goal, and the case cannot express "acceptable, but the least comfortable
 of the three, and worse before the breathing is supported" as a tag.
 
 **The alternatives, none of them free.** Splitting metoprolol out as its own action with a
@@ -312,6 +313,8 @@ blocker for this one.
 
 ## 7. What the interview matcher does on this case, and it is not good
 
+**Superseded in v0.8.** The figures below are the lexical matcher before the bank expansion, the out-of-scope bank and the fusion redesign. The current held-out numbers, model present, are 46 of 52 in scope correct, 2 wrong topics, 1 fallthrough, 4 clarifying questions, and 24 of 30 out-of-scope questions refused. Reproduce with `node engine/matcher_eval.mjs --semantic --only AFRVR`; authoring section 10.6 carries the before-and-after table. The section is kept because its reading of what the numbers do and do not support still stands.
+
 Held-out set: `AFRVR-matcher-eval-questions.json`, 47 in-scope phrasings stratified by
 register, 5 excluded as genuinely ambiguous, and **30 out-of-scope questions**, which is
 the floor authoring section 10.6 sets and which neither earlier pack meets. None of these
@@ -362,7 +365,7 @@ quoting any of these numbers outside this pack.
 ## 7a. Reports carry findings and no interpretation, and they are short
 
 Every imaging report in this case ends where the findings end. None of them says
-"interpretation: cardiogenic pulmonary oedema", none of them calls the ST depression
+"interpretation: cardiogenic pulmonary edema", none of them calls the ST depression
 rate-related, and none of them concludes anything. That was the author's instruction and
 the reasoning holds up: naming the rhythm and deciding what the ST depression means is the
 task this case exists to set, and a report that does it first removes the task. Nothing was
@@ -421,7 +424,7 @@ lines, which are in the deterioration timeline instead.
 Every reference in this pack carries `[UNVERIFIED in this pack, confirm before release]`.
 The interface strips the marker before display; the case file and this packet keep it. The
 citations are 3CPO, the Cochrane review of non-invasive ventilation in cardiogenic
-pulmonary oedema, DOSE, RACE II, LOMAGHI, and the 2023 ACC/AHA/ACCP/HRS atrial fibrillation
+pulmonary edema, DOSE, RACE II, LOMAGHI, and the 2023 ACC/AHA/ACCP/HRS atrial fibrillation
 guideline. **A plausible-looking citation to a paper that does not say what is claimed will
 be believed by a learner.** Check them.
 
@@ -471,7 +474,7 @@ is yours.
 
 - [ ] every reference interval is right for the assays you are modelling
 - [ ] the two 240-second deadlines are claims you will defend
-- [ ] the 30-second rate-control delay is a claim you will defend, and the nurse line
+- [ ] the 10-second rate-control delay is a claim you will defend, and the nurse line
       that accompanies it says what you want it to say
 - [ ] two doses is the right number, twenty-two beats is the right partial response, and
       the fifty-five second obligation asks at the right moment

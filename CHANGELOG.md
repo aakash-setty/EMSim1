@@ -5,6 +5,144 @@ is usable with learners.
 
 ---
 
+## v0.9: several diagnoses, seven scores, and the numbers without the reading
+
+**A handover names more than one thing.** The handoff tab now takes an ordered list of
+diagnoses, the first being the primary, with a promote and a remove on each row and the
+search excluding what is already listed. The payload carries `diagnoses` beside the old
+singular, which the fold keeps in step, so every earlier log and test still reads. Cases
+author `handoff.additional_diagnoses`, what is also true of the patient and appropriate to
+name beside the primary; AFRVR lists the heart failure, the pulmonary edema, the
+respiratory failure and the hypomagnesemia, CHFE the pulmonary edema, the hypercapnic
+respiratory failure, the hypertensive emergency and the hyponatraemia, MGCA septic shock,
+adrenal crisis, disseminated intravascular coagulation, acute kidney injury and
+hypoglycaemia. All three lists were written by an AI assistant from the cases' own
+findings; the author reviewed and approved the lists on 5 September 2026, and the
+explanations under them remain unsigned. The debrief's Handoff section gives one verdict per
+diagnosis listed, prints the authored ones that were not named, and prints the case's own
+diagnosis whenever the resident did not. The validator checks the new list; `new_case.py`
+scaffolds it; authoring 12.1 and design 9 describe it.
+
+**The Summary is seven scores.** History, Physical, Stabilization, Interventions,
+Investigations, Consults and Handoff, computed in the engine (`summaryScores`) from what
+the case authored and printed with their arithmetic. Two new optional fields feed it:
+`interview.key_topics` (every topic counts without it) and
+`debrief_configuration.key_exams` (for a case that tags no exam). The clinical-domain table
+is gone from the debrief. Authoring 13.0 and design 11.2.
+
+**Lab panels show numbers and nothing else while the case runs.** The authored `comment`
+under a panel was the case reading the result for the resident. It is now printed once,
+in a new debrief section, "Your results, read", with the panel it belongs to. The
+reviewer-facing `verify` note, which had been printing under results as "Needs
+verification", is no longer shown to the learner at all.
+
+**Three debrief defects removed.** Two removal notices had been written as comments inside
+the debrief's template literal and were printing verbatim in every debrief. "What was
+acting, and for how long" is gone on the author's instruction.
+
+**NT-proBNP.** The catalog entry `pro_bnp`, displayed as "pro-BNP", is now `nt_probnp`,
+"NT-proBNP", so the assay is unambiguous. AFRVR was already authored as NT-proBNP. CHFE's
+BNP of 2840 against a reference under 100 was rewritten as an NT-proBNP of 9600 pg/mL
+against an NT-proBNP interval; the conversion is approximate and the case file says so.
+
+**Magnesium sulfate** is in the catalog as an ordinary intravenous medication, placed under
+Respiratory, Cardiac, Miscellaneous and OB/GYN at once (one id, four placements; the
+interface now draws an entry in every group it is placed under). The bolus entry stays, and
+AFRVR's repletion act covers both.
+
+**AFRVR timing.** Rate control acts ten seconds after the drug rather than thirty. The
+validator's thirty-second floor was a fairness rule for deteriorations that had been
+applied to every timed transition; it now applies to the two patterns where something
+happens to the resident, and a delayed consequence of the resident's own action has a
+five-second floor instead. The positive-pressure prompt fires at 80 and 200 seconds
+rather than 40 and 100. Moving it later pushed its escalation past the per-phase prompt
+cap, so an escalation is now exempt from the cap: it neither consumes a slot nor is
+silenced by one.
+
+**Two interface changes.** A click on the room to the left of the expanded record minimises
+it, the same as the button in its corner. Submitting an order clears the search box on
+every tab, not only the one the order was sent from.
+
+---
+
+## The interview: measured, then rebuilt
+
+**The embedding layer had never been run.** `semantic.js` shipped in v0.5 with thresholds
+its own comments called unmeasured, because the machine that wrote it could not reach the
+model weights, and the only harness that could measure it was never pointed at all three
+packs. The first thing this version did was measure. The shipped matcher, run through its
+real `matchQuestion` path with the model present, answered 39 of 52 held-out questions on
+AFRVR, 40 of 46 on CHFE and 23 of 37 on MGCA, and answered 19, 19 and 21 of 30 unrelated
+questions with a confident wrong topic.
+
+**Then the banks were expanded**, from 340 to 570 phrasings per pack to 970 to 1200, from a
+shared library keyed by concept (`catalog/interview_phrasings.py`) that mixes lay
+paraphrase, clinical shorthand and conversational openers. The generated phrasings sit in
+`expanded_variants` beside the author's own and merge at build time. Every sixth one is
+withheld into a tuning set rather than added, and nothing that matches a held-out question
+is written anywhere. This took fallthroughs on AFRVR from five to none.
+
+**Then "nothing relevant" got a neighbourhood.** Each case now carries an out-of-scope
+bank, generated from `catalog/interview_out_of_scope.py` and filtered to what the case does
+not cover, that both matchers score like a topic. The cosine ranges of in-scope and
+out-of-scope questions had overlapped so completely that no threshold could separate them;
+this is what doubled the out-of-scope refusal rate.
+
+**Then the fusion was replaced.** The ladder (model wins above 0.62, agreement above 0.45,
+else lexical) was measurably handing correct lexical answers to near-tie model guesses. A
+per-topic weighted sum replaces it, with two rescue branches for evidence only one matcher
+can see ("NKDA?" is invisible to the model; "Temp at home?" is invisible to the lexicon).
+Every parameter was swept on the tuning sets and quoted on the held-out sets.
+
+**Two lexical defects were fixed on the way.** A typo repair could rewrite "taking" to
+"making", which was a rare word belonging to urine output, and the rare-word override then
+handed a 0.77 match on pregnancy to a topic scoring 0.35. The override now acts only on
+words the learner typed that the bank holds, and only on a real contender. And "hx" is a
+lexicon entry rather than a rare token.
+
+Held-out, model present, before and after: AFRVR 39 to 46 of 52 correct, wrong topics 6 to
+2, out-of-scope refused 11 to 24 of 30. CHFE 40 to 39 of 46, 5 to 4, 11 to 23. MGCA 23 to
+26 of 37, 6 to 3, 9 to 21. Four, one and three questions now produce a clarifying question
+instead of an answer. Authoring 10.6 has the table.
+
+**The patient's side of the conversation is new** (design 20.4, authoring 10.7). A topic
+may carry `facts`, atomic pieces of its answer with their own phrasings, and every topic
+carries an `echo`. A short follow-up is tried against the last topic's facts before the
+whole matcher; "anything else?" returns what is untold; a repeat gets a restatement under
+a rotating prefix; a marginal match opens with the topic echoed so a wrong guess shows;
+and two candidates within a hair of each other produce "Sorry, do you mean X, or Y?" rather
+than a guess. All of it is derived in the fold from the log, so it replays. Facts are
+authored for eight topics per pack; the rest gain everything except follow-ups.
+
+**Retired.** `engine/eval/interview-eval-CHFE.json` and the three per-pack
+`<P>-matcher-eval.js` harnesses. One harness, one question-file schema, three packs. Three
+CHFE questions that turned out to be verbatim bank variants were removed from its held-out
+set, and the expected topics of nine compound questions that had been recorded as a single
+topic were corrected to the pair the matcher rightly answers.
+
+**Not done.** A stronger embedding model and a cross-encoder reranker were both planned and
+neither could be measured, because neither this environment nor the authoring machine can
+reach huggingface.co. The harness takes `--model-path`; a machine with access can measure
+a swap in one run.
+
+---
+
+## Submitting an order puts the tab back where the search started
+
+The filter box clears, every group on that tab collapses, and the panel scrolls to the top.
+Before this, a resident who filtered Interventions for the drug they wanted, opened a group
+and scrolled to it came back after submitting to exactly that view: a filtered list, scrolled
+down, showing the thing they had just given. Every subsequent order began by undoing the last
+one's search.
+
+Only the submitted tab is affected, so a filter typed on Investigations survives an order
+submitted on Interventions, and nothing in the run is touched, only the view. Stabilization's
+default-open group is closed by this rather than reopened: that default is there so a resident
+meets vascular access and the monitor on the opening screen without hunting for them, which is
+a question about the start of a case and not about the start of a search.
+
+---
+
 ## The heartbeat is a soft beep rather than a knock
 
 The beat was a thump: a sine whose pitch fell a major sixth over 140 ms under a 12 ms attack
@@ -235,7 +373,7 @@ which nothing renders and which the catalog's own defaults already use for exact
 **AFRVR's imaging reports lost their interpretation lines and about two thirds of their
 length.** An editorial decision in the case rather than an engine change, recorded here
 because the argument generalises. A report that ends "interpretation: cardiogenic pulmonary
-oedema" has done the work the case exists to set; the reasoning belongs in the debrief note
+edema" has done the work the case exists to set; the reasoning belongs in the debrief note
 for that study, where a learner meets it after committing to an answer. And length in a
 report reads as importance, so a long report about a negative study actively misleads. The
 tracing went from about a hundred words to forty-three, the cardiac ultrasound from a

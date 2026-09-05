@@ -166,6 +166,9 @@ def skeleton(prefix, title):
             "out_of_scope_fallback": [{"when": None,
                                        "value": todo("10.3", "non-committal reply revealing nothing")}],
             "topics": [],
+            # v0.9. The topics whose answers change management, read by the summary's
+            # History score. Without it every topic counts.
+            "key_topics": [],
         },
         "handoff": {
             "correct_disposition": {"id": todo("12", "disposition id"),
@@ -177,9 +180,17 @@ def skeleton(prefix, title):
                                   "label": todo("12", "label"),
                                   "explanation": todo("12", "why this is right")},
             "alternative_diagnoses": [],
+            # v0.9. What is also true of the patient and appropriate to name beside the
+            # primary at handover: {catalog_id, label, explanation}. The learner lists as
+            # many diagnoses as apply; each of these earns credit when named beside the
+            # primary and is printed in the debrief when it is not. Authoring 12.1.
+            "additional_diagnoses": [],
         },
         "debrief_configuration": {
             "intended_path": ["presentation", "improving", "case_complete"],
+            # v0.9. Read by the summary's Physical score when no exam is tagged critical
+            # or recommended. Authoring 13.0.
+            "key_exams": [],
             "clinical_domains": [
                 {"id": "examination", "label": "Physical examination", "actions": []},
                 {"id": "disposition_and_communication", "label": "Disposition and communication",

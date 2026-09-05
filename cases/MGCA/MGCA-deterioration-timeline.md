@@ -22,14 +22,14 @@ Prompts in this phase that set steroid_given, which is what the fairness rule re
 - `hydrocortisone_bolus` first at 70s, 170s of lead
 - `hydrocortisone_bolus` escalation at 140s, 100s of lead
 
-All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 are heard):
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 45s `ceftriaxone` (first)
 2. 55s `normal_saline_1l_bolus` (first)
 3. 70s `hydrocortisone_bolus` (first)
-4. 90s `ceftriaxone` (escalation)  **suppressed by the cap**
-5. 120s `normal_saline_1l_bolus` (escalation)  **suppressed by the cap**
-6. 140s `hydrocortisone_bolus` (escalation)  **suppressed by the cap**
+4. 90s `ceftriaxone` (escalation)
+5. 120s `normal_saline_1l_bolus` (escalation)
+6. 140s `hydrocortisone_bolus` (escalation)
 
 **Rule 6: at 240s (measured from phase_entry) → `progressive_meningococcaemia`**
 
@@ -43,14 +43,14 @@ Prompts in this phase that set abx_given, which is what the fairness rule requir
 - `ceftriaxone` first at 45s, 195s of lead
 - `ceftriaxone` escalation at 90s, 150s of lead
 
-All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 are heard):
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 45s `ceftriaxone` (first)
 2. 55s `normal_saline_1l_bolus` (first)
 3. 70s `hydrocortisone_bolus` (first)
-4. 90s `ceftriaxone` (escalation)  **suppressed by the cap**
-5. 120s `normal_saline_1l_bolus` (escalation)  **suppressed by the cap**
-6. 140s `hydrocortisone_bolus` (escalation)  **suppressed by the cap**
+4. 90s `ceftriaxone` (escalation)
+5. 120s `normal_saline_1l_bolus` (escalation)
+6. 140s `hydrocortisone_bolus` (escalation)
 
 ### `adrenal_crisis`: Progressive adrenal crisis
 
@@ -68,17 +68,17 @@ Prompts in this phase that set steroid_given, which is what the fairness rule re
 - `hydrocortisone_bolus` first at 70s, 140s of lead
 - `hydrocortisone_bolus` escalation at 140s, 70s of lead
 
-All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 are heard):
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 45s `ceftriaxone` (first)
 2. 45s `norepinephrine_drip` (first)
 3. 55s `normal_saline_1l_bolus` (first)
 4. 70s `hydrocortisone_bolus` (first)  **suppressed by the cap**
-5. 90s `ceftriaxone` (escalation)  **suppressed by the cap**
+5. 90s `ceftriaxone` (escalation)
 6. 90s `consult_critical_care` (first)  **suppressed by the cap**
-7. 100s `norepinephrine_drip` (escalation)  **suppressed by the cap**
-8. 120s `normal_saline_1l_bolus` (escalation)  **suppressed by the cap**
-9. 140s `hydrocortisone_bolus` (escalation)  **suppressed by the cap**
+7. 100s `norepinephrine_drip` (escalation)
+8. 120s `normal_saline_1l_bolus` (escalation)
+9. 140s `hydrocortisone_bolus` (escalation)
 
 ### `progressive_meningococcaemia`: Progressive meningococcaemia with worsening disseminated intravascular coagulation
 
@@ -96,17 +96,17 @@ Prompts in this phase that set abx_given, which is what the fairness rule requir
 - `ceftriaxone` first at 45s, 165s of lead
 - `ceftriaxone` escalation at 90s, 120s of lead
 
-All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 are heard):
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 45s `ceftriaxone` (first)
 2. 45s `norepinephrine_drip` (first)
 3. 55s `normal_saline_1l_bolus` (first)
 4. 70s `hydrocortisone_bolus` (first)  **suppressed by the cap**
-5. 90s `ceftriaxone` (escalation)  **suppressed by the cap**
+5. 90s `ceftriaxone` (escalation)
 6. 90s `consult_critical_care` (first)  **suppressed by the cap**
-7. 100s `norepinephrine_drip` (escalation)  **suppressed by the cap**
-8. 120s `normal_saline_1l_bolus` (escalation)  **suppressed by the cap**
-9. 140s `hydrocortisone_bolus` (escalation)  **suppressed by the cap**
+7. 100s `norepinephrine_drip` (escalation)
+8. 120s `normal_saline_1l_bolus` (escalation)
+9. 140s `hydrocortisone_bolus` (escalation)
 
 ### `frank_septic_shock`: Frank septic shock after intubation
 
@@ -129,17 +129,17 @@ Prompts in this phase that set abx_given, pressor_running, steroid_given, which 
 - `norepinephrine_drip` escalation at 100s, 200s of lead
 - `hydrocortisone_bolus` escalation at 140s, 160s of lead
 
-All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 are heard):
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 45s `ceftriaxone` (first)
 2. 45s `norepinephrine_drip` (first)
 3. 55s `normal_saline_1l_bolus` (first)
 4. 70s `hydrocortisone_bolus` (first)  **suppressed by the cap**
-5. 90s `ceftriaxone` (escalation)  **suppressed by the cap**
+5. 90s `ceftriaxone` (escalation)
 6. 90s `consult_critical_care` (first)  **suppressed by the cap**
-7. 100s `norepinephrine_drip` (escalation)  **suppressed by the cap**
-8. 120s `normal_saline_1l_bolus` (escalation)  **suppressed by the cap**
-9. 140s `hydrocortisone_bolus` (escalation)  **suppressed by the cap**
+7. 100s `norepinephrine_drip` (escalation)
+8. 120s `normal_saline_1l_bolus` (escalation)
+9. 140s `hydrocortisone_bolus` (escalation)
 
 ## 2. The do-nothing trajectory
 

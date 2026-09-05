@@ -84,12 +84,12 @@ HANDOFF = {
  "correct_diagnosis": {
    "catalog_id": "dx_atrial_fibrillation_with_rapid_ventricular_response",
    "label": "Atrial fibrillation with rapid ventricular response, with acute decompensated heart "
-            "failure and cardiogenic pulmonary oedema on a newly recognised reduced ejection "
+            "failure and cardiogenic pulmonary edema on a newly recognised reduced ejection "
             "fraction",
    "explanation": (
      "New atrial fibrillation with a rapid ventricular response in a man with previously "
      "undiagnosed moderately to severely reduced left ventricular systolic function, presenting as "
-     "acute decompensated heart failure with cardiogenic pulmonary oedema. Whether the arrhythmia "
+     "acute decompensated heart failure with cardiogenic pulmonary edema. Whether the arrhythmia "
      "caused the cardiomyopathy or the cardiomyopathy precipitated the arrhythmia cannot be "
      "settled in the department and does not need to be: a sustained rapid ventricular response "
      "can produce a tachycardia-induced cardiomyopathy, and a dilated left atrium in an existing "
@@ -104,14 +104,14 @@ HANDOFF = {
    "verdict": "acceptable_with_qualification",
    "explanation": (
      "This is the other half of the same answer and it is marked defensible rather than wrong. A "
-     "learner who selected it has recognised the pulmonary oedema and the reduced ejection "
+     "learner who selected it has recognised the pulmonary edema and the reduced ejection "
      "fraction, which is the harder half of the case. What it leaves out is the arrhythmia driving "
      "it, and the reason that matters is that it is the half that generates the rate-control and "
      "anticoagulation decisions. The full formulation names both, and if you can only choose one "
      "id, name the one the treatment turns on. The simulator scores a single catalog id, which is "
      "a limitation of the tool rather than a claim that this answer is wrong.")},
   {"catalog_id": "dx_cardiogenic_pulmonary_edema",
-   "label": "Cardiogenic pulmonary oedema",
+   "label": "Cardiogenic pulmonary edema",
    "explanation": (
      "True and incomplete. It describes the radiographic and ultrasonographic finding and names "
      "neither the arrhythmia nor the ventricular dysfunction underneath it, so it generates no "
@@ -132,7 +132,7 @@ HANDOFF = {
    "label": "Acute pulmonary embolism",
    "explanation": (
      "Usually selected downstream of a D-dimer that should not have been sent. The pretest "
-     "probability is low: gradual onset over more than a day, symmetrical bilateral leg oedema "
+     "probability is low: gradual onset over more than a day, symmetrical bilateral leg edema "
      "with no calf tenderness or asymmetry, no immobilisation, travel, surgery or malignancy, and "
      "a complete alternative explanation for every symptom. The bedside ultrasound settles it: "
      "diffuse bilateral B-lines with a poorly contracting left ventricle and a plethoric inferior "
@@ -167,10 +167,50 @@ HANDOFF = {
      "afebrile, oriented, has no goitre and no eye signs, and his TSH is normal.")},
  ],
 
+ # v0.9. What is also true of this patient and appropriate to name beside the primary at
+ # handover. The learner lists as many diagnoses as apply; the first is scored as the primary
+ # against correct_diagnosis and alternative_diagnoses, and each of the rest earns credit if
+ # it is here. A diagnosis may sit in both lists: the alternative's verdict applies when it
+ # is named as the primary, this entry's when it is named beside one. Written by an AI
+ # assistant from the case's own findings; the list of four was reviewed and approved by
+ # the author (emergency medicine resident) on 5 September 2026. The explanations under
+ # them remain AI-written and unsigned.
+ "additional_diagnoses": [
+   {"catalog_id": "dx_acute_decompensated_heart_failure_with_reduced_ejection_fraction",
+    "label": "Acute decompensated heart failure with reduced ejection fraction",
+    "explanation": (
+      "The other half of the case, and naming it beside the arrhythmia is the complete "
+      "formulation: an ejection fraction of 30 to 35 percent on the bedside scan, a flooded lung, "
+      "a raised venous pressure and a congested liver. It is what makes diltiazem the wrong "
+      "rate-control agent and what makes the diuretic and the positive pressure part of the "
+      "plan rather than afterthoughts.")},
+   {"catalog_id": "dx_cardiogenic_pulmonary_edema",
+    "label": "Cardiogenic pulmonary edema",
+    "explanation": (
+      "True, and worth saying at handover because it is the thing that was going to kill him "
+      "first: B lines on the lung scan, a saturation of 88 percent on room air and a respiratory "
+      "rate of thirty. Named beside the arrhythmia and the ventricular dysfunction it is a "
+      "finding with a cause; named alone it is a finding without one.")},
+   {"catalog_id": "dx_acute_hypoxemic_respiratory_failure",
+    "label": "Acute hypoxaemic respiratory failure",
+    "explanation": (
+      "A saturation of 88 percent on room air with a respiratory rate of thirty and accessory "
+      "muscle use is respiratory failure, and the receiving team needs to hear that he was in it "
+      "on arrival and what he needed to come out of it, because it is the reason he goes to a "
+      "monitored bed rather than a ward.")},
+   {"catalog_id": "dx_hypomagnesemia",
+    "label": "Hypomagnesemia",
+    "explanation": (
+      "A magnesium of 1.6 mg/dL. Small, correctable, and relevant to the rhythm: the potassium "
+      "will not hold while it is low, and intravenous magnesium has been reported as a useful "
+      "adjunct to nodal blockade in rapid atrial fibrillation. A handover that names it is a "
+      "handover in which the repletion does not get forgotten.")},
+ ],
  "diagnosis_entry_method": (
    "The learner searches the whole diagnosis catalog rather than choosing from a list this case "
    "supplies, because committing to a diagnosis from a wide field is the cognitive task being "
-   "taught. Wrong answers outside the seven anticipated here receive the generic note."),
+   "taught. Since v0.9 the learner lists as many diagnoses as apply, the first being the primary. "
+   "Wrong answers outside the seven anticipated here receive the generic note."),
  "pending_result_warning": (
    "Results ordered and never read are recorded automatically and surfaced in the debrief. In this "
    "case the study most often ordered and never looked at is the repeat ECG after rate control."),
@@ -199,7 +239,7 @@ DEBRIEF = {
    "actions": ["apixaban", "aspirin", "clopidogrel", "coagulation_panel"]},
   {"id": "diagnostics", "label": "Diagnostic reasoning and test selection",
    "actions": ["ecg_12_lead", "ultrasound_cardiac", "ultrasound_lung", "xr_chest", "troponin_t",
-               "pro_bnp", "basic_chemistry_chem_7", "magnesium_level",
+               "nt_probnp", "basic_chemistry_chem_7", "magnesium_level",
                "complete_blood_count_cbc", "tsh", "venous_blood_gas", "lactate", "d_dimer",
                "ct_pulmonary_embolus", "ultrasound_lower_extremity_venous", "urinalysis",
                "liver_function_tests_lfts"]},
@@ -265,7 +305,7 @@ PROVENANCE = {
    "Every reference interval in content_keys.labs, none of which came from a laboratory reference.",
    "The two 240-second deterioration deadlines, which are clinical claims about how long this "
    "patient tolerates untreated respiratory failure.",
-   "The 30-second delay on the rate-control transitions, which compresses agents whose real "
+   "The 10-second delay on the rate-control transitions, which compresses agents whose real "
    "onsets differ by an order of magnitude into one number, and the nurse line that goes with "
    "it.",
    "The decision that rate control takes two doses, that a single dose is worth 22 beats, and "
@@ -275,7 +315,7 @@ PROVENANCE = {
    "points and the one-minute tempo.",
    "The 20 mmHg systolic and 10 mmHg diastolic fall attributed to diltiazem.",
    "The decision to bind digoxin, amiodarone and metoprolol as one act, which means a learner who "
-   "gives metoprolol to a man in active pulmonary oedema is credited with the critical action and "
+   "gives metoprolol to a man in active pulmonary edema is credited with the critical action and "
    "reads the caveat only in the expander.",
    "The decision to tag magnesium replacement recommended rather than critical, against the "
    "author's brief. See the note on that action and section 4 of the review packet.",

@@ -2,7 +2,9 @@
    UI. Everything below renders derived state; nothing stores it.
    ============================================================ */
 let LOG=[], SEQ=0, T0=Date.now(), ST=null, TAB='history', ENDED=false;
-let PENDING_HANDOFF={disposition:null,diagnosis:null};
+/* v0.9: `diagnoses` is an ordered list and its first entry is the primary. The
+   singular is filled in at submit for readers written before the list existed. */
+let PENDING_HANDOFF={disposition:null,diagnoses:[]};
 let LASTNURSE=-1, LASTPHASE=null, ASKTEXT='', DXTEXT='';
 /* Filter text and the pending order basket are per tab, so switching tabs and
    coming back leaves both exactly as they were. */
@@ -386,7 +388,7 @@ function feedPayload(v){
     return '<table>'+v.components.map(c=>
       `<tr><td class="lb">${esc(c.label)}</td>
            <td class="vl${c.abnormal?' abn':''}">${esc(c.value)}${c.unit?' '+esc(c.unit):''}</td></tr>`
-    ).join('')+'</table>'+(v.comment?`<div class="fb">${esc(v.comment)}</div>`:'');
+    ).join('')+'</table>';
   const txt=v.report||v.findings||v.value||'';
   return txt?`<div class="fb${v.abnormal?' abn':''}">${esc(txt)}</div>`:'';
 }
@@ -465,7 +467,13 @@ function renderTabs(){
   }).join('');
 }
 
-/* ---------- result payload rendering: abnormal components in red ---------- */
+/* ---------- result payload rendering: abnormal components in red ----------
+   A lab result carries the number, the unit and the interval, and nothing else while
+   the case runs. The authored `comment` under a panel is an interpretation ("worsening
+   respiratory acidosis: he is tiring"), and an interpretation handed to the resident
+   with the number is the simulator doing the reading for them. It is kept, and the
+   debrief prints every one of them under "Your results, read" once the answers are
+   revealed. Reports (imaging, ECG) are unchanged: their text is the result. */
 function renderPayload(v){
   if(v===null||v===undefined) return '<div class="body">No result is defined for this study.</div>';
   if(typeof v==='string') return `<div class="body">${esc(v)}</div>`;
@@ -478,9 +486,10 @@ function renderPayload(v){
        <td class="val">${esc(c.value)}${c.unit?' '+esc(c.unit):''}</td>
        <td class="ref">${esc(c.reference_range||'')}</td>
      </tr>`).join('');
-  return `<table class="labtbl">${rows}</table>`
-       + (v.comment?`<div class="body" style="margin-top:6px">${esc(v.comment)}</div>`:'')
-       + (v.verify?`<div class="verify">Needs verification: ${esc(v.verify)}</div>`:'');
+  /* `verify` is a note to the reviewing physician and lives in the case file and the
+     review packet. It used to print under the result as "Needs verification", which told
+     the resident to distrust the number they had just been given. */
+  return `<table class="labtbl">${rows}</table>`;
 }
 
 /* ---------- action buttons ---------- */
@@ -490,7 +499,7 @@ function actionsFor(tab){
     const a=ACT[id];
     if(a.tab!==tab) continue;
     if(f && !(a.name.toLowerCase().includes(f)||id.includes(f))) continue;
-    (out[a.group]=out[a.group]||[]).push(id);
+    for(const g of (a.groups||[a.group])) (out[g]=out[g]||[]).push(id);
   }
   Object.keys(out).forEach(g=>out[g].sort((x,y)=>ACT[x].name.localeCompare(ACT[y].name)));
   return out;
@@ -576,6 +585,29 @@ function renderActionTab(tab,intro){
         ? 'Selected, not yet sent: '+basket.map(id=>esc(dispName(id))).join(', ')+'.'
         : 'Nothing selected. Click items to add them, then Submit Order.'}</div>`:''}
     ${html}</div>`;
+}
+
+/* Put one orderable tab back to its opening state: no filter, every group collapsed, and
+   scrolled to the top. The scroll matters as much as the other two, because the panel
+   keeps its offset across a re-render and a tab that has just become five headers tall
+   would otherwise be scrolled past its own contents.
+
+   The accordion is emptied rather than re-seeded from `defaultExpanded`. That seed exists
+   so a resident meets Stabilization's first three acts without hunting for them on the
+   opening screen, which is a question about the start of a case rather than about the
+   start of a search, and by the time an order has been submitted it has been answered. */
+function resetTabView(tab){
+  if(!tab) return;
+  FILTERS[tab]='';
+  expandedOf(tab).clear();
+}
+/* Separate from the state above, and called after the repaint rather than before it. The
+   scroll container outlives the tab's markup, so an offset set while the long filtered
+   list is still on screen is clamped against that list's height and not against the short
+   one that replaces it. */
+function scrollTabTop(){
+  const box=el('tabpanel'), sc=box&&box.closest('.lp-scroll');
+  if(sc) sc.scrollTop=0;
 }
 
 function renderTab(){
@@ -738,7 +770,7 @@ function tabHandoff(){
   const disp=[{id:h.correct_disposition.id,label:h.correct_disposition.label}]
     .concat(h.alternative_dispositions.map(d=>({id:d.id,label:d.label})))
     .sort((a,b)=>PROTO.dispOrder.indexOf(a.id)-PROTO.dispOrder.indexOf(b.id));
-  const dx=PENDING_HANDOFF.diagnosis;
+  const dxs=PENDING_HANDOFF.diagnoses;
   const pend=ST.pending.length;
   /* Results are on the chart the moment they return, so there is no unread state to
      warn about. What can still be missed is a study that never came back. */
@@ -747,14 +779,21 @@ function tabHandoff(){
     The diagnosis list is the full catalog, ${PROTO.diagnoses.length} entries.</p>
     <h3>Level of care</h3>
     ${disp.map(d=>`<button class="opt" data-disp="${d.id}" aria-pressed="${PENDING_HANDOFF.disposition===d.id}">${esc(d.label)}</button>`).join('')}
-    <h3>Working diagnosis</h3>
-    <input type="text" id="dxbox" placeholder="Search ${PROTO.diagnoses.length} diagnoses" autocomplete="off"
-      value="${esc(dx?dxLabel(dx):DXTEXT)}">
+    <h3>Diagnoses</h3>
+    <p class="sub">Name everything you are handing over. The first entry is your primary
+    diagnosis; add as many others as apply to this patient.</p>
+    ${dxs.length?`<ol class="dxlist">${dxs.map((id,i)=>`<li class="dxrow${i?'':' primary'}">
+        <span class="dxrank">${i?i+1:'Primary'}</span>
+        <span class="dxname">${esc(dxLabel(id))}</span>
+        ${i?`<button class="dxbtn" data-dxup="${id}" title="Make this the primary diagnosis" aria-label="Make ${esc(dxLabel(id))} the primary diagnosis">Make primary</button>`:''}
+        <button class="dxbtn" data-dxrm="${id}" title="Remove" aria-label="Remove ${esc(dxLabel(id))}">\u00D7</button>
+      </li>`).join('')}</ol>`:''}
+    <input type="text" id="dxbox" placeholder="${dxs.length?'Add another diagnosis':'Search '+PROTO.diagnoses.length+' diagnoses'}" autocomplete="off"
+      value="${esc(DXTEXT)}">
     <div id="dxhits"></div>
-    ${dx?`<div class="note">Selected: <b>${esc(dxLabel(dx))}</b></div>`:''}
     <h3>Confirm</h3>
     ${pend?`<div class="note"><b>Before you confirm.</b> ${pend} study still pending.</div>`:''}
-    <button class="btn" id="submitho" ${(!PENDING_HANDOFF.disposition||!dx)?'disabled':''}>Hand over and end the case</button>
+    <button class="btn" id="submitho" ${(!PENDING_HANDOFF.disposition||!dxs.length)?'disabled':''}>Hand over and end the case</button>
     <button class="btn ghost" id="earlyexit" style="margin-left:8px">End early without handing over</button>
     </div>`;
 }
@@ -834,6 +873,15 @@ const LEXICON={
   'ckd':'kidney medical problems',
 
   /* history taking, the sections residents name by abbreviation */
+  /* general shorthand, added Sep 2026 after the first measured run. `hx` on its own
+     had become a rare token in the expanded banks ("Hx of afib?") and was pulling every
+     "<thing> hx" question toward whichever topic happened to hold it. */
+  'hx':'history', 'sx':'symptoms', 'dx':'diagnosis diagnosed told', 'rx':'medication tablets prescribed',
+  'abx':'antibiotics', 'cp':'chest pain', 'uop':'urine passing water', 'loc':'passed out consciousness blackout',
+  'lmp':'last period', 'n v':'sick vomiting nausea', 'nv':'sick vomiting nausea', 'po':'eat drink',
+  'tob':'smoke smoking cigarettes', 'afib':'heart racing irregular fibrillation', 'af':'heart racing irregular fibrillation',
+  'dm':'diabetes', 'bp':'blood pressure', 'uti':'burning pass urine infection', 'sti':'sexually active partners infection',
+  'std':'sexually active partners infection', 'gu':'urine burning discharge', 'ros':'symptoms',
   'pmh':'medical problems history conditions diagnosed', 'pmhx':'medical problems history conditions diagnosed',
   'psh':'operations surgery procedures', 'pshx':'operations surgery procedures',
   'fhx':'family history parents siblings', 'shx':'smoke drink alcohol tobacco',
@@ -966,15 +1014,41 @@ function normQuery(q){
 
 let DF={}, NTOP=0, RARE={}, VOCAB=new Set(), REPAIR_CACHE=new Map();
 /* Rebuilt whenever a case is selected: the weights describe one case's variant bank. */
+/* ---------- the out-of-scope bank ----------
+   A case may carry `interview.out_of_scope_bank`: questions it has no authored answer
+   to. They are matched exactly like a topic, under this reserved id, and a question
+   that lands closest to them is answered by the fallback rather than by the nearest
+   real topic. Measured before this existed: nineteen of thirty unrelated questions on
+   AFRVR were answered with a confident wrong topic, because "nothing relevant" had no
+   neighbourhood of its own and every question is closest to something. */
+const OOS_TOPIC='__out_of_scope__';
+function matchTopics(){
+  const bank=(CASE.interview&&CASE.interview.out_of_scope_bank)||[];
+  const ts=CASE.interview.topics.slice();
+  if(bank.length) ts.push({topic:OOS_TOPIC,canonical:bank[0],variants:bank.slice(1)});
+  return ts;
+}
+/* What the embedding model is given to embed: the topics, the out-of-scope bank, and
+   every authored fact's own phrasings under a `topic#fact` key. The fact rows never
+   compete for a topic (the fusion skips keys with a hash); they exist so a follow-up
+   can be scored against the last topic's facts by the same model. */
+function semanticRows(){
+  const rows=matchTopics();
+  for(const t of CASE.interview.topics)
+    for(const f of (t.facts||[]))
+      if(f.asks&&f.asks.length) rows.push({topic:t.topic+'#'+f.id,canonical:f.asks[0],variants:f.asks.slice(1)});
+  return rows;
+}
 function buildMatcher(){
-  DF={}; RARE={}; NTOP=CASE.interview.topics.length;
+  const TS=matchTopics();
+  DF={}; RARE={}; NTOP=TS.length;
   VOCAB=new Set(); REPAIR_CACHE=new Map();
-  for(const t of CASE.interview.topics){
+  for(const t of TS){
     const seen=new Set();
     for(const c of [t.canonical].concat(t.variants||[])) norm(c).forEach(w=>seen.add(w));
     seen.forEach(w=>DF[w]=(DF[w]||0)+1);
   }
-  for(const t of CASE.interview.topics){
+  for(const t of TS){
     const seen=new Set();
     for(const c of [t.canonical].concat(t.variants||[])) norm(c).forEach(w=>seen.add(w));
     seen.forEach(w=>{ if((DF[w]||0)<=2) (RARE[w]=RARE[w]||new Set()).add(t.topic); });
@@ -988,64 +1062,161 @@ function wdice(a,b){
   new Set([...A,...B]).forEach(w=>{ const g=idf(w); tot+=g; if(A.has(w)&&B.has(w)) inter+=g; });
   return tot ? (2*inter)/(tot+inter) : 0;
 }
-function matchTopic(q){
+/* Words the learner actually typed that the bank holds verbatim: the only words the
+   rare-word override below is allowed to act on. A word that reached the query through
+   a typo repair or a lexicon expansion is a guess, and a guess must not outrank a
+   measured match. */
+function typedBankWords(q){
+  const out=new Set();
+  for(const w of norm(q)) if(VOCAB.has(w)) out.add(w);
+  return out;
+}
+/* Every topic's best lexical score for a question, the out-of-scope bank included.
+   This is what the fusion below combines with the embedding model's per-topic scores;
+   matchTopic() is the same ranking reduced to one answer, for use before the model
+   has loaded. */
+function rankTopics(q){
   const qt=normQuery(q), scores={};
-  for(const t of CASE.interview.topics){
+  for(const t of matchTopics()){
     let b=0;
     for(const c of [t.canonical].concat(t.variants||[])){ const s=wdice(qt,norm(c)); if(s>b) b=s; }
     scores[t.topic]=b;
   }
+  return {qt,scores};
+}
+function matchTopic(q){
+  const {qt,scores}=rankTopics(q);
   let best=null,bs=0;
   for(const k in scores) if(scores[k]>bs){ bs=scores[k]; best=k; }
+  /* A rare word the learner typed pulls the match toward its topic, but only when that
+     topic is a genuine contender. The measured failure this guards against: "pmh?"
+     expanded to "diagnosed", which was rare and belonged to sleep apnoea, and a 0.67
+     match on past medical history was handed to a topic scoring 0.19. */
+  const typed=typedBankWords(q);
   for(const w of qt){
-    if(RARE[w]&&!RARE[w].has(best)){
-      let alt=null,as=0; RARE[w].forEach(t=>{ if(scores[t]>as){ as=scores[t]; alt=t; } });
-      if(alt&&as>=PROTO.matchThreshold*0.6){ best=alt; bs=Math.max(bs,as); break; }
-    }
+    if(!typed.has(w)||!RARE[w]||RARE[w].has(best)) continue;
+    let alt=null,as=0; RARE[w].forEach(t=>{ if(scores[t]>as){ as=scores[t]; alt=t; } });
+    if(alt&&as>=PROTO.matchThreshold&&as>=0.8*bs){ best=alt; bs=as; break; }
   }
-  return bs>=PROTO.matchThreshold ? {topic:best,score:bs} : {topic:null,score:bs};
+  if(bs<PROTO.matchThreshold) return {topic:null,score:bs};
+  if(best===OOS_TOPIC) return {topic:null,score:bs,oos:true};
+  return {topic:best,score:bs};
 }
 
 /* ---------- fusion of the lexical and semantic matchers ----------
-   The lexical matcher above is unchanged and remains authoritative until the
-   embedding model has loaded, and permanently if it never does.
+   Until the embedding model has loaded, and permanently if it never does, the
+   lexical matcher above answers alone. Once the model is ready the two are
+   combined PER TOPIC:
 
-   The rule is arranged so that where the semantic layer is not confident, the
-   lexical answer stands exactly as it does today. Three of the four branches
-   can only add or withhold a match, not silently substitute a different one:
+       combined[t] = WEIGHT * cosine[t] + (1 - WEIGHT) * lexical[t]
 
-     semantic >= ACCEPT                    the semantic topic wins outright
-     AGREE <= semantic < ACCEPT and both   the same topic, so nothing changed
-       matchers picked the same topic      except the recorded confidence
-     semantic < VETO                       nothing in the bank is close, so the
-                                           patient answers out of scope even
-                                           where the lexical matcher found a
-                                           token overlap
-     otherwise                             today's lexical result, unchanged
+   and the best combined score wins if it clears THRESHOLD. The out-of-scope bank
+   is a topic in both rankings, so "nothing relevant" competes on equal terms and
+   a question that lands closest to it gets the fallback.
 
-   The VETO branch is the only one that can remove a match the current build
-   would have made. It exists because section 10.6 names out-of-scope handling
-   as the weakest part of the system, and because a confident wrong answer is
-   invisible to the learner where a fallthrough is not. It is also the branch
-   most in need of measurement: see engine/matcher_eval.mjs.
+   This replaced a threshold ladder (semantic wins above ACCEPT, agreement counts
+   above AGREE, otherwise lexical). Measured against the ladder on the held-out
+   sets after the banks were expanded, the ladder was handing correct lexical
+   answers to near-tie semantic guesses: "when did the shortness of breath begin"
+   scored 0.80 on both onset and character_of_dyspnea for the model, the lexical
+   matcher had onset at 0.78, and the ladder took the model's coin toss. A sum
+   lets the second matcher break the tie, which is the only thing a second
+   matcher is for.
 
-   Every result records which matcher produced it. Because the model may finish
-   loading part way through a case, two identical questions in one session can
-   be routed by different matchers, and a debrief that claims to report what the
-   learner did should be able to say which. Nothing already in the log is ever
-   re-matched: the topic is frozen at the moment the question was asked. */
+   WEIGHT and THRESHOLD were chosen on the packs' TUNING sets, which are phrasings
+   withheld from the banks by catalog/expand_interview_variants.py, never on the
+   held-out sets that are quoted. engine/matcher_eval.mjs --sweep reproduces the
+   choice. The harness may override them through FUSE_OVERRIDE, which exists only
+   so a sweep can run against the shipped code rather than a copy of it.
+
+   Every result records which matcher produced it. The model may finish loading
+   part way through a case, so two identical questions in one session can be
+   routed differently, and a debrief that claims to report what the learner did
+   should be able to say which. Nothing already in the log is ever re-matched. */
+const FUSE={weight:0.6, threshold:0.45, soloCosine:0.62, soloMargin:0.08, soloLexical:0.55, lexicalUncontested:0.55};
+function fuseParams(){ return (typeof FUSE_OVERRIDE!=='undefined'&&FUSE_OVERRIDE)?FUSE_OVERRIDE:FUSE; }
 async function matchOne(q){
   const lex=matchTopic(q);
   const out=(topic,score,matcher)=>({topic,score,matcher,lexTopic:lex.topic});
   if(!SEM.ready()) return out(lex.topic,lex.score,'lexical');
   let sem=null;
   try{ sem=await SEM.best(q); }catch(e){ sem=null; }
-  if(!sem||sem.topic===null) return out(lex.topic,lex.score,'lexical');
-  if(sem.score>=SEM.ACCEPT)                              return out(sem.topic,sem.score,'semantic');
-  if(sem.score>=SEM.AGREE && sem.topic===lex.topic)      return out(sem.topic,sem.score,'both');
-  if(SEM.VETO>0 && sem.score<SEM.VETO)                   return out(null,sem.score,'semantic-veto');
-  return out(lex.topic,lex.score,'lexical');
+  if(!sem||!sem.scores) return out(lex.topic,lex.score,'lexical');
+  const F=fuseParams(), lx=rankTopics(q).scores;
+  let best=null,bs=-1;
+  for(const t in lx){
+    const c=F.weight*(sem.scores[t]===undefined?0:sem.scores[t])+(1-F.weight)*lx[t];
+    if(c>bs){ bs=c; best=t; }
+  }
+  /* A question the bank shares no words with scores zero lexically and cannot reach
+     THRESHOLD on the model's half alone unless the cosine is very high. Where the
+     model is both confident and unambiguous, its answer stands on its own: "Temp at
+     home?" is fever at 0.69 with the runner-up at 0.39, and no token overlap is
+     needed to believe it. Both figures were chosen on the tuning sets. */
+  if(bs<F.threshold && sem.score>=F.soloCosine && sem.margin>=F.soloMargin && sem.topic!==null){
+    best=sem.topic; bs=sem.score;
+  }
+  /* And the mirror image. The model has never seen "NKDA?" or "PMH?" and scores
+     nothing above 0.35 for them, while the lexicon takes the lexical matcher straight to
+     allergies at 0.78. Where the lexical matcher is confident and the model has no
+     confident opinion of its own, the lexical answer stands. Without this the expanded
+     fusion was WORSE than the lexical matcher alone on clinical shorthand, which is the
+     register the whole lexicon exists for. */
+  if(bs<F.threshold && lex.topic!==null && lex.score>=F.soloLexical && sem.score<F.lexicalUncontested){
+    best=lex.topic; bs=lex.score;
+  }
+  if(bs<F.threshold||best===null) return out(null,bs,'fused');
+  if(best===OOS_TOPIC) return out(null,bs,'fused-out-of-scope');
+  /* Two real topics within a hair of each other, both over the line: the matcher
+     does not know, and guessing is the failure the learner cannot see. It asks. */
+  const D=PROTO.interviewDefaults||{};
+  let second=null,ss=-1;
+  for(const t in lx){
+    if(t===best||t===OOS_TOPIC) continue;
+    const c=F.weight*(sem.scores[t]===undefined?0:sem.scores[t])+(1-F.weight)*lx[t];
+    if(c>ss){ ss=c; second=t; }
+  }
+  if(second&&ss>=F.threshold&&(bs-ss)<(D.clarifyMargin||0)) return {...out(null,bs,'fused-clarify'),clarify:[best,second]};
+  const r=out(best,bs,'fused');
+  if(bs<(D.echoBelow||0)) r.uncertain=true;
+  return r;
 }
+
+/* ---------- follow-ups: the last topic is the context (design 10.7) ----------
+   "And how bad?" after "tell me about the pain" is about the pain. A short question
+   is first tried as a continuation of whatever the patient last spoke about: either
+   "anything else?" (the topic's untold facts) or one of the topic's authored facts,
+   scored the same way topics are. Only if neither fits does it go to the full matcher,
+   and even then a weak global match yields to a good fact match. */
+function lastSpokenTopic(){
+  if(typeof ST==='undefined'||!ST||!ST.readouts) return null;
+  for(let i=ST.readouts.length-1;i>=0;i--){
+    const r=ST.readouts[i];
+    if(r.kind==='speech'&&r.matched) return r.matched;
+  }
+  return null;
+}
+function isMorePhrase(q){
+  const D=PROTO.interviewDefaults||{};
+  const n=norm(q).join(' ');
+  const raw=String(q).toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
+  return (D.morePhrasings||[]).some(p=>raw===p||n===p||raw===p+' then');
+}
+async function matchFact(q,topicId,sem){
+  const T=CASE.interview.topics.find(x=>x.topic===topicId);
+  if(!T||!T.facts||!T.facts.length) return null;
+  const F=fuseParams(), qt=normQuery(q);
+  let best=null,bs=-1;
+  for(const f of T.facts){
+    let lx=0;
+    for(const a of (f.asks||[])){ const v=wdice(qt,norm(a)); if(v>lx) lx=v; }
+    const sv=sem&&sem.scores?sem.scores[topicId+'#'+f.id]:undefined;
+    const c=sem?F.weight*(sv===undefined?0:sv)+(1-F.weight)*lx:lx;
+    if(c>bs){ bs=c; best=f.id; }
+  }
+  return best&&bs>=F.threshold?{fact:best,score:bs}:null;
+}
+
 
 /* ---------- compound questions ----------
    "Any chest pain or palpitations?" is two questions. Until now the matcher
@@ -1081,9 +1252,26 @@ function splitClauses(q){
    learner wrote them. Capped at three: past that it stops reading as a
    conversation and starts reading as a data dump. */
 async function matchQuestion(q){
+  const D=PROTO.interviewDefaults||{};
+  const last=lastSpokenTopic();
+  const words=norm(q).length;
+  if(last&&isMorePhrase(q)) return [{topic:last,score:1,matcher:'follow-up',more:true,q}];
   const parts=splitClauses(q);
   if(!parts.length){
     const only=await matchOne(q);
+    /* A short question that is weak or unmatched globally, or that lands on the topic
+       just spoken about, is tried against that topic's facts. */
+    if(last&&words<=(D.followUpMaxWords||6)&&(only.topic===null||only.uncertain||only.topic===last)){
+      let sem=null;
+      if(SEM.ready()){ try{ sem=await SEM.best(q); }catch(e){ sem=null; } }
+      const f=await matchFact(q,last,sem);
+      /* A fact wins over a weak or absent global match outright. Over a confident
+         match on the same topic it has to score higher, or "When did it start?" asked
+         a second time would be handed to the "how did it start" fact instead of being
+         the repeat it is. */
+      const confidentSame=only.topic===last&&!only.uncertain;
+      if(f&&(!confidentSame||f.score>only.score)) return [{topic:last,score:f.score,matcher:'follow-up',fact:f.fact,q}];
+    }
     return [{...only,q}];
   }
   /* The whole question is the baseline reading, and the bar each clause has to
@@ -1111,7 +1299,7 @@ function bindCase(){
   buildMatcher();
   /* Not awaited. The case must be playable the instant it is chosen, and a
      first model load can take tens of seconds. */
-  try{ SEM.init(CASE.case_id, CASE.interview.topics); }catch(e){}
+  try{ SEM.init(CASE.case_id, semanticRows()); }catch(e){}
 }
 /* Repaint the History tab when the matcher changes state, so the line under the
    question box stops saying "improving" once it has. Nothing else depends on it. */
@@ -1119,7 +1307,7 @@ SEM.onChange(()=>{ if(!ENDED && TAB==='history') renderTab(); });
 
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],'
+  const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
     +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,'
     +'#rp-toggle,#lp-collapse');
@@ -1133,6 +1321,14 @@ document.addEventListener('click',e=>{
   if(t&&t.id==='lp-collapse'){ setPanels(false,RIGHT_WIDE); renderTabs(); return; }
   if(!RIGHT_WIDE && !ENDED && e.target.closest('#rightpanel')){
     expandRecord(); renderTabs(); return;
+  }
+  /* The expanded record leaves the room showing to its left. A click on that
+     background is the same gesture as the minimise button in the record's corner:
+     the reader is done with the chart. Anything that is itself a control (the rail,
+     the header, an overlay, the record) keeps its own behaviour. */
+  if(RIGHT_WIDE && !ENDED && !e.target.closest(
+       '#rightpanel,#tabbar,#leftpanel,header,#endview,#pauseview,#leaveview,#picker,#splash,button,a,input')){
+    minimiseRecord(); return;
   }
   if(!t) return;
   if(t.dataset.tab){
@@ -1181,13 +1377,43 @@ document.addEventListener('click',e=>{
        harmful tags all evaluate exactly as they would one at a time. */
     for(const id of [...bag]) log({actionId:id});
     bag.clear();
-    render(); return;
+    /* A submitted order is the end of one search, so the tab goes back to where that
+       search started rather than staying where it ended. The filter text and the opened
+       group are both scaffolding for finding the thing that has now been ordered, and
+       leaving them in place means the next order begins from three-quarters of the way
+       down a filtered list showing the drug the resident has already given.
+
+       Deliberately not the same as `restart`'s reset: the basket is cleared here because
+       it was just submitted, and the other tabs' baskets and open groups are untouched.
+       Their filter text is cleared too, see below. */
+    resetTabView(tabof);
+    /* v0.9, author instruction: a submitted order clears the search box on every tab,
+       not only the one it was submitted from. The earlier design kept a filter typed
+       on Investigations alive across an order sent from Interventions; in use that
+       read as the box refusing to clear. */
+    Object.keys(FILTERS).forEach(k=>{ FILTERS[k]=''; });
+    render(); scrollTabTop(); return;
   }
   if(t.dataset.ask){ ask(t.dataset.ask); return; }
   if(t.id==='askbtn'){ const b=el('askbox'); if(b&&b.value.trim()) ask(b.value.trim()); return; }
   if(t.dataset.disp){ PENDING_HANDOFF.disposition=t.dataset.disp; render(); return; }
-  if(t.dataset.dx){ PENDING_HANDOFF.diagnosis=t.dataset.dx; DXTEXT=''; render(); return; }
-  if(t.id==='submitho'){ log({actionId:'handoff_submit',payload:{...PENDING_HANDOFF}}); finish(); return; }
+  if(t.dataset.dx){
+    if(!PENDING_HANDOFF.diagnoses.includes(t.dataset.dx)) PENDING_HANDOFF.diagnoses.push(t.dataset.dx);
+    DXTEXT=''; render(); return;
+  }
+  if(t.dataset.dxrm){
+    PENDING_HANDOFF.diagnoses=PENDING_HANDOFF.diagnoses.filter(d=>d!==t.dataset.dxrm); render(); return;
+  }
+  if(t.dataset.dxup){
+    PENDING_HANDOFF.diagnoses=[t.dataset.dxup].concat(PENDING_HANDOFF.diagnoses.filter(d=>d!==t.dataset.dxup));
+    render(); return;
+  }
+  if(t.id==='submitho'){
+    const list=PENDING_HANDOFF.diagnoses.slice();
+    log({actionId:'handoff_submit',payload:{disposition:PENDING_HANDOFF.disposition,
+         diagnosis:list[0]||null,diagnoses:list}});
+    finish(); return;
+  }
   if(t.id==='earlyexit'){ log({actionId:'early_exit',kind:'early_exit'}); finish(); return; }
   if(t.id==='restart'){ restart(); return; }
   if(t.id==='revealanswers'){ revealAnswers(); return; }
@@ -1206,7 +1432,8 @@ document.addEventListener('input',e=>{
     DXTEXT=e.target.value;
     const q=e.target.value.toLowerCase().trim();
     const hits=q.length<2?[]:PROTO.diagnoses.filter(d=>
-      d.label.toLowerCase().includes(q)||d.syn.some(s=>s.toLowerCase().includes(q))).slice(0,10);
+      !PENDING_HANDOFF.diagnoses.includes(d.id)&&
+      (d.label.toLowerCase().includes(q)||d.syn.some(s=>s.toLowerCase().includes(q)))).slice(0,10);
     el('dxhits').innerHTML=hits.length?`<div class="hits">${hits.map(d=>
       `<button class="hit" data-dx="${d.id}">${esc(d.label)}${d.syn.length?`<span class="syn">${esc(d.syn.join(', '))}</span>`:''}</button>`).join('')}</div>`:'';
   }
@@ -1229,7 +1456,8 @@ async function ask(q){
      submitted order basket does, so the fold applies them in sequence and each
      answer is produced by the authored rules for its own topic. */
   for(const m of ms)
-    log({actionId:null,kind:'interview',topic:m.topic,q:m.q,score:m.score,matcher:m.matcher});
+    log({actionId:null,kind:'interview',topic:m.topic,q:m.q,score:m.score,matcher:m.matcher,
+         fact:m.fact||null,more:!!m.more,clarify:m.clarify||null,uncertain:!!m.uncertain});
   render();
 }
 
@@ -1364,7 +1592,7 @@ function restart(){
   Object.keys(FILTERS).forEach(k=>delete FILTERS[k]);
   Object.keys(BASKET).forEach(k=>delete BASKET[k]);
   Object.keys(EXPANDED).forEach(k=>delete EXPANDED[k]);
-  PENDING_HANDOFF={disposition:null,diagnosis:null};
+  PENDING_HANDOFF={disposition:null,diagnoses:[]};
   PAUSED=false; PAUSED_MS=0; PAUSED_AT=0;
   el('pauseview').classList.add('hidden'); closeLeave();
   AUDIO.setScene('idle');
@@ -1418,34 +1646,46 @@ function debriefHTML(){
     </details></div>`;
   };
 
-  const domRows=CASE.debrief_configuration.clinical_domains.map(d=>{
-    const exp=d.actions.filter(a=>ST.expected.has(a));
-    const got=exp.filter(a=>ST.satisfied.has(a));
-    const bad=d.actions.filter(a=>ST.halted&&ST.halted.id===a);
-    return `<tr><td>${esc(d.label)}</td><td class="n">${got.length}/${exp.length}</td>
-      <td class="n">${bad.length?'<span class="pill p-harm">halted here</span>'
-        :(exp.length&&got.length===exp.length?'<span class="pill p-ok">complete</span>'
-        :(exp.length?'<span class="pill p-warn">review</span>':'<span class="pill p-neu">n/a</span>'))}</td></tr>`;
+  /* v0.9: seven categories, scored in the engine (summaryScores) from what the case
+     authored. The old clinical-domain table is gone on the author's instruction. */
+  const scoreRows=summaryScores(ST).map(r=>{
+    const cls=r.pct===null?'':(r.pct<50?'low':(r.pct<80?'mid':''));
+    return `<tr><td>${esc(r.label)}</td>
+      <td class="n">${r.pct===null?'<span class="pill p-neu">n/a</span>'
+        :`${r.pct}%<span class="bar ${cls}"><i style="width:${r.pct}%"></i></span>`}</td>
+      <td class="n">${r.max?r.points+' / '+r.max:''}</td>
+      <td class="d">${esc(r.detail)}${r.halted?' <span class="pill p-harm">halted here</span>':''}</td></tr>`;
   }).join('');
 
   let ho='';
   if(ST.handoff){
-    const h=CASE.handoff, dId=ST.handoff.disposition, xId=ST.handoff.diagnosis;
+    const h=CASE.handoff, dId=ST.handoff.disposition;
     const dOK=dId===h.correct_disposition.id;
     const dAlt=h.alternative_dispositions.find(a=>a.id===dId);
     const dExp=dOK?h.correct_disposition.explanation:(dAlt?dAlt.explanation:'');
     const dV=dOK?['correct','p-ok']:(dAlt&&dAlt.verdict==='acceptable_with_qualification'?['defensible','p-warn']:['incorrect','p-harm']);
-    const xOK=xId===PROTO.correctDxId;
-    const xDef=!xOK&&(PROTO.altDxDefensible||[]).includes(xId);
-    const xExp=xOK?PROTO.correctDxExplanation:(PROTO.altDx[xId]||PROTO.unlistedDxNote);
-    const xV=xOK?['correct','p-ok']:(xDef?['defensible','p-warn']:['incorrect','p-harm']);
+    /* v0.9: every diagnosis the resident listed gets its own verdict, the primary on
+       its own terms and the rest as things also true of the patient or not. The
+       case's own diagnosis is printed at the end whenever it was not named, so the
+       answer is on the page. */
+    const dx=scoreDiagnoses(ST);
+    const PILL={primary_correct:['correct','p-ok'],primary_defensible:['defensible','p-warn'],
+                primary_incorrect:['incorrect','p-harm'],main_not_primary:['the main diagnosis, not listed first','p-warn'],
+                appropriate:['appropriate','p-ok'],defensible:['defensible','p-warn'],unsupported:['not supported','p-harm']};
+    const dxItem=(label,pill,why)=>`<div class="item"><div class="hd"><span class="nm">${esc(label)}</span>
+        <span class="pill ${pill[1]}">${esc(pill[0])}</span></div>
+        ${why?`<div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(why)}</div>`:''}</div>`;
+    const named=dx.rows.some(r=>r.verdict==='primary_correct'||r.verdict==='main_not_primary');
     ho=`<div class="dbsec"><h2>Handoff</h2>
       <div class="item"><div class="hd"><span class="nm">Level of care: ${esc(dispLabel(dId))}</span>
         <span class="pill ${dV[1]}">${dV[0]}</span></div>
         <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(dExp)}</div></div>
-      <div class="item"><div class="hd"><span class="nm">Diagnosis: ${esc(dxLabel(xId))}</span>
-        <span class="pill ${xV[1]}">${xV[0]}</span></div>
-        <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(xExp)}</div></div></div>`;
+      <h3>Diagnoses you handed over</h3>
+      ${dx.rows.map((r,i)=>dxItem((i?'':'Primary: ')+dxLabel(r.id),PILL[r.verdict]||['','p-neu'],r.why)).join('')}
+      ${dx.missed.length?'<h3>Also true of this patient, and not named</h3>'
+        +dx.missed.map(m=>dxItem(dxLabel(m.id),['not named','p-warn'],m.why)).join(''):''}
+      ${named?'':dxItem('The case\'s diagnosis: '+dxLabel(PROTO.correctDxId),['answer','p-neu'],PROTO.correctDxExplanation)}
+      </div>`;
   } else if(ST.earlyExit){
     ho=`<div class="dbsec"><h2>Handoff</h2><p>You ended the case early, so this debrief is marked incomplete.</p></div>`;
   } else if(ST.halted){
@@ -1454,30 +1694,16 @@ function debriefHTML(){
 
   const defaults=[...ST.defaultsServed];
 
-  /* What ran out. Timed mechanics are the one thing in the debrief a resident cannot
-     reconstruct from the chart: an effect that lapsed and a flag that expired leave no
-     entry anywhere, because nothing was done at the moment they happened, which is the
-     point of them. Without this block a case whose lesson is "you had thirty seconds and
-     used them on the wrong thing" ends with the resident none the wiser.
-
-     One row per administration, not per effect, so a repeated drug reads as the repeated
-     act it was. Rendered only when the case uses the mechanics, so a case that authors
-     none is unchanged. */
-  const wore=(function(){
-    const rows=[];
-    for(const fx of ST.vitalFx){
-      const from=fx.t+(fx.onset||0), to=fx.duration===null?null:fx.t+fx.duration;
-      rows.push({t:fx.t,
-        what:dispName(fx.id),
-        detail:(fx.delta>0?'+':'')+fx.delta+' '+fx.vital.replace(/_/g,' ')
-              +', '+(to===null
-                     ? (fx.guard?'while its condition held':'for the rest of the case')
-                     : 'from '+mmss(from)+' to '+mmss(to))});
-    }
-    for(const ex of ST.flagExpiries)
-      rows.push({t:ex.t,what:ex.flag.replace(/_/g,' '),detail:'stopped acting at '+mmss(ex.t)});
-    return rows.sort((a,b)=>a.t-b.t);
-  })();
+  /* v0.9: the interpretations. While the case ran, a lab panel showed its numbers and
+     nothing else; the authored reading under each one is printed here, once, with the
+     numbers it belongs to. Reports (imaging, ECG) are their own text and are not
+     repeated. */
+  const read=[];
+  Object.keys(ST.orders).forEach(id=>ST.orders[id].forEach(o=>{
+    const v=o.value;
+    if(v&&typeof v==='object'&&v.kind!=='report'&&v.comment) read.push({id,o});
+  }));
+  read.sort((a,b)=>a.o.dueT-b.o.dueT);
 
   /* Critical actions lead. They are what the case is about, and a resident reading top
      to bottom should meet the medicine before the scoreboard. */
@@ -1503,31 +1729,27 @@ function debriefHTML(){
       ${dis.map(id=>item(id,'discouraged','p-warn')).join('')}</div>`:''}
 
     <div class="dbsec"><h2>Summary</h2>
-      <p class="sub">${ST.halted?'Halted':(ST.earlyExit?'Ended early, incomplete':'Completed')} at ${mmss(ST.now)},
+      <p class="sub">${ST.halted?'Halted':(ST.failed?'Ended by the clock':(ST.earlyExit?'Ended early, incomplete':'Completed'))} at ${mmss(ST.now)},
       in ${esc(PROTO.difficulty.modes[MODE].label.toLowerCase())}${DM()!==1?`, so nurse prompts were ${DM()} times later than the authored deadlines`:''}.
-      Points direct review; they do not rank you.</p>
-      <table class="dom"><tr><th>Domain</th><th class="n">Done</th><th class="n"></th></tr>${domRows}</table>
+      Points direct review; they do not rank you. Critical actions count two, recommended
+      actions one, a discouraged action costs one, and a harmful action zeroes its tab.</p>
+      <table class="score"><tr><th>Category</th><th class="n">Score</th><th class="n">Points</th><th>Detail</th></tr>${scoreRows}</table>
       <div style="margin-top:16px"><button class="btn" id="restart">Replay this case</button>
       ${CASES.length>1?'<button class="btn ghost" id="pickanother" style="margin-left:8px">Choose a different case</button>':''}</div></div>
-
-    ${wore.length?`<div class="dbsec"><h2>What was acting, and for how long</h2>
-      <p class="sub">Some of what you gave worked for a fixed time and then stopped. Nothing
-      appears in the chart at the moment it wears off, because nothing was done then.</p>
-      ${wore.map(r=>`<div class="item"><div class="hd">
-        <span class="nm">${esc(r.what)}</span>
-        <span class="pill p-warn">${mmss(r.t)}</span>
-        <span class="pill p-neu">${esc(r.detail)}</span></div></div>`).join('')}</div>`:''}
 
     ${traps.length?`<div class="dbsec"><h2>Things that looked reasonable and were not</h2>
       ${traps.map(x=>item(x.id,'no benefit here','p-neu')).join('')}
       </div>`:''}
 
-    /* The blocked-attempts section was removed on the author's instruction. The
-       teaching it carried already happened, in the interface, at the moment the
-       prerequisite refused the action and said why. ST.blocked is still folded and
-       still drives that refusal; only the debrief section is gone. */
-
     ${ho}
+
+    ${read.length?`<div class="dbsec"><h2>Your results, read</h2>
+      <p class="sub">While the case ran you saw the numbers and nothing else. This is the
+      case's own reading of each panel you ordered, in the order they came back.</p>
+      ${read.map(r=>`<div class="item"><div class="hd"><span class="nm">${esc(dispName(r.id))}</span>
+        <span class="pill p-neu">${mmss(r.o.dueT)}</span></div>
+        ${renderPayload(r.o.value)}
+        <div class="note" style="background:none;border:0;padding:0;margin:6px 0 0">${esc(r.o.value.comment)}</div></div>`).join('')}</div>`:''}
 
     ${defaults.length?`<div class="dbsec"><h2>Answered by a default, not by the case</h2>
       <p class="sub">These returned the catalog's normal result or the global response because this case
@@ -1538,10 +1760,6 @@ function debriefHTML(){
     ${stillPending.length?`<div class="dbsec"><h2>Results you did not read</h2>
       ${stillPending.length?`<p>Still pending when the case ended: ${stillPending.map(i=>esc(dispName(i))).join(', ')}.</p>`:''}
       <p class="sub">Handing over with a result you never looked at is a real handover failure.</p></div>`:''}
-
-    /* The independent-and-prompted table was removed on the author's instruction.
-       ST.prompted still exists and still shows as a "prompted" pill on the action it
-       belongs to, which is where it reads as information rather than as a scoreboard. */
 
     <div class="dbsec"><h2>Points to carry out of this case</h2>
       ${(CASE.debrief_configuration.cross_cutting_teaching_points||[]).map(p=>

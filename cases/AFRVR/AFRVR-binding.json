@@ -13,6 +13,9 @@
    "amiodarone_bolus_infusion",
    "metoprolol_bolus"
   ],
+  "magnesium_sulfate_bolus": [
+   "magnesium_sulfate"
+  ],
   "apixaban": [
    "enoxaparin",
    "heparin_bolus_drip"
@@ -195,7 +198,10 @@
    "case_id": "magnesium_sulfate_bolus",
    "catalog_id": "magnesium_sulfate_bolus",
    "status": "exact",
-   "note": null
+   "note": "v0.9: the catalog gained a plain Magnesium Sulfate entry placed under four medication groups. Repleting through either entry is the same act, so the recommended tag, the flag and the note cover both.",
+   "also_covers": [
+    "magnesium_sulfate"
+   ]
   },
   {
    "case_id": "potassium_chloride_kcl",
@@ -291,8 +297,8 @@
    "note": null
   },
   {
-   "case_id": "pro_bnp",
-   "catalog_id": "pro_bnp",
+   "case_id": "nt_probnp",
+   "catalog_id": "nt_probnp",
    "status": "exact",
    "note": null
   },

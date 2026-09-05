@@ -57,7 +57,7 @@
   "estimated_runtime_seconds": 480,
   "learning_objectives": [
    "Recognise the warm-and-wet (Nohria profile B) presentation of acute decompensated HFrEF, and state why distinguishing it from cold-and-wet changes the treatment.",
-   "Sequence non-invasive positive pressure ventilation and vasodilation ahead of diuresis in hypertensive acute cardiogenic pulmonary oedema, and justify that ordering.",
+   "Sequence non-invasive positive pressure ventilation and vasodilation ahead of diuresis in hypertensive acute cardiogenic pulmonary edema, and justify that ordering.",
    "Identify interventions that are actively harmful in acute decompensated HFrEF: intravenous beta blockade, non-dihydropyridine calcium channel blockade, crystalloid bolus, and inotropes in a hypertensive well-perfused patient.",
    "Interpret natriuretic peptide, high-sensitivity troponin, ECG, chest radiograph and POCUS as supportive rather than diagnostic, and distinguish non-ischaemic (type 2) troponin elevation from acute coronary occlusion.",
    "Elicit the precipitant of decompensation on history, treating 'why did this patient decompensate now' as part of the resuscitation rather than an afterthought.",
@@ -95,7 +95,7 @@
  "phases": [
   {
    "id": "presentation",
-   "label": "Hypertensive acute cardiogenic pulmonary oedema",
+   "label": "Hypertensive acute cardiogenic pulmonary edema",
    "clinical_description": "Severe respiratory distress with hypoxaemia and marked hypertension; warm, well-perfused, congested. Nohria profile B.",
    "vitals": {
     "heart_rate": 118,
@@ -168,7 +168,7 @@
   {
    "id": "improving",
    "label": "Decongesting, ready for admission",
-   "clinical_description": "Comfortable on non-invasive ventilation, pressure controlled, diuresis under way. Still requires monitored admission; peripheral oedema and elevated venous pressure persist.",
+   "clinical_description": "Comfortable on non-invasive ventilation, pressure controlled, diuresis under way. Still requires monitored admission; peripheral edema and elevated venous pressure persist.",
    "vitals": {
     "heart_rate": 92,
     "systolic_bp": 138,
@@ -355,7 +355,7 @@
      "text": "He's still tripoding and pulling with his neck muscles, sat's still 87. I've got CPAP and BiPAP both at the bedside. Do you want either of them on him?"
     }
    },
-   "debrief_note": "Non-invasive positive pressure ventilation is the single highest-value early intervention in acute cardiogenic pulmonary oedema. It recruits flooded alveoli, reduces the work of breathing, and by raising intrathoracic pressure it reduces both preload and left ventricular transmural pressure, which lowers afterload. Applying it early is what allows most of these patients to avoid an endotracheal tube. Be honest with learners about the evidence: earlier meta-analyses reported reductions in intubation and mortality, but the largest randomised trial, 3CPO, found no difference in seven-day mortality or intubation rate versus standard oxygen therapy. The strongest defensible claim is faster symptomatic and physiological improvement, with intubation avoidance supported by meta-analytic but not by the single largest trial. On the choice between modes, which is one button here because it is one decision: continuous and bilevel positive pressure are equivalent for the purposes of this case. Bilevel adds inspiratory support and is often preferred when the patient is hypercapnic and tiring, as this one is with a pCO2 of 54. 3CPO found no difference between the two modes in mortality or intubation rate, so either is defensible and the decision that mattered was to apply positive pressure at all. The historical concern that bilevel increased myocardial infarction has not been borne out.",
+   "debrief_note": "Non-invasive positive pressure ventilation is the single highest-value early intervention in acute cardiogenic pulmonary edema. It recruits flooded alveoli, reduces the work of breathing, and by raising intrathoracic pressure it reduces both preload and left ventricular transmural pressure, which lowers afterload. Applying it early is what allows most of these patients to avoid an endotracheal tube. Be honest with learners about the evidence: earlier meta-analyses reported reductions in intubation and mortality, but the largest randomised trial, 3CPO, found no difference in seven-day mortality or intubation rate versus standard oxygen therapy. The strongest defensible claim is faster symptomatic and physiological improvement, with intubation avoidance supported by meta-analytic but not by the single largest trial. On the choice between modes, which is one button here because it is one decision: continuous and bilevel positive pressure are equivalent for the purposes of this case. Bilevel adds inspiratory support and is often preferred when the patient is hypercapnic and tiring, as this one is with a pCO2 of 54. 3CPO found no difference between the two modes in mortality or intubation rate, so either is defensible and the decision that mattered was to apply positive pressure at all. The historical concern that bilevel increased myocardial infarction has not been borne out.",
    "references": [
     "Gray A, Goodacre S, Newby DE, Masson M, Sampson F, Nicholl J; 3CPO Trialists. Noninvasive ventilation in acute cardiogenic pulmonary edema. N Engl J Med. 2008;359(2):142-51. [PubMed record checked]",
     "Masip J, Roque M, Sanchez B, et al. Noninvasive ventilation in acute cardiogenic pulmonary edema: systematic review and meta-analysis. JAMA. 2005;294(24):3124-30. [citation seen in secondary sources; verify]"
@@ -411,9 +411,9 @@
     "text": "His pressure is 188 over 104. Do you want anything for the blood pressure while we're sorting out his breathing?"
    },
    "halt_reason": "You started a nitroglycerin infusion in a patient whose blood pressure was already dependent on vasopressor support after intubation; the additional preload and afterload reduction collapsed his coronary perfusion pressure and he arrested.",
-   "debrief_note": "Afterload reduction is the pharmacological priority in hypertensive acute cardiogenic pulmonary oedema. This patient is not primarily short of diuresis in the first ten minutes; he is short of forward flow against a systolic pressure of 188 with a failing ventricle, and a large part of his pulmonary oedema is redistribution rather than accumulated total body water. Nitrates reduce preload at lower doses and afterload at higher ones, and the trial evidence supports a vasodilator-forward rather than diuretic-forward strategy in this specific phenotype. Doses used for this indication are considerably higher than the anti-anginal doses residents are used to. The same drug becomes harmful the moment the patient is hypotensive, which is why the tag on this action is phase-dependent rather than fixed.",
+   "debrief_note": "Afterload reduction is the pharmacological priority in hypertensive acute cardiogenic pulmonary edema. This patient is not primarily short of diuresis in the first ten minutes; he is short of forward flow against a systolic pressure of 188 with a failing ventricle, and a large part of his pulmonary edema is redistribution rather than accumulated total body water. Nitrates reduce preload at lower doses and afterload at higher ones, and the trial evidence supports a vasodilator-forward rather than diuretic-forward strategy in this specific phenotype. Doses used for this indication are considerably higher than the anti-anginal doses residents are used to. The same drug becomes harmful the moment the patient is hypotensive, which is why the tag on this action is phase-dependent rather than fixed.",
    "references": [
-    "Cotter G, Metzkor E, Kaluski E, et al. Randomised trial of high-dose isosorbide dinitrate plus low-dose furosemide versus high-dose furosemide plus low-dose isosorbide dinitrate in severe pulmonary oedema. Lancet. 1998;351(9100):389-93. [PubMed record checked]",
+    "Cotter G, Metzkor E, Kaluski E, et al. Randomised trial of high-dose isosorbide dinitrate plus low-dose furosemide versus high-dose furosemide plus low-dose isosorbide dinitrate in severe pulmonary edema. Lancet. 1998;351(9100):389-93. [PubMed record checked]",
     "Heidenreich PA, et al. 2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure. Circulation. 2022;145(18):e895-e1032. [UNVERIFIED, confirm before release]"
    ],
    "vital_effects": [
@@ -527,7 +527,7 @@
     "deadline_seconds": 60,
     "text": "He's breathing easier on the mask now. He told the medics he's been out of his water pill for the best part of a week. Do you want to give him a diuretic?"
    },
-   "debrief_note": "This patient genuinely is volume overloaded, not only redistributed: four kilograms above his stated dry weight, five days without his loop diuretic, peripheral oedema and a raised venous pressure. He needs diuresis. The teaching point is sequencing, not omission. Positive pressure and vasodilation act within minutes on the process that is threatening him now; the diuretic acts on the total body sodium and water that accumulated over days. Dose matters: a patient already on a loop diuretic at home requires more than a naive dose, and the conventional approach is to give at least two to two and a half times the home oral dose intravenously. The DOSE trial found no significant difference in its co-primary endpoints between high and low dose or between bolus and infusion, with the high-dose strategy showing better symptom relief on secondary measures at the cost of transient rises in creatinine, so present dosing as a reasoned choice rather than a rule.",
+   "debrief_note": "This patient genuinely is volume overloaded, not only redistributed: four kilograms above his stated dry weight, five days without his loop diuretic, peripheral edema and a raised venous pressure. He needs diuresis. The teaching point is sequencing, not omission. Positive pressure and vasodilation act within minutes on the process that is threatening him now; the diuretic acts on the total body sodium and water that accumulated over days. Dose matters: a patient already on a loop diuretic at home requires more than a naive dose, and the conventional approach is to give at least two to two and a half times the home oral dose intravenously. The DOSE trial found no significant difference in its co-primary endpoints between high and low dose or between bolus and infusion, with the high-dose strategy showing better symptom relief on secondary measures at the cost of transient rises in creatinine, so present dosing as a reasoned choice rather than a rule.",
    "references": [
     "Felker GM, Lee KL, Bull DA, et al. Diuretic strategies in patients with acute decompensated heart failure. N Engl J Med. 2011;364(9):797-805. [PubMed record checked]",
     "Cotter G, et al. Lancet. 1998;351(9100):389-93. [PubMed record checked]"
@@ -685,7 +685,7 @@
     "post_intubation_sedation",
     "post_intubation_cxr"
    ],
-   "debrief_note": "Not a harmful action, and not a scored error, but in this case it was avoidable and it cost the patient. Most patients with acute cardiogenic pulmonary oedema who receive early positive pressure do not need a tube. This patient was hypercapnic and tiring, which frightens people into intubating, but hypercapnia in acute pulmonary oedema is usually a fatigue phenomenon that corrects with non-invasive support rather than an independent indication for a tube. When intubation is genuinely required, anticipate the collapse rather than react to it: this patient is preload-dependent, vasodilated on a nitrate infusion, and about to receive both an induction agent that removes his sympathetic drive and positive intrathoracic pressure that reduces venous return. Have a vasopressor drawn up before you push the drugs. Post-intubation hypotension is common in emergency airway management and predicts poor outcome.",
+   "debrief_note": "Not a harmful action, and not a scored error, but in this case it was avoidable and it cost the patient. Most patients with acute cardiogenic pulmonary edema who receive early positive pressure do not need a tube. This patient was hypercapnic and tiring, which frightens people into intubating, but hypercapnia in acute pulmonary edema is usually a fatigue phenomenon that corrects with non-invasive support rather than an independent indication for a tube. When intubation is genuinely required, anticipate the collapse rather than react to it: this patient is preload-dependent, vasodilated on a nitrate infusion, and about to receive both an induction agent that removes his sympathetic drive and positive intrathoracic pressure that reduces venous return. Have a vasopressor drawn up before you push the drugs. Post-intubation hypotension is common in emergency airway management and predicts poor outcome.",
    "references": [
     "Heffner AC, Swords DS, Nussbaum ML, Kline JA, Jones AE. Predictors of the complication of postintubation hypotension during emergency airway management. J Crit Care. 2012;27(6):587-93. [UNVERIFIED, confirm before release]",
     "Gray A, et al. N Engl J Med. 2008;359(2):142-51. [PubMed record checked]"
@@ -823,7 +823,7 @@
      "source": "case"
     }
    ],
-   "debrief_note": "Six to eight millilitres per kilogram of predicted body weight, calculated from height rather than actual weight. In this patient, positive end-expiratory pressure is doing useful work against the pulmonary oedema, so it should not be abandoned wholesale when the pressure falls; it is one contributor among several and reducing it is a lever, not the first move."
+   "debrief_note": "Six to eight millilitres per kilogram of predicted body weight, calculated from height rather than actual weight. In this patient, positive end-expiratory pressure is doing useful work against the pulmonary edema, so it should not be abandoned wholesale when the pressure falls; it is one contributor among several and reducing it is a lever, not the first move."
   },
   {
    "catalog_id": "peep_reduce",
@@ -848,7 +848,7 @@
      "source": "case"
     }
    ],
-   "debrief_note": "A legitimate lever in post-intubation hypotension, since high intrathoracic pressure reduces venous return. It is a trade in this patient: the same positive pressure is treating his pulmonary oedema. Reduce it thoughtfully and watch the saturation, rather than dropping it to zero reflexively."
+   "debrief_note": "A legitimate lever in post-intubation hypotension, since high intrathoracic pressure reduces venous return. It is a trade in this patient: the same positive pressure is treating his pulmonary edema. Reduce it thoughtfully and watch the saturation, rather than dropping it to zero reflexively."
   },
   {
    "catalog_id": "norepinephrine_infusion",
@@ -888,7 +888,7 @@
     "deadline_seconds": 40,
     "text": "Pressure is 74 over 46 since the tube went in. Do you want me to start a pressor? I can run norepinephrine through the big cannula in his elbow."
    },
-   "halt_reason": "You started a vasopressor in a patient with a systolic pressure of 188 who was already well perfused; the additional afterload on a failing left ventricle worsened his pulmonary oedema and he arrested.",
+   "halt_reason": "You started a vasopressor in a patient with a systolic pressure of 188 who was already well perfused; the additional afterload on a failing left ventricle worsened his pulmonary edema and he arrested.",
    "debrief_note": "The correct haemodynamic support for this patient once he is hypotensive after intubation. He has become cold and wet: the problem is now perfusion pressure, not congestion. Norepinephrine is generally preferred over epinephrine in cardiogenic shock, where a randomised comparison was stopped early for a higher rate of refractory shock in the epinephrine arm. Giving a vasopressor to the same patient while he is hypertensive is a different action entirely, which is why the tag on this entry is phase-dependent.",
    "references": [
     "Levy B, Clere-Jehl R, Legras A, et al. Epinephrine versus norepinephrine for cardiogenic shock after acute myocardial infarction. J Am Coll Cardiol. 2018;72(2):173-82. [UNVERIFIED, confirm before release]",
@@ -990,8 +990,8 @@
      "source": "catalog_default_retained"
     }
    ],
-   "halt_reason": "You gave a litre of crystalloid to a patient already several litres fluid overloaded with cardiogenic pulmonary oedema; the added preload raised his pulmonary venous pressure further, his oxygenation failed, and he arrested.",
-   "debrief_note": "The commonest reflex to a tachycardic, unwell-looking patient, and the wrong one here. Every finding in front of you points away from hypovolaemia: raised jugular venous pressure, an S3, bilateral crackles, peripheral oedema, four kilograms above his dry weight, and a systolic pressure of 188. This is worth dwelling on in the debrief because the same reflex is correct in the septic patient two beds over, and the discriminating skill is the volume assessment rather than the general rule. Note that this remains harmful in the post-intubation hypotension phase: the hypotension there is vasodilation and reduced venous return in a fluid-overloaded patient, and the treatment is a vasopressor and stopping the nitrate, not volume.",
+   "halt_reason": "You gave a litre of crystalloid to a patient already several litres fluid overloaded with cardiogenic pulmonary edema; the added preload raised his pulmonary venous pressure further, his oxygenation failed, and he arrested.",
+   "debrief_note": "The commonest reflex to a tachycardic, unwell-looking patient, and the wrong one here. Every finding in front of you points away from hypovolaemia: raised jugular venous pressure, an S3, bilateral crackles, peripheral edema, four kilograms above his dry weight, and a systolic pressure of 188. This is worth dwelling on in the debrief because the same reflex is correct in the septic patient two beds over, and the discriminating skill is the volume assessment rather than the general rule. Note that this remains harmful in the post-intubation hypotension phase: the hypotension there is vasodilation and reduced venous return in a fluid-overloaded patient, and the treatment is a vasopressor and stopping the nitrate, not volume.",
    "binding_note": "Bound to normal_saline_1l_bolus and covers the other three crystalloid boluses. The resident sees four separate agents with catalog names; all four carry this action's harmful tag."
   },
   {
@@ -1046,7 +1046,7 @@
      "source": "catalog_default_retained"
     }
    ],
-   "debrief_note": "Morphine was taught for decades as a treatment for acute pulmonary oedema on the reasoning that it reduces preload and relieves the distressing sensation of breathlessness. That rationale has not held up. Observational data, most prominently a large registry analysis, found morphine use independently associated with higher mortality, more mechanical ventilation, more intensive care admission and longer stay; a later propensity-matched registry analysis pointed the same way. The evidence is observational and confounding by indication is a serious limitation, since the sickest and most distressed patients are the ones who get morphine. So the honest summary is not that morphine kills, but that the benefit was never demonstrated, the harm signal is consistent across datasets, and there is a better tool for the same problem: the distress in this patient is caused by hypoxaemia and work of breathing, and non-invasive ventilation treats the cause rather than blunting the perception of it. This action is tagged neutral only because the tag vocabulary has no intermediate value between neutral and case-halting harm.",
+   "debrief_note": "Morphine was taught for decades as a treatment for acute pulmonary edema on the reasoning that it reduces preload and relieves the distressing sensation of breathlessness. That rationale has not held up. Observational data, most prominently a large registry analysis, found morphine use independently associated with higher mortality, more mechanical ventilation, more intensive care admission and longer stay; a later propensity-matched registry analysis pointed the same way. The evidence is observational and confounding by indication is a serious limitation, since the sickest and most distressed patients are the ones who get morphine. So the honest summary is not that morphine kills, but that the benefit was never demonstrated, the harm signal is consistent across datasets, and there is a better tool for the same problem: the distress in this patient is caused by hypoxaemia and work of breathing, and non-invasive ventilation treats the cause rather than blunting the perception of it. This action is tagged neutral only because the tag vocabulary has no intermediate value between neutral and case-halting harm.",
    "references": [
     "Peacock WF, Hollander JE, Diercks DB, Lopatin M, Fonarow G, Emerman CL. Morphine and outcomes in acute decompensated heart failure: an ADHERE analysis. Emerg Med J. 2008;25(4):205-9. [PubMed record checked]",
     "Miro O, Gil V, Martin-Sanchez FJ, et al. Morphine use in the emergency department and outcomes of patients with acute heart failure: a propensity score-matching analysis based on the EAHFE Registry. Chest. 2017;152(4):821-32. [citation seen in secondary sources; verify]"
@@ -1064,7 +1064,7 @@
    "flags_set": [
     "bronchodilator_given"
    ],
-   "debrief_note": "This is the cardiac asthma trap and the wheeze on his chest is deliberately there to bait it. Peribronchial oedema narrows small airways and produces expiratory wheeze that sounds exactly like bronchospasm. The distinguishing features are all present: raised jugular venous pressure, an S3, bilateral crackles under the wheeze, peripheral oedema, orthopnoea, and no history of obstructive lung disease. A beta agonist does not treat pulmonary oedema. It does increase heart rate and myocardial oxygen demand in a patient with an ischaemic cardiomyopathy, and it drives potassium intracellularly in a patient about to receive a loop diuretic. When you genuinely cannot tell, treating both is defensible; assuming bronchospasm without examining the neck veins is not."
+   "debrief_note": "This is the cardiac asthma trap and the wheeze on his chest is deliberately there to bait it. Peribronchial edema narrows small airways and produces expiratory wheeze that sounds exactly like bronchospasm. The distinguishing features are all present: raised jugular venous pressure, an S3, bilateral crackles under the wheeze, peripheral edema, orthopnoea, and no history of obstructive lung disease. A beta agonist does not treat pulmonary edema. It does increase heart rate and myocardial oxygen demand in a patient with an ischaemic cardiomyopathy, and it drives potassium intracellularly in a patient about to receive a loop diuretic. When you genuinely cannot tell, treating both is defensible; assuming bronchospasm without examining the neck veins is not."
   },
   {
    "catalog_id": "methylprednisolone_iv",
@@ -1085,7 +1085,7 @@
      "source": "catalog_default_retained"
     }
    ],
-   "debrief_note": "Follows the same misdiagnosis as the nebuliser: an obstructive airways picture that is not there. No benefit in cardiogenic pulmonary oedema, and real cost in a diabetic patient whose glucose is already 172, since a steroid dose will drive it substantially higher and add sodium and water retention to a patient you are trying to decongest."
+   "debrief_note": "Follows the same misdiagnosis as the nebuliser: an obstructive airways picture that is not there. No benefit in cardiogenic pulmonary edema, and real cost in a diabetic patient whose glucose is already 172, since a steroid dose will drive it substantially higher and add sodium and water retention to a patient you are trying to decongest."
   },
   {
    "catalog_id": "ceftriaxone_iv",
@@ -1215,7 +1215,7 @@
   },
   {
    "catalog_id": "labs_bnp",
-   "display_name": "B-type natriuretic peptide",
+   "display_name": "NT-proBNP",
    "tag": [
     {
      "when": null,
@@ -1223,7 +1223,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Most useful when the diagnosis is uncertain, which in this presentation it is not. A value of 2840 is strongly supportive but it is not the reason to treat, and treating the number rather than the patient is the failure mode. Know what shifts it: it rises with age, renal impairment and atrial fibrillation, and it is lowered by obesity, so a value that looks unimpressive in a heavy patient may still be meaningful. In a patient with chronic heart failure, the comparison that matters is against his own previous values rather than against a population threshold.",
+   "debrief_note": "Most useful when the diagnosis is uncertain, which in this presentation it is not. A value of 9600 pg/mL is strongly supportive but it is not the reason to treat, and treating the number rather than the patient is the failure mode. Know what shifts it: it rises with age, renal impairment and atrial fibrillation, and it is lowered by obesity, so a value that looks unimpressive in a heavy patient may still be meaningful. In a patient with chronic heart failure, the comparison that matters is against his own previous values rather than against a population threshold.",
    "references": [
     "Maisel AS, Krishnaswamy P, Nowak RM, et al. Rapid measurement of B-type natriuretic peptide in the emergency diagnosis of heart failure. N Engl J Med. 2002;347(3):161-7. [UNVERIFIED, confirm before release]"
    ]
@@ -1250,7 +1250,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "The most useful single test in the first two minutes. His pH of 7.29 with a pCO2 of 54 shows an acute respiratory acidosis: he is tiring, not simply hypoxaemic. That finding frightens people toward intubation, but hypercapnia in acute cardiogenic pulmonary oedema is usually fatigue and it corrects with positive pressure. The gas after non-invasive ventilation, if repeated, demonstrates exactly that."
+   "debrief_note": "The most useful single test in the first two minutes. His pH of 7.29 with a pCO2 of 54 shows an acute respiratory acidosis: he is tiring, not simply hypoxaemic. That finding frightens people toward intubation, but hypercapnia in acute cardiogenic pulmonary edema is usually fatigue and it corrects with positive pressure. The gas after non-invasive ventilation, if repeated, demonstrates exactly that."
   },
   {
    "catalog_id": "labs_lactate",
@@ -1286,7 +1286,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Reasonable to send alongside potassium in a patient about to receive loop diuretics, since magnesium losses accompany potassium losses and unreplaced hypomagnesaemia makes hypokalaemia refractory. Normal here."
+   "debrief_note": "Reasonable to send alongside potassium in a patient about to receive loop diuretics, since magnesium losses accompany potassium losses and unreplaced hypomagnesemia makes hypokalaemia refractory. Normal here."
   },
   {
    "catalog_id": "labs_tsh",
@@ -1456,7 +1456,7 @@
     }
    ],
    "state_changing": false,
-   "debrief_note": "A third heart sound is one of the few examination findings in dyspnoea with a high positive likelihood ratio for heart failure. It is insensitive, so its absence proves little, but hearing it in this context is close to diagnostic. The laterally displaced apex is chronic, not acute. The symmetrical pitting oedema measures how long this has been building; it is days of accumulated sodium and water, and it will not resolve in the emergency department however much you diurese."
+   "debrief_note": "A third heart sound is one of the few examination findings in dyspnoea with a high positive likelihood ratio for heart failure. It is insensitive, so its absence proves little, but hearing it in this context is close to diagnostic. The laterally displaced apex is chronic, not acute. The symmetrical pitting edema measures how long this has been building; it is days of accumulated sodium and water, and it will not resolve in the emergency department however much you diurese."
   },
   {
    "catalog_id": "exam_pulm",
@@ -1492,7 +1492,7 @@
     }
    ],
    "state_changing": false,
-   "debrief_note": "Here this is a pertinent negative and nothing else. Symmetrical oedema with no calf tenderness, asymmetry or cords argues against deep vein thrombosis, which is the reasoning that should stop the D-dimer being sent rather than the D-dimer result stopping it afterwards."
+   "debrief_note": "Here this is a pertinent negative and nothing else. Symmetrical edema with no calf tenderness, asymmetry or cords argues against deep vein thrombosis, which is the reasoning that should stop the D-dimer being sent rather than the D-dimer result stopping it afterwards."
   },
   {
    "catalog_id": "exam_skin",
@@ -1528,7 +1528,7 @@
     }
    ],
    "state_changing": false,
-   "debrief_note": "Anxiety in acute pulmonary oedema is a symptom of hypoxaemia and air hunger, not a psychiatric finding, and it settles as the physiology settles. Recording it matters because it is the baseline against which a later change in mental state is judged."
+   "debrief_note": "Anxiety in acute pulmonary edema is a symptom of hypoxaemia and air hunger, not a psychiatric finding, and it settles as the physiology settles. Recording it matters because it is the baseline against which a later change in mental state is judged."
   }
  ],
  "follow_ups": [
@@ -1589,7 +1589,7 @@
  "prerequisite_semantics_note": "Prerequisite 'when' states the condition that MUST BE TRUE for the action to proceed, matching the worked table in section 8.1 of the authoring requirements. The failure message is shown when the condition evaluates false.",
  "content_keys": {
   "exam": {
-   "authoring_note": "Bound to the action catalog's closed set of 14 manoeuvres. Findings are placed according to the catalog's exam_finding_routing map, not by the author's preference: peripheral oedema sits under the cardiovascular exam, jugular venous pressure and hepatojugular reflux under the neck exam, capillary refill and peripheral temperature under the circulation exam. exam_heent, exam_gu and exam_back are not authored and inherit the catalog default.",
+   "authoring_note": "Bound to the action catalog's closed set of 14 manoeuvres. Findings are placed according to the catalog's exam_finding_routing map, not by the author's preference: peripheral edema sits under the cardiovascular exam, jugular venous pressure and hepatojugular reflux under the neck exam, capillary refill and peripheral temperature under the circulation exam. exam_heent, exam_gu and exam_back are not authored and inherit the catalog default.",
    "exam_airway": [
     {
      "when": "phase is post_intubation_hypotension OR phase is intubated_stabilized",
@@ -1716,7 +1716,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Tachycardic at around 128, regular, heart sounds soft. A third heart sound is present. Soft systolic murmur at the apex. Two plus pitting oedema to the mid-shin bilaterally, symmetrical."
+      "findings": "Tachycardic at around 128, regular, heart sounds soft. A third heart sound is present. Soft systolic murmur at the apex. Two plus pitting edema to the mid-shin bilaterally, symmetrical."
      }
     },
     {
@@ -1724,7 +1724,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Regular at around 96. Third heart sound still audible. Grade 2 out of 6 holosystolic murmur at the apex. Two plus pitting oedema to the mid-shin bilaterally, symmetrical."
+      "findings": "Regular at around 96. Third heart sound still audible. Grade 2 out of 6 holosystolic murmur at the apex. Two plus pitting edema to the mid-shin bilaterally, symmetrical."
      }
     },
     {
@@ -1732,7 +1732,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Tachycardic and regular. A third heart sound is present at the apex, best heard with the bell in the left lateral position. Grade 2 out of 6 blowing holosystolic murmur at the apex radiating toward the axilla. The apex beat is displaced laterally to the anterior axillary line. Two plus pitting oedema to the mid-shin bilaterally, symmetrical, with indentation from his sock at the ankle."
+      "findings": "Tachycardic and regular. A third heart sound is present at the apex, best heard with the bell in the left lateral position. Grade 2 out of 6 blowing holosystolic murmur at the apex radiating toward the axilla. The apex beat is displaced laterally to the anterior axillary line. Two plus pitting edema to the mid-shin bilaterally, symmetrical, with indentation from his sock at the ankle."
      }
     },
     {
@@ -1740,7 +1740,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Regular, rate around 90. A third heart sound is still audible. Grade 2 out of 6 holosystolic murmur at the apex. Apex beat displaced laterally. Two plus pitting oedema to the mid-shin bilaterally, symmetrical."
+      "findings": "Regular, rate around 90. A third heart sound is still audible. Grade 2 out of 6 holosystolic murmur at the apex. Apex beat displaced laterally. Two plus pitting edema to the mid-shin bilaterally, symmetrical."
      }
     }
    ],
@@ -1794,7 +1794,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": false,
-      "findings": "No deformity, joint effusion or focal bony tenderness. Compartments soft. No calf tenderness, asymmetry or palpable cords. Distal sensation and motor function intact in all four limbs. Bilateral symmetrical pitting oedema is present; see the cardiovascular examination."
+      "findings": "No deformity, joint effusion or focal bony tenderness. Compartments soft. No calf tenderness, asymmetry or palpable cords. Distal sensation and motor function intact in all four limbs. Bilateral symmetrical pitting edema is present; see the cardiovascular examination."
      }
     }
    ],
@@ -2096,16 +2096,17 @@
        "abnormal": true,
        "components": [
         {
-         "label": "B-type natriuretic peptide",
-         "value": "2840",
+         "label": "NT-proBNP",
+         "value": "9600",
          "unit": "pg/mL",
-         "reference_range": "under 100",
+         "reference_range": "under 300 rules out; age-adjusted rule-in 900 at 50 to 75 years",
          "abnormal": true
         }
        ],
-       "verify": "The catalog entry this binds to is pro-BNP, a different assay with a different reference interval. Either the number is rewritten for pro-BNP or a BNP entry is added to the catalog. UNVERIFIED."
+       "comment": "Markedly raised. Strongly supportive of acute heart failure in this presentation, and not the reason to treat it: the diagnosis was made at the bedside. NT-proBNP rises with age, renal impairment and atrial fibrillation and is lowered by obesity, so in a patient with known heart failure the comparison that matters is against his own previous values.",
+       "verify": "CONVERTED in v0.9. The case originally authored a BNP of 2840 pg/mL against a reference under 100. The catalog entry is NT-proBNP, so the value was rewritten as an NT-proBNP number. The conversion assumes a ratio of roughly three to four between the assays in decompensated heart failure, which is approximate, and the age-adjusted rule-in cut-offs (450, 900 and 1800 pg/mL by age band) are the ICON study's, cited from memory. UNVERIFIED: the reviewing physician should replace the number with one from their own laboratory."
       },
-      "prose": "B-type natriuretic peptide 2840 pg/mL (high; reference under 100)."
+      "prose": "NT-proBNP 9600 pg/mL (high; under 300 rules out, age-adjusted rule-in 900 pg/mL at 50 to 75 years)."
      }
     ],
     "result_shape": "structured"
@@ -2570,7 +2571,7 @@
       "value": {
        "kind": "report",
        "abnormal": false,
-       "report": "No filling defect in the pulmonary arterial tree to the segmental level. No pulmonary embolism. Cardiomegaly. Bilateral dependent ground glass opacification with smooth interlobular septal thickening and small bilateral pleural effusions, consistent with pulmonary oedema. Coronary artery calcification. No consolidation, no mass."
+       "report": "No filling defect in the pulmonary arterial tree to the segmental level. No pulmonary embolism. Cardiomegaly. Bilateral dependent ground glass opacification with smooth interlobular septal thickening and small bilateral pleural effusions, consistent with pulmonary edema. Coronary artery calcification. No consolidation, no mass."
       }
      }
     ],
@@ -2622,7 +2623,7 @@
    "consult_critical_care": [
     {
      "when": "phase is post_intubation_hypotension",
-     "value": "Intensivist: yes, we will take him. While you are waiting: stop the nitrate, start norepinephrine peripherally through your best cannula rather than waiting on a central line, and do not give him fluid, he is overloaded not dry. Have a look at your PEEP as well, it is doing useful work on the oedema but it is also part of why his pressure is down. Make sure he is properly sedated, he has had rocuronium."
+     "value": "Intensivist: yes, we will take him. While you are waiting: stop the nitrate, start norepinephrine peripherally through your best cannula rather than waiting on a central line, and do not give him fluid, he is overloaded not dry. Have a look at your PEEP as well, it is doing useful work on the edema but it is also part of why his pressure is down. Make sure he is properly sedated, he has had rocuronium."
     },
     {
      "when": "flag on_niv set AND flag nitro_infusion_running set",
@@ -2748,6 +2749,91 @@
       "when": null,
       "value": "'It's been building for three or four days. I was getting puffed just walking to the kitchen. Then about four this morning I woke up and couldn't get my breath at all, and it hasn't let up since.'"
      }
+    ],
+    "expanded_variants": [
+     "When did this begin?",
+     "What time did it start?",
+     "How long ago did this come on?",
+     "Onset?",
+     "Time of onset?",
+     "When did it come on?",
+     "Was it sudden or did it build up?",
+     "Sudden or gradual onset?",
+     "How long have you had this?",
+     "When did you start feeling like this?",
+     "Where were you when it began?",
+     "Roughly what time yesterday, or today, did this start?",
+     "How many hours or days has this been going on?",
+     "Tell me how it began.",
+     "Take me back to when this started.",
+     "When did things first go wrong?",
+     "Did this start today or before that?",
+     "Sorry to ask, but when did this begin?",
+     "One more thing. When did this begin?",
+     "Can I ask, what time did it start?",
+     "One more thing. How long ago did this come on?",
+     "Okay, how long ago did this come on?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "when it started",
+    "facts": [
+     {
+      "id": "time",
+      "asks": [
+       "how many days",
+       "when exactly",
+       "how long has it been building",
+       "since when"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Three, four days.'"
+       },
+       {
+        "when": null,
+        "value": "'It's been building for three or four days.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "this_morning",
+      "asks": [
+       "what happened this morning",
+       "when did it get bad",
+       "what time this morning",
+       "when did it get much worse"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Four this morning.'"
+       },
+       {
+        "when": null,
+        "value": "'About four this morning I woke up and couldn't get my breath at all, and it hasn't let up since.'"
+       }
+      ]
+     },
+     {
+      "id": "early_symptoms",
+      "asks": [
+       "how did it start",
+       "what was it like at first",
+       "what did you notice first"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Puffed... walking.'"
+       },
+       {
+        "when": null,
+        "value": "'I was getting puffed just walking to the kitchen.'"
+       }
+      ]
+     }
     ]
    },
    {
@@ -2774,7 +2860,32 @@
       "when": null,
       "value": "'It's got worse every single day. Monday I could still do the stairs if I stopped halfway up. By yesterday I couldn't do them at all. This morning was the worst it's been.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Is it getting worse or better?",
+     "How has it changed since it began?",
+     "Constant or does it come and go?",
+     "Intermittent or continuous?",
+     "Progression?",
+     "Is it worse than it was earlier?",
+     "Any change over the last few hours?",
+     "Is it easing off at all?",
+     "Getting worse?",
+     "Has it settled at any point?",
+     "Compared with when it started, how is it now?",
+     "Is this the worst it has been?",
+     "Does it fluctuate?",
+     "Has it been steadily building?",
+     "Better, worse, or the same?",
+     "Has it let up at all?",
+     "And is it getting worse or better?",
+     "Can I ask, is it getting worse or better?",
+     "Right. How has it changed since it began?",
+     "Quick one: how has it changed since it began?",
+     "Before we go on, constant or does it come and go?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "whether it's changing"
    },
    {
     "topic": "character_of_dyspnea",
@@ -2799,6 +2910,62 @@
      {
       "when": null,
       "value": "'Like I can't get enough in. There's a heaviness on my chest, like something's sat on it, and no matter how hard I pull I don't get a proper breath.'"
+     }
+    ],
+    "expanded_variants": [
+     "Describe the breathlessness.",
+     "Character of the dyspnoea?",
+     "Character of the dyspnea?",
+     "Does it feel tight or like you cannot get enough air?",
+     "Any wheeze with it?",
+     "Do you feel you are drowning?",
+     "Is it painful to breathe?",
+     "Are you breathing fast or just struggling?",
+     "Tell me about the shortness of breath.",
+     "Is it worse with talking?",
+     "What does the shortness of breath feel like?",
+     "Are you breathless?",
+     "Short of breath?",
+     "SOB?",
+     "Any SOB?",
+     "Any difficulty breathing?",
+     "Is it hard to breathe?",
+     "Are you struggling to breathe?",
+     "Any breathing problems?",
+     "Do you feel you cannot get your breath?",
+     "Dyspnoea?",
+     "Dyspnea?",
+     "Any trouble with your breathing?",
+     "Is your breathing okay?",
+     "Are you getting enough air?",
+     "Okay, what does the breathing feel like?",
+     "Sorry to ask, but is it hard to breathe in or out?",
+     "One more thing. Is it hard to breathe in or out?",
+     "Okay, character of the dyspnoea?",
+     "Just so I know, character of the dyspnoea?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "the breathing",
+    "facts": [
+     {
+      "id": "sensation",
+      "asks": [
+       "what does it feel like",
+       "tight or heavy",
+       "is it a heaviness",
+       "can you get a breath in"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Weight on my chest... can't get it in.'"
+       },
+       {
+        "when": null,
+        "value": "'Like I can't get enough in. There's a heaviness on my chest, like something's sat on it.'"
+       }
+      ],
+      "restate": true
      }
     ]
    },
@@ -2826,7 +2993,28 @@
       "when": null,
       "value": "'Right now? A ten. I've had bad turns before but never anything like this one.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Out of ten, how bad is it?",
+     "Rate the pain out of ten.",
+     "Severity?",
+     "On a scale of one to ten?",
+     "Is it the worst you have ever had?",
+     "Ten being the worst pain imaginable, where are you?",
+     "Mild, moderate, or severe?",
+     "How much is it bothering you?",
+     "Can you score it for me?",
+     "Pain score?",
+     "Is it bearable?",
+     "How intense is it?",
+     "Quick one: out of ten, how bad is it?",
+     "Before we go on, out of ten, how bad is it?",
+     "Just so I know, how severe is it?",
+     "Can I ask, on a scale of one to ten?",
+     "Sorry to ask, but on a scale of one to ten?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "how bad it is"
    },
    {
     "topic": "aggravating_factors",
@@ -2852,7 +3040,26 @@
       "when": null,
       "value": "'Lying flat makes it much worse, straight away. And moving about. Even getting to the bathroom sets it off now.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Anything that brings it on?",
+     "Does anything set it off?",
+     "Aggravating factors?",
+     "Is it worse with movement?",
+     "Worse with exertion?",
+     "Does lying down make it worse?",
+     "What triggers it?",
+     "Does anything make it flare up?",
+     "Is it worse at any particular time?",
+     "Does breathing in make it worse?",
+     "Sorry to ask, but what makes it worse?",
+     "One more thing. What makes it worse?",
+     "I need to know, anything that brings it on?",
+     "Right. Anything that brings it on?",
+     "Can I ask, does anything set it off?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "what makes it worse"
    },
    {
     "topic": "relieving_factors",
@@ -2878,7 +3085,26 @@
       "when": null,
       "value": "'Sitting up. That's about the only thing. I've been sleeping in the armchair the last two nights because it's the only way I get any rest at all.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Relieving factors?",
+     "Anything ease it?",
+     "Does resting help?",
+     "Have you taken anything for it?",
+     "Did anything you tried make a difference?",
+     "Does it settle with rest?",
+     "Is there anything that eases it off?",
+     "Any position that helps?",
+     "Does oxygen help?",
+     "Did painkillers help?",
+     "Just so I know, what makes it better?",
+     "Sorry to ask, but does anything help?",
+     "One more thing. Does anything help?",
+     "Just so I know, relieving factors?",
+     "I need to know, relieving factors?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "what helps"
    },
    {
     "topic": "orthopnea",
@@ -2903,6 +3129,69 @@
      {
       "when": null,
       "value": "'Normally two pillows. The last few nights I've needed four and even then I had to sit right up. Last night I gave up on the bed altogether and slept in the armchair.'"
+     }
+    ],
+    "expanded_variants": [
+     "Orthopnoea?",
+     "Can you lie down flat?",
+     "Do you have to sit up to breathe?",
+     "How many pillows?",
+     "Pillows?",
+     "Is it worse when you lie down?",
+     "Can you lie on your back?",
+     "Do you sleep in a chair?",
+     "Do you get breathless lying flat?",
+     "Do you need to be upright?",
+     "Are you sleeping sitting up?",
+     "How do you sleep at night, flat or propped?",
+     "Number of pillows at night?",
+     "Quick one: can you lie down flat?",
+     "Before we go on, can you lie down flat?",
+     "Right. Do you have to sit up to breathe?",
+     "Before we go on, how many pillows?",
+     "And how many pillows?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "the pillows",
+    "facts": [
+     {
+      "id": "pillows",
+      "asks": [
+       "how many pillows",
+       "how many normally",
+       "number of pillows",
+       "how many do you use"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Four pillows.'"
+       },
+       {
+        "when": null,
+        "value": "'Normally two pillows. The last few nights I've needed four.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "chair",
+      "asks": [
+       "did you sleep in a chair",
+       "where did you sleep last night",
+       "what about last night",
+       "could you lie in bed"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Chair last night.'"
+       },
+       {
+        "when": null,
+        "value": "'Last night I gave up on the bed altogether and slept in the armchair.'"
+       }
+      ]
      }
     ]
    },
@@ -2930,7 +3219,28 @@
       "when": null,
       "value": "'Twice this week I've woken in the middle of the night absolutely gasping, like I was being suffocated. I had to get to the window and hang on to the sill a good few minutes before it settled.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Any PND?",
+     "Paroxysmal nocturnal dyspnoea?",
+     "Paroxysmal nocturnal dyspnea?",
+     "Do you wake up gasping?",
+     "Do you wake at night breathless?",
+     "Do you wake up fighting for breath?",
+     "Ever wake in the night unable to breathe?",
+     "Do you have to get up at night to catch your breath?",
+     "Any breathlessness waking you?",
+     "Do you wake up choking?",
+     "Night-time breathlessness?",
+     "Do you sit on the edge of the bed at night to breathe?",
+     "Right. Paroxysmal nocturnal dyspnoea?",
+     "Quick one: paroxysmal nocturnal dyspnoea?",
+     "And paroxysmal nocturnal dyspnea?",
+     "And do you wake up gasping?",
+     "Can I ask, do you wake up gasping?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "waking up gasping"
    },
    {
     "topic": "leg_swelling",
@@ -2955,6 +3265,70 @@
      {
       "when": null,
       "value": "'They have. My socks leave marks by the evening and my slippers won't go on properly any more. It's both legs the same.'"
+     }
+    ],
+    "expanded_variants": [
+     "Any ankle swelling?",
+     "Ankle oedema?",
+     "Ankle edema?",
+     "Pedal edema?",
+     "Are your legs swollen?",
+     "Leg swelling?",
+     "Do your shoes feel tight?",
+     "Have your ankles puffed up?",
+     "Any oedema?",
+     "Any edema?",
+     "Do your socks leave marks?",
+     "Peripheral oedema?",
+     "Any fluid in the legs?",
+     "Have your calves swollen?",
+     "I need to know, any ankle swelling?",
+     "Quick one: are your legs swollen?",
+     "Before we go on, are your legs swollen?",
+     "Quick one: any swelling in your legs?",
+     "Before we go on, any swelling in your legs?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my legs",
+    "facts": [
+     {
+      "id": "both",
+      "asks": [
+       "both legs",
+       "one or both",
+       "is one worse",
+       "same on both sides"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Both legs.'"
+       },
+       {
+        "when": null,
+        "value": "'It's both legs the same.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "how_bad",
+      "asks": [
+       "how bad is the swelling",
+       "how swollen",
+       "do your shoes fit",
+       "socks"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Socks cutting in.'"
+       },
+       {
+        "when": null,
+        "value": "'My socks leave marks by the evening and my slippers won't go on properly any more.'"
+       }
+      ]
      }
     ]
    },
@@ -2982,7 +3356,26 @@
       "when": null,
       "value": "'I weigh myself most mornings, they told me to. I'm about nine pounds up on where I normally sit, and it's all come on in the last week or so.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Any weight gain?",
+     "Has your weight gone up?",
+     "Weight change?",
+     "Recent weight gain?",
+     "Have you put on any pounds recently?",
+     "Any change in your weight?",
+     "Have you been weighing yourself?",
+     "Has your weight changed over the last week or two?",
+     "Have you gained weight?",
+     "Are you heavier than usual?",
+     "One more thing. Any weight gain?",
+     "Okay, any weight gain?",
+     "Can I ask, has your weight gone up?",
+     "Sorry to ask, but has your weight gone up?",
+     "I need to know, weight change?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my weight"
    },
    {
     "topic": "cough_and_sputum",
@@ -3008,7 +3401,27 @@
       "when": null,
       "value": "'A dry cough mostly, worse when I lie down. There was a bit of frothy white stuff this morning, not much. Nothing green or yellow, and no blood.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Cough?",
+     "Have you been coughing?",
+     "Any phlegm?",
+     "Sputum?",
+     "Productive cough?",
+     "Coughing anything up?",
+     "Any mucus?",
+     "Frothy sputum?",
+     "Is there anything coming up when you cough?",
+     "Any pink froth?",
+     "Have you got a chesty cough?",
+     "Right. Have you been coughing?",
+     "Quick one: have you been coughing?",
+     "Sorry to ask, but are you bringing anything up?",
+     "One more thing. Are you bringing anything up?",
+     "I need to know, what colour is the sputum?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "the cough"
    },
    {
     "topic": "chest_pain",
@@ -3035,7 +3448,71 @@
       "value": "'No, no pain. It's tightness from working to breathe, not a pain. It's nothing like when I had my heart attack. That was a crushing thing, down my left arm, and I was sick with it. This is completely different.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any chest pain?",
+     "cp?",
+     "Any cp?",
+     "Pain in the chest?",
+     "Is your chest hurting?",
+     "Any pressure in the chest?",
+     "Does your chest hurt at all?",
+     "Chest tightness?",
+     "Any pain across the chest?",
+     "Has there been any chest discomfort?",
+     "Is there pain in your chest?",
+     "Any heaviness on your chest?",
+     "Any pain when you breathe in?",
+     "c/o chest pain?",
+     "Just so I know, any chest pain?",
+     "Just so I know, pain in the chest?",
+     "I need to know, pain in the chest?",
+     "Before we go on, is your chest hurting?",
+     "And is your chest hurting?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "chest pain",
+    "facts": [
+     {
+      "id": "pain",
+      "asks": [
+       "any pain at all",
+       "is it sore",
+       "any discomfort",
+       "does it hurt"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'No pain... just tight.'"
+       },
+       {
+        "when": null,
+        "value": "'No, no pain. It's tightness from working to breathe, not a pain.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "compare",
+      "asks": [
+       "like your heart attack",
+       "is it like last time",
+       "how does it compare",
+       "like before"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Nothing like... the heart attack.'"
+       },
+       {
+        "when": null,
+        "value": "'It's nothing like when I had my heart attack. That was a crushing thing, down my left arm, and I was sick with it. This is completely different.'"
+       }
+      ]
+     }
+    ]
    },
    {
     "topic": "palpitations",
@@ -3062,7 +3539,25 @@
       "value": "'No, nothing like that. I've not felt it racing or thumping or skipping about. Not that I've noticed.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Palpitations?",
+     "Heart racing at all?",
+     "Does your heart feel like it is skipping?",
+     "Any fluttering in the chest?",
+     "Have you felt your heart beating fast?",
+     "Is your heart thumping?",
+     "Does your heart feel odd?",
+     "Have you noticed your pulse racing?",
+     "Any pounding in your chest?",
+     "I need to know, any palpitations?",
+     "Can I ask, is your heart racing?",
+     "Sorry to ask, but is your heart racing?",
+     "Sorry to ask, but heart racing at all?",
+     "One more thing. Heart racing at all?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my heart racing"
    },
    {
     "topic": "fever_and_chills",
@@ -3089,7 +3584,28 @@
       "value": "'No, nothing like that. No fever, no shivers. I've been sweating with the breathing but I've not felt hot or cold in myself.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any fever?",
+     "Fever?",
+     "Fevers or chills?",
+     "Fevers, chills, rigors?",
+     "Have you been shivering?",
+     "Night sweats?",
+     "Do you feel hot and cold?",
+     "Have you felt feverish?",
+     "Any shaking chills?",
+     "Have you had the shivers?",
+     "Did you measure a temperature?",
+     "Have you been burning up?",
+     "Can I ask, fevers or chills?",
+     "Sorry to ask, but fevers or chills?",
+     "I need to know, fevers, chills, rigors?",
+     "Okay, any temperature?",
+     "Just so I know, any temperature?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "a temperature"
    },
    {
     "topic": "syncope_and_dizziness",
@@ -3116,7 +3632,45 @@
       "value": "'No, I've not blacked out and I've not gone dizzy with it. Just the breathing.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any dizziness or fainting?",
+     "Have you felt faint or passed out?",
+     "Dizzy or lightheaded at all?",
+     "Syncope or presyncope?",
+     "Any blackouts or dizzy spells?",
+     "Have you lost consciousness or felt close to it?",
+     "Any funny turns or fainting?",
+     "Have you felt woozy or blacked out?",
+     "Any loss of consciousness or lightheadedness?",
+     "Do you feel like you might pass out?",
+     "Did you black out?",
+     "Syncope?",
+     "Any syncope?",
+     "Any collapse?",
+     "Did you pass out?",
+     "Did you go down at any point?",
+     "Have you collapsed?",
+     "LOC?",
+     "Any loss of consciousness?",
+     "Did you faint or nearly faint?",
+     "Dizzy at all?",
+     "Do you feel lightheaded?",
+     "Lightheaded?",
+     "Presyncope?",
+     "Have you felt woozy?",
+     "Any giddiness?",
+     "Is the room spinning?",
+     "Do you feel unsteady?",
+     "Any near-fainting?",
+     "Sorry to ask, but any dizziness or fainting?",
+     "Right. Have you felt faint or passed out?",
+     "Quick one: have you felt faint or passed out?",
+     "Okay, dizzy or lightheaded at all?",
+     "Just so I know, dizzy or lightheaded at all?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "fainting"
    },
    {
     "topic": "nausea_and_vomiting",
@@ -3143,7 +3697,26 @@
       "value": "'No, I've not been sick and I don't feel sick.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "N/V?",
+     "Nausea or vomiting?",
+     "Have you thrown up?",
+     "Do you feel sick?",
+     "Any retching?",
+     "Feeling queasy?",
+     "Been throwing up?",
+     "Any nausea or vomiting?",
+     "Do you feel nauseous?",
+     "How many times have you vomited?",
+     "Before we go on, nausea or vomiting?",
+     "And nausea or vomiting?",
+     "Just so I know, have you been sick?",
+     "I need to know, have you been sick?",
+     "Okay, have you thrown up?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "feeling sick"
    },
    {
     "topic": "abdominal_fullness",
@@ -3169,7 +3742,26 @@
       "when": null,
       "value": "'Now you mention it, yes. My belly's been full and bloated and I get full up after a few mouthfuls. My trousers are tight round the waist and they weren't a fortnight ago.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Any bloating?",
+     "Does your stomach feel full?",
+     "Any abdominal swelling?",
+     "Is your belly bigger?",
+     "Any tightness in your abdomen?",
+     "Is your stomach distended?",
+     "Any fullness after eating?",
+     "Has your waistband got tighter?",
+     "Any swelling of the tummy?",
+     "Does your abdomen feel tight?",
+     "And does your stomach feel full?",
+     "Can I ask, does your stomach feel full?",
+     "And any abdominal swelling?",
+     "Can I ask, any abdominal swelling?",
+     "Can I ask, is your belly bigger?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my stomach"
    },
    {
     "topic": "urine_output",
@@ -3195,7 +3787,30 @@
       "when": null,
       "value": "'I've not been going as much, now you say it. Which I suppose makes sense with me being off the water tablet.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Are you passing urine?",
+     "Urine output?",
+     "UOP?",
+     "How much urine?",
+     "Passing water okay?",
+     "Have you peed today?",
+     "Any drop in your urine?",
+     "Are you peeing less?",
+     "How often are you going to the toilet?",
+     "Have you been passing less water?",
+     "Any reduction in urine output?",
+     "When did you last go for a wee?",
+     "Are you making urine?",
+     "Have you passed water since this started?",
+     "Just so I know, are you passing urine?",
+     "I need to know, how much urine?",
+     "Right. How much urine?",
+     "I need to know, passing water okay?",
+     "Right. Passing water okay?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "passing water"
    },
    {
     "topic": "calf_pain_or_asymmetry",
@@ -3222,7 +3837,27 @@
       "value": "'No, neither of them hurts. They're both swollen up the same and neither one's red or hot or sore.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any calf pain?",
+     "Is one leg more swollen than the other?",
+     "Calf tenderness?",
+     "Is one calf bigger?",
+     "Any pain in the back of your leg?",
+     "Any leg pain?",
+     "Is one leg red or hot?",
+     "Any swelling in one leg only?",
+     "Any signs of a DVT?",
+     "Any unilateral leg swelling?",
+     "One leg worse than the other?",
+     "Sorry to ask, but any calf pain?",
+     "One more thing. Any calf pain?",
+     "Can I ask, is one leg more swollen than the other?",
+     "Sorry to ask, but is one leg more swollen than the other?",
+     "Can I ask, any pain in your calves?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my calves"
    },
    {
     "topic": "travel_immobility_surgery",
@@ -3249,7 +3884,27 @@
       "value": "'No, I've not been anywhere. No flights, no long journeys, no operations. I've been at home the whole time. I've not moved about much the last day or two because of the breathing, but that's all.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any recent travel?",
+     "Any long flights?",
+     "Any recent surgery?",
+     "Any long journeys recently?",
+     "Been sitting still for long periods?",
+     "Have you been bedbound?",
+     "Any recent operations?",
+     "Recent travel, surgery, or immobility?",
+     "Any risk factors for a clot?",
+     "Have you been laid up recently?",
+     "Been abroad?",
+     "Right. Any recent travel?",
+     "Quick one: any recent travel?",
+     "Right. Any long flights?",
+     "Quick one: any long flights?",
+     "I need to know, have you been immobile?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "travelling"
    },
    {
     "topic": "hemoptysis",
@@ -3276,7 +3931,23 @@
       "value": "'No, no blood. Nothing like that.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Hemoptysis?",
+     "Any blood in the sputum?",
+     "Coughed up blood?",
+     "Blood in the phlegm?",
+     "Any blood-streaked sputum?",
+     "Have you seen blood when coughing?",
+     "Is there blood in what you cough up?",
+     "And any blood in the sputum?",
+     "Can I ask, any blood in the sputum?",
+     "And coughed up blood?",
+     "Just so I know, any blood when you cough?",
+     "I need to know, any blood when you cough?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "blood in the phlegm"
    },
    {
     "topic": "medication_adherence",
@@ -3301,6 +3972,108 @@
      {
       "when": null,
       "value": "'I ran out of the water tablet. That'd be about five days ago now. I meant to get to the chemist but my car's been off the road and I couldn't get a lift down there. I've been taking the rest of them, I think, though I've probably missed the odd one with all this going on.'"
+     }
+    ],
+    "expanded_variants": [
+     "Have you been taking your meds?",
+     "Compliance?",
+     "Adherence?",
+     "Are you taking them as prescribed?",
+     "Have you missed any doses?",
+     "Have you stopped any medication?",
+     "Any missed medications?",
+     "Have you been off your tablets?",
+     "When did you last take your medication?",
+     "Do you take them every day?",
+     "Are you compliant with your medications?",
+     "Did you stop your water tablet?",
+     "Have you been taking everything you should?",
+     "Any problems getting your prescriptions?",
+     "One more thing. Have you been taking your meds?",
+     "Quick one: are you taking them as prescribed?",
+     "Before we go on, are you taking them as prescribed?",
+     "Sorry to ask, but have you missed any doses?",
+     "One more thing. Have you missed any doses?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "taking my tablets",
+    "facts": [
+     {
+      "id": "which",
+      "asks": [
+       "which one did you run out of",
+       "which tablet",
+       "what did you stop",
+       "the water tablet"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'The water tablet.'"
+       },
+       {
+        "when": null,
+        "value": "'I ran out of the water tablet. That's the one.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "when",
+      "asks": [
+       "how long ago",
+       "when did you run out",
+       "how many days without it",
+       "since when"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Five days ago.'"
+       },
+       {
+        "when": null,
+        "value": "'About five days ago now.'"
+       }
+      ]
+     },
+     {
+      "id": "why",
+      "asks": [
+       "why did you run out",
+       "why didn't you get more",
+       "what happened",
+       "could you not get to the chemist"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Car... off the road.'"
+       },
+       {
+        "when": null,
+        "value": "'I meant to get to the chemist but my car's been off the road and I couldn't get a lift down there.'"
+       }
+      ]
+     },
+     {
+      "id": "others",
+      "asks": [
+       "what about the rest",
+       "are you taking the others",
+       "the other tablets",
+       "everything else"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Taking the rest... mostly.'"
+       },
+       {
+        "when": null,
+        "value": "'I've been taking the rest of them, I think, though I've probably missed the odd one with all this going on.'"
+       }
+      ]
      }
     ]
    },
@@ -3328,7 +4101,24 @@
       "when": null,
       "value": "'It was my granddaughter's christening at the weekend. There was a big spread on, ham, sausage rolls, crisps, all of that. I had a good bit more than I should have. The wife did say something at the time.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Any salty food recently?",
+     "Dietary sodium?",
+     "Salt intake?",
+     "Have you eaten a lot of takeaways?",
+     "Any processed food lately?",
+     "Have you had a lot of salty meals recently?",
+     "Do you add salt to your food?",
+     "Any tinned or ready meals?",
+     "Before we go on, how much salt do you eat?",
+     "And how much salt do you eat?",
+     "Okay, any salty food recently?",
+     "Before we go on, dietary sodium?",
+     "And dietary sodium?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "salt"
    },
    {
     "topic": "current_medications",
@@ -3353,6 +4143,88 @@
      {
       "when": null,
       "value": "'There's the water tablet, furosemide. A heart tablet, carvedilol I think it is. There's a newer heart one they started me on a couple of years back, sacubitril something, big tablet. A little white one, spironolactone. Metformin for the diabetes and another new one for the diabetes that they said was good for the heart as well. A statin at night and a baby aspirin in the morning.'"
+     }
+    ],
+    "expanded_variants": [
+     "What meds are you on?",
+     "Medications?",
+     "Current medications?",
+     "What do you take?",
+     "Any regular medications?",
+     "What prescriptions do you have?",
+     "List your medications.",
+     "What pills do you take?",
+     "Any regular meds?",
+     "Do you take anything regularly?",
+     "What are you prescribed?",
+     "Any OTC medicines?",
+     "Anything from the chemist?",
+     "What is your medication list?",
+     "Do you take any tablets?",
+     "I need to know, what meds are you on?",
+     "Just so I know, current medications?",
+     "I need to know, current medications?",
+     "Before we go on, what do you take?",
+     "And what do you take?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my tablets",
+    "facts": [
+     {
+      "id": "list",
+      "asks": [
+       "what are they",
+       "which tablets",
+       "name them",
+       "what exactly"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Water tablet... heart tablets... diabetes ones.'"
+       },
+       {
+        "when": null,
+        "value": "'The water tablet, furosemide. Carvedilol. The sacubitril one. Spironolactone. Metformin and the newer diabetes one. A statin and a baby aspirin.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "heart",
+      "asks": [
+       "which are the heart tablets",
+       "what do you take for your heart",
+       "the heart ones"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Carvedilol... the big new one... spironolactone.'"
+       },
+       {
+        "when": null,
+        "value": "'Carvedilol I think it is, the newer one, sacubitril something, a big tablet, and the little white one, spironolactone.'"
+       }
+      ]
+     },
+     {
+      "id": "diabetes",
+      "asks": [
+       "what do you take for diabetes",
+       "the diabetes tablets",
+       "which are for the sugar"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Metformin... and a new one.'"
+       },
+       {
+        "when": null,
+        "value": "'Metformin, and another new one for the diabetes that they said was good for the heart as well.'"
+       }
+      ]
      }
     ]
    },
@@ -3380,6 +4252,71 @@
       "when": null,
       "value": "'I had a heart attack six years ago and they put a stent in. They told me afterwards the heart doesn't pump the way it should since then. I've got the high blood pressure, and the diabetes, tablets not the injections. And they've said my kidneys aren't brilliant, though I've never had to do anything about that.'"
      }
+    ],
+    "expanded_variants": [
+     "Past medical history?",
+     "Any medical history?",
+     "Any medical problems?",
+     "What conditions do you have?",
+     "Do you have any health problems?",
+     "What is your medical history?",
+     "Any long-term conditions?",
+     "Do you have any illnesses?",
+     "Any chronic conditions?",
+     "What are you known to have?",
+     "Any ongoing health issues?",
+     "Are you known to the hospital for anything?",
+     "Do you see a doctor for anything regularly?",
+     "Any history of diabetes, high blood pressure, anything like that?",
+     "Medical history?",
+     "Sorry to ask, but past medical history?",
+     "Right. Any medical history?",
+     "Quick one: any medical history?",
+     "Can I ask, any medical problems?",
+     "Sorry to ask, but any medical problems?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my medical history",
+    "facts": [
+     {
+      "id": "heart_attack",
+      "asks": [
+       "tell me about the heart attack",
+       "when was the heart attack",
+       "did you have a stent",
+       "what happened to your heart"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Heart attack... six years back.'"
+       },
+       {
+        "when": null,
+        "value": "'I had a heart attack six years ago and they put a stent in. They told me afterwards the heart doesn't pump the way it should since then.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "other",
+      "asks": [
+       "anything else",
+       "what other problems",
+       "blood pressure or diabetes",
+       "kidneys"
+      ],
+      "value": [
+       {
+        "when": "phase is presentation",
+        "value": "'Blood pressure. Diabetes. Kidneys.'"
+       },
+       {
+        "when": null,
+        "value": "'The high blood pressure, and the diabetes, tablets not the injections. And they've said my kidneys aren't brilliant.'"
+       }
+      ]
+     }
     ]
    },
    {
@@ -3406,7 +4343,27 @@
       "when": null,
       "value": "'Just the stent when I had the heart attack, and they took my gallbladder out years back. That's the lot.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "PSH?",
+     "Past surgical history?",
+     "Any operations?",
+     "Any surgery?",
+     "Ever had surgery?",
+     "Surgical history?",
+     "Any operations in the past?",
+     "Have you been under the knife?",
+     "Any previous surgeries?",
+     "Ever been operated on?",
+     "Have you had anything done surgically?",
+     "Okay, past surgical history?",
+     "Just so I know, past surgical history?",
+     "Sorry to ask, but any operations?",
+     "One more thing. Any operations?",
+     "Right. Ever had surgery?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "operations"
    },
    {
     "topic": "allergies",
@@ -3432,7 +4389,25 @@
       "when": null,
       "value": "'No, nothing. I've never had a reaction to anything.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Allergies?",
+     "Any allergies?",
+     "Allergic to any medications?",
+     "Any allergy to antibiotics?",
+     "Any reactions to medicines?",
+     "Do you have any allergies I should know about?",
+     "Any medication allergies?",
+     "Drug allergies?",
+     "Any allergies to anything?",
+     "Sorry to ask, but any allergies?",
+     "Okay, any drug allergies?",
+     "Just so I know, any drug allergies?",
+     "Right. Are you allergic to anything?",
+     "Quick one: are you allergic to anything?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "allergies"
    },
    {
     "topic": "social_history_smoking_alcohol",
@@ -3458,7 +4433,51 @@
       "when": null,
       "value": "'I smoked a long time, about a pack a day from my twenties. I packed it in the day I had the heart attack and I've not touched one since. I have a beer at the weekend, maybe two. That's all I drink.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Do you smoke or drink?",
+     "Smoking and alcohol?",
+     "Any smoking or drinking?",
+     "Tobacco and alcohol?",
+     "Do you smoke, and how much do you drink?",
+     "EtOH and tobacco?",
+     "Are you a smoker or a drinker?",
+     "Any cigarettes or alcohol?",
+     "How much do you smoke and drink?",
+     "Smoker? Drinker?",
+     "Smoker?",
+     "Tobacco?",
+     "tob?",
+     "Any smoking?",
+     "How many a day?",
+     "Pack years?",
+     "Have you ever been a smoker?",
+     "Do you vape?",
+     "Cigarettes?",
+     "When did you quit?",
+     "How much alcohol?",
+     "EtOH?",
+     "etoh hx",
+     "Alcohol history?",
+     "Alcohol intake?",
+     "Any alcohol?",
+     "Units per week?",
+     "Have you been drinking heavily?",
+     "Any binge drinking?",
+     "Did you have a lot to drink recently?",
+     "How many drinks a day?",
+     "Any drinking over the weekend?",
+     "Are you a drinker?",
+     "When did you last have a drink?",
+     "Alcohol use?",
+     "One more thing. Do you smoke or drink?",
+     "Can I ask, smoking and alcohol?",
+     "Sorry to ask, but smoking and alcohol?",
+     "Before we go on, any smoking or drinking?",
+     "And any smoking or drinking?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "smoking and drinking"
    },
    {
     "topic": "substance_use_stimulants",
@@ -3485,7 +4504,38 @@
       "value": "'No. Nothing like that, never have done. No cocaine, nothing of that sort.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any recreational drugs?",
+     "Drug use?",
+     "Any illicit drugs?",
+     "Do you use cocaine?",
+     "Have you taken anything?",
+     "Substance use?",
+     "Do you take anything recreational?",
+     "Any drugs at all?",
+     "Any amphetamines or cocaine?",
+     "Have you used any drugs recently?",
+     "Any caffeine?",
+     "How much coffee?",
+     "Energy drinks?",
+     "Do you take anything to keep you going?",
+     "Any decongestants?",
+     "Any diet pills?",
+     "Do you use cocaine or amphetamines?",
+     "Any recreational stimulants?",
+     "How many coffees a day?",
+     "Any pre-workout supplements?",
+     "Have you taken any uppers?",
+     "Any pseudoephedrine?",
+     "I need to know, any recreational drugs?",
+     "Right. Any recreational drugs?",
+     "Right. Any illicit drugs?",
+     "Just so I know, do you use cocaine?",
+     "I need to know, do you use cocaine?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "drugs"
    },
    {
     "topic": "family_history",
@@ -3511,7 +4561,26 @@
       "when": null,
       "value": "'My dad had a heart attack in his fifties, and another one that took him. My brother's got the same trouble with his heart as me. My mum had the diabetes.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Family history?",
+     "FHx?",
+     "fhx cardiac",
+     "Any family history?",
+     "Did anyone in your family have heart trouble?",
+     "Any relatives with heart problems?",
+     "Did your parents have heart disease?",
+     "Any family history of illness?",
+     "Is there anything that runs in your family?",
+     "Family history of cardiac disease?",
+     "Before we go on, family history?",
+     "Quick one: any family history?",
+     "Before we go on, any family history?",
+     "And any heart problems in the family?",
+     "Can I ask, any heart problems in the family?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "the family"
    },
    {
     "topic": "last_oral_intake",
@@ -3537,7 +4606,29 @@
       "when": null,
       "value": "'A bit of toast about seven this morning, and a cup of tea. I couldn't manage much more than that.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Last oral intake?",
+     "Last PO intake?",
+     "last PO",
+     "When did you last drink?",
+     "NPO since when?",
+     "Have you had anything to eat or drink?",
+     "Last food or drink?",
+     "Anything to eat or drink today?",
+     "When did you last have something to drink?",
+     "Are you eating and drinking?",
+     "How much have you been drinking?",
+     "When did you last eat anything?",
+     "Have you managed any food?",
+     "And when did you last eat?",
+     "Can I ask, when did you last eat?",
+     "Can I ask, last oral intake?",
+     "One more thing. Last PO intake?",
+     "Okay, last PO intake?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "when I last ate"
    },
    {
     "topic": "sleep_apnea_and_snoring",
@@ -3563,7 +4654,25 @@
       "when": null,
       "value": "'My wife says I snore something awful and that I stop breathing in the night. They offered me one of those masks to sleep in a couple of years back but I couldn't get on with it, so I never used it.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Any sleep apnea?",
+     "OSA?",
+     "Do you stop breathing in your sleep?",
+     "Do you use a CPAP machine?",
+     "Do you wake up unrefreshed?",
+     "Sleep apnoea history?",
+     "Do you fall asleep in the day?",
+     "Has your partner noticed you stop breathing at night?",
+     "Any obstructive sleep apnoea?",
+     "Right. Any sleep apnoea?",
+     "And any sleep apnea?",
+     "Can I ask, any sleep apnea?",
+     "Can I ask, do you stop breathing in your sleep?",
+     "Sorry to ask, but do you stop breathing in your sleep?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "snoring"
    },
    {
     "topic": "recent_illness_or_sick_contacts",
@@ -3590,7 +4699,25 @@
       "value": "'No, nobody's been ill. I've not had a cold or a sore throat or anything like that.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Have you been unwell recently?",
+     "Any recent infection?",
+     "Recent cold or flu?",
+     "Anyone at home unwell?",
+     "Have you had a bug recently?",
+     "Any recent chest infection?",
+     "Has anyone around you been ill?",
+     "Any viral illness recently?",
+     "Been poorly in the last few weeks?",
+     "Quick one: have you been unwell recently?",
+     "One more thing. Any recent illness?",
+     "Okay, any recent illness?",
+     "Sorry to ask, but any recent infection?",
+     "One more thing. Any recent infection?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "whether I've been unwell"
    },
    {
     "topic": "functional_baseline",
@@ -3616,9 +4743,135 @@
       "when": null,
       "value": "'Normally I can get round the shops and do the stairs at home, though I'd be puffing by the top. If I'm honest I've been slowing down these last few months. This week I couldn't do the stairs at all.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "What is your normal exercise tolerance?",
+     "Exercise tolerance?",
+     "ET?",
+     "Baseline function?",
+     "How far can you normally walk?",
+     "What can you usually do?",
+     "What were you like before this?",
+     "Functional baseline?",
+     "What is your baseline?",
+     "Do you normally get breathless walking?",
+     "What is normal for you?",
+     "Do you manage your own shopping and housework?",
+     "How were you managing before this started?",
+     "Are you usually fit and well?",
+     "DOE at baseline?",
+     "Just so I know, what is your normal exercise tolerance?",
+     "I need to know, what is your normal exercise tolerance?",
+     "One more thing. Exercise tolerance?",
+     "Okay, exercise tolerance?",
+     "Right. Baseline function?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "what I could normally do"
    }
-  ]
+  ],
+  "key_topics": [
+   "medication_adherence",
+   "current_medications",
+   "chest_pain",
+   "orthopnea",
+   "paroxysmal_nocturnal_dyspnea",
+   "substance_use_stimulants",
+   "calf_pain_or_asymmetry",
+   "fever_and_chills",
+   "hemoptysis",
+   "allergies"
+  ],
+  "key_topics_note": "v0.9. The interview topics whose answers change management in this case, read by the summary's History score (asked / listed). Every other topic is still answerable and still charted; it just does not count toward the score. Seeded from the held-out matcher evaluation's management_changing list. Author judgement, unreviewed.",
+  "out_of_scope_bank": [
+   "Have you ever had a colonoscopy?",
+   "Any blood when you open your bowels?",
+   "Are you constipated?",
+   "Any heartburn?",
+   "Any indigestion after meals?",
+   "Any change in your bowel habit?",
+   "Any diarrhoea at all?",
+   "Have you had piles?",
+   "Any black stools?",
+   "Any yellowing of your skin or eyes?",
+   "Any blood in your urine?",
+   "Any trouble with your prostate?",
+   "Any burning when you pass urine?",
+   "Any kidney stones in the past?",
+   "Any incontinence?",
+   "Any headaches at all?",
+   "Any seizures or fits?",
+   "Any weakness in your arms or legs?",
+   "Any pins and needles?",
+   "Any numbness anywhere?",
+   "Any tremor in your hands?",
+   "Any trouble with your memory?",
+   "Any double vision?",
+   "Have you ever had a stroke?",
+   "Any migraines?",
+   "Any pain in your hands?",
+   "Any pain in your hips?",
+   "Any arthritis?",
+   "Have you broken any bones?",
+   "Any neck pain?",
+   "Any ringing or buzzing in your ears?",
+   "Any earache?",
+   "Do you wear glasses or contact lenses?",
+   "Any blurred vision?",
+   "When did you last have your eyes tested?",
+   "Any sinus trouble?",
+   "Any rash on your skin?",
+   "Any itching?",
+   "Any moles that have changed?",
+   "Any hair loss?",
+   "Any toothache?",
+   "Any mouth ulcers?",
+   "Any lumps or bumps anywhere?",
+   "Any excessive thirst?",
+   "Have you been feeling low in mood?",
+   "Have you had a flu vaccine this year?",
+   "When was your last tetanus?",
+   "Have you had the covid vaccine?",
+   "Have you ever received blood?",
+   "Do you have a blood donor card?",
+   "Who is your family doctor?",
+   "Do you have health insurance?",
+   "Have you got your NHS number?",
+   "Do you have a pharmacy you usually use?",
+   "Is there anyone we should call for you?",
+   "Do you have any religious needs we should know about?",
+   "Do you have any pets at home?",
+   "What do you do for a living?",
+   "What did you do before you retired?",
+   "Did you come in by ambulance?",
+   "Is your family in the waiting room?",
+   "How did you get here today?",
+   "Is it raining outside?",
+   "Do you live alone?",
+   "Do you have children?",
+   "Where do you live?",
+   "Do you follow any sports?",
+   "Do you watch much television?",
+   "What do you do to relax?",
+   "Do you have a garden?",
+   "Would you like a blanket?",
+   "Is the bed at the right height?",
+   "Can I get you anything?",
+   "What is your date of birth?",
+   "Can you confirm your name for me?",
+   "Do you know why you are here?",
+   "How old are you?",
+   "Is it okay if the students watch?",
+   "Would you prefer a female doctor?",
+   "Have you been waiting long?",
+   "What year are you in at university?",
+   "What are you studying?",
+   "Do you get on with your flatmates?",
+   "How much does it cost to park here?",
+   "Who is the prime minister?"
+  ],
+  "out_of_scope_bank_note": "Questions this case has no authored answer to, from catalog/interview_out_of_scope.py filtered to the concepts this case does not cover. The matcher embeds them beside the topic bank; a question closer to one of these than to any topic gets the out-of-scope fallback rather than the nearest topic's answer.",
+  "facts_note": "echo and facts were written by catalog/author_interview_facts.py (design 10.7). A fact's value restates part of the topic's answer for a follow-up question; it adds nothing the paragraph does not say. Not physician-reviewed."
  },
  "handoff": {
   "correct_disposition": {
@@ -3661,15 +4914,15 @@
   ],
   "correct_diagnosis": {
    "catalog_id": "dx_acute_decompensated_heart_failure_with_reduced_ejection_fraction",
-   "label": "Acute decompensated heart failure with reduced ejection fraction, with cardiogenic pulmonary oedema",
-   "explanation": "Acute on chronic decompensation of known HFrEF, presenting as hypertensive acute cardiogenic pulmonary oedema, precipitated by loop diuretic non-adherence and a dietary sodium load. Warm and wet, Nohria profile B.",
+   "label": "Acute decompensated heart failure with reduced ejection fraction, with cardiogenic pulmonary edema",
+   "explanation": "Acute on chronic decompensation of known HFrEF, presenting as hypertensive acute cardiogenic pulmonary edema, precipitated by loop diuretic non-adherence and a dietary sodium load. Warm and wet, Nohria profile B.",
    "label_note": "Label retained for the review packet. The interface shows the diagnosis catalog's own display name, which is shorter."
   },
   "alternative_diagnoses": [
    {
     "catalog_id": "dx_copd_exacerbation",
     "label": "Chronic obstructive pulmonary disease exacerbation",
-    "explanation": "The wheeze invites this and the smoking history supports it, which is why it is the commonest wrong answer to this presentation. What argues against it: no diagnosis of obstructive lung disease, no chronic productive cough, orthopnoea and paroxysmal nocturnal dyspnoea, a raised jugular venous pressure, an S3, symmetrical peripheral oedema, nine pounds of weight gain, and a chest film showing interstitial oedema with effusions rather than hyperinflation. Wheeze in this patient is peribronchial oedema, not bronchospasm. The two conditions coexist often enough that this needs active exclusion rather than assumption."
+    "explanation": "The wheeze invites this and the smoking history supports it, which is why it is the commonest wrong answer to this presentation. What argues against it: no diagnosis of obstructive lung disease, no chronic productive cough, orthopnoea and paroxysmal nocturnal dyspnoea, a raised jugular venous pressure, an S3, symmetrical peripheral edema, nine pounds of weight gain, and a chest film showing interstitial edema with effusions rather than hyperinflation. Wheeze in this patient is peribronchial edema, not bronchospasm. The two conditions coexist often enough that this needs active exclusion rather than assumption."
    },
    {
     "catalog_id": "dx_community_acquired_pneumonia",
@@ -3702,6 +4955,29 @@
     "explanation": "Selecting this usually means the lactate of 2.1 was read as evidence of shock. He is afebrile with a normal white count, warm and hypertensive with brisk capillary refill and clear mentation, and has no identified source. Hyperlactataemia from work of breathing is a genuine and common phenomenon. The clinical cost of this answer is not academic: it is the fluid bolus that follows it."
    }
   ],
+  "additional_diagnoses": [
+   {
+    "catalog_id": "dx_cardiogenic_pulmonary_edema",
+    "label": "Cardiogenic pulmonary edema",
+    "explanation": "The presentation itself: bilateral B lines, bilateral crackles, a saturation of 87 percent and a respiratory rate of 32 in a man whose ventricle cannot cope with the afterload of a systolic pressure of 188. Named beside the heart failure it says what the heart failure did; named alone it leaves out why."
+   },
+   {
+    "catalog_id": "dx_acute_hypercapnic_respiratory_failure",
+    "label": "Acute hypercapnic respiratory failure",
+    "explanation": "A venous pH of 7.29 with a pCO2 of 54 in a patient breathing at 32 is a man who is moving air and not clearing carbon dioxide with it, which is the reason bilevel positive pressure rather than oxygen alone is the treatment, and the reason the receiving team needs to know how close he came to a tube."
+   },
+   {
+    "catalog_id": "dx_hypertensive_emergency",
+    "label": "Hypertensive emergency",
+    "explanation": "A systolic pressure of 188 with acute pulmonary edema is hypertensive emergency by definition: end-organ dysfunction attributable to the pressure. It is the reason nitrates are the pharmacological priority here, and a handover that names it explains the nitroglycerin infusion to whoever inherits it."
+   },
+   {
+    "catalog_id": "dx_hyponatremia",
+    "label": "Hyponatraemia",
+    "explanation": "A sodium of 133 is mild and dilutional, and it is worth naming at handover for what it is rather than what to do about it: an established marker of worse prognosis in heart failure, and a reason to watch the free water rather than to correct the number."
+   }
+  ],
+  "additional_diagnoses_note": "v0.9. Diagnoses that are also true of this patient and appropriate to name at handover beside the primary. The learner lists as many diagnoses as apply; the first is scored as the primary against correct_diagnosis and alternative_diagnoses, and each of the rest earns credit if it is here. A diagnosis may appear both here and in alternative_diagnoses: the alternative's verdict and explanation apply when it is named as the primary, this entry's when it is named beside one. PROVENANCE: written by an AI assistant in September 2026 from the case's own findings. The list of diagnoses was reviewed and approved by the author (emergency medicine resident) on 5 September 2026; the explanations under them remain AI-written and unsigned.",
   "diagnosis_entry_method": "Search against the global diagnosis catalog. The alternatives above are authored for debrief explanation only and are not shown as a shortlist, since committing to a diagnosis from a wide field is the cognitive task being trained.",
   "pending_result_warning": "Standard confirmation dialogue. Pending or unviewed results at the moment of handoff are recorded automatically and surfaced in the debrief; no case-level authoring required.",
   "early_exit": {
@@ -3816,6 +5092,17 @@
     ]
    }
   ],
+  "key_exams": [
+   "exam_airway",
+   "exam_breath",
+   "exam_circ",
+   "exam_neck",
+   "exam_card",
+   "exam_pulm",
+   "exam_abd",
+   "exam_neuro"
+  ],
+  "key_exams_note": "v0.9. Read by the summary's Physical score when no exam carries a critical or recommended tag, as none does in this case. Regions where this case's findings are made or excluded. Author judgement by an AI assistant, unreviewed.",
   "intended_path": [
    "presentation",
    "stabilizing",
@@ -3824,7 +5111,7 @@
   ],
   "cross_cutting_teaching_points": [
    "The organising framework for this case is the warm-and-wet profile. Congestion determines whether the patient needs decongestion and vasodilation; perfusion determines whether they can tolerate it. This patient is congested and perfusing, so vasodilate and decongest, and do not support with inotropes or fluid. The same patient after intubation becomes cold and wet, and the treatment changes accordingly. Teaching the axes rather than the recipe is what transfers to the next case.",
-   "Sequencing is the skill this case tests, not recall. Nearly every learner knows that heart failure is treated with a diuretic. Fewer recognise that in the first ten minutes of hypertensive acute pulmonary oedema, positive pressure and afterload reduction do more than the diuretic does, and that the diuretic is treating the days of accumulated sodium and water rather than the crisis in front of you.",
+   "Sequencing is the skill this case tests, not recall. Nearly every learner knows that heart failure is treated with a diuretic. Fewer recognise that in the first ten minutes of hypertensive acute pulmonary edema, positive pressure and afterload reduction do more than the diuretic does, and that the diuretic is treating the days of accumulated sodium and water rather than the crisis in front of you.",
    "Two of the four halting actions in this case, intravenous metoprolol and diltiazem, are attempts to treat a compensatory sinus tachycardia. Recognising a tachycardia as compensation rather than pathology is a discrete, transferable skill.",
    "The precipitant is part of the diagnosis. Acute decompensated heart failure is not a complete formulation; acute decompensated heart failure because he ran out of furosemide and ate a salt load is, and only the second version generates a plan that prevents the readmission."
   ],

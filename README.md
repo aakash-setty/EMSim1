@@ -32,9 +32,8 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `validator-tests.py` | Negative tests for the validator: break a clean case one way, assert the rule fires |
 | `sim_runner.py` | Walks the authored scenarios end to end, headless |
 | `engine-tests.js` | Case-agnostic engine assertions against a built file |
-| `matcher_eval.mjs` | Interview matcher evaluation, with `--semantic --sweep` for thresholds |
+| `matcher_eval.mjs` | Interview matcher evaluation, all packs, against the built file. `--semantic` adds the model, `--sweep` tunes on the tuning sets only |
 | `deterioration_timeline.py` | Section 14.2c's artifact for a case that uses a clock |
-| `eval/` | Evaluation sets. Read the `provenance` field in each before quoting a number |
 | `shell.html` | The page: markup, the palette, and the layout |
 | `engine.js` | The fold, the condition evaluator, the resolvers |
 | `ui.js` | Rendering, the panel state machine, the interview matcher |
@@ -62,7 +61,8 @@ is `CHFE` (congestive heart failure exacerbation):
 | `CHFE-binding-map.json` | authored | case id to catalog id, one row per action |
 | `CHFE-scenarios.json` | authored | end-to-end paths the simulator walks |
 | `CHFE-tests.js` | authored | case-specific engine assertions |
-| `CHFE-matcher-eval.js` | authored | interview matcher accuracy on held-out phrasings |
+| `CHFE-matcher-eval-questions.json` | authored | held-out phrasings for the interview matcher; never tuned against, always quoted |
+| `CHFE-matcher-tune-questions.json` | generated | phrasings withheld from the bank by the variant expansion; thresholds are swept against these |
 | `CHFE-binding.json` | generated | binding with derived statuses |
 | `CHFE-review-matrix.md` | generated | the physician's review artifact |
 | `CHFE-review-packet.md` | authored | what the reviewing physician reads first |
@@ -205,10 +205,19 @@ running timer.
 The debrief then opens on a single screen carrying the verdict, *All Critical Actions
 Achieved!*, *Critical Actions Missed* or *Case Failed*, the halt or arrest reason where there
 is one, and the critical actions that were completed. Nothing else: the missed list, the
-domain table, the handoff verdict and every teaching note are the answer key, and they sit
+summary, the handoff verdict and every teaching note are the answer key, and they sit
 behind **Reveal Case Answers** so a resident can replay the case without scrolling past the
 answers to reach the button. A run that halted on a harmful action is grouped with the arrest
 as *Case Failed* rather than being scored on its critical actions alone.
+
+Behind the reveal, the Summary is seven scores since v0.9: History, Physical, Stabilization,
+Interventions, Investigations, Consults and Handoff, each with its arithmetic printed beside
+it (critical actions count two, recommended one, a discouraged action costs one, a harmful
+action zeroes its tab). The handoff itself takes an ordered list of diagnoses rather than
+one, the first being the primary, and the debrief gives each a verdict and lists the ones the
+case considers also true of the patient that were not named. Lab panels show their numbers
+and nothing else while the case runs; the case's own reading of each panel is printed in the
+debrief under *Your results, read*.
 
 ## The room
 
@@ -327,7 +336,7 @@ python3 engine/build_simulator.py
 python3 engine/sim_runner.py     cases/PE
 node    engine/engine-tests.js   build/simulator.html cases/PE/PE-tests.js PE
 python3 engine/validator-tests.py cases/PE
-node    cases/PE/PE-matcher-eval.js
+node    engine/matcher_eval.mjs --semantic --only PE
 python3 engine/deterioration_timeline.py cases/PE
 ```
 
@@ -351,8 +360,8 @@ copy was stale and missing the exam defaults and the routing map.
 
 | File | What it is |
 |---|---|
-| `docs/system-design-v2.md` | The system design. **v0.8 is current** |
-| `docs/case-authoring-requirements.md` | What an author must supply. **v0.7 is current** |
+| `docs/system-design-v2.md` | The system design. **v0.9 is current** |
+| `docs/case-authoring-requirements.md` | What an author must supply. **v0.9 is current** (12.1 several diagnoses, 13.0 the seven scores) |
 | `docs/spec-addendum.md` | Superseded. Its content is folded into the two above |
 | `docs/decisions/` | One record per change: why it was made and what was rejected |
 
@@ -381,18 +390,28 @@ including every reference interval and every reference, is unsigned. The interfa
 longer displays the warning, so the review packets are the only place a reader will
 encounter it. Read the one for whichever case you are about to use.
 
-**The interview matcher's accuracy is measured on small sets and it gets worse as cases
-get bigger.** CHFE returns 23 of 25 held-out phrasings correctly; MGCA 22 of 37, with four
-wrong topics on topics that change management; AFRVR 31 of 47, with nine. The three are not
-comparable, because CHFE's set is 25 well-formed lay sentences and the other two were
-written deliberately in the registers that section 10.6 says an author's own set misses.
-None was collected from residents, so none characterises how they actually type.
+**The interview matcher was measured properly for the first time in v0.8, and then
+changed.** On the held-out sets with the embedding model present, in-scope answers went
+from 39 to 46 of 52 on AFRVR, 40 to 39 of 46 on CHFE, and 23 to 26 of 37 on MGCA; wrong
+topics went from 6, 5 and 6 to 2, 4 and 3; and out-of-scope questions correctly refused
+went from 11, 11 and 9 of 30 to 24, 23 and 21. The banks were expanded from a shared
+phrasing library, the case gained an out-of-scope bank that both matchers score as a
+topic, two lexical precision defects were fixed, and the threshold ladder was replaced by
+a per-topic sum whose weights were chosen on withheld tuning sets. Authoring section 10.6
+carries the table and what it does not support: none of the questions was collected from
+residents.
 
-**Out-of-scope handling is the weakest part of the system and AFRVR is the first pack with
-enough questions to say so.** Section 10.6 puts the floor for that arm at thirty; CHFE has
-five and MGCA six. AFRVR has thirty, and nineteen of them receive a confident, specific,
-wrong answer: "have you noticed any blood in your stool" returns the leg-swelling answer.
-Assume any question a case does not cover may be answered as though it were a different
-question. Authoring section 10.6, `cases/MGCA/MGCA-review-packet.md` section 10 and
-`cases/AFRVR/AFRVR-review-packet.md` section 7 state what the numbers do and do not
-support.
+**v0.9 changed what the debrief scores and what the handoff accepts**, and neither has been
+put in front of a resident. The seven category scores are arithmetic over authored tags, so a
+case that tags fifteen things recommended on one tab (AFRVR's Stabilization) has diluted its
+own critical actions there; the additional-diagnosis lists in all three packs were written by
+an AI assistant from the cases' own findings and approved by the author, with the explanations
+under them still unsigned; and CHFE's NT-proBNP is a
+converted number, marked as such in the case file, that a physician should replace.
+
+**The patient now holds a conversation rather than returning paragraphs.** A follow-up is
+answered by the fact it asked about, "anything else?" returns what is untold, a repeated
+question gets a short restatement, a marginal match is prefixed with the topic so a wrong
+guess is visible, and a question the matcher cannot choose between produces a clarifying
+question rather than a coin toss. Facts are authored for eight topics per pack; system
+design 20.4 and authoring 10.7 describe the mechanism and its limits.

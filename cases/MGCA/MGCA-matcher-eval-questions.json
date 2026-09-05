@@ -1,228 +1,372 @@
 {
  "case_prefix": "MGCA",
- "status": "RUN. Results are in MGCA-review-packet.md section 10 and in the harness output. The set has NOT been used to tune the matcher or to add variants to the case: section 10.6 is explicit that doing so and then quoting the result measures memorisation rather than coverage. It stays held out.",
+ "status": "HELD OUT. This set is quoted, never tuned against. Threshold sweeps read MGCA-matcher-tune-questions.json instead. Nothing here may appear in a variant bank or an out-of-scope bank; engine/matcher_eval.mjs checks and refuses to run if it does.",
  "authoring_note": "None of these phrasings appears in any variant list in the case file. Written in the registers section 10.6 says an author-written set tends to miss: clinical shorthand, typos, compound questions and conversational openers. The expected topic on each row is a drafting judgement and should be reviewed before any number is quoted.",
- "out_of_scope_arm_note": "Six out-of-scope questions is far too few to conclude anything. Section 10.6 puts the floor at thirty.",
+ "out_of_scope_arm_note": "Brought up to the 30-question floor in Sep 2026. The clinical arm asks about systems this case does not author; the general arm is small talk. Anything clinically relevant to meningococcaemia that the case fails to author (gum bleeding, nosebleeds) was deliberately left out, because that would test a case gap rather than the matcher.",
+ "management_changing": [
+  "neck_stiffness",
+  "photophobia",
+  "menstrual_and_tampon",
+  "tick_and_outdoor_exposure",
+  "current_medications",
+  "vaccinations",
+  "rash",
+  "urine_output",
+  "sick_contacts"
+ ],
  "questions": [
   {
    "register": "paraphrase",
    "q": "When did you start feeling sick?",
-   "expected_topic": "onset"
+   "expect": "onset"
   },
   {
    "register": "paraphrase",
    "q": "Has the rash spread since you got here?",
-   "expected_topic": "rash"
+   "expect": "rash"
   },
   {
    "register": "paraphrase",
    "q": "Do bright lights make your eyes hurt?",
-   "expected_topic": "photophobia"
+   "expect": "photophobia"
   },
   {
    "register": "paraphrase",
    "q": "Can you bend your neck forward for me?",
-   "expected_topic": "neck_stiffness"
+   "expect": "neck_stiffness"
   },
   {
    "register": "paraphrase",
    "q": "How much water have you managed to keep down?",
-   "expected_topic": "last_oral_intake"
+   "expect": "last_oral_intake"
   },
   {
    "register": "paraphrase",
    "q": "Is there any chance at all that you might be expecting?",
-   "expected_topic": "pregnancy"
+   "expect": "pregnancy"
   },
   {
    "register": "paraphrase",
    "q": "Have you noticed you're not going to the bathroom as much?",
-   "expected_topic": "urine_output"
+   "expect": "urine_output"
   },
   {
    "register": "paraphrase",
    "q": "Do your muscles hurt or is it the joints?",
-   "expected_topic": "joint_pain"
+   "expect": "joint_pain"
   },
   {
    "register": "paraphrase",
    "q": "Has anybody in your building come down with anything?",
-   "expected_topic": "sick_contacts"
+   "expect": "sick_contacts"
   },
   {
    "register": "paraphrase",
    "q": "Are you taking anything for birth control?",
-   "expected_topic": "current_medications"
+   "expect": "current_medications"
   },
   {
    "register": "paraphrase",
    "q": "Did you have a cold or anything before this started?",
-   "expected_topic": "cough_sore_throat"
+   "expect": "cough_sore_throat"
   },
   {
    "register": "paraphrase",
    "q": "Has your head been clear or are you struggling to follow me?",
-   "expected_topic": "confusion"
+   "expect": "confusion"
   },
   {
    "register": "shorthand",
    "q": "PMH?",
-   "expected_topic": "past_medical_history"
+   "expect": "past_medical_history"
   },
   {
    "register": "shorthand",
    "q": "any PSH",
-   "expected_topic": "past_surgical_history"
+   "expect": "past_surgical_history"
   },
   {
    "register": "shorthand",
    "q": "NKDA?",
-   "expected_topic": "allergies"
+   "expect": "allergies"
   },
   {
    "register": "shorthand",
    "q": "LMP",
-   "expected_topic": "menstrual_and_tampon"
+   "expect": "menstrual_and_tampon"
   },
   {
    "register": "shorthand",
    "q": "meds",
-   "expected_topic": "current_medications"
+   "expect": "current_medications"
   },
   {
    "register": "shorthand",
    "q": "FHx",
-   "expected_topic": "family_history"
+   "expect": "family_history"
   },
   {
    "register": "shorthand",
    "q": "tick exposure",
-   "expected_topic": "tick_and_outdoor_exposure"
+   "expect": "tick_and_outdoor_exposure"
   },
   {
    "register": "shorthand",
    "q": "immunisation hx",
-   "expected_topic": "vaccinations"
+   "expect": "vaccinations"
   },
   {
    "register": "shorthand",
    "q": "n/v",
-   "expected_topic": "nausea_vomiting"
+   "expect": "nausea_vomiting"
   },
   {
    "register": "shorthand",
    "q": "SOB?",
-   "expected_topic": "breathing"
+   "expect": "breathing"
   },
   {
    "register": "shorthand",
    "q": "photophobia or neck stiffness",
-   "expected_topic": "photophobia"
+   "expect": [
+    "photophobia",
+    "neck_stiffness"
+   ]
   },
   {
    "register": "shorthand",
    "q": "last PO intake",
-   "expected_topic": "last_oral_intake"
+   "expect": "last_oral_intake"
   },
   {
    "register": "typo",
    "q": "when did the rah start",
-   "expected_topic": "rash"
+   "expect": "rash"
   },
   {
    "register": "typo",
    "q": "any allergis",
-   "expected_topic": "allergies"
+   "expect": "allergies"
   },
   {
    "register": "typo",
    "q": "do you smokee",
-   "expected_topic": "social_history"
+   "expect": "social_history"
   },
   {
    "register": "typo",
    "q": "hav you traveled recently",
-   "expected_topic": "travel_history"
+   "expect": "travel_history"
   },
   {
    "register": "typo",
    "q": "any nausae or vomitting",
-   "expected_topic": "nausea_vomiting"
+   "expect": "nausea_vomiting"
   },
   {
    "register": "compound",
    "q": "Any nausea or vomiting, and have you kept anything down?",
-   "expected_topic": "nausea_vomiting"
+   "expect": "nausea_vomiting"
   },
   {
    "register": "compound",
    "q": "Do you smoke or drink, and do you use any drugs?",
-   "expected_topic": "social_history"
+   "expect": "social_history"
   },
   {
    "register": "compound",
    "q": "Any neck stiffness or sensitivity to light?",
-   "expected_topic": "neck_stiffness"
+   "expect": [
+    "neck_stiffness",
+    "photophobia"
+   ]
   },
   {
    "register": "compound",
    "q": "When did it start and has it got worse?",
-   "expected_topic": "onset"
+   "expect": [
+    "onset",
+    "timing_progression"
+   ]
   },
   {
    "register": "compound",
    "q": "Are you on any medications and do you have any allergies?",
-   "expected_topic": "current_medications"
+   "expect": [
+    "current_medications",
+    "allergies"
+   ]
   },
   {
    "register": "conversational",
    "q": "Tell me a bit about what's been going on with you",
-   "expected_topic": "onset"
+   "expect": "onset"
   },
   {
    "register": "conversational",
    "q": "Is there anything else you think I should know?",
-   "expected_topic": "__ambiguous__"
+   "expect": "__ambiguous__"
   },
   {
    "register": "conversational",
    "q": "Talk me through your morning",
-   "expected_topic": "timing_progression"
+   "expect": "timing_progression"
   },
   {
    "register": "conversational",
    "q": "What worries you most right now?",
-   "expected_topic": "code_status_goals"
+   "expect": "code_status_goals"
   },
   {
-   "register": "out_of_scope",
+   "register": "out_of_scope_general",
    "q": "What is your favourite colour?",
-   "expected_topic": null
+   "expect": null
   },
   {
-   "register": "out_of_scope",
+   "register": "out_of_scope_general",
    "q": "Who is the president?",
-   "expected_topic": null
+   "expect": null
   },
   {
-   "register": "out_of_scope",
+   "register": "out_of_scope_general",
    "q": "Do you like your roommate?",
-   "expected_topic": null
+   "expect": null
   },
   {
-   "register": "out_of_scope",
+   "register": "out_of_scope_general",
    "q": "What are you studying at university?",
-   "expected_topic": null
+   "expect": null
   },
   {
-   "register": "out_of_scope",
+   "register": "out_of_scope_general",
    "q": "Can I have a glass of water?",
-   "expected_topic": null
+   "expect": null
   },
   {
-   "register": "out_of_scope",
+   "register": "out_of_scope_general",
    "q": "How much does parking cost here?",
-   "expected_topic": null
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any change in your hearing?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you wear contact lenses?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "When did you last see a dentist?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you been constipated at all?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any lower back pain?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you lost weight over the last few months?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you get hay fever?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had your eyes tested recently?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you snore?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any trouble with your teeth?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you ever broken a bone?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you get migraines normally?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any heartburn or indigestion?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you wear a hearing aid?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had chickenpox?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you have any pets?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Is it cold in here?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What time is it?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Have you got your phone with you?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "How is the food in halls?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you have a car?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Where did you grow up?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Are you on any sports teams?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What year are you in?",
+   "expect": null
   }
- ]
+ ],
+ "compound_note": "Four rows that ask two authored topics were recorded with a single expected topic when first written. They now carry the list of topics that must all be answered; the shipped matcher answers both and was being scored as if that were an error."
 }

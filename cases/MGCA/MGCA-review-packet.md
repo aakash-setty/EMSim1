@@ -271,6 +271,8 @@ Everything else, including the Endocrine Society adrenal insufficiency guideline
 
 ## 10. Interview matching, measured
 
+**Superseded in v0.8.** `MGCA-matcher-eval.js` is retired; `engine/matcher_eval.mjs` runs every pack. The current held-out numbers, model present, are 26 of 37 in scope correct, 3 wrong topics, 3 fallthroughs, 3 clarifying questions, and 21 of 30 out-of-scope questions refused, on a set brought up to the thirty-question out-of-scope floor. The figures below are the lexical matcher before the v0.8 work.
+
 `MGCA-matcher-eval.js` extracts the shipped lexical matcher from the build and runs 37
 held-out in-scope phrasings plus 6 out-of-scope, stratified by register. None of them
 appears in any variant list. The embedding model is off, as it is on a hospital network.

@@ -21,6 +21,10 @@ from case_1_shell import META, PATIENT, PHASES
 from case_2_actions import ACTIONS, FOLLOW_UPS
 from case_3_content import EXAM, GENERAL_STATUS, LABS, IMAGING, CONSULTANTS
 from case_4_interview import TOPICS, GLOBAL_RULES, OUT_OF_SCOPE, AUTHORING_NOTES
+try:
+    from case_4_interview import OUT_OF_SCOPE_BANK
+except ImportError:          # before the expansion script has run
+    OUT_OF_SCOPE_BANK = []
 from case_5_handoff import HANDOFF, DEBRIEF, PROVENANCE
 
 PACK = sys.argv[1] if len(sys.argv) > 1 else HERE
@@ -63,13 +67,14 @@ CASE = {
      "That was the author's explicit instruction and it is the reason no transition in this case "
      "carries allow_time_to_terminal."),
    "rate_control_delay": (
-     "The two transitions that follow rate control carry a 30-second guard_true delay, so the "
-     "ventricular rate falls about half a minute after the drug rather than on the click. Without "
+     "The two transitions that follow rate control carry a 10-second guard_true delay, so the "
+     "ventricular rate falls about ten seconds after the drug rather than on the click. Without "
      "it the case teaches that rate control is instantaneous. The delay is paired with a nurse "
      "line said the moment the drug goes in, because a delay on its own reads as the drug having "
      "failed and invites a second dose; the line is what carries the lesson and the delay is what "
-     "stops the number being a button. Thirty seconds sits on the validator's hard floor, which is "
-     "deliberate and is recorded in the transition rationale."),
+     "stops the number being a button. It was thirty seconds until v0.9; the validator's "
+     "thirty-second floor is a fairness rule for deteriorations and does not apply to a delayed "
+     "consequence of the resident's own action, as the transition rationale records."),
  },
  "phases": PHASES,
  "tag_vocabulary": {
@@ -98,13 +103,14 @@ CASE = {
    "per_phase": 4,
    "rationale": (
      "Four slots per phase, and the ordering matters more than the number. In the arrival phase "
-     "the nurse can say four things before the 240-second deterioration: attach the monitor at 20 "
-     "seconds, apply positive pressure at 40, escalate that at 100, and put the probe on the heart "
-     "at 130. The escalation has to be inside the cap, because it is the warning the "
-     "deterioration's fairness guarantee rests on, and a cap that suppresses a fairness guarantee "
-     "is worse than no cap. The diuretic at 160, rate control at 190 and anticoagulation at 215 "
-     "therefore do not fire on arrival and do fire in the later phases, where the earlier prompts "
-     "have been satisfied and their guards suppress them without consuming a slot."),
+     "the nurse can say four new things before the 240-second deterioration: attach the monitor "
+     "at 20 seconds, apply positive pressure at 80, put the probe on the heart at 130 and give the "
+     "diuretic at 160. The positive-pressure escalation at 200 is the warning the deterioration's "
+     "fairness guarantee rests on; since v0.9 an escalation is exempt from the cap (it repeats a "
+     "warning rather than raising a new one), so it is heard whatever the ordering. Rate control "
+     "at 190 and anticoagulation at 215 therefore do not fire on arrival and do fire in the later "
+     "phases, where the earlier prompts have been satisfied and their guards suppress them "
+     "without consuming a slot."),
  },
  "prerequisite_semantics_note": (
    "A prerequisite is a requirement that must already hold, not a condition that blocks. Two are "
@@ -122,7 +128,22 @@ CASE = {
    "authoring_notes": AUTHORING_NOTES,
    "global_answer_rules": GLOBAL_RULES,
    "out_of_scope_fallback": OUT_OF_SCOPE,
+   "out_of_scope_bank": OUT_OF_SCOPE_BANK,
+   "out_of_scope_bank_note": (
+     "Questions this case has no authored answer to, generated into case_4_interview.py by "
+     "catalog/expand_interview_variants.py from catalog/interview_out_of_scope.py, filtered to the "
+     "concepts this case does not cover. The matcher embeds them beside the topic bank."),
    "topics": TOPICS,
+   # v0.9. The topics whose answers change management here, read by the summary's History
+   # score (asked / listed). Every other topic is still answerable and charted; it just does
+   # not count. Seeded from the held-out matcher evaluation's management_changing list.
+   "key_topics": ["onset", "prior_afib_or_palpitations", "prior_heart_failure",
+                  "anticoagulant_history_and_bleeding", "current_medications",
+                  "past_medical_history", "chest_pain", "orthopnea",
+                  "paroxysmal_nocturnal_dyspnea", "thyroid_symptoms", "alcohol_and_binge",
+                  "syncope_presyncope", "code_status_goals_of_care"],
+   "key_topics_note": ("Author judgement, unreviewed. Read by the summary's History score; "
+                       "topics not listed are answerable but unscored."),
  },
  "handoff": HANDOFF,
  "debrief_configuration": DEBRIEF,
@@ -142,7 +163,7 @@ CASE = {
    "from any state reaches the ventilated phase rather than an improvement phase. Positive "
    "pressure is checked before rate control in the arrival phase, so a learner who gives both in "
    "one batch of orders moves to the breathing-supported phase immediately and then to stabilised "
-   "thirty seconds later, rather than waiting thirty seconds for either.\n\n"
+   "ten seconds later, rather than waiting ten seconds for either.\n\n"
    "The respiratory failure phase deliberately has no rate-control exit. A learner who arrives "
    "there and responds by giving a rate-controlling drug has the flag recorded and the credit "
    "given and sees no improvement, because the problem in that phase is the lung. Applying "
@@ -189,6 +210,11 @@ for a in ACTIONS:
           "the same harm in a patient with an ejection fraction of 30 to 35 percent and a flooded "
           "lung, so the tag covers the whole equivalence group rather than one entry. A harmful "
           "tag on saline alone would leave Ringer's as an unguarded route to the same death.")
+    elif cid == "magnesium_sulfate_bolus":
+        row["also_covers"] = ["magnesium_sulfate"]
+        row["note"] = ("v0.9: the catalog gained a plain Magnesium Sulfate entry placed under "
+                       "four medication groups. Repleting through either entry is the same act, "
+                       "so the recommended tag, the flag and the note cover both.")
     elif cid == "furosemide_40_mg_iv":
         row["also_covers_group"] = "loop_diuretic"
         row["note"] = ("Bound to the group so that if the catalog ever gains a second loop "

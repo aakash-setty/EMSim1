@@ -437,6 +437,86 @@ section('interview readouts');
       'ui.js feedItems');
 }
 
+section('the patient\'s side of the conversation (design 10.7)');
+{
+  const IV = CASE.interview;
+  const D = PROTO.interviewDefaults || {};
+  const withFacts = IV.topics.find(t => t.facts && t.facts.length >= 2);
+  const plain = IV.topics.find(t => !t.facts || !t.facts.length) || IV.topics[0];
+  const speech = st => st.readouts.filter(r => r.kind === 'speech');
+  const ask = (t, extra) => Object.assign({ t, kind: 'interview', q: 'q' + t }, extra);
+  const first = fold(mk([ask(1, { topic: plain.topic })]), 5);
+  const firstBody = speech(first)[0].body;
+  chk('the first ask of a topic is its authored answer',
+      firstBody === resolve((IV.global_answer_rules || []).concat(plain.answer), first));
+
+  /* Asking twice does not produce the paragraph twice. */
+  const twice = fold(mk([ask(1, { topic: plain.topic }), ask(2, { topic: plain.topic })]), 5);
+  const sp2 = speech(twice);
+  chk('a repeat gets a restatement, not the paragraph again',
+      sp2.length === 2 && sp2[1].body !== sp2[0].body && sp2[1].body.length < sp2[0].body.length + 40,
+      sp2.length === 2 ? sp2[1].body.slice(0, 60) : String(sp2.length));
+  chk('the restatement carries a repeat prefix from the defaults',
+      (D.repeatPrefixes || []).some(p => {
+        const head = p.split('{answer}')[0];
+        return head && sp2[1].body.startsWith(head);
+      }) || !(D.repeatPrefixes || []).length, sp2[1].body.slice(0, 40));
+  chk('a repeat still satisfies the topic', twice.satisfied.has('interview_topic_' + plain.topic)
+      || !ACT['interview_topic_' + plain.topic]);
+  const thrice = fold(mk([ask(1, { topic: plain.topic }), ask(2, { topic: plain.topic }), ask(3, { topic: plain.topic })]), 5);
+  chk('a third ask is phrased differently from the second',
+      speech(thrice)[2].body !== speech(thrice)[1].body || (D.repeatPrefixes || []).length < 2,
+      speech(thrice)[2].body.slice(0, 40));
+
+  /* An echo in front of an uncertain match, and none in front of a confident one. */
+  if (plain.echo) {
+    const unsure = fold(mk([ask(1, { topic: plain.topic, uncertain: true })]), 5);
+    const b = speech(unsure)[0].body;
+    chk('an uncertain match is answered with the topic echoed first',
+        b.toLowerCase().indexOf(plain.echo.toLowerCase()) >= 0 && b.indexOf('?') > 0 && b.indexOf('?') < plain.echo.length + 4,
+        b.slice(0, 50));
+    chk('a confident match is not', firstBody.indexOf(plain.echo + '?') < 0);
+  } else chk('this pack authors no echo on ' + plain.topic + ', so the echo assertion is not made', true);
+
+  /* Clarification names both topics and commits to neither. */
+  const [ta, tb] = IV.topics.slice(0, 2);
+  const cl = fold(mk([ask(1, { topic: null, clarify: [ta.topic, tb.topic], q: 'which' })]), 5);
+  const cb = speech(cl)[0];
+  chk('a clarification is spoken', !!cb && typeof cb.body === 'string' && cb.body.length > 10);
+  chk('it names both candidates', !!cb && [ta, tb].every(t => cb.body.indexOf(t.echo || t.topic.replace(/_/g, ' ')) >= 0), cb && cb.body);
+  chk('it commits to neither', !!cb && cb.matched === null
+      && !cl.satisfied.has('interview_topic_' + ta.topic) && !cl.satisfied.has('interview_topic_' + tb.topic));
+
+  /* Facts: a follow-up gets the piece asked about; "anything else" gets what is untold. */
+  if (withFacts) {
+    const f0 = withFacts.facts[0], f1 = withFacts.facts[1];
+    const one = fold(mk([ask(1, { topic: withFacts.topic, fact: f0.id })]), 5);
+    const want = resolve((IV.global_answer_rules || []).concat(Array.isArray(f0.value) ? f0.value : [{ when: null, value: f0.value }]), one);
+    chk('a fact question is answered with that fact', speech(one)[0].body === want, speech(one)[0].body);
+    chk('and satisfies the topic', one.satisfied.has('interview_topic_' + withFacts.topic) || !ACT['interview_topic_' + withFacts.topic]);
+    const more = fold(mk([ask(1, { topic: withFacts.topic, fact: f0.id }), ask(2, { topic: withFacts.topic, more: true })]), 5);
+    const mb = speech(more)[1].body;
+    const f1want = resolve((IV.global_answer_rules || []).concat(Array.isArray(f1.value) ? f1.value : [{ when: null, value: f1.value }]), more);
+    chk('"anything else" after one fact tells the next untold fact', mb.indexOf(f1want) >= 0, mb.slice(0, 60));
+    chk('and not the one already told', mb.indexOf(want) < 0);
+    const drained = fold(mk([ask(1, { topic: withFacts.topic }), ask(2, { topic: withFacts.topic, more: true })]), 5);
+    chk('"anything else" after the full answer says there is nothing more',
+        speech(drained)[1].body === (IV.nothing_more || D.nothingMore), speech(drained)[1].body);
+    /* The restatement for a topic with facts is the fact marked restate, or the first. */
+    const rep = fold(mk([ask(1, { topic: withFacts.topic }), ask(2, { topic: withFacts.topic })]), 5);
+    const rf = withFacts.facts.find(f => f.restate) || withFacts.facts[0];
+    const core = resolve((IV.global_answer_rules || []).concat(Array.isArray(rf.value) ? rf.value : [{ when: null, value: rf.value }]), rep)
+                 .replace(/^'|'$/g, '');
+    chk('a repeat of a topic with facts restates its lead fact', speech(rep)[1].body.indexOf(core) >= 0, speech(rep)[1].body.slice(0, 60));
+  } else chk('this pack authors no facts, so the fact assertions are not made', true);
+
+  /* All of it replays. */
+  const a = fold(mk([ask(1, { topic: plain.topic }), ask(2, { topic: plain.topic }), ask(3, { topic: null, clarify: [ta.topic, tb.topic] })]), 5);
+  const b = fold(mk([ask(1, { topic: plain.topic }), ask(2, { topic: plain.topic }), ask(3, { topic: null, clarify: [ta.topic, tb.topic] })]), 5);
+  chk('the conversation is a pure function of the log',
+      JSON.stringify(speech(a).map(x => x.body)) === JSON.stringify(speech(b).map(x => x.body)));
+}
+
 section('monitor gating');
 {
   /* Case-agnostic: whichever action carries reveals_vitals, and there must be exactly
@@ -1165,6 +1245,91 @@ const r1 = fold(L, 40), r2 = fold(L, 40);
 chk('same log, same state',
     r1.phase === r2.phase && r1.nurse.length === r2.nurse.length &&
     r1.timeline.length === r2.timeline.length);
+
+section('several diagnoses at handover (v0.9)');
+{
+  const correct = PROTO.correctDxId;
+  const addl = Object.keys(PROTO.addlDx || {});
+  const defensible = PROTO.altDxDefensible || [];
+  const wrongId = Object.keys(PROTO.altDx || {}).find(id => !defensible.includes(id)) || 'dx_nowhere';
+  const ho = (diagnoses, extra) => fold(mk([[1, 'insert_iv'],
+    Object.assign({ t: 30, actionId: 'handoff_submit',
+      payload: Object.assign({ disposition: CASE.handoff.correct_disposition.id, diagnoses }, extra || {}) }, {})]), 60);
+  let st = ho([correct]);
+  chk('the singular is filled in from the list', st.handoff.diagnosis === correct);
+  chk('the list is kept', JSON.stringify(st.handoff.diagnoses) === JSON.stringify([correct]));
+  st = fold(mk([[1, 'insert_iv'], { t: 30, actionId: 'handoff_submit',
+    payload: { disposition: CASE.handoff.correct_disposition.id, diagnosis: correct } }]), 60);
+  chk('an old payload with only the singular is widened to a list of one',
+      JSON.stringify(st.handoff.diagnoses) === JSON.stringify([correct]));
+  let dx = scoreDiagnoses(ho([correct]));
+  chk('the case diagnosis first is primary_correct', dx.rows[0].verdict === 'primary_correct');
+  chk('and every additional diagnosis is then missed', dx.missed.length === addl.length);
+  dx = scoreDiagnoses(ho([wrongId, correct]));
+  chk('a wrong primary is primary_incorrect', dx.rows[0].verdict === 'primary_incorrect', dx.rows[0].verdict);
+  chk('the case diagnosis listed second is flagged, not credited as primary',
+      dx.rows[1].verdict === 'main_not_primary');
+  if (addl.length) {
+    dx = scoreDiagnoses(ho([correct].concat(addl)));
+    chk('every additional diagnosis listed beside the primary is appropriate',
+        dx.rows.slice(1).every(r => r.verdict === 'appropriate') && dx.missed.length === 0);
+    dx = scoreDiagnoses(ho([addl[0]]));
+    chk('an additional diagnosis named as the primary is scored as a primary, not as appropriate',
+        dx.rows[0].verdict !== 'appropriate', dx.rows[0].verdict);
+  }
+  dx = scoreDiagnoses(ho([correct, 'dx_nowhere']));
+  chk('an unknown diagnosis beside the primary is unsupported', dx.rows[1].verdict === 'unsupported');
+  chk('duplicates collapse', ho([correct, correct]).handoff.diagnoses.length === 1);
+}
+
+section('the seven-category summary (v0.9)');
+{
+  const rows = summaryScores(fold([], 10));
+  chk('seven rows, in the order the tabs run',
+      rows.map(r => r.id).join(',') === 'history,physical,stabilization,interventions,investigations,consultations,handoff',
+      rows.map(r => r.id).join(','));
+  chk('nothing done scores nothing on history and physical',
+      rows[0].points === 0 && rows[1].points === 0);
+  chk('the handoff row without a handoff is zero of a hundred',
+      rows[6].points === 0 && rows[6].max === 100);
+  const key = (CASE.interview.key_topics && CASE.interview.key_topics.length)
+    ? CASE.interview.key_topics : CASE.interview.topics.map(t => t.topic);
+  chk('history max is the number of key topics', rows[0].max === key.length, String(rows[0].max));
+  const asked = fold(mk([{ t: 2, kind: 'interview', topic: key[0], q: 'q' }]), 10);
+  chk('asking a key topic scores one point', summaryScores(asked)[0].points === 1,
+      String(summaryScores(asked)[0].points));
+  const examined = fold(mk([[1, EXAMS[0]]]), 10);
+  const ph = summaryScores(examined)[1];
+  chk('examining a region counts when the region is expected',
+      ph.max === 0 || !ph.missed.includes(EXAMS[0]) || ph.points >= 0);
+  /* A critical action satisfied is two points on its tab. */
+  const crit = [...fold([], 1).expected].find(id => A[id] && A[id].tab === 'stabilization');
+  if (crit) {
+    const before = summaryScores(fold([], 5)).find(r => r.id === 'stabilization');
+    const after = summaryScores(fold(mk([[1, 'insert_iv'], [2, crit]]), 5)).find(r => r.id === 'stabilization');
+    chk('a critical action on Stabilization is worth two points',
+        after.points - before.points >= 2 || A[crit].prerequisites.length > 0,
+        before.points + ' -> ' + after.points);
+  }
+  const done = fold(mk([[1, 'insert_iv'], { t: 30, actionId: 'handoff_submit',
+    payload: { disposition: CASE.handoff.correct_disposition.id, diagnoses: [PROTO.correctDxId] } }]), 60);
+  const hr = summaryScores(done)[6];
+  const nAddl = Object.keys(PROTO.addlDx || {}).length;
+  chk('correct level of care and correct primary score 80 with additional diagnoses authored, 100 without',
+      hr.points === (nAddl ? 80 : 100), String(hr.points));
+  const full = fold(mk([[1, 'insert_iv'], { t: 30, actionId: 'handoff_submit',
+    payload: { disposition: CASE.handoff.correct_disposition.id,
+               diagnoses: [PROTO.correctDxId].concat(Object.keys(PROTO.addlDx || {})) } }]), 60);
+  chk('naming every additional diagnosis completes the handoff score',
+      summaryScores(full)[6].points === 100, String(summaryScores(full)[6].points));
+  const bad = fold(mk([[1, 'insert_iv'], { t: 30, actionId: 'handoff_submit',
+    payload: { disposition: CASE.handoff.correct_disposition.id,
+               diagnoses: [PROTO.correctDxId, 'dx_nowhere'] } }]), 60);
+  chk('an unsupported extra diagnosis costs five',
+      summaryScores(bad)[6].points === summaryScores(done)[6].points - 5);
+  chk('scores are deterministic',
+      JSON.stringify(summaryScores(fold([], 10))) === JSON.stringify(rows));
+}
 
 /* ================= case pack assertions ================= */
 const caseTests = findCaseTests(process.argv[3]);

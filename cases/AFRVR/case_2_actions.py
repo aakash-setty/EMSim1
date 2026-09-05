@@ -73,18 +73,21 @@ add(A("non_invasive_positive_pressure_ventilation",
                   "failure_message": "He's already got a tube in and he's on the ventilator. The "
                                      "mask isn't going to do anything now.",
                   "source": "case"}],
-  prompt={"deadline_seconds": 40,
+  # v0.9, author instruction: both deadlines doubled (40 and 100 became 80 and 200). The
+  # first warning was arriving before a resident had finished the primary survey. The
+  # escalation still lands 40 seconds ahead of the 240-second deterioration.
+  prompt={"deadline_seconds": 80,
           "guard": "NOT flag intubated set",
           "text": "He's working hard to breathe and his sat is low. Do you want to do something "
                   "more for his breathing? I can get CPAP or BiPAP on him.",
           "escalation": {
-            "deadline_seconds": 100,
+            "deadline_seconds": 200,
             "text": "He's still tripoding and he's still hypoxic on what he's got. I've got the "
                     "CPAP and the BiPAP both at the bedside if you want either of them on him."}},
   vital_effects=NIV_STEPS,
   debrief_note=(
     "Non-invasive positive pressure ventilation is the highest-value early intervention in acute "
-    "cardiogenic pulmonary oedema and in this case it is also the intervention a learner is most "
+    "cardiogenic pulmonary edema and in this case it is also the intervention a learner is most "
     "likely to defer, because the rate is louder. It recruits flooded alveoli and reduces the work "
     "of breathing, and by raising intrathoracic pressure it reduces preload and left ventricular "
     "transmural pressure, which is afterload reduction by mechanical means. Continuous and bilevel "
@@ -102,7 +105,7 @@ add(A("non_invasive_positive_pressure_ventilation",
     "ventilation in acute cardiogenic pulmonary edema. N Engl J Med. 2008;359(2):142-51. "
     "[UNVERIFIED in this pack, confirm before release]",
     "Berbenetz N, Wang Y, Brown J, et al. Non-invasive positive pressure ventilation (CPAP or "
-    "bilevel NPPV) for cardiogenic pulmonary oedema. Cochrane Database Syst Rev. 2019;4:CD005351. "
+    "bilevel NPPV) for cardiogenic pulmonary edema. Cochrane Database Syst Rev. 2019;4:CD005351. "
     "[UNVERIFIED in this pack, confirm before release]"]))
 
 O2_GUARD = "NOT flag on_niv set AND NOT flag intubated set"
@@ -143,7 +146,7 @@ add(A("intubate_rapid_sequence",
   debrief_note=(
     "Appropriate for a patient who has already failed or cannot tolerate non-invasive support, and "
     "premature in a man who is awake, protecting his airway, and has not yet had a mask on his "
-    "face. Most patients in acute cardiogenic pulmonary oedema who are intubated are intubated "
+    "face. Most patients in acute cardiogenic pulmonary edema who are intubated are intubated "
     "because positive pressure was started too late. Two specific hazards worth naming before you "
     "do it in this patient: induction removes the endogenous sympathetic drive that a poorly "
     "contracting ventricle is leaning on, and positive pressure ventilation reduces venous return, "
@@ -179,7 +182,7 @@ add(A("preoxygenate_for_intubation", tag=RECOMMENDED, flags=["preoxygenated"],
   debrief_note=("Good practice, and in this patient the preoxygenation device of choice is the "
                 "positive pressure he should already be on.")))
 add(A("position_for_intubation", tag=RECOMMENDED, flags=[],
-  debrief_note="Good practice. Sitting a patient in pulmonary oedema flat is poorly tolerated."))
+  debrief_note="Good practice. Sitting a patient in pulmonary edema flat is poorly tolerated."))
 
 # ------------------------------------------------------------------ electricity
 add(A("place_pads_for_monitoring", tag=RECOMMENDED, flags=["pacing_pads_placed"],
@@ -199,7 +202,7 @@ add(A("synchronized_cardioversion", tag=DISCOURAGED, flags=["cardioverted"],
     "attributable to the rate, or altered mental status. This patient has none of those in the "
     "form that mandates electricity: his systolic pressure is 132, he is awake and oriented, and "
     "he has no severe chest pain. The heart failure argument is the one worth arguing about, "
-    "because he does have pulmonary oedema and the rate is plausibly driving it, and a reviewer "
+    "because he does have pulmonary edema and the rate is plausibly driving it, and a reviewer "
     "who wants to defend electricity here has a case to make. Two things weigh against it. The "
     "duration of the arrhythmia is unknown and longer than forty-eight hours cannot be excluded, "
     "so cardioversion without anticoagulation or a transoesophageal echocardiogram carries a "
@@ -221,7 +224,7 @@ add(A("unsynchronized_cardioversion", tag=DISCOURAGED, flags=[],
 # ------------------------------------------------------------------ rate control
 # What the nurse says the moment any rate-controlling drug goes in. It is a nurse_alert
 # rather than an ordinary narration, so it is coloured and it goes into the running chart:
-# a resident deciding thirty seconds later whether the drug has failed needs to be able to
+# a resident deciding ten seconds later whether the drug has failed needs to be able to
 # find this line again, and by then it has scrolled off the nurse's banner.
 #
 # It is load-bearing in this case rather than decorative. The rate does not come fully
@@ -293,7 +296,7 @@ add(A("digoxin_bolus",
     "which matters in a patient who is not anticoagulated and whose arrhythmia duration is "
     "unknown. A carefully selected, low-dose beta blocker is defensible once oxygenation is "
     "supported and the haemodynamics permit it, and is the least forgiving of the three in a "
-    "patient with active pulmonary oedema, because beta blockade in acute decompensation removes "
+    "patient with active pulmonary edema, because beta blockade in acute decompensation removes "
     "compensation as well as rate. Aggressive beta blockade in this patient is not the goal.\n\n"
     "On the target: guideline evidence supports a lenient resting rate of under 110 beats per "
     "minute in many patients with atrial fibrillation, derived largely from RACE II, which "
@@ -382,7 +385,7 @@ add(A("esmolol_drip", tag=DISCOURAGED, flags=["rate_control_given"], prerequisit
     "The argument for esmolol is that it is titratable and short-acting, so if beta blockade is "
     "poorly tolerated it can be withdrawn in minutes, which is a real advantage in a patient whose "
     "ventricle you do not trust. The argument against it here is that this patient has active "
-    "pulmonary oedema and beta blockade in acute decompensation removes compensation along with "
+    "pulmonary edema and beta blockade in acute decompensation removes compensation along with "
     "rate. Reasonable clinicians differ. It is tagged discouraged rather than recommended because "
     "in a patient at a saturation of 88 percent with diffuse B-lines it is not the first thing to "
     "reach for, and because there are two agents on the menu with a better risk profile in this "
@@ -415,7 +418,7 @@ add(A("furosemide_40_mg_iv", tag=CRIT_ALWAYS, flags=["diuretic_given"],
     "the crackles on auscultation both improve once it is given, and neither of those is on the "
     "monitor. The lesson is where to look for the response, not that the drug does nothing."),
   debrief_note=(
-    "He is genuinely volume overloaded and not only redistributed: bilateral pitting oedema, a "
+    "He is genuinely volume overloaded and not only redistributed: bilateral pitting edema, a "
     "jugular venous pressure of about 12 cm, a plethoric inferior vena cava, and diffuse B-lines. "
     "He needs diuresis, and this is a critical action.\n\n"
     "Two things about it are worth saying carefully. The first is dose. He is diuretic-naive, so a "
@@ -440,17 +443,17 @@ add(A("magnesium_sulfate_bolus", tag=RECOMMENDED, flags=["magnesium_given"],
   debrief_note=(
     "His magnesium is 1.6 mg/dL. Correcting it is straightforward, cheap and safe, and it is worth "
     "doing for two reasons: magnesium is a cofactor for the sodium-potassium pump so hypokalaemia "
-    "and hypomagnesaemia travel together and neither corrects properly while the other is low, and "
+    "and hypomagnesemia travel together and neither corrects properly while the other is low, and "
     "intravenous magnesium has been reported to improve rate control and increase conversion when "
     "added to standard atrioventricular nodal blockade in rapid atrial fibrillation. The evidence "
     "for that second claim rests on small randomised trials and a meta-analysis of them, not on a "
     "large definitive trial, so it is a reasonable adjunct rather than a core therapy.\n\n"
-    "AUTHOR NOTE, and this needs your decision. Your brief bundled correcting the hypomagnesaemia "
+    "AUTHOR NOTE, and this needs your decision. Your brief bundled correcting the hypomagnesemia "
     "into critical action four alongside the loop diuretic. It is tagged recommended here rather "
     "than critical, because the set of critical actions a phase expects is computed once on entry "
     "to that phase, so a tag that only becomes critical after the magnesium level results can "
     "never appear in the missed list, and an unconditionally critical tag tells a resident who "
-    "never had reason to suspect hypomagnesaemia that they missed a critical action. If you want "
+    "never had reason to suspect hypomagnesemia that they missed a critical action. If you want "
     "it critical, that is a one-line change and the review packet says where."),
   references=[
     "Bouida W, Beltaief K, Msolli MA, et al. Low-dose magnesium sulfate versus high dose in the "
@@ -465,13 +468,13 @@ add(A("potassium_chloride_kcl", tag=RECOMMENDED, flags=[],
 
 add(A("nitroglycerin_drip", tag=DISCOURAGED, flags=[], prerequisites=[PRE_IV],
   debrief_note=(
-    "Nitrates are the pharmacological priority in hypertensive acute cardiogenic pulmonary oedema, "
-    "where a systolic pressure of 180 or more means most of the oedema is redistribution against "
+    "Nitrates are the pharmacological priority in hypertensive acute cardiogenic pulmonary edema, "
+    "where a systolic pressure of 180 or more means most of the edema is redistribution against "
     "afterload. That is a different patient from this one. This man's systolic pressure is 132, so "
     "there is little afterload to unload and a meaningful chance of dropping a pressure that is "
     "already only adequate, in a ventricle that is preload dependent and filling badly because of "
     "the rate. It is not absurd and it is not the treatment this presentation is asking for. "
-    "Recognising which pulmonary oedema phenotype is in front of you is the transferable skill.")))
+    "Recognising which pulmonary edema phenotype is in front of you is the transferable skill.")))
 
 add(A("nitroglycerin_sublingual", tag=DISCOURAGED, flags=[],
   debrief_note=("Same reasoning as the infusion. He is not hypertensive, so there is little to "
@@ -551,7 +554,7 @@ add(A("normal_saline_1l_bolus", name="Crystalloid bolus",
     "You gave a litre of crystalloid to a man with an ejection fraction of 30 to 35 percent whose "
     "lungs were already full of fluid and who was hypoxaemic on room air. The extra preload went "
     "straight into the alveoli, his saturation fell away, and he required emergency intubation for "
-    "a pulmonary oedema you had made worse."),
+    "a pulmonary edema you had made worse."),
   debrief_note=(
     "The reasoning that leads here is worth naming because it is not stupid: the patient is "
     "tachycardic, tachycardia is often hypovolaemia, and a fluid challenge is the reflex. In this "
@@ -585,7 +588,7 @@ add(A("ultrasound_cardiac", tag=CRIT_ALWAYS, flags=[],
     "fraction of 30 to 35 percent with global hypokinesis converts a routine atrial fibrillation "
     "with a rapid ventricular response into a different problem with a different drug list: it "
     "rules out the calcium channel blocker, it puts digoxin and amiodarone at the front, it "
-    "explains the pulmonary oedema, and it changes the disposition.\n\n"
+    "explains the pulmonary edema, and it changes the disposition.\n\n"
     "Two honest caveats. A visual estimate is exactly that, and a formal echocardiogram is the "
     "measurement; for the decision in front of you, the categorical answer, whether systolic "
     "function is normal or clearly reduced, is what matters and a visual estimate answers it "
@@ -597,8 +600,8 @@ add(A("ultrasound_cardiac", tag=CRIT_ALWAYS, flags=[],
 add(A("ultrasound_lung", tag=CRIT_ALWAYS, flags=[],
   debrief_note=(
     "Diffuse bilateral B-lines in more than two zones per side, with no focal consolidation, is "
-    "interstitial pulmonary oedema. In an undifferentiated breathless patient this single finding "
-    "separates cardiogenic pulmonary oedema from an obstructive exacerbation and from pneumonia "
+    "interstitial pulmonary edema. In an undifferentiated breathless patient this single finding "
+    "separates cardiogenic pulmonary edema from an obstructive exacerbation and from pneumonia "
     "faster and more accurately than a portable chest radiograph, and it does it before the film "
     "is taken. Paired with the cardiac view it also tells you, in the same minute, that this "
     "patient must not have a fluid bolus. Repeat it after treatment: the B-lines are one of the "
@@ -606,10 +609,10 @@ add(A("ultrasound_lung", tag=CRIT_ALWAYS, flags=[],
 
 add(A("xr_chest", tag=RECOMMENDED, flags=[],
   debrief_note=(
-    "Reasonable and slower than the probe. It confirms the interstitial oedema, gives you a cardiac "
+    "Reasonable and slower than the probe. It confirms the interstitial edema, gives you a cardiac "
     "silhouette and effusions, and mostly serves to exclude the things the ultrasound cannot "
     "exclude as confidently, such as a large consolidation. It should not delay treatment and it "
-    "should not be the study you wait for before deciding this patient has pulmonary oedema.")))
+    "should not be the study you wait for before deciding this patient has pulmonary edema.")))
 
 add(A("troponin_t", tag=RECOMMENDED, flags=[],
   debrief_note=(
@@ -621,7 +624,7 @@ add(A("troponin_t", tag=RECOMMENDED, flags=[],
     "result as a reason to repeat it on the ward rather than as a reason to activate the "
     "laboratory, unless the ECG or the story changes your mind.")))
 
-add(A("pro_bnp", tag=RECOMMENDED, flags=[],
+add(A("nt_probnp", tag=RECOMMENDED, flags=[],
   debrief_note=(
     "Supportive rather than diagnostic. A markedly raised natriuretic peptide in a breathless "
     "patient makes heart failure much more likely and does not establish it, and atrial "
@@ -738,10 +741,10 @@ EXAM_NOTES = {
    "separating cardiogenic from non-cardiogenic breathlessness, and it is elevated here at about "
    "12 cm. It is also difficult to read in a tachypnoeic patient at a rate of 160, so read it with "
    "the ultrasound view of the inferior vena cava rather than instead of it.",
- "exam_card": "Peripheral oedema is routed here by the catalog rather than to the musculoskeletal "
+ "exam_card": "Peripheral edema is routed here by the catalog rather than to the musculoskeletal "
    "examination, which is worth knowing so you look in the right place. The auscultatory findings "
    "in fast atrial fibrillation are unreliable: an S3 is very hard to hear at 160 and a variable "
-   "first heart sound is expected. The oedema does not resolve during this case, and it should "
+   "first heart sound is expected. The edema does not resolve during this case, and it should "
    "not: days of accumulated fluid do not leave in ten minutes.",
  "exam_pulm": "Bibasilar crackles to the mid-zones. They improve with the diuretic and the "
    "positive pressure and they are less sensitive than the lung ultrasound, which is why the probe "
@@ -749,7 +752,7 @@ EXAM_NOTES = {
  "exam_abd": "A tender, pulsatile liver edge and the absence of ascites are the abdominal signs of "
    "right-sided congestion. Worth eliciting because congestive hepatopathy explains abdominal "
    "symptoms that would otherwise start a second workup.",
- "exam_msk": "Symmetry is the point. Bilateral symmetrical oedema with no calf tenderness and no "
+ "exam_msk": "Symmetry is the point. Bilateral symmetrical edema with no calf tenderness and no "
    "asymmetry argues against deep vein thrombosis and pulmonary embolism, which is the differential "
    "the D-dimer trap in this case is built on.",
  "exam_skin": "Warm and mildly diaphoretic, which fits sympathetic drive and work of breathing "
@@ -819,7 +822,7 @@ FOLLOW_UPS = [
     "Know when to stop. If the rate is still fast after two adequate doses, that is information "
     "rather than a reason for a third: a ventricular rate that will not come down in acute "
     "decompensated heart failure is usually being driven by the decompensation, and the "
-    "treatment is the pulmonary oedema and the hypoxaemia rather than more nodal blockade in a "
+    "treatment is the pulmonary edema and the hypoxaemia rather than more nodal blockade in a "
     "ventricle that is already struggling.")},
  {"id": "anticoagulation_after_cardioversion",
   "triggered_by": "synchronized_cardioversion",

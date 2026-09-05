@@ -138,10 +138,11 @@ DEFAULTS = {
 "magnesium_level": value("Magnesium", "2.0", "mg/dL", "1.7-2.2"),
 "phosphate_level": value("Phosphate", "3.5", "mg/dL", "2.5-4.5"),
 "plasma_procalcitonin": value("Procalcitonin", "< 0.10", "ng/mL", "< 0.10"),
-"pro_bnp": value("NT-proBNP", "Unremarkable", "", "within normal limits",
-    verify="Author choice: qualitative, avoiding the age-, renal- and "
-           "atrial-fibrillation-dependent cutoffs and the BNP vs NT-proBNP "
-           "assay ambiguity. A case using a raw value must override with units."),
+"nt_probnp": value("NT-proBNP", "Unremarkable", "", "within normal limits",
+    verify="Author choice: qualitative, avoiding the age- and renal-dependent "
+           "cutoffs. The entry is NT-proBNP by name (renamed from pro-BNP in v0.9 "
+           "so the assay is unambiguous); a case using a raw value must override "
+           "with units and an NT-proBNP interval, never a BNP one."),
 "troponin_t": value("Troponin T", "Unremarkable", "", "within normal limits",
     verify="Author choice: qualitative. Note this removes the number, and ED "
            "troponin decisions run on the serial delta rather than a single "

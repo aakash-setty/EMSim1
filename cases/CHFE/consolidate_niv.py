@@ -42,7 +42,7 @@ OLD = ("niv_cpap", "niv_bipap")
 
 MERGED_NOTE = (
     "Non-invasive positive pressure ventilation is the single highest-value early "
-    "intervention in acute cardiogenic pulmonary oedema. It recruits flooded alveoli, "
+    "intervention in acute cardiogenic pulmonary edema. It recruits flooded alveoli, "
     "reduces the work of breathing, and by raising intrathoracic pressure it reduces both "
     "preload and left ventricular transmural pressure, which lowers afterload. Applying it "
     "early is what allows most of these patients to avoid an endotracheal tube. "

@@ -391,15 +391,17 @@ Every component of a default is in range and carries `abnormal: false` explicitl
 
 Payload-level `abnormal` must equal the OR of its components. The interface renders abnormal components distinctly, currently in red.
 
+**`comment` is not shown while the case runs (v0.9).** It is the case's reading of the panel, and a reading handed over with the numbers is the simulator interpreting the result for the resident. A panel shows its components and nothing else during play; every comment is printed once in the debrief, under "Your results, read", with the numbers it belongs to. `verify` is a note to the reviewing physician and is not shown to the learner at all; it lives in the case file and the review packet. Before v0.9 both printed under the result in the Investigations panel.
+
 **Do not parse prose.** The tempting shortcut is to look for "(high)" in an authored string at render time. It is the exact recomputation this section forbids, it fails silently the first time an author writes "raised" or gives a bare number, and the failure mode is a genuinely abnormal value displayed as normal.
 
 ### 3.4 The exam set is closed
 
 The catalog defines exactly 14 exam maneuvers. There is no fifteenth. Each carries a default finding, so a maneuver a case does not author still returns something.
 
-Because 14 maneuvers cannot cover every anatomic region, the catalog also supplies **`exam_finding_routing`**: a fixed map from findings that do not fit cleanly to the maneuver that owns them. Peripheral oedema belongs to the cardiovascular exam, jugular venous distension to the neck exam, capillary refill to the circulation exam, and so on.
+Because 14 maneuvers cannot cover every anatomic region, the catalog also supplies **`exam_finding_routing`**: a fixed map from findings that do not fit cleanly to the maneuver that owns them. Peripheral edema belongs to the cardiovascular exam, jugular venous distension to the neck exam, capillary refill to the circulation exam, and so on.
 
-**The map is not a convenience, it is the point.** Without a fixed routing an author puts pedal oedema under cardiac in one case and musculoskeletal in another, and the resident concludes the tool is arbitrary rather than learning where to look. Authors follow the map even where they would have chosen differently.
+**The map is not a convenience, it is the point.** Without a fixed routing an author puts pedal edema under cardiac in one case and musculoskeletal in another, and the resident concludes the tool is arbitrary rather than learning where to look. Authors follow the map even where they would have chosen differently.
 
 Findings routed to "no available maneuver" cannot be examined for and must not be a case's teaching point.
 
@@ -657,7 +659,7 @@ Reporting these separately gives the learner useful self-knowledge without turni
 
 **Two extensions worth considering later.** An explicit hint control, so a stuck learner can ask rather than wait, which is more honest than making them sit through a deadline. And difficulty modes, where a beginner setting prompts earlier and more specifically while an advanced setting prompts late or not at all. Both fit the existing prompt schema without structural change.
 
-A cap on prompts per phase avoids nagging and should be configurable.
+A cap on prompts per phase avoids nagging and should be configurable. Since v0.9 an escalation is exempt from it, in both directions: it neither consumes a slot nor is silenced by one, because it repeats a warning the nurse has already given rather than raising a new one, and the fairness rule for a deterioration on inaction rests on it being heard. The first warning still has to be inside the cap.
 
 ---
 
@@ -807,8 +809,10 @@ The case completes when the resident submits a handoff and confirms.
 
 The handoff requires:
 - **Level of care and disposition** from a case-supplied list including plausible alternatives
-- **Working diagnosis** from the global diagnosis catalog, referenced by catalog id
+- **Diagnoses**, an ordered list from the global diagnosis catalog referenced by catalog id, the first being the primary (v0.9; a single working diagnosis before that)
 - **Explicit confirmation**, with a warning if any study is still pending
+
+**Several diagnoses (v0.9).** A handover names a working diagnosis and the other things that are true of the patient, and a simulator that accepts one id scores a resident who understood the whole case the same as one who saw half of it. The payload is `{disposition, diagnosis, diagnoses}`: `diagnoses` is the ordered list, `diagnosis` is its first entry, kept in step by the fold (`normaliseHandoff`) for every reader written before the list existed, and a payload carrying only the singular is widened to a list of one. Cases author `handoff.additional_diagnoses`, the diagnoses appropriate to name beside the primary; `correct_diagnosis` and `alternative_diagnoses` keep their meaning for the primary. `scoreDiagnoses(st)` in the engine gives one verdict per listed diagnosis (primary correct, defensible or incorrect; the main diagnosis listed but not first; appropriate; defensible; unsupported) and lists the authored additional diagnoses that were not named. Authoring 12.1.
 
 **Diagnosis entry method.** Use a searchable global catalog rather than a short case-supplied list. Committing to a diagnosis from a wide field is the actual cognitive task being taught; picking from four options is a different and much easier task. This also avoids putting a language model in the critical path.
 
@@ -928,9 +932,10 @@ saying what was missed is not softening the verdict; it is the difference betwee
     nothing needs to meet that before the scoreboard
 2. **Critical actions**, those done and those missed together, each with its teaching note
 3. **Recommended actions** that were done
-4. **Summary**, the domain table and the score
+4. **Summary**, seven category scores (v0.9; the clinical-domain table before that)
 5. **Discouraged actions**, meaning traps that were wrong but not lethal
-6. **Handoff accuracy**, with an explanation for an incorrect disposition or diagnosis
+6. **Handoff accuracy**, with an explanation for an incorrect disposition, one verdict per diagnosis listed, the additional diagnoses that were not named, and the case's own diagnosis whenever the resident did not name it
+6a. **Your results, read** (v0.9): every lab panel the resident ordered, with the authored interpretation under it. While the case runs a panel shows its numbers and nothing else; the reading is an answer and belongs here
 7. **Answered by a default**, listing every study, exam or consultant that returned the catalog normal because this case authors nothing for it
 8. **Studies still pending** at completion
 9. **References** per teaching note, optional per author
@@ -943,6 +948,12 @@ versus prompted* is gone because as a table it read as a scoreboard, and the sam
 survives as a `prompted` pill on the action it belongs to, where it reads as information. Both are
 still folded: `st.blocked` still drives the refusal and `st.prompted` still drives the pill. Only
 the sections are gone.
+
+**Two more went in v0.9.** The two removal notices above used to sit inside the debrief's template
+literal as JavaScript comments, which a template literal does not have, so both printed verbatim in
+every debrief; they are gone from the markup and recorded here instead. *What was acting, and for how
+long*, the table of vital effects and expiring flags, is gone on the author's instruction; the
+mechanics are still folded and still drive the monitor.
 
 **The missed list is headed "Non-Critical Missed Actions".** That label was specified by the author
 and it is worth recording that it does not describe the list's contents: the list holds critical
@@ -962,7 +973,9 @@ different teaching in them.
 
 ### 11.2 Scoring
 
-Points exist to direct review, not to rank. Report by clinical domain, for example airway, circulation, diagnostics, disposition, so the learner knows what to study. A single percentage tells them nothing actionable.
+Points exist to direct review, not to rank. Report by category so the learner knows what to study. A single percentage tells them nothing actionable.
+
+**The seven categories (v0.9).** `summaryScores(st)` in the engine, case-agnostic, one row each for History, Physical, Stabilization, Interventions, Investigations, Consults and Handoff, and the arithmetic printed beside every row. History is key topics asked over `interview.key_topics` (every topic when the case lists none), read from `st.askedTopics`, which the fold records for every question that reached a topic. Physical is regions examined over the exams tagged critical or recommended, else `debrief_configuration.key_exams`, else every exam the case authors. The four ordering tabs score critical actions at two and recommended at one over the critical and recommended actions expected on that tab in the phases visited (`st.expected` and the new `st.recommendedExpected`), minus one per discouraged action taken on the tab, and zero when a harmful action on the tab halted the case. Handoff is level of care 40, primary diagnosis 40 (60 when no additional diagnoses are authored), additional diagnoses 20 pro rata, half credit for defensible answers and for the main diagnosis listed but not first, minus five per unsupported diagnosis. The clinical-domain table this replaces was a count of critical actions per authored domain; the field is still read by the review tooling. Authoring 13.0 says what a case author has to supply.
 
 | Dimension | Treatment |
 |---|---|
@@ -973,11 +986,11 @@ Points exist to direct review, not to rank. Report by clinical domain, for examp
 | Follow-up requirements | Credit or omission |
 | Blocked attempts | Not penalized and, since v0.8, not reported in the debrief either. The system already corrected the learner in the moment |
 | Neutral actions | No effect |
-| Handoff accuracy | Disposition and diagnosis scored separately |
+| Handoff accuracy | Disposition, primary diagnosis and additional diagnoses scored separately (v0.9) |
 | Studies never resulted | Flagged |
 | Timeliness | Reported, weighted lightly until the cadence is calibrated |
 
-**The `discouraged` tier is new in v0.4.** v0.3 offered critical, harmful, recommended and neutral. An action that is wrong but not lethal, such as morphine in acute pulmonary oedema, a bronchodilator for cardiac asthma, steroids or antibiotics without an indication, or an unindicated CT pulmonary angiogram, could only be tagged neutral and therefore carried no weight at all. Section 3.4 of the authoring document asks authors to identify traps as a category; without this tier there was nothing to tag them as.
+**The `discouraged` tier is new in v0.4.** v0.3 offered critical, harmful, recommended and neutral. An action that is wrong but not lethal, such as morphine in acute pulmonary edema, a bronchodilator for cardiac asthma, steroids or antibiotics without an indication, or an unindicated CT pulmonary angiogram, could only be tagged neutral and therefore carried no weight at all. Section 3.4 of the authoring document asks authors to identify traps as a category; without this tier there was nothing to tag them as.
 
 ### 11.3 Attempt history
 
@@ -1400,6 +1413,21 @@ On the Stabilization, Investigations and Interventions tabs, clicking an action 
 
 Exams and consults are excluded. They are reads, not orders, and batching a read would only add a step.
 
+**Submitting resets the tab it was submitted from.** The filter box is cleared, every group
+on that tab collapses, and the panel scrolls to the top. A submitted order is the end of one
+search, and the filter text and the opened group are scaffolding for finding the thing that
+has now been ordered. Leaving them in place means the next order begins three-quarters of the
+way down a filtered list showing the drug the resident has already given.
+
+Three limits on that reset, each deliberate. **Only the submitted tab is touched**, so a
+filter typed on Investigations survives an order submitted on Interventions. **Nothing in the
+run is reset**, only the view: the basket is emptied because it was just submitted, and no
+engine state is involved at all. And **the accordion is emptied rather than re-seeded from
+`defaultExpanded`**, so Stabilization's opening group is closed after a submit rather than
+reopened. That seed answers a question about the start of a case, which is where a resident
+should meet vascular access and the monitor without hunting; it is not a question about the
+start of a search, and by the time an order has gone in it has been answered.
+
 ### 19.1 What it does not change
 
 Submitting writes one log entry per action at the same timestamp in selection order. Section 5.3 governs the rest: the fold applies them in sequence and every mechanism behaves as it would one at a time.
@@ -1468,28 +1496,80 @@ network will usually fail again and a retry loop is worse than a missing feature
 **The case is fully playable while stage two is loading or after it has failed.** This is
 the reason the two stages are ordered this way rather than the model being a prerequisite.
 
-### 20.2 The fusion rule
+### 20.2 The fusion rule (v0.8)
 
 ```
-lex = lexical(q)
-if the model is not ready:            return lex
-sem = semantic(q)
-if sem.score >= ACCEPT:               return sem      (0.62)
-if sem.score >= AGREE and sem.topic == lex.topic:  return sem   (0.45)
-return lex
+lex[t]  = lexical score of topic t              (IDF-weighted Dice, 0 to 1)
+sem[t]  = cosine of the question to topic t     (max over the topic's phrasings)
+comb[t] = WEIGHT * sem[t] + (1 - WEIGHT) * lex[t]
+
+if the model is not ready:                       return the lexical answer
+best = argmax comb
+if comb[best] < THRESHOLD:
+    if sem is confident and unambiguous            (cosine >= soloCosine, margin >= soloMargin)
+        return the model's topic
+    if lex is confident and the model is not       (lexical >= soloLexical, cosine < lexicalUncontested)
+        return the lexical topic
+    return nothing
+if best is the out-of-scope bank:                return nothing
+if the runner-up is within clarifyMargin:        ask which was meant
+return best
 ```
 
-A veto branch exists, where a very low semantic score suppresses a lexical match, and it
-is **disabled in the shipped configuration** (`VETO = 0`). It was disabled deliberately:
-the brief for this simulator is that the resident should get as many answers as the case
-can honestly give, because no context is available anywhere else, and a veto trades
-recall for precision in the wrong direction for that brief. A deployment that cares more
-about false answers than about stalls should raise it.
+Shipped: `FUSE = {weight 0.6, threshold 0.45, soloCosine 0.62, soloMargin 0.08, soloLexical 0.55,
+lexicalUncontested 0.55}`, `clarifyMargin 0.04`. **Every figure was chosen on the packs' tuning
+sets and quoted on their held-out sets**, per authoring section 10.6.
 
-**The thresholds are not measured.** 0.62 and 0.45 were chosen by inspection of a small
-sweep and have not been validated against resident-typed questions. Treat them as
-configuration with a plausible starting value, not as findings. The sweep tooling is in
-`engine/matcher_eval.mjs` under `--semantic --sweep`.
+This replaced the v0.5 ladder (semantic wins above 0.62, agreement counts above 0.45,
+otherwise lexical). The first measured run of that ladder, which happened in v0.8 because the
+model weights had never been reachable from the authoring machine, found it handing correct
+lexical answers to near-tie semantic guesses: "when did the shortness of breath begin" scored
+0.80 for the model on both onset and character_of_dyspnea, the lexical matcher had onset at
+0.78, and the ladder took the coin toss. A per-topic sum lets the second matcher break the
+tie, which is the only thing a second matcher is for.
+
+The two solo branches exist because the sum punishes evidence that only one matcher can
+see. The model has never seen "NKDA?" and scores nothing above 0.35 for it, while the
+lexicon takes the lexical matcher straight to allergies at 0.78; conversely "Temp at home?"
+shares no token with any bank entry and the model has fever at 0.69 with the runner-up at
+0.39. Without the branches the fused matcher was worse than the lexical one alone on
+clinical shorthand, which is the register the lexicon exists for.
+
+**The out-of-scope bank is a topic.** A case may carry `interview.out_of_scope_bank`, a list
+of questions it has no answer to, generated per case from `catalog/interview_out_of_scope.py`
+filtered to the concepts the case does not cover. Both matchers score it like any other
+topic under a reserved id, and a win for it is a fallback. Before this existed, nineteen of
+thirty unrelated questions on AFRVR were answered with a confident wrong topic, and the
+cosine ranges of in-scope and out-of-scope questions overlapped so completely that no
+threshold could have separated them: "Have you had a colonoscopy?" is not far from "When did
+you last eat?" in embedding space. Giving "nothing relevant" its own neighbourhood is what
+moved that number, not a threshold.
+
+**Two lexical precision defects were fixed in the same pass.** The rare-word override, which
+lets a distinctive typed word pull the match toward its topic, was acting on words that had
+reached the query through a typo repair or a lexicon expansion, and on topics scoring far
+below the best. "Are you taking anything for birth control?" had "taking" repaired to
+"making", which was rare and belonged to urine output, and a 0.77 match on pregnancy went to
+a topic scoring 0.35. The override now acts only on words the learner typed that the bank
+holds verbatim, and only when the alternative scores within 80 percent of the best. And
+"hx" had become a rare bank token after the variant expansion, so every "<thing> hx" question
+went to whichever topic held it; it is now a lexicon entry.
+
+**The variant banks were expanded from a shared library**, `catalog/interview_phrasings.py`,
+by `catalog/expand_interview_variants.py`, from 340 to 570 phrasings per pack to 970 to
+1200. The library is keyed by concept and mixes lay paraphrase, clinical shorthand and
+conversational openers; each pack maps its topics onto concepts. The generated phrasings
+land in `expanded_variants` on each topic, kept apart from the author's `variants` for
+provenance and merged at build time. Every sixth new phrasing is withheld into the pack's
+tuning set instead of its bank, and nothing that matches a held-out evaluation question is
+written anywhere. The expansion is what took fallthroughs on AFRVR from five to zero; the
+fusion redesign is what took wrong topics down.
+
+**What was not done, and why.** A stronger embedding model (bge-small, e5-small) and a
+cross-encoder reranker over the top five candidates were both planned. Neither the authoring
+machine nor the build environment can reach huggingface.co, and MiniLM was the only model
+obtainable, vendored on npm. The harness takes `--model-path`, so a machine with access can
+measure a swap in one run.
 
 ### 20.3 The extraction contract, which has broken twice
 
@@ -1498,17 +1578,77 @@ than reimplementing it, so that the numbers describe the matcher that actually r
 locate it by marker comments:
 
 ```
-start:  const STOP=new Set(
-end:    /* ---------- fusion of the lexical and semantic matchers ----------
+lexical:  /* ---------- interview matching (section 10.6) ---------- */
+       to /* ---------- fusion of the lexical and semantic matchers ----------
+fusion:   that marker  to  function bindCase(){
 ```
 
-**Anything placed between those markers is evaluated by the harnesses**, in a context
-where `semantic.js` is not loaded. A top-level `SEM.init(...)` inside that region throws
-`ReferenceError: SEM is not defined` and the harness dies. This has now happened twice,
-once in each harness, and the fix both times was to move the semantic wiring out of the
-region rather than to change the markers. Engine-side semantic wiring lives in
-`bindCase()`, after the fusion marker.
+Since v0.8 there is one harness, `engine/matcher_eval.mjs`, and it extracts BOTH regions.
+The fusion region refers to `SEM`, so it is run with a shim whose `best()` is the harness's
+own embedding of the same model and whose rows are the shipped `semanticRows()`. That shim
+is the one piece of matching logic the harness reproduces rather than extracts; keep it in
+step with `semantic.js`. The fusion parameters are read out of the build (`FUSE`), and a
+sweep overrides them through `FUSE_OVERRIDE`, a hook that exists only so a sweep runs the
+shipped code rather than a copy.
+
+Anything placed in either region is evaluated by the harness. `bindCase()` and everything
+after it is not, which is where the model wiring lives.
 
 This is exactly the drift failure that authoring section 10.6 warns about, arriving from
 the opposite direction: not a second copy of the matcher going stale, but the extraction
 boundary silently moving.
+
+### 20.4 The patient's side of the conversation
+
+New in v0.8. Until now an interview entry produced the topic's paragraph and nothing else.
+Asking twice returned the same paragraph twice, a follow-up had nothing to attach to, and a
+question the matcher had guessed at was answered with the same confidence as one it was
+sure of. All of that was retrieval working and conversation not existing.
+
+Everything below is derived in the fold from the log, so it replays exactly and the
+debrief's claim to report what the learner did survives. The matcher decides what kind of
+turn a question is; the fold decides what the patient says.
+
+**Facts.** A topic may carry `facts`: atomic pieces of its answer, each with its own
+phrasings (`asks`) and a phase-conditional `value`. A follow-up that matches a fact is
+answered by that fact rather than by the paragraph. The paragraph is still the answer to the
+topic's own question, and every fact it contains is marked told when it is given. Facts are
+authored for eight topics per pack by `catalog/author_interview_facts.py`; a fact's value
+restates part of the paragraph and adds nothing to it, which is the rule that keeps the two
+consistent. The rest of the topics gain everything else in this section without facts.
+
+**Context.** The last topic the patient spoke about is the context for a short question. A
+question of six words or fewer that matches nothing well, or that lands on that same topic,
+is tried against the topic's facts first. A fact beats a weak or absent global match
+outright; over a confident match on the same topic it has to score higher, or "When did it
+start?" asked a second time would be handed to the "how did it start" fact instead of being
+the repeat it is.
+
+**"Anything else?"** and its cousins (`interviewDefaults.morePhrasings`) return the topic's
+untold facts, two at a time, or say there is nothing more. After the full paragraph there is
+nothing more, and the patient says so, which is honest rather than evasive.
+
+**Repeats.** A topic already answered gets a restatement under a rotating prefix ("Like I
+said", "I did tell you", "You've asked me that"): the fact marked `restate`, else the first
+fact, else the first sentence of the paragraph.
+
+**Echo.** Every topic carries `echo`, a short phrase in the patient's voice. When the fused
+score cleared the threshold by less than `echoBelow`, the answer opens with it ("My tablets?
+Three things..."), so a wrong match is visible in the transcript at once. A confident match
+does not echo, because a patient who repeats every question back is not natural either.
+
+**Clarification.** When the top two combined scores sit within `clarifyMargin` and both
+clear the threshold, the patient asks which was meant, naming both echoes, and nothing is
+marked as asked. On the held-out sets this converted two confident wrong answers and two
+out-of-scope false accepts into questions, at the cost of two correct answers that now take
+an extra turn; on the tuning sets it fires on about three percent of questions.
+
+The defaults for all of this live in `SHARED.interviewDefaults` and a case may override any
+of them under `interview`. The speech is written in the patient's voice, in the same quoted
+register as the authored answers, and the composer respects the quotes when it splices an
+echo or a prefix onto an answer.
+
+**What this is not.** It is not generation. No sentence the patient says was composed at
+runtime from anything but authored text and authored scaffolding, and the log records the
+matched topic and fact rather than the words, so a change to the scaffolding does not change
+what a past run is recorded as having asked.

@@ -1,7 +1,7 @@
 {
  "binding_version": "0.1",
  "case_id": "adhf-hfref-01",
- "catalog_version": "0.1-draft",
+ "catalog_version": "0.2-draft",
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
   "exact": 16,
@@ -252,9 +252,9 @@
   },
   {
    "case_id": "labs_bnp",
-   "catalog_id": "pro_bnp",
+   "catalog_id": "nt_probnp",
    "status": "mapped",
-   "note": "Catalog offers pro-BNP; the case authored a BNP of 2840 with a reference under 100. Those are different assays with different reference intervals. The number must be rewritten for pro-BNP or a BNP entry added."
+   "note": "Catalog entry is NT-proBNP. The case originally authored a BNP of 2840 against a reference under 100; in v0.9 the payload was rewritten as an NT-proBNP value with an NT-proBNP interval so the number matches the assay it is served under. The converted number is UNVERIFIED."
   },
   {
    "case_id": "labs_troponin_hs",
@@ -362,7 +362,7 @@
    "case_id": "exam_card",
    "catalog_id": "exam_card",
    "status": "exact",
-   "note": "Carries the peripheral oedema as well as the cardiac auscultation, because the catalog's routing map assigns pedal oedema here rather than to the musculoskeletal or circulation exam."
+   "note": "Carries the peripheral edema as well as the cardiac auscultation, because the catalog's routing map assigns pedal edema here rather than to the musculoskeletal or circulation exam."
   },
   {
    "case_id": "exam_pulm",

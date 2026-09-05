@@ -22,12 +22,12 @@ Section numbers below refer to `docs/case-authoring-requirements.md`.
 - **Chief complaint, patient's words:** "My heart won't stop racing and I can't get my
   breath."
 - **Final diagnosis:** atrial fibrillation with rapid ventricular response complicated by
-  acute decompensated HFrEF and cardiogenic pulmonary oedema. The author's note: "the
+  acute decompensated HFrEF and cardiogenic pulmonary edema. The author's note: "the
   learner should also recognise that the AF may be both a consequence of acute
   physiologic stress and a potential contributor to the patient's LV dysfunction."
 - **Learning objectives** (author's list, verbatim in intent):
   - recognise atrial fibrillation with rapid ventricular response
-  - identify acute decompensated heart failure and cardiogenic pulmonary oedema
+  - identify acute decompensated heart failure and cardiogenic pulmonary edema
   - use cardiac and lung POCUS to identify previously undiagnosed HFrEF
   - select appropriate rate-control therapy in the setting of reduced LV systolic
     function
@@ -66,7 +66,7 @@ organised around, whether the breathing is supported and whether the rate is con
 correct management, SpO2 rises to about 94 to 97 percent, respiratory rate falls toward
 the low twenties, work of breathing improves, diuresis begins, heart rate falls toward
 100 to 110, blood pressure remains stable, dyspnoea substantially improved. Repeat POCUS
-may show persistent but improving pulmonary oedema. **The patient remains in AF, and this
+may show persistent but improving pulmonary edema. **The patient remains in AF, and this
 is not a failure.**
 
 **The author's instruction on the simulation mechanics,** verbatim in substance:
@@ -82,10 +82,10 @@ is not a failure.**
 
 1. Obtain and interpret a 12-lead ECG, and recognise AF with RVR.
 2. Perform cardiac and lung POCUS and use the findings to identify reduced LV systolic
-   function and pulmonary oedema.
+   function and pulmonary edema.
 3. Initiate non-invasive positive pressure ventilation (BiPAP or CPAP).
 4. Treat acute decompensated heart failure: IV loop diuretic, and address relevant
-   contributors such as hypomagnesaemia.
+   contributors such as hypomagnesemia.
 5. Initiate and reassess appropriate rate-control therapy. Acceptable approaches include
    digoxin, appropriately selected beta blockade when physiologically tolerated, or IV
    amiodarone.
@@ -112,7 +112,7 @@ controlled.
 ## 3.6 Key findings
 
 **Physical examination, author's list:** irregular tachycardia; elevated JVP; bibasilar
-crackles; bilateral lower-extremity oedema; increased work of breathing; no obvious
+crackles; bilateral lower-extremity edema; increased work of breathing; no obvious
 unilateral leg swelling; no severe chest pain; no altered mental status; no clinical
 shock.
 
@@ -126,7 +126,7 @@ pattern, TSH normal. The author's note: "the low magnesium should prompt replace
 **Cardiac POCUS:** globally reduced LV systolic function, estimated EF approximately
 **30 to 35 percent**, no large pericardial effusion, no obvious RV catastrophe.
 
-**Lung POCUS:** diffuse bilateral B-lines consistent with pulmonary interstitial oedema.
+**Lung POCUS:** diffuse bilateral B-lines consistent with pulmonary interstitial edema.
 
 Reference intervals were not supplied and every one in the case file is model output.
 
@@ -155,7 +155,7 @@ managed.
 
 **Wrong path 1: treats the heart rate and misses the heart failure.** Identifies AF with
 RVR and focuses exclusively on the rate. May give diltiazem and reach a heart rate of 105
-to 110 but fails to perform POCUS, recognise pulmonary oedema, initiate NIV or treat the
+to 110 but fails to perform POCUS, recognise pulmonary edema, initiate NIV or treat the
 decompensated heart failure. Evolution: the heart rate improves, the respiratory rate
 stays around 32, SpO2 stays around 86 to 89 percent, the patient remains markedly
 dyspnoeic, and the B-lines persist. **Teaching point: a lower heart rate does not equal
@@ -164,14 +164,14 @@ successful resuscitation.**
 **Wrong path 2: continues diltiazem after HFrEF is identified.** Sees EF 30 to 35 percent
 and continues IV diltiazem because it lowered the rate. The patient does not necessarily
 crash. Instead: heart rate 95 to 105, systolic pressure 100 to 110, persistent pulmonary
-oedema, ongoing oxygen or NIV requirement, possible worsening heart failure symptoms.
+edema, ongoing oxygen or NIV requirement, possible worsening heart failure symptoms.
 **Teaching point: a medication can produce the desired physiologic effect while still
 being an inappropriate treatment in the patient's underlying disease state.**
 
-**Wrong path 3: fails to treat the pulmonary oedema.** Recognises AF and HFrEF but delays
+**Wrong path 3: fails to treat the pulmonary edema.** Recognises AF and HFrEF but delays
 or fails to initiate NIV despite SpO2 88 percent, RR 30, increased work of breathing and
 diffuse B-lines. Evolution: respiratory distress persists or worsens, increasing oxygen
 requirement, RR above 30, increasing fatigue, persistent hypoxaemia, and ultimately the
-patient may require intubation. **Teaching point: in acute cardiogenic pulmonary oedema
+patient may require intubation. **Teaching point: in acute cardiogenic pulmonary edema
 with respiratory failure, respiratory support is an immediate treatment priority, not
 something to defer until the arrhythmia is completely controlled.**

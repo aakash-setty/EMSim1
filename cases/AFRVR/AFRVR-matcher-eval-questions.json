@@ -1,95 +1,449 @@
 {
  "case_prefix": "AFRVR",
- "status": "RUN. Results are in AFRVR-review-packet.md section 10 and in the harness output. This set has NOT been used to tune the matcher or to add variants to the case file: authoring section 10.6 is explicit that doing so and then quoting the result measures memorisation rather than coverage. It stays held out.",
+ "status": "HELD OUT. This set is quoted, never tuned against. Threshold sweeps read AFRVR-matcher-tune-questions.json instead. Nothing here may appear in a variant bank or an out-of-scope bank; engine/matcher_eval.mjs checks and refuses to run if it does.",
  "authoring_note": "None of these phrasings appears in any variant list in the case file. They are written in the registers section 10.6 says an author-written set tends to miss: clinical shorthand, typographical errors, compound questions and conversational openers, alongside a plain paraphrase arm for comparison. The expected topic on each row is a drafting judgement made by a language model and should be reviewed by the case author before any number from this set is quoted outside the pack.",
  "out_of_scope_arm_note": "Thirty out-of-scope questions, which is the floor section 10.6 sets and which neither earlier pack meets. They are deliberately of two kinds: questions about a real clinical topic this case does not author, which is where a matcher is most likely to answer anyway, and questions with nothing to do with medicine, which is where it should be easy. Both are counted together, which is the harder test.",
+ "compound_note": "Five compound rows were recorded as __ambiguous__ when first written. They are compound rather than ambiguous: each asks two authored topics, and the shipped matcher answers both. They now carry the list of topics that must all be answered. That mapping is a drafting judgement.",
+ "management_changing": [
+  "onset",
+  "prior_afib_or_palpitations",
+  "prior_heart_failure",
+  "anticoagulant_history_and_bleeding",
+  "current_medications",
+  "past_medical_history",
+  "chest_pain",
+  "orthopnea",
+  "paroxysmal_nocturnal_dyspnea",
+  "thyroid_symptoms",
+  "alcohol_and_binge",
+  "syncope_presyncope",
+  "code_status_goals_of_care"
+ ],
  "questions": [
-  {"register": "paraphrase", "q": "What time did your heart start doing this?", "expected_topic": "onset"},
-  {"register": "paraphrase", "q": "Has the racing let up at all since it started?", "expected_topic": "timing_progression"},
-  {"register": "paraphrase", "q": "Does your heartbeat feel regular or all over the place?", "expected_topic": "character_of_palpitations"},
-  {"register": "paraphrase", "q": "Are you struggling to pull air in?", "expected_topic": "dyspnea_character"},
-  {"register": "paraphrase", "q": "How many pillows do you need to sleep these days?", "expected_topic": "orthopnea"},
-  {"register": "paraphrase", "q": "Have you woken up in the night unable to catch your breath?", "expected_topic": "paroxysmal_nocturnal_dyspnea"},
-  {"register": "paraphrase", "q": "Have your ankles been puffing up?", "expected_topic": "leg_swelling"},
-  {"register": "paraphrase", "q": "Is there any pain in your chest with all this?", "expected_topic": "chest_pain"},
-  {"register": "paraphrase", "q": "Have you blacked out at any point?", "expected_topic": "syncope_presyncope"},
-  {"register": "paraphrase", "q": "Has a doctor ever told you your heartbeat was irregular?", "expected_topic": "prior_afib_or_palpitations"},
-  {"register": "paraphrase", "q": "Has anyone ever scanned your heart before?", "expected_topic": "prior_heart_failure"},
-  {"register": "paraphrase", "q": "Are you on anything that thins your blood?", "expected_topic": "anticoagulant_history_and_bleeding"},
-  {"register": "paraphrase", "q": "What tablets do you take at home every day?", "expected_topic": "current_medications"},
-  {"register": "paraphrase", "q": "What conditions are you treated for?", "expected_topic": "past_medical_history"},
-  {"register": "paraphrase", "q": "Did you have a lot to drink over the weekend?", "expected_topic": "alcohol_and_binge"},
-  {"register": "paraphrase", "q": "Have you been losing weight or feeling hot all the time?", "expected_topic": "thyroid_symptoms"},
-  {"register": "paraphrase", "q": "Does anyone say you stop breathing while you're asleep?", "expected_topic": "snoring_and_sleep_apnea"},
-  {"register": "paraphrase", "q": "How much were you able to do before this week?", "expected_topic": "exercise_tolerance_baseline"},
-  {"register": "paraphrase", "q": "Have you been going to the toilet less than usual?", "expected_topic": "urine_output"},
-  {"register": "paraphrase", "q": "Is either of your calves sore or bigger than the other?", "expected_topic": "calf_pain_or_asymmetry"},
-
-  {"register": "shorthand", "q": "pmh?", "expected_topic": "past_medical_history"},
-  {"register": "shorthand", "q": "meds?", "expected_topic": "current_medications"},
-  {"register": "shorthand", "q": "any hx of afib", "expected_topic": "prior_afib_or_palpitations"},
-  {"register": "shorthand", "q": "pnd?", "expected_topic": "paroxysmal_nocturnal_dyspnea"},
-  {"register": "shorthand", "q": "orthopnea", "expected_topic": "orthopnea"},
-  {"register": "shorthand", "q": "sob on exertion?", "expected_topic": "dyspnea_character"},
-  {"register": "shorthand", "q": "cp?", "expected_topic": "chest_pain"},
-  {"register": "shorthand", "q": "nkda?", "expected_topic": "allergies"},
-  {"register": "shorthand", "q": "etoh hx", "expected_topic": "alcohol_and_binge"},
-  {"register": "shorthand", "q": "on doac?", "expected_topic": "anticoagulant_history_and_bleeding"},
-  {"register": "shorthand", "q": "smoking hx", "expected_topic": "social_history_smoking"},
-  {"register": "shorthand", "q": "fhx cardiac", "expected_topic": "family_history"},
-
-  {"register": "typo", "q": "when did the palpitatons start", "expected_topic": "onset"},
-  {"register": "typo", "q": "any chets pain", "expected_topic": "chest_pain"},
-  {"register": "typo", "q": "do your legs swel up", "expected_topic": "leg_swelling"},
-  {"register": "typo", "q": "waht medications are you on", "expected_topic": "current_medications"},
-  {"register": "typo", "q": "have you evre passed out", "expected_topic": "syncope_presyncope"},
-  {"register": "typo", "q": "any allergiess", "expected_topic": "allergies"},
-
-  {"register": "compound", "q": "Any chest pain or shortness of breath?", "expected_topic": "__ambiguous__"},
-  {"register": "compound", "q": "When did it start and has it been constant?", "expected_topic": "__ambiguous__"},
-  {"register": "compound", "q": "Do you smoke or drink?", "expected_topic": "__ambiguous__"},
-  {"register": "compound", "q": "Have you ever had this before, and did anyone tell you what it was?", "expected_topic": "prior_afib_or_palpitations"},
-  {"register": "compound", "q": "What tablets do you take and have you been taking them?", "expected_topic": "__ambiguous__"},
-  {"register": "compound", "q": "Any leg swelling or calf pain?", "expected_topic": "__ambiguous__"},
-
-  {"register": "conversational", "q": "Tell me a bit about how this all started.", "expected_topic": "onset"},
-  {"register": "conversational", "q": "So walk me through what happened yesterday.", "expected_topic": "onset"},
-  {"register": "conversational", "q": "I just want to check, are you allergic to anything?", "expected_topic": "allergies"},
-  {"register": "conversational", "q": "Before we go any further, has your heart ever done this before?", "expected_topic": "prior_afib_or_palpitations"},
-  {"register": "conversational", "q": "Can I ask what you were doing when it came on?", "expected_topic": "onset"},
-  {"register": "conversational", "q": "Just so I know, when did you last have anything to eat?", "expected_topic": "last_oral_intake"},
-  {"register": "conversational", "q": "If things got worse, what would you want us to do?", "expected_topic": "code_status_goals_of_care"},
-  {"register": "conversational", "q": "How were you getting on before all this, generally?", "expected_topic": "exercise_tolerance_baseline"},
-
-  {"register": "out_of_scope_clinical", "q": "When was your last colonoscopy?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Do you have any trouble passing water at night?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Have you had any joint pain in your hands?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Any change in your hearing?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Have you had a tetanus shot recently?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Do you get headaches?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Any rash on your back?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Have you noticed any blood in your stool?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Do you wear glasses?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Any problems with your memory lately?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Have you had a seizure before?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Any pain when you swallow?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Do you use a walking stick?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Have you had your flu jab?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Any numbness or tingling in your feet?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "When did you last see a dentist?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Do you have a hernia?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Any ringing in your ears?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Have you ever had a blood transfusion?", "expected_topic": null},
-  {"register": "out_of_scope_clinical", "q": "Do you get cramps in your legs at night?", "expected_topic": null},
-  {"register": "out_of_scope_general", "q": "What is your favourite colour?", "expected_topic": null},
-  {"register": "out_of_scope_general", "q": "Who is looking after your dog?", "expected_topic": null},
-  {"register": "out_of_scope_general", "q": "What did you do for work?", "expected_topic": null},
-  {"register": "out_of_scope_general", "q": "Is your daughter still outside?", "expected_topic": null},
-  {"register": "out_of_scope_general", "q": "Did you drive yourself here?", "expected_topic": null},
-  {"register": "out_of_scope_general", "q": "What is the weather like out there?", "expected_topic": null},
-  {"register": "out_of_scope_general", "q": "Do you live in a house or a flat?", "expected_topic": null},
-  {"register": "out_of_scope_general", "q": "How many grandchildren do you have?", "expected_topic": null},
-  {"register": "out_of_scope_general", "q": "Have you been on holiday this year?", "expected_topic": null},
-  {"register": "out_of_scope_general", "q": "What football team do you support?", "expected_topic": null}
+  {
+   "register": "paraphrase",
+   "q": "What time did your heart start doing this?",
+   "expect": "onset"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has the racing let up at all since it started?",
+   "expect": "timing_progression"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does your heartbeat feel regular or all over the place?",
+   "expect": "character_of_palpitations"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are you struggling to pull air in?",
+   "expect": "dyspnea_character"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How many pillows do you need to sleep these days?",
+   "expect": "orthopnea"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you woken up in the night unable to catch your breath?",
+   "expect": "paroxysmal_nocturnal_dyspnea"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have your ankles been puffing up?",
+   "expect": "leg_swelling"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is there any pain in your chest with all this?",
+   "expect": "chest_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you blacked out at any point?",
+   "expect": "syncope_presyncope"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has a doctor ever told you your heartbeat was irregular?",
+   "expect": "prior_afib_or_palpitations"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has anyone ever scanned your heart before?",
+   "expect": "prior_heart_failure"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are you on anything that thins your blood?",
+   "expect": "anticoagulant_history_and_bleeding"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What tablets do you take at home every day?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What conditions are you treated for?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you have a lot to drink over the weekend?",
+   "expect": "alcohol_and_binge"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you been losing weight or feeling hot all the time?",
+   "expect": "thyroid_symptoms"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does anyone say you stop breathing while you're asleep?",
+   "expect": "snoring_and_sleep_apnea"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How much were you able to do before this week?",
+   "expect": "exercise_tolerance_baseline"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you been going to the toilet less than usual?",
+   "expect": "urine_output"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is either of your calves sore or bigger than the other?",
+   "expect": "calf_pain_or_asymmetry"
+  },
+  {
+   "register": "shorthand",
+   "q": "pmh?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "meds?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "shorthand",
+   "q": "any hx of afib",
+   "expect": "prior_afib_or_palpitations"
+  },
+  {
+   "register": "shorthand",
+   "q": "pnd?",
+   "expect": "paroxysmal_nocturnal_dyspnea"
+  },
+  {
+   "register": "shorthand",
+   "q": "orthopnea",
+   "expect": "orthopnea"
+  },
+  {
+   "register": "shorthand",
+   "q": "sob on exertion?",
+   "expect": "dyspnea_character"
+  },
+  {
+   "register": "shorthand",
+   "q": "cp?",
+   "expect": "chest_pain"
+  },
+  {
+   "register": "shorthand",
+   "q": "nkda?",
+   "expect": "allergies"
+  },
+  {
+   "register": "shorthand",
+   "q": "etoh hx",
+   "expect": "alcohol_and_binge"
+  },
+  {
+   "register": "shorthand",
+   "q": "on doac?",
+   "expect": "anticoagulant_history_and_bleeding"
+  },
+  {
+   "register": "shorthand",
+   "q": "smoking hx",
+   "expect": "social_history_smoking"
+  },
+  {
+   "register": "shorthand",
+   "q": "fhx cardiac",
+   "expect": "family_history"
+  },
+  {
+   "register": "typo",
+   "q": "when did the palpitatons start",
+   "expect": "onset"
+  },
+  {
+   "register": "typo",
+   "q": "any chets pain",
+   "expect": "chest_pain"
+  },
+  {
+   "register": "typo",
+   "q": "do your legs swel up",
+   "expect": "leg_swelling"
+  },
+  {
+   "register": "typo",
+   "q": "waht medications are you on",
+   "expect": "current_medications"
+  },
+  {
+   "register": "typo",
+   "q": "have you evre passed out",
+   "expect": "syncope_presyncope"
+  },
+  {
+   "register": "typo",
+   "q": "any allergiess",
+   "expect": "allergies"
+  },
+  {
+   "register": "compound",
+   "q": "Any chest pain or shortness of breath?",
+   "expect": [
+    "chest_pain",
+    "dyspnea_character"
+   ]
+  },
+  {
+   "register": "compound",
+   "q": "When did it start and has it been constant?",
+   "expect": [
+    "onset",
+    "timing_progression"
+   ]
+  },
+  {
+   "register": "compound",
+   "q": "Do you smoke or drink?",
+   "expect": [
+    "social_history_smoking",
+    "alcohol_and_binge"
+   ]
+  },
+  {
+   "register": "compound",
+   "q": "Have you ever had this before, and did anyone tell you what it was?",
+   "expect": "prior_afib_or_palpitations"
+  },
+  {
+   "register": "compound",
+   "q": "What tablets do you take and have you been taking them?",
+   "expect": [
+    "current_medications",
+    "medication_adherence"
+   ]
+  },
+  {
+   "register": "compound",
+   "q": "Any leg swelling or calf pain?",
+   "expect": [
+    "leg_swelling",
+    "calf_pain_or_asymmetry"
+   ]
+  },
+  {
+   "register": "conversational",
+   "q": "Tell me a bit about how this all started.",
+   "expect": "onset"
+  },
+  {
+   "register": "conversational",
+   "q": "So walk me through what happened yesterday.",
+   "expect": "onset"
+  },
+  {
+   "register": "conversational",
+   "q": "I just want to check, are you allergic to anything?",
+   "expect": "allergies"
+  },
+  {
+   "register": "conversational",
+   "q": "Before we go any further, has your heart ever done this before?",
+   "expect": "prior_afib_or_palpitations"
+  },
+  {
+   "register": "conversational",
+   "q": "Can I ask what you were doing when it came on?",
+   "expect": "onset"
+  },
+  {
+   "register": "conversational",
+   "q": "Just so I know, when did you last have anything to eat?",
+   "expect": "last_oral_intake"
+  },
+  {
+   "register": "conversational",
+   "q": "If things got worse, what would you want us to do?",
+   "expect": "code_status_goals_of_care"
+  },
+  {
+   "register": "conversational",
+   "q": "How were you getting on before all this, generally?",
+   "expect": "exercise_tolerance_baseline"
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "When was your last colonoscopy?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you have any trouble passing water at night?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had any joint pain in your hands?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any change in your hearing?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had a tetanus shot recently?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you get headaches?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any rash on your back?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you noticed any blood in your stool?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you wear glasses?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any problems with your memory lately?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had a seizure before?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any pain when you swallow?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you use a walking stick?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had your flu jab?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any numbness or tingling in your feet?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "When did you last see a dentist?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you have a hernia?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any ringing in your ears?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you ever had a blood transfusion?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you get cramps in your legs at night?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What is your favourite colour?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Who is looking after your dog?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What did you do for work?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Is your daughter still outside?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Did you drive yourself here?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What is the weather like out there?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you live in a house or a flat?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "How many grandchildren do you have?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Have you been on holiday this year?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What football team do you support?",
+   "expect": null
+  }
  ]
 }

@@ -694,6 +694,29 @@ input:focus,select:focus,button:focus-visible{outline:2px solid var(--act);outli
 .hit{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--rule2);
   padding:8px 10px;cursor:pointer;font-size:14px}
 .hit:hover{background:var(--actl)}
+/* v0.9: the handoff's ordered diagnosis list. The primary is the first row and is
+   drawn as the chosen option is; the rest are plain rows with a promote and a remove. */
+.dxlist{list-style:none;margin:0 0 8px;padding:0}
+.dxrow{display:flex;align-items:center;gap:10px;background:var(--pane2);border:1px solid var(--rule);
+  border-radius:3px;padding:8px 10px;margin-bottom:6px;font-size:14px}
+.dxrow.primary{background:var(--actl);border-color:var(--act);box-shadow:inset 0 0 0 1px var(--act);font-weight:500}
+.dxrank{flex:0 0 auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink3);min-width:52px}
+.dxrow.primary .dxrank{color:var(--act)}
+.dxname{flex:1 1 auto}
+.dxbtn{flex:0 0 auto;background:none;border:1px solid var(--rule);border-radius:3px;color:var(--ink3);
+  cursor:pointer;font-size:12px;padding:3px 8px}
+.dxbtn:hover{color:var(--act);border-color:var(--actb);background:#fff}
+/* v0.9: the summary's seven categories and the debrief's diagnosis list */
+.score{width:100%;border-collapse:collapse;margin-top:8px}
+.score th,.score td{padding:7px 8px;border-bottom:1px solid var(--rule2);font-size:13.5px;vertical-align:top}
+.score th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.score td.n,.score th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.score td.d{color:var(--ink2);font-size:12.5px}
+.score .bar{display:inline-block;width:90px;height:7px;background:var(--rule2);border-radius:4px;vertical-align:middle;margin-left:8px;overflow:hidden}
+.score .bar i{display:block;height:100%;background:var(--act)}
+.score .bar.low i{background:var(--harm)}
+.score .bar.mid i{background:var(--warn)}
 
 /* ---------- halt / debrief ---------- */
 .endview{position:fixed;top:var(--top);left:0;right:0;bottom:0;z-index:45;overflow-y:auto}
@@ -803,7 +826,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
         hand over, then read what your timing cost. Free to use, free to fork, and written to be
         checked line by line.</p>
     </div>
-    <div class="wl-stamp" aria-hidden="true"><div>Engine v0.6</div><div>Catalog v0.1-draft</div></div>
+    <div class="wl-stamp" aria-hidden="true"><div>Engine v0.9</div><div>Catalog v0.2-draft</div></div>
   </section>
 
   <aside class="wl-board" aria-label="Available cases">

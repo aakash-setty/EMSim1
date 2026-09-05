@@ -14,11 +14,11 @@
   "author_only_fields_pending_signoff": [
    "Every reference interval in content_keys.labs, none of which came from a laboratory reference.",
    "The two 240-second deterioration deadlines, which are clinical claims about how long this patient tolerates untreated respiratory failure.",
-   "The 30-second delay on the rate-control transitions, which compresses agents whose real onsets differ by an order of magnitude into one number, and the nurse line that goes with it.",
+   "The 10-second delay on the rate-control transitions, which compresses agents whose real onsets differ by an order of magnitude into one number, and the nurse line that goes with it.",
    "The decision that rate control takes two doses, that a single dose is worth 22 beats, and that all six routes to nodal blockade count toward one tally so that metoprolol followed by amiodarone is two doses rather than one of each.",
    "The four two-point steps of the positive-pressure saturation effect, both the total of eight points and the one-minute tempo.",
    "The 20 mmHg systolic and 10 mmHg diastolic fall attributed to diltiazem.",
-   "The decision to bind digoxin, amiodarone and metoprolol as one act, which means a learner who gives metoprolol to a man in active pulmonary oedema is credited with the critical action and reads the caveat only in the expander.",
+   "The decision to bind digoxin, amiodarone and metoprolol as one act, which means a learner who gives metoprolol to a man in active pulmonary edema is credited with the critical action and reads the caveat only in the expander.",
    "The decision to tag magnesium replacement recommended rather than critical, against the author's brief. See the note on that action and section 4 of the review packet.",
    "The decision that a crystalloid bolus is the only halting action in this case.",
    "The decision that every non-terminal phase carries an irregularly irregular heartbeat, and the shape and spread of the interval model that sounds it. The parameters are global rather than case-level, so changing them changes every future case that uses the same rhythm.",
@@ -31,7 +31,7 @@
  "metadata": {
   "working_title": "Sixty-eight year old man, palpitations and breathlessness, brought in by EMS",
   "chief_complaint_patient_voice": "My heart won't stop racing and I can't get my breath.",
-  "final_diagnosis": "Atrial fibrillation with rapid ventricular response, complicated by acute decompensated heart failure with a newly recognised reduced ejection fraction and cardiogenic pulmonary oedema. The arrhythmia and the ventricular dysfunction are each plausibly cause and consequence of the other, and the case does not require the learner to decide which came first.",
+  "final_diagnosis": "Atrial fibrillation with rapid ventricular response, complicated by acute decompensated heart failure with a newly recognised reduced ejection fraction and cardiogenic pulmonary edema. The arrhythmia and the ventricular dysfunction are each plausibly cause and consequence of the other, and the case does not require the learner to decide which came first.",
   "target_level": [
    "intern",
    "junior_resident",
@@ -40,7 +40,7 @@
   "estimated_runtime_seconds": 600,
   "learning_objectives": [
    "Recognise atrial fibrillation with a rapid ventricular response on a twelve-lead ECG and separate it from the other narrow-complex tachycardias.",
-   "Identify acute decompensated heart failure and cardiogenic pulmonary oedema in a patient with no prior diagnosis of either.",
+   "Identify acute decompensated heart failure and cardiogenic pulmonary edema in a patient with no prior diagnosis of either.",
    "Use cardiac and lung point-of-care ultrasound to establish reduced left ventricular systolic function at the bedside, and treat that finding as the pivot the rest of the case turns on.",
    "Select a rate-control strategy that accounts for reduced systolic function, and state why a non-dihydropyridine calcium channel blocker is the wrong agent once the ejection fraction is known.",
    "Sequence non-invasive positive pressure ventilation and diuresis alongside rate control rather than after it, and recognise that a lower heart rate is not by itself a resuscitated patient.",
@@ -74,12 +74,12 @@
  "phase_notes": {
   "count_justification": "Six clinical phases, which is the ceiling in section 3.3, and each one is a state a learner can actually reach and a reviewer has to read. They are the two axes of this case crossed: whether the breathing is supported and whether the rate is controlled, giving arrival, breathing supported alone, rate controlled alone, and both; plus the deterioration branch for a patient whose breathing was never supported, and the ventilated phase.",
   "deterioration_path": "Two time-guarded transitions, both at 240 seconds and both guarded on positive pressure not having been applied, one from arrival and one from the rate-controlled-but-congested phase. Both land in respiratory failure, which has exits and is not terminal. The clock cannot end this case: a learner who does nothing at all reaches respiratory failure and stays there. That was the author's explicit instruction and it is the reason no transition in this case carries allow_time_to_terminal.",
-  "rate_control_delay": "The two transitions that follow rate control carry a 30-second guard_true delay, so the ventricular rate falls about half a minute after the drug rather than on the click. Without it the case teaches that rate control is instantaneous. The delay is paired with a nurse line said the moment the drug goes in, because a delay on its own reads as the drug having failed and invites a second dose; the line is what carries the lesson and the delay is what stops the number being a button. Thirty seconds sits on the validator's hard floor, which is deliberate and is recorded in the transition rationale."
+  "rate_control_delay": "The two transitions that follow rate control carry a 10-second guard_true delay, so the ventricular rate falls about ten seconds after the drug rather than on the click. Without it the case teaches that rate control is instantaneous. The delay is paired with a nurse line said the moment the drug goes in, because a delay on its own reads as the drug having failed and invites a second dose; the line is what carries the lesson and the delay is what stops the number being a button. It was thirty seconds until v0.9; the validator's thirty-second floor is a fairness rule for deteriorations and does not apply to a delayed consequence of the resident's own action, as the transition rationale records."
  },
  "phases": [
   {
    "id": "presentation",
-   "label": "Atrial fibrillation with rapid ventricular response and cardiogenic pulmonary oedema",
+   "label": "Atrial fibrillation with rapid ventricular response and cardiogenic pulmonary edema",
    "short_label": "on arrival",
    "clinical_description": "Awake, anxious, tachypnoeic and hypoxaemic with an irregularly irregular ventricular rate of 160. Congested and perfusing. The reduced ejection fraction has not yet been found.",
    "vitals": {
@@ -112,11 +112,11 @@
     {
      "when": "flag rate_control_adequate set",
      "to": "rate_controlled_congested",
-     "after_seconds": 30,
+     "after_seconds": 10,
      "measured_from": "guard_true",
      "narration": "That second dose has done it. His rate's down and I can actually count it now, still all over the place.",
-     "debrief_note": "The ventricular rate fell about half a minute after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so thirty seconds is a heavy compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose because the first one appeared not to work. The nurse says so out loud when the drug goes in, which is the part of this that will actually stop somebody redosing.",
-     "author_rationale": "AUTHOR: thirty seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It sits on the validator's hard 30-second floor, which is deliberate: the author's judgement was that a minute felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
+     "debrief_note": "The ventricular rate fell about ten seconds after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so ten seconds is a heavy compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose because the first one appeared not to work. The nurse says so out loud when the drug goes in, which is the part of this that will actually stop somebody redosing.",
+     "author_rationale": "AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgement was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
     },
     {
      "when": "NOT flag on_niv set",
@@ -124,8 +124,8 @@
      "measured_from": "phase_entry",
      "to": "respiratory_failure",
      "narration": "He's wearing out. He's stopped talking to me and his sat has dropped since you came in.",
-     "debrief_note": "Four minutes of hypoxaemic respiratory failure at a respiratory rate of thirty, with no positive pressure and no supplemental oxygen that changes anything, and he tired. This is the commonest way this case is lost: the rate is the visible abnormality, the learner spends the first four minutes on it, and the problem that was going to kill him first was the flooded lung. In acute cardiogenic pulmonary oedema, positive pressure is a treatment for the oedema and not merely a support measure while you treat something else. It recruits flooded alveoli, reduces the work of breathing, and by raising intrathoracic pressure it lowers both preload and left ventricular transmural pressure. Applying it in the first minutes is what keeps most of these patients off a ventilator. Be honest with learners about the strength of the claim: meta-analyses report reductions in intubation rate, and the largest single randomised trial, 3CPO, found no difference in seven-day mortality or intubation against standard oxygen therapy. The defensible claim is faster physiological and symptomatic improvement.",
-     "author_rationale": "AUTHOR SIGNATURE REQUIRED. The claim is that a sixty-eight year old man in cardiogenic pulmonary oedema at a saturation of 88 percent on room air, a respiratory rate of thirty and a ventricular rate of 160 will begin to tire inside four minutes if nothing is done for his breathing. Four minutes is compressed against real disease tempo in the same way the five-second laboratory turnaround is; the honest version of the claim is that he is on a trajectory that ends in intubation and that a case cannot spend twenty minutes demonstrating it. The deadline is a single integer in this transition and is the reviewer's to change."
+     "debrief_note": "Four minutes of hypoxaemic respiratory failure at a respiratory rate of thirty, with no positive pressure and no supplemental oxygen that changes anything, and he tired. This is the commonest way this case is lost: the rate is the visible abnormality, the learner spends the first four minutes on it, and the problem that was going to kill him first was the flooded lung. In acute cardiogenic pulmonary edema, positive pressure is a treatment for the edema and not merely a support measure while you treat something else. It recruits flooded alveoli, reduces the work of breathing, and by raising intrathoracic pressure it lowers both preload and left ventricular transmural pressure. Applying it in the first minutes is what keeps most of these patients off a ventilator. Be honest with learners about the strength of the claim: meta-analyses report reductions in intubation rate, and the largest single randomised trial, 3CPO, found no difference in seven-day mortality or intubation against standard oxygen therapy. The defensible claim is faster physiological and symptomatic improvement.",
+     "author_rationale": "AUTHOR SIGNATURE REQUIRED. The claim is that a sixty-eight year old man in cardiogenic pulmonary edema at a saturation of 88 percent on room air, a respiratory rate of thirty and a ventricular rate of 160 will begin to tire inside four minutes if nothing is done for his breathing. Four minutes is compressed against real disease tempo in the same way the five-second laboratory turnaround is; the honest version of the claim is that he is on a trajectory that ends in intubation and that a case cannot spend twenty minutes demonstrating it. The deadline is a single integer in this transition and is the reviewer's to change."
     },
     {
      "when": "action handoff_submit taken",
@@ -137,7 +137,7 @@
    "id": "respiratory_failure",
    "label": "Tiring on an untreated flooded lung",
    "short_label": "in respiratory failure",
-   "clinical_description": "Hypoxaemic and hypercapnic respiratory failure from untreated cardiogenic pulmonary oedema. Drowsy, tachypnoeic, and no longer able to sustain the work of breathing. Still perfusing. The authored heart rate here is the UNTREATED one. A patient who reached this phase with one dose of a nodal blocker on board reads about 22 beats lower and one with two doses about 35 lower, through two vital effects on the rate-control actions guarded on this phase.",
+   "clinical_description": "Hypoxaemic and hypercapnic respiratory failure from untreated cardiogenic pulmonary edema. Drowsy, tachypnoeic, and no longer able to sustain the work of breathing. Still perfusing. The authored heart rate here is the UNTREATED one. A patient who reached this phase with one dose of a nodal blocker on board reads about 22 beats lower and one with two doses about 35 lower, through two vital effects on the rate-control actions guarded on this phase.",
    "vitals": {
     "heart_rate": 166,
     "systolic_bp": 118,
@@ -205,11 +205,11 @@
     {
      "when": "flag rate_control_adequate set",
      "to": "stabilized",
-     "after_seconds": 30,
+     "after_seconds": 10,
      "measured_from": "guard_true",
      "narration": "That second dose has done it. His rate's down and I can actually count it now, still all over the place.",
-     "debrief_note": "The ventricular rate fell about half a minute after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so thirty seconds is a heavy compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose because the first one appeared not to work. The nurse says so out loud when the drug goes in, which is the part of this that will actually stop somebody redosing.",
-     "author_rationale": "AUTHOR: thirty seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It sits on the validator's hard 30-second floor, which is deliberate: the author's judgement was that a minute felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
+     "debrief_note": "The ventricular rate fell about ten seconds after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so ten seconds is a heavy compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose because the first one appeared not to work. The nurse says so out loud when the drug goes in, which is the part of this that will actually stop somebody redosing.",
+     "author_rationale": "AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgement was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
     },
     {
      "when": "action handoff_submit taken",
@@ -221,7 +221,7 @@
    "id": "rate_controlled_congested",
    "label": "Ventricular rate controlled, lung still flooded",
    "short_label": "rate controlled, still congested",
-   "clinical_description": "The ventricular rate has come down and nothing has been done for the pulmonary oedema. Tachypnoeic, hypoxaemic, and still working hard to breathe.",
+   "clinical_description": "The ventricular rate has come down and nothing has been done for the pulmonary edema. Tachypnoeic, hypoxaemic, and still working hard to breathe.",
    "vitals": {
     "heart_rate": 108,
     "systolic_bp": 118,
@@ -253,7 +253,7 @@
      "measured_from": "phase_entry",
      "to": "respiratory_failure",
      "narration": "His rate's crept up again and he's working much harder than he was. His sat has come down.",
-     "debrief_note": "The heart rate improved and the patient did not. This is wrong path one in its pure form: the arrhythmia was the visible problem, it was treated competently, and the flooded lung underneath it was never addressed. A ventricular rate of 108 in a man at a saturation of 86 percent breathing 32 times a minute is not a resuscitated patient. Rate control and treatment of the pulmonary oedema are parallel tasks in this case, not sequential ones, and if anything the oedema is the more urgent of the two.",
+     "debrief_note": "The heart rate improved and the patient did not. This is wrong path one in its pure form: the arrhythmia was the visible problem, it was treated competently, and the flooded lung underneath it was never addressed. A ventricular rate of 108 in a man at a saturation of 86 percent breathing 32 times a minute is not a resuscitated patient. Rate control and treatment of the pulmonary edema are parallel tasks in this case, not sequential ones, and if anything the edema is the more urgent of the two.",
      "author_rationale": "AUTHOR SIGNATURE REQUIRED. Same claim and same four minutes as the arrival phase, applied to a patient whose rate is now 108. The rate control is a genuine improvement in diastolic filling time, so a reviewer might reasonably argue this patient tires more slowly than the one at 160 and that the deadline here should be longer. It is set the same deliberately, so that the case does not teach that treating the rate buys time it has not been shown to buy."
     },
     {
@@ -450,11 +450,11 @@
     }
    ],
    "prompt": {
-    "deadline_seconds": 40,
+    "deadline_seconds": 80,
     "guard": "NOT flag intubated set",
     "text": "He's working hard to breathe and his sat is low. Do you want to do something more for his breathing? I can get CPAP or BiPAP on him.",
     "escalation": {
-     "deadline_seconds": 100,
+     "deadline_seconds": 200,
      "text": "He's still tripoding and he's still hypoxic on what he's got. I've got the CPAP and the BiPAP both at the bedside if you want either of them on him."
     }
    },
@@ -489,10 +489,10 @@
      "note": "Eight points of saturation, authored as four two-point steps at zero, twenty, forty and sixty seconds rather than as one jump, because the author asked for the number to climb over about a minute of game time and the engine has no way to ramp a single effect. Each step triggers the renderer's five-second interpolation, so what the resident sees is a saturation that walks up rather than one that snaps. Every one of the four is a separate key, because effects sharing a key do not stack. All four are guarded on not being intubated: the mask comes off at intubation and the ventilated phase authors its own saturation. The size and the tempo are teaching choices. No trial supports either number, and the review packet says so rather than implying the simulator is modelling alveolar recruitment."
     }
    ],
-   "debrief_note": "Non-invasive positive pressure ventilation is the highest-value early intervention in acute cardiogenic pulmonary oedema and in this case it is also the intervention a learner is most likely to defer, because the rate is louder. It recruits flooded alveoli and reduces the work of breathing, and by raising intrathoracic pressure it reduces preload and left ventricular transmural pressure, which is afterload reduction by mechanical means. Continuous and bilevel positive pressure are one button here because they are one decision: 3CPO found no difference between the modes in mortality or intubation rate, and bilevel is often preferred when the patient is tiring and hypercapnic, as this one is on his venous gas. Be honest about the evidence. Meta-analyses report reductions in intubation and mortality against standard oxygen therapy; 3CPO, the largest randomised trial, found no difference in seven-day mortality or intubation rate. The strongest defensible claim is faster symptomatic and physiological improvement, with intubation avoidance supported by meta-analytic but not by single-trial evidence. The historical concern that bilevel increased myocardial infarction has not been borne out.",
+   "debrief_note": "Non-invasive positive pressure ventilation is the highest-value early intervention in acute cardiogenic pulmonary edema and in this case it is also the intervention a learner is most likely to defer, because the rate is louder. It recruits flooded alveoli and reduces the work of breathing, and by raising intrathoracic pressure it reduces preload and left ventricular transmural pressure, which is afterload reduction by mechanical means. Continuous and bilevel positive pressure are one button here because they are one decision: 3CPO found no difference between the modes in mortality or intubation rate, and bilevel is often preferred when the patient is tiring and hypercapnic, as this one is on his venous gas. Be honest about the evidence. Meta-analyses report reductions in intubation and mortality against standard oxygen therapy; 3CPO, the largest randomised trial, found no difference in seven-day mortality or intubation rate. The strongest defensible claim is faster symptomatic and physiological improvement, with intubation avoidance supported by meta-analytic but not by single-trial evidence. The historical concern that bilevel increased myocardial infarction has not been borne out.",
    "references": [
     "Gray A, Goodacre S, Newby DE, Masson M, Sampson F, Nicholl J; 3CPO Trialists. Noninvasive ventilation in acute cardiogenic pulmonary edema. N Engl J Med. 2008;359(2):142-51. [UNVERIFIED in this pack, confirm before release]",
-    "Berbenetz N, Wang Y, Brown J, et al. Non-invasive positive pressure ventilation (CPAP or bilevel NPPV) for cardiogenic pulmonary oedema. Cochrane Database Syst Rev. 2019;4:CD005351. [UNVERIFIED in this pack, confirm before release]"
+    "Berbenetz N, Wang Y, Brown J, et al. Non-invasive positive pressure ventilation (CPAP or bilevel NPPV) for cardiogenic pulmonary edema. Cochrane Database Syst Rev. 2019;4:CD005351. [UNVERIFIED in this pack, confirm before release]"
    ]
   },
   {
@@ -558,7 +558,7 @@
     "post_intubation_sedation",
     "post_intubation_cxr"
    ],
-   "debrief_note": "Appropriate for a patient who has already failed or cannot tolerate non-invasive support, and premature in a man who is awake, protecting his airway, and has not yet had a mask on his face. Most patients in acute cardiogenic pulmonary oedema who are intubated are intubated because positive pressure was started too late. Two specific hazards worth naming before you do it in this patient: induction removes the endogenous sympathetic drive that a poorly contracting ventricle is leaning on, and positive pressure ventilation reduces venous return, so the blood pressure after the tube is frequently much lower than the blood pressure before it. This case does not model that collapse, which is a simplification and not a claim that it does not happen."
+   "debrief_note": "Appropriate for a patient who has already failed or cannot tolerate non-invasive support, and premature in a man who is awake, protecting his airway, and has not yet had a mask on his face. Most patients in acute cardiogenic pulmonary edema who are intubated are intubated because positive pressure was started too late. Two specific hazards worth naming before you do it in this patient: induction removes the endogenous sympathetic drive that a poorly contracting ventricle is leaning on, and positive pressure ventilation reduces venous return, so the blood pressure after the tube is frequently much lower than the blood pressure before it. This case does not model that collapse, which is a simplification and not a claim that it does not happen."
   },
   {
    "catalog_id": "etomidate_bolus",
@@ -699,7 +699,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Good practice. Sitting a patient in pulmonary oedema flat is poorly tolerated."
+   "debrief_note": "Good practice. Sitting a patient in pulmonary edema flat is poorly tolerated."
   },
   {
    "catalog_id": "place_pads_for_monitoring",
@@ -735,7 +735,7 @@
    "follow_ups_triggered": [
     "anticoagulation_after_cardioversion"
    ],
-   "debrief_note": "Immediate synchronised cardioversion is the right answer for atrial fibrillation with a rapid ventricular response causing hypotension, ischaemic chest pain, acute heart failure attributable to the rate, or altered mental status. This patient has none of those in the form that mandates electricity: his systolic pressure is 132, he is awake and oriented, and he has no severe chest pain. The heart failure argument is the one worth arguing about, because he does have pulmonary oedema and the rate is plausibly driving it, and a reviewer who wants to defend electricity here has a case to make. Two things weigh against it. The duration of the arrhythmia is unknown and longer than forty-eight hours cannot be excluded, so cardioversion without anticoagulation or a transoesophageal echocardiogram carries a thromboembolic risk that is not trivial. And cardioversion of an arrhythmia driven by an underlying decompensation tends not to hold. It is tagged discouraged rather than harmful because it is a defensible decision made on incomplete reasoning, not a lethal one.",
+   "debrief_note": "Immediate synchronised cardioversion is the right answer for atrial fibrillation with a rapid ventricular response causing hypotension, ischaemic chest pain, acute heart failure attributable to the rate, or altered mental status. This patient has none of those in the form that mandates electricity: his systolic pressure is 132, he is awake and oriented, and he has no severe chest pain. The heart failure argument is the one worth arguing about, because he does have pulmonary edema and the rate is plausibly driving it, and a reviewer who wants to defend electricity here has a case to make. Two things weigh against it. The duration of the arrhythmia is unknown and longer than forty-eight hours cannot be excluded, so cardioversion without anticoagulation or a transoesophageal echocardiogram carries a thromboembolic risk that is not trivial. And cardioversion of an arrhythmia driven by an underlying decompensation tends not to hold. It is tagged discouraged rather than harmful because it is a defensible decision made on incomplete reasoning, not a lethal one.",
    "references": [
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2023;148(9):e1-e156. [UNVERIFIED in this pack, confirm before release]"
    ]
@@ -802,7 +802,7 @@
    "follow_ups_triggered": [
     "second_rate_control_dose"
    ],
-   "debrief_note": "This entry stands for the act of rate control rather than for one drug: digoxin, amiodarone and metoprolol are bound together, any of the three satisfies the critical action, and all three carry this note. That is deliberate, because the defensible answer here is a strategy rather than a named agent, and it should respond to the patient in front of you.\n\nWhy not diltiazem, which is the reflex answer for atrial fibrillation with a rapid ventricular response: non-dihydropyridine calcium channel blockers are negatively inotropic, and the 2023 ACC/AHA/ACCP/HRS atrial fibrillation guideline advises against them in patients with significant left ventricular systolic dysfunction for that reason. Once the POCUS shows an ejection fraction of 30 to 35 percent, that recommendation applies to this patient.\n\nDigoxin is the most comfortable choice in decompensated heart failure with reduced ejection fraction because it slows atrioventricular conduction without negative inotropy, and it is the least satisfying because its onset is slow, its therapeutic window is narrow, and it works poorly against high sympathetic tone. Amiodarone is reasonable when nodal blockade is ineffective or contraindicated and is widely used in decompensated and critically ill patients; it is not a benign drug and it carries a real chance of chemical cardioversion, which matters in a patient who is not anticoagulated and whose arrhythmia duration is unknown. A carefully selected, low-dose beta blocker is defensible once oxygenation is supported and the haemodynamics permit it, and is the least forgiving of the three in a patient with active pulmonary oedema, because beta blockade in acute decompensation removes compensation as well as rate. Aggressive beta blockade in this patient is not the goal.\n\nOn the target: guideline evidence supports a lenient resting rate of under 110 beats per minute in many patients with atrial fibrillation, derived largely from RACE II, which enrolled patients with permanent atrial fibrillation rather than acutely decompensated ones. The optimal target in acute decompensated heart failure with reduced ejection fraction is less certain, and the endpoint that matters here is clinical response rather than a number.",
+   "debrief_note": "This entry stands for the act of rate control rather than for one drug: digoxin, amiodarone and metoprolol are bound together, any of the three satisfies the critical action, and all three carry this note. That is deliberate, because the defensible answer here is a strategy rather than a named agent, and it should respond to the patient in front of you.\n\nWhy not diltiazem, which is the reflex answer for atrial fibrillation with a rapid ventricular response: non-dihydropyridine calcium channel blockers are negatively inotropic, and the 2023 ACC/AHA/ACCP/HRS atrial fibrillation guideline advises against them in patients with significant left ventricular systolic dysfunction for that reason. Once the POCUS shows an ejection fraction of 30 to 35 percent, that recommendation applies to this patient.\n\nDigoxin is the most comfortable choice in decompensated heart failure with reduced ejection fraction because it slows atrioventricular conduction without negative inotropy, and it is the least satisfying because its onset is slow, its therapeutic window is narrow, and it works poorly against high sympathetic tone. Amiodarone is reasonable when nodal blockade is ineffective or contraindicated and is widely used in decompensated and critically ill patients; it is not a benign drug and it carries a real chance of chemical cardioversion, which matters in a patient who is not anticoagulated and whose arrhythmia duration is unknown. A carefully selected, low-dose beta blocker is defensible once oxygenation is supported and the haemodynamics permit it, and is the least forgiving of the three in a patient with active pulmonary edema, because beta blockade in acute decompensation removes compensation as well as rate. Aggressive beta blockade in this patient is not the goal.\n\nOn the target: guideline evidence supports a lenient resting rate of under 110 beats per minute in many patients with atrial fibrillation, derived largely from RACE II, which enrolled patients with permanent atrial fibrillation rather than acutely decompensated ones. The optimal target in acute decompensated heart failure with reduced ejection fraction is less certain, and the endpoint that matters here is clinical response rather than a number.",
    "references": [
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2023;148(9):e1-e156. [UNVERIFIED in this pack, confirm before release]",
     "Van Gelder IC, Groenveld HF, Crijns HJGM, et al. Lenient versus strict rate control in patients with atrial fibrillation (RACE II). N Engl J Med. 2010;362(15):1363-73. [UNVERIFIED in this pack, confirm before release]"
@@ -986,7 +986,7 @@
      "note": "One vitals block per phase, and respiratory failure is reached by two routes. The authored 166 is the untreated patient tiring; a patient who got there with two doses of a nodal blocker on board reads 166 minus 22 minus 13, about 131, which is a rate-controlled patient with a sympathetic surge rather than an untreated one. It is a workaround for the schema rather than physiology, and the review packet says so."
     }
    ],
-   "debrief_note": "The argument for esmolol is that it is titratable and short-acting, so if beta blockade is poorly tolerated it can be withdrawn in minutes, which is a real advantage in a patient whose ventricle you do not trust. The argument against it here is that this patient has active pulmonary oedema and beta blockade in acute decompensation removes compensation along with rate. Reasonable clinicians differ. It is tagged discouraged rather than recommended because in a patient at a saturation of 88 percent with diffuse B-lines it is not the first thing to reach for, and because there are two agents on the menu with a better risk profile in this specific physiology."
+   "debrief_note": "The argument for esmolol is that it is titratable and short-acting, so if beta blockade is poorly tolerated it can be withdrawn in minutes, which is a real advantage in a patient whose ventricle you do not trust. The argument against it here is that this patient has active pulmonary edema and beta blockade in acute decompensation removes compensation along with rate. Reasonable clinicians differ. It is tagged discouraged rather than recommended because in a patient at a saturation of 88 percent with diffuse B-lines it is not the first thing to reach for, and because there are two agents on the menu with a better risk profile in this specific physiology."
   },
   {
    "catalog_id": "procainamide_drip",
@@ -1030,7 +1030,7 @@
     "text": "His legs are swollen up past the ankle and his neck veins are up. Do you want to give him a diuretic?"
    },
    "no_vital_effect_note": "Deliberate, and it is the author's explicit instruction. Furosemide carries no vital effect at all in this case, so a resident who gives the diuretic and then watches the saturation sees nothing move. What it does change is the lung: the B-lines on the repeat ultrasound and the crackles on auscultation both improve once it is given, and neither of those is on the monitor. The lesson is where to look for the response, not that the drug does nothing.",
-   "debrief_note": "He is genuinely volume overloaded and not only redistributed: bilateral pitting oedema, a jugular venous pressure of about 12 cm, a plethoric inferior vena cava, and diffuse B-lines. He needs diuresis, and this is a critical action.\n\nTwo things about it are worth saying carefully. The first is dose. He is diuretic-naive, so a conventional starting dose is reasonable, and the usual rule of two to two and a half times the home oral dose does not apply to a patient who takes none. The DOSE trial found no significant difference in its co-primary endpoints between high and low dose or between bolus and infusion, with better symptom relief on secondary measures in the high-dose arm at the cost of transient rises in creatinine, so dose is a reasoned choice rather than a rule.\n\nThe second is what the diuretic is treating and how fast. It acts on the accumulated sodium and water, over tens of minutes to hours. Positive pressure acts on the alveoli that are flooded right now, over minutes. Rate control gives the ventricle time to fill, over minutes. In this case the diuretic is necessary and it is not the thing that changes the next ten minutes, which is why the monitor does not move when you give it. Look at the lung, not at the saturation.",
+   "debrief_note": "He is genuinely volume overloaded and not only redistributed: bilateral pitting edema, a jugular venous pressure of about 12 cm, a plethoric inferior vena cava, and diffuse B-lines. He needs diuresis, and this is a critical action.\n\nTwo things about it are worth saying carefully. The first is dose. He is diuretic-naive, so a conventional starting dose is reasonable, and the usual rule of two to two and a half times the home oral dose does not apply to a patient who takes none. The DOSE trial found no significant difference in its co-primary endpoints between high and low dose or between bolus and infusion, with better symptom relief on secondary measures in the high-dose arm at the cost of transient rises in creatinine, so dose is a reasoned choice rather than a rule.\n\nThe second is what the diuretic is treating and how fast. It acts on the accumulated sodium and water, over tens of minutes to hours. Positive pressure acts on the alveoli that are flooded right now, over minutes. Rate control gives the ventricle time to fill, over minutes. In this case the diuretic is necessary and it is not the thing that changes the next ten minutes, which is why the monitor does not move when you give it. Look at the lung, not at the saturation.",
    "references": [
     "Felker GM, Lee KL, Bull DA, et al. Diuretic strategies in patients with acute decompensated heart failure (DOSE). N Engl J Med. 2011;364(9):797-805. [UNVERIFIED in this pack, confirm before release]"
    ]
@@ -1053,7 +1053,7 @@
      "source": "catalog_default_retained"
     }
    ],
-   "debrief_note": "His magnesium is 1.6 mg/dL. Correcting it is straightforward, cheap and safe, and it is worth doing for two reasons: magnesium is a cofactor for the sodium-potassium pump so hypokalaemia and hypomagnesaemia travel together and neither corrects properly while the other is low, and intravenous magnesium has been reported to improve rate control and increase conversion when added to standard atrioventricular nodal blockade in rapid atrial fibrillation. The evidence for that second claim rests on small randomised trials and a meta-analysis of them, not on a large definitive trial, so it is a reasonable adjunct rather than a core therapy.\n\nAUTHOR NOTE, and this needs your decision. Your brief bundled correcting the hypomagnesaemia into critical action four alongside the loop diuretic. It is tagged recommended here rather than critical, because the set of critical actions a phase expects is computed once on entry to that phase, so a tag that only becomes critical after the magnesium level results can never appear in the missed list, and an unconditionally critical tag tells a resident who never had reason to suspect hypomagnesaemia that they missed a critical action. If you want it critical, that is a one-line change and the review packet says where.",
+   "debrief_note": "His magnesium is 1.6 mg/dL. Correcting it is straightforward, cheap and safe, and it is worth doing for two reasons: magnesium is a cofactor for the sodium-potassium pump so hypokalaemia and hypomagnesemia travel together and neither corrects properly while the other is low, and intravenous magnesium has been reported to improve rate control and increase conversion when added to standard atrioventricular nodal blockade in rapid atrial fibrillation. The evidence for that second claim rests on small randomised trials and a meta-analysis of them, not on a large definitive trial, so it is a reasonable adjunct rather than a core therapy.\n\nAUTHOR NOTE, and this needs your decision. Your brief bundled correcting the hypomagnesemia into critical action four alongside the loop diuretic. It is tagged recommended here rather than critical, because the set of critical actions a phase expects is computed once on entry to that phase, so a tag that only becomes critical after the magnesium level results can never appear in the missed list, and an unconditionally critical tag tells a resident who never had reason to suspect hypomagnesemia that they missed a critical action. If you want it critical, that is a one-line change and the review packet says where.",
    "references": [
     "Bouida W, Beltaief K, Msolli MA, et al. Low-dose magnesium sulfate versus high dose in the early management of rapid atrial fibrillation (LOMAGHI). Acad Emerg Med. 2019;26(2):183-91. [UNVERIFIED in this pack, confirm before release]"
    ]
@@ -1085,7 +1085,7 @@
      "source": "catalog_default_retained"
     }
    ],
-   "debrief_note": "Nitrates are the pharmacological priority in hypertensive acute cardiogenic pulmonary oedema, where a systolic pressure of 180 or more means most of the oedema is redistribution against afterload. That is a different patient from this one. This man's systolic pressure is 132, so there is little afterload to unload and a meaningful chance of dropping a pressure that is already only adequate, in a ventricle that is preload dependent and filling badly because of the rate. It is not absurd and it is not the treatment this presentation is asking for. Recognising which pulmonary oedema phenotype is in front of you is the transferable skill."
+   "debrief_note": "Nitrates are the pharmacological priority in hypertensive acute cardiogenic pulmonary edema, where a systolic pressure of 180 or more means most of the edema is redistribution against afterload. That is a different patient from this one. This man's systolic pressure is 132, so there is little afterload to unload and a meaningful chance of dropping a pressure that is already only adequate, in a ventricle that is preload dependent and filling badly because of the rate. It is not absurd and it is not the treatment this presentation is asking for. Recognising which pulmonary edema phenotype is in front of you is the transferable skill."
   },
   {
    "catalog_id": "nitroglycerin_sublingual",
@@ -1200,7 +1200,7 @@
      "source": "catalog_default_retained"
     }
    ],
-   "halt_reason": "You gave a litre of crystalloid to a man with an ejection fraction of 30 to 35 percent whose lungs were already full of fluid and who was hypoxaemic on room air. The extra preload went straight into the alveoli, his saturation fell away, and he required emergency intubation for a pulmonary oedema you had made worse.",
+   "halt_reason": "You gave a litre of crystalloid to a man with an ejection fraction of 30 to 35 percent whose lungs were already full of fluid and who was hypoxaemic on room air. The extra preload went straight into the alveoli, his saturation fell away, and he required emergency intubation for a pulmonary edema you had made worse.",
    "debrief_note": "The reasoning that leads here is worth naming because it is not stupid: the patient is tachycardic, tachycardia is often hypovolaemia, and a fluid challenge is the reflex. In this patient the tachycardia is an arrhythmia and the ventricle is failing, so volume has nowhere to go but the lungs. Every route to a crystalloid bolus reaches the same harm, so this tag covers the whole equivalence group: saline and Ringer's, a litre and 500 mL.\n\nThe tag is phase-dependent. Once he is on positive pressure with a controlled rate and diuresing, a small fluid challenge is wrong rather than lethal, and it is tagged discouraged there. Before that it kills him. The general point: in a hypoxaemic tachycardic patient, find out whether the lungs are wet before you fill them. The lung ultrasound takes under a minute and answers the question."
   },
   {
@@ -1227,7 +1227,7 @@
     "deadline_seconds": 130,
     "text": "The probe's on the machine at the bedside if you want it. We don't know anything about this man's heart."
    },
-   "debrief_note": "This is the pivot of the case and it takes under a minute. A visually estimated ejection fraction of 30 to 35 percent with global hypokinesis converts a routine atrial fibrillation with a rapid ventricular response into a different problem with a different drug list: it rules out the calcium channel blocker, it puts digoxin and amiodarone at the front, it explains the pulmonary oedema, and it changes the disposition.\n\nTwo honest caveats. A visual estimate is exactly that, and a formal echocardiogram is the measurement; for the decision in front of you, the categorical answer, whether systolic function is normal or clearly reduced, is what matters and a visual estimate answers it reliably enough in trained hands. And this study cannot tell you which came first. A sustained rapid ventricular response can itself produce a tachycardia-induced cardiomyopathy, and a pre-existing cardiomyopathy can precipitate atrial fibrillation. You do not have to resolve that in the department, and the treatment is the same either way."
+   "debrief_note": "This is the pivot of the case and it takes under a minute. A visually estimated ejection fraction of 30 to 35 percent with global hypokinesis converts a routine atrial fibrillation with a rapid ventricular response into a different problem with a different drug list: it rules out the calcium channel blocker, it puts digoxin and amiodarone at the front, it explains the pulmonary edema, and it changes the disposition.\n\nTwo honest caveats. A visual estimate is exactly that, and a formal echocardiogram is the measurement; for the decision in front of you, the categorical answer, whether systolic function is normal or clearly reduced, is what matters and a visual estimate answers it reliably enough in trained hands. And this study cannot tell you which came first. A sustained rapid ventricular response can itself produce a tachycardia-induced cardiomyopathy, and a pre-existing cardiomyopathy can precipitate atrial fibrillation. You do not have to resolve that in the department, and the treatment is the same either way."
   },
   {
    "catalog_id": "ultrasound_lung",
@@ -1238,7 +1238,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Diffuse bilateral B-lines in more than two zones per side, with no focal consolidation, is interstitial pulmonary oedema. In an undifferentiated breathless patient this single finding separates cardiogenic pulmonary oedema from an obstructive exacerbation and from pneumonia faster and more accurately than a portable chest radiograph, and it does it before the film is taken. Paired with the cardiac view it also tells you, in the same minute, that this patient must not have a fluid bolus. Repeat it after treatment: the B-lines are one of the few things in this case that visibly respond to the diuretic."
+   "debrief_note": "Diffuse bilateral B-lines in more than two zones per side, with no focal consolidation, is interstitial pulmonary edema. In an undifferentiated breathless patient this single finding separates cardiogenic pulmonary edema from an obstructive exacerbation and from pneumonia faster and more accurately than a portable chest radiograph, and it does it before the film is taken. Paired with the cardiac view it also tells you, in the same minute, that this patient must not have a fluid bolus. Repeat it after treatment: the B-lines are one of the few things in this case that visibly respond to the diuretic."
   },
   {
    "catalog_id": "xr_chest",
@@ -1249,7 +1249,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Reasonable and slower than the probe. It confirms the interstitial oedema, gives you a cardiac silhouette and effusions, and mostly serves to exclude the things the ultrasound cannot exclude as confidently, such as a large consolidation. It should not delay treatment and it should not be the study you wait for before deciding this patient has pulmonary oedema."
+   "debrief_note": "Reasonable and slower than the probe. It confirms the interstitial edema, gives you a cardiac silhouette and effusions, and mostly serves to exclude the things the ultrasound cannot exclude as confidently, such as a large consolidation. It should not delay treatment and it should not be the study you wait for before deciding this patient has pulmonary edema."
   },
   {
    "catalog_id": "troponin_t",
@@ -1263,7 +1263,7 @@
    "debrief_note": "Worth sending, and the single value is nearly uninterpretable on its own. A modest elevation in a patient at a ventricular rate of 160 with a poorly contracting ventricle is a demand pattern: supply-demand mismatch from shortened diastole and raised wall stress, which is type 2 myocardial injury and not acute coronary occlusion. What distinguishes the two is the trajectory over one to three hours and the clinical picture, not the first number. Treat this result as a reason to repeat it on the ward rather than as a reason to activate the laboratory, unless the ECG or the story changes your mind."
   },
   {
-   "catalog_id": "pro_bnp",
+   "catalog_id": "nt_probnp",
    "tag": [
     {
      "when": null,
@@ -1481,7 +1481,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "Peripheral oedema is routed here by the catalog rather than to the musculoskeletal examination, which is worth knowing so you look in the right place. The auscultatory findings in fast atrial fibrillation are unreliable: an S3 is very hard to hear at 160 and a variable first heart sound is expected. The oedema does not resolve during this case, and it should not: days of accumulated fluid do not leave in ten minutes.",
+   "debrief_note": "Peripheral edema is routed here by the catalog rather than to the musculoskeletal examination, which is worth knowing so you look in the right place. The auscultatory findings in fast atrial fibrillation are unreliable: an S3 is very hard to hear at 160 and a variable first heart sound is expected. The edema does not resolve during this case, and it should not: days of accumulated fluid do not leave in ten minutes.",
    "state_changing": false
   },
   {
@@ -1514,7 +1514,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "Symmetry is the point. Bilateral symmetrical oedema with no calf tenderness and no asymmetry argues against deep vein thrombosis and pulmonary embolism, which is the differential the D-dimer trap in this case is built on.",
+   "debrief_note": "Symmetry is the point. Bilateral symmetrical edema with no calf tenderness and no asymmetry argues against deep vein thrombosis and pulmonary embolism, which is the differential the D-dimer trap in this case is built on.",
    "state_changing": false
   },
   {
@@ -1678,7 +1678,7 @@
    "deadline_seconds": 55,
    "satisfied_when": "flag rate_control_adequate set",
    "nurse_prompt": "He's slower than he was but he's still running fast. Do you want me to draw up another dose?",
-   "debrief_note": "One dose is a trial, not a treatment. A single intravenous dose of any of the agents this case accepts produces a partial fall in the ventricular rate, and the correct response to a partial response is another dose of the same agent, not a different agent and not the conclusion that the drug failed. That is the specific error this obligation exists to catch: a resident who reads 160 becoming 138 as a failure will reach for something else, and what they reach for in atrial fibrillation with a reduced ejection fraction is usually the calcium channel blocker.\n\nIt is discharged by a second dose of any of the four routes, because two attempts at atrioventricular nodal blockade is two attempts whichever drugs they were. It is not discharged by time, and it is not discharged by the first dose, which is why it is authored against a condition rather than against a list of actions: the action that would satisfy it is the action that created it.\n\nKnow when to stop. If the rate is still fast after two adequate doses, that is information rather than a reason for a third: a ventricular rate that will not come down in acute decompensated heart failure is usually being driven by the decompensation, and the treatment is the pulmonary oedema and the hypoxaemia rather than more nodal blockade in a ventricle that is already struggling."
+   "debrief_note": "One dose is a trial, not a treatment. A single intravenous dose of any of the agents this case accepts produces a partial fall in the ventricular rate, and the correct response to a partial response is another dose of the same agent, not a different agent and not the conclusion that the drug failed. That is the specific error this obligation exists to catch: a resident who reads 160 becoming 138 as a failure will reach for something else, and what they reach for in atrial fibrillation with a reduced ejection fraction is usually the calcium channel blocker.\n\nIt is discharged by a second dose of any of the four routes, because two attempts at atrioventricular nodal blockade is two attempts whichever drugs they were. It is not discharged by time, and it is not discharged by the first dose, which is why it is authored against a condition rather than against a list of actions: the action that would satisfy it is the action that created it.\n\nKnow when to stop. If the rate is still fast after two adequate doses, that is information rather than a reason for a third: a ventricular rate that will not come down in acute decompensated heart failure is usually being driven by the decompensation, and the treatment is the pulmonary edema and the hypoxaemia rather than more nodal blockade in a ventricle that is already struggling."
   },
   {
    "id": "anticoagulation_after_cardioversion",
@@ -1695,12 +1695,12 @@
  "follow_up_condition_note": "The post-intubation obligations apply only when the patient has been intubated, and the post-cardioversion anticoagulation obligation only when he has been cardioverted, so all three are guarded rather than unconditional. Every satisfier is listed: a covered sibling records the covering action as taken, so enoxaparin and a heparin infusion discharge the anticoagulation obligation as well as apixaban.",
  "prompt_cap_recommendation": {
   "per_phase": 4,
-  "rationale": "Four slots per phase, and the ordering matters more than the number. In the arrival phase the nurse can say four things before the 240-second deterioration: attach the monitor at 20 seconds, apply positive pressure at 40, escalate that at 100, and put the probe on the heart at 130. The escalation has to be inside the cap, because it is the warning the deterioration's fairness guarantee rests on, and a cap that suppresses a fairness guarantee is worse than no cap. The diuretic at 160, rate control at 190 and anticoagulation at 215 therefore do not fire on arrival and do fire in the later phases, where the earlier prompts have been satisfied and their guards suppress them without consuming a slot."
+  "rationale": "Four slots per phase, and the ordering matters more than the number. In the arrival phase the nurse can say four new things before the 240-second deterioration: attach the monitor at 20 seconds, apply positive pressure at 80, put the probe on the heart at 130 and give the diuretic at 160. The positive-pressure escalation at 200 is the warning the deterioration's fairness guarantee rests on; since v0.9 an escalation is exempt from the cap (it repeats a warning rather than raising a new one), so it is heard whatever the ordering. Rate control at 190 and anticoagulation at 215 therefore do not fire on arrival and do fire in the later phases, where the earlier prompts have been satisfied and their guards suppress them without consuming a slot."
  },
  "prerequisite_semantics_note": "A prerequisite is a requirement that must already hold, not a condition that blocks. Two are authored here beyond the catalog defaults: positive pressure requires that the patient is not already intubated, and synchronised cardioversion requires that he has been given something for sedation, because he is awake and talking.",
  "content_keys": {
   "exam": {
-   "authoring_note": "Section 11.2. Twelve of the fourteen catalog manoeuvres are authored; genitourinary and back inherit the catalog default. Peripheral oedema sits on the cardiovascular examination and jugular venous pressure on the neck, per exam_finding_routing, not where a clinician would instinctively look for them.",
+   "authoring_note": "Section 11.2. Twelve of the fourteen catalog manoeuvres are authored; genitourinary and back inherit the catalog default. Peripheral edema sits on the cardiovascular examination and jugular venous pressure on the neck, per exam_finding_routing, not where a clinician would instinctively look for them.",
    "exam_airway": [
     {
      "when": "phase is intubated",
@@ -1811,7 +1811,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Irregularly irregular, rate around 118. Heart sounds distant against the ventilator. Bilateral pitting oedema to mid-shin, unchanged."
+      "findings": "Irregularly irregular, rate around 118. Heart sounds distant against the ventilator. Bilateral pitting edema to mid-shin, unchanged."
      }
     },
     {
@@ -1819,7 +1819,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Irregularly irregular at a rate you can now count, around 105. First heart sound still varies in intensity from beat to beat, which is expected in atrial fibrillation because the diastolic filling time varies. Apex is displaced laterally to the anterior axillary line in the sixth interspace. No murmur audible. Bilateral pitting oedema to mid-shin, unchanged: days of accumulated fluid do not leave in ten minutes."
+      "findings": "Irregularly irregular at a rate you can now count, around 105. First heart sound still varies in intensity from beat to beat, which is expected in atrial fibrillation because the diastolic filling time varies. Apex is displaced laterally to the anterior axillary line in the sixth interspace. No murmur audible. Bilateral pitting edema to mid-shin, unchanged: days of accumulated fluid do not leave in ten minutes."
      }
     },
     {
@@ -1827,7 +1827,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Irregularly irregular, far too fast to count accurately by auscultation, around 160. The first heart sound varies in intensity beat to beat. No murmur that can be characterised at this rate. A third heart sound cannot be excluded and cannot be confirmed at 160. Apex beat displaced laterally to the anterior axillary line in the sixth interspace, diffuse rather than tapping. Bilateral pitting oedema to mid-shin, symmetrical, pitting to about 2 cm."
+      "findings": "Irregularly irregular, far too fast to count accurately by auscultation, around 160. The first heart sound varies in intensity beat to beat. No murmur that can be characterised at this rate. A third heart sound cannot be excluded and cannot be confirmed at 160. Apex beat displaced laterally to the anterior axillary line in the sixth interspace, diffuse rather than tapping. Bilateral pitting edema to mid-shin, symmetrical, pitting to about 2 cm."
      }
     }
    ],
@@ -1853,7 +1853,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Fine inspiratory crackles in both lung fields to the mid-zones, symmetrical, worse at the bases. Scattered expiratory wheeze in both lower zones, which in this patient is peribronchial oedema rather than bronchospasm. Percussion note dull at both bases. No focal consolidation, no pleural rub."
+      "findings": "Fine inspiratory crackles in both lung fields to the mid-zones, symmetrical, worse at the bases. Scattered expiratory wheeze in both lower zones, which in this patient is peribronchial edema rather than bronchospasm. Percussion note dull at both bases. No focal consolidation, no pleural rub."
      }
     }
    ],
@@ -1873,7 +1873,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": false,
-      "findings": "Symmetrical pitting oedema of both lower limbs to mid-shin. No unilateral calf swelling, no calf tenderness, no palpable cord, no asymmetry in calf circumference. Dorsalis pedis and posterior tibial pulses present bilaterally and irregular. Full range of movement at both ankles and knees."
+      "findings": "Symmetrical pitting edema of both lower limbs to mid-shin. No unilateral calf swelling, no calf tenderness, no palpable cord, no asymmetry in calf circumference. Dorsalis pedis and posterior tibial pulses present bilaterally and irregular. Full range of movement at both ankles and knees."
      }
     }
    ],
@@ -1899,7 +1899,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Warm to the touch with a light sweat over the forehead and upper chest. Colour is reasonable centrally with no frank cyanosis. No rash, no petechiae, no wounds, no cellulitis. Skin over both shins is taut and shiny with the oedema."
+      "findings": "Warm to the touch with a light sweat over the forehead and upper chest. Colour is reasonable centrally with no frank cyanosis. No rash, no petechiae, no wounds, no cellulitis. Skin over both shins is taut and shiny with the edema."
      }
     }
    ],
@@ -2145,7 +2145,7 @@
      }
     ]
    },
-   "pro_bnp": {
+   "nt_probnp": {
     "changes_with_state": false,
     "rules": [
      {
@@ -2163,7 +2163,7 @@
         }
        ],
        "comment": "Markedly raised. Supportive of acute heart failure and not diagnostic of it: atrial fibrillation raises natriuretic peptides independently through atrial wall stress, and the two contributions cannot be separated in this patient. Most useful when low.",
-       "verify": "ASSAY NOTE, for the reviewer and not for the learner. The catalog entry is named 'pro-BNP' and this payload is written as NT-proBNP with an NT-proBNP reference interval. BNP and NT-proBNP have different units and different cut-offs and are not interchangeable, so which assay this case models is a decision the author has to make, and the value and the interval both change with it. This sits in `verify` rather than in `comment` because `comment` is rendered to the learner: a note addressed to a reviewing physician, printed under a result, tells a resident to distrust the number they were just given."
+       "verify": "ASSAY NOTE, for the reviewer and not for the learner. The catalog entry is NT-proBNP (renamed from 'pro-BNP' in v0.9 so the assay is unambiguous) and this payload is written as NT-proBNP with an NT-proBNP reference interval. BNP and NT-proBNP have different units and different cut-offs and are not interchangeable. This sits in `verify` rather than in `comment` because `comment` is the interpretation the debrief shows after the case."
       }
      }
     ]
@@ -2581,7 +2581,7 @@
       "value": {
        "kind": "report",
        "abnormal": false,
-       "report": "Common femoral and popliteal veins fully compressible on both sides. No echogenic intraluminal material. Symmetrical subcutaneous oedema of both calves."
+       "report": "Common femoral and popliteal veins fully compressible on both sides. No echogenic intraluminal material. Symmetrical subcutaneous edema of both calves."
       }
      }
     ]
@@ -2592,11 +2592,11 @@
    "consult_cardiology": [
     {
      "when": "study ultrasound_cardiac resulted AND study ecg_12_lead resulted AND flag rate_control_adequate set",
-     "value": "Cardiology fellow: good, that is a rate I can live with, and he does not have to be in sinus rhythm today. Nobody can tell me how long he has been in it, so I am not cardioverting him and neither should you. Three things before he leaves you. He needs to be anticoagulated, and his CHA2DS2-VASc is at least three so there is no argument to have about it. He needs a bed that can keep the mask on him and watch the rate, because a ventricle at thirty to thirty-five percent that has just been slowed can go the other way if the oedema is not treated. And he needs a formal echocardiogram this admission, because if this cardiomyopathy turns out to be rate related it may recover once he stays in rhythm, and that changes what he goes home on."
+     "value": "Cardiology fellow: good, that is a rate I can live with, and he does not have to be in sinus rhythm today. Nobody can tell me how long he has been in it, so I am not cardioverting him and neither should you. Three things before he leaves you. He needs to be anticoagulated, and his CHA2DS2-VASc is at least three so there is no argument to have about it. He needs a bed that can keep the mask on him and watch the rate, because a ventricle at thirty to thirty-five percent that has just been slowed can go the other way if the edema is not treated. And he needs a formal echocardiogram this admission, because if this cardiomyopathy turns out to be rate related it may recover once he stays in rhythm, and that changes what he goes home on."
     },
     {
      "when": "study ultrasound_cardiac resulted AND study ecg_12_lead resulted AND flag rate_control_given set",
-     "value": "Cardiology fellow: so he has had a dose and he is still up around 140. That is a partial response, which is what one dose usually buys you, and the answer is another dose of the same thing rather than a second drug. Do not let a partial response push you toward diltiazem, because with an ejection fraction of thirty to thirty-five that is the one agent you should not use. Give it again and watch the pressure.\n\nAnd know when to stop. If he is still fast after two decent doses, that is telling you something rather than asking for a third: a rate that will not come down in acute decompensated heart failure is usually being driven by the decompensation. At that point the treatment is the oedema and the hypoxaemia, not more nodal blockade in a ventricle that is already struggling. Get the positive pressure on him and diurese him, and the rate will often follow."
+     "value": "Cardiology fellow: so he has had a dose and he is still up around 140. That is a partial response, which is what one dose usually buys you, and the answer is another dose of the same thing rather than a second drug. Do not let a partial response push you toward diltiazem, because with an ejection fraction of thirty to thirty-five that is the one agent you should not use. Give it again and watch the pressure.\n\nAnd know when to stop. If he is still fast after two decent doses, that is telling you something rather than asking for a third: a rate that will not come down in acute decompensated heart failure is usually being driven by the decompensation. At that point the treatment is the edema and the hypoxaemia, not more nodal blockade in a ventricle that is already struggling. Get the positive pressure on him and diurese him, and the rate will often follow."
     },
     {
      "when": "study ultrasound_cardiac resulted AND study ecg_12_lead resulted",
@@ -2630,7 +2630,7 @@
     },
     {
      "when": "flag on_niv set",
-     "value": "Intensive care registrar: a patient on non-invasive ventilation is a patient we will take, but tell me what you are treating. Have you established why he is in pulmonary oedema, and specifically does anybody know what his left ventricle looks like? Put a probe on him before you call me back."
+     "value": "Intensive care registrar: a patient on non-invasive ventilation is a patient we will take, but tell me what you are treating. Have you established why he is in pulmonary edema, and specifically does anybody know what his left ventricle looks like? Put a probe on him before you call me back."
     },
     {
      "when": null,
@@ -2640,7 +2640,7 @@
    "consult_pulmonology": [
     {
      "when": null,
-     "value": "Respiratory registrar: I have listened to what you have described and I do not think this is a primary lung problem. Diffuse symmetrical B-lines, a raised jugular venous pressure and peripheral oedema in a man in fast atrial fibrillation is cardiogenic pulmonary oedema, and the wheeze you are hearing is oedema around the airways rather than bronchospasm. Treat the heart. If you want us later for the sleep apnoea question, that is an outpatient conversation."
+     "value": "Respiratory registrar: I have listened to what you have described and I do not think this is a primary lung problem. Diffuse symmetrical B-lines, a raised jugular venous pressure and peripheral edema in a man in fast atrial fibrillation is cardiogenic pulmonary edema, and the wheeze you are hearing is edema around the airways rather than bronchospasm. Treat the heart. If you want us later for the sleep apnoea question, that is an outpatient conversation."
     }
    ]
   }
@@ -2670,6 +2670,93 @@
     "value": "He frowns and shakes his head between breaths. 'I'm sorry, doctor. I don't know what you mean by that.'"
    }
   ],
+  "out_of_scope_bank": [
+   "Have you ever had a colonoscopy?",
+   "Any blood when you open your bowels?",
+   "Are you constipated?",
+   "Any heartburn?",
+   "Any indigestion after meals?",
+   "Any change in your bowel habit?",
+   "Any diarrhoea at all?",
+   "Any pain in your tummy?",
+   "Have you had piles?",
+   "Any black stools?",
+   "Do you get up at night to pass water?",
+   "Any blood in your urine?",
+   "Any trouble with your prostate?",
+   "Any burning when you pass urine?",
+   "Any kidney stones in the past?",
+   "When was your last smear test?",
+   "Any headaches at all?",
+   "Any seizures or fits?",
+   "Any weakness in your arms or legs?",
+   "Any pins and needles?",
+   "Any problems with your speech?",
+   "Any trouble with your memory?",
+   "Any double vision?",
+   "Have you ever had a stroke?",
+   "Any migraines?",
+   "Any pain in your hands?",
+   "Any pain in your hips?",
+   "Any arthritis?",
+   "Have you broken any bones?",
+   "Any neck pain?",
+   "Any ringing or buzzing in your ears?",
+   "Any earache?",
+   "Do you wear glasses or contact lenses?",
+   "Any blurred vision?",
+   "When did you last have your eyes tested?",
+   "Any sinus trouble?",
+   "Any rash on your skin?",
+   "Any itching?",
+   "Any moles that have changed?",
+   "When did you last see the dentist?",
+   "Any mouth ulcers?",
+   "Any lumps or bumps anywhere?",
+   "Any excessive thirst?",
+   "Have you been feeling low in mood?",
+   "Any anxiety or panic attacks?",
+   "When was your last tetanus?",
+   "Have you had the covid vaccine?",
+   "Have you ever received blood?",
+   "Do you have a blood donor card?",
+   "Who is your GP?",
+   "Do you have health insurance?",
+   "Have you got your NHS number?",
+   "Do you have a pharmacy you usually use?",
+   "Is there anyone we should call for you?",
+   "Who is your next of kin?",
+   "Do you have any pets at home?",
+   "What do you do for a living?",
+   "What did you do before you retired?",
+   "Did you come in by ambulance?",
+   "Is anyone here with you?",
+   "How did you get here today?",
+   "Is it raining outside?",
+   "Do you have children?",
+   "How many kids do you have?",
+   "Where do you live?",
+   "Do you watch much television?",
+   "What do you do to relax?",
+   "Do you have a garden?",
+   "Are you comfortable on that trolley?",
+   "Would you like a blanket?",
+   "Can I get you anything?",
+   "What is your date of birth?",
+   "Can you confirm your name for me?",
+   "What is your address?",
+   "Do you know why you are here?",
+   "Is it okay if the students watch?",
+   "Would you prefer a female doctor?",
+   "Have you been waiting long?",
+   "Is there anything you would like to ask me?",
+   "What year are you in at university?",
+   "Do you get on with your flatmates?",
+   "How much does it cost to park here?",
+   "Who is the prime minister?",
+   "What is the date today?"
+  ],
+  "out_of_scope_bank_note": "Questions this case has no authored answer to, generated into case_4_interview.py by catalog/expand_interview_variants.py from catalog/interview_out_of_scope.py, filtered to the concepts this case does not cover. The matcher embeds them beside the topic bank.",
   "topics": [
    {
     "topic": "onset",
@@ -2699,6 +2786,94 @@
      {
       "when": null,
       "value": "'Yesterday afternoon, about three o'clock. I was sat watching the television and it just started, like something turned over in my chest. It hasn't stopped since. The breathing came on after, later in the evening.'"
+     }
+    ],
+    "expanded_variants": [
+     "When did this begin?",
+     "What time did it start?",
+     "How long ago did this come on?",
+     "Onset?",
+     "Time of onset?",
+     "When did it come on?",
+     "Was it sudden or did it build up?",
+     "Sudden or gradual onset?",
+     "How long have you had this?",
+     "When did you start feeling like this?",
+     "Where were you when it began?",
+     "Roughly what time yesterday, or today, did this start?",
+     "How many hours or days has this been going on?",
+     "Tell me how it began.",
+     "Take me back to when this started.",
+     "When did things first go wrong?",
+     "Did this start today or before that?",
+     "Sorry to ask, but when did this begin?",
+     "One more thing. When did this begin?",
+     "Can I ask, what time did it start?",
+     "One more thing. How long ago did this come on?",
+     "Okay, how long ago did this come on?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "when it started",
+    "facts": [
+     {
+      "id": "time",
+      "asks": [
+       "what time",
+       "what time exactly",
+       "when exactly",
+       "roughly what time",
+       "how long ago"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Three... yesterday.'"
+       },
+       {
+        "when": null,
+        "value": "'About three o'clock yesterday afternoon.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "how",
+      "asks": [
+       "how did it start",
+       "sudden or gradual",
+       "what were you doing",
+       "did it come on suddenly",
+       "what brought it on"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Sudden. Watching... telly.'"
+       },
+       {
+        "when": null,
+        "value": "'All at once. I was sat watching the television and it just started, like something turned over in my chest.'"
+       }
+      ]
+     },
+     {
+      "id": "breathing_after",
+      "asks": [
+       "when did the breathing start",
+       "did the breathing come at the same time",
+       "which came first",
+       "and the breathing"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Breathing... later.'"
+       },
+       {
+        "when": null,
+        "value": "'The breathing came on after, later in the evening. The heart was first.'"
+       }
+      ]
      }
     ]
    },
@@ -2731,7 +2906,32 @@
       "when": null,
       "value": "'It's not stopped once, and the breathing has got worse every hour. Last night was the worst of it. This morning I couldn't get from the chair to the kitchen without having to stop, and that's when my daughter called the ambulance.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Is it getting worse or better?",
+     "How has it changed since it began?",
+     "Constant or does it come and go?",
+     "Intermittent or continuous?",
+     "Progression?",
+     "Is it worse than it was earlier?",
+     "Any change over the last few hours?",
+     "Is it easing off at all?",
+     "Getting worse?",
+     "Has it settled at any point?",
+     "Compared with when it started, how is it now?",
+     "Is this the worst it has been?",
+     "Does it fluctuate?",
+     "Has it been steadily building?",
+     "Better, worse, or the same?",
+     "Has it let up at all?",
+     "And is it getting worse or better?",
+     "Can I ask, is it getting worse or better?",
+     "Right. How has it changed since it began?",
+     "Quick one: how has it changed since it began?",
+     "Before we go on, constant or does it come and go?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "whether it's getting worse"
    },
    {
     "topic": "character_of_palpitations",
@@ -2761,6 +2961,68 @@
      {
       "when": null,
       "value": "'It's like a bird flapping in there. It doesn't keep any kind of time, it just goes and goes and then gives a big thump and carries on. I can feel it in my throat.'"
+     }
+    ],
+    "expanded_variants": [
+     "Describe the heartbeat for me.",
+     "What does the heartbeat feel like?",
+     "Is the rhythm regular?",
+     "Does it feel regular or all over the place?",
+     "Fast, skipping, or thumping?",
+     "Regular or irregular?",
+     "Can you tap out the rhythm on the bed?",
+     "Is it a flutter or a pounding?",
+     "Does it feel like it misses beats?",
+     "Does your heart feel like it is racing?",
+     "Tell me what you feel in your chest.",
+     "Is it like a bird flapping or a drum beating?",
+     "Just so I know, what does the heartbeat feel like?",
+     "I need to know, what does the heartbeat feel like?",
+     "Can I ask, is the rhythm regular?",
+     "Quick one: does it feel regular or all over the place?",
+     "Before we go on, does it feel regular or all over the place?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "what the racing feels like",
+    "facts": [
+     {
+      "id": "rhythm",
+      "asks": [
+       "regular or irregular",
+       "is it regular",
+       "does it keep time",
+       "steady or all over the place"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'All over... the place.'"
+       },
+       {
+        "when": null,
+        "value": "'It doesn't keep any kind of time. It just goes and goes and then gives a big thump and carries on.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "where_felt",
+      "asks": [
+       "where do you feel it",
+       "can you feel it in your neck",
+       "where in your chest",
+       "do you feel it in your throat"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Throat.'"
+       },
+       {
+        "when": null,
+        "value": "'In my chest, and I can feel it in my throat too.'"
+       }
+      ]
      }
     ]
    },
@@ -2793,6 +3055,81 @@
       "when": null,
       "value": "'I can't get a full breath. It's like there's a weight on me and I only get half of what I need each time, so I have to keep going faster to make up for it. I'm exhausted from it.'"
      }
+    ],
+    "expanded_variants": [
+     "Describe the breathlessness.",
+     "What does the breathing feel like?",
+     "Is it hard to breathe in or out?",
+     "Character of the dyspnoea?",
+     "Character of the dyspnea?",
+     "Any wheeze with it?",
+     "Is it a tightness or a smothering feeling?",
+     "Do you feel you are drowning?",
+     "Is it painful to breathe?",
+     "Are you breathing fast or just struggling?",
+     "Can you finish a sentence?",
+     "What does the shortness of breath feel like?",
+     "Are you breathless?",
+     "Short of breath?",
+     "SOB?",
+     "Any shortness of breath?",
+     "Any difficulty breathing?",
+     "Is it hard to breathe?",
+     "Any breathing problems?",
+     "Do you feel you cannot get your breath?",
+     "Dyspnoea?",
+     "Dyspnea?",
+     "Any trouble with your breathing?",
+     "Is your breathing okay?",
+     "Are you getting enough air?",
+     "Okay, what does the breathing feel like?",
+     "Sorry to ask, but is it hard to breathe in or out?",
+     "One more thing. Is it hard to breathe in or out?",
+     "Okay, character of the dyspnoea?",
+     "Just so I know, character of the dyspnoea?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "the breathing",
+    "facts": [
+     {
+      "id": "sensation",
+      "asks": [
+       "what does it feel like",
+       "tight or heavy",
+       "is it a tightness",
+       "can you get a full breath"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Can't... get enough.'"
+       },
+       {
+        "when": null,
+        "value": "'I can't get a full breath. It's like there's a weight on me and I only get half of what I need each time.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "effort",
+      "asks": [
+       "are you breathing fast",
+       "why are you breathing so fast",
+       "are you tired from it",
+       "is it tiring"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Exhausted.'"
+       },
+       {
+        "when": null,
+        "value": "'I have to keep going faster to make up for it. I'm exhausted from it.'"
+       }
+      ]
+     }
     ]
    },
    {
@@ -2824,7 +3161,28 @@
       "when": null,
       "value": "'The worst I've ever felt. I've never had anything like this. I honestly thought I wasn't going to make it to the front door this morning.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Out of ten, how bad is it?",
+     "Rate the pain out of ten.",
+     "Severity?",
+     "On a scale of one to ten?",
+     "Is it the worst you have ever had?",
+     "Ten being the worst pain imaginable, where are you?",
+     "Mild, moderate, or severe?",
+     "How much is it bothering you?",
+     "Can you score it for me?",
+     "Pain score?",
+     "Is it bearable?",
+     "How intense is it?",
+     "Quick one: out of ten, how bad is it?",
+     "Before we go on, out of ten, how bad is it?",
+     "Just so I know, how severe is it?",
+     "Can I ask, on a scale of one to ten?",
+     "Sorry to ask, but on a scale of one to ten?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "how bad it is"
    },
    {
     "topic": "aggravating_factors",
@@ -2855,7 +3213,26 @@
       "when": null,
       "value": "'Anything at all. Standing up, walking to the bathroom, even talking to you now. And lying flat is the worst of it, I can't do it at all.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Anything that brings it on?",
+     "Does anything set it off?",
+     "Aggravating factors?",
+     "Is it worse with movement?",
+     "Worse with exertion?",
+     "Does anything make it flare up?",
+     "Is it worse at any particular time?",
+     "What aggravates it?",
+     "Does breathing in make it worse?",
+     "Does it get worse when you do anything?",
+     "One more thing. What makes it worse?",
+     "I need to know, anything that brings it on?",
+     "Right. Anything that brings it on?",
+     "Can I ask, does anything set it off?",
+     "Sorry to ask, but does anything set it off?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "what makes it worse"
    },
    {
     "topic": "relieving_factors",
@@ -2886,7 +3263,25 @@
       "when": null,
       "value": "'Sitting bolt upright is the only thing. Resting used to settle it a bit yesterday but it doesn't any more, it just carries on whatever I do. I didn't take anything for it.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Relieving factors?",
+     "Anything ease it?",
+     "Have you taken anything for it?",
+     "Did anything you tried make a difference?",
+     "What helps?",
+     "Is there anything that eases it off?",
+     "Any position that helps?",
+     "Does oxygen help?",
+     "Did painkillers help?",
+     "Okay, what makes it better?",
+     "Sorry to ask, but does anything help?",
+     "One more thing. Does anything help?",
+     "Just so I know, relieving factors?",
+     "I need to know, relieving factors?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "what helps"
    },
    {
     "topic": "chest_pain",
@@ -2918,7 +3313,70 @@
       "value": "'No, no pain. It's not sore. I can feel it thumping and I can feel that I can't breathe, but there's no pain to it. Nothing in my arm, nothing in my jaw.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Chest pain?",
+     "Any cp?",
+     "Pain in the chest?",
+     "Is your chest hurting?",
+     "Any tightness in your chest?",
+     "Does your chest hurt at all?",
+     "Chest tightness?",
+     "Any pain across the chest?",
+     "Has there been any chest discomfort?",
+     "Any chest pain with this?",
+     "Any heaviness on your chest?",
+     "Any pain when you breathe in?",
+     "c/o chest pain?",
+     "Just so I know, any chest pain?",
+     "I need to know, any chest pain?",
+     "I need to know, pain in the chest?",
+     "Before we go on, is your chest hurting?",
+     "And is your chest hurting?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "chest pain",
+    "facts": [
+     {
+      "id": "pain",
+      "asks": [
+       "any pain at all",
+       "is it sore",
+       "does it hurt",
+       "any discomfort"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'No... pain.'"
+       },
+       {
+        "when": null,
+        "value": "'No, no pain. It's not sore. I can feel it thumping and I can feel that I can't breathe, but there's no pain to it.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "arm_jaw",
+      "asks": [
+       "anything in your arm",
+       "does it go to your jaw",
+       "any pain in your arm or jaw",
+       "any radiation"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Nothing... arm.'"
+       },
+       {
+        "when": null,
+        "value": "'Nothing in my arm, nothing in my jaw.'"
+       }
+      ]
+     }
+    ]
    },
    {
     "topic": "syncope_presyncope",
@@ -2950,7 +3408,26 @@
       "value": "'No, I've not passed out. I've felt swimmy when I stand up too quick, but I've not gone down and I've not blacked out at any point.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Have you fainted?",
+     "Did you black out?",
+     "Syncope?",
+     "Any syncope?",
+     "Any collapse?",
+     "Have you lost consciousness at all?",
+     "Have you collapsed?",
+     "LOC?",
+     "Did you faint or nearly faint?",
+     "Have you keeled over?",
+     "I need to know, have you fainted?",
+     "Right. Have you fainted?",
+     "Before we go on, did you black out?",
+     "And did you black out?",
+     "Before we go on, did you pass out?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "whether I've passed out"
    },
    {
     "topic": "dizziness_lightheadedness",
@@ -2981,7 +3458,21 @@
       "when": null,
       "value": "'A bit swimmy when I stand up quickly, and I've had to hold onto the furniture once or twice. Nothing spinning. It settles once I'm up.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Dizzy at all?",
+     "Lightheaded?",
+     "Presyncope?",
+     "Do you feel like you might pass out?",
+     "Any giddiness?",
+     "One more thing. Any dizziness?",
+     "Okay, any dizziness?",
+     "Right. Do you feel lightheaded?",
+     "Quick one: do you feel lightheaded?",
+     "Okay, do you feel faint?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "feeling dizzy"
    },
    {
     "topic": "orthopnea",
@@ -3012,7 +3503,28 @@
       "when": null,
       "value": "'I can't. The last two nights I've had three pillows behind me and I still ended up sat on the edge of the bed. Before this week I slept on one pillow, flat, no trouble at all.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Orthopnoea?",
+     "Can you lie down flat?",
+     "Do you have to sit up to breathe?",
+     "How many pillows?",
+     "Pillows?",
+     "Is it worse when you lie down?",
+     "Can you lie on your back?",
+     "Do you get breathless lying flat?",
+     "Do you need to be upright?",
+     "Does lying down make the breathing worse?",
+     "How do you sleep at night, flat or propped?",
+     "Number of pillows at night?",
+     "Quick one: can you lie down flat?",
+     "Before we go on, can you lie down flat?",
+     "I need to know, do you have to sit up to breathe?",
+     "Before we go on, how many pillows?",
+     "And how many pillows?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "lying flat"
    },
    {
     "topic": "paroxysmal_nocturnal_dyspnea",
@@ -3043,7 +3555,26 @@
       "when": null,
       "value": "'Twice last night. I woke up both times feeling like I was drowning and had to get to the window and hang out of it. That's never happened to me before.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Paroxysmal nocturnal dyspnoea?",
+     "Paroxysmal nocturnal dyspnea?",
+     "Do you wake at night breathless?",
+     "Woken up short of breath?",
+     "Do you wake up fighting for breath?",
+     "Do you have to get up at night to catch your breath?",
+     "Any breathlessness waking you?",
+     "Nocturnal dyspnoea?",
+     "Night-time breathlessness?",
+     "Do you sit on the edge of the bed at night to breathe?",
+     "Quick one: paroxysmal nocturnal dyspnoea?",
+     "And paroxysmal nocturnal dyspnea?",
+     "Can I ask, paroxysmal nocturnal dyspnea?",
+     "And do you wake up gasping?",
+     "Can I ask, do you wake up gasping?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "waking up breathless"
    },
    {
     "topic": "leg_swelling",
@@ -3074,7 +3605,29 @@
       "when": null,
       "value": "'About a week. My socks have been leaving deep marks round the top and my shoes have been tight. Both legs, the same. I thought it was the heat.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Any ankle swelling?",
+     "Ankle oedema?",
+     "Ankle edema?",
+     "Pedal oedema?",
+     "Pedal edema?",
+     "Swollen feet?",
+     "Leg swelling?",
+     "Do your shoes feel tight?",
+     "Have your ankles puffed up?",
+     "Any edema?",
+     "Peripheral oedema?",
+     "Any fluid in the legs?",
+     "Have your calves swollen?",
+     "I need to know, any ankle swelling?",
+     "Right. Any ankle swelling?",
+     "Before we go on, are your legs swollen?",
+     "Quick one: any swelling in your legs?",
+     "Before we go on, any swelling in your legs?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my legs swelling"
    },
    {
     "topic": "weight_gain",
@@ -3105,7 +3658,26 @@
       "when": null,
       "value": "'I don't weigh myself, but my trousers have been tight round the waist this last week and I've had to let my belt out a notch. My middle feels bloated.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Any weight gain?",
+     "Has your weight gone up?",
+     "Weight change?",
+     "Recent weight gain?",
+     "Have you put on any pounds recently?",
+     "Any change in your weight?",
+     "Have you been weighing yourself?",
+     "Has your weight changed over the last week or two?",
+     "Are you heavier than usual?",
+     "Any fluid weight?",
+     "Okay, any weight gain?",
+     "Can I ask, has your weight gone up?",
+     "Sorry to ask, but has your weight gone up?",
+     "I need to know, weight change?",
+     "Right. Weight change?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my weight"
    },
    {
     "topic": "exercise_tolerance_baseline",
@@ -3136,7 +3708,31 @@
       "when": null,
       "value": "'I walked the dog twice a day, half an hour each time, up the hill and back, no bother at all. I'm still working part time. A week ago there was nothing wrong with me.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "What is your normal exercise tolerance?",
+     "Exercise tolerance?",
+     "ET?",
+     "Baseline function?",
+     "How far can you normally walk?",
+     "What can you usually do?",
+     "What were you like before this?",
+     "Functional baseline?",
+     "What is your baseline?",
+     "Do you normally get breathless walking?",
+     "What is normal for you?",
+     "Do you manage your own shopping and housework?",
+     "How were you managing before this started?",
+     "Are you usually fit and well?",
+     "DOE at baseline?",
+     "Just so I know, what is your normal exercise tolerance?",
+     "I need to know, what is your normal exercise tolerance?",
+     "One more thing. Exercise tolerance?",
+     "Okay, exercise tolerance?",
+     "Right. Baseline function?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "what I could do before"
    },
    {
     "topic": "cough_and_sputum",
@@ -3167,7 +3763,26 @@
       "when": null,
       "value": "'A bit of a dry cough, mostly when I lie down. Nothing comes up. No blood, nothing coloured, nothing frothy. It's not really a cough so much as a tickle.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Cough?",
+     "Sputum?",
+     "Productive cough?",
+     "Is the cough dry or chesty?",
+     "Coughing anything up?",
+     "Frothy sputum?",
+     "Is there anything coming up when you cough?",
+     "Any pink froth?",
+     "Cough productive?",
+     "Have you got a chesty cough?",
+     "Quick one: have you been coughing?",
+     "Sorry to ask, but are you bringing anything up?",
+     "One more thing. Are you bringing anything up?",
+     "Just so I know, what colour is the sputum?",
+     "I need to know, what colour is the sputum?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "a cough"
    },
    {
     "topic": "fever_and_chills",
@@ -3199,7 +3814,26 @@
       "value": "'No fever, no shivering, nothing like that. I've been sweaty this morning but that's from the struggling, not from being hot.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Fever?",
+     "Fevers or chills?",
+     "Fevers, chills, rigors?",
+     "Have you had a temperature?",
+     "Any rigors?",
+     "Have you felt feverish?",
+     "Any shaking chills?",
+     "Have you had the shivers?",
+     "Temp at home?",
+     "Did you measure a temperature?",
+     "Can I ask, fevers or chills?",
+     "Sorry to ask, but fevers or chills?",
+     "I need to know, fevers, chills, rigors?",
+     "Right. Fevers, chills, rigors?",
+     "Okay, any temperature?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "a temperature"
    },
    {
     "topic": "prior_afib_or_palpitations",
@@ -3231,7 +3865,29 @@
       "value": "'Never. Nobody has ever told me my heart is irregular and I've never felt anything like this before. I've had my blood pressure checked plenty of times and nobody ever said a word about the rhythm.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any history of AF?",
+     "Hx of afib?",
+     "Have you had atrial fibrillation before?",
+     "Have you ever had palpitations before?",
+     "Previous AF?",
+     "Any previous episodes?",
+     "Has anyone said your heart was irregular?",
+     "Have you been told you have an irregular heartbeat?",
+     "Any history of an irregular pulse?",
+     "First time this has happened?",
+     "Known AF?",
+     "Previous palpitations?",
+     "Ever been told you have a fast heart rhythm?",
+     "Okay, any history of AF?",
+     "Just so I know, any history of AF?",
+     "And have you had atrial fibrillation before?",
+     "And has this happened before?",
+     "Can I ask, has this happened before?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "whether it's happened before"
    },
    {
     "topic": "prior_heart_failure",
@@ -3263,7 +3919,27 @@
       "value": "'No, never. I've never had a scan of my heart and nobody has ever said anything about it being weak. They did a CT of my heart arteries three years back and told me there was some furring up but nothing that needed doing.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Hx of CHF?",
+     "Known heart failure?",
+     "Have you been told your heart is weak?",
+     "Any heart failure?",
+     "Has anyone said you have a weak heart?",
+     "Have you ever had fluid on the lungs?",
+     "Any previous heart problems?",
+     "History of cardiac failure?",
+     "Has a doctor told you your heart does not pump properly?",
+     "Any known cardiomyopathy?",
+     "Any history of a weak heart muscle?",
+     "Just so I know, any history of heart failure?",
+     "I need to know, any history of heart failure?",
+     "Right. Known heart failure?",
+     "Quick one: known heart failure?",
+     "Quick one: have you been told your heart is weak?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "heart failure"
    },
    {
     "topic": "past_medical_history",
@@ -3293,6 +3969,69 @@
      {
       "when": null,
       "value": "'High blood pressure and diabetes, both for years. And they found some furring up in my heart arteries on a CT scan three years ago, but they said it wasn't bad enough to do anything about and just put me on a statin. That's it.'"
+     }
+    ],
+    "expanded_variants": [
+     "Past medical history?",
+     "Any medical history?",
+     "Any medical problems?",
+     "Do you have any health problems?",
+     "Any past history?",
+     "Do you have any illnesses?",
+     "What are you known to have?",
+     "Any diagnoses?",
+     "Any ongoing health issues?",
+     "Are you known to the hospital for anything?",
+     "Any history of diabetes, high blood pressure, anything like that?",
+     "Medical history?",
+     "Can I ask, past medical history?",
+     "Sorry to ask, but past medical history?",
+     "Right. Any medical history?",
+     "Can I ask, any medical problems?",
+     "Sorry to ask, but any medical problems?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my medical history",
+    "facts": [
+     {
+      "id": "conditions",
+      "asks": [
+       "what conditions",
+       "which problems",
+       "what have you got",
+       "blood pressure or diabetes"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Blood pressure. Sugar.'"
+       },
+       {
+        "when": null,
+        "value": "'High blood pressure and diabetes, both for years.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "heart_scan",
+      "asks": [
+       "what about your heart",
+       "tell me about the scan",
+       "the furring up",
+       "what did the CT show",
+       "any heart problems"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Scan... arteries. Statin.'"
+       },
+       {
+        "when": null,
+        "value": "'They found some furring up in my heart arteries on a CT scan three years ago. They said it wasn't bad enough to do anything about and just put me on a statin.'"
+       }
+      ]
      }
     ]
    },
@@ -3326,7 +4065,27 @@
       "value": "'They took my gallbladder out about fifteen years ago and that's the only time I've been under. No stents, no bypass, nothing on my heart. Nothing recent at all.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "PSH?",
+     "Past surgical history?",
+     "Any operations?",
+     "Any surgery?",
+     "Ever had surgery?",
+     "Surgical history?",
+     "Any operations in the past?",
+     "Have you been under the knife?",
+     "Any previous surgeries?",
+     "Ever been operated on?",
+     "Have you had anything done surgically?",
+     "Okay, past surgical history?",
+     "Just so I know, past surgical history?",
+     "Sorry to ask, but any operations?",
+     "One more thing. Any operations?",
+     "Right. Ever had surgery?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "operations"
    },
    {
     "topic": "current_medications",
@@ -3356,6 +4115,87 @@
      {
       "when": null,
       "value": "'Three things. A blood pressure tablet, lisinopril I think it's called, twenty milligrams. A statin at night, atorvastatin. And metformin twice a day for the sugar. That's the lot.'"
+     }
+    ],
+    "expanded_variants": [
+     "What meds are you on?",
+     "Medications?",
+     "Current medications?",
+     "What do you take?",
+     "Any regular medications?",
+     "List your medications.",
+     "Any regular meds?",
+     "Do you take anything regularly?",
+     "Any medicines at home?",
+     "Any OTC medicines?",
+     "What is your medication list?",
+     "Do you take any tablets?",
+     "Just so I know, what meds are you on?",
+     "I need to know, what meds are you on?",
+     "Just so I know, current medications?",
+     "Before we go on, what do you take?",
+     "And what do you take?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my tablets",
+    "facts": [
+     {
+      "id": "list",
+      "asks": [
+       "what are they",
+       "which tablets",
+       "name them",
+       "what exactly do you take"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Blood pressure... statin... metformin.'"
+       },
+       {
+        "when": null,
+        "value": "'A blood pressure tablet, lisinopril I think, twenty milligrams. A statin at night, atorvastatin. And metformin twice a day.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "doses",
+      "asks": [
+       "what dose",
+       "how much of each",
+       "what strength",
+       "how many milligrams"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Twenty... the pressure one.'"
+       },
+       {
+        "when": null,
+        "value": "'The lisinopril is twenty milligrams. The metformin is twice a day. I couldn't tell you the statin dose.'"
+       }
+      ]
+     },
+     {
+      "id": "anything_else",
+      "asks": [
+       "anything else at all",
+       "any inhalers",
+       "anything over the counter",
+       "any other tablets"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'That's... it.'"
+       },
+       {
+        "when": null,
+        "value": "'That's the lot. Nothing else, no inhalers, nothing from the chemist.'"
+       }
+      ]
      }
     ]
    },
@@ -3389,7 +4229,70 @@
       "value": "'No, nothing like that. I've never been on a blood thinner and I don't even take aspirin. I've never had a bleed, never had an ulcer, and I haven't had a fall.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Are you on blood thinners?",
+     "Anticoagulated?",
+     "On anticoagulation?",
+     "Any anticoagulant?",
+     "On a DOAC?",
+     "On warfarin or a DOAC?",
+     "Any anticoagulation history?",
+     "Ever been on blood thinners?",
+     "Do you bleed easily?",
+     "Any history of bleeds?",
+     "Are you on aspirin or clopidogrel?",
+     "Antiplatelets or anticoagulants?",
+     "Any bleeding history?",
+     "Before we go on, are you on blood thinners?",
+     "And are you on blood thinners?",
+     "Quick one: anticoagulated?",
+     "One more thing. On anticoagulation?",
+     "Okay, on anticoagulation?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "blood thinners",
+    "facts": [
+     {
+      "id": "thinners",
+      "asks": [
+       "any blood thinner",
+       "warfarin or anything",
+       "aspirin",
+       "any antiplatelet"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'No. Nothing... like that.'"
+       },
+       {
+        "when": null,
+        "value": "'No. I've never been on a blood thinner and I don't even take aspirin.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "bleeding",
+      "asks": [
+       "any bleeding",
+       "ever had a bleed",
+       "any ulcers",
+       "any falls"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'No bleeds.'"
+       },
+       {
+        "when": null,
+        "value": "'I've never had a bleed, never had an ulcer, and I haven't had a fall.'"
+       }
+      ]
+     }
+    ]
    },
    {
     "topic": "medication_adherence",
@@ -3420,7 +4323,30 @@
       "when": null,
       "value": "'Every morning without fail, my daughter set me up one of those weekly boxes. I took them yesterday and I took them this morning before all this.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Have you been taking your meds?",
+     "Compliance?",
+     "Adherence?",
+     "Are you taking them as prescribed?",
+     "Did you run out of anything?",
+     "Are you up to date with your tablets?",
+     "Any missed medications?",
+     "Have you been off your tablets?",
+     "When did you last take your medication?",
+     "Do you take them every day?",
+     "Are you compliant with your medications?",
+     "Did you stop your water tablet?",
+     "Have you been taking everything you should?",
+     "Any problems getting your prescriptions?",
+     "One more thing. Have you been taking your meds?",
+     "Quick one: are you taking them as prescribed?",
+     "Before we go on, are you taking them as prescribed?",
+     "Sorry to ask, but have you missed any doses?",
+     "One more thing. Have you missed any doses?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "whether I take them"
    },
    {
     "topic": "allergies",
@@ -3452,7 +4378,25 @@
       "value": "'No, nothing. I can take anything as far as I know.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Allergies?",
+     "Allergic to any medications?",
+     "Any allergy to antibiotics?",
+     "Any reactions to medicines?",
+     "Allergic to penicillin?",
+     "What are you allergic to?",
+     "Any medication allergies?",
+     "Drug allergies?",
+     "Any allergies to anything?",
+     "Sorry to ask, but any allergies?",
+     "Okay, any drug allergies?",
+     "Just so I know, any drug allergies?",
+     "Right. Are you allergic to anything?",
+     "Quick one: are you allergic to anything?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "allergies"
    },
    {
     "topic": "alcohol_and_binge",
@@ -3482,6 +4426,71 @@
      {
       "when": null,
       "value": "'Two or three beers at the weekend, that's all, and nothing during the week. Although I had more than that on Saturday, we had a barbecue for my grandson's birthday and I'd say I had four or five over the afternoon. Is that what did it?'"
+     }
+    ],
+    "expanded_variants": [
+     "Do you drink?",
+     "How much alcohol?",
+     "EtOH?",
+     "Alcohol history?",
+     "Alcohol intake?",
+     "Any alcohol?",
+     "Units per week?",
+     "Have you been drinking heavily?",
+     "Did you have a lot to drink recently?",
+     "Big weekend?",
+     "Any drinking over the weekend?",
+     "Are you a drinker?",
+     "When did you last have a drink?",
+     "Alcohol use?",
+     "One more thing. How much alcohol?",
+     "And alcohol history?",
+     "Can I ask, alcohol history?",
+     "And alcohol intake?",
+     "Can I ask, alcohol intake?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "drink",
+    "facts": [
+     {
+      "id": "usual",
+      "asks": [
+       "how much normally",
+       "what do you usually drink",
+       "during the week",
+       "how many a week"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Few beers. Weekend.'"
+       },
+       {
+        "when": null,
+        "value": "'Two or three beers at the weekend, that's all, and nothing during the week.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "saturday",
+      "asks": [
+       "what about saturday",
+       "the barbecue",
+       "how many on saturday",
+       "more than usual recently",
+       "any binge"
+      ],
+      "value": [
+       {
+        "when": "phase is respiratory_failure",
+        "value": "'Saturday... four or five.'"
+       },
+       {
+        "when": null,
+        "value": "'I had more than that on Saturday. We had a barbecue for my grandson's birthday and I'd say I had four or five over the afternoon.'"
+       }
+      ]
      }
     ]
    },
@@ -3515,7 +4524,28 @@
       "value": "'Two cups of coffee in the morning, same as I've had for forty years. No energy drinks, no supplements, no herbal things. And no, I've never taken any drugs, not once.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any caffeine?",
+     "How much coffee?",
+     "Energy drinks?",
+     "Any stimulants?",
+     "Do you take anything to keep you going?",
+     "Any cold and flu tablets?",
+     "Any diet pills?",
+     "Do you use cocaine or amphetamines?",
+     "Any recreational stimulants?",
+     "Any pre-workout supplements?",
+     "Have you taken any uppers?",
+     "Any pseudoephedrine?",
+     "Before we go on, how much coffee?",
+     "And how much coffee?",
+     "Before we go on, energy drinks?",
+     "Okay, any stimulants?",
+     "Just so I know, any stimulants?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "coffee and that"
    },
    {
     "topic": "thyroid_symptoms",
@@ -3547,7 +4577,26 @@
       "value": "'No, nothing wrong with my thyroid that I know of. I've not lost weight, my hands don't shake, and I feel the cold if anything. Nobody has ever checked it as far as I remember.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Thyroid history?",
+     "Thyroid?",
+     "Any thyroid disease?",
+     "Are you on thyroxine?",
+     "Have you lost weight without trying?",
+     "Any change in your neck?",
+     "Any goitre?",
+     "Overactive thyroid?",
+     "Any weight loss or feeling hot?",
+     "Have you been told your thyroid is overactive?",
+     "Just so I know, any thyroid problems?",
+     "I need to know, any thyroid problems?",
+     "Can I ask, thyroid history?",
+     "Sorry to ask, but thyroid history?",
+     "Right. Any thyroid disease?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my thyroid"
    },
    {
     "topic": "social_history_smoking",
@@ -3578,7 +4627,26 @@
       "when": null,
       "value": "'I smoked from my twenties until I was about forty-five, twenty a day at the worst of it, and then I packed it in and I've not touched one since. That's over twenty years now.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Smoker?",
+     "Smoking history?",
+     "Tobacco?",
+     "tob?",
+     "Any smoking?",
+     "Ever smoked?",
+     "Pack years?",
+     "Have you ever been a smoker?",
+     "Cigarettes?",
+     "When did you quit?",
+     "Just so I know, smoking history?",
+     "Sorry to ask, but how many a day?",
+     "One more thing. How many a day?",
+     "Just so I know, are you a smoker?",
+     "I need to know, are you a smoker?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "smoking"
    },
    {
     "topic": "family_history",
@@ -3609,7 +4677,26 @@
       "when": null,
       "value": "'My dad had a stroke when he was seventy-four and never really got over it. My brother has something with his heartbeat, he's on tablets for it, I don't know what it's called. My mother was fine until she was ninety.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Family history?",
+     "FHx?",
+     "Any family history?",
+     "Any family history of heart disease?",
+     "Did anyone in your family have heart trouble?",
+     "Any relatives with heart problems?",
+     "Did your parents have heart disease?",
+     "Any family history of illness?",
+     "Is there anything that runs in your family?",
+     "Family history of cardiac disease?",
+     "Before we go on, family history?",
+     "Quick one: any family history?",
+     "Before we go on, any family history?",
+     "And any heart problems in the family?",
+     "Can I ask, any heart problems in the family?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "the family"
    },
    {
     "topic": "last_oral_intake",
@@ -3640,7 +4727,29 @@
       "when": null,
       "value": "'Toast and a cup of coffee at about seven this morning. I couldn't finish the toast, I was too puffed. Nothing since.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Last oral intake?",
+     "Last PO intake?",
+     "last PO",
+     "When did you last drink?",
+     "NPO since when?",
+     "Have you had anything to eat or drink?",
+     "Last food or drink?",
+     "Anything to eat or drink today?",
+     "When did you last have something to drink?",
+     "Are you eating and drinking?",
+     "How much have you been drinking?",
+     "When did you last eat anything?",
+     "Have you managed any food?",
+     "And when did you last eat?",
+     "Can I ask, when did you last eat?",
+     "Can I ask, last oral intake?",
+     "One more thing. Last PO intake?",
+     "Okay, last PO intake?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "when I last ate"
    },
    {
     "topic": "recent_illness_or_sick_contacts",
@@ -3672,7 +4781,22 @@
       "value": "'No, nothing. I've been perfectly well. No colds, nobody at home has been ill, and I've not been to the doctor since my last diabetes check in the spring.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any recent infection?",
+     "Recent cold or flu?",
+     "Have you had a bug recently?",
+     "Any coughs or colds lately?",
+     "Any viral illness recently?",
+     "Any recent infections?",
+     "Quick one: have you been unwell recently?",
+     "Before we go on, have you been unwell recently?",
+     "One more thing. Any recent illness?",
+     "Okay, any recent illness?",
+     "One more thing. Any recent infection?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "whether I've been unwell"
    },
    {
     "topic": "travel_immobility_surgery",
@@ -3704,7 +4828,27 @@
       "value": "'No travel, no flights, nothing like that. I've been at home and out with the dog every day until this week. I've never had a clot and neither has anyone in my family that I know of.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any long flights?",
+     "Have you been immobile?",
+     "Any recent surgery?",
+     "Any long journeys recently?",
+     "Been sitting still for long periods?",
+     "Have you been bedbound?",
+     "Any recent operations?",
+     "Recent travel, surgery, or immobility?",
+     "Have you been laid up recently?",
+     "Any recent hospital stays?",
+     "Been abroad?",
+     "Right. Any recent travel?",
+     "Quick one: any recent travel?",
+     "Right. Any long flights?",
+     "Quick one: any long flights?",
+     "I need to know, have you been immobile?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "travelling"
    },
    {
     "topic": "calf_pain_or_asymmetry",
@@ -3736,7 +4880,26 @@
       "value": "'No pain at all, they're just puffy. Both the same, and they've been like that for about a week. Nothing red, nothing hot, and they don't hurt when I walk.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Calf tenderness?",
+     "Is one calf bigger?",
+     "Any pain in the back of your leg?",
+     "Are your calves sore?",
+     "Any leg pain?",
+     "Any swelling in one leg only?",
+     "Any signs of a DVT?",
+     "Any unilateral leg swelling?",
+     "Any pain when you press your calf?",
+     "One leg worse than the other?",
+     "One more thing. Any calf pain?",
+     "Can I ask, is one leg more swollen than the other?",
+     "Sorry to ask, but is one leg more swollen than the other?",
+     "And any pain in your calves?",
+     "Can I ask, any pain in your calves?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "my calves"
    },
    {
     "topic": "urine_output",
@@ -3767,7 +4930,30 @@
       "when": null,
       "value": "'Less than usual, I'd say, these last couple of days, and it's been darker. I used to be up twice in the night for it and I haven't been at all.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Are you passing urine?",
+     "Urine output?",
+     "UOP?",
+     "How much urine?",
+     "Passing water okay?",
+     "Have you peed today?",
+     "Any drop in your urine?",
+     "Are you peeing less?",
+     "How often are you going to the toilet?",
+     "Have you been passing less water?",
+     "Any reduction in urine output?",
+     "When did you last go for a wee?",
+     "Are you making urine?",
+     "Have you passed water since this started?",
+     "Just so I know, are you passing urine?",
+     "I need to know, how much urine?",
+     "Right. How much urine?",
+     "I need to know, passing water okay?",
+     "Right. Passing water okay?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "passing water"
    },
    {
     "topic": "nausea_and_vomiting",
@@ -3799,7 +4985,23 @@
       "value": "'A bit queasy, and my stomach feels full and uncomfortable, but I haven't been sick. No vomiting.'"
      }
     ],
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "N/V?",
+     "Nausea or vomiting?",
+     "Have you vomited?",
+     "Feeling queasy?",
+     "Been throwing up?",
+     "How many times have you vomited?",
+     "Any sickness?",
+     "Before we go on, nausea or vomiting?",
+     "And nausea or vomiting?",
+     "Just so I know, have you been sick?",
+     "Okay, have you thrown up?",
+     "Just so I know, have you thrown up?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "feeling sick"
    },
    {
     "topic": "snoring_and_sleep_apnea",
@@ -3830,7 +5032,24 @@
       "when": null,
       "value": "'My wife says I snore the house down and that I stop breathing sometimes and then give a great gasp. She's been on at me about it for years. I've never had it looked into.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Any sleep apnea?",
+     "OSA?",
+     "Has anyone said you snore?",
+     "Do you use a CPAP machine?",
+     "Are you tired during the day?",
+     "Sleep apnoea history?",
+     "Has your partner noticed you stop breathing at night?",
+     "Any obstructive sleep apnoea?",
+     "Right. Any sleep apnoea?",
+     "Quick one: any sleep apnoea?",
+     "Can I ask, any sleep apnea?",
+     "Can I ask, do you stop breathing in your sleep?",
+     "Sorry to ask, but do you stop breathing in your sleep?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "snoring"
    },
    {
     "topic": "code_status_goals_of_care",
@@ -3861,9 +5080,46 @@
       "when": null,
       "value": "'I've not thought about it, no. I'd want you to do whatever you need to do. My daughter is outside, she knows what I'd want. I've not signed anything.'"
      }
-    ]
+    ],
+    "expanded_variants": [
+     "Code status?",
+     "Have you thought about resuscitation?",
+     "What would you want if things got worse?",
+     "Any wishes about treatment?",
+     "Full code?",
+     "Have you discussed ceilings of care?",
+     "Any DNR in place?",
+     "What matters most to you if this gets serious?",
+     "Goals of care?",
+     "Have you ever talked about what you would want in an emergency?",
+     "If your heart stopped, what would you want us to do?",
+     "Is there a DNACPR?",
+     "Okay, have you thought about resuscitation?",
+     "Just so I know, have you thought about resuscitation?",
+     "Okay, do you have an advance directive?",
+     "And what would you want if things got worse?",
+     "Can I ask, what would you want if things got worse?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
+    "echo": "what I'd want if it got worse"
    }
-  ]
+  ],
+  "key_topics": [
+   "onset",
+   "prior_afib_or_palpitations",
+   "prior_heart_failure",
+   "anticoagulant_history_and_bleeding",
+   "current_medications",
+   "past_medical_history",
+   "chest_pain",
+   "orthopnea",
+   "paroxysmal_nocturnal_dyspnea",
+   "thyroid_symptoms",
+   "alcohol_and_binge",
+   "syncope_presyncope",
+   "code_status_goals_of_care"
+  ],
+  "key_topics_note": "Author judgement, unreviewed. Read by the summary's History score; topics not listed are answerable but unscored."
  },
  "handoff": {
   "correct_disposition": {
@@ -3915,8 +5171,8 @@
   "disposition_display_order_note": "Least to most intensive, with the catheterisation laboratory last because it is a different axis rather than a more intensive ward.",
   "correct_diagnosis": {
    "catalog_id": "dx_atrial_fibrillation_with_rapid_ventricular_response",
-   "label": "Atrial fibrillation with rapid ventricular response, with acute decompensated heart failure and cardiogenic pulmonary oedema on a newly recognised reduced ejection fraction",
-   "explanation": "New atrial fibrillation with a rapid ventricular response in a man with previously undiagnosed moderately to severely reduced left ventricular systolic function, presenting as acute decompensated heart failure with cardiogenic pulmonary oedema. Whether the arrhythmia caused the cardiomyopathy or the cardiomyopathy precipitated the arrhythmia cannot be settled in the department and does not need to be: a sustained rapid ventricular response can produce a tachycardia-induced cardiomyopathy, and a dilated left atrium in an existing cardiomyopathy readily produces atrial fibrillation. The complete formulation names both halves, and the plan that follows from it treats both.",
+   "label": "Atrial fibrillation with rapid ventricular response, with acute decompensated heart failure and cardiogenic pulmonary edema on a newly recognised reduced ejection fraction",
+   "explanation": "New atrial fibrillation with a rapid ventricular response in a man with previously undiagnosed moderately to severely reduced left ventricular systolic function, presenting as acute decompensated heart failure with cardiogenic pulmonary edema. Whether the arrhythmia caused the cardiomyopathy or the cardiomyopathy precipitated the arrhythmia cannot be settled in the department and does not need to be: a sustained rapid ventricular response can produce a tachycardia-induced cardiomyopathy, and a dilated left atrium in an existing cardiomyopathy readily produces atrial fibrillation. The complete formulation names both halves, and the plan that follows from it treats both.",
    "label_note": "Retained for the review packet. The interface shows the diagnosis catalog's own display name, which is shorter."
   },
   "alternative_diagnoses": [
@@ -3924,11 +5180,11 @@
     "catalog_id": "dx_acute_decompensated_heart_failure_with_reduced_ejection_fraction",
     "label": "Acute decompensated heart failure with reduced ejection fraction",
     "verdict": "acceptable_with_qualification",
-    "explanation": "This is the other half of the same answer and it is marked defensible rather than wrong. A learner who selected it has recognised the pulmonary oedema and the reduced ejection fraction, which is the harder half of the case. What it leaves out is the arrhythmia driving it, and the reason that matters is that it is the half that generates the rate-control and anticoagulation decisions. The full formulation names both, and if you can only choose one id, name the one the treatment turns on. The simulator scores a single catalog id, which is a limitation of the tool rather than a claim that this answer is wrong."
+    "explanation": "This is the other half of the same answer and it is marked defensible rather than wrong. A learner who selected it has recognised the pulmonary edema and the reduced ejection fraction, which is the harder half of the case. What it leaves out is the arrhythmia driving it, and the reason that matters is that it is the half that generates the rate-control and anticoagulation decisions. The full formulation names both, and if you can only choose one id, name the one the treatment turns on. The simulator scores a single catalog id, which is a limitation of the tool rather than a claim that this answer is wrong."
    },
    {
     "catalog_id": "dx_cardiogenic_pulmonary_edema",
-    "label": "Cardiogenic pulmonary oedema",
+    "label": "Cardiogenic pulmonary edema",
     "explanation": "True and incomplete. It describes the radiographic and ultrasonographic finding and names neither the arrhythmia nor the ventricular dysfunction underneath it, so it generates no plan beyond positive pressure and a diuretic. A formulation you cannot write a treatment plan from is not finished."
    },
    {
@@ -3939,7 +5195,7 @@
    {
     "catalog_id": "dx_pulmonary_embolism",
     "label": "Acute pulmonary embolism",
-    "explanation": "Usually selected downstream of a D-dimer that should not have been sent. The pretest probability is low: gradual onset over more than a day, symmetrical bilateral leg oedema with no calf tenderness or asymmetry, no immobilisation, travel, surgery or malignancy, and a complete alternative explanation for every symptom. The bedside ultrasound settles it: diffuse bilateral B-lines with a poorly contracting left ventricle and a plethoric inferior vena cava is left heart failure, and pulmonary embolism large enough to cause this degree of hypoxaemia would show a dilated hypokinetic right ventricle with clear lung fields. Atrial fibrillation does raise the D-dimer on its own."
+    "explanation": "Usually selected downstream of a D-dimer that should not have been sent. The pretest probability is low: gradual onset over more than a day, symmetrical bilateral leg edema with no calf tenderness or asymmetry, no immobilisation, travel, surgery or malignancy, and a complete alternative explanation for every symptom. The bedside ultrasound settles it: diffuse bilateral B-lines with a poorly contracting left ventricle and a plethoric inferior vena cava is left heart failure, and pulmonary embolism large enough to cause this degree of hypoxaemia would show a dilated hypokinetic right ventricle with clear lung fields. Atrial fibrillation does raise the D-dimer on its own."
    },
    {
     "catalog_id": "dx_community_acquired_pneumonia",
@@ -3957,7 +5213,29 @@
     "explanation": "Worth thinking of and not this. Hyperthyroidism is a genuine and treatable precipitant of new atrial fibrillation, which is exactly why the thyroid function test is worth sending, but thyroid storm is a different clinical picture: fever, agitation or delirium, gastrointestinal symptoms, and usually a known or clinically obvious thyroid problem. He is afebrile, oriented, has no goitre and no eye signs, and his TSH is normal."
    }
   ],
-  "diagnosis_entry_method": "The learner searches the whole diagnosis catalog rather than choosing from a list this case supplies, because committing to a diagnosis from a wide field is the cognitive task being taught. Wrong answers outside the seven anticipated here receive the generic note.",
+  "additional_diagnoses": [
+   {
+    "catalog_id": "dx_acute_decompensated_heart_failure_with_reduced_ejection_fraction",
+    "label": "Acute decompensated heart failure with reduced ejection fraction",
+    "explanation": "The other half of the case, and naming it beside the arrhythmia is the complete formulation: an ejection fraction of 30 to 35 percent on the bedside scan, a flooded lung, a raised venous pressure and a congested liver. It is what makes diltiazem the wrong rate-control agent and what makes the diuretic and the positive pressure part of the plan rather than afterthoughts."
+   },
+   {
+    "catalog_id": "dx_cardiogenic_pulmonary_edema",
+    "label": "Cardiogenic pulmonary edema",
+    "explanation": "True, and worth saying at handover because it is the thing that was going to kill him first: B lines on the lung scan, a saturation of 88 percent on room air and a respiratory rate of thirty. Named beside the arrhythmia and the ventricular dysfunction it is a finding with a cause; named alone it is a finding without one."
+   },
+   {
+    "catalog_id": "dx_acute_hypoxemic_respiratory_failure",
+    "label": "Acute hypoxaemic respiratory failure",
+    "explanation": "A saturation of 88 percent on room air with a respiratory rate of thirty and accessory muscle use is respiratory failure, and the receiving team needs to hear that he was in it on arrival and what he needed to come out of it, because it is the reason he goes to a monitored bed rather than a ward."
+   },
+   {
+    "catalog_id": "dx_hypomagnesemia",
+    "label": "Hypomagnesemia",
+    "explanation": "A magnesium of 1.6 mg/dL. Small, correctable, and relevant to the rhythm: the potassium will not hold while it is low, and intravenous magnesium has been reported as a useful adjunct to nodal blockade in rapid atrial fibrillation. A handover that names it is a handover in which the repletion does not get forgotten."
+   }
+  ],
+  "diagnosis_entry_method": "The learner searches the whole diagnosis catalog rather than choosing from a list this case supplies, because committing to a diagnosis from a wide field is the cognitive task being taught. Since v0.9 the learner lists as many diagnoses as apply, the first being the primary. Wrong answers outside the seven anticipated here receive the generic note.",
   "pending_result_warning": "Results ordered and never read are recorded automatically and surfaced in the debrief. In this case the study most often ordered and never looked at is the repeat ECG after rate control.",
   "early_exit": {
    "available": true,
@@ -4036,7 +5314,7 @@
      "ultrasound_lung",
      "xr_chest",
      "troponin_t",
-     "pro_bnp",
+     "nt_probnp",
      "basic_chemistry_chem_7",
      "magnesium_level",
      "complete_blood_count_cbc",
@@ -4120,5 +5398,5 @@
   "prose_field": "Not used in this case. Every authored result is a structured payload.",
   "unverified": "Reference intervals in this pack are model output. Where the catalog carries a default for the same analyte the case uses the catalog's interval so the two agree."
  },
- "phases_note": "Read the transition lists in order, because first match wins and two of the rules in the arrival phase are timed. Intubation is checked first everywhere, so a learner who intubates from any state reaches the ventilated phase rather than an improvement phase. Positive pressure is checked before rate control in the arrival phase, so a learner who gives both in one batch of orders moves to the breathing-supported phase immediately and then to stabilised thirty seconds later, rather than waiting thirty seconds for either.\n\nThe respiratory failure phase deliberately has no rate-control exit. A learner who arrives there and responds by giving a rate-controlling drug has the flag recorded and the credit given and sees no improvement, because the problem in that phase is the lung. Applying positive pressure afterwards goes straight to the stabilised phase, since the rate control is already in and has had time to work."
+ "phases_note": "Read the transition lists in order, because first match wins and two of the rules in the arrival phase are timed. Intubation is checked first everywhere, so a learner who intubates from any state reaches the ventilated phase rather than an improvement phase. Positive pressure is checked before rate control in the arrival phase, so a learner who gives both in one batch of orders moves to the breathing-supported phase immediately and then to stabilised ten seconds later, rather than waiting ten seconds for either.\n\nThe respiratory failure phase deliberately has no rate-control exit. A learner who arrives there and responds by giving a rate-controlling drug has the flag recorded and the credit given and sees no improvement, because the problem in that phase is the lung. Applying positive pressure afterwards goes straight to the stabilised phase, since the rate control is already in and has had time to work."
 }

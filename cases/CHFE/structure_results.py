@@ -77,10 +77,11 @@ LABS = {
      C("Calcium", "8.8", "mg/dL", "8.5-10.2")))],
 
  "labs_bnp": [
-   (None, val(C("B-type natriuretic peptide", "2840", "pg/mL", "under 100", T),
-     verify="The catalog entry this binds to is pro-BNP, a different assay with a different "
-            "reference interval. Either the number is rewritten for pro-BNP or a BNP entry is "
-            "added to the catalog. UNVERIFIED."))],
+   (None, val(C("NT-proBNP", "9600", "pg/mL",
+                "under 300 rules out; age-adjusted rule-in 900 at 50 to 75 years", T),
+     verify="CONVERTED in v0.9 from the originally authored BNP 2840 (reference under 100) "
+            "because the catalog entry is NT-proBNP. Approximate ratio, cut-offs cited from "
+            "memory. UNVERIFIED."))],
 
  "labs_troponin_hs": [
    (None, val(C("High-sensitivity troponin I", "62", "ng/L", "99th percentile URL 34 (M)", T),

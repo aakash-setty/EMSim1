@@ -183,7 +183,7 @@ Worked examples, each of which the mechanism supports without extension:
 
 | Case | Rule | Reads as |
 |---|---|---|
-| Anaphylaxis | `NOT flag epinephrine_im_given set`, 120s, → airway oedema | Delay to adrenaline is the single determinant of outcome, and antihistamines and steroids do not stop the clock |
+| Anaphylaxis | `NOT flag epinephrine_im_given set`, 120s, → airway edema | Delay to adrenaline is the single determinant of outcome, and antihistamines and steroids do not stop the clock |
 | Status epilepticus | `NOT flag benzodiazepine_given set`, 180s, → refractory status | Seizure duration is the variable; the second-line agent is a different phase again |
 | Occlusive infarction | `NOT flag reperfusion_activated set`, 300s, → cardiogenic shock | Time is muscle, expressed as physiology rather than as a debrief line |
 | Tension pneumothorax | `NOT flag needle_decompression set`, 90s, → arrest, terminal, opt-in | The one presentation where a very short deadline is defensible |

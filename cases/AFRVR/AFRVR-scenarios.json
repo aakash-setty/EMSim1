@@ -59,7 +59,7 @@
     "apixaban"
    ],
    "expect_phase": "rate_controlled_congested",
-   "note": "A competent arrhythmia resuscitation and nothing for the pulmonary oedema."
+   "note": "A competent arrhythmia resuscitation and nothing for the pulmonary edema."
   },
   {
    "name": "Wrong path 1 continued: rate controlled, still nothing for the breathing, and he tires",
@@ -176,7 +176,7 @@
    "expect_phase": "intubated"
   },
   {
-   "name": "Harmful: a crystalloid bolus in florid pulmonary oedema halts the case",
+   "name": "Harmful: a crystalloid bolus in florid pulmonary edema halts the case",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -386,7 +386,7 @@
    "note": "Two minutes after a single dose he is still in the breathing-supported phase. The rate on the monitor has come down 22 beats and the phase has not turned over, because one dose is a partial response and the case says so. The scenario above it gives the second dose and waits forty."
   },
   {
-   "name": "Two doses, thirty seconds apart, and only the second one turns the phase over",
+   "name": "Two doses, and only the second one turns the phase over, ten seconds later",
    "steps": [
     "insert_iv",
     "non_invasive_positive_pressure_ventilation",

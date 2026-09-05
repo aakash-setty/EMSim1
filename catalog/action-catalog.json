@@ -2399,8 +2399,8 @@
       }
     },
     {
-      "id": "pro_bnp",
-      "display_name": "pro-BNP",
+      "id": "nt_probnp",
+      "display_name": "NT-proBNP",
       "placements": [
         {
           "tab": "investigations",
@@ -2427,7 +2427,7 @@
             "abnormal": false
           }
         ],
-        "verify": "Author choice: qualitative, avoiding the age-, renal- and atrial-fibrillation-dependent cutoffs and the BNP vs NT-proBNP assay ambiguity. A case using a raw value must override with units."
+        "verify": "Author choice: qualitative, avoiding the age- and renal-dependent cutoffs. The entry is NT-proBNP by name (renamed from pro-BNP in v0.9 so the assay is unambiguous); a case using a raw value must override with units and an NT-proBNP interval, never a BNP one."
       }
     },
     {
@@ -4820,6 +4820,44 @@
       "persistent": true
     },
     {
+      "id": "magnesium_sulfate",
+      "display_name": "Magnesium Sulfate",
+      "placements": [
+        {
+          "tab": "interventions",
+          "group": "Meds - Cardiac"
+        },
+        {
+          "tab": "interventions",
+          "group": "Meds - Respiratory"
+        },
+        {
+          "tab": "interventions",
+          "group": "Meds - OB/GYN"
+        },
+        {
+          "tab": "interventions",
+          "group": "Meds - Miscellaneous"
+        }
+      ],
+      "category": "medication",
+      "state_changing": true,
+      "dose_required": true,
+      "turnaround_class": null,
+      "narration_template": "Giving {dose} of {name}.",
+      "default_prerequisites": [
+        {
+          "when": "flag iv_access set OR flag central_access set OR flag io_access set",
+          "failure_message": "He doesn't have a line yet. Do you want me to get IV access first?",
+          "source": "derived"
+        }
+      ],
+      "flags_set_default": [],
+      "route_class": "iv_timed_infusion",
+      "source": "author-supplied, not in screenshots (v0.9)",
+      "indications_note": "Placed under Respiratory (severe asthma), Cardiac (prolonged QT, torsades de pointes), Miscellaneous (repletion) and OB/GYN (pre-eclampsia, eclampsia). Dose and rate are the case's to author; the catalog holds no appropriateness judgement."
+    },
+    {
       "id": "metoprolol_bolus",
       "display_name": "Metoprolol bolus",
       "placements": [
@@ -5759,8 +5797,8 @@
       "route_class": "non_iv"
     },
     {
-      "id": "rhogam",
-      "display_name": "RhoGAM",
+      "id": "oxytocin_im_iv",
+      "display_name": "Oxytocin IM/IV",
       "placements": [
         {
           "tab": "interventions",
@@ -5777,8 +5815,8 @@
       "route_class": "unspecified"
     },
     {
-      "id": "oxytocin_im_iv",
-      "display_name": "Oxytocin IM/IV",
+      "id": "rhogam",
+      "display_name": "RhoGAM",
       "placements": [
         {
           "tab": "interventions",
@@ -6258,30 +6296,6 @@
       "route_class": "iv_bolus"
     },
     {
-      "id": "fos_phenytoin",
-      "display_name": "fos-Phenytoin",
-      "placements": [
-        {
-          "tab": "interventions",
-          "group": "Meds - Miscellaneous"
-        }
-      ],
-      "category": "medication",
-      "state_changing": true,
-      "dose_required": true,
-      "turnaround_class": null,
-      "narration_template": "Giving {dose} of {name}.",
-      "default_prerequisites": [
-        {
-          "when": "flag iv_access set OR flag central_access set OR flag io_access set",
-          "failure_message": "He doesn't have a line yet. Do you want me to get IV access first?",
-          "source": "derived"
-        }
-      ],
-      "flags_set_default": [],
-      "route_class": "iv_bolus"
-    },
-    {
       "id": "furosemide_40_mg_iv",
       "display_name": "Furosemide 40 mg IV",
       "placements": [
@@ -6574,6 +6588,30 @@
     {
       "id": "tranexamic_acid",
       "display_name": "Tranexamic acid",
+      "placements": [
+        {
+          "tab": "interventions",
+          "group": "Meds - Miscellaneous"
+        }
+      ],
+      "category": "medication",
+      "state_changing": true,
+      "dose_required": true,
+      "turnaround_class": null,
+      "narration_template": "Giving {dose} of {name}.",
+      "default_prerequisites": [
+        {
+          "when": "flag iv_access set OR flag central_access set OR flag io_access set",
+          "failure_message": "He doesn't have a line yet. Do you want me to get IV access first?",
+          "source": "derived"
+        }
+      ],
+      "flags_set_default": [],
+      "route_class": "iv_bolus"
+    },
+    {
+      "id": "fos_phenytoin",
+      "display_name": "fos-Phenytoin",
       "placements": [
         {
           "tab": "interventions",

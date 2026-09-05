@@ -167,7 +167,7 @@ LABS = ["Arterial Blood Gas", "Venous Blood Gas", "Basic Chemistry (Chem 7)",
         "Calcium (ionized)", "Calcium Level", "Coagulation Panel",
         "Complete Blood Count (CBC)", "D-Dimer", "Lactate", "Lipase",
         "Liver Function Tests (LFTs)", "Magnesium Level", "Phosphate Level",
-        "Plasma Procalcitonin", "pro-BNP", "Troponin-T", "Urinalysis"]
+        "Plasma Procalcitonin", "NT-proBNP", "Troponin-T", "Urinalysis"]
 OTHER_LABS = ["Acetaminophen Level", "Amylase", "Blood Culture x 2",
               "C-reactive Protein (CRP)", "COVID-19 test", "Creatine Kinase (CK)",
               "CSF Cell Count", "CSF Culture", "CSF Glucose", "CSF Gram Stain",
@@ -277,7 +277,16 @@ MEDS = {
 # source=author-supplied so a reader can see they were not seen in the interface.
 AUTHOR_ADDED = {"Meds - Vasoactive Agents": ["Dobutamine drip"],
                 "Meds - Cardiac": ["Nitroglycerin sublingual", "Digoxin bolus",
-                                   "Apixaban", "Enoxaparin"]}
+                                   "Apixaban", "Enoxaparin", "Magnesium Sulfate"],
+                # v0.9, author instruction: magnesium sulfate as an ordinary intravenous
+                # medication (not the "bolus" entry, which stays) placed under every
+                # group where a resident would look for it: severe asthma under
+                # Respiratory, prolonged QT and torsades under Cardiac, repletion under
+                # Miscellaneous, pre-eclampsia and eclampsia under OB/GYN. One id,
+                # four placements.
+                "Meds - Respiratory": ["Magnesium Sulfate"],
+                "Meds - Miscellaneous": ["Magnesium Sulfate"],
+                "Meds - OB/GYN": ["Magnesium Sulfate"]}
 for g, items in AUTHOR_ADDED.items():
     MEDS.setdefault(g, [])
     MEDS[g] = sorted(set(MEDS[g] + items))
@@ -335,6 +344,18 @@ for group, items in MEDS.items():
             INDEX[sid(d)]["persistent"] = True   # author: drips stay running once started
         if d in AUTHOR_ADDED.get(group, []):
             INDEX[sid(d)]["source"] = "author-supplied, not in screenshots"
+
+# The four-group magnesium entry carries the indications it was added for, so the
+# catalog says why a repletion drug sits under OB/GYN. Nothing clinical is scored here.
+INDEX["magnesium_sulfate"]["source"] = "author-supplied, not in screenshots (v0.9)"
+# Not a push. Asthma, torsades, repletion and pre-eclampsia all give it over minutes to
+# an hour, so the route is a timed infusion that completes rather than a bolus or a
+# persistent drip that would need a stop action.
+INDEX["magnesium_sulfate"]["route_class"] = "iv_timed_infusion"
+INDEX["magnesium_sulfate"]["indications_note"] = (
+    "Placed under Respiratory (severe asthma), Cardiac (prolonged QT, torsades de pointes), "
+    "Miscellaneous (repletion) and OB/GYN (pre-eclampsia, eclampsia). Dose and rate are the "
+    "case's to author; the catalog holds no appropriateness judgement.")
 
 # ================================================ STOP ACTIONS
 # Infusions are persistent: once started they run for the rest of the case. Without a

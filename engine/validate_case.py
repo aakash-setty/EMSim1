@@ -375,6 +375,12 @@ def run_checks(case):
     # Six rules. Each is a lesson from a way a deterioration on a clock can become a
     # trap rather than a lesson, so the reasoning is in the message, not only the rule.
     FLOOR_ERROR, FLOOR_WARN, PROMPT_LEAD = 30, 60, 20
+    # v0.9. The hard floor is a fairness rule, and fairness is about the two patterns
+    # where something happens TO the resident. A delayed consequence of an act they
+    # took (measured_from guard_true, guard with no negated flag) is the case saying how
+    # long a drug takes to work, and a drug that acts in ten seconds is a tempo choice
+    # rather than a trap. Below five seconds it is a button again, so that stays an error.
+    FLOOR_CONSEQUENCE = 5
 
     def guard_flags(tr):
         """Flags the guard requires to be UNSET for this transition to fire."""
@@ -422,10 +428,16 @@ def run_checks(case):
             loc = f"{ph['id']}/transitions[{i}]"
             n = tr["after_seconds"]
 
-            if not isinstance(n, int) or n < FLOOR_ERROR:
-                errors.append(f"[time] {loc}: after_seconds {n!r} is below the {FLOOR_ERROR}s "
-                              f"floor. A deterioration the resident could not plausibly have "
-                              f"prevented tests reflexes, not medicine")
+            fairness = tr.get("when") is None or bool(guard_flags(tr))
+            consequence = (not fairness and tr.get("measured_from") == "guard_true")
+            floor = FLOOR_CONSEQUENCE if consequence else FLOOR_ERROR
+            if not isinstance(n, int) or n < floor:
+                errors.append(f"[time] {loc}: after_seconds {n!r} is below the {floor}s "
+                              f"floor. " + ("A consequence that lands on the same click as "
+                              f"the action is a button, not a drug taking effect"
+                              if consequence else
+                              f"A deterioration the resident could not plausibly have "
+                              f"prevented tests reflexes, not medicine"))
             # The soft floor is a FAIRNESS rule and applies only to the two patterns where
             # something happens TO the resident: a deterioration on inaction, whose guard
             # requires a flag to be unset, and an unguarded scheduled natural history. The
@@ -434,7 +446,7 @@ def run_checks(case):
             # work, and warning that a drug acts too quickly is not a fairness question. A
             # rule that fires on correct authoring gets skimmed, and then it protects
             # nothing, which is why this is scoped rather than blanket.
-            elif n < FLOOR_WARN and (tr.get("when") is None or guard_flags(tr)):
+            elif n < FLOOR_WARN and fairness:
                 warnings.append(f"[time] {loc}: after_seconds {n} is under {FLOOR_WARN}s")
 
             mf = tr.get("measured_from", "phase_entry")
@@ -1099,6 +1111,41 @@ def run_checks(case):
     notes.append(f"pertinent negatives authored as explicit denials: {len(neg)} ({', '.join(neg)})")
     notes.append(f"interview topics: {len(iv['topics'])}; total paraphrase variants: "
                  f"{sum(len(t['variants']) for t in iv['topics'])}")
+
+    # -- M2: the summary's inputs (v0.9) ------------------------------------
+    # key_topics, key_exams and additional_diagnoses are all optional; when present
+    # they must name things that exist, because a misspelt id scores silently as
+    # "never asked" or "never named".
+    topic_ids = {t["topic"] for t in iv["topics"]}
+    for k in iv.get("key_topics") or []:
+        if k not in topic_ids:
+            errors.append(f"[interview] key_topics names {k!r}, which is not a topic in this case")
+    act_ids = {a["catalog_id"] for a in case["case_actions"]}
+    for k in (case.get("debrief_configuration") or {}).get("key_exams") or []:
+        if k not in act_ids:
+            errors.append(f"[debrief] key_exams names {k!r}, which is not a case action")
+        elif not str(k).startswith("exam_"):
+            errors.append(f"[debrief] key_exams names {k!r}, which is not an exam")
+    dxcat, _ = _load(catalog_path("diagnosis-catalog.json"))
+    dx_ids = {d["id"] for d in (dxcat or {}).get("entries", [])}
+    dx_names = {d["display_name"].lower() for d in (dxcat or {}).get("entries", [])}
+    ho = case.get("handoff") or {}
+    correct = (ho.get("correct_diagnosis") or {}).get("catalog_id")
+    seen_addl = set()
+    for a in ho.get("additional_diagnoses") or []:
+        cid, lab = a.get("catalog_id"), a.get("label", "")
+        if dx_ids and cid not in dx_ids and lab.lower() not in dx_names:
+            errors.append(f"[handoff] additional diagnosis {cid or lab!r} is not in the diagnosis catalog")
+        if cid and cid == correct:
+            errors.append(f"[handoff] additional diagnosis {cid!r} is the correct diagnosis; list it once")
+        if cid in seen_addl:
+            errors.append(f"[handoff] additional diagnosis {cid!r} is listed twice")
+        seen_addl.add(cid)
+        if not a.get("explanation"):
+            warnings.append(f"[handoff] additional diagnosis {cid or lab!r} has no explanation; "
+                            f"the debrief will print the name and nothing under it")
+    if ho.get("additional_diagnoses"):
+        notes.append(f"additional diagnoses: {len(ho['additional_diagnoses'])}")
 
     # -- alertness gating coverage -----------------------------------------
     gated = set()
