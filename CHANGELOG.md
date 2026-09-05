@@ -66,6 +66,16 @@ leave, and the viewer does not steal the caret from a half-written interview que
 cross, the backdrop and Escape all work whether or not it has focus. It still does not pause
 the clock, for the reason it never did.
 
+**The pause screen's play button.** The glyph went from 52px to 68px inside the same 132px
+circle, just under half the diameter, which is where a play control stops reading as an icon
+inside a button and starts reading as the button. Its corners are rounded by stroking the
+path in its own colour with a round line join, so the shape stays one readable triangle
+rather than a set of arcs. And it is centred properly: a triangle's centre of area sits a
+third of the way from its base, so one centred by its bounding box looks pushed left. The old
+fix was `margin-left:7px` on a 52px glyph, which is 13% and visibly too far to the right, and
+being a fixed pixel value it did not scale with the icon. The nudge now lives in the path
+coordinates at about 4%, so it scales with everything else.
+
 **Result turnaround, rebalanced.** Plain films were priced like cross-sectional imaging and
 the twelve-lead like a CT. A new `radiograph` class at 5 seconds takes `xr_chest` and
 `xr_pelvis` out of `imaging`, and `ecg` drops from 10 seconds to 5. CT and MRI keep 10, which

@@ -471,7 +471,22 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .resumebtn:hover{background:rgba(255,255,255,.20);border-color:#fff;transform:scale(1.04)}
 .resumebtn:active{transform:scale(.98)}
 .resumebtn:focus-visible{outline:2px solid #fff;outline-offset:4px}
-.resumebtn svg{width:52px;height:52px;fill:currentColor;margin-left:7px}
+/* The glyph is 62 of the circle's 132, just under half the diameter, which is where a play
+   control stops reading as an icon inside a button and starts reading as the button.
+
+   TWO THINGS ABOUT CENTRING A TRIANGLE, both of which the first version got wrong. Its
+   centre of area sits a third of the way from the base rather than halfway, so a triangle
+   centred by its bounding box looks pushed left; the fix is to move it right, and the
+   amount is small. This used to be `margin-left:7px` on a 52px glyph, which is 13% and
+   visibly too far, and being a fixed pixel value it did not scale with the icon. The
+   nudge now lives in the path coordinates, so it scales with everything else.
+
+   The corners are rounded by stroking the path in the same colour with a round line join
+   rather than by drawing arcs, which keeps the geometry one readable triangle. The stroke
+   grows the shape outward, so the path is drawn small and the stroke brings it back to
+   size. */
+.resumebtn svg{width:68px;height:68px;fill:currentColor;stroke:currentColor;
+  stroke-width:10;stroke-linejoin:round}
 .pausemsg{margin:0;color:#fff;font-size:16px;line-height:1.5;max-width:34ch}
 .pausemsg span{color:rgba(255,255,255,.72);font-size:13.5px}
 
@@ -987,7 +1002,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 <div id="pauseview" class="pauseview hidden" role="dialog" aria-modal="true"
      aria-labelledby="pausemsg">
   <button id="resumebtn" class="resumebtn" type="button" aria-label="Resume the case">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="9,5 20,12 9,19"/></svg>
+    <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M31 26 L75 50 L31 74 Z"/></svg>
   </button>
   <p id="pausemsg" class="pausemsg">Paused while you were away.<br><span>The case clock is
     stopped. Nothing has happened to the patient.</span></p>
