@@ -278,6 +278,16 @@ MEDS = {
 AUTHOR_ADDED = {"Meds - Vasoactive Agents": ["Dobutamine drip"],
                 "Meds - Cardiac": ["Nitroglycerin sublingual", "Digoxin bolus",
                                    "Apixaban", "Enoxaparin", "Magnesium Sulfate"],
+                # v0.9, author instruction (Kelly Medwid case, via Aakash Setty,
+                # 5 September 2026): physostigmine, the anticholinergic antidote. The
+                # catalog held every other tox antidote a resident might reach for and
+                # not this one, which made a diphenhydramine case unauthorable: the
+                # lesson is what happens when it is given to a patient whose QRS is
+                # already wide, and an action a case cannot offer is an action no
+                # learner can get wrong. Placed under Meds - Tox beside the other
+                # antidotes. The catalog holds no appropriateness judgement about it,
+                # exactly as it holds none about naloxone or flumazenil.
+                "Meds - Tox": ["Physostigmine"],
                 # v0.9, author instruction: magnesium sulfate as an ordinary intravenous
                 # medication (not the "bolus" entry, which stays) placed under every
                 # group where a resident would look for it: severe asthma under
@@ -530,6 +540,10 @@ CATALOG = {
         "Each sets a flag of its own name and asserts nothing clinical.",
         "attach_monitor carries reveals_vitals. The interface shows no vitals and plays no "
         "heartbeat until an action carrying this flag has been taken.",
+        "Physostigmine added to Meds - Tox on author instruction for the diphenhydramine "
+        "case. Not transcribed from any screenshot; carries source=author-supplied. It is "
+        "an intravenous push and is not in NON_IV, so it inherits the vascular-access "
+        "prerequisite like every other intravenous drug.",
     ],
     "known_gaps": [
         "Meds - Respiratory truncated in screenshot: only Albuterol and Ipratropium visible, list continues.",

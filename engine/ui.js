@@ -1563,7 +1563,10 @@ function revealAnswers(){
 
 /* The clock's equivalent of haltCard. A harmful action names itself; a terminal phase
    reached by the clock has no action to name, so the phase's own timeout_reason is the
-   whole explanation and it is authored for exactly this. */
+   whole explanation and it is authored for exactly this. A terminal phase reached by an
+   instantaneous transition does have an action to name, and the action's own debrief note
+   names it; the phase's timeout_reason then has to be true of both routes, which is a
+   constraint on the case rather than on this card. */
 function failCard(){
   return `<div class="halt"><h2>The case ended here</h2>
     <p><b>${esc(PHASE[ST.failed.phase].label||ST.failed.phase)}</b> at ${mmss(ST.failed.t)}.</p>
@@ -1729,7 +1732,7 @@ function debriefHTML(){
       ${dis.map(id=>item(id,'discouraged','p-warn')).join('')}</div>`:''}
 
     <div class="dbsec"><h2>Summary</h2>
-      <p class="sub">${ST.halted?'Halted':(ST.failed?'Ended by the clock':(ST.earlyExit?'Ended early, incomplete':'Completed'))} at ${mmss(ST.now)},
+      <p class="sub">${ST.halted?'Halted':(ST.failed?(ST.failed.byClock?'Ended by the clock':'Ended by an action'):(ST.earlyExit?'Ended early, incomplete':'Completed'))} at ${mmss(ST.now)},
       in ${esc(PROTO.difficulty.modes[MODE].label.toLowerCase())}${DM()!==1?`, so nurse prompts were ${DM()} times later than the authored deadlines`:''}.
       Points direct review; they do not rank you. Critical actions count two, recommended
       actions one, a discouraged action costs one, and a harmful action zeroes its tab.</p>

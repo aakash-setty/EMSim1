@@ -224,6 +224,29 @@ CATALOG = {
     ("Beta-blocker overdose", []), ("Calcium channel blocker overdose", []),
     ("Sympathomimetic toxicity", ["cocaine", "amphetamine", "methamphetamine"]),
     ("Anticholinergic toxidrome", []),
+    # Author instruction, 5 September 2026, for the diphenhydramine case. Three entries,
+    # and the middle one is the important one.
+    #
+    # The catalog held "Anticholinergic toxidrome" and nothing else an antihistamine
+    # overdose could be handed off as, so a case whose whole teaching point is that the
+    # toxidrome is NOT the whole story had to record the toxidrome as its correct answer.
+    # The agent now has an entry of its own.
+    #
+    # Sodium channel blocker cardiotoxicity is deliberately a mechanism rather than an
+    # agent, because that is how it is handed over and because it is the thing a receiving
+    # team acts on: the same entry serves tricyclic, diphenhydramine, cocaine, bupropion,
+    # flecainide and local anaesthetic poisoning, all of which are treated the same way.
+    # It is the entry a wide QRS after any exposure should resolve to.
+    #
+    # Drug-induced seizure exists because the nearest previous fit was status epilepticus,
+    # which claims something about duration that a single toxic convulsion does not.
+    ("Diphenhydramine overdose",
+     ["Benadryl overdose", "antihistamine overdose", "diphenhydramine toxicity",
+      "H1 antihistamine overdose", "sedating antihistamine overdose"]),
+    ("Sodium channel blocker cardiotoxicity",
+     ["sodium channel blockade", "QRS widening from poisoning", "wide QRS overdose",
+      "membrane stabilising effect", "membrane stabilizing effect"]),
+    ("Drug-induced seizure", ["toxic seizure", "seizure from overdose", "poisoning seizure"]),
     ("Organophosphate poisoning", ["cholinergic toxidrome"]),
     ("Carbon monoxide poisoning", ["CO poisoning"]),
     ("Cyanide poisoning", []), ("Methemoglobinemia", []),
@@ -394,6 +417,13 @@ for category, items in CATALOG.items():
         entries.append({"id": i, "display_name": name,
                         "category": category, "synonyms": syn})
 
+AUTHOR_SUPPLIED = {"dx_diphenhydramine_overdose",
+                   "dx_sodium_channel_blocker_cardiotoxicity",
+                   "dx_drug_induced_seizure"}
+for _e in entries:
+    if _e["id"] in AUTHOR_SUPPLIED:
+        _e["source"] = "author-supplied, added for a case rather than drafted with the list"
+
 OUT = {
   "catalog_version": "0.1-draft",
   "status": "DRAFT, NOT CLINICALLY REVIEWED",
@@ -428,6 +458,15 @@ OUT = {
       "appear in adult case searches.",
       "Peds, tox, and environmental sections are thinner than cardiovascular "
       "and GI. That reflects drafting effort, not clinical importance.",
+      "Three toxicology entries were added on author instruction rather than "
+      "drafted with the rest: diphenhydramine overdose, sodium channel blocker "
+      "cardiotoxicity and drug-induced seizure. They are marked "
+      "source=author-supplied. The gap they filled is worth stating because it "
+      "is the kind that recurs: the catalog held the syndrome (anticholinergic "
+      "toxidrome) and not the agent, and not the complication that decides the "
+      "treatment, so a case teaching that the syndrome is not the whole story "
+      "could not express its own correct answer. Check the other toxidromes for "
+      "the same shape before the next tox case.",
   ],
   "counts": {k: len(v) for k, v in CATALOG.items()},
   "total": len(entries),

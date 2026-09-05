@@ -1,0 +1,680 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "diphenhydramine-overdose-qrs-01",
+ "note": "End-to-end paths. The first group is the intended run. The second tests the author's instruction that a seizure occurs regardless of how well the case is being managed. The third walks the do-nothing trajectory to the arrest, which is the path a frozen learner sees. The fourth is every deterioration branch and its rescue, including a rescue that arrives too late. The fifth is physostigmine by both routes, which is the case. Then the other harmful actions, the prerequisites (including the one that must not halt), the coverage groups, the two-flag resolution requirement, and a handoff from three different phases.\n\nSince 5 September 2026 a sixth group tests the arrow that takes a patient who receives sodium bicarbonate in the arrival phase straight to the narrowing phase: the escape, the flawless run with and without the drug, the boundary at 230 seconds rather than 240, and how it interacts with physostigmine in both orders.\n\nA seventh group covers amiodarone into the wide-complex rhythm, which arrests her instantaneously, and the two orderings against the bicarbonate rescue.",
+ "scenarios": [
+  {
+   "name": "Intended path: monitor, access, glucose, ECG, benzodiazepine for the seizure, bicarbonate, cooling, toxicology, handoff",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fingerstick_blood_sugar",
+    "ecg_12_lead",
+    "urinalysis",
+    "exam_heent",
+    "exam_abd",
+    "basic_chemistry_chem_7",
+    "creatine_kinase_ck",
+    "arterial_blood_gas",
+    "acetaminophen_level",
+    "salicylate_aspirin_level",
+    "urine_tox_screen",
+    {
+     "wait": 245
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    },
+    "na_bicarbonate_bolus",
+    "ecg_12_lead",
+    "cooling_measures",
+    "consult_toxicology",
+    "consult_critical_care",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": "\n\nThey are laboratory orders rather than examinations because an examination is never state-changing: the engine does not re-evaluate the transition list after one, so a phase cannot be advanced by palpating an abdomen. The scenario runner agreed with the engine about this only from 5 September 2026."
+  },
+  {
+   "name": "Intended path reaches the stabilised phase before any handoff",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 245
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    },
+    "cooling_measures",
+    "consult_toxicology",
+    "urinalysis"
+   ],
+   "expect_phase": "stabilized",
+   "note": "Bicarbonate narrows the QRS ten seconds after it is given, then cooling and toxicology are the two flags the stabilised phase requires.\n\nThe trailing laboratory order is load-bearing rather than decorative: the stabilising-to-stabilised rule is instantaneous, an instantaneous rule is evaluated on a state-changing action or a clock event, and the action before it was the one that entered the phase. In play there is always a next event; in a scenario file there is not unless you write one."
+  },
+  {
+   "name": "A benzodiazepine and bicarbonate before the seizure prevent it",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 15
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "The arrow added on 5 September 2026 and narrowed the same day to require both drugs. The benzodiazepine is what prevents a drug-induced seizure; the bicarbonate is what treats the conduction. See the author_rationale on the rule."
+  },
+  {
+   "name": "Doing nothing at all reaches the seizure at four minutes",
+   "steps": [
+    {
+     "wait": 245
+    }
+   ],
+   "expect_phase": "seizing",
+   "note": "The unguarded transition. Nothing the resident does prevents it and nothing is required to reach it."
+  },
+  {
+   "name": "A flawless first four minutes WITHOUT bicarbonate still reaches the seizure",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fingerstick_blood_sugar",
+    "ecg_12_lead",
+    "cooling_measures",
+    "consult_toxicology",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 245
+    }
+   ],
+   "expect_phase": "seizing",
+   "note": "The author's instruction in the only form it still holds. Everything correct except the one drug that now buys an escape, and the seizure fires on the clock exactly as she wrote it."
+  },
+  {
+   "name": "Doing nothing at all: seizure, then wide complex, then arrest",
+   "steps": [
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    },
+    {
+     "wait": 125
+    }
+   ],
+   "expect_phase": "pulseless_vt",
+   "note": "The whole clock path with no action taken. This is the trajectory section 14.2c prints and it ends in a dead patient."
+  },
+  {
+   "name": "Seizure treated and conduction never treated: arrest by the longer road",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    "lorazepam_bolus",
+    {
+     "wait": 185
+    },
+    {
+     "wait": 125
+    }
+   ],
+   "expect_phase": "pulseless_vt",
+   "note": "Post-ictal at 180 seconds into the wide-complex phase, then 120 more to the arrest."
+  },
+  {
+   "name": "Untreated seizure reaches the wide-complex phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    }
+   ],
+   "expect_phase": "wide_complex_tachycardia"
+  },
+  {
+   "name": "Bicarbonate rescues the wide-complex phase inside the window",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "stabilizing"
+  },
+  {
+   "name": "The bicarbonate infusion alone also rescues it",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    },
+    "na_bicarbonate_infusion",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "The infusion sets the same flag as the bolus, so a resident who reaches only for the drip is not treated as having withheld bicarbonate."
+  },
+  {
+   "name": "Bicarbonate one second too late does not rescue it",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    },
+    {
+     "wait": 125
+    },
+    "na_bicarbonate_bolus"
+   ],
+   "expect_phase": "pulseless_vt",
+   "note": "Deterioration is all-or-nothing. The arrest fires at 120 seconds and the drug arrives after it."
+  },
+  {
+   "name": "Untreated conduction from the post-ictal phase reaches the wide-complex phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    "lorazepam_bolus",
+    {
+     "wait": 185
+    }
+   ],
+   "expect_phase": "wide_complex_tachycardia"
+  },
+  {
+   "name": "Physostigmine before the ECG halts the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "physostigmine"
+   ],
+   "expect_phase": "halted",
+   "note": "The tag evaluates to harmful because no ECG has resulted, and a harmful action bypasses every transition rule."
+  },
+  {
+   "name": "Physostigmine after the ECG does not halt the case, it produces the seizure",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 15
+    },
+    "physostigmine",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "seizing",
+   "note": "The author's instruction: harmful, and it leads back to a seizure requiring bicarbonate. The split is recorded in DIPH-SEED.md section 9.1. The wait after the ECG is load-bearing: the tag gates on resulted rather than ordered, and the tracing takes ten seconds."
+  },
+  {
+   "name": "The physostigmine seizure is escapable by the ordinary route",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 15
+    },
+    "physostigmine",
+    {
+     "wait": 15
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "stabilizing"
+  },
+  {
+   "name": "Physostigmine while the ECG is pending still halts the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "physostigmine"
+   ],
+   "expect_phase": "halted",
+   "note": "Ordered is not resulted. The ECG takes ten seconds and the tag gates on resulted, which is the right gate: a tracing nobody has read decides nothing."
+  },
+  {
+   "name": "Flumazenil halts the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "flumazenil"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "A further dose of diphenhydramine halts the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "diphenhydramine"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Procainamide in the wide-complex phase halts the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    },
+    "procainamide_drip"
+   ],
+   "expect_phase": "halted"
+  },
+  {
+   "name": "Procainamide before the wide-complex phase does not halt the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "procainamide_drip"
+   ],
+   "expect_phase": "presentation",
+   "note": "Discouraged rather than harmful outside the established wide-complex rhythm. The tag list is phase-dependent and this is the fallthrough being checked."
+  },
+  {
+   "name": "An intravenous drug with no line is blocked and changes nothing",
+   "steps": [
+    "attach_monitor",
+    "lorazepam_bolus"
+   ],
+   "expect_phase": "presentation",
+   "note": "The catalog's vascular-access prerequisite. The attempt is logged, the flag is not set, and the phase does not move."
+  },
+  {
+   "name": "Physostigmine with no line is blocked and does not halt the case",
+   "steps": [
+    "attach_monitor",
+    "physostigmine"
+   ],
+   "expect_phase": "presentation",
+   "note": "A blocked harmful action must not halt. This is the one scenario in the pack whose failure would be silent and lethal to the lesson."
+  },
+  {
+   "name": "Intubation without sedation and paralysis is blocked",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "intubate_rapid_sequence"
+   ],
+   "expect_phase": "presentation"
+  },
+  {
+   "name": "Intubation after induction and paralysis proceeds",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence"
+   ],
+   "expect_phase": "presentation",
+   "note": "Intubation does not change the phase in this case, by design. It sets a flag and moves the saturation."
+  },
+  {
+   "name": "Midazolam terminates the seizure, through the lorazepam coverage",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    "midazolam_bolus"
+   ],
+   "expect_phase": "post_ictal"
+  },
+  {
+   "name": "Ringer's carries the same tag as saline, through the crystalloid group",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "lactated_ringer_s_1l_bolus"
+   ],
+   "expect_phase": "presentation"
+  },
+  {
+   "name": "Vancomycin carries the same tag as ceftriaxone, through the antibiotic coverage",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "vancomycin"
+   ],
+   "expect_phase": "presentation"
+  },
+  {
+   "name": "Magnesium through the bolus entry is the same act as through the plain entry",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "magnesium_sulfate_bolus"
+   ],
+   "expect_phase": "presentation"
+  },
+  {
+   "name": "Cooling without toxicology does not reach the stabilised phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 245
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    },
+    "cooling_measures"
+   ],
+   "expect_phase": "stabilizing",
+   "note": "Both flags are required. This is the half of the conjunction that is easy to get wrong."
+  },
+  {
+   "name": "Toxicology without cooling does not reach the stabilised phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 245
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    },
+    "consult_toxicology"
+   ],
+   "expect_phase": "stabilizing"
+  },
+  {
+   "name": "A handoff from the arrival phase completes the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete"
+  },
+  {
+   "name": "A handoff during the seizure completes the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": "Poor practice and permitted. The handoff rule is first in every transition list, so it is never overtaken by a clinical rule in the same step."
+  },
+  {
+   "name": "A handoff from the wide-complex phase completes the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    },
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete"
+  },
+  {
+   "name": "A flawless first four minutes with both drugs avoids the seizure entirely",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fingerstick_blood_sugar",
+    "ecg_12_lead",
+    {
+     "wait": 15
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    "cooling_measures",
+    "consult_toxicology",
+    {
+     "wait": 15
+    },
+    "urinalysis",
+    "magnesium_level"
+   ],
+   "expect_phase": "stabilized",
+   "note": "The best run in the case now ends without a convulsion. Before the 5 September arrow this same run seized at four minutes, which was the author's stated intention. The trailing laboratory order is not decoration: the stabilising-to-stabilised rule is instantaneous rather than timed, and an instantaneous rule is evaluated on an action or a clock event, so a run whose last event is a wait sits in the phase it entered.\n\nThey are laboratory orders rather than examinations because an examination is never state-changing: the engine does not re-evaluate the transition list after one, so a phase cannot be advanced by palpating an abdomen. The scenario runner agreed with the engine about this only from 5 September 2026.\n\nThe two trailing laboratory orders are load-bearing: the first is the event on which the escape from the arrival phase fires and the second is the event on which the stabilised transition does. The general rule is load-bearing rather than decorative: the stabilising-to-stabilised rule is instantaneous, an instantaneous rule is evaluated on a state-changing action or a clock event, and the action before it was the one that entered the phase. In play there is always a next event; in a scenario file there is not unless you write one."
+  },
+  {
+   "name": "Both drugs with time to spare escape the seizure",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "lorazepam_bolus",
+    {
+     "wait": 170
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 20
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "The escape needs its ten seconds to mature before the 240-second deadline, so the real boundary is about 230 seconds rather than 240. Each action also advances the runner's clock by eight seconds, which is why the wait here is 180 and not 205."
+  },
+  {
+   "name": "Both drugs in the last ten seconds do not escape, and are not wasted either",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "lorazepam_bolus",
+    {
+     "wait": 195
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 20
+    },
+    "urinalysis",
+    {
+     "wait": 15
+    },
+    "magnesium_level"
+   ],
+   "expect_phase": "stabilizing",
+   "note": "The ten-second delay creates a dead zone at the end of the arrival phase: both drugs are in, the escape has not matured, and the seizure fires first. Nothing is lost beyond the convulsion itself, because the benzodiazepine flag ends the seizure and the bicarbonate flag then carries her out of the post-ictal phase. Same resident, ten seconds later, very different debrief.\n\nThe two laboratory orders at the end are load-bearing rather than decorative, and the reason is worth knowing: an instantaneous transition is evaluated on an action or a clock event and fires at most one hop per evaluation, so a patient who seizes with the benzodiazepine already given sits in the seizing phase until something next happens, then moves to post-ictal, then needs one more event to take the bicarbonate rescue. In play there is always a next event; in a scenario file there is not unless you write one.\n\nThey are laboratory orders rather than examinations because an examination is never state-changing: the engine does not re-evaluate the transition list after one, so a phase cannot be advanced by palpating an abdomen. The scenario runner agreed with the engine about this only from 5 September 2026."
+  },
+  {
+   "name": "Physostigmine after the escape has fired does nothing, which is a gap",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 15
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    },
+    "physostigmine",
+    {
+     "wait": 20
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "Recording current behaviour rather than endorsing it. The physostigmine seizure arrow exists only in the arrival phase, so once the patient has moved on, giving it is scored discouraged and produces no consequence. That hole predates the 5 September arrow (it was already true of the post-ictal, wide-complex and stabilised phases) and the new arrow makes it reachable sooner. Flagged in the review packet rather than fixed, because adding the arrow to four more phases is a decision about the case rather than a defect fix."
+  },
+  {
+   "name": "Physostigmine given just before the escape matures is absorbed by it, which is a gap",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 15
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    "physostigmine",
+    {
+     "wait": 20
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "Recording current behaviour rather than endorsing it, and this one is worth an author decision. Both rules are pending; whichever matures first wins, and it is the one whose guard became true first. A resident who gives bicarbonate and then physostigmine eight seconds later sees no consequence from the physostigmine at all. Rule ordering does not help, because a rule that is not yet due is skipped rather than reserved. The fix is to give the physostigmine seizure arrow to the other phases as well, which is a decision about the case rather than a defect fix."
+  },
+  {
+   "name": "Bicarbonate alone does not escape the seizure",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 15
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 230
+    }
+   ],
+   "expect_phase": "seizing",
+   "expect_phase_note": "",
+   "note": "The half of the guard added on 5 September 2026. Treating the conduction and leaving her agitated does not prevent a drug-induced seizure, because bicarbonate is not an anticonvulsant."
+  },
+  {
+   "name": "A benzodiazepine alone does not escape it either",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "lorazepam_bolus",
+    {
+     "wait": 245
+    }
+   ],
+   "expect_phase": "seizing",
+   "note": "The other half. Sedation without treating the QRS leaves the conduction where it was, and the case does not reward it with an escape."
+  },
+  {
+   "name": "Amiodarone in the wide-complex rhythm arrests her at once",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    },
+    "amiodarone_bolus_infusion"
+   ],
+   "expect_phase": "pulseless_vt",
+   "note": "Instantaneous, not on a clock. A class III agent that also blocks sodium channels, given into a rhythm caused by sodium-channel blockade."
+  },
+  {
+   "name": "Amiodarone outside that rhythm is discouraged and nothing happens",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "amiodarone_bolus_infusion"
+   ],
+   "expect_phase": "presentation",
+   "note": "The tag is discouraged everywhere; only the wide-complex phase carries the arrow. Whether that is right is a question for the reviewer, since amiodarone at any point is a sodium-channel blocker added to a sodium-channel blocker overdose."
+  },
+  {
+   "name": "Amiodarone beats the bicarbonate rescue when both are ordered together",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    },
+    "na_bicarbonate_bolus",
+    "amiodarone_bolus_infusion"
+   ],
+   "expect_phase": "pulseless_vt",
+   "note": "The amiodarone rule is listed first among the clinical rules in that phase, and it is instantaneous while the bicarbonate rescue takes ten seconds, so the arrest wins on both counts. Deliberate: treating the mechanism does not undo an agent that adds to the block."
+  },
+  {
+   "name": "Bicarbonate ten seconds before the amiodarone still rescues, and then it arrests her",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    },
+    "amiodarone_bolus_infusion"
+   ],
+   "expect_phase": "stabilizing",
+   "note": "Recording current behaviour. Once the rescue has fired she is out of the wide-complex phase, and the amiodarone arrow exists only there, so giving it afterwards is scored discouraged and does nothing. Same shape as the physostigmine gap above and the same decision to make about it."
+  }
+ ]
+}

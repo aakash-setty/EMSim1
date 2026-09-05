@@ -11,7 +11,7 @@ before using any of it with a learner.
 ```
 engine/     case-agnostic code and tools. No clinical content, no case names.
 catalog/    global action and diagnosis catalogs, and their generators.
-cases/      one folder per case. CHFE is the reference case; MGCA and AFRVR follow it.
+cases/      one folder per case. CHFE is the reference case; MGCA, AFRVR and DIPH follow it.
 docs/       specification, and decisions/ holding one rationale record per change.
 build/      generated. simulator.html and an identical index.html.
 ```
@@ -78,8 +78,9 @@ stub saying so, which is a record that the artifact was checked for rather than
 forgotten.
 
 A pack may also hold the scripts that produced its files. `cases/CHFE/` keeps three
-one-shot migrations; `cases/AFRVR/` keeps `build_case.py` and five `case_*.py` modules,
-which is how its 190 KB case file was written and how it should be edited. Nothing in
+one-shot migrations; `cases/AFRVR/` and `cases/DIPH/` each keep `build_case.py` and five
+`case_*.py` modules, which is how their case files were written and how they should be
+edited. Nothing in
 those scripts is derived from anything: they are the JSON in readable Python, so that
 changing a deadline or a debrief note is a one-line edit rather than a search through
 indented braces.
@@ -121,19 +122,35 @@ the directory. There is no build step to configure and nothing to install on the
 
 **What needs network access at runtime, and what does not.** The case, the catalogs,
 the interface and the lexical interview matcher are all inside the file and need
-nothing. There are exactly two outbound requests:
+nothing. There are **three** outbound requests, to three different hosts, and the first
+two are worth separating because until v0.10 this section ran them together:
 
-- the optional embedding model (`all-MiniLM-L6-v2`, about 23 MB, from jsDelivr). On a
-  network that blocks it the loader gives up, the interface says so, and the simulator
-  runs on the lexical matcher alone. This is a deliberate design constraint, not a
-  fallback that happens to work: see authoring section 10.6.
+- the transformers library, from `cdn.jsdelivr.net`. About 1 MB of JavaScript, and the
+  URL is `LIB_URL` in `engine/semantic.js`.
+- **the model weights, from `huggingface.co`**, not from jsDelivr. `all-MiniLM-L6-v2` in
+  its 23 MB int8 build. `semantic.js` sets `allowRemoteModels` and never sets
+  `env.remoteHost`, so the library uses its own default host, which is the Hugging Face
+  hub. **A network that allows jsDelivr and blocks huggingface.co therefore fetches a
+  megabyte of library and no model**, which is a different failure from the one this
+  section used to describe, and a likelier one: hospital networks block model hubs more
+  often than they block a general-purpose CDN. Either way the loader gives up, the
+  interface says so, and the simulator runs on the lexical matcher alone. That is a
+  deliberate design constraint rather than a fallback that happens to work: see
+  authoring section 10.6.
 - an IBM Plex stylesheet from Google Fonts, purely cosmetic. Blocked, the page falls
   back to the system sans and mono stacks and nothing else changes. Inline the two
   faces if the deployment must make no third-party requests at all.
 
-Verified by loading the built file over http with both hosts blocked: the case renders,
+Verified by loading the built file over http with the hosts blocked: the case renders,
 the seven tabs work, and the interview answers, with the matcher chip reading
 "Question matching: basic".
+
+**The same two hosts are what `matcher_eval.mjs --semantic` needs**, for the same reason,
+so an environment that cannot measure the semantic arm is also an environment where the
+shipped page will not load the model. If `--semantic` dies on `getaddrinfo` or a 403 for
+`huggingface.co`, that is the answer to both questions at once. Mirroring the weights
+onto a host the deployment can reach, and setting `env.remoteHost` to it, is the fix for
+a site behind a restrictive network, and it is not built.
 
 **Nothing is stored server-side.** There is no analytics, no telemetry, no submission
 endpoint, and no way for one learner's run to reach anyone else. The only browser
@@ -317,6 +334,36 @@ it from becoming a trap, of which the one that matters is that every deteriorati
 be preceded by a prompt naming the missing treatment. See
 `docs/decisions/time-driven-transitions.md` for what was rejected and why.
 
+## A case converted rather than authored
+
+`cases/DIPH/` is the first pack that did not start from a seed written for this platform.
+It is a conversion of a complete mannequin-based simulation case and its debriefing guide,
+written by Kelly Medwid, MD, and used with her permission. Three things follow that are
+worth knowing before converting another one.
+
+**A finished case is not a seed, and a finished case can disagree with itself.** The source
+document turned out to be two documents of different vintage bound together, and they
+disagreed about the central teaching point: whether physostigmine is warranted in this
+patient. Six other contradictions followed, including two sets of vital signs, an ECG
+finding described in opposite directions four pages apart, and a chemistry panel whose
+bicarbonate is arithmetically impossible beside its own blood gas. **Every one of them had
+to be resolved by somebody before the case could be authored at all**, and the seed's job
+in a conversion is to record which resolutions came from the author and which are drafting
+assumptions. `DIPH-SEED.md` section 9 is that record and it is the first thing to read.
+
+**The mechanics of a mannequin case do not all survive.** This one is run with a confederate
+mother who is the only historian, and the engine's interview is patient-facing. It was
+converted by having the mother answer in the patient's place with no engine change, which
+works and has consequences: the history no longer disappears when the patient's alertness
+drops, because the person answering is not the patient. Its four images could not be carried
+at all, because a result payload is structured text.
+
+**It exercised constructs no earlier pack had used, and found five gaps in the tooling.**
+An unguarded time-guarded transition (authoring 5.1's scheduled natural history), a tag
+gated on a study having resulted rather than on a flag, and four vital effects sharing one
+key. Section 10 of `DIPH-review-packet.md` lists what each gap was. All five fixes were
+verified against the other three packs, which pass unchanged.
+
 ## Adding a case
 
 ```
@@ -339,6 +386,15 @@ python3 engine/validator-tests.py cases/PE
 node    engine/matcher_eval.mjs --semantic --only PE
 python3 engine/deterioration_timeline.py cases/PE
 ```
+
+**The `--semantic` step needs two things the rest of the chain does not.** The library,
+which is `npm install` against the `devDependencies` in `package.json`, and network
+access to `huggingface.co` for the weights. Without the library the harness says so and
+stops. Without the host it dies on a `getaddrinfo` or a 403 naming huggingface.co, and
+that failure is worth reading rather than working around: it means the shipped page will
+not load the model on that network either. Run the lexical arm, which needs neither, and
+record that the semantic arm was not measured rather than leaving the reader to assume it
+was.
 
 Every tool takes a case pack and defaults to the only one present. None of them
 needs editing to accept a new case.
@@ -373,20 +429,24 @@ only as conclusions. They are not a source of truth for how the system behaves.
 
 ## Status
 
-All three cases pass the validator with no errors. CHFE walks 13 authored scenarios,
-MGCA 26 and AFRVR 31. CHFE passes 268 engine assertions, MGCA 278 and AFRVR 352, which is
-the same case-agnostic suite plus each pack's own; each passes 39 validator negative
-tests. Each carries one warning, in every case about actions the catalog does not
+All four cases pass the validator with no errors. CHFE walks 13 authored scenarios,
+MGCA 26, AFRVR 31 and DIPH 33. CHFE passes 309 engine assertions, MGCA 319, AFRVR 393 and
+DIPH 367, which is the same case-agnostic suite plus each pack's own; each passes 49
+validator negative tests. Each carries one warning, in every case about actions the catalog does not
 hold, which the prototype renders anyway so the gap stays visible. Those are catalog change
 requests rather than defects.
 
 That is a structural claim only.
 
 **Nothing here has been reviewed by a physician**: not the reference case, not the
-298-entry action catalog, and not the 488-entry diagnosis catalog, which was generated
-from model memory with no source consulted. AFRVR is the closest to an exception and is
-not one: a physician supplied its clinical seed, and everything expanded from that seed,
-including every reference interval and every reference, is unsigned. The interface no
+300-entry action catalog, and not the 488-entry diagnosis catalog, which was generated
+from model memory with no source consulted. AFRVR and DIPH are the closest to exceptions
+and neither is one: a physician supplied AFRVR's clinical seed, and DIPH is a conversion of
+a complete simulation case written by a physician and used with her permission. Everything
+expanded from either, including every reference interval and every reference, is unsigned.
+DIPH's source document also contradicts itself in seven places, of which three are resolved
+by a drafting assumption rather than by its author; they are in `cases/DIPH/DIPH-SEED.md`
+section 9 and in section 2 of its review packet. The interface no
 longer displays the warning, so the review packets are the only place a reader will
 encounter it. Read the one for whichever case you are about to use.
 

@@ -1,0 +1,16 @@
+{
+  "name": "em-case-simulator",
+  "private": true,
+  "version": "0.10.0",
+  "description": "Build and evaluation tooling for the EM case simulator. The product itself is build/simulator.html and has no dependencies; this file exists for one optional evaluation tool.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "eval:matcher": "node engine/matcher_eval.mjs",
+    "eval:matcher:semantic": "node engine/matcher_eval.mjs --semantic",
+    "eval:matcher:sweep": "node engine/matcher_eval.mjs --semantic --sweep",
+    "test:engine": "node engine/engine-tests.js"
+  },
+  "devDependencies": {
+    "@huggingface/transformers": "4.2.0"
+  }
+}

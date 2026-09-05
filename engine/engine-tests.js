@@ -351,8 +351,18 @@ section('time-guarded transitions');
        against what actually fires: the prompt cap can suppress a prompt the validator
        thought would be seen. */
     const guarded = timed.filter(([, , t]) => /NOT\s+flag/.test(t.when || ''));
-    const unwarned = [];
+    const unwarned = [], offPath = [];
     for (const [phase, , t] of guarded) {
+      /* This walk sees only the phases the do-nothing path reaches, and a case may put a
+         guarded deterioration in a phase that path never enters: DIPH's post-ictal phase
+         is entered by giving a benzodiazepine, which a resident who does nothing never
+         does. Treating an unvisited phase as unwarned reported a fairness failure for a
+         deadline that cannot fire on this path at all, which is a false alarm rather than
+         a finding. The authored-deadline half of the same rule is enforced statically by
+         the validator for every phase, visited or not; what this check adds is the part
+         the validator cannot see, which is the prompt cap, and the cap can only suppress
+         a prompt in a phase somebody is standing in. */
+      if (idle.phaseEntry[phase] === undefined) { offPath.push(phase); continue; }
       const flags = [...(t.when.match(/flag ([a-z0-9_]+) set/g) || [])]
         .map(x => x.replace('flag ', '').replace(' set', ''));
       for (const f of flags) {
@@ -362,6 +372,9 @@ section('time-guarded transitions');
         if (!fired) unwarned.push(phase + ' deteriorates on ' + f + ' with no prompt seen');
       }
     }
+    if (offPath.length) console.log('  note guarded deteriorations in phases the ' +
+      'do-nothing path never enters, checked statically by the validator instead: ' +
+      [...new Set(offPath)].join(', '));
     chk('every deterioration is preceded by a prompt that actually fires',
         unwarned.length === 0, unwarned.join('; '));
   }
@@ -551,20 +564,31 @@ section('vital effects');
     chk('this case authors no vital effects, so there is nothing further to check', true);
   } else {
     /* Pick an effect whose action is takeable at t=0 in the start phase with no
-       prerequisites, so the assertion is about the effect and not about the block. */
-    const id = withFx.find(x => !(A[x].prerequisites || []).length) || withFx[0];
+       prerequisites, so the assertion is about the effect and not about the block.
+
+       Two further filters, both added after a case failed this section for reasons that
+       were not defects. Prefer an effect with no `while` guard: section 6.1 explicitly
+       allows one, and an effect guarded off in the start phase moves nothing there by
+       design, so reading it at t=3 measured the guard rather than the effect. And read
+       after the onset rather than at a fixed t=3, because an effect with a thirty-second
+       onset has not started at three seconds and reporting that as a failure to move is
+       a statement about the clock. */
+    const unguarded = withFx.filter(x => !(A[x].prerequisites || []).length &&
+                                         !(A[x].vital_effects[0].while));
+    const id = unguarded[0] || withFx.find(x => !(A[x].prerequisites || []).length) || withFx[0];
     const fx = A[id].vital_effects[0];
     const pre = (A[id].prerequisites || []).length;
+    const readAt = 1 + (fx.onset_seconds || 0) + 1;
     if (!pre) {
-      const st = fold(mk([[1, id]]), 3);
+      const st = fold(mk([[1, id]]), readAt);
       const moved = st.vitals[fx.vital] - PHASE[st.phase].vitals[fx.vital];
       chk('an effect moves its vital off the phase baseline', moved !== 0,
           id + ' ' + fx.vital + ' ' + moved);
       /* Repeat dosing refreshes rather than stacks: two administrations sharing a key
          must not double the delta. */
-      const twice = fold(mk([[1, id], [2, id]]), 3);
+      const twice = fold(mk([[1, id], [2, id]]), readAt + 1);
       chk('the same action twice does not stack',
-          twice.vitals[fx.vital] === fold(mk([[2, id]]), 3).vitals[fx.vital]);
+          twice.vitals[fx.vital] === fold(mk([[2, id]]), readAt + 1).vitals[fx.vital]);
       chk('effects sharing a key collapse to one',
           twice.vitalEffects.filter(e => e.key === (fx.key || id)).length === 1);
       if (fx.duration_seconds) {

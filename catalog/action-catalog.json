@@ -116,7 +116,8 @@
     "Nitroglycerin sublingual added as a separate route variant on author instruction.",
     "Digoxin bolus, Apixaban and Enoxaparin added to Meds - Cardiac on author instruction for the atrial fibrillation case. Not transcribed from any screenshot; each carries source=author-supplied. Apixaban and enoxaparin are in NON_IV, so neither requires vascular access.",
     "Nursing group added under Stabilization on author instruction, not from a screenshot: droplet, contact and airborne precautions, warming measures and cooling measures. Each sets a flag of its own name and asserts nothing clinical.",
-    "attach_monitor carries reveals_vitals. The interface shows no vitals and plays no heartbeat until an action carrying this flag has been taken."
+    "attach_monitor carries reveals_vitals. The interface shows no vitals and plays no heartbeat until an action carrying this flag has been taken.",
+    "Physostigmine added to Meds - Tox on author instruction for the diphenhydramine case. Not transcribed from any screenshot; carries source=author-supplied. It is an intravenous push and is not in NON_IV, so it inherits the vascular-access prerequisite like every other intravenous drug."
   ],
   "known_gaps": [
     "Meds - Respiratory truncated in screenshot: only Albuterol and Ipratropium visible, list continues.",
@@ -6132,6 +6133,31 @@
       ],
       "flags_set_default": [],
       "route_class": "iv_bolus"
+    },
+    {
+      "id": "physostigmine",
+      "display_name": "Physostigmine",
+      "placements": [
+        {
+          "tab": "interventions",
+          "group": "Meds - Tox"
+        }
+      ],
+      "category": "medication",
+      "state_changing": true,
+      "dose_required": true,
+      "turnaround_class": null,
+      "narration_template": "Giving {dose} of {name}.",
+      "default_prerequisites": [
+        {
+          "when": "flag iv_access set OR flag central_access set OR flag io_access set",
+          "failure_message": "He doesn't have a line yet. Do you want me to get IV access first?",
+          "source": "derived"
+        }
+      ],
+      "flags_set_default": [],
+      "route_class": "iv_bolus",
+      "source": "author-supplied, not in screenshots"
     },
     {
       "id": "pralidoxime_2_pam",

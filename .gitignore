@@ -9,3 +9,13 @@ __pycache__/
 # The Claude desktop app drops files it delivers into the conversation here. They are
 # screenshots and scratch, not repository content.
 Claude outputs/
+
+# node_modules/ holds one thing: @huggingface/transformers, which
+# engine/matcher_eval.mjs needs for its --semantic arm and nothing else does. It is a
+# development dependency of one evaluation tool and no part of the product: the built
+# simulator loads its own copy of the library from a CDN at runtime and never reads this
+# directory. package.json records the version so `npm install` reproduces it.
+#
+# package-lock.json is NOT ignored, so the version the numbers were measured against is
+# in the repository even though the tree is not.
+node_modules/

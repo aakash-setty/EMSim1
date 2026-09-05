@@ -844,8 +844,15 @@ function fold(log, now, difficultyMultiplier){
      engine only reports that the run is over and when the phase was entered. */
   if(!st.halted && !st.complete && !st.earlyExit
      && PHASE[st.phase] && PHASE[st.phase].terminal)
+    /* byClock says how this terminal phase was reached, because since v0.11 it is no longer
+       always the clock: a case may author an instantaneous transition into a terminal phase,
+       and DIPH does, for an antiarrhythmic given into a rhythm caused by channel blockade.
+       Until this existed the debrief said "Ended by the clock" for that run, which was a
+       false statement about the resident's own case. Derived rather than authored: a timed
+       arrival is one that appears in timeFires. */
     st.failed={phase:st.phase, t:st.phaseEntry[st.phase],
-               reason:PHASE[st.phase].timeout_reason||''};
+               reason:PHASE[st.phase].timeout_reason||'',
+               byClock:st.timeFires.some(f=>f.to===st.phase)};
   return st;
 }
 

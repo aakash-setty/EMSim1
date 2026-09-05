@@ -23,7 +23,8 @@
     "No severity or acuity qualifier is attached to any entry. If a case wants to distinguish 'sepsis' from 'septic shock' as the handoff answer, both exist, but nothing enforces which is right.",
     "Many entries pair a general and a specific form (heart failure with reduced vs preserved EF; AAA ruptured vs not). Cases must decide whether the general form counts as partially correct.",
     "No pediatric-vs-adult flag. Some entries are pediatric-only and will appear in adult case searches.",
-    "Peds, tox, and environmental sections are thinner than cardiovascular and GI. That reflects drafting effort, not clinical importance."
+    "Peds, tox, and environmental sections are thinner than cardiovascular and GI. That reflects drafting effort, not clinical importance.",
+    "Three toxicology entries were added on author instruction rather than drafted with the rest: diphenhydramine overdose, sodium channel blocker cardiotoxicity and drug-induced seizure. They are marked source=author-supplied. The gap they filled is worth stating because it is the kind that recurs: the catalog held the syndrome (anticholinergic toxidrome) and not the agent, and not the complication that decides the treatment, so a case teaching that the syndrome is not the whole story could not express its own correct answer. Check the other toxidromes for the same shape before the next tox case."
   ],
   "counts": {
     "cardiovascular": 49,
@@ -34,7 +35,7 @@
     "infectious_disease": 26,
     "endocrine_metabolic": 25,
     "hematology_oncology": 24,
-    "toxicology": 38,
+    "toxicology": 41,
     "environmental": 16,
     "trauma": 35,
     "musculoskeletal": 29,
@@ -46,7 +47,7 @@
     "pediatric": 13,
     "undifferentiated": 11
   },
-  "total": 488,
+  "total": 491,
   "entries": [
     {
       "id": "dx_st_elevation_myocardial_infarction",
@@ -1919,6 +1920,43 @@
       "display_name": "Anticholinergic toxidrome",
       "category": "toxicology",
       "synonyms": []
+    },
+    {
+      "id": "dx_diphenhydramine_overdose",
+      "display_name": "Diphenhydramine overdose",
+      "category": "toxicology",
+      "synonyms": [
+        "Benadryl overdose",
+        "antihistamine overdose",
+        "diphenhydramine toxicity",
+        "H1 antihistamine overdose",
+        "sedating antihistamine overdose"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list"
+    },
+    {
+      "id": "dx_sodium_channel_blocker_cardiotoxicity",
+      "display_name": "Sodium channel blocker cardiotoxicity",
+      "category": "toxicology",
+      "synonyms": [
+        "sodium channel blockade",
+        "QRS widening from poisoning",
+        "wide QRS overdose",
+        "membrane stabilising effect",
+        "membrane stabilizing effect"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list"
+    },
+    {
+      "id": "dx_drug_induced_seizure",
+      "display_name": "Drug-induced seizure",
+      "category": "toxicology",
+      "synonyms": [
+        "toxic seizure",
+        "seizure from overdose",
+        "poisoning seizure"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list"
     },
     {
       "id": "dx_organophosphate_poisoning",

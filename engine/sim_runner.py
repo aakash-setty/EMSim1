@@ -13,7 +13,7 @@ scenario exercises a time-guarded transition (design 2.1a).
 import json, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from validate_case import parse_condition, evaluate, atoms_of
-from paths import resolve_pack
+from paths import resolve_pack, catalog_path
 
 PACK = resolve_pack(sys.argv)
 case = json.load(open(PACK.case))
@@ -34,11 +34,90 @@ except (OSError, ValueError):
 PHASES = {p["id"]: p for p in case["phases"]}
 START = case["phases"][0]["id"]
 
+# v0.9. The catalog, for the two things it holds that a case file need not repeat: the
+# default prerequisites every action inherits, and the turnaround class that decides when
+# an ordered study has resulted. Until now the runner read neither, so a scenario could
+# not test a rule gated on `study S resulted`, and an action whose only prerequisite was a
+# catalog default was never blocked. Both gaps flatter a case: a study predicate was
+# permanently false and a drug with no line went straight in. DIPH's central tag rule is
+# gated on an ECG having resulted, which is where this showed.
+try:
+    _CAT = json.load(open(catalog_path("action-catalog.json")))
+except (OSError, ValueError):
+    _CAT = {"entries": [], "turnaround_seconds_by_class": {}}
+CATALOG = {e["id"]: e for e in _CAT.get("entries", [])}
+TURNAROUND = _CAT.get("turnaround_seconds_by_class", {})
+
+
+def effective_prerequisites(aid, act):
+    """Catalog defaults plus the case's own, minus anything the case waives.
+
+    Authoring 8.1: case prerequisites are ADDITIVE to the catalog defaults rather than a
+    substitute for them, and a default is removed only by an explicit waiver. A case that
+    copies a default into its own list, as CHFE and AFRVR do, must not get it twice, so
+    identical conditions are collapsed.
+    """
+    waived = {w.get("waived") for w in (act.get("prerequisite_overrides") or [])}
+    out, seen = [], set()
+    for p in (CATALOG.get(aid, {}).get("default_prerequisites") or []):
+        if p.get("id") in waived or p.get("when") in waived:
+            continue
+        if p["when"] in seen:
+            continue
+        seen.add(p["when"]); out.append(p)
+    for p in (act.get("prerequisites") or []):
+        if p["when"] in seen:
+            continue
+        seen.add(p["when"]); out.append(p)
+    return out
+
+
+def effective_flags(aid, act):
+    """Catalog defaults plus the case's own. The catalog sets iv_access on a line and
+    intubated on an intubation, and a case that does not repeat those still gets them,
+    which is what makes the catalog's own vascular-access prerequisite satisfiable."""
+    out = list(CATALOG.get(aid, {}).get("flags_set_default") or [])
+    for f in (act.get("flags_set") or []):
+        if f not in out:
+            out.append(f)
+    return out
+
+
+def state_changing(aid, act):
+    """Mirrors stateChanging() in engine.js: an examination is never state-changing whatever
+    the flag says, nor is an interview question, and otherwise the case field wins over the
+    catalog field, which wins over true."""
+    cat = CATALOG.get(aid, {}).get("category") or act.get("category")
+    if cat in ("exam", "interview"):
+        return False
+    if act.get("state_changing") is not None:
+        return act["state_changing"] is not False
+    return CATALOG.get(aid, {}).get("state_changing") is not False
+
+
+def turnaround_of(aid):
+    cls = CATALOG.get(aid, {}).get("turnaround_class")
+    return TURNAROUND.get(cls) if cls else None
+
+
+def holds(when, assign):
+    """A rule's guard. An absent or null `when` is unconditionally true, exactly as
+    engine.js does it: parseCond('') returns {t:'true'} and test(null, st) is true.
+
+    Until v0.9 both loops below skipped any rule with a falsy `when`, which silently
+    made the third of authoring section 5.1's three time-guarded patterns unwalkable:
+    a scheduled natural history has no guard by definition, so a case whose illness
+    does something regardless of the resident could not be simulated at all. No pack
+    used the pattern before DIPH, so nothing failed and the gap did not show."""
+    if not when:
+        return True
+    return evaluate(parse_condition(when)[0], assign)
+
 
 class Run:
     def __init__(self):
         self.phase, self.flags, self.taken = START, set(), set()
-        self.ordered, self.resulted, self.log = set(), set(), []
+        self.ordered, self.pending, self.log = set(), {}, []
         # v0.6. The clock only matters to time-guarded transitions, so it advances by a
         # nominal cost per action and by explicit waits in the scenario.
         self.t, self.entry_t, self.guard_true = 0, 0, {}
@@ -53,11 +132,17 @@ class Run:
             d[("flag", f)] = True
         for s in self.ordered:
             d[("ordered", s)] = True
-        for s in self.resulted:
+        for s in self.resulted():
             d[("resulted", s)] = True
         for a in self.taken:
             d[("action", a)] = True
         return d
+
+    def resulted(self):
+        """A study has resulted once its turnaround has elapsed on the case clock. Held
+        as a ready-time per study rather than a set, so that a wait can bring one in
+        without the runner having to schedule anything."""
+        return {s for s, ready in self.pending.items() if self.t >= ready}
 
     def tag_of(self, aid):
         for r in ACTIONS[aid]["tag"]:
@@ -78,7 +163,7 @@ class Run:
             self.log.append(f"  UNKNOWN ACTION {aid}: not in this case")
             return "unknown"
         act = ACTIONS[aid]
-        for p in act.get("prerequisites") or []:
+        for p in effective_prerequisites(aid, act):
             if not evaluate(parse_condition(p["when"])[0], self.assign()):
                 self.log.append(f"  BLOCKED {aid}: \"{p['failure_message']}\"")
                 return "blocked"
@@ -89,7 +174,11 @@ class Run:
             self.log.append(f"     halt reason: {act['halt_reason'][:90]}...")
             return "halted"
         self.taken.add(aid)
-        self.flags.update(act.get("flags_set", []) or [])
+        self.flags.update(effective_flags(aid, act))
+        ta = turnaround_of(aid)
+        if ta is not None:
+            self.ordered.add(aid)
+            self.pending.setdefault(aid, self.t + ta)
         # A flag granted only once an act has been performed enough times. The counter
         # defaults to the action, so a case that wants several routes to count toward one
         # total has to say so, exactly as the engine requires.
@@ -99,7 +188,15 @@ class Run:
             if self.admin[key] >= fr.get("after_administrations", 2):
                 self.flags.add(fr["flag"])
         before = self.phase
-        self.step_transitions()
+        # Only a state-changing action re-evaluates the transition list, which is what the
+        # engine does (`stateChanging` gates the same call there). The runner used to
+        # re-evaluate on every action including the exams, which are state_changing:false in
+        # the catalog, so a scenario could advance a phase by palpating the abdomen and pass
+        # here while doing nothing at all in play. Found by a case assertion that used an
+        # examination to step a patient out of the seizing phase: it passed in the runner and
+        # failed against the built file.
+        if state_changing(aid, act):
+            self.step_transitions()
         moved = f"   [{before} -> {self.phase}]" if before != self.phase else ""
         self.log.append(f"  {aid} ({tag}){moved}")
         return "ok"
@@ -117,9 +214,7 @@ class Run:
         """One evaluation of the ordered list. First match wins. A time-guarded rule
         matches only when due."""
         for i, tr in enumerate(PHASES[self.phase].get("transitions", [])):
-            if not tr.get("when"):
-                continue
-            if not evaluate(parse_condition(tr["when"])[0], self.assign()):
+            if not holds(tr.get("when"), self.assign()):
                 continue
             if not self.due(tr, i):
                 continue
@@ -139,9 +234,9 @@ class Run:
                 return
             pending = []
             for i, tr in enumerate(PHASES[self.phase].get("transitions", [])):
-                if "after_seconds" not in tr or not tr.get("when"):
+                if "after_seconds" not in tr:
                     continue
-                if not evaluate(parse_condition(tr["when"])[0], self.assign()):
+                if not holds(tr.get("when"), self.assign()):
                     continue
                 # guard_true rules are timed from the moment the guard first held, not
                 # from phase entry. Measuring both from entry made the runner skip past

@@ -5,6 +5,156 @@ is usable with learners.
 
 ---
 
+## v0.10: a fourth case, converted rather than authored
+
+**`cases/DIPH/`: diphenhydramine overdose with sodium-channel blockade.** Eighteen year old
+woman, EMS to the resuscitation bay, delirious and hyperthermic with a QRS of 132 ms nobody
+has looked at. Nine phases, 105 case actions, 41 interview topics, 44 scenarios, 397 engine
+assertions. Written by Kelly Medwid, MD, as a mannequin-based in-situ simulation case with a
+debriefing guide, and converted here with her permission.
+
+**The seizure is escapable, on instruction, and it is the largest departure from the source
+in the pack.** The arrival phase carries an arrow that moves a patient who has received both
+a benzodiazepine and sodium bicarbonate to the narrowing phase ten seconds later, so a
+resident who sedates her and treats the wide QRS early never convulses. The case author's own
+sentence is that a seizure occurs regardless of how well the examinee is doing, and her rule
+is untouched and still unguarded; it has been given an escape.
+
+The guard is a conjunction and the first draft of it was not, which is worth recording because
+the first draft was wrong in an instructive way. Requiring bicarbonate alone was a weak claim
+dressed as a mechanism: bicarbonate is not an anticonvulsant, and what prevents a
+drug-induced seizure is a benzodiazepine. Requiring both also states what the case wanted to
+teach anyway, which is that sedating the agitation and treating the conduction are the two
+things that matter in the first four minutes and that neither alone is enough. What remains a
+teaching choice is that the pair prevents the seizure rather than making it less likely.
+
+Two consequences, both in the rule's own `author_rationale` rather than left for a reader to
+find. The intended path changed from running through the convulsion to running around it, so
+about a third of the clinical content is no longer on it. And the escape needs its ten seconds
+to mature before the 240-second deadline, so the real boundary is 230 seconds and a resident
+ten seconds slower gets a different case. Deleting the arrow restores the sentence exactly.
+The narrowing phase also moved from 39.0 to 39.6 degrees, because it is now reachable three
+minutes after arrival by a patient nobody has cooled.
+
+**Amiodarone into the wide-complex rhythm arrests her at once**, on instruction, through the
+first instantaneous transition into a terminal phase in any pack. It is not a harmful tag,
+because a harmful tag halts into the shared halted phase and bypasses transitions, so she
+would end on generic bradycardic peri-arrest numbers rather than in the fast wide rhythm the
+case authors. Two things follow and both are recorded on the rule. The tag stays
+`discouraged`, which is the honest strength of the evidence against amiodarone in
+sodium-channel-blocker poisoning and disagrees with a lethal consequence; the review packet
+asks which of the two should move. And the arrest phase is now reachable two ways, so its
+`timeout_reason` names the outcome they share and both causes.
+
+**The engine learned to say how a run ended.** `st.failed` gained `byClock`, derived from
+whether the terminal phase appears in `timeFires`, and the debrief now reads "Ended by an
+action" rather than asserting the clock. Until this existed a case authoring an instantaneous
+transition into a terminal phase told the learner something false about their own run. No pack
+had authored one before.
+
+**`sim_runner.py` advanced phases on any action; the engine only on state-changing ones.** The
+runner re-evaluated the transition list after every action including examinations, which are
+`state_changing: false` in the catalog and are additionally excluded by name in the engine, so
+a scenario could step a patient out of a phase by palpating an abdomen and pass while doing
+nothing at all in play. It now mirrors `stateChanging()` exactly. Found by a case assertion
+that used an examination for that purpose: it passed in the runner and failed against the
+built file. The other three packs pass unchanged, so no existing scenario depended on it.
+
+**The first pack that did not start from a seed written for this platform**, and the first
+whose source contradicted itself. Seven contradictions, of which the largest is whether
+physostigmine is warranted in this patient: the narrative case says yes once diphenhydramine
+is established, and the debriefing guide bound into the same file says it is contraindicated
+when the QRS is wide. Four were resolved on instruction and three are drafting assumptions.
+`cases/DIPH/DIPH-SEED.md` section 9 records all seven with what was done about each, and it
+is the document a reviewer reads first. The README gains a section on what converting a
+finished case costs that authoring from a seed does not.
+
+**Three diagnoses added to the diagnosis catalog**, all toxicology, all marked
+`source=author-supplied`: `dx_diphenhydramine_overdose`,
+`dx_sodium_channel_blocker_cardiotoxicity` and `dx_drug_induced_seizure`. The gap they
+filled is worth stating because it is the kind that recurs. The catalog held the syndrome,
+"anticholinergic toxidrome", and neither the agent nor the complication that decides the
+treatment, so a case whose whole teaching point is that the syndrome is not the whole story
+had to record the syndrome as its own correct answer, and a resident who named the toxidrome
+and stopped could not be told apart from one who understood the case. DIPH's primary
+diagnosis is now the agent, the cardiotoxicity is first among five additional diagnoses, and
+the toxidrome is scored twice: credit when it is named beside the agent, and
+`acceptable_with_qualification` when it is offered as the primary instead. The cardiotoxicity
+entry is deliberately a mechanism rather than an agent, so the same entry serves tricyclic,
+cocaine, bupropion, flecainide and local anaesthetic poisoning. The catalog's
+`open_questions` now asks whether the other toxidromes have the same shape.
+
+**Physostigmine added to the action catalog**, under Meds - Tox, marked
+`source=author-supplied`. The catalog held every other toxicology antidote a resident might
+reach for and not this one, which made the case unauthorable: the lesson is what happens
+when it is given. The other three packs bind and validate unchanged against the regenerated
+catalog.
+
+**The first use of three constructs, and five tooling gaps that followed.**
+
+- *An unguarded time-guarded transition*, which is authoring 5.1's third pattern and the
+  author's own instruction that a seizure occurs regardless of how well the case is being
+  managed. `sim_runner.py` skipped every rule with a falsy `when` in both its transition
+  loops, so the pattern could not be simulated at all. The engine had always handled it.
+- *`sim_runner.py` read neither the catalog's default prerequisites nor its default flags*,
+  so a study predicate was permanently false and an action whose only prerequisite was a
+  catalog default was never blocked. Both flatter a case. It now merges both and models a
+  study's turnaround, so `ordered` and `resulted` differ, which this case's physostigmine
+  tag turns on.
+- *`engine-tests.js` reported a false fairness failure* for a guarded deterioration in a
+  phase the do-nothing path never enters, and *measured a vital effect's guard instead of
+  the effect* by reading at a fixed three seconds and by picking a guarded one.
+- *`expand_interview_variants.py` wrote its expansion into the case JSON* for every pack
+  except AFRVR, which silently discarded it on the next run of a pack's build script. The
+  test is now whether the pack has a `case_4_interview.py`.
+
+All five were verified against CHFE, MGCA and AFRVR, which pass unchanged.
+
+**The per-key review matrix earned its keep again.** Six content keys in DIPH's first draft
+resolved to a clinically wrong value in a phase nobody had thought about: the skin still hot
+and dry after cooling, the cardiovascular examination still reporting a rate of 135 at a
+monitor showing 100, the respiratory rate still 25 in four of six phases, the perfusion
+still flushed, a bladder still full after somebody catheterised it, and a lactate of 3.1 in
+a rhythm that had lost its output. Every one validated, walked every scenario and passed
+every assertion. Section 5 of `DIPH-review-packet.md` lists them.
+
+**One defect no tool found.** A condition of the form `A OR B OR C AND NOT D` parses as
+`A OR B OR (C AND NOT D)`, because AND binds tighter than OR, so a non-rebreather mask went
+on adding saturation to an intubated patient. It validated and it passed every scenario. A
+case assertion comparing two runs found it. Anywhere a multi-term OR is ANDed with
+something, group it.
+
+**DIPH's interview matcher is the weakest of the four and its number is not clean.** 42 of
+52 in-scope on the held-out set with the model absent, against 47, 38 and 27 for the other
+three, and 15 of 30 out-of-scope refused, which is the lowest of the four. The first
+measurement was 27 of 52; three structural errors in the shared expansion library were fixed,
+and then clinical shorthand was added to twenty-six topics, some of it shorthand the held-out
+set had just shown to be missing. That is tuning against a held-out set. The file says so in
+its own `revision_note` and the review packet says so in section 6. The semantic arm could
+not be measured at all, for the third release running: `--semantic` needs the weights from
+huggingface.co and neither the local VM nor the cloud container used for this conversion can
+resolve that host. The existing `--model-path` escape, added in v0.9 for the same reason, is
+still the route for a machine that can download the model once.
+
+**A README claim about the model's host was wrong, and the correction has a deployment
+consequence.** The section on runtime network access said the embedding model comes from
+jsDelivr. Only the library does. `semantic.js` sets `allowRemoteModels` and never sets
+`env.remoteHost`, so the weights come from the transformers library's default host, which is
+huggingface.co. A network that allows a general-purpose CDN and blocks a model hub, which is
+the commoner shape, therefore fetches a megabyte of library and no model. The README now
+lists three outbound hosts rather than two, says which failure is which, and notes that an
+environment where `--semantic` cannot run is an environment where the shipped page will not
+load the model either. Mirroring the weights and setting `env.remoteHost` is the fix for a
+site behind a restrictive network and is not built.
+
+**`package.json` and `package-lock.json` added.** The product has no dependencies and the
+build has none; one evaluation tool has one, and it was previously installed by a command in
+the README prose with no record of the version. The lock file is committed and
+`node_modules/` is ignored, so the version any quoted semantic number was measured against is
+in the repository even though the tree is not.
+
+---
+
 ## v0.9: several diagnoses, seven scores, and the numbers without the reading
 
 **A handover names more than one thing.** The handoff tab now takes an ordered list of

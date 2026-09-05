@@ -1,0 +1,676 @@
+{
+ "binding_version": "0.1",
+ "case_id": "diphenhydramine-overdose-qrs-01",
+ "catalog_version": "0.2-draft",
+ "status": "DRAFT. Every mapped row is an author judgement and needs review.",
+ "counts": {
+  "exact": 104,
+  "mapped": 0,
+  "unmatched": 1
+ },
+ "group_coverage": {
+  "lorazepam_bolus": [
+   "midazolam_bolus"
+  ],
+  "magnesium_sulfate": [
+   "magnesium_sulfate_bolus"
+  ],
+  "normal_saline_1l_bolus": [
+   "lactated_ringer_s_1l_bolus",
+   "lactated_ringer_s_500ml_bolus",
+   "normal_saline_500ml_bolus"
+  ],
+  "ceftriaxone": [
+   "cefepime",
+   "vancomycin"
+  ]
+ },
+ "blocking": [],
+ "rows": [
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "second_iv",
+   "catalog_id": "second_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intraosseous_line",
+   "catalog_id": "intraosseous_line",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "nasal_cannula_oxygen",
+   "catalog_id": "nasal_cannula_oxygen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "non_rebreather_mask",
+   "catalog_id": "non_rebreather_mask",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "bag_valve_mask",
+   "catalog_id": "bag_valve_mask",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "suction",
+   "catalog_id": "suction",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intubate_rapid_sequence",
+   "catalog_id": "intubate_rapid_sequence",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "etomidate_bolus",
+   "catalog_id": "etomidate_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propofol_bolus",
+   "catalog_id": "propofol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_bolus",
+   "catalog_id": "ketamine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "rocuronium_bolus",
+   "catalog_id": "rocuronium_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "succinylcholine_bolus",
+   "catalog_id": "succinylcholine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "cooling_measures",
+   "catalog_id": "cooling_measures",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "warming_measures",
+   "catalog_id": "warming_measures",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "place_pads_for_monitoring",
+   "catalog_id": "place_pads_for_monitoring",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "defibrillate",
+   "catalog_id": "defibrillate",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "synchronized_cardioversion",
+   "catalog_id": "synchronized_cardioversion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "start_chest_compressions",
+   "catalog_id": "start_chest_compressions",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "place_patient_on_isolation_precautions",
+   "catalog_id": "place_patient_on_isolation_precautions",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insert_foley_catheter",
+   "catalog_id": "insert_foley_catheter",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lorazepam_bolus",
+   "catalog_id": "lorazepam_bolus",
+   "status": "exact",
+   "note": "Lorazepam and midazolam are one decision for the purpose this case scores, which is whether the seizure and the agitation were treated with a benzodiazepine. Coverage gives both the same tag, the same flag and the same note, so neither is an unscored route around the critical action.\n\nThe cost is real and is recorded here rather than hidden. The catalog places midazolam under the intubation drugs, where it is an induction agent, so a resident who induces with midazolam sets the benzodiazepine flag and terminates the seizure without having chosen an anticonvulsant. That is clinically true, and it means this case cannot distinguish a deliberate anticonvulsant from an induction agent that happened to be one. Diazepam is not in the catalog.",
+   "also_covers": [
+    "midazolam_bolus"
+   ]
+  },
+  {
+   "case_id": "na_bicarbonate_bolus",
+   "catalog_id": "na_bicarbonate_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "na_bicarbonate_infusion",
+   "catalog_id": "na_bicarbonate_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "stop_na_bicarbonate",
+   "catalog_id": "stop_na_bicarbonate",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "physostigmine",
+   "catalog_id": "physostigmine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "atropine_bolus",
+   "catalog_id": "atropine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "flumazenil",
+   "catalog_id": "flumazenil",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "diphenhydramine",
+   "catalog_id": "diphenhydramine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fos_phenytoin",
+   "catalog_id": "fos_phenytoin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "levetiracetam_bolus",
+   "catalog_id": "levetiracetam_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propofol_infusion",
+   "catalog_id": "propofol_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_infusion",
+   "catalog_id": "ketamine_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fentanyl_bolus",
+   "catalog_id": "fentanyl_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "morphine_bolus",
+   "catalog_id": "morphine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "haloperidol",
+   "catalog_id": "haloperidol",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "olanzapine",
+   "catalog_id": "olanzapine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ziprasidone",
+   "catalog_id": "ziprasidone",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "acetaminophen",
+   "catalog_id": "acetaminophen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ibuprofen",
+   "catalog_id": "ibuprofen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "naloxone_bolus",
+   "catalog_id": "naloxone_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "thiamine",
+   "catalog_id": "thiamine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d50_bolus",
+   "catalog_id": "d50_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "procainamide_drip",
+   "catalog_id": "procainamide_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "amiodarone_bolus_infusion",
+   "catalog_id": "amiodarone_bolus_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lidocaine_bolus",
+   "catalog_id": "lidocaine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "hypertonic_saline_25_bolus",
+   "catalog_id": "hypertonic_saline_25_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intralipid",
+   "catalog_id": "intralipid",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "magnesium_sulfate",
+   "catalog_id": "magnesium_sulfate",
+   "status": "exact",
+   "note": "The catalog carries magnesium twice, as a plain entry placed under four groups and as a bolus. Repleting through either is the same act here, so the tag, the flag and the note cover both.",
+   "also_covers": [
+    "magnesium_sulfate_bolus"
+   ]
+  },
+  {
+   "case_id": "potassium_chloride_kcl",
+   "catalog_id": "potassium_chloride_kcl",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "norepinephrine_drip",
+   "catalog_id": "norepinephrine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "status": "exact",
+   "note": "The case is making a claim about volume rather than about an agent, so the recommended tag and the note cover all four crystalloid boluses. Nothing here is harmful, so the group is being used to stop the credit being agent-specific rather than to close an escape hatch.",
+   "also_covers": [
+    "lactated_ringer_s_1l_bolus",
+    "lactated_ringer_s_500ml_bolus",
+    "normal_saline_500ml_bolus"
+   ]
+  },
+  {
+   "case_id": "activated_charcoal",
+   "catalog_id": "activated_charcoal",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "whole_bowel_irrigation_by_ng_tube",
+   "catalog_id": "whole_bowel_irrigation_by_ng_tube",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "place_orogastric_tube",
+   "catalog_id": "place_orogastric_tube",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "place_nasogastric_tube",
+   "catalog_id": "place_nasogastric_tube",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ceftriaxone",
+   "catalog_id": "ceftriaxone",
+   "status": "exact",
+   "note": "This case scores the act of starting empirical antimicrobial cover for a febrile confused adolescent, not a regimen, and it makes no claim about which regimen is right for suspected bacterial meningitis in this age group. Coverage means a resident who reaches for vancomycin and cefepime gets the same recommended tag on arrival and the same discouraged tag once the toxicology screen has resulted. Acyclovir is deliberately NOT in this group: it is a different question and is authored as its own action.",
+   "also_covers": [
+    "cefepime",
+    "vancomycin"
+   ]
+  },
+  {
+   "case_id": "acyclovir",
+   "catalog_id": "acyclovir",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lumbar_puncture",
+   "catalog_id": "lumbar_puncture",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fingerstick_blood_sugar",
+   "catalog_id": "fingerstick_blood_sugar",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "complete_blood_count_cbc",
+   "catalog_id": "complete_blood_count_cbc",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "creatine_kinase_ck",
+   "catalog_id": "creatine_kinase_ck",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lactate",
+   "catalog_id": "lactate",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "acetaminophen_level",
+   "catalog_id": "acetaminophen_level",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "salicylate_aspirin_level",
+   "catalog_id": "salicylate_aspirin_level",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ethanol_level_etoh",
+   "catalog_id": "ethanol_level_etoh",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urine_tox_screen",
+   "catalog_id": "urine_tox_screen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urine_hcg_qualitative",
+   "catalog_id": "urine_hcg_qualitative",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "serum_hcg_quantitative",
+   "catalog_id": "serum_hcg_quantitative",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urinalysis",
+   "catalog_id": "urinalysis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "magnesium_level",
+   "catalog_id": "magnesium_level",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "calcium_ionized",
+   "catalog_id": "calcium_ionized",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "liver_function_tests_lfts",
+   "catalog_id": "liver_function_tests_lfts",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "coagulation_panel",
+   "catalog_id": "coagulation_panel",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "blood_culture_x_2",
+   "catalog_id": "blood_culture_x_2",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "troponin_t",
+   "catalog_id": "troponin_t",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "tsh",
+   "catalog_id": "tsh",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ultrasound_cardiac",
+   "catalog_id": "ultrasound_cardiac",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "xr_chest",
+   "catalog_id": "xr_chest",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ct_head",
+   "catalog_id": "ct_head",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_toxicology",
+   "catalog_id": "consult_toxicology",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_psychiatry",
+   "catalog_id": "consult_psychiatry",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_neurology",
+   "catalog_id": "consult_neurology",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_cardiology",
+   "catalog_id": "consult_cardiology",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_renal",
+   "catalog_id": "consult_renal",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_abd",
+   "catalog_id": "exam_abd",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_gu",
+   "catalog_id": "exam_gu",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "The catalog has no handoff tab and no handoff action; it is listed in the catalog's own known_gaps. Rendered anyway so the case is playable."
+  }
+ ]
+}
