@@ -248,7 +248,7 @@
     }
    ],
    "expect_phase": "seizing",
-   "note": "The author's instruction: harmful, and it leads back to a seizure requiring bicarbonate. The split is recorded in DIPH-SEED.md section 9.1. The wait after the ECG is load-bearing: the tag gates on resulted rather than ordered, and the tracing takes ten seconds."
+   "note": "The author's instruction: harmful, and it leads back to a seizure requiring bicarbonate. The split is recorded in DIPH-SEED.md section 9.1. The wait after the ECG is load-bearing: the tag gates on resulted rather than ordered. The tracing took ten seconds until 5 September 2026 and now takes five, so the wait is longer than it needs to be and is left that way deliberately, since a scenario that only just clears a deadline tests the deadline rather than the rule."
   },
   {
    "name": "The physostigmine seizure is escapable by the ordinary route",
@@ -272,15 +272,18 @@
    "expect_phase": "stabilizing"
   },
   {
-   "name": "Physostigmine while the ECG is pending still halts the case",
+   "name": "Physostigmine one action after the ECG does not halt the case, because the tracing is already back",
    "steps": [
     "attach_monitor",
     "insert_iv",
     "ecg_12_lead",
-    "physostigmine"
+    "physostigmine",
+    {
+     "wait": 15
+    }
    ],
-   "expect_phase": "halted",
-   "note": "Ordered is not resulted. The ECG takes ten seconds and the tag gates on resulted, which is the right gate: a tracing nobody has read decides nothing."
+   "expect_phase": "seizing",
+   "note": "This scenario asserted the opposite until 5 September 2026, when the ECG turnaround was shortened from ten seconds to five on Aakash Setty's instruction. Ordered is still not resulted and the tag still gates on resulted, which is still the right gate. What changed is the size of the window: giving physostigmine on a tracing nobody has read halts the case for five seconds after the order rather than ten. The runner charges eight seconds of clock per action, so it can no longer express a gap that short, and the ordered-but-not-resulted halt is asserted at second precision in DIPH-tests.js instead (ECG at 2s, physostigmine at 5s). Worth an author decision: the shorter tracing makes the lesson easier to miss."
   },
   {
    "name": "Flumazenil halts the case",

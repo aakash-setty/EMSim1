@@ -814,6 +814,7 @@ function fold(log, now, difficultyMultiplier){
       st.resulted.add(e.id);
       const a=ACT[e.id]||{};
       const tmpl={lab:'{name} is back.',imaging:'{name} is up on the screen.',
+                  radiograph:'{name} is up on the screen.',
                   ecg:'{name} is up.',bedside:'{name} is done.'}[a.turnaround_class]||'{name} is back.';
       /* Leads with the name, so it goes through the same sentence rule as the rest. */
       narrate(t,sentence(tmpl.replace('{name}',dispName(e.id))),'result');

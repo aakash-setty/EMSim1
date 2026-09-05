@@ -81,8 +81,9 @@
   },
   "turnaround_seconds_by_class": {
     "lab": 5,
+    "radiograph": 5,
     "imaging": 10,
-    "ecg": 10,
+    "ecg": 5,
     "bedside": 0
   },
   "equivalence_groups": {
@@ -3667,7 +3668,7 @@
       "category": "investigation",
       "state_changing": true,
       "dose_required": false,
-      "turnaround_class": "imaging",
+      "turnaround_class": "radiograph",
       "narration_template": "{name} is ordered.",
       "default_prerequisites": [],
       "flags_set_default": [],
@@ -3690,7 +3691,7 @@
       "category": "investigation",
       "state_changing": true,
       "dose_required": false,
-      "turnaround_class": "imaging",
+      "turnaround_class": "radiograph",
       "narration_template": "{name} is ordered.",
       "default_prerequisites": [],
       "flags_set_default": [],

@@ -216,6 +216,18 @@ it was false everywhere. It is still not licence to describe the numbers as movi
 
 The turnaround values are pacing devices, not clinical durations. Real turnaround is roughly 30 to 60 minutes for labs and 30 to 90 for cross-sectional imaging.
 
+| class | seconds | what is in it |
+|---|---|---|
+| `bedside` | 0 | point-of-care ultrasound, fingerstick, peak flow |
+| `ecg` | 5 | the twelve-lead |
+| `lab` | 5 | everything sent to a laboratory |
+| `radiograph` | 5 | plain films, shot at the bedside |
+| `imaging` | 10 | CT and MRI, which mean leaving the department |
+
+**The ratios are the meaning, not the numbers.** What a resident learns from these is which studies they can wait for and which they must act without, and the only class that costs real waiting is cross-sectional imaging. `radiograph` was split out of `imaging` and `ecg` dropped from 10 to 5 on 5 September 2026: a portable chest film and a twelve-lead are both in the resident's hands while the patient is still in the room, and pricing them like a trip to the scanner taught the wrong thing about both.
+
+**Shortening a class shortens every window that depends on it.** A tag or a consultant rule gated on `study S resulted` flips sooner, and the ordered-but-not-resulted window in which it has not flipped gets smaller. DIPH is the worked example: physostigmine halts the case while the tracing is unread, and that window went from ten seconds to five when the ECG did. Check every `resulted` predicate in every pack before changing a class, and check the scenarios, whose runner charges a fixed eight seconds per action and therefore cannot express a gap shorter than that.
+
 Optionally display a simulated clock that advances faster than real time, so a 5-second wait reads as roughly 35 minutes elapsed. This preserves the lesson that results take time and you must act before they arrive. Low priority; the underlying values are configurable and can be calibrated later.
 
 **On the bedside class at 0 seconds.** A point-of-care scan returning in the same instant as the order removes the order-and-wait beat entirely, which is most of what the mechanic teaches. Two to three seconds preserves the beat without pretending a scan takes as long as a send-away lab. This is a tuning decision, not a structural one, but it should be made deliberately rather than by leaving the class at zero.
@@ -348,7 +360,7 @@ Every drug, exam maneuver, lab, imaging study, ECG, consultant, stabilization ta
 | `placements` | Tab and group; drives the entire action surface |
 | `category` | exam, investigation, medication, stabilization, procedure, consultant, blood_product |
 | `state_changing` | Whether performing it can change state |
-| `turnaround_class` | For investigations: lab, imaging, ecg, bedside |
+| `turnaround_class` | For investigations: lab, radiograph, imaging, ecg, bedside. See 2.3 |
 | `narration_template` | Nurse line, for example "Giving {dose} of {name}." |
 | `default_prerequisites` | Standard gating, applied to every case unless waived |
 | `flags_set_default` | Flags the action sets everywhere, for example `insert_iv` sets `iv_access` |

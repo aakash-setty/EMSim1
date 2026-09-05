@@ -1078,7 +1078,7 @@ A result **freezes at the state in which it was ordered**, not when it arrives. 
 The most state-dependent key in the case.
 
 - Content referencing a finding must gate on `study S resulted`. A consultant must never discuss imaging that was never obtained, and must not discuss a result that has not come back yet.
-- **Author a pending tier.** With a 5 to 10 second turnaround there is a real window in which a study is ordered but not resulted. A consultant asked during that window should acknowledge it.
+- **Author a pending tier.** With a 5 to 10 second turnaround there is a real window in which a study is ordered but not resulted. A consultant asked during that window should acknowledge it. The window is 5 seconds for a twelve-lead, a plain film and any laboratory study, and 10 for CT and MRI, so a rule that depends on the window being noticed has less room than it looks.
 - Order rules from most specific to least specific.
 - Unrelated consultants inherit the global "does not know why they were called" response. Do not author these.
 - Where a consult unlocks a disposition or intervention, it sets a flag and is state-changing. **A state-changing consult still returns content**: the two questions are independent.

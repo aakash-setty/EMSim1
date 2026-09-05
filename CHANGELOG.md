@@ -55,6 +55,33 @@ read for themselves, and every tracing after it describes itself.
 Build size goes from 2.7 MB to 3.4 MB, all of it those two images. The other three packs
 carry no media and are unchanged.
 
+**A picture opens itself.** A result that is an image opens full size the moment it comes
+back, rather than waiting to be found as a thumbnail on the chart. A 260-pixel tracing in a
+running list is not a tracing anybody can read, and the chart is a list a resident may not be
+looking at when the study lands. Each result opens once, keyed by the study and the second it
+resulted, so a repeat twelve-lead is a new picture and a dismissed one never comes back. Two
+studies landing together queue rather than race, the second following about half a second
+after the first is closed. Nothing opens while the case is over, paused, or asking whether to
+leave, and the viewer does not steal the caret from a half-written interview question: the
+cross, the backdrop and Escape all work whether or not it has focus. It still does not pause
+the clock, for the reason it never did.
+
+**Result turnaround, rebalanced.** Plain films were priced like cross-sectional imaging and
+the twelve-lead like a CT. A new `radiograph` class at 5 seconds takes `xr_chest` and
+`xr_pelvis` out of `imaging`, and `ecg` drops from 10 seconds to 5. CT and MRI keep 10, which
+is now the only class that costs real waiting, which is the thing the ratios are there to
+teach.
+
+**That change has a consequence worth stating.** Every predicate of the form
+`study S resulted` flips sooner, and the ordered-but-not-resulted window shrinks with it. In
+DIPH, physostigmine halts the case while the tracing is unread, and that window went from ten
+seconds to five. One scenario asserted the halt by ordering the ECG and giving physostigmine
+on the next action; the runner charges a fixed eight seconds per action, so it can no longer
+express a gap that short. It now asserts what actually happens and says why, and the halt
+itself is asserted at second precision in `DIPH-tests.js`, where the ECG lands at 2 seconds
+and the physostigmine at 5. The design doc says to check every `resulted` predicate before
+changing a class.
+
 ---
 
 ## v0.11: the interface stops assuming the patient is a man

@@ -183,6 +183,12 @@ IMAGING = ["CT - Abdomen", "CT - Aorta", "CT - C-spine", "CT - Chest", "CT - Hea
            "CT - Pulmonary Embolus", "CT/CTA - Head and Neck", "MRI - C-spine",
            "MRI - Lumbar Spine", "MRI - Thoracic Spine", "MRI/MRA - Head and Neck",
            "XR - Chest", "XR - Pelvis"]
+# A plain film is not a cross-sectional study and does not wait like one: it is shot at the
+# bedside and is on the screen while the patient is still in the room, where a CT means
+# leaving the department. They shared one turnaround class and therefore one delay, which
+# made a chest film feel like a trip to the scanner. Radiographs now resolve with the
+# labs, and cross-sectional imaging keeps the longer wait.
+RADIOGRAPH = {"XR - Chest", "XR - Pelvis"}
 
 for d in BEDSIDE:
     tc = "ecg" if d == "ECG" else "bedside"
@@ -203,7 +209,7 @@ for d in OTHER_LABS:
         narration_template="Sending {name}.", **kw)
 for d in IMAGING:
     add(d, "investigations", "Imaging", category="investigation",
-        turnaround_class="imaging", repeatable=True,
+        turnaround_class="radiograph" if d in RADIOGRAPH else "imaging", repeatable=True,
         narration_template="{name} is ordered.")
 
 # ================================================ INTERVENTIONS (images 10-20)
@@ -510,7 +516,15 @@ CATALOG = {
         "not_present_and_not_invented": ["clinical appropriateness", "dose values",
                                          "normal result values", "consultant list"],
     },
-    "turnaround_seconds_by_class": {"lab": 5, "imaging": 10, "ecg": 10, "bedside": 0},
+    # Seconds from order to result, per class. These are compressions of clinical time and
+    # the ratios are what carry meaning, not the absolute numbers: bedside is instant, a
+    # tracing and a plain film come back while the resident is still working the patient,
+    # and cross-sectional imaging is the one study that costs real waiting. The ECG dropped
+    # from 10 to 5 with the radiographs, on Aakash Setty's instruction, 5 September 2026:
+    # a twelve-lead in a resuscitation bay is handed over in well under a minute, and in a
+    # case whose next decision depends on the QRS the wait was buying nothing.
+    "turnaround_seconds_by_class": {"lab": 5, "radiograph": 5, "imaging": 10,
+                                    "ecg": 5, "bedside": 0},
     "equivalence_groups": {
         "_note": "Sets of entries a case may treat as interchangeable. Where a case "
                  "requires or forbids the act rather than one specific agent, bind one "

@@ -1527,6 +1527,7 @@ setInterval(()=>{
   const before=tabFingerprint();
   refold();
   if(tabFingerprint()!==before){ renderTabs(); renderTab(); }
+  autoOpenImages();
 },300);
 
 /* ---------- ending ---------- */
@@ -1625,6 +1626,7 @@ function finish(){
 }
 function restart(){
   LOG=[];SEQ=0;ENDED=false;STARTED=false;TAB='history';LASTNURSE=-1;LASTPHASE=null;
+  closeImage(); IMG_SEEN=new Set(); IMG_QUEUE=[];
   resetRamp();
   Object.keys(FILTERS).forEach(k=>delete FILTERS[k]);
   Object.keys(BASKET).forEach(k=>delete BASKET[k]);
@@ -2152,7 +2154,13 @@ function openImage(id,cap){
   el('imgfull').alt=cap||'';
   el('imgview-title').textContent=cap||'Image';
   el('imgview').classList.remove('hidden');
-  el('imgclose').focus();
+  /* Focus moves to the dialog, which is what a modal should do, EXCEPT when the resident
+     is typing. A study that arrives while a question is half-written opens itself under
+     the rule below, and taking the caret out of the box mid-sentence would lose the
+     question. Escape, the backdrop and the cross all still work without focus. */
+  const a=document.activeElement;
+  const typing=a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'||a.isContentEditable);
+  if(!typing) el('imgclose').focus();
 }
 function closeImage(){
   if(el('imgview').classList.contains('hidden')) return;
@@ -2162,6 +2170,44 @@ function closeImage(){
   el('imgfull').removeAttribute('src');
   try{ if(IMG_RETURN&&IMG_RETURN.focus) IMG_RETURN.focus(); }catch(err){}
   IMG_RETURN=null;
+  /* A second picture waiting behind this one opens after a beat rather than on the same
+     frame, so closing one does not read as a dialog that refuses to go away. */
+  if(IMG_QUEUE.length) setTimeout(drainImageQueue,450);
+}
+
+/* ---------- a picture opens itself ----------
+   A result that is a tracing or a film opens full size the moment it comes back, without
+   the resident having to find the thumbnail on the chart. Two reasons this is not just a
+   convenience. A twelve-lead is the study this case turns on, and a 260-pixel thumbnail on
+   a running list is not a tracing anybody can read; and the chart is newest-first but it is
+   still a list that the resident may not be looking at when the study lands.
+
+   It does not pause the clock, for the same reason the viewer never did: reading the film
+   is part of the resuscitation.
+
+   Each result opens once. The key is the study plus the second it resulted, so a repeat
+   twelve-lead is a new picture and the same one is never reopened after it is dismissed.
+   Two studies landing together queue rather than race, and nothing opens while the case is
+   over, paused, or asking whether to leave. */
+let IMG_SEEN=new Set(), IMG_QUEUE=[];
+function autoOpenImages(){
+  if(!ST||ENDED||PAUSED||LEAVING) return;
+  if(!el('leaveview').classList.contains('hidden')) return;
+  Object.keys(ST.orders).forEach(id=>ST.orders[id].forEach(rec=>{
+    const v=rec.value;
+    if(!v||typeof v!=='object'||v.kind!=='image') return;
+    const key=id+'@'+rec.dueT;
+    if(IMG_SEEN.has(key)) return;
+    IMG_SEEN.add(key);
+    if(!imageSrc(v.image)) return;              /* degrades to the chart line, as elsewhere */
+    IMG_QUEUE.push({img:v.image,cap:v.caption||dispName(id)});
+  }));
+  drainImageQueue();
+}
+function drainImageQueue(){
+  if(!IMG_QUEUE.length||ENDED||PAUSED||LEAVING||imageOpen()) return;
+  const n=IMG_QUEUE.shift();
+  openImage(n.img,n.cap);
 }
 function imageOpen(){ return !el('imgview').classList.contains('hidden'); }
 

@@ -292,6 +292,19 @@ before the pack goes anywhere.
 
 The head CT is unused. Nothing in the case orders one.
 
+**Two changes on 5 September 2026, after you saw the first version.** A result that is an
+image now opens full size by itself the moment it comes back, so the arrival tracing and the
+chest film are put in front of the resident rather than left as a thumbnail to be found. It
+opens once per result and does not pause the clock. And the twelve-lead now takes 5 seconds
+to come back rather than 10, along with plain films; CT and MRI still take 10.
+
+**The shorter tracing costs you something and you should decide whether you mind.**
+Physostigmine halts this case while the ECG is unread, and that window is now five seconds
+wide instead of ten. A resident who orders a twelve-lead and reaches for physostigmine in the
+same breath is more likely to have the tracing back already, which scores the act as
+discouraged with a seizure rather than halting the case on it. The lesson is the same and it
+is easier to miss. Section 2.1 is where the split itself is argued.
+
 ---
 
 ## 3. The historian is the mother, and that is a departure from the platform
@@ -606,6 +619,8 @@ a multi-term OR is ANDed with something, group it.
 - [ ] **The narrowing phase's report is new text, not your original**, which was overwritten and not recoverable. Its numbers agree with what cardiology reads on the repeat tracing
 - [ ] That one tracing being a picture while every later one describes itself is a decision you accept
 - [ ] The chest radiograph is shown as a picture with no report, and the intubated-patient radiograph still reports in words
+- [ ] That a picture opening itself the moment it results is what you want, rather than a thumbnail the resident finds
+- [ ] **That the twelve-lead coming back in five seconds rather than ten is right**, and that halving the window in which physostigmine halts the case is an acceptable cost
 
 **Then**
 

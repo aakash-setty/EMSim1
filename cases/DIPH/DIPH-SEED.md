@@ -592,3 +592,15 @@ prints along its top.
 **Provenance is unresolved and now matters more.** Section 0's question about which of the
 four images are the author's own work was previously academic, because none was used. Two are
 now embedded in a build distributed as a single file.
+
+### 9.11 The ECG comes back in five seconds. NOT A SOURCE QUESTION. A PLATFORM CHANGE.
+
+Changed on Aakash Setty's instruction, 5 September 2026, in the global catalog rather than in
+this case: the `ecg` turnaround class went from 10 seconds to 5, and plain films moved out of
+`imaging` into a new `radiograph` class at 5. CT and MRI stay at 10. The source document
+gives no turnaround times at all, so nothing here contradicts it.
+
+**It changes one thing in this case that a reviewer should see.** The physostigmine tag gates
+on `study ecg_12_lead resulted`, so the window in which giving physostigmine halts the case is
+now five seconds after the order rather than ten. See review packet section 2.9 and section
+2.1.
