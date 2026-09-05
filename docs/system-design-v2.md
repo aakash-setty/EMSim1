@@ -379,7 +379,7 @@ Every component of a default is in range and carries `abnormal: false` explicitl
 ### 3.3 Result payload shape
 
 ```json
-{"kind": "panel|value|report|exam_findings|general_status",
+{"kind": "panel|value|report|image|exam_findings|general_status",
  "abnormal": true,
  "components": [{"label": "Sodium", "value": "133", "unit": "mEq/L",
                  "reference_range": "135-145", "abnormal": true}],
@@ -388,6 +388,28 @@ Every component of a default is in range and carries `abnormal: false` explicitl
 ```
 
 `panel` and `value` carry components. `report` carries a `report` string. `exam_findings` and `general_status` carry a `findings` string.
+
+**`image` carries a picture and nothing else (v0.11).**
+
+```json
+{"kind": "image", "abnormal": true,
+ "image": "diph-ecg-arrival", "caption": "Twelve-lead ECG"}
+```
+
+`image` names a file in the pack's `media/` directory by its stem; the build inlines every
+such file as a data URI, so an image in that directory costs build size whether or not a
+payload refers to it. The result renders as a thumbnail wherever a result renders, in the
+chart and in the feed, and clicking it opens a viewer that closes on its cross, on a click
+outside it, or on Escape.
+
+**An image payload may not also carry `report` or `components`**, and the validator errors
+when it does. The two shapes answer the same question differently and the interface would
+show one of them, so a payload holding both is an author who changed their mind halfway. The
+`caption` titles the viewer and is a caption rather than a reading: "Twelve-lead ECG", or
+the machine measurements a real tracing prints along its top, not "sodium-channel blockade".
+
+`abnormal` is still authored and still means what it means everywhere else, which for an
+image is the only signal the interface has about the study, since there is no text to flag.
 
 Payload-level `abnormal` must equal the OR of its components. The interface renders abnormal components distinctly, currently in red.
 

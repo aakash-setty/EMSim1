@@ -42,8 +42,10 @@ governs and the conflict is recorded in section 9 below.
 `thepoisonreview.com`. It is not clear from the document how much of the Teaching Points
 essay, and which of the four images, are the author's own work and how much is reproduced
 or adapted from those sources. This matters because the platform is free and open source.
-**No image from the source is used in this case pack**, which sidesteps the image half of
-the question but not the prose half. Nothing from the Teaching Points essay is reproduced
+**Two of the four images are now in the case pack** and are embedded in the distributed
+build, so the question is live rather than sidestepped: the arrival ECG and the chest
+radiograph are shown as pictures with no interpretation. The second ECG was tried and taken
+out, and the head CT is unused because nothing in the case orders one. See section 9.10. Nothing from the Teaching Points essay is reproduced
 verbatim in the case file. See section 10.
 
 ---
@@ -548,3 +550,45 @@ outcome they share and both causes.
 discouraged and does nothing, which is arguable: it is a sodium-channel blocker added to a
 sodium-channel-blocker overdose whenever it is given. That is the same shape as the
 physostigmine gap in section 2.0 of the review packet and the same decision to make about it.
+
+### 9.10 The images. RESOLVED, EXCEPT WHICH TRACING IS WHICH.
+
+Added on Aakash Setty's instruction, 5 September 2026, after the engine gained a result
+payload that is a picture; narrowed the same day.
+
+**What is in the pack.** `media/diph-ecg-arrival.jpg` and `media/diph-cxr.jpg`, resized and
+recompressed from the source document. The arrival twelve-lead and the chest radiograph
+resolve to those files and to no text at all. Every other ECG in the case, and the radiograph
+of the intubated patient, report in words.
+
+**No interpretation is supplied with either**, on instruction. A resident who orders one gets
+a thumbnail in the chart, opens it, and reads it. Cardiology will read a tracing aloud if
+called, and calling cardiology is not prompted anywhere.
+
+**The second tracing was tried in the narrowing phase and taken out.** Section 0 records the
+source as carrying "two wide-complex tachycardia ECGs", and that is what both files are.
+Neither is narrow, so the twelve-lead assigned to the narrowing phase showed a broad tracing
+under a nurse line saying the complexes had narrowed. That phase reports in text again.
+`diph-ecg-post-bicarb.jpg` is kept in `cases/DIPH/assets/` with a note saying how to put it
+back, and is out of `media/` because the build inlines that directory whole.
+
+**The restored report is new text.** The original string was overwritten when the image went
+in and the repository is not under version control, so it was rewritten to agree with the
+numbers the case states elsewhere: 115 per minute, which is the phase's own authored heart
+rate, a QRS of 104 ms and a terminal R in aVR of 2 mm, which are what `consult_cardiology`
+reads aloud on the repeat tracing, and a QTc of 470. It is model output like every other
+number in every tracing in this case. See section 9.2.
+
+**What is still a drafting assumption.** That the remaining image is the arrival tracing
+rather than the repeat. The source document does not label them, both are wide-complex, and a
+QRS cannot be measured off a scan whose calibration is not readable.
+
+**Second-order effect of removing the report text.** The arrival ECG used to report a QRS of
+132 ms in words. It no longer does, so on the likeliest path that number reaches a resident
+only through the cardiology consult or the debrief. Putting the machine measurements in the
+caption would restore it without supplying an interpretation, and is what a real tracing
+prints along its top.
+
+**Provenance is unresolved and now matters more.** Section 0's question about which of the
+four images are the author's own work was previously academic, because none was used. Two are
+now embedded in a build distributed as a single file.

@@ -12,6 +12,7 @@ scenario exercises a time-guarded transition (design 2.1a).
 """
 import json, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import re
 from validate_case import parse_condition, evaluate, atoms_of
 from paths import resolve_pack, catalog_path
 
@@ -81,6 +82,28 @@ def effective_flags(aid, act):
         if f not in out:
             out.append(f)
     return out
+
+
+# Mirrors PRONOUNS and pron() in engine.js. Shared strings carry tokens rather than a sex,
+# so a blocked-action message logged here has to be substituted the same way the interface
+# does it, or the runner prints a line no learner would ever see.
+PRONOUNS = {
+    "male":   {"He": "He", "he": "he", "His": "His", "his": "his", "Him": "Him", "him": "him",
+               "He's": "He's", "he's": "he's", "himself": "himself"},
+    "female": {"He": "She", "he": "she", "His": "Her", "his": "her", "Him": "Her", "him": "her",
+               "He's": "She's", "he's": "she's", "himself": "herself"},
+    "_":      {"He": "They", "he": "they", "His": "Their", "his": "their", "Him": "Them",
+               "him": "them", "He's": "They're", "he's": "they're", "himself": "themselves"},
+}
+SEX = (case.get("patient") or {}).get("sex")
+_TOK = re.compile(r"\{(He's|he's|He|he|His|his|Him|him|himself)\}")
+
+
+def pron(text):
+    if not isinstance(text, str) or "{" not in text:
+        return text
+    table = PRONOUNS.get(str(SEX or "").lower(), PRONOUNS["_"])
+    return _TOK.sub(lambda m: table[m.group(1)], text)
 
 
 def state_changing(aid, act):
@@ -165,7 +188,7 @@ class Run:
         act = ACTIONS[aid]
         for p in effective_prerequisites(aid, act):
             if not evaluate(parse_condition(p["when"])[0], self.assign()):
-                self.log.append(f"  BLOCKED {aid}: \"{p['failure_message']}\"")
+                self.log.append(f"  BLOCKED {aid}: \"{pron(p['failure_message'])}\"")
                 return "blocked"
         tag = self.tag_of(aid)
         if tag == "harmful":

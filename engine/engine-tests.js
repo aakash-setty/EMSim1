@@ -552,6 +552,48 @@ section('monitor gating');
       !!fold(mk([]), 30).vitals, 'the fold computes them; the interface hides them');
 }
 
+section('the interface does not assume the patient is male');
+{
+  /* v0.11. Strings shared across every case cannot name a sex, so they carry pronoun
+     tokens that the bind substitutes from patient.sex. Two things to check and the second
+     is the one that was broken: that no token survives to the screen, and that nothing the
+     nurse says calls the patient by the wrong pronoun. Scoped to the shared strings, the
+     nurse's idle line and the prerequisite failure messages, because authored case text is
+     the author's business and may legitimately name somebody else. */
+  const SEX = String((CASE.patient || {}).sex || '').toLowerCase();
+  const shared = [PROTO.nurseIdle].concat(
+    Object.keys(A).flatMap(id => (A[id].prerequisites || []).map(p => p.failure_message || '')));
+  const leftover = shared.filter(x => /\{(He's|he's|He|he|His|his|Him|him|himself)\}/.test(x));
+  chk('no shared string still carries an unsubstituted pronoun token',
+      leftover.length === 0, leftover.join(' | '));
+  chk('the nurse has an idle line at all', !!PROTO.nurseIdle, PROTO.nurseIdle);
+  if (SEX === 'female') {
+    const wrong = shared.filter(x => /\b(he|his|him|He|His|Him)\b/.test(x));
+    chk('nothing shared calls a female patient he', wrong.length === 0, wrong.join(' | '));
+  } else if (SEX === 'male') {
+    const wrong = shared.filter(x => /\b(she|her|She|Her)\b/.test(x));
+    chk('nothing shared calls a male patient she', wrong.length === 0, wrong.join(' | '));
+  } else {
+    chk('a case that states no sex is not something this build has', false,
+        'patient.sex is ' + JSON.stringify((CASE.patient || {}).sex));
+  }
+  /* The substitution is per bind and must not leak between cases, which is the failure a
+     shared object invites: bind another pack and come back. */
+  if (CASES.length > 1) {
+    const mine = PROTO.nurseIdle;
+    const other = (packIdx + 1) % CASES.length;
+    bind(other);
+    const theirs = PROTO.nurseIdle;
+    bind(packIdx);
+    chk('rebinding the case under test restores its own line',
+        PROTO.nurseIdle === mine, PROTO.nurseIdle);
+    chk('and each case gets the line its own patient earns',
+        (String((CASES[other].case.patient || {}).sex || '').toLowerCase() === SEX)
+          ? theirs === mine : theirs !== mine,
+        mine + '  vs  ' + theirs);
+  }
+}
+
 section('vital effects');
 {
   const START = CASE.phases[0].id;

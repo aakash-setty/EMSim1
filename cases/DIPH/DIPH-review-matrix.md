@@ -959,14 +959,14 @@ Single unconditional rule; nothing to enumerate.
 | stabilized | rule 3 (phase is stabilized) &rarr; ABNORMAL: Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms.... | plausible |
 | stabilizing | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms... | plausible |
 | wide_complex_tachycardia | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Monomorphic wide-complex tachycardia at approximately 180 per minute. ... | plausible |
-| «any other phase» | rule 5 (default) &rarr; ABNORMAL: Sinus tachycardia at approximately 135 per minute. QRS duration 132 ms... | plausible |
+| «any other phase» | rule 5 (default) &rarr;  | plausible |
 
 
 ### `imaging/xr_chest`
 
 | phase | airway_protected | resolves to | reachable? |
 |---|---|---|---|
-| «any phase» | no | rule 1 (default) &rarr; normal: Lungs clear. No consolidation, no effusion, no pneumothorax. Cardiomed... | plausible |
+| «any phase» | no | rule 1 (default) &rarr;  | plausible |
 | «any phase» | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube tip 4 cm above the carina. Lungs clear. Heart size n... | plausible |
 
 
@@ -1034,11 +1034,26 @@ Single unconditional rule; nothing to enumerate.
 
 ### `consultant/consult_cardiology`
 
-| phase | ecg_12_lead | resolves to | reachable? |
-|---|---|---|---|
-| «any phase» | not_ordered | rule 1 (default) | plausible |
-| «any phase» | pending | rule 1 (default) | plausible |
-| «any phase» | resulted | rule 0 (study ecg_12_lead resulted) | plausible |
+| phase | bicarb_given | ecg_12_lead | resolves to | reachable? |
+|---|---|---|---|---|
+| pulseless_vt | no | not_ordered | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| pulseless_vt | no | pending | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| pulseless_vt | no | resulted | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| pulseless_vt | yes | not_ordered | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| pulseless_vt | yes | pending | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| pulseless_vt | yes | resulted | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| wide_complex_tachycardia | no | not_ordered | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| wide_complex_tachycardia | no | pending | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| wide_complex_tachycardia | no | resulted | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| wide_complex_tachycardia | yes | not_ordered | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| wide_complex_tachycardia | yes | pending | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| wide_complex_tachycardia | yes | resulted | rule 0 (phase is wide_complex_tachycardia OR phase is pulseless_vt) | plausible |
+| «any other phase» | no | not_ordered | rule 4 (default) | plausible |
+| «any other phase» | no | pending | rule 3 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | no | resulted | rule 2 (study ecg_12_lead resulted) | plausible |
+| «any other phase» | yes | not_ordered | rule 4 (default) | plausible |
+| «any other phase» | yes | pending | rule 3 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | yes | resulted | rule 1 (study ecg_12_lead resulted AND flag bicarb_given set) | plausible |
 
 
 ### `consultant/consult_renal`

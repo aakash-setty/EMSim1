@@ -25,7 +25,7 @@ classes, difficulty modes, and the global default responses. Per case: the case 
 the catalog bindings, the placements for actions the catalog lacks, and the handoff
 resolution.
 """
-import json, os, sys
+import base64, json, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -126,7 +126,10 @@ shared = {
     # it does not force it.
     "defaultExpanded": {"stabilization": ["Stabilization"]},
     "matchThreshold": 0.32,
-    "nurseIdle": "He's all yours. Tell me what you want and I'll get it.",
+    # Pronoun tokens, substituted per case from patient.sex when the case is bound.
+    # See PRONOUNS and pron() in engine.js. It said "He's" until v0.11, in two packs
+    # whose patient is a woman.
+    "nurseIdle": "{He's} all yours. Tell me what you want and I'll get it.",
     # The patient's conversational scaffolding (design 10.7). A case may override any
     # of these under `interview`: repeat_prefixes, nothing_more, clarify_template.
     # Written in the patient's voice, so they read as speech and not as system text.
@@ -383,6 +386,18 @@ def build_pack(pack):
     return {
         "prefix": pack.prefix,
         "id": case["case_id"],
+        # v0.11. A case may carry images: a twelve-lead tracing, a plain film. They live
+        # as ordinary image files in `cases/<PREFIX>/media/` so they can be looked at,
+        # replaced and diffed as images, and they are inlined as data URIs here, because
+        # the product is one HTML file and a second request for a picture would make it
+        # two. The id a case content key names is the file's stem.
+        #
+        # This is the one thing in a pack whose size a reviewer should watch. DIPH's three
+        # images are about 800 KB on disk and about 1.1 MB once base64 has added its third,
+        # which is a third of that build. Downscale and recompress before adding more; the
+        # ECGs are JPEG at quality 80 and 1446 pixels wide, which is enough to measure a
+        # QRS on screen and not enough to print.
+        "media": load_media(pack),
         # everything the picker needs, so it does not have to open the case file
         "card": {
             "title": m.get("working_title", case["case_id"]),
@@ -416,6 +431,33 @@ def build_pack(pack):
         "promptCap": case.get("prompt_cap_recommendation", {}).get("per_phase", 3),
         "buildNotes": notes,
     }
+
+
+MEDIA_TYPES = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
+               ".webp": "image/webp", ".gif": "image/gif"}
+
+
+def load_media(pack):
+    """Every image in `cases/<PREFIX>/media/`, as {stem: data URI}.
+
+    A pack with no media directory returns an empty map and costs nothing. The stem is
+    the id, so two files that differ only in extension would collide; that is refused
+    here rather than silently resolving to whichever was read last.
+    """
+    d = os.path.join(pack.dir, "media")
+    if not os.path.isdir(d):
+        return {}
+    out = {}
+    for name in sorted(os.listdir(d)):
+        stem, ext = os.path.splitext(name)
+        mime = MEDIA_TYPES.get(ext.lower())
+        if not mime:
+            continue
+        if stem in out:
+            raise SystemExit(f"{pack.prefix}: two media files share the id {stem!r}")
+        with open(os.path.join(d, name), "rb") as f:
+            out[stem] = "data:%s;base64,%s" % (mime, base64.b64encode(f.read()).decode())
+    return out
 
 
 def main():

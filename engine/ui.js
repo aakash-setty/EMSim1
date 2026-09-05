@@ -382,8 +382,33 @@ function feedItems(){
   return out;
 }
 
+/* ---------- results that are a picture ----------
+   A twelve-lead tracing is not prose and a case may author it as the image itself, with no
+   report text at all: the reading is the skill, and a payload that hands the resident "QRS
+   132 ms" beside the tracing has done the reading for them. DIPH authors three that way.
+
+   The media map is per case and lives on PROTO, keyed by the file stem, so a case that
+   ships no images costs nothing here and a payload naming a missing one degrades to a line
+   of text rather than to a broken image icon. The validator catches that case before it
+   ever ships; this is the runtime half of the same guarantee. */
+function imageSrc(id){ return (PROTO.media||{})[id]||null; }
+
+function imageThumb(v){
+  const src=imageSrc(v.image);
+  const cap=v.caption||'Image';
+  if(!src) return `<div class="fb">${esc(cap)} (image ${esc(v.image||'?')} is not in this build)</div>`;
+  /* A button rather than a div, so it is reachable by keyboard and announces itself. The
+     data attributes are read by the delegated click handler; the src is inlined because
+     every image in the build is already a data URI. */
+  return `<button type="button" class="imgthumb" data-img="${esc(v.image)}"
+            data-cap="${esc(cap)}" title="${esc(cap)} - click to open">
+            <img src="${src}" alt="${esc(cap)}" loading="lazy">
+          </button><p class="imgcap">${esc(cap)}. Click to open.</p>`;
+}
+
 function feedPayload(v){
   if(!v||typeof v!=='object') return v?`<div class="fb">${esc(v)}</div>`:'';
+  if(v.kind==='image') return imageThumb(v);
   if(v.components&&v.components.length)
     return '<table>'+v.components.map(c=>
       `<tr><td class="lb">${esc(c.label)}</td>
@@ -477,6 +502,7 @@ function renderTabs(){
 function renderPayload(v){
   if(v===null||v===undefined) return '<div class="body">No result is defined for this study.</div>';
   if(typeof v==='string') return `<div class="body">${esc(v)}</div>`;
+  if(v.kind==='image') return imageThumb(v);
   if(v.kind==='report'){
     return `<div class="body${v.abnormal?' abn-report':''}">${esc(v.report)}</div>`;
   }
@@ -754,6 +780,14 @@ function tabHistory(){
   return `<div class="panel"><h2>History</h2>
     ${demo?`<p class="sub">${esc(demo)}</p>`:''}
     ${hand?`<div class="handover"><div class="who">${who}</div>${esc(hand)}</div>`:''}
+    <!-- The transcript heading below is "What you were told" rather than "What he told
+         you". It said "he" until v0.11, which was wrong in the two packs whose patient is
+         a woman, and tokenising it would have been the obvious fix and the wrong one: a
+         case may author a collateral historian, and DIPH does, so the person answering is
+         not always the patient and their sex is not patient.sex. Neutral phrasing is
+         correct for every case and needs no substitution. "Ask the patient" above it still
+         assumes the patient answers, which is a case-level question rather than a string:
+         see DIPH's review packet, section 3. -->
     <h3>Ask the patient</h3>
     <p class="sub">Type a question in your own words.</p>
     <div style="display:flex;gap:8px">
@@ -762,7 +796,7 @@ function tabHistory(){
     </div>
     ${semChip()}
 </div>
-    ${outs?`<div class="panel"><h3>What he told you</h3>${outs}</div>`:''}`;
+    ${outs?`<div class="panel"><h3>What you were told</h3>${outs}</div>`:''}`;
 }
 
 function tabHandoff(){
@@ -2098,7 +2132,50 @@ el('leaveok').addEventListener('click',()=>{
   },260);
 });
 
+/* ---------- the image viewer ----------
+   Opened from any thumbnail, anywhere: the chart, the results panel, the debrief. Three
+   ways out, because a reader who wants the picture gone should not have to hunt for the
+   control. The cross, the backdrop, and Escape.
+
+   It does not pause the case. Every other overlay in this interface either ends the run or
+   stops the clock, and this one deliberately does neither: reading a tracing is part of the
+   resuscitation rather than a break from it, and a case's deadlines are claims about a
+   patient who does not wait while somebody studies an ECG. A resident who wants the clock
+   stopped can still switch away from the window, which pauses on visibilitychange as it
+   always did. */
+let IMG_RETURN=null;
+function openImage(id,cap){
+  const src=imageSrc(id);
+  if(!src) return;
+  IMG_RETURN=document.activeElement;
+  el('imgfull').src=src;
+  el('imgfull').alt=cap||'';
+  el('imgview-title').textContent=cap||'Image';
+  el('imgview').classList.remove('hidden');
+  el('imgclose').focus();
+}
+function closeImage(){
+  if(el('imgview').classList.contains('hidden')) return;
+  el('imgview').classList.add('hidden');
+  /* Drop the source so a 400 KB tracing is not decoded and held for the rest of the run,
+     and put focus back where it was rather than at the top of the document. */
+  el('imgfull').removeAttribute('src');
+  try{ if(IMG_RETURN&&IMG_RETURN.focus) IMG_RETURN.focus(); }catch(err){}
+  IMG_RETURN=null;
+}
+function imageOpen(){ return !el('imgview').classList.contains('hidden'); }
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest?e.target.closest('.imgthumb'):null;
+  if(t){ e.preventDefault(); openImage(t.dataset.img,t.dataset.cap); return; }
+  if(!imageOpen()) return;
+  /* The backdrop is the overlay itself; anything inside the card is not it. */
+  if(e.target===el('imgview')) closeImage();
+});
+el('imgclose').addEventListener('click',closeImage);
+
 document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&imageOpen()){ closeImage(); return; }
   if(e.key==='Escape'&&!el('leaveview').classList.contains('hidden')){ closeLeave(); return; }
   const reload=(e.key==='F5')||((e.key==='r'||e.key==='R')&&(e.ctrlKey||e.metaKey)&&!e.altKey);
   if(reload&&inCase()&&!LEAVING){ e.preventDefault(); askLeave('reload'); }

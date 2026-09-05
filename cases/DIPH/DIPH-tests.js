@@ -232,21 +232,95 @@ chk('every harmful action in this case carries a halt reason',
     HARMFUL.every(id => !!A[id].halt_reason), HARMFUL.join(', '));
 chk('four actions can be harmful here', HARMFUL.length === 4, HARMFUL.join(', '));
 
-section('the tracing changes with the state, and narrows after bicarbonate');
-const ecgAt = s => (s.orders.ecg_12_lead || []).slice(-1)[0].value.report;
-const arrivalEcg = ecgAt(fold(mk([[1, 'insert_iv'], [2, 'ecg_12_lead']]), 40));
-chk('the arrival tracing reports a QRS of 132 ms', /QRS duration 132 ms/.test(arrivalEcg),
-    arrivalEcg);
-chk('and a 5 mm terminal R wave in aVR', /Terminal R wave in lead aVR of 5 mm/.test(arrivalEcg));
-chk('it reports findings and not the conclusion',
-    !/sodium.channel|blockade|toxic/i.test(arrivalEcg), arrivalEcg);
-const laterEcg = ecgAt(fold(mk([[1, 'insert_iv'], [245, 'lorazepam_bolus'],
-                                [250, 'na_bicarbonate_bolus'], [275, 'ecg_12_lead']]), 300));
-chk('after bicarbonate the QRS reads 104 ms', /QRS duration 104 ms/.test(laterEcg), laterEcg);
-chk('and the aVR R wave has come down to 2 mm', /aVR now 2 mm/.test(laterEcg));
-const vtEcg = ecgAt(fold(mk([[1, 'insert_iv'], [370, 'ecg_12_lead']]), 400));
-chk('in the wide-complex phase it reads a wide-complex tachycardia',
-    /wide-complex tachycardia/.test(vtEcg) && /180 ms/.test(vtEcg), vtEcg);
+section('the arrival tracing is a picture, and carries no reading');
+/* v0.12. The arrival ECG and the chest film are authored as images with no report text at
+   all, on instruction: reading a twelve-lead is the skill this case is testing, and a
+   payload that prints "QRS 132 ms" beside the tracing has done the measurement for the
+   resident. The consequence to hold onto is that the arrival QRS duration is now absent
+   from the interface until the debrief, except in what a consultant says.
+
+   The narrowing phase was briefly a second image and is text again: the second supplied
+   tracing is as broad as the first, so it contradicted the nurse line about the complexes
+   narrowing. The assertions below hold that reversion in place, because the failure it
+   guards against is silent. Nothing in the interface would complain about a wide tracing
+   under a narrowing line; only a person looking at both would. */
+const val = (s, id) => (s.orders[id] || []).slice(-1)[0].value;
+const arrivalEcg = val(fold(mk([[1, 'insert_iv'], [2, 'ecg_12_lead']]), 40), 'ecg_12_lead');
+chk('the arrival tracing is an image', arrivalEcg.kind === 'image', arrivalEcg.kind);
+chk('it names a picture this build ships',
+    !!PROTO.media[arrivalEcg.image], arrivalEcg.image);
+chk('and carries no report text and no components',
+    !arrivalEcg.report && !arrivalEcg.components);
+chk('it has a caption to title the viewer with', !!arrivalEcg.caption, arrivalEcg.caption);
+chk('the caption is a label rather than a reading',
+    !/wide|narrow|blockade|sinus|QRS|aVR|ms\b|toxic/i.test(arrivalEcg.caption),
+    arrivalEcg.caption);
+const laterEcg = val(fold(mk([[1, 'insert_iv'], [2, 'ecg_12_lead'], [20, 'lorazepam_bolus'],
+                              [22, 'na_bicarbonate_bolus'], [40, 'ecg_12_lead']]), 60),
+                     'ecg_12_lead');
+chk('the narrowing phase reports in words rather than showing a picture',
+    laterEcg.kind === 'report', laterEcg.kind);
+chk('and it says the tracing is narrower, which is the claim an image contradicted',
+    /narrower/.test(laterEcg.report), laterEcg.report);
+chk('and its QRS agrees with what cardiology reads on the repeat',
+    /104 ms/.test(laterEcg.report), laterEcg.report);
+chk('and its rate agrees with the phase it belongs to',
+    /115 per minute/.test(laterEcg.report), laterEcg.report);
+chk('and it still reports findings rather than the conclusion',
+    !/sodium.channel|blockade|toxic/i.test(laterEcg.report), laterEcg.report);
+const film = val(fold(mk([[1, 'xr_chest']]), 30), 'xr_chest');
+chk('the chest film is an image and is flagged normal',
+    film.kind === 'image' && film.abnormal === false, film.kind + '/' + film.abnormal);
+chk('and it is in the build', !!PROTO.media[film.image], film.image);
+chk('the two images are distinct',
+    new Set([arrivalEcg.image, film.image]).size === 2);
+chk('the second supplied tracing is not in the build, since nothing shows it',
+    !PROTO.media['diph-ecg-post-bicarb'],
+    Object.keys(PROTO.media).join(', '));
+chk('every image the case names exists, and every image it ships is used',
+    (() => {
+      const named = new Set();
+      for (const g of ['labs', 'imaging'])
+        for (const k in CASE.content_keys[g]) {
+          if (k === 'authoring_note') continue;
+          for (const r of CASE.content_keys[g][k].rules)
+            if (r.value && r.value.kind === 'image') named.add(r.value.image);
+        }
+      const shipped = new Set(Object.keys(PROTO.media));
+      return [...named].every(x => shipped.has(x)) && [...shipped].every(x => named.has(x));
+    })(),
+    'named vs shipped');
+chk('every image payload is a data URI rather than a path',
+    Object.values(PROTO.media).every(u => /^data:image\/(jpeg|png|webp|gif);base64,/.test(u)));
+
+section('the tracings the case still describes in words');
+/* Every ECG but the arrival one keeps its text. That asymmetry is the thing to see rather
+   than smooth over: the one tracing a resident has to read for themselves is the first one,
+   and everything after it reports itself. */
+const vtEcg = val(fold(mk([[1, 'insert_iv'], [370, 'ecg_12_lead']]), 400), 'ecg_12_lead');
+chk('the wide-complex phase still reports in words',
+    vtEcg.kind === 'report' && /wide-complex tachycardia/.test(vtEcg.report), vtEcg.kind);
+chk('and it still reports findings rather than the conclusion',
+    !/sodium.channel|blockade|toxic/i.test(vtEcg.report), vtEcg.report);
+chk('the intubated chest film still reports in words, because no image shows a tube',
+    val(fold(mk([[1, 'insert_iv'], [2, 'etomidate_bolus'], [3, 'rocuronium_bolus'],
+                 [4, 'intubate_rapid_sequence'], [5, 'xr_chest']]), 40), 'xr_chest')
+      .kind === 'report');
+
+section('cardiology will read the tracing, and is not prompted for');
+const cards = CASE.content_keys.consultants.consult_cardiology;
+chk('it reads the QRS out loud once the tracing has resulted',
+    cards.some(r => /132 milliseconds/.test(r.value) && /aVR/.test(r.value)),
+    'no rule names the QRS');
+chk('and reads the repeat once bicarbonate has been given',
+    cards.some(r => /104/.test(r.value)));
+chk('it hands the management back to toxicology rather than keeping it',
+    cards.every(r => !/catheter laboratory is indicated/i.test(r.value)) &&
+    cards.some(r => /toxicology/i.test(r.value)));
+chk('cardiology is never prompted for, so nothing pushes a resident toward it',
+    !A['consult_cardiology'].prompt, JSON.stringify(A['consult_cardiology'].prompt));
+chk('and it is tagged neutral, so calling it costs nothing and earns nothing',
+    A['consult_cardiology'].tag.every(r => r.value === 'neutral'));
 
 section('the panels move in the directions the treatment moves them');
 const get = (cs, label) => (cs.find(c => c.label === label) || {}).value;

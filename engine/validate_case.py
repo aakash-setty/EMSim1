@@ -870,6 +870,20 @@ def run_checks(case):
                      f"phase: {', '.join(sorted(set(unchecked)))}")
 
     # -- N: result payload shape (action catalog default_result_contract) ---
+    # Every image the pack ships, by file stem, which is the id a payload names. Built
+    # here rather than in the payload check so an unreadable media directory is one note
+    # rather than one error per rule.
+    media_dir = os.path.join(PACK.dir, "media")
+    media_ids = set()
+    if os.path.isdir(media_dir):
+        for _n in os.listdir(media_dir):
+            _stem, _ext = os.path.splitext(_n)
+            if _ext.lower() in (".jpg", ".jpeg", ".png", ".webp", ".gif"):
+                media_ids.add(_stem)
+    if media_ids:
+        notes.append(f"media: {len(media_ids)} image(s) in the pack "
+                     f"({', '.join(sorted(media_ids))})")
+
     def check_payload(where, v):
         if isinstance(v, str):
             errors.append(f"{where}: result is a prose string; authored results must be "
@@ -898,6 +912,26 @@ def run_checks(case):
         elif v["kind"] == "report":
             if not v.get("report"):
                 errors.append(f"{where}: report payload has no report text")
+        elif v["kind"] == "image":
+            # v0.11. A result that is the picture: a twelve-lead tracing, a plain film. It
+            # carries no text at all by design, so a resident reads it rather than being
+            # handed the reading. Three things have to hold and the third is the one that
+            # would fail silently: the id must be there, the file must exist in the pack's
+            # media directory, and the payload must not also carry prose, because a payload
+            # holding both an image and a report is an author changing their mind halfway
+            # and the interface would show only one of them.
+            iid = v.get("image")
+            if not iid:
+                errors.append(f"{where}: image payload names no image")
+            elif iid not in media_ids:
+                errors.append(f"{where}: image {iid!r} is not in {PACK.dir}/media "
+                              f"(found: {', '.join(sorted(media_ids)) or 'nothing'})")
+            if v.get("report") or v.get("components"):
+                errors.append(f"{where}: image payload also carries report text or "
+                              f"components; it must be the picture and nothing else")
+            if not v.get("caption"):
+                warnings.append(f"{where}: image payload has no caption, so the viewer "
+                                f"has nothing to title it with")
         else:
             errors.append(f"{where}: unknown payload kind {v['kind']!r}")
 

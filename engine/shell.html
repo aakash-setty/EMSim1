@@ -484,6 +484,39 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .leavecard p{margin:0 0 18px;color:var(--ink2);font-size:14px;line-height:1.5}
 .leavebtns{display:flex;justify-content:flex-end;gap:9px}
 
+/* The image viewer, and the thumbnail that opens it. A result that is a picture is shown
+   small in the chart, because the chart is a running list and a full tracing in it would
+   push everything else off the screen, and full size here. z-index sits above the panels
+   and below the pause and leave dialogs: the case ending or being paused should cover a
+   picture rather than the other way round. */
+.imgview{position:fixed;inset:0;z-index:280;display:grid;place-content:center;padding:22px;
+  background:rgba(14,17,22,.72)}
+.imgview.hidden{display:none}
+.imgcard{background:var(--solid);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:0 18px 46px rgba(0,0,0,.4);max-width:min(1500px,94vw);
+  display:flex;flex-direction:column;max-height:92vh}
+.imghd{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 10px 9px 14px;border-bottom:1px solid var(--rule);
+  font-size:13.5px;font-weight:600;letter-spacing:-.01em;flex:0 0 auto}
+.imgx{appearance:none;background:none;border:0;cursor:pointer;line-height:1;
+  font-size:22px;padding:0 6px;color:var(--ink2);border-radius:4px}
+.imgx:hover{color:var(--ink);background:var(--tint)}
+.imgx:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* The picture scrolls inside the card rather than the card growing past the viewport, so
+   a wide tracing on a narrow screen can be panned instead of being shrunk to illegibility. */
+.imgwrap{overflow:auto;padding:10px;flex:1 1 auto;background:#fff}
+.imgwrap img{display:block;max-width:100%;height:auto}
+
+.imgthumb{appearance:none;padding:0;border:1px solid var(--rule);border-radius:4px;
+  background:#fff;cursor:zoom-in;display:block;margin:4px 0 2px;overflow:hidden;
+  position:relative;line-height:0;width:100%;max-width:260px}
+.imgthumb img{display:block;width:100%;height:auto}
+.imgthumb:hover{border-color:var(--accent)}
+.imgthumb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.imgcap{font-size:11.5px;color:var(--ink2);line-height:1.3;margin:2px 0 0}
+/* In the results panel and the debrief there is more room than in the chart. */
+.read .imgthumb,.item .imgthumb{max-width:420px}
+
 .splash{position:fixed;inset:0;z-index:100;overflow:auto;
   background:rgba(231,238,242,.52);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   display:flex;align-items:flex-start;justify-content:center;padding:44px 20px}
@@ -973,6 +1006,24 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       <button id="leavecancel" class="btn ghost" type="button">Cancel</button>
       <button id="leaveok" class="btn" type="button">OK</button>
     </div>
+  </div>
+</div>
+
+<!-- The image viewer. A result that is a picture (a twelve-lead tracing, a plain film)
+     renders as a thumbnail in the chart and in the results panel, and opens here. Three
+     ways out, because a reader who wants the picture gone should not have to look for the
+     control: the cross, the backdrop, and Escape. It is the only overlay in the interface
+     that does not pause the case, and that is deliberate: looking at an ECG is part of
+     running the resuscitation rather than a break from it, and the clock a case authors is
+     a claim about a patient who does not wait while somebody reads a tracing. -->
+<div id="imgview" class="imgview hidden" role="dialog" aria-modal="true"
+     aria-labelledby="imgview-title">
+  <div class="imgcard" id="imgcard">
+    <div class="imghd">
+      <span id="imgview-title"></span>
+      <button id="imgclose" class="imgx" type="button" aria-label="Close image">&#215;</button>
+    </div>
+    <div class="imgwrap"><img id="imgfull" alt=""></div>
   </div>
 </div>
 

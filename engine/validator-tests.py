@@ -291,6 +291,60 @@ expect_clean("irregularly_irregular passes",
 expect_clean("a phase with no rhythm at all passes",
              lambda c: c["phases"][0].pop("rhythm", None), "rhythm")
 
+print("\n-- image results (v0.11) --")
+
+MEDIA_DIR = os.path.join(V.PACK.dir, "media")
+MEDIA_IDS = sorted(
+    os.path.splitext(n)[0] for n in (os.listdir(MEDIA_DIR) if os.path.isdir(MEDIA_DIR) else [])
+    if os.path.splitext(n)[1].lower() in (".jpg", ".jpeg", ".png", ".webp", ".gif"))
+
+
+def imaging_rule(c):
+    """The first authored imaging rule in this pack, which is what an image replaces."""
+    for k, block in c["content_keys"]["imaging"].items():
+        if k == "authoring_note":
+            continue
+        return block["rules"][0]
+    raise SystemExit("no imaging rule")
+
+
+def img(c, **kw):
+    v = {"kind": "image", "abnormal": True, "image": "no_such_image", "caption": "Tracing"}
+    v.update(kw)
+    imaging_rule(c)["value"] = v
+    return v
+
+
+# The id is the whole payload. Without it the interface has nothing to open, and the
+# result would render as an empty frame rather than as an error anyone could act on.
+expect("an image payload with no id is rejected",
+       lambda c: img(c, image=None), "names no image")
+# The one that would ship. The case validates, the build runs, and the gap only appears
+# when a resident orders the study and gets a placeholder instead of a tracing.
+expect("an image naming a file the pack does not contain is rejected",
+       lambda c: img(c), "is not in")
+expect("an image payload that also carries report text is rejected",
+       lambda c: img(c, report="Sinus tachycardia."), "the picture and nothing else")
+expect("an image payload that also carries components is rejected",
+       lambda c: img(c, components=[{"label": "QRS", "value": "132 ms",
+                                     "reference_range": "< 120 ms", "abnormal": True}]),
+       "the picture and nothing else")
+expect("an image with no caption warns",
+       lambda c: img(c, caption=None), "nothing to title it with", "warnings")
+expect("an image payload that omits abnormal is rejected",
+       lambda c: imaging_rule(c).__setitem__(
+           "value", {"kind": "image", "image": "no_such_image", "caption": "Tracing"}),
+       "omits abnormal")
+if MEDIA_IDS:
+    # The inverse, and the reason it is here: rule V shipped once warning on correct
+    # authoring. A pack that does carry media has to pass with its own file named.
+    expect_clean("an image naming a file the pack does contain passes",
+                 lambda c: img(c, image=MEDIA_IDS[0]), "is not in")
+    expect_clean("that same image draws no caption warning",
+                 lambda c: img(c, image=MEDIA_IDS[0]), "nothing to title it with", "warnings")
+else:
+    print("  --   this pack carries no media, so the passing case is not exercised here")
+
 print("\n-- the summary's inputs and the handoff's diagnoses (v0.9) --")
 expect("a key topic that is not a topic is rejected",
        lambda c: c["interview"].__setitem__("key_topics", ["no_such_topic"]),

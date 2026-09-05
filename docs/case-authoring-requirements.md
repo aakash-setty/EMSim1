@@ -1036,7 +1036,28 @@ Results are structured, not prose:
  "comment": "optional interpretive line"}
 ```
 
-`kind` is `panel` for multi-analyte results, `value` for single ones, `report` for imaging and ECG narrative.
+`kind` is `panel` for multi-analyte results, `value` for single ones, `report` for imaging and ECG narrative, and `image` for a study shown as a picture.
+
+**Showing the study instead of describing it.** Put the file in `media/` inside the pack, named for the id the payload uses, and author:
+
+```json
+{"kind": "image", "abnormal": true,
+ "image": "diph-ecg-arrival", "caption": "Twelve-lead ECG"}
+```
+
+Formats are `.jpg`, `.jpeg`, `.png`, `.webp` and `.gif`. Every file in `media/` is inlined into the build as a data URI whether or not a payload refers to it, so it costs build size permanently: put a file there when the case shows it and not before. Resize and recompress first; a twelve-lead scanned at full resolution is several megabytes and reads no better at 1400 pixels wide.
+
+**An image payload may not also carry `report` text or `components`**, and the validator rejects one that does. Decide which the study is. A `caption` is required in practice, since the viewer has nothing to title itself with otherwise, and the validator warns when it is missing.
+
+**A caption is a caption, not a reading.** The findings-not-conclusions rule below applies with more force here, because the whole point of showing a tracing is that the resident reads it. "Twelve-lead ECG" is a caption. So are the machine measurements a real tracing prints along its top, which a resident would have in front of them at the bedside. "Wide-complex tachycardia with a terminal R in aVR" is the answer to the question the case is asking.
+
+**Nothing in this tool chain can check what an image shows.** The validator confirms the file exists and the payload is well formed. It cannot see that the tracing contradicts the sentence beside it, and neither can the scenario runner or the engine assertions, because to every one of them the payload is valid and the study resulted. An image is the only authored content in a case whose correctness rests entirely on a person having looked at it.
+
+**So decide three things before you use one, and write the answers down.** Whether the picture matches the phase it is assigned to, because a tracing that contradicts what the nurse says is worse than no tracing, and worse in a way no test will report. Whether removing the report text takes a number out of the interface that the case needs a resident to be able to read, in which case it belongs in the caption. And whether some studies in the case describing themselves in text while others do not is a choice you can defend, since the asymmetry is what a learner will notice. DIPH hit all three: it shipped a wide-complex tracing under a line saying the complexes had narrowed, passed every check, and was caught by a person reading the picture and the sentence together. Section 2.9 of its review packet is the worked example.
+
+**A file in `media/` that no payload names still costs build size**, because the build inlines the directory rather than the references. Keep source images the case does not show outside it.
+
+**Provenance is yours to establish.** An image is embedded in a build that gets distributed as one file. Do not put anything in `media/` whose source you cannot account for.
 
 **Author findings, not conclusions, and keep them short.** A report that ends "interpretation: cardiogenic pulmonary edema", or a tracing that explains that the ST depression is rate-related, has done the work the case was setting. Put that reasoning in the study's debrief note instead, where the learner meets it after committing to an answer rather than before. Length is the same problem in a quieter form: a resident who reads eight sentences to find the ejection fraction is spending attention on comprehension rather than on management, and because length reads as importance, a long report about a negative study misleads. Cut the views obtained, the secondary measures that merely agree with the primary one, and the negatives nobody asked about.
 

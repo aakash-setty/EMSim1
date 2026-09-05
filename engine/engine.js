@@ -200,6 +200,36 @@ function buildActions(pack){
   return out;
 }
 
+/* ---------- the patient's pronouns ----------
+   Strings that are written once and shown for every case cannot name a sex: the nurse's
+   idle line and the catalog's default prerequisite failure messages are the same words
+   whoever is on the trolley. They said "he" until v0.11, which was wrong in the two packs
+   whose patient is a woman, and the two packs that noticed worked around it by authoring
+   a prerequisite override on every intravenous action in the case: MGCA carries about
+   forty near-identical failure messages whose only purpose is a pronoun.
+
+   Shared strings now carry tokens and this substitutes them from `patient.sex` when the
+   case is bound. Authored case text contains no tokens and passes through untouched, so
+   nothing an author wrote is rewritten by this.
+
+   Verb agreement is why the contraction is inside the token: "{He's} all yours" can become
+   "They're all yours" for a case that states no sex, where "{He} is" could not. Any shared
+   string needing a present-tense verb after a bare subject pronoun has to be written around
+   that, and the three in the catalog are. */
+const PRONOUNS={
+  male:   {He:'He',   he:'he',   His:'His',   his:'his',   Him:'Him',  him:'him',
+           "He's":"He's",   "he's":"he's",   himself:'himself'},
+  female: {He:'She',  he:'she',  His:'Her',   his:'her',   Him:'Her',  him:'her',
+           "He's":"She's",  "he's":"she's",  himself:'herself'},
+  _:      {He:'They', he:'they', His:'Their', his:'their', Him:'Them', him:'them',
+           "He's":"They're","he's":"they're",himself:'themselves'},
+};
+function pron(text,sex){
+  if(typeof text!=='string'||text.indexOf('{')<0) return text;
+  const t=PRONOUNS[String(sex||'').toLowerCase()]||PRONOUNS._;
+  return text.replace(/\{(He's|he's|He|he|His|his|Him|him|himself)\}/g,(m,k)=>t[k]);
+}
+
 /* let-bindings inside an eval are not visible to the caller, so the test harness
    reads them through this instead of touching the variables. */
 function engineState(){ return {CASE,PROTO,PACK,PHASE,ACT,FU,CK,CONTENT,GENERAL_STATUS}; }
@@ -225,8 +255,21 @@ function selectCase(ref){
        primary, and credited when listed with it. */
     addlDx: PACK.addlDx||{},
     promptCap: PACK.promptCap,
+    /* v0.11. The pack's images, id to data URI, inlined at build time from
+       cases/<PREFIX>/media/. Empty for a case that ships none. */
+    media: PACK.media||{},
     buildNotes: PACK.buildNotes
   });
+  /* Substitute the patient's pronouns into every string this build shares between cases.
+     Done here rather than in mergeAction so it happens exactly once per bind, and done on
+     PROTO rather than SHARED so binding a second case does not read the first one's
+     substitutions. mergeAction already copies each prerequisite with Object.assign, so
+     writing to failure_message here cannot reach back into the catalog. */
+  const SEX=(CASE.patient||{}).sex;
+  PROTO.nurseIdle=pron(PROTO.nurseIdle,SEX);
+  for(const _id in PROTO.actions)
+    for(const _p of (PROTO.actions[_id].prerequisites||[]))
+      _p.failure_message=pron(_p.failure_message,SEX);
   PHASE={}; CASE.phases.forEach(p=>PHASE[p.id]=p);
   ACT=PROTO.actions;
   FU={}; (CASE.follow_ups||[]).forEach(f=>FU[f.id]=f);

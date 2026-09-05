@@ -43,17 +43,17 @@ def add(display, tab, group, **kw):
 # the design puts in scope. Written in the five-predicate condition language.
 PRE_VASCULAR = [{
     "when": "flag iv_access set OR flag central_access set OR flag io_access set",
-    "failure_message": "He doesn't have a line yet. Do you want me to get IV access first?",
+    "failure_message": "No line in {him} yet. Do you want me to get IV access first?",
     "source": "derived",
 }]
 PRE_RSI = [{
     "when": "flag sedation_given set AND flag paralytic_given set",
-    "failure_message": "He isn't sedated or paralyzed yet. We need induction and a paralytic before we tube him.",
+    "failure_message": "{He's} not sedated or paralysed yet. We need induction and a paralytic before we tube {him}.",
     "source": "system-design-v2.md 6.1",
 }]
 PRE_PADS = [{
     "when": "flag pacing_pads_placed set",
-    "failure_message": "Pads aren't on him yet. Want me to get them on?",
+    "failure_message": "Pads aren't on {him} yet. Want me to get them on?",
     "source": "system-design-v2.md 6.1",
 }]
 PRE_LP = [{
@@ -300,6 +300,17 @@ AUTHOR_ADDED = {"Meds - Vasoactive Agents": ["Dobutamine drip"],
 for g, items in AUTHOR_ADDED.items():
     MEDS.setdefault(g, [])
     MEDS[g] = sorted(set(MEDS[g] + items))
+
+# Default failure messages carry pronoun tokens ({He's}, {him}) rather than a sex, because
+# one catalog serves every case and two of the four packs have a woman on the trolley. They
+# are substituted at bind time from patient.sex; see PRONOUNS and pron() in engine.js. Until
+# v0.11 these said "he", and the packs that noticed worked around it by authoring a
+# prerequisite override on every intravenous action, which is why MGCA carries about forty
+# near-identical failure messages whose only difference from this one is a pronoun.
+#
+# Write these so that no bare subject pronoun is followed by a present-tense verb, because
+# the fallback for a case that states no sex is singular they and "they doesn't" is not a
+# sentence. Hence "No line in {him} yet" rather than "{He} hasn't got a line in yet".
 
 # Routes that do not need vascular access. DERIVED, not transcribed: the
 # screenshots carry no route information. Author confirmation required.

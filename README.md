@@ -67,6 +67,18 @@ is `CHFE` (congestive heart failure exacerbation):
 | `CHFE-review-matrix.md` | generated | the physician's review artifact |
 | `CHFE-review-packet.md` | authored | what the reviewing physician reads first |
 
+A case that shows a picture also carries a `media/` directory beside those files: one
+image per file, `.jpg`, `.jpeg`, `.png`, `.webp` or `.gif`, named by the id an authored
+payload refers to (`media/diph-ecg-arrival.jpg` is the id `diph-ecg-arrival`). The build
+inlines every file in it as a data URI, so an image costs build size permanently and
+belongs in the pack only if the case shows it: a source image the case does not display goes
+somewhere else, by convention a sibling `assets/`. `DIPH` is the only pack that has either.
+
+**An image is the one authored content nothing here can check.** The validator can confirm
+the file exists and the payload is well formed; it cannot see that the tracing contradicts
+the sentence next to it. That failure has already happened once, in DIPH, and section 2.9 of
+its review packet is the worked example.
+
 A case that uses time-guarded transitions carries one more generated file,
 `<PREFIX>-deterioration-timeline.md`: every timed exit with its guard and the prompts
 that precede it, the trajectory a resident sees if they do nothing at all, and every
@@ -355,14 +367,18 @@ assumptions. `DIPH-SEED.md` section 9 is that record and it is the first thing t
 mother who is the only historian, and the engine's interview is patient-facing. It was
 converted by having the mother answer in the patient's place with no engine change, which
 works and has consequences: the history no longer disappears when the patient's alertness
-drops, because the person answering is not the patient. Its four images could not be carried
-at all, because a result payload is structured text.
+drops, because the person answering is not the patient. Two of its four images are carried by
+the image payload the engine gained for it: the arrival twelve-lead and the chest radiograph.
+The second tracing was tried and taken out, because it is as broad as the first and
+contradicted the case's own line about the complexes narrowing, and the head CT is unused
+because nothing in the case orders one.
 
 **It exercised constructs no earlier pack had used, and found five gaps in the tooling.**
 An unguarded time-guarded transition (authoring 5.1's scheduled natural history), a tag
 gated on a study having resulted rather than on a flag, and four vital effects sharing one
-key. Section 10 of `DIPH-review-packet.md` lists what each gap was. All five fixes were
-verified against the other three packs, which pass unchanged.
+key. Section 10 of `DIPH-review-packet.md` lists what each gap was, and what the engine
+gained for it. All the fixes were verified against the other three packs, which pass
+unchanged.
 
 ## Adding a case
 

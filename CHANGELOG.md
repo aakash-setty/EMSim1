@@ -5,6 +5,102 @@ is usable with learners.
 
 ---
 
+## v0.12: a result can be the picture
+
+**A case whose pivot is a tracing could describe the tracing and not show it.** Every result
+payload was structured text, so the four images that came with the diphenhydramine case were
+converted into prose reports and the images themselves went unused. That is the wrong way
+round for a study a resident is supposed to read.
+
+**Results gained an `image` kind.** A pack may carry a `media/` directory; the build inlines
+every file in it as a data URI keyed by the filename stem, and a payload of
+`{"kind": "image", "image": "<stem>", "caption": "...", "abnormal": true}` renders as a
+thumbnail wherever a result renders. Clicking it opens a viewer that closes on its cross, on
+a click outside the frame, or on Escape, and drops the image source when it closes so a
+1400-pixel tracing is not held in the layout behind a hidden dialog.
+
+**An image payload carries the picture and nothing else.** It may not also carry `report`
+text or `components`, and the validator errors when it does, because the interface would
+render one of them and an author who wrote both meant something. The validator also rejects
+an image that names no file and an image whose file is not in the pack, and warns when there
+is no caption for the viewer to use as a title. `validator-tests.py` gained six negative
+tests for those and a seventh asserting that a correctly authored image draws nothing; the
+passing case is exercised only in a pack that carries media, and says so when it is skipped.
+
+**The caption is a caption.** The findings-not-conclusions rule that governs report text
+governs captions with more force, since showing the tracing is the whole point. The
+authoring requirements say so, and say the three things to settle before using an image: that
+the picture matches the phase it is assigned to, that removing the report text has not taken
+a number out of the interface the case needs a resident to read, and that a pack showing some
+studies and describing others is a decision rather than an artefact of which files existed.
+
+**DIPH uses it for two of its four images**: the arrival twelve-lead and the chest
+radiograph, both with no words. The head CT is unused because nothing in the case orders one.
+
+**The second tracing was tried in the narrowing phase and taken out, and that is the lesson
+of this release.** Both supplied tracings are wide-complex, so a resident who gave bicarbonate
+heard the nurse say the complexes had narrowed and then opened a picture that did not look
+narrowed. Nothing in the tool chain could have caught it: the payload was valid, the file
+existed, every scenario passed. Only a person looking at the picture and the sentence together
+would see it. **An image is the one authored content this project cannot check**, and the
+authoring requirements now say so and say what to settle before using one. That phase reports
+in text again; the file is kept in `cases/DIPH/assets/` rather than `media/`, because the
+build inlines that directory whole and an unnamed file in it costs size for nothing.
+
+Two second-order effects, both on the case's sign-off checklist. Removing the arrival report
+text means the QRS of 132 ms is now spoken only by the cardiology consult and the debrief.
+And the pack is asymmetric on purpose: the arrival tracing is the one study a resident must
+read for themselves, and every tracing after it describes itself.
+
+Build size goes from 2.7 MB to 3.4 MB, all of it those two images. The other three packs
+carry no media and are unchanged.
+
+---
+
+## v0.11: the interface stops assuming the patient is a man
+
+**The nurse said "He's all yours" to every learner, in two packs whose patient is a woman.**
+So did the catalog's three default prerequisite failure messages, and so did the interview
+transcript heading. Every string a build shares across its cases was written once, for a
+man, and shown for all of them.
+
+**Shared strings now carry pronoun tokens**, substituted at bind time from `patient.sex` by
+`pron()` in `engine.js`. Male, female, and singular they for a case that states no sex. The
+substitution happens on `PROTO` rather than on `SHARED`, so binding a second case cannot
+inherit the first one's pronouns, and `mergeAction` already copies each prerequisite, so
+writing to a failure message cannot reach back into the catalog. Authored case text contains
+no tokens and is never rewritten.
+
+The contraction is inside the token, `{He's}` rather than `{He}` plus "is", because the
+fallback for an unstated sex is singular they and "they is" is not a sentence. Shared strings
+therefore have to be written so no bare subject pronoun is followed by a present-tense verb,
+which is why the vascular-access default now reads "No line in {him} yet" rather than "{He}
+hasn't got a line in yet". The comment in `build_catalog.py` says so, because the next person
+to add a default message will hit it.
+
+**This removes about eighty lines of workaround from two packs.** MGCA and CHFE each author a
+prerequisite override on nearly every intravenous action whose only difference from the
+catalog default is a pronoun: forty near-identical failure messages in MGCA alone. They are
+left in place, because they are authored text and now correct either way, but a new case no
+longer needs them. DIPH never had them, which is why it was the pack showing the defect.
+
+**The interview transcript heading is neutral rather than tokenised**, and the difference is
+the point. "What he told you" became "What you were told" rather than "What she told you",
+because a case may author a collateral historian and DIPH does: the person answering is the
+patient's mother, so the answerer's sex is not `patient.sex` and tokenising would have been
+the obvious fix and the wrong one. "Ask the patient", above it, still assumes the patient
+answers, and that is a case-level question rather than a string.
+
+**A case-agnostic assertion now guards it.** Five checks per pack: no shared string survives
+with an unsubstituted token, nothing shared calls a female patient he or a male patient she,
+every pack states a sex, and rebinding does not leak one case's pronouns into another. 314,
+324, 398 and 402 assertions.
+
+**`sim_runner.py` substitutes too**, so a blocked-action line in a scenario log is the line
+the learner would actually see rather than one with a token in it.
+
+---
+
 ## v0.10: a fourth case, converted rather than authored
 
 **`cases/DIPH/`: diphenhydramine overdose with sodium-channel blockade.** Eighteen year old

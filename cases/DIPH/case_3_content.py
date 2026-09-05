@@ -46,6 +46,39 @@ def val(label, value, unit, ref, abnormal, comment=None, **kw):
     return d
 
 
+# ------------------------------------------------------------------ images
+# Three images live in cases/DIPH/media/ and are inlined as data URIs at build time. The
+# ids below are the file stems. THE ASSIGNMENT OF THE TWO TRACINGS IS THE ONE THING HERE
+# MOST LIKELY TO BE WRONG AND IT IS DELIBERATELY ONE LINE: swapping the two values below
+# swaps them everywhere.
+#
+# ONE tracing is a picture, and that is a decision rather than an oversight.
+#
+# The source supplied two ECGs. Both are wide-complex tachycardias to the eye that drafted
+# this, and the second was briefly assigned to the narrowing phase, where the case describes
+# a sinus tachycardia at 115 with a QRS of 104 ms that is NARROWER than the arrival tracing.
+# It does not look narrower. A picture that contradicts the nurse standing next to it is
+# worse than no picture, so the narrowing phase went back to a text report on Aakash Setty's
+# instruction, 5 September 2026. `diph-ecg-post-bicarb.jpg` is kept in cases/DIPH/assets/
+# rather than in media/, because the build inlines everything in media/ whether a payload
+# names it or not. See review packet section 2.9.
+#
+# What the reviewer is still being asked to confirm: that the remaining image is in fact the
+# arrival tracing rather than the repeat, which the source document does not establish, and
+# that the arrival tracing is compatible with what the case says about it, which is a sinus
+# tachycardia at 135 with a QRS of 132 ms.
+ECG_ARRIVAL = "diph-ecg-arrival"
+CXR = "diph-cxr"
+
+
+def image(image_id, caption, abnormal=True, **kw):
+    """A result that IS the picture. No report text, by instruction: these carry no
+    interpretation at all, so a resident reads the tracing themselves or asks cardiology."""
+    d = {"kind": "image", "abnormal": abnormal, "image": image_id, "caption": caption}
+    d.update(kw)
+    return d
+
+
 def report(text, abnormal=True, comment=None):
     d = {"kind": "report", "abnormal": abnormal, "report": text}
     if comment:
@@ -506,10 +539,26 @@ IMAGING = {
    "Section 11.4, kind report: findings and not conclusions. The words sodium-channel blockade "
    "do not appear in any tracing below; they appear in the debrief note on the ECG action, "
    "where the learner meets them after committing to an interpretation rather than before.\n\n"
-   "The source document carries four images: a near-normal chest radiograph, a normal "
-   "non-contrast head CT, and two twelve-lead tracings showing wide-complex tachycardia. None "
-   "of them is used. The engine has no way to display an image in a result, and the provenance "
-   "of the four is not established in the document. Every report below is text."),
+   "Two of the source document's four images ARE used, since v0.12: the arrival twelve-lead "
+   "and the chest radiograph, inlined from cases/DIPH/media/ and shown as a thumbnail in the "
+   "chart that opens full size. The head CT is not, because nothing in this case turns on "
+   "looking at it, and the second tracing is not, for the reason below.\n\n"
+   "Both carry NO report text at all, by instruction. A twelve-lead tracing is a picture and "
+   "reading it is the skill; handing a resident 'QRS duration 132 ms' beside it does the "
+   "measurement for them, and this case is built around whether they look. What follows from "
+   "that, and is worth knowing before playing it: the arrival QRS duration appears nowhere in "
+   "the interface until the debrief, except in what a consultant says. consult_cardiology "
+   "will read the tracing for a resident who asks, which is the intended escape hatch and is "
+   "deliberately not prompted for.\n\n"
+   "Every other tracing in this case is text, including the narrowing phase, which was "
+   "briefly an image and was reverted: the second supplied tracing is as broad as the first "
+   "and contradicted the nurse line about the complexes narrowing. So the arrival tracing is "
+   "the one study in this case a resident has to read for themselves, and everything after it "
+   "reports itself. That asymmetry is deliberate and it is the thing to sign off. See review "
+   "packet section 2.9.\n\n"
+   "The provenance of the source images is still not established in the document, which cites "
+   "an ACEP toxicology case file and thepoisonreview.com in its reference list. That question "
+   "was avoidable while the images were unused and is not avoidable now."),
 
  "ecg_12_lead": {
    "changes_with_state": True,
@@ -530,14 +579,16 @@ IMAGING = {
        "Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms. Terminal R wave "
        "in aVR now 1 mm with an R to S ratio below 0.7. Normal QRS axis. QTc 445 ms. No ST "
        "elevation.")},
+     # Text, not a picture. Both supplied tracings are wide-complex; neither is narrow, so
+     # showing one here put a broad tracing under the nurse's line about the complexes
+     # narrowing. Reverted on Aakash Setty's instruction, 5 September 2026. The numbers are
+     # the ones consult_cardiology already reads aloud on the repeat tracing, and the rate is
+     # this phase's own authored heart rate.
      {"when": "phase is stabilizing", "value": report(
        "Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms, narrower than "
-       "on the previous tracing. Terminal R wave in aVR now 2 mm. QTc 460 ms. No ST elevation.")},
-     {"when": None, "value": report(
-       "Sinus tachycardia at approximately 135 per minute. QRS duration 132 ms. Terminal R wave "
-       "in lead aVR of 5 mm, with an R to S ratio in aVR greater than 0.7. Rightward deviation "
-       "of the terminal QRS axis. QTc 495 ms. No ST elevation and no ST depression.",
-       comment=None)}],
+       "on the arrival tracing. Terminal R wave in aVR now 2 mm with an R to S ratio below "
+       "0.7. QTc 470 ms, still prolonged. No ST elevation.")},
+     {"when": None, "value": image(ECG_ARRIVAL, "Twelve-lead ECG")}],
    "verify": (
      "The arrival tracing is the case. The author's narrative says the examinee 'should "
      "recognize the lack of a significant R wave in lead aVR', and her own teaching text four "
@@ -555,9 +606,7 @@ IMAGING = {
      {"when": "flag airway_protected set", "value": report(
        "Endotracheal tube tip 4 cm above the carina. Lungs clear. Heart size normal. No "
        "pneumothorax.")},
-     {"when": None, "value": report(
-       "Lungs clear. No consolidation, no effusion, no pneumothorax. Cardiomediastinal "
-       "silhouette normal. No free subdiaphragmatic gas.", abnormal=False)}]},
+     {"when": None, "value": image(CXR, "Chest radiograph", abnormal=False)}]},
 
  "ct_head": {
    "changes_with_state": False,
@@ -693,18 +742,50 @@ CONSULTANTS = {
               "overdose you have not characterised.")}],
 
  "consult_cardiology": [
+   # The escape hatch for a resident who cannot read the tracing, and it is deliberately not
+   # prompted for and tagged neutral: the case wants them to look first. Cardiology reads the
+   # ECG out loud, which is the one thing the images cannot do for themselves, and then hands
+   # the management back, because the management is toxicological.
+   {"when": "phase is wide_complex_tachycardia OR phase is pulseless_vt",
+    "value": ("Cardiology fellow, looking at the monitor: that is a broad complex tachycardia "
+              "and I can see why you called, but I do not think this is mine. A young heart "
+              "with no structural disease does not do this on its own. In a poisoning it is "
+              "the sodium channel, and the drug for it is bicarbonate rather than anything "
+              "from my shelf.\n\nDo not give her amiodarone. Do not give her procainamide. "
+              "If she loses her pressure, shock her, and give the bicarbonate either way. Call "
+              "toxicology, not me.")},
+   {"when": "study ecg_12_lead resulted AND flag bicarb_given set",
+    "value": ("Cardiology fellow: I have both tracings. Walk through them with me.\n\nOn the "
+              "first one the rate is about 135 and it is sinus, so the tachycardia itself is "
+              "not the problem. The QRS is 132 milliseconds, which is wide for a young woman "
+              "with no bundle branch block, and look at aVR: there is a terminal R wave of "
+              "about 5 millimetres and the R to S ratio there is over 0.7. The terminal axis "
+              "is rightward. That combination is sodium-channel blockade and it is the same "
+              "picture a tricyclic gives you.\n\nOn the repeat the QRS is about 104 and the "
+              "aVR R wave is down to a couple of millimetres, so whatever you gave is working. "
+              "Keep going and keep repeating it. The QTc is still long, so no QT-prolonging "
+              "drugs and keep her potassium and magnesium up.\n\nNothing here needs a "
+              "cardiologist. It needs toxicology and it needs a monitored bed.")},
    {"when": "study ecg_12_lead resulted",
-    "value": ("Cardiology fellow: that is a wide complex with a terminal R in aVR and it is a "
-              "toxicological problem rather than a cardiac one. I have nothing to add to sodium "
-              "bicarbonate and I would call toxicology rather than me. No indication for the "
-              "catheter laboratory and no indication for an antiarrhythmic. If she needs "
-              "electricity because she loses her pressure, that is standard, but the drug that "
-              "fixes the substrate is bicarbonate.")},
+    "value": ("Cardiology fellow: let me read it to you, because there are three things on it "
+              "and only one is obvious.\n\nThe rate is about 135 and it is sinus. The QRS is "
+              "132 milliseconds, which is wide, and there is no bundle branch morphology to "
+              "explain it in an eighteen year old. Now look at aVR specifically: terminal R "
+              "wave about 5 millimetres, R to S ratio over 0.7, and the terminal part of the "
+              "QRS is swinging rightward. The QTc is about 495.\n\nThat is sodium-channel "
+              "blockade, and it is the same tracing a tricyclic overdose gives you. It is not "
+              "ischaemia, it is not a bundle, and it is not something for the catheter "
+              "laboratory. The treatment is sodium bicarbonate and the call is to toxicology "
+              "rather than to me. Repeat the tracing after each dose and watch that QRS.")},
+   {"when": "study ecg_12_lead ordered",
+    "value": ("Cardiology fellow: the tracing is not through yet. Send it to me when it is and "
+              "I will read it with you. A sinus tachycardia in a poisoned teenager is not a "
+              "cardiology problem, but if the QRS is wide I will tell you what I see.")},
    {"when": None,
-    "value": ("Cardiology fellow: send me the tracing and I will look at it, but a sinus "
-              "tachycardia in a poisoned teenager is not a cardiology problem. If she has a "
-              "wide QRS from a sodium-channel blocker, the treatment is bicarbonate and the "
-              "call is to toxicology.")}],
+    "value": ("Cardiology fellow: get a twelve-lead and send it to me and I will look at it "
+              "with you. There is nothing I can say about a heart I have no tracing of. If it "
+              "turns out to be a wide QRS from a sodium-channel blocker, the treatment is "
+              "bicarbonate and the call is to toxicology.")}],
 
  "consult_renal": [
    {"when": "study creatine_kinase_ck resulted",

@@ -242,6 +242,56 @@ has a CK of 540, and rocuronium is available. The hyperkalaemic response to succ
 is well described in established rhabdomyolysis and is not well quantified in the first
 hours of drug-induced muscle injury, so the note says the claim is soft and says why.
 
+### 2.9 One tracing is a picture. The second was tried there and taken out
+
+The arrival twelve-lead and the chest radiograph are shown as pictures with no words at all.
+A resident who orders one gets a thumbnail in the chart, opens it, and reads it. Nothing tells
+them what it shows. Cardiology will read a tracing aloud if called, and calling cardiology is
+prompted nowhere.
+
+**The second tracing was briefly shown in the narrowing phase and has been taken back out.**
+Both files you supplied are wide-complex tachycardias. Neither is narrow, and by eye the
+second is at least as broad as the first, so a resident who gave bicarbonate heard the nurse
+say
+
+> The complexes have narrowed and her rate's coming down. That's since the bicarb went in.
+
+and then opened a picture that did not look narrowed. The interface was contradicting itself,
+and a picture that contradicts the person standing next to it is worse than no picture,
+because the picture is the thing a resident is being taught to trust. That phase reports in
+text again, as it did before the images went in. Reverted on Aakash Setty's instruction,
+5 September 2026.
+
+I cannot measure a QRS off a scanned tracing whose calibration and paper speed are not
+readable from the image, so that reading is qualitative and you should overrule it if you
+disagree. If you do, the file is kept in `cases/DIPH/assets/` with a note saying how to put it
+back; it is out of `media/` because the build inlines that directory whether or not a payload
+names anything in it.
+
+**The restored text is not your wording and was not recoverable.** The original report string
+was overwritten when the image went in, and the repository is not under version control, so
+what is there now was rewritten to agree with the numbers the case states elsewhere: 115 per
+minute, which is this phase's own authored heart rate, a QRS of 104 ms and a terminal R in aVR
+of 2 mm, which are what `consult_cardiology` already reads aloud on the repeat tracing, and a
+QTc of 470 that is still prolonged. Read it as new text rather than as restored text.
+
+**Two things the remaining image still costs you.** The arrival ECG used to report a QRS of
+132 ms in words and no longer does, so on the likeliest path that number reaches a resident
+only through the cardiology consult or the debrief. If you want them to be able to read 132
+without calling anyone, the tracing needs a caption carrying the machine measurements, which
+is what a real twelve-lead prints along its top and is not interpretation. And the pack is now
+asymmetric on purpose: the arrival tracing is the one study in this case a resident has to
+read for themselves, and every tracing after it describes itself in detail. That is
+defensible, and it is a decision rather than an accident, but it is yours to sign.
+
+**Provenance is still open.** It is not clear from your document whether the arrival tracing
+and the radiograph are your own or are taken from the ACEP toxicology case file or
+thepoisonreview.com that your reference list cites. They are in the build now, and the build
+is distributed as a single HTML file with the images embedded in it, so this needs an answer
+before the pack goes anywhere.
+
+The head CT is unused. Nothing in the case orders one.
+
 ---
 
 ## 3. The historian is the mother, and that is a departure from the platform
@@ -371,13 +421,16 @@ tracing. The urine screen reports a positive tricyclic result and the words "fal
 appear only in the debrief note, so a resident who anchors on it does so and then reads why
 they should not have.
 
-**Your four images are not used.** The engine cannot display an image in a result: payloads
-are structured text. That is a real loss for a case whose pivot is a tracing, and it is
-logged as an engine change request rather than worked around. It also sidesteps a question
-this packet cannot answer, which is what the provenance of the two ECG tracings, the chest
-radiograph and the head CT actually is: your reference list cites an ACEP toxicology case
-file and thepoisonreview.com, and it is not clear from the document which of the four are
-yours. **No text from your document is reproduced verbatim in the case file**, and the short
+**Two of your four images are now used, and they carry no words.** The engine gained an
+image payload for this case, so the arrival twelve-lead and the chest radiograph are shown as
+pictures and nothing else. The second tracing was tried in the narrowing phase and taken out,
+for the reason in section 2.9. The head CT is unused, because nothing in the case orders one.
+The images also sharpen a
+question this packet cannot answer, which is what the provenance of the two ECG tracings, the
+chest radiograph and the head CT actually is: your reference list cites an ACEP toxicology
+case file and thepoisonreview.com, and it is not clear from the document which of the four
+are yours. They are embedded in the distributed build, so the answer matters more now than
+it did. **No text from your document is reproduced verbatim in the case file**, and the short
 quotations in the seed are marked as quotations so you can check the conversion against what
 you wrote.
 
@@ -415,9 +468,15 @@ unchanged.
 - No core or rectal temperature measurement. Temperature appears on the monitor once one is
   attached and cannot be ordered, so "check a rectal temperature in a significantly agitated
   patient" is carried in a debrief note rather than taught mechanically.
-- The catalog's default vascular-access failure message reads "He doesn't have a line yet",
-  which is wrong for this patient. A gendered default in a shared catalog, with no
-  case-level fix.
+- **Fixed.** The catalog's default failure messages, and the nurse's idle line, were written
+  for a man: "He's all yours", "He doesn't have a line yet". This case inherited all of them,
+  because unlike CHFE and MGCA it does not author a prerequisite override on every
+  intravenous action purely to change a pronoun. Shared strings now carry pronoun tokens
+  substituted from `patient.sex` at bind time, so this patient's nurse says "She's all
+  yours" and "No line in her yet". The interview transcript heading, which read "What he
+  told you", is now "What you were told" rather than "What she told you", because in this
+  case the person answering is her mother rather than the patient and the answerer's sex is
+  not the patient's.
 
 ---
 
@@ -434,9 +493,9 @@ that language.
 
 ## 10. Engine and tooling changes this case required
 
-Four, and each was a gap that existed before this case and was invisible until it used a
-construct no other pack had used. All four were verified against the other three packs,
-which pass unchanged.
+Six. Five were gaps that existed before this case and were invisible until it used a
+construct no other pack had used; the sixth is a capability the engine did not have. All six
+were verified against the other three packs, which pass unchanged.
 
 1. **`sim_runner.py` could not walk an unguarded time transition.** Both of its transition
    loops skipped any rule with a falsy `when`, which silently made authoring section 5.1's
@@ -456,6 +515,18 @@ which pass unchanged.
 5. **`expand_interview_variants.py` wrote its expansion into the case JSON** for every pack
    except AFRVR, which meant a pack built by a script silently lost it on the next build.
    The test is now whether the pack has a `case_4_interview.py`, not which pack it is.
+6. **The engine could not show a picture.** Every result payload was structured text, so a
+   case whose pivot is a tracing could describe the tracing and not show it. There is now an
+   `image` payload kind: the pack's `media/` directory is inlined into the build as data
+   URIs, a result renders as a thumbnail in the chart, and clicking it opens a viewer that
+   closes on the cross, on a click outside it, or on Escape. The validator rejects an image
+   that names no file, an image whose file is not in the pack, and an image that also
+   carries prose, and warns when it has no caption; six negative tests cover those, and a
+   seventh asserts a correctly authored image draws nothing. The other three packs carry no
+   media and are unaffected. **The directory is inlined whole**, so a file in it that no
+   payload names costs build size for nothing: that is why the second tracing sits in
+   `cases/DIPH/assets/` rather than in `media/`, and why one of this pack's own assertions
+   is that nothing shipped goes unused.
 
 One defect in this case was found by none of the tooling and only by a case assertion: a
 condition of the form `A OR B OR C AND NOT D` parses as `A OR B OR (C AND NOT D)`, because
@@ -524,7 +595,17 @@ a multi-term OR is ANDed with something, group it.
 **Provenance**
 
 - [ ] Which parts of the source document are your own work, and which are compiled from the ACEP toxicology case file and the other cited sources
-- [ ] Whether the four images are yours, if they are ever to be used
+- [ ] **Whether the arrival tracing and the radiograph are yours.** Both are now embedded in the distributed build, so this is no longer hypothetical
+
+**The images (section 2.9)**
+
+- [ ] **That the remaining tracing is the arrival one rather than the repeat.** Your document does not label them and both are wide-complex
+- [ ] That the arrival tracing is compatible with what the case says about it, which is a sinus tachycardia at 135 with a QRS of 132 ms
+- [ ] That showing it with no words is what you want, and that losing the written QRS of 132 ms from the interface is acceptable
+- [ ] Whether it should carry a caption with the machine measurements, which is not interpretation and would put 132 ms back on the screen
+- [ ] **The narrowing phase's report is new text, not your original**, which was overwritten and not recoverable. Its numbers agree with what cardiology reads on the repeat tracing
+- [ ] That one tracing being a picture while every later one describes itself is a decision you accept
+- [ ] The chest radiograph is shown as a picture with no report, and the intubated-patient radiograph still reports in words
 
 **Then**
 
