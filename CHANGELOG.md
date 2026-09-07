@@ -5,6 +5,40 @@ is usable with learners.
 
 ---
 
+## v0.14: the case starts unaided
+
+**Hard mode is now Normal mode, and it is where a case begins.** The two modes are
+unchanged in what they do: the nurse waits three times the case's own prompt deadline in
+normal, and prompts at that deadline in easy. What changed is which one a resident is
+taken to be running. Calling the unaided pacing "hard" and starting every run in the
+assisted one made the prompted-versus-independent report in the debrief a measurement of
+reading speed rather than of knowledge, which authoring section 9.7 has said in as many
+words since it was written. The mode key was `hard`; nothing stored it, so the rename
+reached the catalog, the splash, the tests and the documents and nothing else.
+
+**Easy lost its box.** The splash drew the two modes as equal cards, which asked the
+resident to make a choice where there is a default and an escape hatch, and drew a box
+around the escape hatch. Normal is now the card; easy is a line of text under it that
+takes an accent rule and a tint when it is selected, so it still shows its state without
+being recommended. Which mode gets which treatment is read from `difficulty.default`
+rather than from a name, so the card cannot end up recommending one mode while the
+interface starts in another.
+
+**The debrief's mode sentence moved its clause.** It used to explain the mode that
+delayed the prompts, because that was the exception; now the default delays them and the
+exception is the mode that does not, so the explanation follows the help: a run in easy
+says the nurse prompted at the deadlines the case authored, and a run in normal says
+nothing beyond naming the mode.
+
+**Also, the voice order panel could not close.** Its rule set `display:flex`, which
+outranks the `hidden` attribute's rule in the user-agent stylesheet, so the panel was on
+screen from the moment the page loaded and Close changed a state that nothing could show.
+It is one line of CSS, and it is the kind of thing a screenshot of the open state does not
+catch, which is the argument for taking screenshots of the states that are supposed to be
+empty.
+
+---
+
 ## v0.13: orders can be spoken
 
 **A microphone sits to the left of the monitor.** Click it, say a string of orders across

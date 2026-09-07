@@ -114,7 +114,7 @@ deadline is credited. Replay stays honest because nothing is stored. Deadlines a
 cancelled on any phase change, including a time-driven one.
 
 **Difficulty is deliberately not applied.** `DM` scales prompt deadlines only. See
-system design 17.1 for why scaling deterioration would make hard mode more
+system design 17.1 for why scaling deterioration would make normal mode more
 forgiving and less forgiving at the same time.
 
 ### Verification

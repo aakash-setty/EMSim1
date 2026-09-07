@@ -39,7 +39,7 @@ Neither mechanism enters the condition language. Section 4's exclusion of time n
 | Every click performs an action | Orders are selected and submitted as a batch on order tabs |
 | Four tag values | Five, with `discouraged` between neutral and harmful |
 | Case starts immediately | A splash screen sets the scene and the clock starts on Begin |
-| One pacing for everyone | Easy and hard modes, differing only in prompt timing |
+| One pacing for everyone | Normal and easy modes, differing only in prompt timing |
 | Engine and case content interleaved | Separated: `engine/`, `catalog/`, `cases/<PREFIX>/` |
 
 Sections 3, 4, 6, 8, 11, 13 and 15 have substantive changes. Sections 16, 17, 18 and 19 are new.
@@ -1362,8 +1362,17 @@ Two modes, differing in one number:
 
 | Mode | Prompt multiplier | Intent |
 |---|---|---|
+| Normal | 3 | The nurse waits three times as long, and often the case ends first |
 | Easy | 1 | The nurse prompts at the authored deadlines |
-| Hard | 3 | The nurse waits three times as long, and often the case ends first |
+
+**A case starts in normal**, and the splash draws normal as a box with easy as a line of
+text under it. Until v0.14 it was the other way round: the two were drawn as equal boxes
+and a run began in easy, which made the assisted pacing the one a resident had to opt out
+of and made the prompted-versus-independent report in 11.2 an exception rather than the
+measurement. The interface reads `difficulty.default` to decide both which mode a run
+starts in and which one is drawn as the box, so the emphasis on the card cannot disagree
+with the behaviour. The mode was called `hard` until v0.14; nothing stored it, so the
+rename touched the catalog, the splash and these documents and nothing else.
 
 The multiplier scales prompt deadlines, prompt escalations and follow-up prompt
 deadlines. **It scales nothing else.** Result turnaround, phase transitions and clinical
@@ -1371,18 +1380,18 @@ tags are identical, so the medicine is the same in both modes and only the amoun
 help changes. This is what makes the two modes comparable in the debrief.
 
 **Time-guarded transition deadlines are not scaled, and the reason is worth stating** because it
-looks like an omission. Scaling them by the same multiplier would make hard mode *more* forgiving,
+looks like an omission. Scaling them by the same multiplier would make normal mode *more* forgiving,
 since the patient would take three times as long to deteriorate, while the prompts arriving later
 makes it less forgiving. The two effects point in opposite directions and the mode would stop
 meaning anything. Leaving deterioration unscaled keeps the property the modes were built for: the
 patient's physiology is identical in both, and the only difference is how much help the nurse gives.
-The consequence is real and should be understood before a case leans on it heavily: in hard mode a
+The consequence is real and should be understood before a case leans on it heavily: in normal mode a
 resident may deteriorate a patient before the prompt that would have warned them has fired. That is
-the honest version of the question hard mode exists to ask, and it is also the strongest argument
+the honest version of the question normal mode exists to ask, and it is also the strongest argument
 for the 30-second floor and the mandatory preceding prompt in 13.1. If deterioration pacing needs
 tuning it should move through the global multiplier in open decision 10, not through difficulty.
 
-Hard mode is the honest test of whether a resident would have acted unaided, which is
+Normal mode is the honest test of whether a resident would have acted unaided, which is
 the question the prompted-versus-independent report in section 11.2 exists to answer and
 could not previously answer well, because in easy mode the prompt usually arrives before
 the resident has finished thinking.

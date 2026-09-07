@@ -17,7 +17,9 @@ const EXPANDED={};
    because the set exists from the first call and is never re-seeded. */
 const expandedOf = t => (EXPANDED[t]=EXPANDED[t]
   || new Set(((PROTO&&PROTO.defaultExpanded)||{})[t]||[]));
-let MODE='easy', STARTED=false;
+/* The mode a run starts in comes from the catalog rather than from a literal here,
+   so there is one place that decides it and the splash cannot disagree with it. */
+let MODE=SHARED.difficulty.default, STARTED=false;
 /* ---------- panel state ----------
    Two booleans describe the whole layout. The tab rail is fixed and never
    participates: it is on screen in every state, which is what makes closing
@@ -1775,7 +1777,7 @@ function debriefHTML(){
 
     <div class="dbsec"><h2>Summary</h2>
       <p class="sub">${ST.halted?'Halted':(ST.failed?(ST.failed.byClock?'Ended by the clock':'Ended by an action'):(ST.earlyExit?'Ended early, incomplete':'Completed'))} at ${mmss(ST.now)},
-      in ${esc(PROTO.difficulty.modes[MODE].label.toLowerCase())}${DM()!==1?`, so nurse prompts were ${DM()} times later than the authored deadlines`:''}.
+      in ${esc(PROTO.difficulty.modes[MODE].label.toLowerCase())} mode${DM()===1&&MODE!==PROTO.difficulty.default?`, so the nurse prompted at the deadlines the case authored rather than waiting past them`:''}.
       Points direct review; they do not rank you. Critical actions count two, recommended
       actions one, a discouraged action costs one, and a harmful action zeroes its tab.</p>
       <table class="score"><tr><th>Category</th><th class="n">Score</th><th class="n">Points</th><th>Detail</th></tr>${scoreRows}</table>
@@ -1993,10 +1995,15 @@ function renderSplash(){
   arr.textContent = room ? 'Patient brought to the '+room : '';
   arr.classList.toggle('hidden', !room);
   renderSplashVitals();
+  /* The mode the case starts in is drawn first and as a box; every other mode follows
+     it as a line of text. Which is which is read from `difficulty.default` rather than
+     from a mode's name, so the card cannot end up recommending one mode while the
+     interface starts in another. */
   const D=PROTO.difficulty;
-  el('sp-modes').innerHTML=Object.keys(D.modes).map(k=>{
-    const md=D.modes[k];
-    return `<button class="mode" role="radio" data-mode="${k}" aria-checked="${MODE===k}">
+  const order=Object.keys(D.modes).sort((a,b)=>(a===D.default?0:1)-(b===D.default?0:1));
+  el('sp-modes').innerHTML=order.map(k=>{
+    const md=D.modes[k], plain=k!==D.default;
+    return `<button class="mode${plain?' plain':''}" role="radio" data-mode="${k}" aria-checked="${MODE===k}">
       <b>${esc(md.label)}</b><span>${esc(md.description)}</span></button>`;
   }).join('');
 

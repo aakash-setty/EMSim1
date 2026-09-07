@@ -174,18 +174,25 @@ shared = {
                        "land here; a case can only pre-explain the common ones."
                        % len(dxcat["entries"])),
     "difficulty": {
-        "default": "easy",
+        # The mode a run starts in, and the one the splash draws as a box. The interface
+        # reads this to decide which mode is offered and which is the alternative under
+        # it, so moving the default moves the emphasis with it and the two cannot drift
+        # apart. It was "easy" until v0.14.
+        "default": "normal",
         "note": ("Mode changes only how long the nurse waits before prompting. Result turnaround, "
                  "phase transitions and clinical tags are identical, so the medicine is the same "
                  "either way."),
         "modes": {
+            # The default first: the order here is the order the splash draws them in,
+            # and renderSplash sorts the default to the front regardless.
+            "normal": {"label": "Normal", "prompt_multiplier": 3,
+                       "description": ("The nurse waits three times the case's own prompt deadline "
+                                       "before she says anything, so the case is often over before "
+                                       "she does. This is the honest test of whether you would have "
+                                       "acted unaided.")},
             "easy": {"label": "Easy", "prompt_multiplier": 1,
-                     "description": ("The nurse prompts at the authored deadlines. Choose this if "
+                     "description": ("The nurse prompts at the case's own deadlines. Choose this if "
                                      "the case is unfamiliar.")},
-            "hard": {"label": "Hard", "prompt_multiplier": 3,
-                     "description": ("The nurse waits three times as long before prompting, and "
-                                     "often the case will be over first. Choose this to test "
-                                     "whether you would have acted unaided.")},
         },
     },
     # How the debrief opens, and how long the monitor holds on a terminal phase before

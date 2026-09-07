@@ -31,7 +31,7 @@ the passage of time could not be authored at all.
   that keep it from becoming a trap.
 - **Section 0 fact 2** is rewritten. It is the fact most authors build their mental model on.
 - **Section 9.5** gains one exception to the no-trajectory rule, and only one.
-- **Section 9.7** explains why hard mode does not slow deterioration down.
+- **Section 9.7** explains why normal mode does not slow deterioration down.
 - **Section 14** adds the validator checks, a third review artifact and four checklist items.
 - **Section 15** amends the limitation that said the patient does not deteriorate.
 
@@ -382,7 +382,7 @@ rather than creating it, and it is the most common reason to lengthen a deadline
 orders, or thinking, is on the same clock as one who has frozen. The floor and the mandatory prompt
 are the mitigations; there is no grace period. Author deadlines with a slow reader in mind.
 
-**Hard mode does not slow it down.** See 9.7.
+**Normal mode does not slow it down.** See 9.7.
 
 **Deterioration is all-or-nothing.** A drug given one second before the deadline has the same effect
 as one given immediately. Graded lateness is not representable; if you need it, you need more phases,
@@ -815,21 +815,21 @@ decision 10.
 
 ### 9.7 Difficulty modes change when prompts fire
 
-The resident chooses easy or hard on the splash screen. Hard multiplies every prompt deadline, escalation and follow-up deadline by three. It changes nothing else: turnaround, transitions and tags are identical, so the medicine is the same either way.
+The resident chooses normal or easy on the splash screen, and a case starts in normal. Normal multiplies every prompt deadline, escalation and follow-up deadline by three. It changes nothing else: turnaround, transitions and tags are identical, so the medicine is the same either way.
 
-**Author for easy mode.** Get the relative urgency right at the authored deadlines, per 9.6. Hard mode is derived from those numbers and needs no separate authoring.
+**Author for easy mode.** Get the relative urgency right at the authored deadlines, per 9.6. Normal mode is derived from those numbers and needs no separate authoring.
 
-**Hard mode does not slow deterioration down, and you should understand why before relying on it.**
+**Normal mode does not slow deterioration down, and you should understand why before relying on it.**
 The multiplier scales prompts only. If it also scaled time-guarded transitions, the patient would
-take three times as long to deteriorate in hard mode, which would make it more forgiving at the same
+take three times as long to deteriorate in normal mode, which would make it more forgiving at the same
 time as the later prompts make it less forgiving, and the mode would stop meaning anything. Leaving
 deterioration unscaled preserves the property the modes exist for: the physiology is identical in
-both and only the amount of help differs. The consequence is that in hard mode a resident can
+both and only the amount of help differs. The consequence is that in normal mode a resident can
 deteriorate a patient before the prompt that would have warned them has fired. That is the honest
-version of the question hard mode asks, and it is the strongest argument for setting your deadlines
+version of the question normal mode asks, and it is the strongest argument for setting your deadlines
 generously.
 
-**What hard mode is for.** In easy mode the prompt often arrives before the resident has finished thinking, so the prompted-versus-independent report in the debrief measures reading speed as much as knowledge. Hard mode is the honest version of that question, and it means many runs will end with the prompt never firing at all. Write prompts that still make sense arriving late.
+**What normal mode is for.** In easy mode the prompt often arrives before the resident has finished thinking, so the prompted-versus-independent report in the debrief measures reading speed as much as knowledge. Normal mode is the honest version of that question, and it means many runs will end with the prompt never firing at all. Write prompts that still make sense arriving late.
 
 ### 9.8 Prompts now make a sound
 

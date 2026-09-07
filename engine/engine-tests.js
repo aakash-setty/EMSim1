@@ -295,15 +295,21 @@ section('difficulty modes');
 const D = PROTO.difficulty;
 chk('two modes are defined', Object.keys(D.modes).length === 2, Object.keys(D.modes).join(','));
 chk('easy leaves prompt deadlines alone', D.modes.easy.prompt_multiplier === 1);
-chk('hard triples them', D.modes.hard.prompt_multiplier === 3);
+chk('normal triples them', D.modes.normal.prompt_multiplier === 3);
+chk('the default names a mode that exists', !!D.modes[D.default], D.default);
+/* v0.14. The mode a run starts in is a product decision rather than an accident of
+   which key came first, and the splash reads the same field to decide which mode it
+   draws as a box, so this pins both at once. */
+chk('a case starts in the mode that makes the nurse wait',
+    D.default === 'normal' && D.modes[D.default].prompt_multiplier === 3, D.default);
 const promptAction = CRITICAL.find(id => A[id].prompt);
 if (promptAction) {
   const d = A[promptAction].prompt.deadline_seconds;
-  chk('a prompt that has fired in easy mode has not fired in hard mode',
+  chk('a prompt that has fired in easy mode has not fired in normal mode',
       fold(mk([]), d + 2, 1).promptFires.some(p => p.id === promptAction) &&
       !fold(mk([]), d + 2, 3).promptFires.some(p => p.id === promptAction),
       promptAction + ' at ' + d + 's');
-  chk('the same prompt fires in hard mode at three times the deadline',
+  chk('the same prompt fires in normal mode at three times the deadline',
       fold(mk([]), d * 3 + 2, 3).promptFires.some(p => p.id === promptAction));
   /* Until v0.6 this asserted the phase was still START_PHASE after 300 seconds of
      doing nothing, because no case could change on its own. A case may now author

@@ -82,7 +82,7 @@ written. Section 5.6 specifies that an already-satisfied transition does not fir
 state-changing action, and a universal tick would silently make cascades resolve on their own.
 Ticking only in phases that carry a time-guarded rule keeps every v0.5 case bit-identical.
 
-**Scaling deterioration with difficulty mode.** Rejected after working out what it does. Hard mode
+**Scaling deterioration with difficulty mode.** Rejected after working out what it does. Normal mode
 multiplies prompt deadlines by three, which makes it harder by giving less help. Multiplying
 deterioration deadlines by the same factor would make it easier by giving more time. The two effects
 point in opposite directions and the mode would stop meaning anything. Deterioration is unscaled, so
