@@ -38,6 +38,7 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `engine.js` | The fold, the condition evaluator, the resolvers |
 | `ui.js` | Rendering, the panel state machine, the interview matcher |
 | `semantic.js` | Optional in-browser embedding model. Loads in the background, may never load |
+| `voice.js` | Voice orders: the normaliser, the phrase parser, the recorder and the dropdown. The parser is fenced for the tests |
 | `audio.js` | Heartbeat, nurse tones and the looping ward ambience |
 | `room-bg.txt` | The blurred room background as a data URI |
 | `hero-bg.txt` | The welcome screen photograph as a data URI |
@@ -47,7 +48,15 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `assets/` | Sources for the derived assets above, kept so a crop or a recut can be redone |
 
 The bundle order in `build_simulator.py` is load-bearing: `semantic.js` declares `SEM`
-and `ui.js` registers on it at top level, so reversing them produces a blank page.
+and `ui.js` registers on it at top level, so reversing them produces a blank page. The same
+holds for `voice.js`, which declares `VOICE` and is called from `bindCase`.
+
+`catalog/` also holds `voice-aliases.json`, the terminology the microphone accepts, and
+`build_voice_aliases.py`, which writes it. Keyed by catalog id, never by case id; the engine
+resolves each entry through the bound case's binding map, so a case that renames an entry
+needs nothing there. What the file may and may not contain is set out at the top of the
+script: the ways a thing is said, one phrase that is several orders, a phrase that is a
+choice, a phrase the catalog lacks. Not a diagnosis and its workup.
 
 ## A case pack
 
@@ -163,6 +172,15 @@ shipped page will not load the model. If `--semantic` dies on `getaddrinfo` or a
 `huggingface.co`, that is the answer to both questions at once. Mirroring the weights
 onto a host the deployment can reach, and setting `env.remoteHost` to it, is the fix for
 a site behind a restrictive network, and it is not built.
+
+**Voice orders add a fourth request, and it is the audio.** The microphone uses the
+browser's own speech recognition (the Web Speech API), which in Chrome and Edge sends the
+recording to Google's speech service and in Safari to Apple's. Firefox has no
+implementation. Nothing in this repository chooses the host or can move it. Where the
+service is unreachable, or the browser lacks it, or the microphone is refused, the same
+dropdown opens with a text box and the typed order goes through the same parser; the
+parser itself is inside the file and needs nothing. A deployment that must make no
+third-party request at all has the typed path and not the spoken one.
 
 **Nothing is stored server-side.** There is no analytics, no telemetry, no submission
 endpoint, and no way for one learner's run to reach anyone else. The only browser
@@ -423,7 +441,11 @@ the sign-off checklist in `docs/case-authoring-requirements.md` section 14.3.
 ```
 python3 catalog/build_catalog.py   > catalog/action-catalog.json
 python3 catalog/build_diagnoses.py > catalog/diagnosis-catalog.json
+python3 catalog/build_voice_aliases.py          # writes catalog/voice-aliases.json
 ```
+
+The voice table takes a few seconds to write, because every authored phrase is run through
+the normaliser to a fixed point before it is stored; the build then ships it as it is.
 
 The action catalog checked in here was regenerated from `build_catalog.py`; an earlier
 copy was stale and missing the exam defaults and the routing map.

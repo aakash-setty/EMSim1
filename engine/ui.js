@@ -1331,6 +1331,9 @@ async function matchQuestion(q){
    lexical matcher does not need. */
 function bindCase(){
   buildMatcher();
+  /* The voice order index is built per case, because a catalog id resolves to whatever
+     the bound case calls it, and an orphan action exists only in its case. */
+  VOICE.build(VOICE_DATA);
   /* Not awaited. The case must be playable the instant it is chosen, and a
      first model load can take tens of seconds. */
   try{ SEM.init(CASE.case_id, semanticRows()); }catch(e){}
@@ -1516,6 +1519,7 @@ function render(){
   refold();
   if(ST.halted&&!ENDED){ finish(); return; }
   renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor();
+  VOICE.paint();
 }
 /* Rebuild the tab only when something the tab shows has actually changed. A nurse
    line or a prompt does not change the action grid, and rebuilding it can swallow a
@@ -1615,6 +1619,7 @@ function finish(){
      and ambience still humming under it is the interface not noticing the case is over.
      setScene('idle') stops the heartbeat and the room together. */
   refold(); ENDED=true; AUDIO.setScene('idle');
+  VOICE.reset();
   /* Neither overlay belongs over a debrief. The case is over, so there is nothing to
      resume and nothing left to lose by leaving. */
   el('pauseview').classList.add('hidden'); closeLeave(); PAUSED=false;
@@ -1626,6 +1631,7 @@ function finish(){
 }
 function restart(){
   LOG=[];SEQ=0;ENDED=false;STARTED=false;TAB='history';LASTNURSE=-1;LASTPHASE=null;
+  VOICE.reset();
   closeImage(); IMG_SEEN=new Set(); IMG_QUEUE=[];
   resetRamp();
   Object.keys(FILTERS).forEach(k=>delete FILTERS[k]);
@@ -1962,6 +1968,7 @@ function chooseCase(i){
   renderSplash();
 }
 function backToPicker(){
+  VOICE.reset();
   AUDIO.setScene('idle');
   el('splash').classList.add('hidden');
   el('picker').classList.remove('hidden');
@@ -2043,6 +2050,7 @@ function begin(){
      started is not a case anybody is in. */
   AUDIO.setScene('case');
   render();
+  VOICE.paint();
   requestAnimationFrame(tick);
 }
 
@@ -2074,6 +2082,13 @@ const inCase = ()=> STARTED && !ENDED;
 
 function pauseSim(){
   if(PAUSED||!inCase()) return;
+  /* The microphone permission prompt can take the window's focus. A case that pauses
+     itself the moment someone tries to speak to it would be a poor first impression of
+     the feature, so the blur that the prompt causes is not a pause. A hidden tab still
+     is: visibilitychange does not come through here with the flag set. */
+  if(VOICE.arming()&&!document.hidden) return;
+  /* A paused case is not listening. What was heard so far is kept in the list. */
+  VOICE.pause();
   PAUSED=true; PAUSED_AT=Date.now();
   AUDIO.setScene('idle');
   el('pauseview').classList.remove('hidden');
@@ -2258,6 +2273,7 @@ function boot(){
     renderPicker();
   }
   setPanels(true,false);
+  VOICE.bind();
   refold(); renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor();
 }
 boot();

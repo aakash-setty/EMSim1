@@ -1397,6 +1397,118 @@ section('the seven-category summary (v0.9)');
       JSON.stringify(summaryScores(fold([], 10))) === JSON.stringify(rows));
 }
 
+/* ================= voice orders ================= */
+/* The parser is fenced in the bundle and evaluated here against the terminology block
+   that shipped in the same file. `const VOICE` does not leak out of a direct eval any
+   more than AUDIO does, so the trailing expression hands it back. */
+section('voice orders');
+{
+  const vf = html.match(/\/\*__VOICE_START__\*\/([\s\S]*?)\/\*__VOICE_END__\*\//);
+  chk('voice block is fenced in the bundle', !!vf);
+  const VD = grab('voice-data');
+  chk('voice terminology block is present', !!(VD && VD.aliases));
+  if (vf && VD && VD.aliases) {
+    const VOICE = eval(vf[1] + '\n;VOICE');
+    VOICE.build(VD);
+    /* 1. The two normalisation pipelines agree. Every phrase the Python side wrote was
+       normalised by its pipeline; the JS pipeline must return each unchanged. A phrase
+       that comes back different is a rule present on one side and not the other. */
+    const phrases = [];
+    for (const cid in VD.aliases) for (const p of VD.aliases[cid]) phrases.push(p);
+    for (const t of ['expansions', 'ambiguous', 'unavailable']) for (const p in VD[t]) phrases.push(p);
+    const drift = phrases.filter(p => VOICE.normalise(p) !== p);
+    chk('JS normalisation reproduces every phrase in the table (' + phrases.length + ')',
+        drift.length === 0, drift.slice(0, 6).map(p => p + ' -> ' + VOICE.normalise(p)).join(' | '));
+    /* 2. Every catalog id the table names resolves in this case or is not orderable. */
+    const res = cid => (PACK.bindings || {})[cid] || cid;
+    const badIds = Object.keys(VD.aliases).filter(cid => !SHARED.actionsBase[cid]);
+    chk('every alias key is a catalog id', badIds.length === 0, badIds.join(', '));
+    /* 3. The author's examples, resolved through this case's bindings. */
+    const ids = rows => rows.filter(r => r.kind === 'ok').map(r => r.id);
+    const kinds = rows => rows.map(r => r.kind).join(',');
+    const one = (text, cid) => {
+      const r = VOICE.parse(text);
+      chk('"' + text + '" -> ' + cid, ids(r).length === 1 && ids(r)[0] === res(cid) && r.length === 1,
+          JSON.stringify(r));
+    };
+    for (const t of ['EKG', 'ECG', 'electrocardiogram', 'get a 12 lead', 'twelve lead EKG']) one(t, 'ecg_12_lead');
+    for (const t of ['calcium', 'calcium level', 'give me a calcium']) one(t, 'calcium_level');
+    for (const t of ['ionized calcium', 'ionised calcium', 'iCal']) one(t, 'calcium_ionized');
+    for (const t of ['VBG', 'venous blood gas', 'venous resuscitation panel', 'resus panel']) one(t, 'venous_blood_gas');
+    for (const t of ['chem 7', 'chem seven', 'BMP', 'basic metabolic panel', 'lytes']) one(t, 'basic_chemistry_chem_7');
+    for (const t of ['heart ultrasound', 'ultrasound of the heart', 'cardiac ultrasound', 'cardiac POCUS',
+                     'POCUS of the heart', 'bedside echo', 'echo']) one(t, 'ultrasound_cardiac');
+    for (const t of ['lung ultrasound', 'pocus of the lungs', 'chest ultrasound']) one(t, 'ultrasound_lung');
+    for (const t of ['troponin', 'trop', 'high sensitivity troponin']) one(t, 'troponin_t');
+    for (const t of ['chest x-ray', 'CXR', 'portable chest film', 'chest radiograph']) one(t, 'xr_chest');
+    for (const t of ['CT head', 'noncontrast head CT', 'cat scan of the head']) one(t, 'ct_head');
+    for (const t of ['CTA chest for PE', 'CT PE study', 'CT pulmonary angiogram']) one(t, 'ct_pulmonary_embolus');
+    for (const t of ['type and screen', 'T and S', 'type and cross']) one(t, 'blood_type_and_screen');
+    for (const t of ['stop the levophed', 'discontinue norepinephrine', 'turn off the norepi']) one(t, 'stop_norepinephrine');
+    for (const t of ['amp of bicarb', 'push an amp of sodium bicarbonate', 'bicarb push']) one(t, 'na_bicarbonate_bolus');
+    for (const t of ['bicarb drip', 'sodium bicarbonate infusion', 'three amps of bicarb in a liter of D5W']) one(t, 'na_bicarbonate_infusion');
+    for (const t of ['a liter of normal saline', '1000 cc of NS', 'one liter saline bolus', '30 per kilo of normal saline']) one(t, 'normal_saline_1l_bolus');
+    for (const t of ['500 of normal saline', 'half a liter of saline', '500 cc NS bolus']) one(t, 'normal_saline_500ml_bolus');
+    for (const t of ['normal saline at 125', 'maintenance NS', 'saline at 100 an hour']) one(t, 'normal_saline_infusion');
+    for (const t of ['2 grams of magnesium sulfate', 'mag sulfate', 'magnesium sulfate infusion']) one(t, 'magnesium_sulfate');
+    for (const t of ['rocuronium', 'rock uranium', 'roc']) one(t, 'rocuronium_bolus');
+    for (const t of ['put the patient on the monitor', 'monitor', 'telemetry']) one(t, 'attach_monitor');
+    for (const t of ['nasal cannula', '2 liters nasal cannula', 'two liters by nasal cannula']) one(t, 'nasal_cannula_oxygen');
+    for (const t of ['non-rebreather', 'NRB at 15', '15 liters non rebreather']) one(t, 'non_rebreather_mask');
+    for (const t of ['bipap', 'CPAP', 'noninvasive ventilation']) one(t, 'non_invasive_positive_pressure_ventilation');
+    for (const t of ['intubate', 'RSI', 'secure the airway']) one(t, 'intubate_rapid_sequence');
+    /* Panels and pairs. */
+    const cmp = VOICE.parse('CMP');
+    chk('"CMP" -> Chem 7 and the hepatic panel', ids(cmp).length === 2 &&
+        ids(cmp).includes(res('basic_chemistry_chem_7')) && ids(cmp).includes(res('liver_function_tests_lfts')), kinds(cmp));
+    const hepatic = VOICE.parse('hepatic function panel');
+    chk('"hepatic function panel" -> LFTs alone', ids(hepatic).length === 1 && ids(hepatic)[0] === res('liver_function_tests_lfts'));
+    const two = VOICE.parse('two large bore IVs');
+    chk('"two large bore IVs" -> the first and the second IV', ids(two).length === 2 &&
+        ids(two).includes(res('insert_iv')) && ids(two).includes(res('second_iv')), kinds(two));
+    const mtp = VOICE.parse('activate MTP');
+    chk('"activate MTP" -> pRBC, FFP, platelets', ids(mtp).length === 3);
+    /* A string of orders, with and without separators, in the order said. */
+    const many = VOICE.parse('CBC, BMP, troponin and a chest x-ray, then an EKG');
+    chk('a comma-and-and list gives five orders in the order said', ids(many).join(',') ===
+        [res('complete_blood_count_cbc'), res('basic_chemistry_chem_7'), res('troponin_t'), res('xr_chest'), res('ecg_12_lead')].join(','), kinds(many));
+    const bare = VOICE.parse('cbc bmp lactate lipase');
+    chk('a list with no separators still parses', ids(bare).length === 4, kinds(bare));
+    const dup = VOICE.parse('EKG and an ECG and an electrocardiogram');
+    chk('the same order said three ways is one row', dup.length === 1);
+    /* What the parser refuses to guess. */
+    const epi = VOICE.parse('epi');
+    chk('"epi" is a choice between bolus, drip and IM', epi.length === 1 && epi[0].kind === 'ambiguous' && epi[0].ids.length === 3, JSON.stringify(epi));
+    const mg = VOICE.parse('magnesium');
+    chk('"magnesium" is a choice between the level and the drug', mg.length === 1 && mg[0].kind === 'ambiguous', JSON.stringify(mg));
+    const us = VOICE.parse('ultrasound');
+    chk('"ultrasound" alone asks which view', us.length === 1 && us[0].kind === 'ambiguous' && us[0].ids.length >= 6);
+    const gluc = VOICE.parse('calcium gluconate');
+    chk('"calcium gluconate" is refused rather than swapped for chloride', gluc.length === 1 && gluc[0].kind === 'unavailable', JSON.stringify(gluc));
+    const sepsis = VOICE.parse('sepsis workup');
+    chk('"sepsis workup" is refused: the parser does not expand a diagnosis', sepsis.length === 1 && sepsis[0].kind === 'unavailable', JSON.stringify(sepsis));
+    const unk = VOICE.parse('the flux capacitor');
+    chk('nonsense is reported as not understood', unk.length === 1 && unk[0].kind === 'unknown', JSON.stringify(unk));
+    const why = VOICE.parse('troponin for the chest pain');
+    chk('a reason after the order is dropped, not reported', why.length === 1 && why[0].kind === 'ok', JSON.stringify(why));
+    const fuzzy = VOICE.parse('vancomycn');
+    chk('one misspelled letter is repaired and flagged', fuzzy.length === 1 && fuzzy[0].kind === 'ok' && fuzzy[0].uncertain === true &&
+        fuzzy[0].id === res('vancomycin'), JSON.stringify(fuzzy));
+    const dose = VOICE.parse('give 1 milligram of epinephrine IV push');
+    chk('a dose and a route resolve the epinephrine choice to the bolus', ids(dose).length === 1 && ids(dose)[0] === res('epinephrine_bolus'), JSON.stringify(dose));
+    const empty = VOICE.parse('please and thank you');
+    chk('fillers alone give nothing', empty.length === 0, JSON.stringify(empty));
+    /* Every orderable action is reachable by its own button name. */
+    const unreachable = Object.keys(A).filter(id => PROTO.orderableTabs.includes(A[id].tab))
+      .filter(id => { const r = VOICE.parse(A[id].name); return !(r.length >= 1 && r.some(x => x.kind === 'ok' && x.id === id) || r.some(x => x.kind === 'ambiguous' && x.ids.includes(id))); });
+    chk('every orderable action is reachable by its display name', unreachable.length === 0,
+        unreachable.slice(0, 8).map(id => id + ' ("' + A[id].name + '" -> ' + kinds(VOICE.parse(A[id].name)) + ')').join(' | '));
+    /* Nothing outside the orderable tabs is ever an order. */
+    const ex = VOICE.parse('airway exam and consult cardiology');
+    chk('exams and consults are not voice orders', ids(ex).length === 0, JSON.stringify(ex));
+  }
+}
+
 /* ================= case pack assertions ================= */
 const caseTests = findCaseTests(process.argv[3]);
 if (caseTests) {
