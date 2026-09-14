@@ -345,9 +345,12 @@ are display and audio only, exactly as the phase-boundary ramp is.
 
 **The cost is a rebasing, and it is the mistake to expect.** Once an action supplies the
 gain, a phase's authored vitals have to be the unsupported baseline or the number is
-counted twice. CHFE's `stabilizing` and `improving` therefore carry the arrival
-saturation of 87. Validator rule V catches the arithmetic half of that and cannot catch
-the clinical half. See `docs/decisions/monitor-gating-and-vital-effects.md`.
+counted twice. CHFE's `niv_supported` therefore carries the same saturation of 85 as
+arrival: the mask is worth four points and it supplies all four of them, so the number on
+the screen reads 89 and the baseline underneath it has not moved. Its nitrate phase is the
+mirror image, a baseline three points higher with nothing on the patient's face. Validator
+rule V catches the arithmetic half of that and cannot catch the clinical half. See
+`docs/decisions/monitor-gating-and-vital-effects.md`.
 
 ## The clock
 
@@ -467,10 +470,10 @@ only as conclusions. They are not a source of truth for how the system behaves.
 
 ## Status
 
-All four cases pass the validator with no errors. CHFE walks 13 authored scenarios,
-MGCA 26, AFRVR 31 and DIPH 33. CHFE passes 309 engine assertions, MGCA 319, AFRVR 393 and
-DIPH 367, which is the same case-agnostic suite plus each pack's own; each passes 49
-validator negative tests. Each carries one warning, in every case about actions the catalog does not
+All four cases pass the validator with no errors. CHFE walks 20 authored scenarios,
+MGCA 26, AFRVR 31 and DIPH 44. CHFE passes 455 engine assertions, MGCA 435, AFRVR 509 and
+DIPH 531, which is the same case-agnostic suite plus each pack's own; each passes 55
+validator negative tests, DIPH 57. Each carries one warning, in every case about actions the catalog does not
 hold, which the prototype renders anyway so the gap stays visible. Those are catalog change
 requests rather than defects.
 

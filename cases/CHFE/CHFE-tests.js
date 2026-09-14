@@ -8,8 +8,18 @@
 section('intended path');
 let st=fold(mk([[1,'iv_access_peripheral'],[2,'cardiac_monitor'],[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion'],[30,'furosemide_iv']]),40);
 chk('reaches improving',st.phase==='improving',st.phase);
-chk('phase sequence',JSON.stringify(st.phaseSeq.map(p=>p.id))==='["presentation","stabilizing","improving"]',JSON.stringify(st.phaseSeq.map(p=>p.id)));
+chk('phase sequence',
+    JSON.stringify(st.phaseSeq.map(p=>p.id))==='["presentation","niv_supported","stabilizing","improving"]',
+    JSON.stringify(st.phaseSeq.map(p=>p.id)));
 chk('no halt',!st.halted);
+/* Both orders in the same batch are two log entries one second apart at most, and the
+   engine re-checks the transitions after each. The mask phase is passed through rather
+   than skipped, which is what the phase list should say. */
+const batched=fold(mk([[1,'iv_access_peripheral'],[6,'niv_bipap_cpap'],[6,'nitroglycerin_infusion']]),10);
+chk('a batch of both reaches stabilizing through the mask phase',
+    batched.phase==='stabilizing'&&
+    JSON.stringify(batched.phaseSeq.map(p=>p.id))==='["presentation","niv_supported","stabilizing"]',
+    JSON.stringify(batched.phaseSeq.map(p=>p.id)));
 
 section('harmful halts');
 for(const h of ['metoprolol_iv','diltiazem_iv','crystalloid_bolus_1l','dobutamine_infusion']){
@@ -84,40 +94,71 @@ chk('handoff completes the case',st.phase==='case_complete'&&st.complete);
 chk('payload recorded',st.handoff&&st.handoff.disposition==='icu_or_ccu');
 chk('expected actions collected',st.expected.size>0,String(st.expected.size));
 
-section('oxygenation is action-driven, not phase-driven');
+section('the two treatments are not the same treatment');
 {
-  /* The whole arc in one place. The authored baseline is 87 in every non-terminal
-     phase a resident can reach without intubating, and the only things that move the
-     number on the screen are positive pressure and, for thirty seconds, a nitrate. */
+  /* The case exists to separate positive pressure from vasodilation, so the two-by-two
+     they describe is asserted corner by corner. */
+  const IV=[1,'iv_access_peripheral'], MON=[2,'cardiac_monitor'];
+  const at=(steps,t)=>fold(mk(steps),t);
+
+  chk('the mask alone reaches the moderate phase and stops there',
+      at([IV,MON,[6,'niv_bipap_cpap']],200).phase==='niv_supported');
+  chk('a nitrate alone reaches the other moderate phase and stops there',
+      at([IV,MON,[6,'nitroglycerin_infusion']],200).phase==='nitrate_responding');
+  chk('the mask added to a nitrate reaches the mild phase',
+      at([IV,MON,[6,'nitroglycerin_infusion'],[20,'niv_bipap_cpap']],30).phase==='stabilizing');
+  chk('a nitrate added to the mask reaches the mild phase',
+      at([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion']],30).phase==='stabilizing');
+
+  /* The sublingual route is a bridge and the case accepts it as one: it sets the shared
+     flag and moves the patient, and it is not what is scored. */
+  chk('sublingual nitrate moves the patient too',
+      at([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_sublingual']],30).phase==='stabilizing');
+  chk('both routes set the shared flag',
+      at([IV,[6,'nitroglycerin_sublingual']],10).flags.has('nitrate_given')&&
+      at([IV,[6,'nitroglycerin_infusion']],10).flags.has('nitrate_given'));
+  chk('only the infusion is the scored critical action',
+      PROTO.actions.nitroglycerin_infusion.tag.some(r=>r.value==='critical')&&
+      !PROTO.actions.nitroglycerin_sublingual.tag.some(r=>r.value==='critical'));
+
+  /* The diuretic is not a substitute for either of them, which is the sequencing lesson
+     the case was built on and the one most at risk from adding phases. */
+  chk('the diuretic alone moves the patient nowhere',
+      at([IV,MON,[6,'furosemide_iv']],200).phase==='presentation');
+  chk('the diuretic does not stand in for the nitrate',
+      at([IV,MON,[6,'niv_bipap_cpap'],[20,'furosemide_iv']],60).phase==='niv_supported');
+}
+
+section('the saturation ladder');
+{
+  /* The authored baseline is the UNSUPPORTED number in every non-terminal phase and the
+     mask is worth four points on top of it. Read the two columns against each other: the
+     mask moves the number by four and the baseline by nothing, and the nitrate moves the
+     baseline by three with nothing on the patient's face. */
   const SP='oxygen_saturation';
   const spo2=(steps,at)=>fold(mk(steps),at).vitals[SP];
+  const base=id=>PHASE[id].vitals[SP];
   const IV=[1,'iv_access_peripheral'], MON=[2,'cardiac_monitor'];
 
-  chk('arrival saturation is 87',spo2([IV,MON],5)===87);
+  chk('arrival saturation is 85',spo2([IV,MON],5)===85);
+  chk('the mask leaves the baseline where it was',
+      base('niv_supported')===base('presentation'),
+      base('presentation')+' -> '+base('niv_supported'));
+  chk('the mask reads four points higher on the screen',
+      spo2([IV,MON,[6,'niv_bipap_cpap']],20)===89);
+  chk('positive pressure does not wear off',
+      spo2([IV,MON,[6,'niv_bipap_cpap']],200)===89);
+  chk('the nitrate moves the baseline instead, with no mask on',
+      base('nitrate_responding')===88&&spo2([IV,MON,[6,'nitroglycerin_infusion']],20)===88);
+  chk('both together read 94',
+      spo2([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion']],30)===94);
+  chk('the nitrate carries no vital effect of its own any more',
+      !(PROTO.actions.nitroglycerin_infusion.vital_effects||[]).length&&
+      !(PROTO.actions.nitroglycerin_sublingual.vital_effects||[]).length);
 
-  chk('positive pressure adds three points',spo2([IV,MON,[6,'niv_bipap_cpap']],10)===90);
-  chk('positive pressure does not wear off',spo2([IV,MON,[6,'niv_bipap_cpap']],400)===90);
-  chk('positive pressure alone does not change the phase',
-      fold(mk([IV,MON,[6,'niv_bipap_cpap']]),10).phase==='presentation');
-
-  /* Five points for thirty seconds, from either route, and no more from both. */
-  chk('a nitrate adds five points',spo2([IV,MON,[6,'nitroglycerin_infusion']],20)===92);
-  chk('the nitrate has lapsed at thirty seconds',
-      spo2([IV,MON,[6,'nitroglycerin_infusion']],40)===87);
-  chk('a repeat nitrate does the same thing again',
-      spo2([IV,MON,[6,'nitroglycerin_infusion'],[50,'nitroglycerin_infusion']],60)===92);
-  chk('the two nitrate routes do not stack',
-      spo2([IV,MON,[6,'nitroglycerin_infusion'],[7,'nitroglycerin_sublingual']],20)===92);
-
-  /* Mask plus nitrate is the phase change, and the two effects add on the new
-     baseline: 87 + 3 + 5 during the window, 87 + 3 after it. */
-  const both=[IV,MON,[6,'niv_bipap_cpap'],[8,'nitroglycerin_infusion']];
-  chk('mask and nitrate move to stabilizing',fold(mk(both),20).phase==='stabilizing');
-  chk('mask and nitrate read 95 during the nitrate window',spo2(both,20)===95);
-  chk('and 90 once the nitrate lapses',spo2(both,60)===90);
-
-  /* The point of the change: diuresis moves everything except the saturation. */
-  const beforeFuro=fold(mk(both),60), afterFuro=fold(mk(both.concat([[70,'furosemide_iv']])),90);
+  /* Unchanged from the previous design and still the second learning objective. */
+  const both=[IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion']];
+  const beforeFuro=fold(mk(both),40), afterFuro=fold(mk(both.concat([[50,'furosemide_iv']])),60);
   chk('furosemide moves to improving',afterFuro.phase==='improving');
   chk('furosemide changes the saturation by nothing',
       afterFuro.vitals[SP]===beforeFuro.vitals[SP],
@@ -141,6 +182,97 @@ section('oxygenation is action-driven, not phase-driven');
   const halt=fold(mk([IV,MON,[6,'niv_bipap_cpap'],[8,'crystalloid_bolus_1l']]),20);
   chk('a halted case reads its authored numbers, effects and all',
       halt.phase==='halted'&&halt.vitals[SP]===PHASE.halted.vitals[SP]);
+}
+
+section('what happens when the nitrate never comes');
+{
+  const IV=[1,'iv_access_peripheral'], MON=[2,'cardiac_monitor'];
+  const at=(steps,t)=>fold(mk(steps),t);
+
+  chk('doing nothing at all tires him at four minutes',
+      at([IV,MON],250).phase==='impending_respiratory_failure');
+  chk('and not a second early',at([IV,MON],235).phase==='presentation');
+  chk('the mask alone buys four more minutes and no more',
+      at([IV,MON,[6,'niv_bipap_cpap']],250).phase==='impending_respiratory_failure'&&
+      at([IV,MON,[6,'niv_bipap_cpap']],240).phase==='niv_supported');
+  chk('a nitrate with no mask buys five',
+      at([IV,MON,[6,'nitroglycerin_infusion']],310).phase==='impending_respiratory_failure'&&
+      at([IV,MON,[6,'nitroglycerin_infusion']],300).phase==='nitrate_responding');
+
+  /* Arriving there with the mask already on must not bounce straight back, which is the
+     failure mode a second exit rule would have introduced. */
+  const tired=at([IV,MON,[6,'niv_bipap_cpap']],400);
+  chk('he stays tired while the mask is all he has',
+      tired.phase==='impending_respiratory_failure'&&tired.flags.has('on_niv'));
+  chk('one treatment does not rescue him',
+      at([IV,MON,[260,'niv_bipap_cpap']],300).phase==='impending_respiratory_failure');
+  chk('both treatments do',
+      at([IV,MON,[260,'niv_bipap_cpap'],[262,'nitroglycerin_infusion']],270).phase==='stabilizing');
+  chk('and so does a tube',
+      at([IV,MON,[260,'etomidate_iv'],[261,'rocuronium_iv'],[262,'intubation_rsi']],270)
+        .phase==='post_intubation_hypotension');
+
+  /* The deterioration is a cost, not an ending. Nothing in this case kills the patient. */
+  const forever=at([IV,MON],3000);
+  chk('the clock never reaches a terminal phase',
+      forever.phase==='impending_respiratory_failure'&&!forever.failed&&!forever.halted,
+      forever.phase);
+  chk('no transition in the case authors a terminal arrival on the clock',
+      !CASE.phases.some(p=>(p.transitions||[]).some(t=>
+        t.after_seconds!==undefined&&(PHASE[t.to]||{}).terminal)));
+
+  /* Fairness: both treatments the guard names were asked for, out loud, before it fired. */
+  const idle=at([],250);
+  const said=id=>idle.promptFires.some(f=>f.id===id&&f.t<=220);
+  chk('the mask was asked for before the deadline',said('niv_bipap_cpap'));
+  chk('the nitrate was asked for before the deadline',said('nitroglycerin_infusion'));
+}
+
+section('the patient as the case gets worse');
+{
+  const IV=[1,'iv_access_peripheral'];
+  const ask=(steps,t)=>fold(mk(steps).concat([{seq:99,t:t-1,kind:'interview',topic:'onset',q:'when did this start'}]),t)
+                        .readouts.filter(r=>r.kind==='speech').pop().body;
+
+  chk('on arrival he answers in bursts',/^'Three\.\.\. four days/.test(ask([IV],5)),ask([IV],5));
+  chk('on the mask he is still in bursts',
+      ask([IV,[2,'niv_bipap_cpap']],10)===ask([IV],5));
+  chk('once he is comfortable he answers in sentences',
+      /It's been building for three or four days/.test(
+        ask([IV,[2,'niv_bipap_cpap'],[3,'nitroglycerin_infusion']],10)));
+  chk('when he tires he stops answering',
+      /too exhausted to answer/i.test(ask([IV],250)));
+  chk('the content is the same in both registers',
+      /four this morning/.test(ask([IV],5))&&
+      /four this morning/.test(ask([IV,[2,'niv_bipap_cpap'],[3,'nitroglycerin_infusion']],10)));
+
+  /* The nurse does not suggest taking a history from a man who cannot give one. */
+  const tired=fold(mk([IV]),400);
+  chk('the adherence prompt is not raised once he has tired',
+      !tired.promptFires.some(f=>f.id==='interview_topic_medication_adherence'&&
+                                 f.t>tired.phaseEntry.impending_respiratory_failure));
+}
+
+section('the edema has a severity and it is legible');
+{
+  /* Lung ultrasound is the readout that says severe, moderate or mild out loud, and the
+     word has to match the phase the patient is in rather than the drugs on his chart. */
+  const IV=[1,'iv_access_peripheral'];
+  /* mk() turns [t, id] pairs into log entries, so the scan step has to go through it
+     with the rest rather than being concatenated on afterwards. */
+  const scan=(steps,t)=>fold(mk(steps.concat([[t-1,'pocus_lung_cardiac']])),t+20)
+                          .orders.pocus_lung_cardiac.pop().value.report;
+  chk('severe on arrival',/Lung: severe|three or more B lines per field in all/i.test(scan([IV],5)));
+  chk('moderate on the mask',/Lung: moderate/.test(scan([IV,[2,'niv_bipap_cpap']],6)));
+  chk('moderate on a nitrate',/Lung: moderate/.test(scan([IV,[2,'nitroglycerin_infusion']],6)));
+  chk('mild on both',
+      /Lung: mild/.test(scan([IV,[2,'niv_bipap_cpap'],[3,'nitroglycerin_infusion']],6)));
+  chk('clearing after the diuretic',
+      /clearing/.test(scan([IV,[2,'niv_bipap_cpap'],[3,'nitroglycerin_infusion'],[4,'furosemide_iv']],6)));
+  /* The defect this replaced: a diuretic given in the first minute used to clear the
+     ultrasound of a patient still in the arrival phase. */
+  chk('a diuretic on its own does not clear the scan',
+      /Lung: severe|three or more B lines per field in all/i.test(scan([IV,[2,'furosemide_iv']],6)));
 }
 
 section('the monitor is what shows the vitals');

@@ -5,6 +5,85 @@ is usable with learners.
 
 ---
 
+## v0.15: the heart failure case learns the difference between its two treatments
+
+**CHFE had one improvement phase and one gate into it, and the gate wanted both treatments
+at once.** Positive pressure and a nitrate were therefore the same treatment as far as the
+case was concerned. A learner who put the mask on and stopped saw nothing happen at all,
+and a learner who gave both could not tell which one had done the work. On the author's
+instruction the two are now separated, which means the case is the two-by-two those
+treatments describe: `presentation` severe, `niv_supported` and `nitrate_responding`
+moderate by two different mechanisms, `stabilizing` mild, `improving` diuresed. Eight live
+phases against the three to six the authoring requirements ask for, the largest overrun in
+any pack, recorded in the case file's own `phase_notes` rather than left for a reader to
+notice.
+
+**The saturation column is the argument.** Baselines are the unsupported number and the
+mask is worth four points on top of it, so the ladder reads 85 on arrival, 85 on the mask
+with 89 on the screen, 88 on a nitrate with nothing on the patient's face, and 90 with both
+for 94 on the screen. The mask moves the number and not the lung. The nitrate moves the
+lung with no mask on the patient at all. That is the case's first learning objective
+expressed as arithmetic instead of asserted in a debrief note, and it is the claim in this
+change most in need of a physician's signature: it says afterload reduction is what empties
+the lung and positive pressure buys the time to do it. Diuresis still moves heart rate,
+blood pressure and respiratory rate and moves the saturation by nothing, which was the
+previous version's teaching point and survives intact.
+
+**Three things now force the nitrate, in ascending order.** The mild phases are unreachable
+without one. `nitroglycerin_infusion` is critical in every phase where it has not been
+given, so it is on the expected list of every run. And the case has the first time-guarded
+deterioration it has ever had: four minutes with neither treatment, four minutes with the
+mask and no nitrate, five minutes with the nitrate and no mask, all arriving at
+`impending_respiratory_failure`. The README's claim that this case cannot teach the cost of
+delay is no longer true.
+
+**The deterioration cannot kill him, and the phase has exactly one exit that is not a
+tube.** Both treatments together rescue it. That is not tidiness: he arrives there having
+had at most one of the two, so a rule that fired on either alone would return him to the
+phase he had just left, and the oscillation would restart the clock each time. No
+transition in the case reaches a terminal phase on the clock and an engine assertion checks
+that property rather than trusting it, because `medical_student` is in this case's target
+level list.
+
+**What the deterioration costs is the history.** He is authored at alertness 2 there, drowsy
+from a pCO2 of 68 rather than from sedation, so section 10.5 requires a global answer rule
+and the rule is the point rather than a formality: the patient stops answering, and a
+learner who spent four minutes taking a history instead of treating him loses the rest of
+it.
+
+**He is more breathless in every answer, in the same words.** Every topic was already
+authored twice, once for a patient in distress and once for a patient who is comfortable.
+The breathless register is now one and two word bursts rather than short phrases, and it
+covers the two moderate phases as well as arrival. No answer lost any content and an engine
+assertion checks that the same facts appear in both registers.
+
+**Two defects surfaced while restructuring, both of the kind only a rewrite finds.** The
+lung ultrasound keyed its improved picture on `flag diuretic_given set`, so a diuretic given
+in the first minute cleared the ultrasound of a patient still in the arrival phase, and it
+credited the diuretic with clearing edema the vasodilator had cleared. It is keyed on the
+phase now, which is the same set of runs by a route that cannot fire early. And the
+medication-adherence question, which is critical in every phase, was being prompted at a
+sedated intubated patient.
+
+**A prompt that quotes a number is bound to the phase whose number it quotes.** Both of this
+case's early prompts quoted an arrival vital sign. Firing them in three phases with three
+different saturations took the figures out of them, which is a real loss of the specificity
+section 7.5 asks for, and there is no schema for a prompt that varies by phase. Recorded in
+the authoring document as a gap rather than a rule.
+
+**The validator caught the one thing a human reviewer would have missed.** Dropping the
+arrival saturation by two points left the EMS handover quoting the old number, so a resident
+would have read 87 in the handover and seen 85 the moment they attached a monitor. Rule N
+refused the case until the handover agreed with the phase. Two more copies of the old figure
+were inside a consultant's reply and a diagnosis explanation, where no rule can reach them,
+and they were found by grep.
+
+**Unchanged, deliberately.** The chest radiograph and the ECG do not improve with the
+patient. Radiographic clearing lags clinical improvement by hours and a film that cleared in
+ten minutes would teach something false.
+
+---
+
 ## v0.14: the case starts unaided
 
 **Hard mode is now Normal mode, and it is where a case begins.** The two modes are

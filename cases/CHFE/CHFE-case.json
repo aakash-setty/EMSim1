@@ -54,10 +54,11 @@
    "intern",
    "junior_resident"
   ],
-  "estimated_runtime_seconds": 480,
+  "estimated_runtime_seconds": 600,
   "learning_objectives": [
    "Recognise the warm-and-wet (Nohria profile B) presentation of acute decompensated HFrEF, and state why distinguishing it from cold-and-wet changes the treatment.",
    "Sequence non-invasive positive pressure ventilation and vasodilation ahead of diuresis in hypertensive acute cardiogenic pulmonary edema, and justify that ordering.",
+   "Separate what positive pressure does from what a vasodilator does. The mask improves oxygenation and the work of breathing and leaves the driving pressure untreated; afterload is the lever on the edema itself. Neither alone finishes this patient.",
    "Identify interventions that are actively harmful in acute decompensated HFrEF: intravenous beta blockade, non-dihydropyridine calcium channel blockade, crystalloid bolus, and inotropes in a hypertensive well-perfused patient.",
    "Interpret natriuretic peptide, high-sensitivity troponin, ECG, chest radiograph and POCUS as supportive rather than diagnostic, and distinguish non-ischaemic (type 2) troponin elevation from acute coronary occlusion.",
    "Elicit the precipitant of decompensation on history, treating 'why did this patient decompensate now' as part of the resuscitation rather than an afterthought.",
@@ -85,24 +86,24 @@
   "background": "Ischaemic cardiomyopathy with HFrEF, LVEF 25-30% on echocardiogram eight months ago. Anterior STEMI six years ago treated with a drug-eluting stent to the left anterior descending artery. Hypertension. Type 2 diabetes mellitus. Chronic kidney disease stage 3 with a baseline creatinine of 1.4 mg/dL. Ex-smoker, 30 pack-years, stopped at the time of his infarct. Untreated obstructive sleep apnoea (declined CPAP two years ago). Home medications: furosemide 40 mg daily, carvedilol 12.5 mg twice daily, sacubitril/valsartan 49/51 mg twice daily, spironolactone 25 mg daily, empagliflozin 10 mg daily, atorvastatin 40 mg nightly, aspirin 81 mg daily, metformin 1000 mg twice daily.",
   "presenting_vitals_source": "Inherited from phase 'presentation'. EMS applied a nasal cannula at 6 L/min en route and established no intravenous access.",
   "presenting_appearance": "A heavy-set older man sitting bolt upright on the EMS stretcher, gripping the rails, visibly sweating and speaking in two or three word bursts. He will not lie flat and pushes the trolley back up when it is lowered.",
-  "ems_handover_text": "Sixty-five year old man, known heart failure, three or four days of worsening breathlessness, much worse since about four this morning. Family called when he could not get up the stairs. Sats were 84 percent on room air at the house, 87 on six litres now. Pressure has been running high the whole way in, last was 190 over 100. He has not had any of his own medications for the last few days. No chest pain that he will admit to. Nothing given en route apart from oxygen.",
-  "arrival_handover": "Sixty-five year old man, breathing trouble that's been getting worse over the last few days. Family called us this morning when he couldn't manage the stairs, and he's still only holding 87% on six litres by nasal cannula."
+  "ems_handover_text": "Sixty-five year old man, known heart failure, three or four days of worsening breathlessness, much worse since about four this morning. Family called when he could not get up the stairs. Sats were 82 percent on room air at the house, 85 on six litres now. Pressure has been running high the whole way in, last was 190 over 100. He has not had any of his own medications for the last few days. No chest pain that he will admit to. Nothing given en route apart from oxygen.",
+  "arrival_handover": "Sixty-five year old man, breathing trouble that's been getting worse over the last few days. Family called us this morning when he couldn't manage the stairs, and he's still only holding 85% on six litres by nasal cannula."
  },
  "phase_notes": {
-  "count_justification": "Five clinical phases plus two terminal phases. Section 3.3 of the authoring requirements asks for three to six phases. If terminal phases are counted the case exceeds that ceiling by one. Flagged for the design owner in the review packet: the guidance should state whether terminal phases count toward the limit.",
-  "deterioration_path": "post_intubation_hypotension is the deterioration phase. It is entered only by intubating, since no time-driven deterioration exists in this engine. It is recoverable, not terminal."
+  "count_justification": "Eight clinical phases plus two terminal phases, against the three to six the authoring requirements ask for. This is the largest phase count in any pack and it is a deliberate overrun: six of the eight are the two-by-two of positive pressure against vasodilation plus the two states either side of it, and collapsing any pair of them puts the case back to being unable to say which treatment did what. Flagged for the design owner in the review packet.",
+  "deterioration_path": "Two deterioration phases now, and they are different in kind. impending_respiratory_failure is reached by the clock when a treatment is missing; it is recoverable and not terminal, and both treatments together turn it around. post_intubation_hypotension is reached by intubating, whenever that happens; it is recoverable and not terminal. Neither can kill the patient: no transition in this case reaches a terminal phase on the clock, and the only terminal phases are the handoff and a harmful action."
  },
  "phases": [
   {
    "id": "presentation",
-   "label": "Hypertensive acute cardiogenic pulmonary edema",
-   "clinical_description": "Severe respiratory distress with hypoxaemia and marked hypertension; warm, well-perfused, congested. Nohria profile B.",
+   "label": "Severe hypertensive acute cardiogenic pulmonary edema",
+   "clinical_description": "Severe respiratory distress with hypoxaemia and marked hypertension; warm, well-perfused, congested. Severe pulmonary edema. Nohria profile B.",
    "vitals": {
     "heart_rate": 118,
     "systolic_bp": 188,
     "diastolic_bp": 104,
     "respiratory_rate": 32,
-    "oxygen_saturation": 87,
+    "oxygen_saturation": 85,
     "temperature_c": 36.8
    },
    "appearance": {
@@ -114,32 +115,46 @@
    "terminal": false,
    "transitions": [
     {
+     "when": "action handoff_submit taken",
+     "to": "case_complete"
+    },
+    {
      "when": "flag intubated set",
      "to": "post_intubation_hypotension",
      "author_note": "Intubation in a preload-dependent, vasodilated patient predictably drops the blood pressure. Modelled as certain here for teaching; see review packet, this is the most debatable transition in the case."
     },
     {
-     "when": "flag on_niv set AND (flag nitro_infusion_running set OR flag nitro_sl_given set)",
-     "to": "stabilizing",
-     "author_note": "Sublingual nitrate is accepted as a bridge so a learner who has not yet started an infusion is not stranded. The infusion remains the scored critical action."
+     "when": "flag on_niv set",
+     "to": "niv_supported",
+     "author_note": "The mask alone. Work of breathing and oxygenation improve and the edema goes from severe to moderate; the driving pressure is untouched, so this is as far as it goes. Reached in passing, for one instant, by a learner who submits the mask and the nitrate in the same batch: the engine re-checks the transitions after each order, so the pair arrives at stabilizing through here rather than needing a rule of its own."
     },
     {
-     "when": "action handoff_submit taken",
-     "to": "case_complete"
+     "when": "flag nitrate_given set",
+     "to": "nitrate_responding",
+     "author_note": "The nitrate alone. The edema itself improves because a large part of it is redistribution against afterload, but he is still doing all the work of breathing himself."
+    },
+    {
+     "when": "NOT flag on_niv set AND NOT flag nitrate_given set",
+     "after_seconds": 240,
+     "measured_from": "phase_entry",
+     "to": "impending_respiratory_failure",
+     "narration": "He's wearing out on me. He's stopped answering and he's gone grey round the lips.",
+     "debrief_note": "Four minutes of severe hypertensive pulmonary edema with neither positive pressure nor a vasodilator. Both were asked for by name before this fired. The patient is not lost: the mask and a nitrate together still turn him around, and nothing in this case kills him. What has been lost is the part of the history he can no longer give you.",
+     "author_rationale": "AUTHOR SIGNATURE REQUIRED. The claim is that a sixty-five year old man in hypertensive acute cardiogenic pulmonary edema at a saturation of 85 percent and a respiratory rate of 32 begins to tire inside four minutes if nothing is done. Four minutes is compressed against real disease tempo the way every deadline in these packs is. The guard names both treatments so that either one alone stops it, which is the fairness claim: a learner who did something is not punished for not doing everything."
     }
    ],
    "short_label": "on arrival"
   },
   {
-   "id": "stabilizing",
-   "label": "Responding to positive pressure and vasodilation",
-   "clinical_description": "Work of breathing and oxygenation improving on non-invasive ventilation with afterload reduction; still congested and not yet diuresed.",
+   "id": "niv_supported",
+   "label": "Moderate pulmonary edema on positive pressure, afterload untreated",
+   "clinical_description": "Work of breathing and oxygenation improved on non-invasive ventilation. The pulmonary edema is moderate rather than severe and the blood pressure driving it has not been treated.",
    "vitals": {
-    "heart_rate": 104,
-    "systolic_bp": 156,
-    "diastolic_bp": 90,
-    "respiratory_rate": 26,
-    "oxygen_saturation": 87,
+    "heart_rate": 110,
+    "systolic_bp": 178,
+    "diastolic_bp": 98,
+    "respiratory_rate": 28,
+    "oxygen_saturation": 85,
     "temperature_c": 36.8
    },
    "appearance": {
@@ -151,30 +166,83 @@
    "terminal": false,
    "transitions": [
     {
+     "when": "action handoff_submit taken",
+     "to": "case_complete"
+    },
+    {
      "when": "flag intubated set",
      "to": "post_intubation_hypotension"
     },
     {
-     "when": "flag diuretic_given set",
-     "to": "improving"
+     "when": "flag nitrate_given set",
+     "to": "stabilizing"
     },
+    {
+     "when": "NOT flag nitrate_given set",
+     "after_seconds": 240,
+     "measured_from": "phase_entry",
+     "to": "impending_respiratory_failure",
+     "narration": "He's tiring under the mask. He's stopped talking to me and his pressure is no better than when he came in.",
+     "debrief_note": "The mask bought four minutes and the afterload driving the edema was never treated. This is the commonest way this version of the case is lost: positive pressure looks like an answer because the saturation on the screen improves, and the number improved because of the mask rather than because the patient did.",
+     "author_rationale": "AUTHOR SIGNATURE REQUIRED. Non-invasive ventilation failure in hypertensive acute cardiogenic pulmonary edema is real and is the usual route to intubation in these patients. Four minutes is a teaching tempo, not a measured interval."
+    }
+   ],
+   "short_label": "on the mask"
+  },
+  {
+   "id": "nitrate_responding",
+   "label": "Moderate pulmonary edema after vasodilation, no positive pressure",
+   "clinical_description": "Afterload reduction has moved the edema from severe to moderate. He is doing all of the work of breathing himself, at a rate around thirty, with no positive pressure.",
+   "vitals": {
+    "heart_rate": 108,
+    "systolic_bp": 152,
+    "diastolic_bp": 88,
+    "respiratory_rate": 30,
+    "oxygen_saturation": 88,
+    "temperature_c": 36.8
+   },
+   "appearance": {
+    "distress_level": 2,
+    "alertness_level": 0,
+    "pupil_size": "normal",
+    "pupil_reactivity": "reactive"
+   },
+   "terminal": false,
+   "transitions": [
     {
      "when": "action handoff_submit taken",
      "to": "case_complete"
+    },
+    {
+     "when": "flag intubated set",
+     "to": "post_intubation_hypotension"
+    },
+    {
+     "when": "flag on_niv set",
+     "to": "stabilizing"
+    },
+    {
+     "when": "NOT flag on_niv set",
+     "after_seconds": 300,
+     "measured_from": "phase_entry",
+     "to": "impending_respiratory_failure",
+     "narration": "He's still pulling hard and he's starting to flag. He's gone quiet on me.",
+     "debrief_note": "The right drug and no support for the breathing. The vasodilator is treating the cause and it is not doing the work of breathing for him; five minutes at a respiratory rate of thirty in a man of sixty-five ends the same way whether or not the pressure has come down.",
+     "author_rationale": "AUTHOR SIGNATURE REQUIRED. Longer than the other two deadlines on the judgement that a treated afterload buys more time than an untreated one. Five minutes is a teaching tempo."
     }
    ],
-   "short_label": "responding"
+   "short_label": "nitrate running"
   },
   {
-   "id": "improving",
-   "label": "Decongesting, ready for admission",
-   "clinical_description": "Comfortable on non-invasive ventilation, pressure controlled, diuresis under way. Still requires monitored admission; peripheral edema and elevated venous pressure persist.",
+   "id": "stabilizing",
+   "label": "Mild pulmonary edema on positive pressure and a nitrate",
+   "clinical_description": "Work of breathing and oxygenation improving on non-invasive ventilation with afterload reduction; pulmonary edema now mild. Still congested and not yet diuresed.",
    "vitals": {
-    "heart_rate": 92,
-    "systolic_bp": 138,
+    "heart_rate": 104,
+    "systolic_bp": 144,
     "diastolic_bp": 84,
-    "respiratory_rate": 18,
-    "oxygen_saturation": 87,
+    "respiratory_rate": 22,
+    "oxygen_saturation": 90,
     "temperature_c": 36.8
    },
    "appearance": {
@@ -186,15 +254,86 @@
    "terminal": false,
    "transitions": [
     {
+     "when": "action handoff_submit taken",
+     "to": "case_complete"
+    },
+    {
      "when": "flag intubated set",
      "to": "post_intubation_hypotension"
     },
     {
+     "when": "flag diuretic_given set",
+     "to": "improving"
+    }
+   ],
+   "short_label": "responding"
+  },
+  {
+   "id": "improving",
+   "label": "Decongesting, ready for admission",
+   "clinical_description": "Decongesting on positive pressure, a nitrate and a loop diuretic. Mild pulmonary edema, clearing.",
+   "vitals": {
+    "heart_rate": 92,
+    "systolic_bp": 132,
+    "diastolic_bp": 80,
+    "respiratory_rate": 18,
+    "oxygen_saturation": 90,
+    "temperature_c": 36.8
+   },
+   "appearance": {
+    "distress_level": 0,
+    "alertness_level": 0,
+    "pupil_size": "normal",
+    "pupil_reactivity": "reactive"
+   },
+   "terminal": false,
+   "transitions": [
+    {
      "when": "action handoff_submit taken",
      "to": "case_complete"
+    },
+    {
+     "when": "flag intubated set",
+     "to": "post_intubation_hypotension"
     }
    ],
    "short_label": "improving"
+  },
+  {
+   "id": "impending_respiratory_failure",
+   "label": "Tiring, with hypercapnic respiratory failure",
+   "clinical_description": "Exhausted after minutes of untreated work. Hypercapnic and drowsy with a saturation in the low eighties. Still warm and still hypertensive: the problem has not changed, only how much of it he can compensate for.",
+   "vitals": {
+    "heart_rate": 126,
+    "systolic_bp": 176,
+    "diastolic_bp": 98,
+    "respiratory_rate": 38,
+    "oxygen_saturation": 80,
+    "temperature_c": 36.8
+   },
+   "appearance": {
+    "distress_level": 3,
+    "alertness_level": 2,
+    "pupil_size": "normal",
+    "pupil_reactivity": "reactive"
+   },
+   "terminal": false,
+   "transitions": [
+    {
+     "when": "action handoff_submit taken",
+     "to": "case_complete"
+    },
+    {
+     "when": "flag intubated set",
+     "to": "post_intubation_hypotension"
+    },
+    {
+     "when": "flag on_niv set AND flag nitrate_given set",
+     "to": "stabilizing",
+     "author_note": "The only way out that is not a tube, and it needs both treatments because he arrives here having had at most one of them. Authoring both separately would return him to the phase he came from the instant he arrived, since one of the two flags is already set."
+    }
+   ],
+   "short_label": "tiring"
   },
   {
    "id": "post_intubation_hypotension",
@@ -283,10 +422,10 @@
    "clinical_description": "Terminal phase entered when the resident confirms a handoff. The debrief is generated from here.",
    "vitals": {
     "heart_rate": 92,
-    "systolic_bp": 138,
-    "diastolic_bp": 84,
+    "systolic_bp": 132,
+    "diastolic_bp": 80,
     "respiratory_rate": 18,
-    "oxygen_saturation": 90,
+    "oxygen_saturation": 94,
     "temperature_c": 36.8
    },
    "appearance": {
@@ -317,7 +456,7 @@
   ],
   "note": "Enumerated in section 7.3 of case-authoring-requirements v0.3 and scored in section 11.2 of system-design v0.4. The 'discouraged' tier was added in response to this case: seven traps here are wrong but not lethal and could previously only be tagged neutral, which carries no scoring weight. This case has not yet been retagged; see authored_against.conformance_note."
  },
- "flag_namespace_note": "Flags here use unprefixed catalog-level names because catalog prerequisites (for example intubation requiring sedation_given and paralytic_given) must reference the same flag across all cases. Section 14.1 requires that no flag name collide with another case, which is incompatible with shared catalog flags. Flagged in the review packet.",
+ "flag_namespace_note": "Flags here use unprefixed catalog-level names because catalog prerequisites (for example intubation requiring sedation_given and paralytic_given) must reference the same flag across all cases. Section 14.1 requires that no flag name collide with another case, which is incompatible with shared catalog flags. Flagged in the review packet. nitrate_given is set by both nitrate routes alongside the route-specific flag, so that a guard meaning 'a nitrate has been given' is one atom. The route-specific flags still exist and still differ: nitro_infusion_running is what the blood-pressure-cycling obligation and the post-intubation rescue read, because stopping an infusion is an act and swallowing a tablet cannot be undone.",
  "case_actions": [
   {
    "catalog_id": "niv_bipap_cpap",
@@ -328,7 +467,7 @@
      "value": "neutral"
     },
     {
-     "when": "phase is presentation",
+     "when": "phase is presentation OR phase is nitrate_responding OR phase is impending_respiratory_failure",
      "value": "critical"
     },
     {
@@ -349,10 +488,10 @@
    "prompt": {
     "deadline_seconds": 45,
     "guard": "NOT flag intubated set",
-    "text": "He's working really hard to breathe and his sat is sitting at 87 on six litres. Do you want to do something more for his breathing? I can get the CPAP mask on him.",
+    "text": "He's working really hard to breathe and his sat is low on the oxygen he's got. Do you want to do something more for his breathing? I can get the CPAP mask on him.",
     "escalation": {
      "deadline_seconds": 90,
-     "text": "He's still tripoding and pulling with his neck muscles, sat's still 87. I've got CPAP and BiPAP both at the bedside. Do you want either of them on him?"
+     "text": "He's still tripoding and pulling with his neck muscles. I've got CPAP and BiPAP both at the bedside. Do you want either of them on him?"
     }
    },
    "debrief_note": "Non-invasive positive pressure ventilation is the single highest-value early intervention in acute cardiogenic pulmonary edema. It recruits flooded alveoli, reduces the work of breathing, and by raising intrathoracic pressure it reduces both preload and left ventricular transmural pressure, which lowers afterload. Applying it early is what allows most of these patients to avoid an endotracheal tube. Be honest with learners about the evidence: earlier meta-analyses reported reductions in intubation and mortality, but the largest randomised trial, 3CPO, found no difference in seven-day mortality or intubation rate versus standard oxygen therapy. The strongest defensible claim is faster symptomatic and physiological improvement, with intubation avoidance supported by meta-analytic but not by the single largest trial. On the choice between modes, which is one button here because it is one decision: continuous and bilevel positive pressure are equivalent for the purposes of this case. Bilevel adds inspiratory support and is often preferred when the patient is hypercapnic and tiring, as this one is with a pCO2 of 54. 3CPO found no difference between the two modes in mortality or intubation rate, so either is defensible and the decision that mattered was to apply positive pressure at all. The historical concern that bilevel increased myocardial infarction has not been borne out.",
@@ -364,10 +503,10 @@
    "vital_effects": [
     {
      "vital": "oxygen_saturation",
-     "delta": 3,
+     "delta": 4,
      "key": "positive_pressure_spo2",
      "while": "NOT flag intubated set",
-     "note": "Three points, held for as long as the mask is on. Alveolar recruitment and the reduction in work of breathing are the mechanism, and they persist rather than wearing off, which is why there is no duration here. The guard removes it at intubation: the mask comes off, and the ventilator phases author their own saturation. The size is an author's teaching choice, not a measured quantity, and no trial supports a specific number."
+     "note": "Four points, held for as long as the mask is on, in every phase where it is on. Alveolar recruitment and the reduction in work of breathing are the mechanism and they persist rather than wearing off, which is why there is no duration here. The guard removes it at intubation: the mask comes off and the ventilator phases author their own saturation. It was three points before the phases were split. The size is an author's teaching choice, not a measured quantity, and no trial supports a specific number. What it is doing structurally is carrying the whole of the mask's contribution to the number on the screen, because the phase baselines carry none of it: niv_supported is authored at the same 85 as arrival."
     }
    ]
   },
@@ -380,12 +519,8 @@
      "value": "harmful"
     },
     {
-     "when": "phase is presentation",
+     "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure",
      "value": "critical"
-    },
-    {
-     "when": "phase is stabilizing",
-     "value": "recommended"
     },
     {
      "when": null,
@@ -393,7 +528,8 @@
     }
    ],
    "flags_set": [
-    "nitro_infusion_running"
+    "nitro_infusion_running",
+    "nitrate_given"
    ],
    "prerequisites": [
     {
@@ -406,25 +542,19 @@
     "bp_cycling_after_nitrate"
    ],
    "prompt": {
-    "deadline_seconds": 75,
-    "guard": "NOT flag intubated set",
-    "text": "His pressure is 188 over 104. Do you want anything for the blood pressure while we're sorting out his breathing?"
+    "deadline_seconds": 60,
+    "guard": "NOT flag intubated set AND NOT flag nitrate_given set",
+    "text": "His pressure is still right up, doctor. Do you want anything for the blood pressure while we're sorting out his breathing?",
+    "escalation": {
+     "deadline_seconds": 140,
+     "text": "Nothing has come off his blood pressure. Do you want me to get a nitroglycerin infusion mixed and running?"
+    }
    },
    "halt_reason": "You started a nitroglycerin infusion in a patient whose blood pressure was already dependent on vasopressor support after intubation; the additional preload and afterload reduction collapsed his coronary perfusion pressure and he arrested.",
    "debrief_note": "Afterload reduction is the pharmacological priority in hypertensive acute cardiogenic pulmonary edema. This patient is not primarily short of diuresis in the first ten minutes; he is short of forward flow against a systolic pressure of 188 with a failing ventricle, and a large part of his pulmonary edema is redistribution rather than accumulated total body water. Nitrates reduce preload at lower doses and afterload at higher ones, and the trial evidence supports a vasodilator-forward rather than diuretic-forward strategy in this specific phenotype. Doses used for this indication are considerably higher than the anti-anginal doses residents are used to. The same drug becomes harmful the moment the patient is hypotensive, which is why the tag on this action is phase-dependent rather than fixed.",
    "references": [
     "Cotter G, Metzkor E, Kaluski E, et al. Randomised trial of high-dose isosorbide dinitrate plus low-dose furosemide versus high-dose furosemide plus low-dose isosorbide dinitrate in severe pulmonary edema. Lancet. 1998;351(9100):389-93. [PubMed record checked]",
     "Heidenreich PA, et al. 2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure. Circulation. 2022;145(18):e895-e1032. [UNVERIFIED, confirm before release]"
-   ],
-   "vital_effects": [
-    {
-     "vital": "oxygen_saturation",
-     "delta": 5,
-     "duration_seconds": 30,
-     "key": "nitrate_spo2",
-     "while": "NOT flag intubated set",
-     "note": "Five points for thirty seconds, then back to baseline. Redistribution of pulmonary blood volume is fast and, at a fixed rate with no titration modelled, transient. Repeating the drug repeats the same excursion rather than adding to it: the key is shared with the sublingual route, so the two cannot be stacked into an improvement neither would produce. Deliberately unsatisfying, and the point of the case is that the durable gain comes from the mask."
-    }
    ]
   },
   {
@@ -441,20 +571,11 @@
     }
    ],
    "flags_set": [
-    "nitro_sl_given"
+    "nitro_sl_given",
+    "nitrate_given"
    ],
    "halt_reason": "You gave sublingual nitroglycerin to a patient whose blood pressure was already dependent on vasopressor support after intubation; further vasodilation dropped his coronary perfusion pressure and he arrested.",
-   "debrief_note": "A reasonable bridge while an infusion is being mixed, and repeated sublingual dosing is a legitimate strategy when a pump is not immediately available. It is not a substitute for a titratable infusion in a patient who is going to need sustained afterload reduction, because the effect is short-lived and cannot be dialled back if the pressure falls too far. Credit here is partial: the right idea, an incomplete execution.",
-   "vital_effects": [
-    {
-     "vital": "oxygen_saturation",
-     "delta": 5,
-     "duration_seconds": 30,
-     "key": "nitrate_spo2",
-     "while": "NOT flag intubated set",
-     "note": "Same excursion as the infusion, same key, so the two routes do not stack."
-    }
-   ]
+   "debrief_note": "A reasonable bridge while an infusion is being mixed, and repeated sublingual dosing is a legitimate strategy when a pump is not immediately available. It is not a substitute for a titratable infusion in a patient who is going to need sustained afterload reduction, because the effect is short-lived and cannot be dialled back if the pressure falls too far. Credit here is partial: the right idea, an incomplete execution."
   },
   {
    "catalog_id": "nitroglycerin_stop",
@@ -649,7 +770,8 @@
    "flags_set": [],
    "prompt": {
     "deadline_seconds": 210,
-    "text": "Did you want to ask him about his tablets? He said something to the medics about running out."
+    "text": "Did you want to ask him about his tablets? He said something to the medics about running out.",
+    "guard": "NOT flag intubated set AND NOT phase is impending_respiratory_failure"
    },
    "debrief_note": "Finding the precipitant is part of the resuscitation, not paperwork for the admitting team. Decompensation in a patient with stable chronic heart failure almost always has a reason: missed diuretic, dietary sodium, new atrial fibrillation, ischaemia, infection, anaemia, thyroid disease, or a newly started negative inotrope or NSAID. Here it is a loop diuretic he stopped taking five days ago plus a salt load. That answer changes the admission plan, changes the discharge plan, and is the modifiable part of this presentation. A resident who stabilises the physiology but never asks why it happened has treated the episode and not the patient."
   },
@@ -859,7 +981,7 @@
      "value": "critical"
     },
     {
-     "when": "phase is presentation OR phase is stabilizing OR phase is improving",
+     "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure",
      "value": "harmful"
     },
     {
@@ -904,7 +1026,7 @@
      "value": "recommended"
     },
     {
-     "when": "phase is presentation OR phase is stabilizing OR phase is improving",
+     "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure",
      "value": "harmful"
     },
     {
@@ -1003,7 +1125,7 @@
      "value": "neutral"
     },
     {
-     "when": "phase is presentation OR phase is stabilizing OR phase is improving",
+     "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure",
      "value": "harmful"
     },
     {
@@ -1584,7 +1706,7 @@
  "follow_up_condition_note": "None of the four applies_when conditions above does discriminating work in this case; each is trivially true once its trigger has fired. That is honest rather than clever: the mechanism exists for cases where an obligation applies only sometimes. Flagged so the reviewer does not mistake the conditions for meaningful clinical gating.",
  "prompt_cap_recommendation": {
   "per_phase": 3,
-  "rationale": "The presentation phase carries five prompts with an escalation. Firing all of them would nag. Suggested ordering if a cap is enforced: NIV, then nitroglycerin, then ECG, with the chest film and the adherence question suppressed."
+  "rationale": "Three new things per phase, and an escalation is exempt from the cap since engine v0.9. Prompts are scheduled only for actions that are critical in the phase being entered, so each phase carries its own short list. In presentation the nurse can say three things before the 240-second deterioration: the mask at 45 seconds, the nitrate at 60 and the tracing at 90, with the chest film at 150 and the adherence question at 210 suppressed. Both treatments the deterioration guard names are therefore heard, with the mask escalating at 90 and the nitrate at 140 on top. In niv_supported the list is the nitrate at 60 and the adherence question at 210; in nitrate_responding it is the mask at 45, the nitrate at 60 and the adherence question at 210.\n\nThese are authored seconds. The difficulty multiplier scales them and does not scale the deterioration deadlines, so in the default mode the nitrate is asked for at 180 seconds against a deadline of 240. That is the margin that matters, and it is why the nitrate prompt is at 60 rather than at the 75 it was first written with."
  },
  "prerequisite_semantics_note": "Prerequisite 'when' states the condition that MUST BE TRUE for the action to proceed, matching the worked table in section 8.1 of the authoring requirements. The failure message is shown when the condition evaluates false.",
  "content_keys": {
@@ -1600,6 +1722,14 @@
      }
     },
     {
+     "when": "phase is impending_respiratory_failure",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Airway still patent and self-maintained, but he is no longer speaking and no longer clearing his own secretions readily. No stridor, no oropharyngeal swelling. This is an airway that is about to need help rather than one that is obstructed."
+     }
+    },
+    {
      "when": "phase is presentation",
      "value": {
       "kind": "exam_findings",
@@ -1608,11 +1738,19 @@
      }
     },
     {
-     "when": "phase is stabilizing",
+     "when": "phase is niv_supported OR phase is stabilizing",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Airway patent and self-maintained under the mask. Speaking in short sentences."
+      "findings": "Airway patent and self-maintained under the mask. Speaking in short bursts when the mask is lifted. No stridor."
+     }
+    },
+    {
+     "when": "phase is nitrate_responding",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Airway patent and self-maintained. Speaking in short bursts, pausing to breathe. No stridor."
      }
     },
     {
@@ -1634,11 +1772,35 @@
      }
     },
     {
+     "when": "phase is impending_respiratory_failure",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Exhausted respiratory effort. The rate is high and the breaths have become shallow, with the abdomen drawing in as the chest rises. Marked accessory muscle use at the neck. He no longer responds when you ask him to take a deep breath."
+     }
+    },
+    {
      "when": "phase is presentation",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Marked increase in the work of breathing. Respiratory rate in the low thirties. Accessory muscle use at the neck with intercostal indrawing. Sitting bolt upright, gripping the trolley rails and refusing to lie back. Chest rise symmetrical."
+      "findings": "Marked increase in the work of breathing. Respiratory rate in the low thirties. Accessory muscle use at the neck with intercostal indrawing. Sitting bolt upright, gripping the trolley rails and refusing to lie back. Unable to complete a sentence. Chest rise symmetrical."
+     }
+    },
+    {
+     "when": "phase is niv_supported",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Work of breathing reduced on the mask though still increased. Rate in the high twenties. Accessory muscle use present and less marked than on arrival. Tolerating the mask and no longer gripping the rails. Chest rise symmetrical."
+     }
+    },
+    {
+     "when": "phase is nitrate_responding",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Still doing all the work himself at a rate around thirty, with accessory muscle use at the neck. Less frantic than on arrival and no longer refusing to be touched. Chest rise symmetrical."
      }
     },
     {
@@ -1646,7 +1808,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Work of breathing reduced on the mask. Rate in the mid twenties. Accessory muscle use present but less marked. No longer gripping the rails. Chest rise symmetrical."
+      "findings": "Work of breathing close to normal on the mask. Rate in the low twenties. Minimal accessory muscle use, no indrawing. Chest rise symmetrical."
      }
     },
     {
@@ -1676,7 +1838,15 @@
      }
     },
     {
-     "when": "phase is presentation",
+     "when": "phase is impending_respiratory_failure",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Still warm peripherally, which is the point: he is tiring, not shocked. Capillary refill under three seconds. Radial pulses full. Drenched in sweat. No external haemorrhage."
+     }
+    },
+    {
+     "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
@@ -1728,7 +1898,7 @@
      }
     },
     {
-     "when": "phase is presentation OR phase is stabilizing",
+     "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
@@ -1754,6 +1924,14 @@
      }
     },
     {
+     "when": "phase is impending_respiratory_failure",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Fine and coarse crackles bilaterally from the bases to the apices. Air entry is poor throughout and the chest is quieter than the effort would suggest, which is the finding that matters here. No wheeze now."
+     }
+    },
+    {
      "when": "phase is presentation",
      "value": {
       "kind": "exam_findings",
@@ -1762,11 +1940,19 @@
      }
     },
     {
+     "when": "phase is niv_supported OR phase is nitrate_responding",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Crackles bilaterally to the mid-zones, no longer audible in the upper zones. The wheeze has settled. Air entry improved."
+     }
+    },
+    {
      "when": "phase is stabilizing",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Crackles bilaterally to the mid-zones, no longer audible in the upper zones. The wheeze has resolved. Air entry improved."
+      "findings": "Crackles limited to the lower zones. No wheeze. Good air entry throughout."
      }
     },
     {
@@ -1774,7 +1960,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Crackles limited to both bases. No wheeze. Good air entry throughout."
+      "findings": "Scattered fine crackles at both bases only. No wheeze. Air entry good throughout."
      }
     }
    ],
@@ -1816,6 +2002,14 @@
      }
     },
     {
+     "when": "phase is impending_respiratory_failure",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Drenched in sweat, cool over the forehead with it, and dusky at the lips. Trunk still warm. No rash."
+     }
+    },
+    {
      "when": "phase is presentation",
      "value": {
       "kind": "exam_findings",
@@ -1824,7 +2018,7 @@
      }
     },
     {
-     "when": "phase is stabilizing",
+     "when": "phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
@@ -1850,7 +2044,15 @@
      }
     },
     {
-     "when": "phase is presentation",
+     "when": "phase is impending_respiratory_failure",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Drowsy and slow to rouse, opening his eyes to voice but not answering. No focal deficit, moving all four limbs to stimulation. Pupils equal and reactive. This is carbon dioxide, not a neurological event."
+     }
+    },
+    {
+     "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
      "value": {
       "kind": "exam_findings",
       "abnormal": false,
@@ -1876,7 +2078,15 @@
      }
     },
     {
-     "when": "phase is presentation",
+     "when": "phase is impending_respiratory_failure",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Too drowsy to assess. No agitation."
+     }
+    },
+    {
+     "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
@@ -2232,7 +2442,53 @@
       "prose": "Venous pH 7.32 (low). pCO2 42 mmHg. Bicarbonate 22 mmol/L. Base excess -3. Lactate 2.2 mmol/L (high). Improving."
      },
      {
-      "when": "flag on_niv set",
+      "when": "phase is impending_respiratory_failure",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH (venous)",
+         "value": "7.21",
+         "unit": "",
+         "reference_range": "7.31-7.41 (venous)",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "68",
+         "unit": "mmHg",
+         "reference_range": "41-51 (venous)",
+         "abnormal": true
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "26",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Base excess",
+         "value": "-1",
+         "unit": "mEq/L",
+         "reference_range": "-2 to +2",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "2.8",
+         "unit": "mmol/L",
+         "reference_range": "under 2.0",
+         "abnormal": true
+        }
+       ],
+       "comment": "Worsening acute respiratory acidosis. He is not clearing carbon dioxide because he is tiring, and this is the number that explains the drowsiness."
+      },
+      "prose": "pH (venous) 7.21. pCO2 68 mmHg. Bicarbonate 26 mEq/L. Base excess -1 mEq/L. Lactate 2.8 mmol/L. Worsening acute respiratory acidosis. He is not clearing carbon dioxide because he is tiring, and this is the number that explains the drowsiness."
+     },
+     {
+      "when": "phase is stabilizing OR phase is improving",
       "value": {
        "kind": "panel",
        "abnormal": false,
@@ -2253,29 +2509,29 @@
         },
         {
          "label": "Bicarbonate",
-         "value": "25",
+         "value": "24",
          "unit": "mEq/L",
          "reference_range": "22-26",
          "abnormal": false
         },
         {
          "label": "Base excess",
-         "value": "0",
+         "value": "-1",
          "unit": "mEq/L",
          "reference_range": "-2 to +2",
          "abnormal": false
         },
         {
          "label": "Lactate",
-         "value": "1.4",
+         "value": "1.5",
          "unit": "mmol/L",
          "reference_range": "under 2.0",
          "abnormal": false
         }
        ],
-       "comment": "The respiratory acidosis has corrected."
+       "comment": "The respiratory acidosis has corrected on positive pressure and afterload reduction."
       },
-      "prose": "Venous pH 7.36. pCO2 44 mmHg. Bicarbonate 25 mmol/L. Base excess 0. Lactate 1.4 mmol/L. The respiratory acidosis has corrected."
+      "prose": "pH (venous) 7.36. pCO2 44 mmHg. Bicarbonate 24 mEq/L. Base excess -1 mEq/L. Lactate 1.5 mmol/L. The respiratory acidosis has corrected on positive pressure and afterload reduction."
      },
      {
       "when": null,
@@ -2366,7 +2622,25 @@
       "prose": "Lactate 2.2 mmol/L (high), falling."
      },
      {
-      "when": "flag on_niv set",
+      "when": "phase is impending_respiratory_failure",
+      "value": {
+       "kind": "value",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "Lactate",
+         "value": "2.8",
+         "unit": "mmol/L",
+         "reference_range": "under 2.0",
+         "abnormal": true
+        }
+       ],
+       "comment": "Higher than on arrival. The work of breathing is the source."
+      },
+      "prose": "Lactate 2.8 mmol/L (high). Higher than on arrival."
+     },
+     {
+      "when": "phase is stabilizing OR phase is improving",
       "value": {
        "kind": "value",
        "abnormal": false,
@@ -2545,11 +2819,51 @@
       }
      },
      {
-      "when": "flag diuretic_given set",
+      "when": "phase is impending_respiratory_failure",
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Lung: B lines still present in all zones but reduced in density anteriorly compared with the earlier study. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties. No pericardial effusion. Right ventricle not dilated, no septal flattening. Inferior vena cava 2.1 cm with minimal respiratory variation."
+       "report": "Lung: severe. Confluent B lines in every anterior and lateral zone bilaterally, coalescing into a white lung appearance anteriorly, with small bilateral pleural effusions. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.3 cm with minimal respiratory variation."
+      }
+     },
+     {
+      "when": "phase is presentation",
+      "value": {
+       "kind": "report",
+       "abnormal": true,
+       "report": "Lung: three or more B lines per field in all anterior and lateral zones bilaterally, with small bilateral pleural effusions. No lung sliding abnormality, no pneumothorax. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.3 cm with minimal respiratory variation."
+      }
+     },
+     {
+      "when": "phase is niv_supported",
+      "value": {
+       "kind": "report",
+       "abnormal": true,
+       "report": "Lung: moderate. Three or more B lines per field remain in every zone, less dense anteriorly than at the bases, with small bilateral pleural effusions. No lung sliding abnormality, no pneumothorax. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.3 cm with minimal respiratory variation, unchanged."
+      }
+     },
+     {
+      "when": "phase is nitrate_responding",
+      "value": {
+       "kind": "report",
+       "abnormal": true,
+       "report": "Lung: moderate. B lines reduced to two or three per field in the upper zones and still dense at the bases, with small bilateral pleural effusions. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.2 cm with minimal respiratory variation."
+      }
+     },
+     {
+      "when": "phase is stabilizing",
+      "value": {
+       "kind": "report",
+       "abnormal": true,
+       "report": "Lung: mild. B lines now confined to the lower zones at one or two per field, with the anterior fields clear. Small bilateral pleural effusions unchanged. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.1 cm with minimal respiratory variation."
+      }
+     },
+     {
+      "when": "phase is improving",
+      "value": {
+       "kind": "report",
+       "abnormal": true,
+       "report": "Lung: mild and clearing. Isolated B lines at both bases only, anterior and lateral fields clear, small bilateral pleural effusions unchanged. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.0 cm with a little more respiratory variation than on the earlier study."
       }
      },
      {
@@ -2635,7 +2949,7 @@
     },
     {
      "when": null,
-     "value": "Intensivist: tell me what you have actually done for his breathing so far. If he is at 87 percent on a cannula and working that hard, the first question is whether he is on positive pressure yet, and from what you are describing he is not. Sort that first and call me back with what happens."
+     "value": "Intensivist: tell me what you have actually done for his breathing so far. If he is at 85 percent on a cannula and working that hard, the first question is whether he is on positive pressure yet, and from what you are describing he is not. Sort that first and call me back with what happens."
     }
    ],
    "consult_nephrology": [
@@ -2673,11 +2987,35 @@
      }
     },
     {
+     "when": "phase is impending_respiratory_failure",
+     "value": {
+      "kind": "general_status",
+      "abnormal": true,
+      "findings": "Exhausted. Drowsy, eyes closing between breaths, no longer answering. Grey, sweating heavily, dusky at the lips. Still upright because he cannot lie back."
+     }
+    },
+    {
      "when": "phase is presentation",
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Severe respiratory distress. Upright, sweating, speaking in short bursts. GCS 15."
+      "findings": "Severe respiratory distress. Upright, sweating, speaking one or two words at a time and pausing to breathe between them. GCS 15."
+     }
+    },
+    {
+     "when": "phase is niv_supported",
+     "value": {
+      "kind": "general_status",
+      "abnormal": true,
+      "findings": "Moderate respiratory distress, better on the mask. Still tachypnoeic, speaking in short bursts between breaths. GCS 15."
+     }
+    },
+    {
+     "when": "phase is nitrate_responding",
+     "value": {
+      "kind": "general_status",
+      "abnormal": true,
+      "findings": "Moderate respiratory distress. Still upright and breathing fast with nothing on his face, but less frantic than on arrival. Speaking in short bursts. GCS 15."
      }
     },
     {
@@ -2685,7 +3023,7 @@
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Moderate respiratory distress, improving on the mask. Speaking in short sentences. GCS 15."
+      "findings": "Mild respiratory distress on the mask. Talking in short sentences between breaths. GCS 15."
      }
     },
     {
@@ -2701,13 +3039,17 @@
  },
  "interview": {
   "authoring_notes": {
-   "alertness_gating": "Section 10.5 asks for alertness gating authored once as a global rule. The condition language has no alertness predicate, so alertness must be reached indirectly through the phases that carry it. The global rule below enumerates the two phases in this case where alertness level is 3. Flagged in the review packet as a language gap.",
-   "breathlessness_gating": "Section 10.5 covers alertness but not speech limited by respiratory distress. This patient is fully alert in the presentation phase and can answer, but only in short bursts. That could not be done as a global rule without suppressing all topic content, so every topic carries its own presentation-phase answer. Ellipses mark where he stops to breathe.",
+   "alertness_gating": "Section 10.5 asks for alertness gating authored once as a global rule. The condition language has no alertness predicate, so alertness must be reached indirectly through the phases that carry it. The global rule below enumerates the two phases in this case where alertness level is 3. Flagged in the review packet as a language gap. A third phase joined the two intubated ones when impending_respiratory_failure was added: he is drowsy from carbon dioxide rather than from sedation, and the effect on the history is the same. The history closes when the patient tires.",
+   "breathlessness_gating": "Section 10.5 covers alertness but not speech limited by respiratory distress. Every topic is authored twice: a breathless register for the three phases where he is in distress and still talking, which is presentation and the two moderate phases, and the full answer for the phases where he is comfortable enough to give one. The content is identical between them and only the number of words changes, so a learner who asks the right question early is not punished with a worse answer, only a shorter one. On arrival he is down to one and two word bursts. That is the same register a resident hears from a real patient in this state, and it is the reason the case makes taking a history early expensive rather than impossible.",
    "interview_during_niv": "In the stabilizing phase the patient has a mask on his face. The answers assume the mask is lifted briefly, which is what actually happens at the bedside. This is deliberately not modelled as a barrier, because penalising a resident for correctly applying non-invasive ventilation before taking a history would teach the wrong lesson. The debrief note on history timing carries the real teaching point instead.",
    "diagnosis_disclosure": "Section 10.4 forbids the patient from stating or implying the diagnosis. He does describe his known chronic history in lay terms, including that his heart was damaged by a previous infarct, because that is required past medical history content and a real patient would volunteer it. He never attributes the current episode to a cause and never uses the words heart failure. This line is a judgement call and is flagged for the reviewing physician.",
    "coverage_exceptions": "Pregnancy status is not authored; the patient is a 65 year old man and section 10.2 requires it only where applicable. Code status and goals of care are not authored, though they are a defensible conversation in an admission for decompensated heart failure; noted as a possible addition."
   },
   "global_answer_rules": [
+   {
+    "when": "phase is impending_respiratory_failure",
+    "value": "He is too exhausted to answer. He opens his eyes when you speak and closes them again without saying anything."
+   },
    {
     "when": "phase is post_intubation_hypotension OR phase is intubated_stabilized",
     "value": "He is intubated and sedated. He does not respond to your voice and cannot give any history.",
@@ -2716,8 +3058,8 @@
   ],
   "out_of_scope_fallback": [
    {
-    "when": "phase is presentation",
-    "value": "He looks at you, still pulling hard for each breath, and shakes his head. 'I don't... sorry... I don't know.'"
+    "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+    "value": "He looks at you, still pulling hard for each breath, and shakes his head. 'Sorry... I don't... know.'"
    },
    {
     "when": null,
@@ -2742,8 +3084,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Three, four days... much worse... since about four this morning.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Three... four days. Worse since... four this morning.'"
      },
      {
       "when": null,
@@ -2787,7 +3129,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Three, four days.'"
        },
        {
@@ -2807,7 +3149,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Four this morning.'"
        },
        {
@@ -2825,7 +3167,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Puffed... walking.'"
        },
        {
@@ -2853,8 +3195,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Worse... every day. Terrible... since four this morning.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Worse. Every day. Since four... this morning... terrible.'"
      },
      {
       "when": null,
@@ -2904,8 +3246,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Like drowning... can't get it in... weight on my chest.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Like drowning. Can't... get it in. Weight... on my chest.'"
      },
      {
       "when": null,
@@ -2957,7 +3299,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Weight on my chest... can't get it in.'"
        },
        {
@@ -2986,8 +3328,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Ten... worst ever.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Ten. Worst... ever.'"
      },
      {
       "when": null,
@@ -3033,8 +3375,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Lying down... and moving.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Lying down. Moving... anything.'"
      },
      {
       "when": null,
@@ -3078,8 +3420,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Sitting up... that's all.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Sitting up. That's... all.'"
      },
      {
       "when": null,
@@ -3123,8 +3465,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Four pillows... chair last night.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Four pillows. Chair... last night.'"
      },
      {
       "when": null,
@@ -3164,7 +3506,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Four pillows.'"
        },
        {
@@ -3184,7 +3526,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Chair last night.'"
        },
        {
@@ -3212,8 +3554,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Twice... woke up gasping.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Twice. Woke up... gasping.'"
      },
      {
       "when": null,
@@ -3259,8 +3601,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Both legs up... socks cutting in.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Both legs. Socks... cutting in.'"
      },
      {
       "when": null,
@@ -3301,7 +3643,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Both legs.'"
        },
        {
@@ -3321,7 +3663,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Socks cutting in.'"
        },
        {
@@ -3349,8 +3691,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Nine pounds up... this week.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Nine pounds. This week.'"
      },
      {
       "when": null,
@@ -3394,8 +3736,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Dry cough... worse lying down.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Dry cough. Worse... lying down.'"
      },
      {
       "when": null,
@@ -3440,8 +3782,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'No pain... just tight from breathing.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'No pain. Just tight... from breathing.'"
      },
      {
       "when": null,
@@ -3483,7 +3825,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'No pain... just tight.'"
        },
        {
@@ -3503,7 +3845,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Nothing like... the heart attack.'"
        },
        {
@@ -3531,8 +3873,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'No... not that I've felt.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'No. Not felt it.'"
      },
      {
       "when": null,
@@ -3576,8 +3918,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'No fever... no shivers.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'No fever. No shivers.'"
      },
      {
       "when": null,
@@ -3624,8 +3966,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'No... not passed out.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'No. Not passed out.'"
      },
      {
       "when": null,
@@ -3689,8 +4031,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'No... not sick.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'No. Not sick.'"
      },
      {
       "when": null,
@@ -3735,8 +4077,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Belly's full... tight.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Belly's full. Tight.'"
      },
      {
       "when": null,
@@ -3780,8 +4122,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Going less... than usual.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Going less. Than usual.'"
      },
      {
       "when": null,
@@ -3829,8 +4171,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'No pain... both the same.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'No pain. Both... the same.'"
      },
      {
       "when": null,
@@ -3876,8 +4218,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'No... been at home.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'No. Been at home.'"
      },
      {
       "when": null,
@@ -3923,7 +4265,7 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
       "value": "'No blood.'"
      },
      {
@@ -3966,8 +4308,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Ran out... the water tablet... five days ago.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Ran out. Water tablet. Five days.'"
      },
      {
       "when": null,
@@ -4008,7 +4350,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'The water tablet.'"
        },
        {
@@ -4028,7 +4370,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Five days ago.'"
        },
        {
@@ -4047,7 +4389,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Car... off the road.'"
        },
        {
@@ -4066,7 +4408,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Taking the rest... mostly.'"
        },
        {
@@ -4094,8 +4436,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Christening... at the weekend... big spread.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Christening. Weekend. Big spread.'"
      },
      {
       "when": null,
@@ -4137,8 +4479,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Water tablet... heart tablets... diabetes ones. Wife has the list.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Water tablet. Heart tablets. Diabetes ones. Wife... has the list.'"
      },
      {
       "when": null,
@@ -4180,7 +4522,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Water tablet... heart tablets... diabetes ones.'"
        },
        {
@@ -4199,7 +4541,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Carvedilol... the big new one... spironolactone.'"
        },
        {
@@ -4217,7 +4559,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Metformin... and a new one.'"
        },
        {
@@ -4245,8 +4587,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Heart attack... six years back. Blood pressure. Diabetes.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Heart attack. Six years. Blood pressure. Diabetes.'"
      },
      {
       "when": null,
@@ -4288,7 +4630,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Heart attack... six years back.'"
        },
        {
@@ -4308,7 +4650,7 @@
       ],
       "value": [
        {
-        "when": "phase is presentation",
+        "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
         "value": "'Blood pressure. Diabetes. Kidneys.'"
        },
        {
@@ -4336,8 +4678,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Stent... and gallbladder.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Stent. Gallbladder.'"
      },
      {
       "when": null,
@@ -4382,7 +4724,7 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
       "value": "'No allergies.'"
      },
      {
@@ -4426,8 +4768,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Stopped smoking... six years ago. Beer at weekends.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Stopped smoking. Six years. Beer... at weekends.'"
      },
      {
       "when": null,
@@ -4496,8 +4838,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'No... never.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'No. Never.'"
      },
      {
       "when": null,
@@ -4554,8 +4896,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Dad... heart attack. Brother too.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Dad. Heart attack. Brother... same.'"
      },
      {
       "when": null,
@@ -4599,8 +4941,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Bit of toast... seven this morning.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Toast. Seven... this morning.'"
      },
      {
       "when": null,
@@ -4647,8 +4989,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Wife says I snore... stop breathing.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Wife says... I snore. Stop breathing.'"
      },
      {
       "when": null,
@@ -4691,8 +5033,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'No... nobody's been ill.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'No. Nobody's... been ill.'"
      },
      {
       "when": null,
@@ -4736,8 +5078,8 @@
     ],
     "answer": [
      {
-      "when": "phase is presentation",
-      "value": "'Normally manage the stairs... not this week.'"
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Normally... the stairs. Not this week.'"
      },
      {
       "when": null,
@@ -4959,7 +5301,7 @@
    {
     "catalog_id": "dx_cardiogenic_pulmonary_edema",
     "label": "Cardiogenic pulmonary edema",
-    "explanation": "The presentation itself: bilateral B lines, bilateral crackles, a saturation of 87 percent and a respiratory rate of 32 in a man whose ventricle cannot cope with the afterload of a systolic pressure of 188. Named beside the heart failure it says what the heart failure did; named alone it leaves out why."
+    "explanation": "The presentation itself: bilateral B lines, bilateral crackles, a saturation of 85 percent and a respiratory rate of 32 in a man whose ventricle cannot cope with the afterload of a systolic pressure of 188. Named beside the heart failure it says what the heart failure did; named alone it leaves out why."
    },
    {
     "catalog_id": "dx_acute_hypercapnic_respiratory_failure",
@@ -5105,6 +5447,7 @@
   "key_exams_note": "v0.9. Read by the summary's Physical score when no exam carries a critical or recommended tag, as none does in this case. Regions where this case's findings are made or excluded. Author judgement by an AI assistant, unreviewed.",
   "intended_path": [
    "presentation",
+   "niv_supported",
    "stabilizing",
    "improving",
    "case_complete"
@@ -5141,7 +5484,10 @@
  "migrations": [
   "structure_results",
   "restructure_exam",
-  "consolidate_niv"
+  "consolidate_niv",
+  "restructure_edema_states",
+  "rewrite_findings_and_speech",
+  "fix_saturation_references"
  ],
- "phases_note": "label is the full clinical description used in the debrief; short_label is what fits on the monitor beside the vitals. Keep short_label to a few words. v0.7: oxygen_saturation is authored as the UNSUPPORTED baseline in every non-terminal phase, and is 87 in presentation, stabilizing and improving. What the monitor reads is that baseline plus whatever vital_effects are acting, so the only things that raise this patient's saturation are positive pressure and, briefly, a nitrate. Diuresis moves heart rate, blood pressure and respiratory rate and moves the saturation by nothing, which is the case's second learning objective made mechanical rather than asserted. The terminal phases are exempt from effects and read exactly as authored. case_complete is one authored snapshot regardless of the path taken to it, as it always was. It now reads 90, the number a patient on positive pressure has been showing for most of the run, so handing off does not jump the monitor six points on the way to the debrief."
+ "phases_note": "label is the full clinical description used in the debrief; short_label is what fits on the monitor beside the vitals. Keep short_label to a few words. oxygen_saturation is authored as the UNSUPPORTED baseline in every non-terminal phase: what the monitor reads is that baseline plus whatever vital_effects are acting, and the only thing in this case that acts on the saturation is positive pressure, worth four points while the mask is on. The baselines are 85 on arrival, 85 on the mask, 88 on a nitrate with no mask, 90 with both, 90 after diuresis and 80 when he has tired. Read that column twice: the mask moves the number by four and moves the baseline by nothing, and the nitrate moves the baseline by three with no mask on the patient at all. That is the difference between making a number look better and making a patient better, and it is the case's first learning objective expressed as arithmetic. Diuresis moves heart rate, blood pressure and respiratory rate and moves the saturation by nothing, which is the second. The terminal phases are exempt from effects and read exactly as authored. case_complete is one authored snapshot regardless of the path taken to it: it reads 94, the number a patient on the mask with a nitrate running has been showing, so handing off does not jump the monitor on the way to the debrief."
 }

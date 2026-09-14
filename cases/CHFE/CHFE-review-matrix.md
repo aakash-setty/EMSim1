@@ -12,9 +12,11 @@ For lab, imaging and exam keys the resolved payload is shown inline. **Bold** co
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 1 (phase is presentation OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
 | intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
+| nitrate_responding | rule 1 (phase is presentation OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| presentation | rule 1 (phase is presentation) | plausible |
+| presentation | rule 1 (phase is presentation OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
 | «any other phase» | rule 2 (default) | plausible |
 
 
@@ -22,11 +24,13 @@ For lab, imaging and exam keys the resolved payload is shown inline. **Bold** co
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
 | intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
+| nitrate_responding | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
+| niv_supported | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| presentation | rule 1 (phase is presentation) | plausible |
-| stabilizing | rule 2 (phase is stabilizing) | plausible |
-| «any other phase» | rule 3 (default) | plausible |
+| presentation | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
+| «any other phase» | rule 2 (default) | plausible |
 
 
 ### `action_tag/nitroglycerin_sublingual`
@@ -158,10 +162,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| improving | rule 1 (phase is presentation OR phase is stabilizing OR phase is improving) | plausible |
+| impending_respiratory_failure | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| improving | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| nitrate_responding | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| niv_supported | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) | plausible |
-| presentation | rule 1 (phase is presentation OR phase is stabilizing OR phase is improving) | plausible |
-| stabilizing | rule 1 (phase is presentation OR phase is stabilizing OR phase is improving) | plausible |
+| presentation | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| stabilizing | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
 | «any other phase» | rule 2 (default) | plausible |
 
 
@@ -169,10 +176,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| improving | rule 1 (phase is presentation OR phase is stabilizing OR phase is improving) | plausible |
+| impending_respiratory_failure | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| improving | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| nitrate_responding | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| niv_supported | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) | plausible |
-| presentation | rule 1 (phase is presentation OR phase is stabilizing OR phase is improving) | plausible |
-| stabilizing | rule 1 (phase is presentation OR phase is stabilizing OR phase is improving) | plausible |
+| presentation | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| stabilizing | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
 | «any other phase» | rule 2 (default) | plausible |
 
 
@@ -195,10 +205,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| improving | rule 1 (phase is presentation OR phase is stabilizing OR phase is improving) | plausible |
+| impending_respiratory_failure | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| improving | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| nitrate_responding | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| niv_supported | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) | plausible |
-| presentation | rule 1 (phase is presentation OR phase is stabilizing OR phase is improving) | plausible |
-| stabilizing | rule 1 (phase is presentation OR phase is stabilizing OR phase is improving) | plausible |
+| presentation | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
+| stabilizing | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing OR phase is improving OR phase is impending_respiratory_failure) | plausible |
 | «any other phase» | rule 2 (default) | plausible |
 
 
@@ -391,32 +404,41 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 1 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Airway still patent and self-maintained, but he is no longer speaking ... | plausible |
 | intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Endotracheal tube in place and secured at the teeth, cuff inflated. Ai... | plausible |
+| nitrate_responding | rule 4 (phase is nitrate_responding) &rarr; ABNORMAL: Airway patent and self-maintained. Speaking in short bursts, pausing t... | plausible |
+| niv_supported | rule 3 (phase is niv_supported OR phase is stabilizing) &rarr; ABNORMAL: Airway patent and self-maintained under the mask. Speaking in short bu... | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Endotracheal tube in place and secured at the teeth, cuff inflated. Ai... | plausible |
-| presentation | rule 1 (phase is presentation) &rarr; ABNORMAL: Airway patent and self-maintained. No stridor, no drooling, no orophar... | plausible |
-| stabilizing | rule 2 (phase is stabilizing) &rarr; ABNORMAL: Airway patent and self-maintained under the mask. Speaking in short se... | plausible |
-| «any other phase» | rule 3 (default) &rarr; normal: Airway patent and self-maintained. Speaking in full sentences. No stri... | plausible |
+| presentation | rule 2 (phase is presentation) &rarr; ABNORMAL: Airway patent and self-maintained. No stridor, no drooling, no orophar... | plausible |
+| stabilizing | rule 3 (phase is niv_supported OR phase is stabilizing) &rarr; ABNORMAL: Airway patent and self-maintained under the mask. Speaking in short bu... | plausible |
+| «any other phase» | rule 5 (default) &rarr; normal: Airway patent and self-maintained. Speaking in full sentences. No stri... | plausible |
 
 
 ### `exam/exam_breath`
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 1 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Exhausted respiratory effort. The rate is high and the breaths have be... | plausible |
 | intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Ventilated. Chest rises symmetrically with each delivered breath. No a... | plausible |
+| nitrate_responding | rule 4 (phase is nitrate_responding) &rarr; ABNORMAL: Still doing all the work himself at a rate around thirty, with accesso... | plausible |
+| niv_supported | rule 3 (phase is niv_supported) &rarr; ABNORMAL: Work of breathing reduced on the mask though still increased. Rate in ... | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Ventilated. Chest rises symmetrically with each delivered breath. No a... | plausible |
-| presentation | rule 1 (phase is presentation) &rarr; ABNORMAL: Marked increase in the work of breathing. Respiratory rate in the low ... | plausible |
-| stabilizing | rule 2 (phase is stabilizing) &rarr; ABNORMAL: Work of breathing reduced on the mask. Rate in the mid twenties. Acces... | plausible |
-| «any other phase» | rule 3 (default) &rarr; normal: Breathing comfortably at a normal rate. No accessory muscle use and no... | plausible |
+| presentation | rule 2 (phase is presentation) &rarr; ABNORMAL: Marked increase in the work of breathing. Respiratory rate in the low ... | plausible |
+| stabilizing | rule 5 (phase is stabilizing) &rarr; ABNORMAL: Work of breathing close to normal on the mask. Rate in the low twentie... | plausible |
+| «any other phase» | rule 6 (default) &rarr; normal: Breathing comfortably at a normal rate. No accessory muscle use and no... | plausible |
 
 
 ### `exam/exam_circ`
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 2 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Still warm peripherally, which is the point: he is tiring, not shocked... | plausible |
 | intubated_stabilized | rule 1 (phase is intubated_stabilized) &rarr; ABNORMAL: Peripherally warm again. Capillary refill under three seconds. Pulses ... | plausible |
+| nitrate_responding | rule 3 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) &rarr; ABNORMAL: Warm and well perfused peripherally despite the distress. Capillary re... | plausible |
+| niv_supported | rule 3 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) &rarr; ABNORMAL: Warm and well perfused peripherally despite the distress. Capillary re... | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; ABNORMAL: Cool peripherally with mottling over the knees. Capillary refill four ... | plausible |
-| presentation | rule 2 (phase is presentation) &rarr; ABNORMAL: Warm and well perfused peripherally despite the distress. Capillary re... | plausible |
-| «any other phase» | rule 3 (default) &rarr; normal: Warm and well perfused. Capillary refill under two seconds. Peripheral... | plausible |
+| presentation | rule 3 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) &rarr; ABNORMAL: Warm and well perfused peripherally despite the distress. Capillary re... | plausible |
+| «any other phase» | rule 4 (default) &rarr; normal: Warm and well perfused. Capillary refill under two seconds. Peripheral... | plausible |
 
 
 ### `exam/exam_neck`
@@ -432,10 +454,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing) &rarr; ABNORMAL: Tachycardic and regular. A third heart sound is present at the apex, b... | plausible |
 | intubated_stabilized | rule 1 (phase is intubated_stabilized) &rarr; ABNORMAL: Regular at around 96. Third heart sound still audible. Grade 2 out of ... | plausible |
+| nitrate_responding | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing) &rarr; ABNORMAL: Tachycardic and regular. A third heart sound is present at the apex, b... | plausible |
+| niv_supported | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing) &rarr; ABNORMAL: Tachycardic and regular. A third heart sound is present at the apex, b... | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; ABNORMAL: Tachycardic at around 128, regular, heart sounds soft. A third heart s... | plausible |
-| presentation | rule 2 (phase is presentation OR phase is stabilizing) &rarr; ABNORMAL: Tachycardic and regular. A third heart sound is present at the apex, b... | plausible |
-| stabilizing | rule 2 (phase is presentation OR phase is stabilizing) &rarr; ABNORMAL: Tachycardic and regular. A third heart sound is present at the apex, b... | plausible |
+| presentation | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing) &rarr; ABNORMAL: Tachycardic and regular. A third heart sound is present at the apex, b... | plausible |
+| stabilizing | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing) &rarr; ABNORMAL: Tachycardic and regular. A third heart sound is present at the apex, b... | plausible |
 | «any other phase» | rule 3 (default) &rarr; ABNORMAL: Regular, rate around 90. A third heart sound is still audible. Grade 2... | plausible |
 
 
@@ -443,11 +468,14 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 1 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Fine and coarse crackles bilaterally from the bases to the apices. Air... | plausible |
 | intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Bilateral coarse crackles to the mid-zones. Equal breath sounds both s... | plausible |
+| nitrate_responding | rule 3 (phase is niv_supported OR phase is nitrate_responding) &rarr; ABNORMAL: Crackles bilaterally to the mid-zones, no longer audible in the upper ... | plausible |
+| niv_supported | rule 3 (phase is niv_supported OR phase is nitrate_responding) &rarr; ABNORMAL: Crackles bilaterally to the mid-zones, no longer audible in the upper ... | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Bilateral coarse crackles to the mid-zones. Equal breath sounds both s... | plausible |
-| presentation | rule 1 (phase is presentation) &rarr; ABNORMAL: Fine and coarse crackles bilaterally from the bases up to the upper zo... | plausible |
-| stabilizing | rule 2 (phase is stabilizing) &rarr; ABNORMAL: Crackles bilaterally to the mid-zones, no longer audible in the upper ... | plausible |
-| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Crackles limited to both bases. No wheeze. Good air entry throughout. | plausible |
+| presentation | rule 2 (phase is presentation) &rarr; ABNORMAL: Fine and coarse crackles bilaterally from the bases up to the upper zo... | plausible |
+| stabilizing | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Crackles limited to the lower zones. No wheeze. Good air entry through... | plausible |
+| «any other phase» | rule 5 (default) &rarr; ABNORMAL: Scattered fine crackles at both bases only. No wheeze. Air entry good ... | plausible |
 
 
 ### `exam/exam_abd`
@@ -464,42 +492,54 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 2 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Drenched in sweat, cool over the forehead with it, and dusky at the li... | plausible |
 | intubated_stabilized | rule 1 (phase is intubated_stabilized) &rarr; normal: Warm and dry. Mottling resolved. No rash. | plausible |
+| nitrate_responding | rule 4 (phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing) &rarr; ABNORMAL: Damp but no longer actively sweating. Warm. No rash. | plausible |
+| niv_supported | rule 4 (phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing) &rarr; ABNORMAL: Damp but no longer actively sweating. Warm. No rash. | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; ABNORMAL: Cool and mottled over the knees and forearms. No rash. | plausible |
-| presentation | rule 2 (phase is presentation) &rarr; ABNORMAL: Warm to the touch and visibly sweating over the forehead, neck and che... | plausible |
-| stabilizing | rule 3 (phase is stabilizing) &rarr; ABNORMAL: Damp but no longer actively sweating. Warm. No rash. | plausible |
-| «any other phase» | rule 4 (default) &rarr; normal: Warm and dry. No rash. | plausible |
+| presentation | rule 3 (phase is presentation) &rarr; ABNORMAL: Warm to the touch and visibly sweating over the forehead, neck and che... | plausible |
+| stabilizing | rule 4 (phase is niv_supported OR phase is nitrate_responding OR phase is stabilizing) &rarr; ABNORMAL: Damp but no longer actively sweating. Warm. No rash. | plausible |
+| «any other phase» | rule 5 (default) &rarr; normal: Warm and dry. No rash. | plausible |
 
 
 ### `exam/exam_neuro`
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 1 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Drowsy and slow to rouse, opening his eyes to voice but not answering.... | plausible |
 | intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Sedated and not responsive to voice. Pupils equal and reactive but slu... | plausible |
+| nitrate_responding | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) &rarr; normal: Alert and oriented to person, place and time, GCS 15, though answers a... | plausible |
+| niv_supported | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) &rarr; normal: Alert and oriented to person, place and time, GCS 15, though answers a... | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Sedated and not responsive to voice. Pupils equal and reactive but slu... | plausible |
-| presentation | rule 1 (phase is presentation) &rarr; normal: Alert and oriented to person, place and time, GCS 15, though answers a... | plausible |
-| «any other phase» | rule 2 (default) &rarr; normal: Alert and oriented, GCS 15, answering in full sentences. No focal defi... | plausible |
+| presentation | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) &rarr; normal: Alert and oriented to person, place and time, GCS 15, though answers a... | plausible |
+| «any other phase» | rule 3 (default) &rarr; normal: Alert and oriented, GCS 15, answering in full sentences. No focal defi... | plausible |
 
 
 ### `exam/exam_psych`
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 1 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Too drowsy to assess. No agitation. | plausible |
 | intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Sedated. Not assessable. | plausible |
+| nitrate_responding | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) &rarr; ABNORMAL: Anxious and frightened, but cooperative and following instruction. Tho... | plausible |
+| niv_supported | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) &rarr; ABNORMAL: Anxious and frightened, but cooperative and following instruction. Tho... | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Sedated. Not assessable. | plausible |
-| presentation | rule 1 (phase is presentation) &rarr; ABNORMAL: Anxious and frightened, but cooperative and following instruction. Tho... | plausible |
-| «any other phase» | rule 2 (default) &rarr; normal: Calm and cooperative with appropriate affect. Thought linear and goal ... | plausible |
+| presentation | rule 2 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) &rarr; ABNORMAL: Anxious and frightened, but cooperative and following instruction. Tho... | plausible |
+| «any other phase» | rule 3 (default) &rarr; normal: Calm and cooperative with appropriate affect. Thought linear and goal ... | plausible |
 
 
 ### `general_status`
 
 | phase | resolves to | reachable? |
 |---|---|---|
+| impending_respiratory_failure | rule 2 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Exhausted. Drowsy, eyes closing between breaths, no longer answering. ... | plausible |
 | intubated_stabilized | rule 1 (phase is intubated_stabilized) &rarr; ABNORMAL: Intubated and sedated on the ventilator. Colour improved, peripherally... | plausible |
+| nitrate_responding | rule 5 (phase is nitrate_responding) &rarr; ABNORMAL: Moderate respiratory distress. Still upright and breathing fast with n... | plausible |
+| niv_supported | rule 4 (phase is niv_supported) &rarr; ABNORMAL: Moderate respiratory distress, better on the mask. Still tachypnoeic, ... | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; ABNORMAL: Intubated and sedated. Not responsive. Mottled and cool peripherally. | plausible |
-| presentation | rule 2 (phase is presentation) &rarr; ABNORMAL: Severe respiratory distress. Upright, sweating, speaking in short burs... | plausible |
-| stabilizing | rule 3 (phase is stabilizing) &rarr; ABNORMAL: Moderate respiratory distress, improving on the mask. Speaking in shor... | plausible |
-| «any other phase» | rule 4 (default) &rarr; ABNORMAL: Comfortable at rest on the mask. Talking in full sentences. GCS 15. | plausible |
+| presentation | rule 3 (phase is presentation) &rarr; ABNORMAL: Severe respiratory distress. Upright, sweating, speaking one or two wo... | plausible |
+| stabilizing | rule 6 (phase is stabilizing) &rarr; ABNORMAL: Mild respiratory distress on the mask. Talking in short sentences betw... | plausible |
+| «any other phase» | rule 7 (default) &rarr; ABNORMAL: Comfortable at rest on the mask. Talking in full sentences. GCS 15. | plausible |
 
 
 ### `labs/labs_cbc`
@@ -527,26 +567,26 @@ Single unconditional rule; nothing to enumerate.
 
 ### `labs/labs_vbg`
 
-| phase | on_niv | resolves to | reachable? |
-|---|---|---|---|
-| intubated_stabilized | no | rule 1 (phase is intubated_stabilized) &rarr; pH (venous) 7.32; pCO2 42 mmHg; Bicarbonate 22 mEq/L; **Base excess -3 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
-| intubated_stabilized | yes | rule 1 (phase is intubated_stabilized) &rarr; pH (venous) 7.32; pCO2 42 mmHg; Bicarbonate 22 mEq/L; **Base excess -3 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
-| post_intubation_hypotension | no | rule 0 (phase is post_intubation_hypotension) &rarr; **pH (venous) 7.24**; pCO2 46 mmHg; **Bicarbonate 19 mEq/L**; **Base excess -7 mEq/L**; **Lactate 3.4 mmol/L** | plausible |
-| post_intubation_hypotension | yes | rule 0 (phase is post_intubation_hypotension) &rarr; **pH (venous) 7.24**; pCO2 46 mmHg; **Bicarbonate 19 mEq/L**; **Base excess -7 mEq/L**; **Lactate 3.4 mmol/L** | plausible |
-| «any other phase» | no | rule 3 (default) &rarr; **pH (venous) 7.29**; **pCO2 54 mmHg**; Bicarbonate 25 mEq/L; Base excess -1 mEq/L; **Lactate 2.1 mmol/L** | plausible |
-| «any other phase» | yes | rule 2 (flag on_niv set) &rarr; pH (venous) 7.36; pCO2 44 mmHg; Bicarbonate 25 mEq/L; Base excess 0 mEq/L; Lactate 1.4 mmol/L | plausible |
+| phase | resolves to | reachable? |
+|---|---|---|
+| impending_respiratory_failure | rule 2 (phase is impending_respiratory_failure) &rarr; **pH (venous) 7.21**; **pCO2 68 mmHg**; Bicarbonate 26 mEq/L; Base excess -1 mEq/L; **Lactate 2.8 mmol/L** | plausible |
+| improving | rule 3 (phase is stabilizing OR phase is improving) &rarr; pH (venous) 7.36; pCO2 44 mmHg; Bicarbonate 24 mEq/L; Base excess -1 mEq/L; Lactate 1.5 mmol/L | plausible |
+| intubated_stabilized | rule 1 (phase is intubated_stabilized) &rarr; pH (venous) 7.32; pCO2 42 mmHg; Bicarbonate 22 mEq/L; **Base excess -3 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
+| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; **pH (venous) 7.24**; pCO2 46 mmHg; **Bicarbonate 19 mEq/L**; **Base excess -7 mEq/L**; **Lactate 3.4 mmol/L** | plausible |
+| stabilizing | rule 3 (phase is stabilizing OR phase is improving) &rarr; pH (venous) 7.36; pCO2 44 mmHg; Bicarbonate 24 mEq/L; Base excess -1 mEq/L; Lactate 1.5 mmol/L | plausible |
+| «any other phase» | rule 4 (default) &rarr; **pH (venous) 7.29**; **pCO2 54 mmHg**; Bicarbonate 25 mEq/L; Base excess -1 mEq/L; **Lactate 2.1 mmol/L** | plausible |
 
 
 ### `labs/labs_lactate`
 
-| phase | on_niv | resolves to | reachable? |
-|---|---|---|---|
-| intubated_stabilized | no | rule 1 (phase is intubated_stabilized) &rarr; **Lactate 2.2 mmol/L** | plausible |
-| intubated_stabilized | yes | rule 1 (phase is intubated_stabilized) &rarr; **Lactate 2.2 mmol/L** | plausible |
-| post_intubation_hypotension | no | rule 0 (phase is post_intubation_hypotension) &rarr; **Lactate 3.4 mmol/L** | plausible |
-| post_intubation_hypotension | yes | rule 0 (phase is post_intubation_hypotension) &rarr; **Lactate 3.4 mmol/L** | plausible |
-| «any other phase» | no | rule 3 (default) &rarr; **Lactate 2.1 mmol/L** | plausible |
-| «any other phase» | yes | rule 2 (flag on_niv set) &rarr; Lactate 1.4 mmol/L | plausible |
+| phase | resolves to | reachable? |
+|---|---|---|
+| impending_respiratory_failure | rule 2 (phase is impending_respiratory_failure) &rarr; **Lactate 2.8 mmol/L** | plausible |
+| improving | rule 3 (phase is stabilizing OR phase is improving) &rarr; Lactate 1.4 mmol/L | plausible |
+| intubated_stabilized | rule 1 (phase is intubated_stabilized) &rarr; **Lactate 2.2 mmol/L** | plausible |
+| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; **Lactate 3.4 mmol/L** | plausible |
+| stabilizing | rule 3 (phase is stabilizing OR phase is improving) &rarr; Lactate 1.4 mmol/L | plausible |
+| «any other phase» | rule 4 (default) &rarr; **Lactate 2.1 mmol/L** | plausible |
 
 
 ### `labs/labs_lft`
@@ -579,12 +619,16 @@ Single unconditional rule; nothing to enumerate.
 
 ### `imaging/pocus_lung_cardiac`
 
-| phase | diuretic_given | resolves to | reachable? |
-|---|---|---|---|
-| post_intubation_hypotension | no | rule 0 (phase is post_intubation_hypotension) &rarr; ABNORMAL: Lung: diffuse B lines in all anterior and lateral zones bilaterally. C... | plausible |
-| post_intubation_hypotension | yes | rule 0 (phase is post_intubation_hypotension) &rarr; ABNORMAL: Lung: diffuse B lines in all anterior and lateral zones bilaterally. C... | plausible |
-| «any other phase» | no | rule 2 (default) &rarr; ABNORMAL: Lung: three or more B lines per field in all anterior and lateral zone... | plausible |
-| «any other phase» | yes | rule 1 (flag diuretic_given set) &rarr; ABNORMAL: Lung: B lines still present in all zones but reduced in density anteri... | plausible |
+| phase | resolves to | reachable? |
+|---|---|---|
+| impending_respiratory_failure | rule 1 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Lung: severe. Confluent B lines in every anterior and lateral zone bil... | plausible |
+| improving | rule 6 (phase is improving) &rarr; ABNORMAL: Lung: mild and clearing. Isolated B lines at both bases only, anterior... | plausible |
+| nitrate_responding | rule 4 (phase is nitrate_responding) &rarr; ABNORMAL: Lung: moderate. B lines reduced to two or three per field in the upper... | plausible |
+| niv_supported | rule 3 (phase is niv_supported) &rarr; ABNORMAL: Lung: moderate. Three or more B lines per field remain in every zone, ... | plausible |
+| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; ABNORMAL: Lung: diffuse B lines in all anterior and lateral zones bilaterally. C... | plausible |
+| presentation | rule 2 (phase is presentation) &rarr; ABNORMAL: Lung: three or more B lines per field in all anterior and lateral zone... | plausible |
+| stabilizing | rule 5 (phase is stabilizing) &rarr; ABNORMAL: Lung: mild. B lines now confined to the lower zones at one or two per ... | plausible |
+| «any other phase» | rule 7 (default) &rarr; ABNORMAL: Lung: three or more B lines per field in all anterior and lateral zone... | plausible |
 
 
 ### `imaging/ct_pulmonary_angiogram`
@@ -648,7 +692,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -656,7 +702,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -664,7 +712,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -672,7 +722,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -680,7 +732,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -688,7 +742,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -696,7 +752,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -704,7 +762,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -712,7 +772,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -720,7 +782,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -728,7 +792,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -736,7 +802,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -744,7 +812,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -752,7 +822,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -760,7 +832,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -768,7 +842,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -776,7 +852,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -784,7 +862,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -792,7 +872,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -800,7 +882,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -808,7 +892,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -816,7 +902,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -824,7 +912,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -832,7 +922,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -840,7 +932,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -848,7 +942,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -856,7 +952,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -864,7 +962,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -872,7 +972,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -880,7 +982,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -888,7 +992,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -896,7 +1002,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -904,7 +1012,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -912,7 +1022,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -920,7 +1032,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -928,6 +1042,7 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
+| impending_respiratory_failure | rule 0 (phase is impending_respiratory_failure) | plausible |
+| intubated_stabilized | rule 1 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
+| post_intubation_hypotension | rule 1 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
 | «any other phase» | **NO RULE MATCHES** | plausible |

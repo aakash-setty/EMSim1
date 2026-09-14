@@ -38,7 +38,7 @@ The fields needing primary sign-off rather than review are listed in
 
 A 65 year old man with known ischaemic cardiomyopathy, LVEF 25 to 30 percent, arrives by ambulance
 with four days of progressive breathlessness and an acute worsening since 04:00. He is
-hypertensive at 188/104, tachycardic at 118, saturating 87 percent on 6 L nasal cannula,
+hypertensive at 188/104, tachycardic at 118, saturating 85 percent on 6 L nasal cannula,
 respiratory rate 32, afebrile. He is warm, well perfused, orthopnoeic, has a raised jugular venous
 pressure, an S3, bilateral crackles with an overlying expiratory wheeze, symmetrical pitting
 edema, and is four kilograms above his stated dry weight. He ran out of furosemide five days ago
@@ -48,6 +48,13 @@ Nohria profile B, warm and wet. The intended path is non-invasive ventilation, t
 reduction with a nitrate, then diuresis, with an ECG and chest film to exclude the alternatives
 and a history that identifies the precipitant. Disposition is a monitored bed that can continue
 non-invasive ventilation and a titrating infusion.
+
+**Since the restructuring described in the last addendum, the first two steps of that path
+are separate states rather than one.** The mask takes him from severe to moderate pulmonary
+edema and no further; the nitrate is what reaches mild; a patient left without the nitrate
+tires at four minutes. Read that addendum before section 4, because three of the clinical
+calls in section 4 were written against the older structure and are annotated where they
+have been overtaken.
 
 **Structure**
 
@@ -112,8 +119,14 @@ sat is dropping."
 
 These are ordered by how likely I think you are to disagree.
 
-**4.0 Diuresis now moves the saturation by nothing, and this is new in engine v0.7.** Read
-this one first; it is the newest and the least settled.
+**4.0 Diuresis now moves the saturation by nothing, and this is new in engine v0.7.**
+PARTLY OVERTAKEN. The half of this that still stands is the half about furosemide, and it
+stands unchanged: the diuretic still moves the saturation by nothing and the argument
+against it below is still the argument to have. What has changed is everything about the
+nitrate. It no longer carries a transient effect on the saturation at all, because the
+phases now carry the oxygenation arc and counting both would credit the same drug twice.
+The table below therefore describes a design that has been replaced; the last addendum
+carries the current one, and the numbers in it are 85, 89, 88, 94.
 
 Oxygenation in this case used to be carried entirely by the phases: 87 on arrival, 93 once
 the patient was on positive pressure with a nitrate running, 96 after furosemide. Actions
@@ -147,16 +160,20 @@ inside this time window. If you want the improving phase to carry some gain, the
 one number in one phase, and it should be a gain you can defend at eight minutes rather
 than one chosen to look right.
 
-**The deltas are teaching choices, not measurements.** Three points and five points are
-authored figures. No trial supports a specific number, and nothing in the simulator is
-modelling gas exchange. Change them freely; they are one field each.
+**The deltas are teaching choices, not measurements.** This is the sentence in section 4
+that matters most and it survives the restructuring intact, with the numbers moved: the
+mask is now worth four points and the nitrate carries no effect. No trial supports a
+specific figure, and nothing in the simulator is modelling gas exchange.
 
 **One more thing to check.** A resident who never attaches a monitor now never sees any of
 this, because vitals and the heartbeat are gated on `attach_monitor` from v0.7. The NIV
-prompt still says "his sat is sitting at 87 on six litres", which is the nurse telling
-them a number rather than the resident reading one, and that is deliberate. Confirm you
-are happy with a nurse who volunteers a saturation to a resident who has not put a probe
-on the patient.
+prompt used to say "his sat is sitting at 87 on six litres", which was the nurse telling
+them a number rather than the resident reading one, and that was deliberate. The number
+has since come out of it, for a structural reason rather than a clinical one: that prompt
+now fires in three phases with three different saturations, and a prompt that quotes a
+number is silently bound to the phase whose number it quotes. What is left is the
+observation without the figure. If you want the figure back, it has to be a prompt per
+phase.
 
 **4.1 Dobutamine as a halting harmful action.** The physiology is defensible: an inotrope in a
 hypertensive, warm, well-perfused patient with an ischaemic cardiomyopathy adds myocardial oxygen
@@ -881,8 +898,9 @@ Actions with no catalog entry are still shown in their own labelled group, as re
 
 ## Addendum: what changed when the engine moved to v0.6
 
-This case authors no time-guarded transitions and is unaffected by the mechanism. Three
-things did change for it, none clinical.
+This case authored no time-guarded transitions at the time and was unaffected by the
+mechanism. It has three of them now; see the last addendum. Three things did change for it
+here, none clinical.
 
 **Three phantom entries left its omissions list.** `also_covers` was handing every covered
 crystalloid entry the covering action's critical expectation as well as its tag, so the
@@ -922,3 +940,101 @@ so they render untagged and neutral, which is correct for it.
 
 The sign-off checklist stands exactly where it did, with one addition: authoring 14.3 now
 carries a vital-effects block, and this case uses the mechanism.
+
+---
+
+## Addendum: what changed when the two treatments were separated
+
+**The instruction.** Force the learner to reach for a nitrate. Start the saturation two
+points lower. Make the patient more breathless in what he says. Have positive pressure
+improve the pulmonary edema from severe to moderate, and only a nitrate take it to mild.
+
+**Why it needed new phases rather than new numbers.** The case had one gate into
+improvement and it required both treatments at once, so the two were indistinguishable: a
+learner who put the mask on and stopped saw nothing happen at all, and a learner who gave
+both could not tell which one had worked. Separating them is the two-by-two those two
+treatments actually describe, and the phases are now that grid:
+
+| | no nitrate | nitrate |
+|---|---|---|
+| **no mask** | `presentation`, severe | `nitrate_responding`, moderate |
+| **mask** | `niv_supported`, moderate | `stabilizing`, mild |
+
+plus `improving` for the diuresed corner and `impending_respiratory_failure` for the
+patient left in the first cell too long. Eight live phases against the three to six the
+authoring requirements ask for, which is the largest overrun in any pack and is recorded
+in the case file's own `phase_notes`.
+
+**The saturation column is the argument, and it is worth your attention.** Baselines are
+the unsupported number, as they have been since v0.7, and the mask is worth four points on
+top:
+
+| phase | baseline | on the screen |
+|---|---|---|
+| `presentation` | 85 | 85 |
+| `niv_supported` | 85 | 89 |
+| `nitrate_responding` | 88 | 88 |
+| `stabilizing` | 90 | 94 |
+| `improving` | 90 | 94 |
+| `impending_respiratory_failure` | 80 | 80, or 84 with the mask still on |
+
+The mask moves the number by four and the baseline by nothing. The nitrate moves the
+baseline by three with nothing on the patient's face. **That is a claim about mechanism
+made as arithmetic, and it is the single thing in this change most in need of your
+signature.** It says positive pressure buys oxygenation and work of breathing while the
+alveolar flooding is unchanged, and that afterload reduction is what empties the lung. I
+believe it is defensible for hypertensive acute cardiogenic pulmonary edema, where a large
+part of the oedema is redistribution against afterload rather than accumulated water. It is
+also a simplification: positive pressure does reduce preload and left ventricular
+transmural pressure, so the honest version is that the mask moves the lung a little and
+the model gives it none of that movement. If you want the mask to move the baseline, it is
+one number in one phase.
+
+**What forces the nitrate now, in ascending order of force.** `stabilizing` and `improving`
+are unreachable without one. `nitroglycerin_infusion` is critical in every phase where it
+has not been given, so it is on the expected list of every run. And the case has acquired
+the first time-guarded deterioration it has ever had: four minutes in `presentation` with
+neither treatment, four minutes in `niv_supported` with the mask but no nitrate, five
+minutes in `nitrate_responding` with the nitrate but no mask, all of them arriving at
+`impending_respiratory_failure`.
+
+**Three deadlines, none of them yours.** 240, 240 and 300 seconds are mine. The direction
+is defensible, non-invasive ventilation failure in this patient population is real and is
+the usual route to intubation, and the numbers are a teaching tempo compressed against
+real disease. The fairness rule is satisfied with a wide margin: the mask is asked for at
+45 seconds and escalated at 90, the nitrate is asked for at 75 and escalated at 150, and
+both are inside the per-phase prompt cap. `CHFE-deterioration-timeline.md` prints every
+one of those numbers against the deadline it is protecting.
+
+**The deterioration cannot kill him and that is deliberate.** `impending_respiratory_failure`
+is not terminal and has no clock of its own. Both treatments together rescue it; a tube
+leads where a tube always led. `medical_student` is in this case's target level list and
+the deterioration is there to teach that delay costs something, not to teach reflexes. No
+transition in this case reaches a terminal phase on the clock, and an engine assertion now
+checks that property rather than trusting it.
+
+**What the deterioration costs is the history.** He is authored at alertness 2 there,
+drowsy from carbon dioxide, so section 10.5 requires a global answer rule and the rule is
+the point: the patient stops answering. A learner who spent four minutes taking a history
+instead of treating him loses the rest of it. The venous gas in that phase is a pH of 7.21
+with a pCO2 of 68, which is the finding that explains the drowsiness and the thing to
+check if you think the phase is arbitrary.
+
+**The patient is more breathless, in the same words.** Every topic was already authored
+twice. The breathless register is now one and two word bursts rather than short phrases,
+and it covers the two moderate phases as well as arrival, on the argument that a man at a
+respiratory rate of 28 with a mask strapped to his face does not speak in sentences
+either. No answer lost any content: an engine assertion checks that the same facts appear
+in both registers. Read a few of them anyway. They are the part of this change a learner
+meets first and the part I am least able to check.
+
+**Two defects were found on the way and are worth knowing about.** The lung ultrasound
+keyed its improved picture on `flag diuretic_given set`, so a diuretic given in the first
+minute cleared the ultrasound of a patient still in the arrival phase, and it credited the
+diuretic with clearing edema the vasodilator had cleared; it is now keyed on the phase.
+And the adherence question, which is critical in every phase, was being prompted at a
+sedated intubated patient; it is now guarded to the phases where he can still speak.
+
+**Not changed, deliberately.** The chest radiograph does not improve with the patient.
+Radiographic clearing lags clinical improvement by hours and a film that cleared in ten
+minutes would teach something false. The same reasoning applies to the ECG.

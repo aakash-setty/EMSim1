@@ -1,7 +1,7 @@
 {
  "scenarios_version": "0.1",
  "case_id": "adhf-hfref-01",
- "note": "End-to-end paths through this case. Reachability is a weak claim: the validator says a phase can be reached, these say a plausible sequence of clinical actions gets there. Cover the intended path, every harmful halt, every blocked prerequisite, the deterioration branch and its rescue, and any ordering a resident is likely to produce.",
+ "note": "End-to-end paths through this case. Reachability is a weak claim: the validator says a phase can be reached, these say a plausible sequence of clinical actions gets there. Cover the intended path, every harmful halt, every blocked prerequisite, the deterioration branch and its rescue, and any ordering a resident is likely to produce. Seven scenarios were added when the case was split into the positive-pressure-against-vasodilation two-by-two: one per corner, one per deterioration route, and the rescue. The suite is the only place the deterioration deadlines are exercised end to end, because no engine assertion walks a whole run on the clock.",
  "scenarios": [
   {
    "name": "Intended path, run cleanly",
@@ -143,6 +143,102 @@
    ],
    "expect_phase": "halted",
    "note": "A harmful tag has to cover every catalog route to the same act. This walks one of the three siblings the crystalloid_bolus group covers."
+  },
+  {
+   "name": "The mask alone plateaus at moderate and stays there",
+   "steps": [
+    "iv_access_peripheral",
+    "cardiac_monitor",
+    "niv_bipap_cpap",
+    {
+     "wait": 180
+    }
+   ],
+   "expect_phase": "niv_supported",
+   "note": "Three minutes on positive pressure with the blood pressure untreated. The saturation on the screen has improved by four points and the patient has not: this is the corner of the two-by-two the case was restructured to make visible."
+  },
+  {
+   "name": "A nitrate with no mask reaches the other moderate corner",
+   "steps": [
+    "iv_access_peripheral",
+    "cardiac_monitor",
+    "nitroglycerin_infusion",
+    {
+     "wait": 180
+    }
+   ],
+   "expect_phase": "nitrate_responding",
+   "note": "The lever on the edema, pulled, with nothing helping him breathe. The baseline saturation rises three points here and no vital effect is acting, which is the arithmetic that separates treating the number from treating the patient."
+  },
+  {
+   "name": "Neither treatment for four minutes and he tires",
+   "steps": [
+    "iv_access_peripheral",
+    "cardiac_monitor",
+    {
+     "wait": 250
+    }
+   ],
+   "expect_phase": "impending_respiratory_failure",
+   "note": "The first time-guarded deterioration this case has ever had. The nurse asked for the mask at 45 seconds and the nitrate at 75, both inside the prompt cap, before it fired."
+  },
+  {
+   "name": "The mask without a nitrate tires him four minutes later",
+   "steps": [
+    "iv_access_peripheral",
+    "cardiac_monitor",
+    "niv_bipap_cpap",
+    {
+     "wait": 250
+    }
+   ],
+   "expect_phase": "impending_respiratory_failure",
+   "note": "Positive pressure buys four minutes and does not buy an outcome. He arrives here with the mask already on, which is why the phase has no second exit rule: one that fired on the mask alone would return him to the phase he just left."
+  },
+  {
+   "name": "Tired, then rescued by both treatments together",
+   "steps": [
+    "iv_access_peripheral",
+    "cardiac_monitor",
+    {
+     "wait": 250
+    },
+    "niv_bipap_cpap",
+    "nitroglycerin_infusion"
+   ],
+   "expect_phase": "stabilizing",
+   "note": "Nothing in this case kills the patient. The deterioration costs the history and the saturation, and both treatments together still turn him around."
+  },
+  {
+   "name": "Tired, and one treatment is not enough",
+   "steps": [
+    "iv_access_peripheral",
+    "cardiac_monitor",
+    {
+     "wait": 250
+    },
+    "niv_bipap_cpap",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "impending_respiratory_failure",
+   "note": "The mask alone does not rescue a patient it already failed to rescue."
+  },
+  {
+   "name": "Intubating the tired patient leads where intubating always led",
+   "steps": [
+    "iv_access_peripheral",
+    "cardiac_monitor",
+    {
+     "wait": 250
+    },
+    "etomidate_iv",
+    "rocuronium_iv",
+    "intubation_rsi"
+   ],
+   "expect_phase": "post_intubation_hypotension",
+   "note": "The deterioration does not change what a tube does. The same vasodilated, preload-dependent collapse follows."
   }
  ]
 }
