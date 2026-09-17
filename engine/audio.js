@@ -14,6 +14,12 @@
       instead of being restarted whenever the rate crosses a quantisation step,
       and it is what makes an uneven rhythm expressible at all.
 
+      Since v0.16 the chain itself lives in monitor.js and this module subscribes
+      to it. The trace on the monitor and the beep are one beat perceived twice,
+      and a QRS drawn away from the sound it makes reads as a fault, so a single
+      clock has to tell both. The chain runs whether or not sound is on; this
+      module decides only whether a beat it is told about makes a noise.
+
       A phase may declare a `rhythm`. The vocabulary is closed and lives in
       SHARED.audio.rhythm; the engine knows nothing about which diagnoses produce
       which rhythm, exactly as it knows nothing about which drugs are harmful.
@@ -51,11 +57,7 @@ const AUDIO = (() => {
   /* Audio configuration is global, not per case, so it reads SHARED. Reading PROTO
      here would capture null: this module is evaluated before any case is selected. */
   const CFG = SHARED.audio;
-  /* beatTimer !== null means a beat is pending. It is the single source of truth for
-     whether the chain is running: there is no second flag to fall out of step with it.
-     prevMs is the interval that has just elapsed, which is what the loudness of the
-     next beat is derived from. */
-  let ctx = null, master = null, on = true, beatTimer = null, prevMs = null;
+  let ctx = null, master = null, on = true;
   /* The room. `scene` is the only thing that decides whether it plays, and it is set by
      the interface at the two moments that matter rather than inferred from anything the
      patient is doing. */
@@ -128,61 +130,16 @@ const AUDIO = (() => {
      quiet, and it means something because the asset is normalised. */
   const AMB_FADE_IN = 1.6, AMB_FADE_OUT = 0.7;
 
-  /* ---------- the interval model ----------
-     Exposed rather than private, because it is a claim about physiology that a
-     reviewer has to be able to check, and because `describe()` and the test harness
-     both read it. Given a mean interval and a rhythm name it returns the length of
-     one R-R interval in milliseconds.
+  /* ---------- the interval model and the vitals ----------
+     Both moved to monitor.js in v0.16, where the beat clock that draws from them now
+     lives. They are re-exported from here unchanged so that `describe()`, the sound
+     control and the test harness keep one name for them. The reasoning behind the
+     model is in monitor.js beside the code and in
+     docs/decisions/rhythm-and-the-heartbeat-chain.md. */
+  const intervalModel = (meanMs, rhythm) => MONITOR.intervalModel(meanMs, rhythm);
+  const rhythmNow = () => MONITOR.rhythmNow();
+  const currentVitals = () => MONITOR.vitalsNow();
 
-     For `irregularly_irregular` the interval is a shifted exponential:
-
-         interval = mean * (s + (1 - s) * Exp(1))
-
-     A fixed fraction s of the mean is refractory and the remainder is exponentially
-     distributed. Two properties matter and both are asserted in the test suite.
-
-     THE MEAN IS PRESERVED EXACTLY. E[Exp(1)] = 1, so E[interval] = mean * (s + (1-s))
-     = mean. The authored heart rate is therefore the real average rate, not an
-     approximation of it, which is what lets the rate on the monitor and the rate in
-     the ear stay the same number while every individual interval differs.
-
-     THE SPREAD NARROWS AS THE RATE RISES. s is raised where a fixed refractory floor
-     would otherwise be breached, so the coefficient of variation, which is (1 - s),
-     falls at fast rates. That is not a fudge to keep the arithmetic tidy: at high
-     ventricular rates the interval distribution really is compressed, because
-     concealed conduction into the atrioventricular node leaves less room between
-     beats. It also means no interval is ever shorter than the floor, so two beats
-     can never collide.
-
-     The exponential shape is right-skewed, which is what produces the occasional
-     long pause that makes an irregularly irregular rhythm recognisable. The
-     parameters are teaching choices and live in SHARED.audio.rhythm, where the
-     provenance note says so. */
-  function intervalModel(meanMs, rhythm) {
-    const r = CFG.rhythm && CFG.rhythm[rhythm];
-    if (!r || !(r.refractoryFraction > 0) || !(r.refractoryFraction < 1)) return meanMs;
-    /* Raise the refractory fraction rather than clamping the result. Clamping a draw
-       up to a floor would push a third of the beats at 220 bpm onto the floor and the
-       mean would no longer be the authored rate. */
-    const s = Math.min(0.98, Math.max(r.refractoryFraction, (r.absoluteFloorMs || 0) / meanMs));
-    /* Math.random() can return exactly 0 and ln(0) is -Infinity, so the draw is taken
-       from (0, 1] rather than [0, 1). */
-    const draw = -Math.log(1 - Math.random());
-    const ms = meanMs * (s + (1 - s) * draw);
-    /* The ceiling truncates a tail with a probability of roughly one in a thousand and
-       exists only so that a pathological draw cannot leave a long silence. */
-    return Math.min(meanMs * (r.ceilingMultiple || 3), ms);
-  }
-
-  /* The rhythm the current phase declares. An unrecognised value falls back to regular
-     rather than throwing: the validator rejects one at authoring time, and a built file
-     that somehow carries one should still make a sound. */
-  function rhythmNow() {
-    if (typeof PHASE === 'undefined' || typeof ST === 'undefined' || !ST) return 'regular';
-    const p = PHASE[ST.phase];
-    const r = p && p.rhythm;
-    return (r && CFG.rhythm && CFG.rhythm[r]) ? r : 'regular';
-  }
 
   function ensure() {
     if (ctx) {
@@ -288,7 +245,7 @@ const AUDIO = (() => {
      a case that has been chosen but not started, is idle. */
   function setScene(s) {
     scene = (s === 'case') ? 'case' : 'idle';
-    if (scene === 'idle') { stopBeat(); stopAmbience(); return; }
+    if (scene === 'idle') { stopAmbience(); return; }
     if (on && ctx) { loadAmbience(); startAmbience(); sync(); }
   }
 
@@ -338,7 +295,7 @@ const AUDIO = (() => {
      metronome with jitter sprinkled on it: without it the ear hears mistimed identical
      beats, with it the ear hears a heart. Derived from the interval that has just
      elapsed, bounded, and off entirely for a regular rhythm. */
-  function fillingGain(rhythm, meanMs) {
+  function fillingGain(rhythm, meanMs, prevMs) {
     const r = CFG.rhythm && CFG.rhythm[rhythm];
     if (!r || !r.gainPerRatio || !prevMs || !meanMs) return 1;
     const g = 1 + (prevMs / meanMs - 1) * r.gainPerRatio;
@@ -362,82 +319,42 @@ const AUDIO = (() => {
             LEVEL.beatOctave * gain);
   }
 
-  /* One beat, then the next appointment. Everything is read fresh here rather than
-     captured when the chain started, so the rate, the pitch and the rhythm all track
-     whatever the monitor is currently showing, including mid-ramp. The chain simply
-     stops if there is nothing to sound; sync() restarts it when there is. */
-  function tick() {
-    beatTimer = null;
-    if (!on || !ctx) return;
-    const v = currentVitals();
-    if (!v) return;
-    const meanMs = 60000 / Math.max(HR_MIN, Math.min(HR_MAX, v.heart_rate));
-    const rhythm = rhythmNow();
-    /* The next interval is drawn before the beat is played, because the lub-dub gap
-       has to fit inside it. */
-    const nextMs = intervalModel(meanMs, rhythm);
-    beat(pitchFor(v.oxygen_saturation), nextMs, fillingGain(rhythm, meanMs));
-    prevMs = nextMs;
-    /* Scheduled forward from now with no attempt to make up lost time. A background
-       tab throttles timers to about a second, and a chain that tried to catch up
-       would fire a burst of beats the moment the tab came back. */
-    beatTimer = setTimeout(tick, nextMs);
+  /* A beat, as the monitor's clock announces it. The clock has already read the rate,
+     the rhythm and the vitals the monitor is showing, including mid-ramp, and has drawn
+     the next interval; all this module decides is whether it makes a sound. It does not
+     when sound is off, when no gesture has yet created a context, or outside a running
+     case, and each of those is checked here rather than trusted to the clock, because
+     the clock runs for the trace whether or not any of them holds.
+
+     Until v0.16 this function was the chain itself: it scheduled its own successor with
+     setTimeout and the monitor's picture was decorative. The hazards that made the
+     chain worth writing carefully (double scheduling, catch-up bursts, a restart on
+     every render) are now the clock's to avoid, and the clock's tests assert them. */
+  let beats = 0;
+  function onBeat(ev) {
+    if (!on || !ctx || scene !== 'case') return;
+    beats++;
+    beat(pitchFor(ev.vitals.oxygen_saturation), ev.nextMs, fillingGain(ev.rhythm, ev.meanMs, ev.prevMs));
   }
+  MONITOR.onBeat(onBeat);
 
-  function currentVitals() {
-    if (!CASE) return null;
-    /* No monitor, no monitor sound. ST.monitoring is set by the fold the moment an
-       action carrying the catalog's reveals_vitals capability is taken. */
-    if (!ST || !ST.monitoring) return null;
-    /* The phase baseline with any active vital effect already applied, so a thirty
-       second rise in saturation is heard as well as seen. */
-    let v = ST.vitals;
-    if (!v) { const p = PHASE[ST.phase]; v = p ? p.vitals : null; }
-    /* The monitor travels to the new phase's numbers over five seconds. The
-       heartbeat travels with it, because a beat that jumps to the new rate
-       while the displayed rate is still moving sounds like a fault. Guarded by
-       typeof so this file keeps working without the UI layer. */
-    if (typeof rampedVitals === 'function') { const r = rampedVitals(); if (r) v = r; }
-    /* An unauthored case has null vitals. There is no tempo and no pitch to derive,
-       so play nothing rather than guessing at a rate. */
-    if (!v || typeof v.heart_rate !== 'number' || typeof v.oxygen_saturation !== 'number') return null;
-    return v;
-  }
-
-  /* Called every render, sixty times a second. It starts the chain and stops it and
-     does nothing else, because the chain reads the rate itself.
-
-     This used to quantise the rate and the saturation and restart the beat whenever
-     the quantised value changed, which existed to stop a five-second ramp restarting
-     the interval three hundred times and sounding like stumbling. There is nothing
-     left to restart, so the quantisation is gone and with it the last place where the
-     beat could stutter. It also means the tempo now follows the ramp exactly rather
-     than in two-beat-per-minute steps. */
+  /* Called every render, sixty times a second. It keeps the room right and nothing
+     else: the beat is the clock's, and the clock is started and stopped by the monitor
+     render that calls this. */
   function sync() {
     if (!on || !ctx) return;
     /* Nothing sounds outside a running case. The room stops because it is the room and
-       the case is over; the heartbeat stops for the same reason, and it has to be checked
-       here rather than only in setScene, because sync() runs sixty times a second and
-       would otherwise start the chain again on the next frame. */
-    if (scene !== 'case') { stopBeat(); stopAmbience(); return; }
+       the case is over. The heartbeat stops for the same reason, and onBeat checks the
+       scene itself rather than relying on the clock having been told. */
+    if (scene !== 'case') { stopAmbience(); return; }
     ambienceUpkeep();
-    /* stopBeat, not stop. Losing the monitor silences the heartbeat and must not silence
-       the room: the resident has taken equipment off a patient, not left the ward. */
-    if (!currentVitals()) { if (beatTimer !== null) stopBeat(); return; }
-    if (beatTimer === null) tick();
-  }
-
-  function stopBeat() {
-    clearTimeout(beatTimer);
-    beatTimer = null;
-    prevMs = null;
   }
 
   /* Everything. This is what the interface calls when a case ends and when it is torn
      down, and it is the only thing that has to be right for the requirement that no
-     sound survives into the debrief or back to the welcome screen. */
+     sound survives into the debrief or back to the welcome screen. The beat needs no
+     stopping here: it sounds only while `on`, `ctx` and the scene all say it may. */
   function stop() {
-    stopBeat();
     stopAmbience();
   }
 
@@ -500,10 +417,6 @@ const AUDIO = (() => {
   function start() {
     if (!ensure()) return false;
     on = true;
-    /* Clear the beat first. Calling start() while one is already pending would leave
-       two chains running against each other, and the only symptom would be a beat that
-       sounds subtly doubled. */
-    stopBeat();
     sync();
     return true;
   }
@@ -523,6 +436,9 @@ const AUDIO = (() => {
     start, unlock, toggle, sync, trill, cue, stop, setScene, intervalModel,
     get running() { return on && !!ctx && ctx.state === 'running'; },
     get enabled() { return on; },
+    /* Beats this module has actually sounded, for the harness: the clock announces
+       beats whether or not sound is on, and this is how the difference is asserted. */
+    get beats() { return beats; },
     /* exposed so the interface can state the mapping rather than hide it */
     describe() {
       const v = currentVitals();

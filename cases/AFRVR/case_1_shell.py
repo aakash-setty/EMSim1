@@ -103,6 +103,9 @@ def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp,
       "appearance": {"distress_level": distress, "alertness_level": alert,
                      "pupil_size": pupil, "pupil_reactivity": react},
       "rhythm": rhythm,
+      # The monitor's lead (authoring 6.0b), looked up by phase id from ECG below so the
+      # picture and the phase's ECG report are authored from one set of numbers.
+      **({"ecg": ECG[pid]} if pid in ECG else {}),
       "terminal": terminal, "transitions": transitions,
     }
     d.update(kw)
@@ -135,6 +138,35 @@ RATE_CONTROL_RATIONALE = (
   "the difference between agents represented, that needs three separate case actions and three "
   "separate transitions, and the cost is that the critical action can no longer be 'rate control' "
   "as a single act.")
+
+# What the monitor draws in each phase: lead II, from the same figures as the phase's
+# ecg_12_lead report. Atrial fibrillation in every live phase, so no P waves anywhere the
+# rhythm is irregularly irregular, which the monitor would also have assumed from the
+# rhythm alone; it is written out so that the choice is visible to a reviewer. The
+# lateral ST depression the reports describe is in V4 to V6 and is not drawn in lead II.
+ECG = {
+  "presentation": {"p_waves": False, "qrs_ms": 88, "qtc_ms": 448,
+                   "author_note": "Arrival tracing: narrow QRS 88 ms, QTc 448 ms, no P waves."},
+  "respiratory_failure": {"p_waves": False, "qrs_ms": 88, "qtc_ms": 448,
+                          "author_note": "No separate tracing; the arrival figures carry."},
+  "breathing_supported": {"p_waves": False, "qrs_ms": 88, "qtc_ms": 448,
+                          "author_note": "No separate tracing; the arrival figures carry."},
+  "rate_controlled_congested": {"p_waves": False, "qrs_ms": 92, "qtc_ms": 442,
+                                "author_note": "Rate-controlled tracing: QRS 92 ms, QTc 442 ms."},
+  "stabilized": {"p_waves": False, "qrs_ms": 92, "qtc_ms": 442,
+                 "author_note": "Rate-controlled tracing: QRS 92 ms, QTc 442 ms."},
+  "intubated": {"p_waves": False, "qrs_ms": 92, "qtc_ms": 444,
+                "author_note": "Post-intubation tracing: QRS 92 ms, QTc 444 ms."},
+  "halted": {"p_waves": False, "qrs_ms": 180,
+             "verify": ("MODEL OUTPUT, NOT IN THE SOURCE. The halted phase authors a regular "
+                        "rhythm at 38 with a pressure of 62/34 and says nothing about the "
+                        "tracing, so the monitor draws a slow, wide, P-less idioventricular "
+                        "rhythm, the generic peri-arrest picture. A reviewer who reads the "
+                        "author's 'regular' as a converted sinus bradycardia sets p_waves to "
+                        "true and qrs_ms to 90 here. [UNVERIFIED, confirm before release]")},
+  "case_complete": {"p_waves": False, "qrs_ms": 92, "qtc_ms": 442,
+                    "author_note": "Handed over on the rate-controlled figures."},
+}
 
 PHASES = [
   phase("presentation",

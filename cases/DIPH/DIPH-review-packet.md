@@ -627,3 +627,32 @@ a multi-term OR is ANDed with something, group it.
 - [ ] Read `DIPH-review-matrix.md` in full
 - [ ] Read `DIPH-deterioration-timeline.md` in full, particularly the do-nothing trajectory
 - [ ] Play the case from start to finish, at least once doing nothing at all
+
+
+## Addendum: the monitor trace (v0.16)
+
+Since v0.16 the monitor draws one lead live, from the same beat the heartbeat sounds, and
+each phase carries an `ecg` block saying what that lead looks like (authoring 6.0b). The
+blocks were authored from this pack's own ECG reports. This is the case the trace was built for. The QRS is the clock, and the resident can now watch it at 132 ms on arrival, 148 ms seizing, 180 ms without P waves in the wide-complex phase, and 104 ms once the bicarbonate has acted. Every figure is the phase report's, and the arrival report's verify note applies to all of them: the source gives no measurements, so every millisecond is model output awaiting your signature. The terminal R in aVR and the rightward axis are not visible in lead II and are not drawn.
+
+| Phase | What the monitor draws | Provenance in the block |
+|---|---|---|
+| `presentation` | P waves, QRS 132 ms, QTc 495 ms | verify |
+| `seizing` | P waves, QRS 148 ms, QTc 512 ms | verify |
+| `post_ictal` | P waves, QRS 132 ms, QTc 495 ms | verify |
+| `wide_complex_tachycardia` | no P waves, QRS 180 ms | verify |
+| `stabilizing` | P waves, QRS 104 ms, QTc 470 ms | verify |
+| `stabilized` | P waves, QRS 96 ms, QTc 445 ms | verify |
+| `pulseless_vt` | no P waves, QRS 200 ms | verify |
+| `halted` | no P waves, QRS 200 ms | verify |
+| `case_complete` | P waves, QRS 100 ms, QTc 460 ms | author_note |
+
+**What needs your signature.** The blocks for `halted` are model output: those phases author vitals and no tracing, so the monitor draws a slow, wide, P-less idioventricular rhythm as a generic peri-arrest picture. If you would rather see asystole, or a converted sinus bradycardia with P waves, the block for that phase changes and nothing else does. Everything the trace draws is
+display only: no rule, tag, prerequisite or transition reads it, and a result ordered while
+the trace shows one thing returns the phase's authored ECG report whatever the picture was.
+
+**What it is not.** The waveform shapes are stylisations with a provenance note in
+`SHARED.monitor.ecg` in `engine/build_simulator.py`; the lead II amplitudes and the shape of
+a wide complex are the ECG generator project's placeholders and are not fitted to data. This
+pack does not model an ECG. It says how wide the QRS is and whether there are P waves, and
+the monitor draws a lead with those properties.

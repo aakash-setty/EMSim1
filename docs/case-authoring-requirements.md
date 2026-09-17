@@ -437,6 +437,40 @@ A phase may carry a `rhythm`, a sibling of `vitals` and `appearance` rather than
 
 Adding a third value, for a regularly irregular beat such as bigeminy or Wenckebach, is a request to extend the global audio module. It would need its own model rather than different parameters for this one, so escalate rather than reaching for the nearest existing value.
 
+### 6.0b The monitor trace, which is authored beside the rhythm
+
+Since v0.16 the monitor draws one lead, live, from the same beat the heartbeat sounds (design 8.4c). A phase may carry an `ecg` block, a sibling of `rhythm`, saying what that lead looks like. The block and every field in it are optional.
+
+| Field | Meaning | Default |
+|---|---|---|
+| `pattern` | `organised` draws one complex per beat from the fields below. `ventricular_fibrillation` and `asystole` draw no complexes and sound no beats | `organised` |
+| `p_waves` | Whether a P wave precedes each QRS | `true`, or `false` under an `irregularly_irregular` rhythm |
+| `pr_ms` | PR interval | 160 |
+| `qrs_ms` | QRS duration. This is the field that makes a complex wide | 90 |
+| `qtc_ms` | Corrected QT; the QT drawn follows the rate from it | 420 |
+| `st_mv` | ST level at the J point in lead II, positive for elevation | 0 |
+| `t_mv` | T wave amplitude in lead II from the baseline | derived: modest and upright for a narrow complex, discordant for a wide one |
+| `verify`, `author_note` | Provenance for the reviewer, as elsewhere | |
+
+```json
+{ "id": "wide_complex_tachycardia", "vitals": { "heart_rate": 180, "...": "..." },
+  "rhythm": "regular",
+  "ecg": { "p_waves": false, "qrs_ms": 180,
+           "verify": "QRS 180 ms and no P waves, as the phase's ECG report says. [UNVERIFIED]" } }
+```
+
+**Author it from the phase's own ECG report, with the same numbers.** The report and the trace are two statements of one tracing, and a monitor showing narrow complexes above a report that says the QRS is 180 ms is the contradiction 6.0a describes, seen rather than heard. The validator cannot compare a picture to a sentence, so the discipline is on you: take the QRS, the QTc and the P wave statement from the report for the phase and write them here. Where a phase has no report of its own, say in `author_note` which figures it carries and why.
+
+**A phase with no block is not wrong.** It draws a narrow complex with P waves at the authored rate, or without P waves under an irregularly irregular rhythm, which is what every case written before this existed already showed. Write a block where the tracing is part of the finding, and where a reviewer would otherwise have to guess what the monitor is showing in a terminal phase.
+
+**Author the terminal phases.** `halted` and `cardiac_arrest` phases carry vitals and no ECG report, and a resident spends the last five seconds of a run looking at their monitor. Say what it shows. The shipped packs draw a slow, wide, P-less idioventricular rhythm for their generic peri-arrest phases, and each says in `verify` that a reviewer who prefers asystole, or a converted sinus bradycardia, changes the block and nothing else.
+
+**What it is not.** It is not a twelve-lead. A terminal R in aVR, lateral ST depression, anterior Q waves and reciprocal change are findings a lead II monitor does not show, and the block has no fields for them; they belong in the report. It is not a model: the amplitudes and the shape of a wide complex are stylisations with a provenance note in `SHARED.monitor.ecg`, and **no case should be described as modelling an ECG.** And it is not read by anything: no rule, tag, prerequisite or transition can see it, for the reason none can see a vital.
+
+**A widening QRS is phases, not a parameter.** The trace cannot change within a phase. DIPH shows the QRS at 132 ms on arrival, 148 ms seizing, 180 ms in the wide-complex phase and 104 ms once bicarbonate has acted, because those are four phases; that is the same rule as for a pressure that falls.
+
+**The validator's stance.** Unknown fields and unknown patterns are errors, because the renderer would ignore them silently. A wide QRS without a `verify` note warns, because it is a clinical claim the monitor will draw. `p_waves: true` under an irregularly irregular rhythm warns and passes, since multifocal atrial tachycardia exists. Ranges are wide, and a unit slip (`0.12` for 120 ms) fails.
+
 **Consequence to accept:** vitals are static within a phase and change at phase boundaries. Small cosmetic variance is added by the renderer so the monitor does not look frozen, but that variance carries no clinical meaning and no rule reads it.
 
 **Phase boundaries now ramp over five seconds.** Rather than replacing every number at once, the renderer interpolates heart rate, both pressures, saturation, respiratory rate and temperature from the previous displayed values to the new phase's authored values across five seconds, and the heartbeat audio follows. Two consequences for the author:

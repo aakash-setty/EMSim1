@@ -97,6 +97,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "irregularly_irregular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 88,
+    "qtc_ms": 448,
+    "author_note": "Arrival tracing: narrow QRS 88 ms, QTc 448 ms, no P waves."
+   },
    "terminal": false,
    "transitions": [
     {
@@ -153,6 +159,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "irregularly_irregular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 88,
+    "qtc_ms": 448,
+    "author_note": "No separate tracing; the arrival figures carry."
+   },
    "terminal": false,
    "transitions": [
     {
@@ -196,6 +208,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "irregularly_irregular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 88,
+    "qtc_ms": 448,
+    "author_note": "No separate tracing; the arrival figures carry."
+   },
    "terminal": false,
    "transitions": [
     {
@@ -237,6 +255,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "irregularly_irregular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 92,
+    "qtc_ms": 442,
+    "author_note": "Rate-controlled tracing: QRS 92 ms, QTc 442 ms."
+   },
    "terminal": false,
    "transitions": [
     {
@@ -282,6 +306,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "irregularly_irregular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 92,
+    "qtc_ms": 442,
+    "author_note": "Rate-controlled tracing: QRS 92 ms, QTc 442 ms."
+   },
    "terminal": false,
    "transitions": [
     {
@@ -314,6 +344,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "irregularly_irregular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 92,
+    "qtc_ms": 444,
+    "author_note": "Post-intubation tracing: QRS 92 ms, QTc 444 ms."
+   },
    "terminal": false,
    "transitions": [
     {
@@ -343,6 +379,11 @@
     "pupil_reactivity": "sluggish"
    },
    "rhythm": "regular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 180,
+    "verify": "MODEL OUTPUT, NOT IN THE SOURCE. The halted phase authors a regular rhythm at 38 with a pressure of 62/34 and says nothing about the tracing, so the monitor draws a slow, wide, P-less idioventricular rhythm, the generic peri-arrest picture. A reviewer who reads the author's 'regular' as a converted sinus bradycardia sets p_waves to true and qrs_ms to 90 here. [UNVERIFIED, confirm before release]"
+   },
    "terminal": true,
    "transitions": [],
    "schema_gap_note": "Generic peri-arrest numbers. This case has one halting action, so unlike CHFE there is no second physiology these numbers have to cover. The rhythm here is regular rather than irregularly irregular, and that is deliberate: these are not this patient's numbers, they are the generic peri-arrest block every halt shows, and asserting that a man who has just been killed by a fluid bolus is still in atrial fibrillation at 38 beats per minute would be a clinical claim the case has no basis for. In practice the beat is stopped the moment the case ends, so almost nobody hears it either way."
@@ -367,6 +408,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "irregularly_irregular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 92,
+    "qtc_ms": 442,
+    "author_note": "Handed over on the rate-controlled figures."
+   },
    "terminal": true,
    "transitions": [],
    "schema_gap_note": "Placeholder, as in the reference case. A completion phase should inherit the vitals of the phase the resident handed off from and the schema cannot express that. The saturation of 95 assumes the intended path with positive pressure running; a resident who hands over from the rate-controlled-and-congested phase sees a number here that is better than the patient they handed over."

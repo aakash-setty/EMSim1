@@ -208,6 +208,26 @@ const VOICE=(function(){
   }
 
   /* ---------- 3. recorder and dropdown ---------- */
+  /* Two states, two icons. The microphone means "nothing is being recorded, press to
+     start"; the pause bars mean "something is, press to stop". A red button alone did
+     not say which of the two it was, and the one thing a live microphone must never be
+     is ambiguous. The bars and the dot are filled rather than stroked, because the
+     stroke weight the rest of the interface uses reads as an outline of a shape rather
+     than as the shape, and a transport control is read at a glance. */
+  const ICON_MIC='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/>'
+                +'<path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg>';
+  const ICON_PAUSE='<svg viewBox="0 0 24 24" aria-hidden="true">'
+                  +'<rect x="8.5" y="5" width="3" height="14" rx="1" fill="currentColor" stroke="none"/>'
+                  +'<rect x="12.5" y="5" width="3" height="14" rx="1" fill="currentColor" stroke="none"/></svg>';
+  /* The panel's button draws at 12 pixels, where the 24-unit icons above collapse: two
+     3-unit bars become a pair of 1.5-pixel lines with half a pixel between them, which
+     reads as one bar. These are the same two shapes on a 12-unit grid, so the gap
+     survives the size. */
+  const ICON_PAUSE_SM='<svg viewBox="0 0 12 12" aria-hidden="true">'
+                     +'<rect x="1.8" y="1.5" width="3" height="9" rx="0.8" fill="currentColor" stroke="none"/>'
+                     +'<rect x="7.2" y="1.5" width="3" height="9" rx="0.8" fill="currentColor" stroke="none"/></svg>';
+  const ICON_DOT_SM='<svg viewBox="0 0 12 12" aria-hidden="true">'
+                   +'<circle cx="6" cy="6" r="3.6" fill="currentColor" stroke="none"/></svg>';
   const inBrowser=typeof document!=='undefined'&&typeof document.getElementById==='function';
   const SR=inBrowser?(window.SpeechRecognition||window.webkitSpeechRecognition||null):null;
   const MAX_MS=120000;          // a single recording; the button says so when it ends
@@ -357,20 +377,38 @@ const VOICE=(function(){
     btn.disabled=!active;
     btn.classList.toggle('live',LISTENING);
     btn.setAttribute('aria-pressed',LISTENING?'true':'false');
-    btn.title=LISTENING?'Click to finish the order':(SR?'Speak an order':'Type an order');
-    const lab=$('voicelab'); if(lab) lab.textContent=LISTENING?'Listening':'Voice order';
+    /* Only touched when the state actually changes: paint runs on every speech result
+       and rewriting the button's markup forty times a minute is churn for nothing. */
+    const wantIcon=LISTENING?'pause':'mic';
+    if(btn.dataset.icon!==wantIcon){ btn.dataset.icon=wantIcon; btn.innerHTML=LISTENING?ICON_PAUSE:ICON_MIC; }
+    const blab=LISTENING?'Pause recording':(SR?'Record an order':'Type an order');
+    btn.title=blab; btn.setAttribute('aria-label',blab);
+    const lab=$('voicelab'); if(lab) lab.textContent=LISTENING?'Recording':'Voice order';
     panel.hidden=!OPEN||!active;
     if(panel.hidden) return;
     const okN=ROWS.filter(r=>r.kind==='ok').length;
     const live=(FINAL+' '+INTERIM).trim();
     let status;
-    if(LISTENING) status=ARMED?'Waiting for the microphone…':(live?'':'Listening. Say the orders, then click the microphone again.');
+    if(LISTENING) status=ARMED?'Waiting for the microphone…':(live?'':'Listening. Say the orders, then press Pause Recording.');
     else status=ROWS.length?'':'Nothing heard yet.';
     $('voicestatus').innerHTML=
       (ERROR?`<div class="verr">${esc(ERROR)}</div>`:'')+
       (NOTE?`<div class="vnote">${esc(NOTE)}</div>`:'')+
       (LISTENING&&live?`<div class="vlive">${esc(live)}</div>`:'')+
       (status?`<div class="vnote">${esc(status)}</div>`:'');
+    /* The same toggle as the microphone, in words, because the control that starts and
+       stops a recording should be reachable without aiming at a 46-pixel circle behind
+       the panel. Hidden rather than disabled where the browser has no recogniser: there
+       is nothing to record, and the status line already says so. */
+    const rec=$('voicerec');
+    if(rec){
+      rec.hidden=!SR;
+      rec.classList.toggle('live',LISTENING);
+      rec.setAttribute('aria-pressed',LISTENING?'true':'false');
+      const ri=$('voicerecicon'), wantRec=LISTENING?'pause':'dot';
+      if(ri&&ri.dataset.icon!==wantRec){ ri.dataset.icon=wantRec; ri.innerHTML=LISTENING?ICON_PAUSE_SM:ICON_DOT_SM; }
+      const rl=$('voicereclab'); if(rl) rl.textContent=LISTENING?'Pause Recording':'Record';
+    }
     $('voicelist').innerHTML=ROWS.map(rowHTML).join('');
     const c=$('voiceok'); c.disabled=!okN; c.textContent='Confirm'+(okN?' ('+okN+')':'');
     const cl=$('voicecancel'); cl.textContent=ROWS.length?'Discard':'Close';
@@ -379,10 +417,10 @@ const VOICE=(function(){
     if(!inBrowser) return;
     const root=$('voice'); if(!root) return;
     root.addEventListener('click',e=>{
-      const t=e.target.closest('#voicebtn,#voiceok,#voicecancel,[data-vrm],[data-vpick]');
+      const t=e.target.closest('#voicebtn,#voicerec,#voiceok,#voicecancel,[data-vrm],[data-vpick]');
       if(!t) return;
       e.stopPropagation();
-      if(t.id==='voicebtn'){ toggle(); return; }
+      if(t.id==='voicebtn'||t.id==='voicerec'){ toggle(); return; }
       if(t.id==='voiceok'){ confirm(); return; }
       if(t.id==='voicecancel'){ close(); return; }
       if(t.dataset.vrm!==undefined){ remove(Number(t.dataset.vrm)); return; }

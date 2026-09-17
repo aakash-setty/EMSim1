@@ -100,6 +100,16 @@ def skeleton(prefix, title):
                 # the finding: a resident who can hear that the beat is uneven before
                 # they read the tracing has learned something the monitor cannot show.
                 "rhythm": "regular",
+                # What the monitor's single lead looks like (authoring 6.0b). Every field
+                # is optional and the whole block may be omitted: a phase with none draws
+                # a narrow complex with P waves at the authored rate. Author it wherever
+                # the tracing is part of the finding, from the same numbers as the ECG
+                # report for the phase, so the monitor and the report cannot disagree.
+                # "pattern" is "organised" (the default), "ventricular_fibrillation" or
+                # "asystole". The other fields describe lead II: p_waves true or false,
+                # pr_ms, qrs_ms, qtc_ms, st_mv (J-point level), t_mv (T amplitude; omit
+                # to let the monitor derive one). A wide QRS wants a "verify" note.
+                "ecg": {"pattern": "organised", "p_waves": True, "qrs_ms": 90},
                 "transitions": [
                     {"when": todo("5", "condition on this phase's critical actions"),
                      "to": "improving"},

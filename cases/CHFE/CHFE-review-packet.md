@@ -1038,3 +1038,33 @@ sedated intubated patient; it is now guarded to the phases where he can still sp
 **Not changed, deliberately.** The chest radiograph does not improve with the patient.
 Radiographic clearing lags clinical improvement by hours and a film that cleared in ten
 minutes would teach something false. The same reasoning applies to the ECG.
+
+
+## Addendum: the monitor trace (v0.16)
+
+Since v0.16 the monitor draws one lead live, from the same beat the heartbeat sounds, and
+each phase carries an `ecg` block saying what that lead looks like (authoring 6.0b). The
+blocks were authored from this pack's own ECG reports. Every live phase here is sinus rhythm with a narrow QRS, and the block says so in the same figures as the phase's ECG report. The reports never state a QRS duration; 90 ms is the monitor's default written out, not a measurement, and the anterior Q waves, the LVH voltage and the V1 to V4 T inversion are precordial findings a lead II monitor does not show.
+
+| Phase | What the monitor draws | Provenance in the block |
+|---|---|---|
+| `presentation` | P waves, QRS 90 ms, QTc 452 ms | author_note |
+| `niv_supported` | P waves, QRS 90 ms, QTc 452 ms | report |
+| `nitrate_responding` | P waves, QRS 90 ms, QTc 452 ms | report |
+| `stabilizing` | P waves, QRS 90 ms, QTc 452 ms | report |
+| `improving` | P waves, QRS 90 ms, QTc 448 ms | report |
+| `impending_respiratory_failure` | P waves, QRS 90 ms, QTc 456 ms | report |
+| `post_intubation_hypotension` | P waves, QRS 90 ms, QTc 456 ms | report |
+| `intubated_stabilized` | P waves, QRS 90 ms, QTc 448 ms | report |
+| `halted` | no P waves, QRS 180 ms | verify |
+| `case_complete` | P waves, QRS 90 ms, QTc 448 ms | report |
+
+**What needs your signature.** The blocks for `halted` are model output: those phases author vitals and no tracing, so the monitor draws a slow, wide, P-less idioventricular rhythm as a generic peri-arrest picture. If you would rather see asystole, or a converted sinus bradycardia with P waves, the block for that phase changes and nothing else does. Everything the trace draws is
+display only: no rule, tag, prerequisite or transition reads it, and a result ordered while
+the trace shows one thing returns the phase's authored ECG report whatever the picture was.
+
+**What it is not.** The waveform shapes are stylisations with a provenance note in
+`SHARED.monitor.ecg` in `engine/build_simulator.py`; the lead II amplitudes and the shape of
+a wide complex are the ECG generator project's placeholders and are not fitted to data. This
+pack does not model an ECG. It says how wide the QRS is and whether there are P waves, and
+the monitor draws a lead with those properties.

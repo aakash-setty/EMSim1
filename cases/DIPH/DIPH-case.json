@@ -112,6 +112,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "regular",
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 132,
+    "qtc_ms": 495,
+    "verify": "Arrival tracing: QRS 132 ms, QTc 495 ms. Figures from this phase's ecg_12_lead report, whose verify note says every number in it is model output: the source gives no measurements. [UNVERIFIED, confirm before release]"
+   },
    "terminal": false,
    "transitions": [
     {
@@ -169,6 +175,12 @@
     "pupil_reactivity": "sluggish"
    },
    "rhythm": "regular",
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 148,
+    "qtc_ms": 512,
+    "verify": "Seizing tracing: QRS 148 ms, QTc 512 ms. The report also describes frequent ventricular ectopics and movement artefact, neither of which the monitor draws; the trace shows the widened sinus complexes and nothing else. Figures from this phase's ecg_12_lead report, whose verify note says every number in it is model output: the source gives no measurements. [UNVERIFIED, confirm before release]"
+   },
    "terminal": false,
    "transitions": [
     {
@@ -212,6 +224,12 @@
     "pupil_reactivity": "sluggish"
    },
    "rhythm": "regular",
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 132,
+    "qtc_ms": 495,
+    "verify": "No tracing is authored for this phase; the phase description says the QRS is unchanged at around 130 ms, so the arrival figures are carried. Figures from this phase's ecg_12_lead report, whose verify note says every number in it is model output: the source gives no measurements. [UNVERIFIED, confirm before release]"
+   },
    "terminal": false,
    "transitions": [
     {
@@ -259,6 +277,11 @@
     "pupil_reactivity": "sluggish"
    },
    "rhythm": "regular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 180,
+    "verify": "Monomorphic wide-complex tachycardia at 180 with a QRS of 180 ms and no discernible P waves, as the report says. The terminal R in aVR and the rightward axis are not visible in lead II. Figures from this phase's ecg_12_lead report, whose verify note says every number in it is model output: the source gives no measurements. [UNVERIFIED, confirm before release]"
+   },
    "terminal": false,
    "transitions": [
     {
@@ -313,6 +336,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "regular",
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 104,
+    "qtc_ms": 470,
+    "verify": "Stabilising tracing: QRS 104 ms, QTc 470 ms. Figures from this phase's ecg_12_lead report, whose verify note says every number in it is model output: the source gives no measurements. [UNVERIFIED, confirm before release]"
+   },
    "terminal": false,
    "transitions": [
     {
@@ -347,6 +376,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "regular",
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 96,
+    "qtc_ms": 445,
+    "verify": "Stabilised tracing: QRS 96 ms, QTc 445 ms. Figures from this phase's ecg_12_lead report, whose verify note says every number in it is model output: the source gives no measurements. [UNVERIFIED, confirm before release]"
+   },
    "terminal": false,
    "transitions": [
     {
@@ -376,6 +411,11 @@
     "pupil_reactivity": "fixed"
    },
    "rhythm": "regular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 200,
+    "verify": "Wide-complex tachycardia at 190 with a QRS of 200 ms and no mechanical activity: the same rhythm as the phase before it, faster and wider, which is what the nurse says she sees. Figures from this phase's ecg_12_lead report, whose verify note says every number in it is model output: the source gives no measurements. [UNVERIFIED, confirm before release]"
+   },
    "terminal": true,
    "transitions": [],
    "timeout_reason": "She lost mechanical output in a wide-complex tachycardia. Conduction through a sodium channel that was already blocked failed completely, either because two minutes passed with no sodium bicarbonate given, or because an antiarrhythmic that blocks the same channel was given into the rhythm.",
@@ -402,6 +442,11 @@
     "pupil_reactivity": "fixed"
    },
    "rhythm": "regular",
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 200,
+    "verify": "MODEL OUTPUT, NOT IN THE SOURCE. The halted phase carries generic bradycardic peri-arrest numbers (see the CHANGELOG entry on amiodarone), so the monitor draws a slow, wide, P-less idioventricular rhythm. A reviewer who prefers asystole sets pattern to asystole here. [UNVERIFIED, confirm before release]"
+   },
    "terminal": true,
    "transitions": [],
    "schema_gap_note": "Generic peri-arrest numbers, as in the reference case. This case has four halting actions and they do not share a physiology: physostigmine before the ECG produces cholinergic bradycardia, flumazenil produces refractory seizure, a further dose of diphenhydramine deepens the block, and procainamide widens it into a pulseless rhythm. One block of numbers cannot be all four, and the bradycardia these carry fits the first and fits the others less well. The halt reason on each action carries the physiology; these numbers carry none of it. In practice the beat stops the moment the case ends, so few learners will read them."
@@ -426,6 +471,12 @@
     "pupil_reactivity": "reactive"
    },
    "rhythm": "regular",
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 100,
+    "qtc_ms": 460,
+    "author_note": "Handed over between the stabilising and stabilised figures, as the vitals for this phase are; no tracing is authored for it."
+   },
    "terminal": true,
    "transitions": [],
    "schema_gap_note": "Placeholder, as in every other pack. A completion phase should inherit the vitals of the phase the resident handed off from and the schema cannot express that. These numbers assume the intended path with bicarbonate given and cooling running. A resident who hands over from the post-ictal phase without treating the conduction sees numbers here that are better than the patient they handed over, which is the one place in this case where the interface flatters a run it should not."

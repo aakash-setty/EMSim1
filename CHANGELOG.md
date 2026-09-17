@@ -5,6 +5,66 @@ is usable with learners.
 
 ---
 
+## v0.16: the monitor draws the rhythm it is sounding
+
+**The trace was a picture and the heartbeat was a timer, and the note beside the trace said
+the beats on screen were not the beats being heard.** That was tolerable while the picture
+did not move. The monitor now draws one lead live, the way a bedside monitor does: the pen
+sweeps left to right at 25 mm/s, the newest sample lands at the pen, a short blank gap runs
+ahead of it erasing the previous pass, and at the right edge it starts again at the left.
+The last few seconds stay on the screen behind the gap until the pen comes round, so a beat
+that has just happened can still be looked at. The sweep freezes with the case.
+
+**One clock, two senses.** The beat chain moved out of `audio.js` into a new `monitor.js`,
+and the audio subscribes to it. Each beat books the next complex one interval ahead, which
+is what lets a P wave be drawn before its QRS arrives, and the beep plays when the clock
+says the QRS is. The chain now runs whether or not sound is on, because a resident who has
+muted the room still has to see the rhythm; the audio decides only whether a beat it is
+told about makes a noise. The interval model is unchanged and its tests still hold; the
+loop test was rewritten to drive the shared clock and to assert that muting stops the
+oscillators and not the clock.
+
+**A phase may say what the lead looks like.** An `ecg` block beside `rhythm`, authoring
+6.0b: whether there are P waves, the QRS duration, the PR and QTc, the ST level at the J
+point, the T amplitude, or a pattern with no complexes at all (`ventricular_fibrillation`,
+`asystole`). Every field is optional and a phase with no block draws what the old trace
+implied. The complexes are built from compact-support primitives ported from the ECG
+generator project, so the QRS an author writes is the QRS that renders and the baseline
+between complexes is exactly flat. The vocabulary is what a single monitor lead can show
+and nothing beyond it: a terminal R in aVR, lateral ST depression and anterior Q waves stay
+in the report. **The engine holds no association between any of it and a diagnosis, and
+no case models an ECG**; the amplitudes and the blend from a narrow complex to a wide one
+are stylisations, recorded as such in `SHARED.monitor.ecg.provenance`.
+
+**All four packs were authored from their own ECG reports.** DIPH is the case this was
+built for: the QRS is the clock there, and it can now be watched at 132 ms on arrival,
+148 ms seizing, 180 ms without P waves in the wide-complex phase, and 104 ms once the
+bicarbonate has acted. AFRVR writes out the absent P waves it was already implying. CHFE
+and MGCA carry their reports' intervals. **Every terminal phase got a picture, and every one
+of those is model output**: `halted` and `cardiac_arrest` phases author vitals and no
+tracing, so the packs draw a slow, wide, P-less idioventricular rhythm for generic
+peri-arrest numbers and say so in a `verify` note a reviewer can overrule by changing one
+block. The review packets carry an addendum listing the blocks and their provenance.
+
+**The validator learned the block.** Unknown fields and patterns are errors, since the
+renderer would ignore them silently; a wide QRS without a `verify` note warns; `p_waves:
+true` under an irregularly irregular rhythm warns and passes. The validator's copy of the
+vocabulary is held equal to the build's by a test rather than by intent. The scaffold
+writes an example block with the field meanings beside it.
+
+**Two things found on the way.** A canvas line stroked one frame at a time, with the erase
+band starting at the pen, loses the antialiased edge of the previous stroke's end cap at
+every frame boundary and reads as a dashed line; the band now starts one pixel after the
+pen and the new stroke overdraws that pixel. And the vitals ramp keys on the phase and the
+numbers only, so the first five seconds of a case ramp from the numbers of whichever case
+was last on the picker; nobody sees it unless they attach the monitor inside five seconds,
+and it is recorded here rather than fixed because it predates this change.
+
+Files: `engine/monitor.js` (new), `engine/audio.js`, `engine/ui.js`, `engine/shell.html`,
+`engine/build_simulator.py`, `engine/validate_case.py`, `engine/validator-tests.py`,
+`engine/new_case.py`, `engine/engine-tests.js`, the four case packs, design 8.4c and 8.5,
+authoring 6.0b, `docs/decisions/live-monitor-trace.md`, README.
+
 ## v0.15: the heart failure case learns the difference between its two treatments
 
 **CHFE had one improvement phase and one gate into it, and the gate wanted both treatments
@@ -81,6 +141,33 @@ and they were found by grep.
 **Unchanged, deliberately.** The chest radiograph and the ECG do not improve with the
 patient. Radiographic clearing lags clinical improvement by hours and a film that cleared in
 ten minutes would teach something false.
+
+---
+
+## v0.15: the microphone says which way it is pointing
+
+**A live microphone now shows a pause icon.** The button turned red while it was
+recording and otherwise kept the microphone glyph, which says what the control is rather
+than what pressing it will do. It now carries the two bars while recording and the
+microphone when idle, and the label under it reads Recording rather than Voice order. The
+icon is only rewritten when the state changes, because paint runs on every speech result
+and rewriting markup forty times a minute is churn for nothing.
+
+**The panel gained the same toggle in words.** A Record button sits under the live
+transcript and becomes Pause Recording while a recording is running, so starting and
+stopping does not mean aiming at a 46-pixel circle behind the open panel. It is the same
+`toggle()` the microphone calls, so the two controls cannot disagree. Where the browser
+has no recogniser the button is hidden rather than disabled: there is nothing to record
+and the status line already says so.
+
+**Pausing keeps the list.** Stopping a recording finalises what was heard and parses it
+into rows; pressing Record again adds to those rows rather than replacing them, which is
+what pause and resume should mean and what the two controls now promise.
+
+**The panel's icons are drawn on their own grid.** The 24-unit pause icon collapses at the
+12 pixels the panel button draws at, where two 3-unit bars become a pair of 1.5-pixel
+lines half a pixel apart and read as one bar. The small pair is the same two shapes on a
+12-unit grid.
 
 ---
 

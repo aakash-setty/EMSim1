@@ -39,7 +39,8 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `ui.js` | Rendering, the panel state machine, the interview matcher |
 | `semantic.js` | Optional in-browser embedding model. Loads in the background, may never load |
 | `voice.js` | Voice orders: the normaliser, the phrase parser, the recorder and the dropdown. The parser is fenced for the tests |
-| `audio.js` | Heartbeat, nurse tones and the looping ward ambience |
+| `monitor.js` | The live trace: the beat clock, the lead II waveform synthesiser and the sweep. Fenced for the tests |
+| `audio.js` | Heartbeat, nurse tones and the looping ward ambience. The heartbeat subscribes to the beat clock in `monitor.js` |
 | `room-bg.txt` | The blurred room background as a data URI |
 | `hero-bg.txt` | The welcome screen photograph as a data URI |
 | `avatar-male.txt`, `avatar-female.txt` | Patient silhouettes, used as CSS masks so they follow the theme |
@@ -49,7 +50,8 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 
 The bundle order in `build_simulator.py` is load-bearing: `semantic.js` declares `SEM`
 and `ui.js` registers on it at top level, so reversing them produces a blank page. The same
-holds for `voice.js`, which declares `VOICE` and is called from `bindCase`.
+holds for `voice.js`, which declares `VOICE` and is called from `bindCase`, and for
+`monitor.js`, which declares `MONITOR` and is subscribed to by `audio.js` at its top level.
 
 `catalog/` also holds `voice-aliases.json`, the terminology the microphone accepts, and
 `build_voice_aliases.py`, which writes it. Keyed by catalog id, never by case id; the engine
@@ -306,7 +308,9 @@ below.
 The beat is a chain: each beat reads the current rate, saturation and rhythm and schedules
 the next one. Exactly one is ever pending. That is what lets the tempo follow the
 five-second ramp between phases continuously rather than in quantised steps, and it is
-what makes an uneven rhythm expressible at all.
+what makes an uneven rhythm expressible at all. Since v0.16 the chain lives in
+`monitor.js`, because it draws the trace as well as sounding the beep, and it runs whether
+or not sound is on.
 
 A phase may declare a **`rhythm`**, from a closed vocabulary in `SHARED.audio.rhythm`.
 `regular` is the default and is what every phase written before this existed sounds like.
@@ -315,12 +319,41 @@ there is no period for a listener to lock onto, and varies the loudness of each 
 the interval before it, because a long diastole fills the ventricle more. **The mean is
 preserved exactly**, so the rate on the monitor is the true average rate; the spread
 narrows at fast rates rather than the floor being clamped, which is what keeps that true.
-The ECG trace reads the same field and draws unevenly spaced complexes with no P wave.
+The ECG trace is drawn from the same beats, so what is seen and what is heard are one
+rhythm; see the next section.
 
 The engine holds no association between a rhythm and a diagnosis, exactly as the catalog
 holds no appropriateness judgement about a drug. Every parameter is a teaching choice and
 the provenance note beside them says so: **no case models a rhythm.** See
 `docs/decisions/rhythm-and-the-heartbeat-chain.md` for what was rejected.
+
+## The trace
+
+The monitor draws one lead, live, the way a bedside monitor does: the pen moves left to
+right at 25 mm/s, the newest sample is drawn at the pen, a short blank gap runs ahead of it
+erasing the previous pass, and at the right edge it starts again at the left. Nothing
+scrolls, and the last few seconds stay on screen behind the gap until the pen comes round,
+so a beat that has just happened can still be looked at. The sweep freezes with the case.
+
+Every complex on the screen is a beat that sounded. The beat clock in `monitor.js` books
+each complex one interval ahead, which is what lets a P wave be drawn before its QRS
+arrives, and the audio plays the beep when the clock says the QRS is. Until v0.16 the
+trace was a decorative path with a note saying the beats on screen were not the beats
+being heard; a picture that moves cannot carry that note.
+
+A phase may say what the lead looks like with an **`ecg`** block beside its `rhythm`:
+whether there are P waves, the QRS duration, the PR and QTc, the ST level and the T
+amplitude, or a pattern with no complexes at all (`ventricular_fibrillation`, `asystole`).
+A phase with no block draws a narrow complex with P waves, or without them under an
+irregularly irregular rhythm, which is what the old trace showed. Author it from the same
+numbers as the phase's ECG report, so the tracing on the wall and the tracing in the chart
+cannot disagree; DIPH does, and its QRS can be watched widening and then narrowing after
+bicarbonate. The complexes are built from compact-support primitives ported from the ECG
+generator project, so an authored QRS duration renders literally.
+
+The engine holds no association between any of it and a diagnosis, and the amplitudes are
+authored stylisations with a provenance note in `SHARED.monitor.ecg`: **no case models an
+ECG.** Authoring section 6.0b; design 8.4c; `docs/decisions/live-monitor-trace.md`.
 
 ## The monitor, and what an action can do to a vital
 
@@ -464,7 +497,8 @@ copy was stale and missing the exam defaults and the routing map.
 
 `docs/decisions/` holds `time-driven-transitions.md`, `welcome-integration.md`,
 `ui-redesign-notes.md`, `arrival-and-history-change.md`, `interview-matching-plan.md`,
-`monitor-gating-and-vital-effects.md` and `rhythm-and-the-heartbeat-chain.md`.
+`monitor-gating-and-vital-effects.md`, `rhythm-and-the-heartbeat-chain.md`,
+`voice-orders.md` and `live-monitor-trace.md`.
 They are kept because they record what was rejected, which the current documents state
 only as conclusions. They are not a source of truth for how the system behaves.
 

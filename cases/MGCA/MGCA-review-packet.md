@@ -316,3 +316,32 @@ of these failures, and the matcher was not touched. Section 10.6 forbids tuning 
 the held-out set and then quoting the result. The set stays held out. The fix for the
 paraphrase and conversational arms is variant expansion written against fresh phrasings,
 starting with the topics in `CRITICAL_TOPICS` in the harness.
+
+
+## Addendum: the monitor trace (v0.16)
+
+Since v0.16 the monitor draws one lead live, from the same beat the heartbeat sounds, and
+each phase carries an `ecg` block saying what that lead looks like (authoring 6.0b). The
+blocks were authored from this pack's own ECG reports. Sinus tachycardia in every live phase, explicitly, with the intervals each report gives. The improving and stabilised reports say only 'normal intervals', so those phases carry the arrival figures. The T waves are deliberately not peaked and the QRS deliberately not widened, as the report's own author_note explains.
+
+| Phase | What the monitor draws | Provenance in the block |
+|---|---|---|
+| `presentation` | P waves, QRS 82 ms, PR 132 ms, QTc 448 ms | author_note |
+| `adrenal_crisis` | P waves, QRS 84 ms, PR 132 ms, QTc 458 ms | report |
+| `progressive_meningococcaemia` | P waves, QRS 84 ms, PR 132 ms, QTc 458 ms | report |
+| `frank_septic_shock` | P waves, QRS 84 ms, PR 128 ms, QTc 468 ms | report |
+| `improving` | P waves, QRS 84 ms, PR 132 ms, QTc 448 ms | report |
+| `stabilized_shock` | P waves, QRS 84 ms, PR 132 ms, QTc 448 ms | report |
+| `cardiac_arrest` | no P waves, QRS 200 ms | verify |
+| `halted` | no P waves, QRS 180 ms | verify |
+| `case_complete` | P waves, QRS 84 ms, PR 132 ms, QTc 448 ms | report |
+
+**What needs your signature.** The blocks for `cardiac_arrest`, `halted` are model output: those phases author vitals and no tracing, so the monitor draws a slow, wide, P-less idioventricular rhythm as a generic peri-arrest picture. If you would rather see asystole, or a converted sinus bradycardia with P waves, the block for that phase changes and nothing else does. Everything the trace draws is
+display only: no rule, tag, prerequisite or transition reads it, and a result ordered while
+the trace shows one thing returns the phase's authored ECG report whatever the picture was.
+
+**What it is not.** The waveform shapes are stylisations with a provenance note in
+`SHARED.monitor.ecg` in `engine/build_simulator.py`; the lead II amplitudes and the shape of
+a wide complex are the ECG generator project's placeholders and are not fitted to data. This
+pack does not model an ECG. It says how wide the QRS is and whether there are P waves, and
+the monitor draws a lead with those properties.

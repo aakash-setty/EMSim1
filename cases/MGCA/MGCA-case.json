@@ -130,6 +130,13 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "ecg": {
+    "p_waves": true,
+    "pr_ms": 132,
+    "qrs_ms": 82,
+    "qtc_ms": 448,
+    "author_note": "Authored from the case's own ecg_12_lead reports, which give PR, QRS and QTc for the arrival, the adrenal crisis and the frank shock tracings. The improving and stabilised tracings say only 'normal intervals', so they carry the arrival figures. The T waves are deliberately not peaked and the QRS deliberately not widened, which the report's author_note explains; the default T the monitor derives is an ordinary upright one and is left in place for the same reason."
+   },
    "terminal": false,
    "transitions": [
     {
@@ -200,6 +207,12 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "ecg": {
+    "p_waves": true,
+    "pr_ms": 132,
+    "qrs_ms": 84,
+    "qtc_ms": 458
+   },
    "terminal": false,
    "transitions": [
     {
@@ -249,6 +262,12 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "ecg": {
+    "p_waves": true,
+    "pr_ms": 132,
+    "qrs_ms": 84,
+    "qtc_ms": 458
+   },
    "terminal": false,
    "transitions": [
     {
@@ -297,6 +316,12 @@
     "pupil_size": "normal",
     "pupil_reactivity": "sluggish"
    },
+   "ecg": {
+    "p_waves": true,
+    "pr_ms": 128,
+    "qrs_ms": 84,
+    "qtc_ms": 468
+   },
    "terminal": false,
    "transitions": [
     {
@@ -340,6 +365,12 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "ecg": {
+    "p_waves": true,
+    "pr_ms": 132,
+    "qrs_ms": 84,
+    "qtc_ms": 448
+   },
    "terminal": false,
    "transitions": [
     {
@@ -366,6 +397,12 @@
     "alertness_level": 0,
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
+   },
+   "ecg": {
+    "p_waves": true,
+    "pr_ms": 132,
+    "qrs_ms": 84,
+    "qtc_ms": 448
    },
    "terminal": false,
    "transitions": [
@@ -394,6 +431,11 @@
     "pupil_size": "large",
     "pupil_reactivity": "fixed"
    },
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 200,
+    "verify": "MODEL OUTPUT, NOT IN THE SOURCE. The phase is arrest from untreated shock with a heart rate of 26 and a pressure of 44/24 authored on it, which is a slow organised rhythm with almost no output rather than fibrillation or asystole, so the monitor draws a slow, wide, P-less idioventricular rhythm. A reviewer who wants the arrest to be seen as asystole sets pattern to asystole here and nothing else changes. [UNVERIFIED, confirm before release]"
+   },
    "terminal": true,
    "transitions": [],
    "timeout_reason": "Five minutes passed in refractory septic shock with no antibiotic, no glucocorticoid and no vasopressor. Perfusion pressure fell below the level that sustains the coronary circulation and she lost cardiac output.",
@@ -420,6 +462,11 @@
     "pupil_size": "large",
     "pupil_reactivity": "sluggish"
    },
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 180,
+    "verify": "MODEL OUTPUT, NOT IN THE SOURCE. The source authors the numbers for this phase and says nothing about the tracing. A slow, wide idioventricular rhythm with no P waves is the generic peri-arrest picture the monitor draws for it, chosen because the phase carries generic bradycardic peri-arrest numbers rather than a named rhythm. A reviewer who prefers a different picture (sinus bradycardia with P waves, or asystole) changes this block and nothing else. [UNVERIFIED, confirm before release]"
+   },
    "terminal": true,
    "transitions": [],
    "schema_gap_note": "One vitals block per phase, but the harmful actions in this case produce different physiology: beta blockade produces bradycardic collapse, insulin produces a hypoglycaemic arrest with a normal rate until late. These are generic peri-arrest values. Per-halt vitals would need a schema change; flagged in the review packet."
@@ -442,6 +489,12 @@
     "alertness_level": 0,
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
+   },
+   "ecg": {
+    "p_waves": true,
+    "pr_ms": 132,
+    "qrs_ms": 84,
+    "qtc_ms": 448
    },
    "terminal": true,
    "transitions": [],

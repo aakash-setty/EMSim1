@@ -589,3 +589,31 @@ a case.
     stops with it. It is not case content and nothing in this pack depends on it, but it
     is the reason the silence before the monitor is attached is now the monitor's silence
     rather than the ward's, which is what that gating was always trying to say.
+
+
+## Addendum: the monitor trace (v0.16)
+
+Since v0.16 the monitor draws one lead live, from the same beat the heartbeat sounds, and
+each phase carries an `ecg` block saying what that lead looks like (authoring 6.0b). The
+blocks were authored from this pack's own ECG reports. Atrial fibrillation in every live phase, so no P waves anywhere the rhythm is irregularly irregular; the monitor would have assumed as much from the rhythm alone, and the blocks write the choice out so you can see it. The lateral ST depression the reports describe is in V4 to V6 and is not drawn in lead II.
+
+| Phase | What the monitor draws | Provenance in the block |
+|---|---|---|
+| `presentation` | no P waves, QRS 88 ms, QTc 448 ms | author_note |
+| `respiratory_failure` | no P waves, QRS 88 ms, QTc 448 ms | author_note |
+| `breathing_supported` | no P waves, QRS 88 ms, QTc 448 ms | author_note |
+| `rate_controlled_congested` | no P waves, QRS 92 ms, QTc 442 ms | author_note |
+| `stabilized` | no P waves, QRS 92 ms, QTc 442 ms | author_note |
+| `intubated` | no P waves, QRS 92 ms, QTc 444 ms | author_note |
+| `halted` | no P waves, QRS 180 ms | verify |
+| `case_complete` | no P waves, QRS 92 ms, QTc 442 ms | author_note |
+
+**What needs your signature.** The blocks for `halted` are model output: those phases author vitals and no tracing, so the monitor draws a slow, wide, P-less idioventricular rhythm as a generic peri-arrest picture. If you would rather see asystole, or a converted sinus bradycardia with P waves, the block for that phase changes and nothing else does. Everything the trace draws is
+display only: no rule, tag, prerequisite or transition reads it, and a result ordered while
+the trace shows one thing returns the phase's authored ECG report whatever the picture was.
+
+**What it is not.** The waveform shapes are stylisations with a provenance note in
+`SHARED.monitor.ecg` in `engine/build_simulator.py`; the lead II amplitudes and the shape of
+a wide complex are the ECG generator project's placeholders and are not fitted to data. This
+pack does not model an ECG. It says how wide the QRS is and whether there are P waves, and
+the monitor draws a lead with those properties.

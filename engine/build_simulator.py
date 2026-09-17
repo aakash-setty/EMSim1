@@ -208,6 +208,51 @@ shared = {
                   "action still ends the case immediately, because its halt card is the "
                   "teaching."),
     },
+    # The monitor's waveform. Paper speed and gain are the device's own units; the
+    # ecg block is what a phase may author and what the validator restates as a
+    # spelling check. Nothing in here associates any of it with a diagnosis.
+    "monitor": {
+        "_note": ("The live single-lead trace on the monitor (design 8.4c). Drawn by "
+                  "engine/monitor.js at sweepMmPerSecond across the trace, at "
+                  "gainMmPerMillivolt, with an erase bar eraseGapMm ahead of the pen. "
+                  "A CSS pixel is 1/96 inch, so 25 mm/s is about 94 px/s."),
+        "sweepMmPerSecond": 25,
+        "gainMmPerMillivolt": 5,
+        "eraseGapMm": 6,
+        "ecg": {
+            "_note": ("What phases[].ecg may carry. `pattern` is closed: `organised` draws "
+                      "one complex per beat from the fields below; the other two draw no "
+                      "complexes at all and announce no beats, so the heartbeat is silent "
+                      "under them. `p_waves` defaults to true, or to false under an "
+                      "irregularly_irregular rhythm. The numbers are lead II as a bedside "
+                      "monitor shows it and nothing more: `qrs_ms` is the QRS duration, "
+                      "`st_mv` the level of the ST segment at the J point, `t_mv` the T "
+                      "wave amplitude (omit it and the module derives one: upright and "
+                      "modest for a narrow complex, discordant for a wide one), `pr_ms` and "
+                      "`qtc_ms` the intervals. Every field is optional. A phase with no "
+                      "ecg block at all draws a narrow complex with P waves."),
+            "patterns": {
+                "organised": {"label": "organised complexes"},
+                "ventricular_fibrillation": {"label": "ventricular fibrillation"},
+                "asystole": {"label": "asystole"},
+            },
+            "defaults": {"pr_ms": 160, "qrs_ms": 90, "qtc_ms": 420, "st_mv": 0},
+            # The validator enforces the same figures. Wide enough for anything a case
+            # would show on a monitor, narrow enough that a unit slip (0.09 for 90) fails.
+            "ranges": {"pr_ms": [80, 400], "qrs_ms": [50, 260], "qtc_ms": [280, 720],
+                       "st_mv": [-0.6, 0.6], "t_mv": [-1.2, 1.5]},
+            "provenance": (
+                "AUTHORED, NOT MEASURED. The lead II amplitudes for a narrow complex are "
+                "the ECG generator project's textbook-typical placeholders, and the blend "
+                "from a narrow complex to a wide one (initial r held short, a deep broad "
+                "terminal S drawn as a dome, the J point on its return limb, a discordant "
+                "T) follows that project's sodium-channel pattern, which was tuned to look "
+                "like exemplar tracings rather than fitted to data. The fibrillation and "
+                "asystole patterns are pictures. No case should be described as modelling "
+                "an ECG: a case says how wide the QRS is and whether there are P waves, and "
+                "the monitor draws a lead that has those properties."),
+        },
+    },
     "audio": {
         "baseHz": 1760.0, "baseNote": "A6", "spo2Reference": 100, "semitonesPerPercent": 1.0,
         "assumption": ("One half step lower per percent of SpO2 'below'. The reference point is "
@@ -520,8 +565,15 @@ def main():
     # audio.js is fenced separately so the test harness can evaluate it without the
     # engine, and the engine without it. The interval model is a claim about physiology
     # and has to be assertable.
+    # monitor.js declares `const MONITOR` and audio.js calls MONITOR.onBeat at its own
+    # top level, so it MUST come before audio.js: the beat clock the two share lives in
+    # the monitor. Fenced for the same reason audio.js is, because the waveform makes
+    # claims (a QRS duration that renders as authored, a mean interval that is the
+    # authored rate) that the harness has to be able to assert.
     bundle = ("/*__ENGINE_START__*/\n" + open(os.path.join(HERE, "engine.js")).read() +
               "\n/*__ENGINE_END__*/\n"
+              "/*__MONITOR_START__*/\n" + open(os.path.join(HERE, "monitor.js")).read() +
+              "\n/*__MONITOR_END__*/\n"
               "/*__AUDIO_START__*/\n" + open(os.path.join(HERE, "audio.js")).read() +
               "\n/*__AUDIO_END__*/\n" +
               "\n" + open(os.path.join(HERE, "semantic.js")).read() +

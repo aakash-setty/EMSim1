@@ -112,6 +112,12 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 90,
+    "qtc_ms": 452,
+    "author_note": "Authored from the case's own ecg_12_lead reports: sinus rhythm in every live phase, QTc as the report for the phase gives it. The reports do not state a QRS duration, so the 90 ms here is the monitor's default written out rather than a measurement. The LVH voltage, the anterior Q waves and the T inversion in V1 to V4 are precordial findings a lead II monitor does not show."
+   },
    "terminal": false,
    "transitions": [
     {
@@ -163,6 +169,11 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 90,
+    "qtc_ms": 452
+   },
    "terminal": false,
    "transitions": [
     {
@@ -206,6 +217,11 @@
     "alertness_level": 0,
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
+   },
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 90,
+    "qtc_ms": 452
    },
    "terminal": false,
    "transitions": [
@@ -251,6 +267,11 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 90,
+    "qtc_ms": 452
+   },
    "terminal": false,
    "transitions": [
     {
@@ -286,6 +307,11 @@
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
    },
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 90,
+    "qtc_ms": 448
+   },
    "terminal": false,
    "transitions": [
     {
@@ -316,6 +342,11 @@
     "alertness_level": 2,
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
+   },
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 90,
+    "qtc_ms": 456
    },
    "terminal": false,
    "transitions": [
@@ -353,6 +384,11 @@
     "pupil_size": "normal",
     "pupil_reactivity": "sluggish"
    },
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 90,
+    "qtc_ms": 456
+   },
    "terminal": false,
    "transitions": [
     {
@@ -384,6 +420,11 @@
     "pupil_size": "normal",
     "pupil_reactivity": "sluggish"
    },
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 90,
+    "qtc_ms": 448
+   },
    "terminal": false,
    "transitions": [
     {
@@ -411,6 +452,11 @@
     "pupil_size": "large",
     "pupil_reactivity": "sluggish"
    },
+   "ecg": {
+    "p_waves": false,
+    "qrs_ms": 180,
+    "verify": "MODEL OUTPUT, NOT IN THE SOURCE. The source authors the numbers for this phase and says nothing about the tracing. A slow, wide idioventricular rhythm with no P waves is the generic peri-arrest picture the monitor draws for it, chosen because the phase carries generic bradycardic peri-arrest numbers rather than a named rhythm. A reviewer who prefers a different picture (sinus bradycardia with P waves, or asystole) changes this block and nothing else. [UNVERIFIED, confirm before release]"
+   },
    "terminal": true,
    "transitions": [],
    "schema_gap_note": "The schema provides one vitals block per phase, but the five harmful actions in this case produce different physiology. These are generic peri-arrest values. Per-halt-reason vitals would need a schema change; flagged in the review packet.",
@@ -433,6 +479,11 @@
     "alertness_level": 0,
     "pupil_size": "normal",
     "pupil_reactivity": "reactive"
+   },
+   "ecg": {
+    "p_waves": true,
+    "qrs_ms": 90,
+    "qtc_ms": 448
    },
    "terminal": true,
    "transitions": [],

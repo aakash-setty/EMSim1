@@ -133,10 +133,61 @@ def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp,
       "appearance": {"distress_level": distress, "alertness_level": alert,
                      "pupil_size": pupil, "pupil_reactivity": react},
       "rhythm": rhythm,
+      # The monitor's lead (authoring 6.0b), looked up by phase id from ECG below so the
+      # picture and the phase's ECG report are authored from one set of numbers.
+      **({"ecg": ECG[pid]} if pid in ECG else {}),
       "terminal": terminal, "transitions": transitions,
     }
     d.update(kw)
     return d
+
+# What the monitor draws in each phase: lead II, from the same figures as the phase's
+# ecg_12_lead report, so the tracing on the wall and the tracing in the chart cannot
+# disagree. The QRS is the clock in this case, and this is where the resident watches it
+# widen and, after bicarbonate, narrow. Every figure carries the provenance of the report
+# it comes from, and the arrival report's own verify note applies to all of them: the
+# source gives no measurements, so every millisecond here is model output awaiting the
+# author's signature.
+ECG_SOURCE = ("Figures from this phase's ecg_12_lead report, whose verify note says every "
+              "number in it is model output: the source gives no measurements. "
+              "[UNVERIFIED, confirm before release]")
+ECG = {
+  "presentation": {"p_waves": True, "qrs_ms": 132, "qtc_ms": 495,
+                   "verify": "Arrival tracing: QRS 132 ms, QTc 495 ms. " + ECG_SOURCE},
+  "seizing": {"p_waves": True, "qrs_ms": 148, "qtc_ms": 512,
+              "verify": ("Seizing tracing: QRS 148 ms, QTc 512 ms. The report also describes "
+                         "frequent ventricular ectopics and movement artefact, neither of which "
+                         "the monitor draws; the trace shows the widened sinus complexes and "
+                         "nothing else. " + ECG_SOURCE)},
+  "post_ictal": {"p_waves": True, "qrs_ms": 132, "qtc_ms": 495,
+                 "verify": ("No tracing is authored for this phase; the phase description says "
+                            "the QRS is unchanged at around 130 ms, so the arrival figures are "
+                            "carried. " + ECG_SOURCE)},
+  "wide_complex_tachycardia": {"p_waves": False, "qrs_ms": 180,
+                               "verify": ("Monomorphic wide-complex tachycardia at 180 with a "
+                                          "QRS of 180 ms and no discernible P waves, as the "
+                                          "report says. The terminal R in aVR and the rightward "
+                                          "axis are not visible in lead II. " + ECG_SOURCE)},
+  "stabilizing": {"p_waves": True, "qrs_ms": 104, "qtc_ms": 470,
+                  "verify": "Stabilising tracing: QRS 104 ms, QTc 470 ms. " + ECG_SOURCE},
+  "stabilized": {"p_waves": True, "qrs_ms": 96, "qtc_ms": 445,
+                 "verify": "Stabilised tracing: QRS 96 ms, QTc 445 ms. " + ECG_SOURCE},
+  "pulseless_vt": {"p_waves": False, "qrs_ms": 200,
+                   "verify": ("Wide-complex tachycardia at 190 with a QRS of 200 ms and no "
+                              "mechanical activity: the same rhythm as the phase before it, "
+                              "faster and wider, which is what the nurse says she sees. "
+                              + ECG_SOURCE)},
+  "halted": {"p_waves": False, "qrs_ms": 200,
+             "verify": ("MODEL OUTPUT, NOT IN THE SOURCE. The halted phase carries generic "
+                        "bradycardic peri-arrest numbers (see the CHANGELOG entry on amiodarone), "
+                        "so the monitor draws a slow, wide, P-less idioventricular rhythm. A "
+                        "reviewer who prefers asystole sets pattern to asystole here. "
+                        "[UNVERIFIED, confirm before release]")},
+  "case_complete": {"p_waves": True, "qrs_ms": 100, "qtc_ms": 460,
+                    "author_note": ("Handed over between the stabilising and stabilised figures, "
+                                    "as the vitals for this phase are; no tracing is authored for "
+                                    "it.")},
+}
 
 HANDOFF_T = {"when": "action handoff_submit taken", "to": "case_complete",
              "author_note": "First in every list so that a handoff is never overtaken by a "

@@ -192,63 +192,13 @@ function renderMonitor(){
        <div class="phasechip">${esc(PROTO.difficulty.modes[MODE].label)}</div></div>`;
   if(LASTPHASE!==null && LASTPHASE!==ST.phase) el('monitor').animate?.([{opacity:.35},{opacity:1}],{duration:420});
   LASTPHASE=ST.phase;
-  /* The trace is decorative: its path does not encode rate, and the argument is
-     only a cache key. Feed it the phase's authored rate rather than the ramping
-     one so it redraws on a phase change instead of on every frame for five
-     seconds. */
-  renderTrace(on&&p&&p.vitals?p.vitals.heart_rate:undefined, p?p.rhythm:undefined);
+  /* The trace is live: the monitor module draws it, one lead, at paper speed, from the
+     same beat clock the audio sounds. Off means a dark screen, which is the same nothing
+     the vital cells show. sync() starts or stops the clock; frame() draws one frame. */
+  MONITOR.frame(on);
+  MONITOR.sync();
   renderSound();
   AUDIO.sync();
-}
-/* Deterministic pseudo-random, so a redraw of the same phase produces the same
-   picture. Math.random() here would make the trace shimmer on every render, which
-   would read as a fault rather than as a rhythm. */
-function traceRand(seed){
-  let x=seed>>>0||1;
-  return ()=>{ x^=x<<13; x>>>=0; x^=x>>17; x^=x<<5; x>>>=0; return x/4294967296; };
-}
-function renderTrace(hr, rhythm){
-  const svg=el('trace');
-  if(typeof hr!=='number'){ svg.innerHTML=''; svg.dataset.hr=''; return; }
-  const key=String(hr)+'|'+(rhythm||'regular');
-  if(svg.dataset.hr===key) return;
-  svg.dataset.hr=key;
-  const beats=6, w=420; let d='';
-  if(rhythm==='irregularly_irregular'){
-    /* Two things separate this from the regular trace and both are the finding rather
-       than decoration: the complexes are unevenly spaced, and there is no P wave. The
-       spacing is drawn from the same shifted-exponential shape the audio uses and then
-       normalised to the width, so the picture and the sound tell the same story without
-       either importing the other's code. The complex itself keeps a fixed width and the
-       baseline between complexes absorbs the difference, because a long R-R interval
-       lengthens diastole and does not widen the QRS. Still decorative: the six beats on
-       screen are not the six beats you are hearing. */
-    const rnd=traceRand(Math.round(hr)*2654435761);
-    const raw=[]; for(let b=0;b<beats;b++) raw.push(0.62+0.38*(-Math.log(1-rnd())));
-    const tot=raw.reduce((a,c)=>a+c,0);
-    const cw=32;                       /* complex width in pixels, fixed */
-    let x=0;
-    for(let b=0;b<beats;b++){
-      const seg=w*raw[b]/tot, flat=Math.max(4,seg-cw), c=x+flat;
-      d+=`M${x} 14 L${c} 14 `
-       + `L${c+cw*0.10} 17 L${c+cw*0.22} 2 L${c+cw*0.34} 20 L${c+cw*0.46} 14 `
-       + `L${c+cw*0.62} 14 L${c+cw*0.78} 9 L${c+cw*0.94} 14 L${x+seg} 14 `;
-      x+=seg;
-    }
-  } else {
-    /* Unchanged, so the two cases written before a rhythm existed draw exactly what
-       they drew before. The complex scales with the segment here, which a fixed-width
-       one would not, and there is no reason to redraw a picture nobody complained
-       about. */
-    const seg=w/beats;
-    for(let b=0;b<beats;b++){
-      const x=b*seg;
-      d+=`M${x} 14 L${x+seg*0.30} 14 L${x+seg*0.36} 11 L${x+seg*0.42} 14 `
-       + `L${x+seg*0.47} 17 L${x+seg*0.52} 2 L${x+seg*0.57} 20 L${x+seg*0.62} 14 `
-       + `L${x+seg*0.78} 14 L${x+seg*0.84} 9 L${x+seg*0.90} 14 L${x+seg} 14 `;
-    }
-  }
-  svg.innerHTML=`<path d="${d}" fill="none" stroke="var(--hr)" stroke-width="1.3"/>`;
 }
 function renderSound(){
   const b=el('soundbtn'); if(!b) return;
@@ -1620,7 +1570,7 @@ function finish(){
   /* The room goes quiet with the case. A debrief is reading rather than resuscitating,
      and ambience still humming under it is the interface not noticing the case is over.
      setScene('idle') stops the heartbeat and the room together. */
-  refold(); ENDED=true; AUDIO.setScene('idle');
+  refold(); ENDED=true; AUDIO.setScene('idle'); MONITOR.setScene('idle');
   VOICE.reset();
   /* Neither overlay belongs over a debrief. The case is over, so there is nothing to
      resume and nothing left to lose by leaving. */
@@ -1642,7 +1592,7 @@ function restart(){
   PENDING_HANDOFF={disposition:null,diagnoses:[]};
   PAUSED=false; PAUSED_MS=0; PAUSED_AT=0;
   el('pauseview').classList.add('hidden'); closeLeave();
-  AUDIO.setScene('idle');
+  AUDIO.setScene('idle'); MONITOR.setScene('idle'); MONITOR.reset();
   el('endview').classList.add('hidden'); el('playview').classList.remove('hidden');
   el('splash').classList.remove('hidden');
   setPanels(true,false);
@@ -1971,7 +1921,7 @@ function chooseCase(i){
 }
 function backToPicker(){
   VOICE.reset();
-  AUDIO.setScene('idle');
+  AUDIO.setScene('idle'); MONITOR.setScene('idle'); MONITOR.reset();
   el('splash').classList.add('hidden');
   el('picker').classList.remove('hidden');
   WL_SEL=-1;                          // returning must not land on a stale highlight
@@ -2055,7 +2005,7 @@ function begin(){
   AUDIO.unlock();
   /* The room starts here rather than on the splash. A case that has been chosen and not
      started is not a case anybody is in. */
-  AUDIO.setScene('case');
+  AUDIO.setScene('case'); MONITOR.setScene('case');
   render();
   VOICE.paint();
   requestAnimationFrame(tick);
@@ -2097,7 +2047,7 @@ function pauseSim(){
   /* A paused case is not listening. What was heard so far is kept in the list. */
   VOICE.pause();
   PAUSED=true; PAUSED_AT=Date.now();
-  AUDIO.setScene('idle');
+  AUDIO.setScene('idle'); MONITOR.setScene('idle');
   el('pauseview').classList.remove('hidden');
 }
 function resumeSim(){
@@ -2109,7 +2059,7 @@ function resumeSim(){
   RAMP_T0+=away;
   PAUSED=false;
   el('pauseview').classList.add('hidden');
-  AUDIO.unlock(); AUDIO.setScene('case');
+  AUDIO.unlock(); AUDIO.setScene('case'); MONITOR.setScene('case');
   render();
 }
 document.addEventListener('visibilitychange',()=>{ if(document.hidden) pauseSim(); });

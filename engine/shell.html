@@ -181,6 +181,19 @@ button{font:inherit;color:inherit}
 .vlive{font-size:13.5px;line-height:1.4;color:var(--ink);font-style:italic;margin:2px 0 4px}
 .vnote{font-size:12px;color:var(--ink3);line-height:1.4}
 .verr{font-size:12px;color:var(--harm);line-height:1.4;margin-bottom:4px}
+/* The record control inside the panel: the same toggle as the microphone above it, in
+   words. `hidden` gets an explicit rule for the same reason the panel does, since the
+   display here outranks the user-agent stylesheet and the attribute would do nothing. */
+.vrec{display:inline-flex;align-items:center;gap:7px;margin-top:8px;font:inherit;font-size:12.5px;
+  padding:5px 11px;border:1px solid var(--rule);border-radius:3px;background:var(--pane2);
+  color:var(--ink2);cursor:pointer}
+.vrec[hidden]{display:none}
+.vrecicon{display:inline-flex;align-items:center;flex:0 0 auto}
+.vrec svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;display:block}
+.vrec:hover{border-color:var(--actb);color:var(--act);background:var(--actl)}
+.vrec.live{border-color:var(--harmb);color:var(--harm);background:var(--harml)}
+.vrec.live:hover{border-color:var(--harm);color:#fff;background:var(--harm)}
 .voicebox{width:100%;box-sizing:border-box;margin-top:6px;font:inherit;font-size:13px;padding:6px 9px;
   border:1px solid var(--rule);border-radius:3px;background:var(--pane2);color:var(--ink)}
 .voicebox:focus{outline:none;border-color:var(--actb);background:#fff}
@@ -228,7 +241,12 @@ button{font:inherit;color:inherit}
 .clock{font-family:var(--mono);font-size:26px;font-weight:500;color:#CBD9E1;font-variant-numeric:tabular-nums}
 .phasechip{font-size:11px;color:#8FA8B6;font-family:var(--mono);margin-top:2px;
   max-width:190px;margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.trace{height:22px;margin-top:5px;opacity:.95}
+/* The waveform. A canvas rather than an SVG since v0.16, because it is drawn live at
+   paper speed with an erase bar, and a path that is rewritten sixty times a second is
+   the wrong tool for a picture that changes by a few pixels a frame. Sized in CSS and
+   fitted to device pixels by the monitor module; the module reads --hr from here so the
+   trace is the same green as the number above it. */
+.trace{display:block;width:100%;height:48px;margin-top:6px;opacity:.95}
 
 /* ============================================================
    TAB RAIL: fixed at the left edge, present in every state. The content
@@ -1047,6 +1065,9 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
         <div class="vhead">
           <div class="vtitle">Voice order</div>
           <div id="voicestatus"></div>
+          <button class="vrec" id="voicerec" type="button" aria-pressed="false" hidden>
+            <span class="vrecicon" id="voicerecicon"></span><span id="voicereclab">Record</span>
+          </button>
           <input type="text" id="voicebox" class="voicebox" autocomplete="off" spellcheck="false"
                  placeholder="Or type an order and press Enter" aria-label="Type an order">
         </div>
@@ -1060,7 +1081,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
     </div>
     <div class="monwrap">
       <div class="mon" id="monitor"></div>
-      <svg class="trace" id="trace" viewBox="0 0 420 22" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <canvas class="trace" id="trace" aria-hidden="true"></canvas>
     </div>
   </div>
 </div>

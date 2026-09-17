@@ -52,6 +52,13 @@ const eng = html.match(/\/\*__ENGINE_START__\*\/([\s\S]*?)\/\*__ENGINE_END__\*\/
 if (!eng) { console.error('engine block not found in ' + HTML_PATH); process.exit(2); }
 eval(eng[1]);
 
+/* monitor.js is fenced separately and evaluated before audio.js, because audio.js
+   subscribes to the monitor's beat clock at its own top level and would throw without
+   it. It is inert in node: nothing touches a canvas until a frame is drawn, and nothing
+   is drawn without a document. The same const-in-eval trick as for AUDIO below. */
+const mon = html.match(/\/\*__MONITOR_START__\*\/([\s\S]*?)\/\*__MONITOR_END__\*\//);
+if (mon) global.MONITOR = eval(mon[1] + '\n;MONITOR');
+
 /* audio.js is fenced separately in the bundle. It is evaluated here because the
    heartbeat's interval model is a claim about physiology rather than a rendering
    detail, and a claim that nothing can check is a claim nobody should trust. Nothing
@@ -1196,14 +1203,20 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
     const realOsc = stubCtx.createOscillator;
     stubCtx.createOscillator = () => { beats++; return realOsc(); };
 
-    /* Nothing sounds outside a running case, so the scene has to say one is running
-       before there is a beat to measure. */
-    AUDIO.setScene('case');
+    /* Since v0.16 the chain is the monitor's and the audio subscribes to it. The
+       interface tells both the scene and the monitor render calls both sync()s, so the
+       harness does the same. `beats` below counts oscillators, which is what the ear
+       gets; MONITOR.pending is the clock. */
+    const scene = s => { MONITOR.setScene(s); AUDIO.setScene(s); };
+    const tickAll = () => { MONITOR.sync(); AUDIO.sync(); };
+    const heard0 = AUDIO.beats;
+    scene('case');
     AUDIO.start();
+    tickAll();
     chk('no beat outside a case', (() => {
-      AUDIO.setScene('idle'); AUDIO.sync();
-      const quiet = pending.length === 0;
-      AUDIO.setScene('case'); AUDIO.sync();
+      scene('idle'); tickAll();
+      const quiet = pending.length === 0 && !MONITOR.pending;
+      scene('case'); tickAll();
       return quiet;
     })());
     advance(60000);
@@ -1212,11 +1225,13 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
     chk('sixty seconds at 160 bpm gives about 160 beats', Math.abs(n60 - 160) <= 12,
         n60.toFixed(0));
     chk('only ever one beat is pending', maxPending <= 1, String(maxPending));
+    chk('every beat the audio sounded was one the clock announced',
+        AUDIO.beats - heard0 === n60, (AUDIO.beats - heard0) + ' against ' + n60);
 
     /* Sixty renders a second must not disturb it. This is the regression the removed
        quantisation used to paper over. */
     beats = 0; const before = pending.length;
-    for (let i = 0; i < 600; i++) AUDIO.sync();
+    for (let i = 0; i < 600; i++) tickAll();
     chk('calling sync repeatedly schedules nothing extra',
         pending.length === before && beats === 0, String(pending.length));
 
@@ -1228,14 +1243,27 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
         slow.toFixed(0));
 
     /* Losing the monitor stops the beat; regaining it starts it again. */
-    ST.monitoring = null; AUDIO.sync();
-    chk('no monitor, no pending beat', pending.length === 0, String(pending.length));
+    ST.monitoring = null; tickAll();
+    chk('no monitor, no pending beat', pending.length === 0 && !MONITOR.pending, String(pending.length));
     beats = 0; advance(now + 5000);
     chk('and nothing sounds while it is off', beats === 0, String(beats / 2));
-    ST.monitoring = { t: 0 }; AUDIO.setScene('case'); AUDIO.sync();
-    chk('reattaching restarts it', pending.length === 1, String(pending.length));
-    AUDIO.stop();
-    chk('stop leaves nothing pending', pending.length === 0, String(pending.length));
+    ST.monitoring = { t: 0 }; scene('case'); tickAll();
+    chk('reattaching restarts it', pending.length === 1 && MONITOR.pending, String(pending.length));
+
+    /* Sound off is not monitor off. The trace has to keep drawing for a resident who
+       has muted the room, so the clock runs on; what stops is the oscillators. */
+    AUDIO.toggle();
+    beats = 0; advance(now + 10000);
+    chk('switching the sound off leaves the clock running for the trace',
+        !AUDIO.enabled && MONITOR.pending && pending.length === 1, String(pending.length));
+    chk('and sounds nothing while it is off', beats === 0, String(beats / 2));
+    AUDIO.toggle();
+    beats = 0; advance(now + 10000);
+    chk('switching it back on picks the same clock up again', AUDIO.enabled && beats / 2 >= 8,
+        String(beats / 2));
+    chk('the beeps are the drawn beats: every complex the trace booked is a beat the clock announced',
+        MONITOR.booked.length > 0 && MONITOR.booked.every(b => b.on <= 0 && b.off > 0),
+        String(MONITOR.booked.length));
 
     /* ---- what the beat actually scheduled ----
        Read off the graph rather than off the config. The config can say the pitch is
@@ -1288,23 +1316,25 @@ if (typeof AUDIO === 'undefined' || !AUDIO.intervalModel) {
     AUDIO.setScene('case'); AUDIO.sync(); AUDIO.sync();
     chk('only ever one loop is running', sources === afterStart, String(sources - afterStart));
     /* The room is not the monitor. Taking equipment off a patient is not leaving the ward. */
-    ST.monitoring = null; AUDIO.sync();
+    ST.monitoring = null; tickAll();
     chk('losing the monitor silences the heartbeat and not the room',
         pending.length === 0 && AUDIO.ambience.playing);
     ST.monitoring = { t: 0 };
-    AUDIO.setScene('idle');
+    scene('idle');
     chk('it stops when the case does', !AUDIO.ambience.playing);
-    chk('and the heartbeat stops with it', pending.length === 0, String(pending.length));
-    AUDIO.setScene('case');
+    chk('and the heartbeat stops with it', pending.length === 0 && !MONITOR.pending, String(pending.length));
+    scene('case');
     AUDIO.stop();
-    chk('stop() silences the room as well as the beat', !AUDIO.ambience.playing);
-    AUDIO.setScene('case');
+    chk('stop() silences the room', !AUDIO.ambience.playing);
+    scene('case');
     AUDIO.toggle();
     chk('switching the sound off silences the room', !AUDIO.ambience.playing);
     AUDIO.toggle();
     chk('and switching it back on brings it back', AUDIO.ambience.playing);
-    AUDIO.setScene('idle');
+    scene('idle');
     AUDIO.stop();
+    MONITOR.reset();
+    chk('reset leaves the trace with nothing booked', MONITOR.booked.length === 0 && !MONITOR.pending);
   } finally {
     global.ST = realST; global.setTimeout = realSetT; global.clearTimeout = realClearT;
     global.window = realWindow; global.PHASE = realPHASE; global.AMBIENCE = realAmb;

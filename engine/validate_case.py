@@ -257,6 +257,60 @@ def collect_all_conditions(case):
     return conds
 
 
+# The monitor waveform block a phase may carry. Restated from SHARED.monitor.ecg in
+# build_simulator.py, which is the authoritative copy; the two are held equal by
+# validator-tests.py. Ranges are wide enough for anything a case would put on a
+# bedside monitor and narrow enough that a unit slip (0.09 for 90 ms, 90 for 0.09 mV)
+# fails rather than drawing something absurd.
+ECG_PATTERNS = {"organised", "ventricular_fibrillation", "asystole"}
+ECG_RANGES = {"pr_ms": (80, 400), "qrs_ms": (50, 260), "qtc_ms": (280, 720),
+              "st_mv": (-0.6, 0.6), "t_mv": (-1.2, 1.5)}
+ECG_KEYS = {"pattern", "p_waves", "verify", "author_note"} | set(ECG_RANGES)
+
+
+def _check_ecg(p, errors, warnings):
+    e = p["ecg"]
+    pid = p["id"]
+    if not isinstance(e, dict):
+        errors.append(f"[ecg] {pid}: ecg is {e!r}, expected an object")
+        return
+    for k in e:
+        if k not in ECG_KEYS:
+            errors.append(f"[ecg] {pid}: unknown field {k!r}; the monitor reads "
+                          f"{sorted(ECG_KEYS - {'verify', 'author_note'})} and would ignore this")
+    pat = e.get("pattern", "organised")
+    if pat not in ECG_PATTERNS:
+        errors.append(f"[ecg] {pid}: pattern {pat!r} is not one of {sorted(ECG_PATTERNS)}; "
+                      f"an unknown value draws organised complexes and says nothing")
+    if "p_waves" in e and not isinstance(e["p_waves"], bool):
+        errors.append(f"[ecg] {pid}: p_waves is {e['p_waves']!r}, expected true or false")
+    for k, (lo, hi) in ECG_RANGES.items():
+        if k not in e:
+            continue
+        v = e[k]
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            errors.append(f"[ecg] {pid}: {k} is {v!r}, not a number")
+        elif not (lo <= v <= hi):
+            errors.append(f"[ecg] {pid}: {k}={v} outside plausible range {lo}-{hi}")
+    # A pattern with no complexes reads none of the complex fields, and an author who
+    # wrote them was probably describing something the monitor will not draw.
+    if pat != "organised":
+        stray = sorted(k for k in e if k in ECG_RANGES or k == "p_waves")
+        if stray:
+            warnings.append(f"[ecg] {pid}: pattern {pat} draws no complexes, so {stray} "
+                            f"are ignored")
+    # The rhythm and the waveform are two fields describing one beat, and an author can
+    # write them apart. Neither combination is impossible (multifocal atrial tachycardia
+    # is irregularly irregular with P waves), so this is a warning that says what the
+    # monitor will do, not an error that says it is wrong.
+    if p.get("rhythm") == "irregularly_irregular" and e.get("p_waves") is True:
+        warnings.append(f"[ecg] {pid}: irregularly_irregular with p_waves true will draw "
+                        f"P waves at uneven intervals; confirm that is the finding intended")
+    if isinstance(e.get("qrs_ms"), (int, float)) and e["qrs_ms"] >= 120 and "verify" not in e:
+        warnings.append(f"[ecg] {pid}: a wide QRS ({e['qrs_ms']} ms) is a clinical claim the "
+                        f"monitor will draw; a verify note for the reviewer is expected")
+
+
 # --------------------------------------------------------------------------
 # Checks
 # --------------------------------------------------------------------------
@@ -665,6 +719,15 @@ def run_checks(case):
         if "rhythm" in p and p["rhythm"] not in RHYTHMS:
             errors.append(f"[vitals] {p['id']}: rhythm {p['rhythm']!r} is not one of "
                           f"{sorted(RHYTHMS)}; an unknown value sounds regular and says nothing")
+        # The monitor's waveform (design 8.4c, authoring 6.0b). Optional, and absent
+        # means a narrow complex with P waves, so every case written before this existed
+        # draws what its rhythm alone implied. The same spelling-check stance as the
+        # rhythm: the authoritative copy of the vocabulary and the ranges is
+        # SHARED.monitor.ecg in build_simulator.py and it is restated here. Unknown keys
+        # are errors, because a misspelt `qrs` would be ignored by the renderer and the
+        # author would be looking at a narrow complex wondering why.
+        if "ecg" in p:
+            _check_ecg(p, errors, warnings)
 
     # -- V: vital effects (design 2.3, authoring 5.2) -----------------------
     # Six rules, and the reason for each is that the mechanism is easy to author into

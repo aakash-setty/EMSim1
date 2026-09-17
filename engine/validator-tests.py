@@ -291,6 +291,71 @@ expect_clean("irregularly_irregular passes",
 expect_clean("a phase with no rhythm at all passes",
              lambda c: c["phases"][0].pop("rhythm", None), "rhythm")
 
+print("\n-- the monitor waveform (v0.16) --")
+# The same stance as the rhythm: the renderer falls back silently, so the validator has
+# to be the thing that notices. And the vocabulary is restated in two places, so the two
+# are held equal here rather than trusted to stay so.
+_shared = {}
+try:
+    import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location("_bs", os.path.join(HERE, "build_simulator.py"))
+    _bs = _ilu.module_from_spec(_spec)
+    _real_argv = sys.argv; sys.argv = [sys.argv[0]]
+    _spec.loader.exec_module(_bs)
+    sys.argv = _real_argv
+    _shared = _bs.shared
+except Exception as exc:                                     # noqa: BLE001
+    print(f"  FAIL build_simulator.py could not be imported for the vocabulary check: {exc}")
+    FAILS.append("build_simulator import")
+COUNT += 1
+if _shared:
+    _ecg = _shared["monitor"]["ecg"]
+    _pats = {k for k in _ecg["patterns"] if not k.startswith("_")}
+    _rng = {k: tuple(v) for k, v in _ecg["ranges"].items()}
+    if _pats == V.ECG_PATTERNS and _rng == V.ECG_RANGES:
+        print("  ok   the validator's ecg vocabulary and ranges match the build's")
+    else:
+        print(f"  FAIL the validator's ecg vocabulary and ranges match the build's: "
+              f"{_pats} / {_rng} against {V.ECG_PATTERNS} / {V.ECG_RANGES}")
+        FAILS.append("ecg vocabulary")
+
+def _ecg_set(c, block):
+    c["phases"][0]["ecg"] = block
+
+expect("an unknown ecg pattern is rejected",
+       lambda c: _ecg_set(c, {"pattern": "torsades"}), "is not one of")
+expect("an unknown ecg field is rejected",
+       lambda c: _ecg_set(c, {"qrs": 120}), "unknown field")
+expect("an ecg block that is not an object is rejected",
+       lambda c: _ecg_set(c, "wide"), "expected an object")
+expect("a QRS in seconds rather than milliseconds is rejected",
+       lambda c: _ecg_set(c, {"qrs_ms": 0.12}), "outside plausible range")
+expect("an ST level in millimetres rather than millivolts is rejected",
+       lambda c: _ecg_set(c, {"st_mv": 3}), "outside plausible range")
+expect("p_waves that is not a boolean is rejected",
+       lambda c: _ecg_set(c, {"p_waves": "no"}), "expected true or false")
+expect("a number that is a string is rejected",
+       lambda c: _ecg_set(c, {"qrs_ms": "120"}), "not a number")
+expect("a wide QRS without a verify note warns",
+       lambda c: _ecg_set(c, {"qrs_ms": 160}), "verify note", where="warnings")
+expect("complex fields under a pattern with no complexes warn",
+       lambda c: _ecg_set(c, {"pattern": "asystole", "qrs_ms": 90}), "draws no complexes",
+       where="warnings")
+expect("P waves declared under an irregularly irregular rhythm warn",
+       lambda c: (c["phases"][0].__setitem__("rhythm", "irregularly_irregular"),
+                  _ecg_set(c, {"p_waves": True})),
+       "uneven intervals", where="warnings")
+expect_clean("a full organised block passes",
+             lambda c: _ecg_set(c, {"pattern": "organised", "p_waves": False, "pr_ms": 200,
+                                    "qrs_ms": 180, "qtc_ms": 500, "st_mv": -0.1, "t_mv": -0.3,
+                                    "verify": "reviewer: confirm"}), "[ecg]")
+expect_clean("ventricular fibrillation alone passes",
+             lambda c: _ecg_set(c, {"pattern": "ventricular_fibrillation"}), "[ecg]")
+expect_clean("asystole alone passes",
+             lambda c: _ecg_set(c, {"pattern": "asystole"}), "[ecg]")
+expect_clean("a phase with no ecg block at all passes",
+             lambda c: c["phases"][0].pop("ecg", None), "[ecg]")
+
 print("\n-- image results (v0.11) --")
 
 MEDIA_DIR = os.path.join(V.PACK.dir, "media")
