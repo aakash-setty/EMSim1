@@ -246,7 +246,12 @@ button{font:inherit;color:inherit}
    the wrong tool for a picture that changes by a few pixels a frame. Sized in CSS and
    fitted to device pixels by the monitor module; the module reads --hr from here so the
    trace is the same green as the number above it. */
-.trace{display:block;width:100%;height:48px;margin-top:6px;opacity:.95}
+.tracebox{position:relative;height:48px;margin-top:6px}
+/* Absolutely positioned so the canvas contributes no intrinsic width to the grid. A canvas
+   in flow reports its bitmap width (CSS width times device pixels) as its natural size,
+   the monitor box grows to hold it, the module refits the bitmap to the bigger box, and
+   the header is the whole window by the third frame. */
+.trace{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.95}
 
 /* ============================================================
    TAB RAIL: fixed at the left edge, present in every state. The content
@@ -1081,7 +1086,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
     </div>
     <div class="monwrap">
       <div class="mon" id="monitor"></div>
-      <canvas class="trace" id="trace" aria-hidden="true"></canvas>
+      <div class="tracebox"><canvas class="trace" id="trace" aria-hidden="true"></canvas></div>
     </div>
   </div>
 </div>
