@@ -207,8 +207,9 @@ function renderSound(){
      silence reads as a fault, so the button says which of the two is missing. */
   b.textContent = AUDIO.running
     ? (ST&&ST.monitoring ? 'Sound on' : 'Sound on, no monitor')
-    : (AUDIO.enabled ? 'Enable sound' : 'Sound off');
-  b.setAttribute('aria-pressed', AUDIO.running?'true':'false');
+    : (AUDIO.enabled ? 'Sound starting\u2026' : 'Sound off');
+  b.setAttribute('aria-pressed', AUDIO.enabled?'true':'false');
+  b.title = 'Click to turn sound '+(AUDIO.enabled?'off':'on')+'. Audio context: '+AUDIO.state;
 
 }
 
@@ -297,8 +298,12 @@ function renderSplashPatient(){
          at mount, so the measurement has to come after them or it measures a patient
          with no bed and clips the rails off. */
       if(SP._dirty&&SP.reconcile) SP.reconcile();
-      const bb=svg.getBBox(), m=6;
-      svg.setAttribute('viewBox',`${(bb.x-m).toFixed(1)} ${(bb.y-m).toFixed(1)} ${(bb.width+2*m).toFixed(1)} ${(bb.height+2*m).toFixed(1)}`);
+      /* Width from what is drawn, so the rails are in. Height stops at the art's own
+         bottom edge, y=280, where the gown ends: the stretcher runs on below it, and a
+         torso shown with mattress under it read as a torso floating on a bed rather
+         than a patient cropped at the frame, which is what the room does too. */
+      const bb=svg.getBBox(), m=6, bottom=280;
+      svg.setAttribute('viewBox',`${(bb.x-m).toFixed(1)} ${(bb.y-m).toFixed(1)} ${(bb.width+2*m).toFixed(1)} ${(bottom-bb.y+m).toFixed(1)}`);
       svg.style.overflow='hidden'; svg.style.marginBottom='0';
     }catch(e){}
   }
@@ -1717,7 +1722,13 @@ function debriefHTML(){
      reported as missed. The action grid still reads `taken`, so only the button that
      was actually pressed is drawn as used. */
   ST.expected.forEach(id=>{ (ST.satisfied.has(id)?done:omit).push(id); });
-  const rec=[...ST.recommendedTaken];
+  /* Recommended actions, done and not. The ones nobody needs telling about are left
+     out: a line and a monitor are the first two acts of any resuscitation, and a
+     debrief that lists them beside a nitrate infusion has made them look like a
+     finding. Taken through a coverage group counts, as it does for critical actions. */
+  const OBVIOUS=id=>{ const a=ACT[id]||{}; return a.reveals_vitals||a.catalog_id==='insert_iv'||a.catalog_id==='attach_monitor'; };
+  const recDone=[...ST.recommendedTaken].filter(id=>!OBVIOUS(id));
+  const recMissed=[...ST.recommendedExpected].filter(id=>!ST.recommendedTaken.has(id)&&!ST.satisfied.has(id)&&!OBVIOUS(id));
   const dis=[...ST.discouragedTaken];
   const traps=ST.timeline.filter(x=>x.tag==='neutral'&&PROTO.traps.includes(x.id));
   const stillPending=ST.pending.map(p=>p.id);
@@ -1811,15 +1822,21 @@ function debriefHTML(){
     ${ST.halted?`<div class="dbsec"><h2>Harmful action</h2>${item(ST.halted.id,'harmful','p-harm')}</div>`:''}
 
     <div class="dbsec"><h2 class="crith">Critical actions</h2>
-      ${done.length?done.map(id=>item(id,'critical','p-crit',dispExp(id))).join(''):'<p>No critical action was completed.</p>'}
-      ${omit.length?'<h3 class="misshd">Non-Critical Missed Actions</h3>'+omit.map(id=>item(id,'not done','p-harm',dispExp(id))).join(''):''}
-      ${[...ST.fuOutstanding].length?'<h3>Follow-up obligations left open</h3>'+[...ST.fuOutstanding].map(fid=>
+      <h3 class="misshd">Completed</h3>
+      ${done.length?done.map(id=>item(id,'done','p-crit',dispExp(id))).join(''):'<p class="sub">None of this case\'s critical actions were completed.</p>'}
+      <h3 class="misshd">Missed critical actions</h3>
+      ${omit.length?omit.map(id=>item(id,'not done','p-harm',dispExp(id))).join(''):'<p class="sub">None. Every critical action was completed.</p>'}
+      ${[...ST.fuOutstanding].length?'<h3 class="misshd">Follow-up obligations left open</h3>'+[...ST.fuOutstanding].map(fid=>
         `<div class="item"><div class="hd"><span class="nm">${esc(fid.replace(/_/g,' '))}</span>
         <span class="pill p-harm">not done</span></div>
-        <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(FU[fid].debrief_note)}</div></div>`).join(''):''}</div>
+        <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(FU[fid].debrief_note)}</div></div>`).join(''):''}
+      <div class="gatebtns"><button class="btn" id="restart">Replay this case</button>
+      ${CASES.length>1?'<button class="btn ghost" id="pickanother">Choose a different case</button>':''}</div></div>
 
-    ${rec.length?`<div class="dbsec"><h2>Also worth doing</h2>
-      ${rec.map(id=>item(id,'recommended','p-ok')).join('')}</div>`:''}
+    ${(recDone.length||recMissed.length)?`<div class="dbsec"><h2>Other actions worth doing</h2>
+      <p class="sub">Recommended rather than critical: none of these decides the case, and each is the kind of thing a reviewer would ask about.</p>
+      ${recMissed.map(id=>item(id,'not done','p-warn')).join('')}
+      ${recDone.map(id=>item(id,'done','p-ok')).join('')}</div>`:''}
 
     ${dis.length?`<div class="dbsec"><h2>Wrong here, and worth understanding why</h2>
       <p class="sub">These did not stop the case and some of them will have moved a number
@@ -1833,9 +1850,7 @@ function debriefHTML(){
       in ${esc(PROTO.difficulty.modes[MODE].label.toLowerCase())} mode${DM()===1&&MODE!==PROTO.difficulty.default?`, so the nurse prompted at the deadlines the case authored rather than waiting past them`:''}.
       Points direct review; they do not rank you. Critical actions count two, recommended
       actions one, a discouraged action costs one, and a harmful action zeroes its tab.</p>
-      <table class="score"><tr><th>Category</th><th class="n">Score</th><th class="n">Points</th><th>Detail</th></tr>${scoreRows}</table>
-      <div style="margin-top:16px"><button class="btn" id="restart">Replay this case</button>
-      ${CASES.length>1?'<button class="btn ghost" id="pickanother" style="margin-left:8px">Choose a different case</button>':''}</div></div>
+      <table class="score"><tr><th>Category</th><th class="n">Score</th><th class="n">Points</th><th>Detail</th></tr>${scoreRows}</table></div>
 
     ${traps.length?`<div class="dbsec"><h2>Things that looked reasonable and were not</h2>
       ${traps.map(x=>item(x.id,'no benefit here','p-neu')).join('')}

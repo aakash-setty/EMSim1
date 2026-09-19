@@ -5,6 +5,44 @@ is usable with learners.
 
 ---
 
+## v0.17k: the debrief says which critical actions were missed, and the sound button obeys
+
+**Critical actions, done and missed, under their own names.** The section listed the
+completed ones and then, under a heading that said "Non-Critical Missed Actions", the
+critical ones that were not done, which was the wrong word in the one place it mattered.
+It now reads Completed, then Missed critical actions, each with a line for the empty case,
+and Replay and Choose a different case sit directly under it rather than at the bottom of
+the scoreboard.
+
+**Other actions worth doing lists what was not done, not only what was.** "Also worth
+doing" praised the recommended actions a resident had taken and said nothing about the
+ones they had not, which is the half a reviewer would ask about. It now lists the
+recommended actions the run expected, missed first, done after. A line and a monitor are
+left out of it: they are the first two acts of any resuscitation, and a debrief that lists
+them beside a nitrate infusion has made them look like a finding.
+
+**The halt card is opaque.** It was the harm tint alone over the blurred room, so the one
+paragraph that explains why the case ended was the hardest one on the page to read.
+
+**The sound button is keyed on intent.** Every earlier version consulted the audio context
+before turning sound off (`on && ctx`, then `ctx.state === 'running'`), and each had a
+state in which the button could not turn sound off. It now toggles `on` and nothing else;
+`start()` and `sync()` do whatever the context needs, and `sync()` keeps resuming a
+context that is on but not running every frame rather than once on the click. The label
+has a third state, "Sound starting", for on-but-not-yet-running, and its tooltip shows the
+raw context state so a report of the button misbehaving can say what the browser thought.
+The reported sequence (sound off, monitor on, sound on with a ten-second delay, then stuck
+on) does not reproduce in headless Chromium, where the first beat sounds 650 ms after the
+click and the next click silences it; the delay is most likely the output device, not the
+page, and the tooltip is there to tell the two apart.
+
+**The splash is one card with the vitals on the left.** Follow-on from v0.17j: the card is
+the wrapper, twice as wide, the figure stands in its left half cropped at the gown's edge
+and flush with the card's bottom, and the arrival vitals moved above it, which leaves the
+right half with the title, the quote, the mode and Begin.
+
+---
+
 ## v0.17j: the card shows the patient, and the record is the only place a result lives
 
 **The splash is two columns.** The patient, on the stretcher, in the arrival state, on the

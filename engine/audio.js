@@ -349,6 +349,10 @@ const AUDIO = (() => {
      render that calls this. */
   function sync() {
     if (!on || !ctx) return;
+    /* A context that is on but not running is nudged every frame, not only on the
+       click that switched it on: resume() is asynchronous and can be refused once
+       and honoured later. */
+    if (ctx.state !== 'running') { try { ctx.resume(); } catch (e) {} return; }
     /* Nothing sounds outside a running case. The room stops because it is the room and
        the case is over. The heartbeat stops for the same reason, and onBeat checks the
        scene itself rather than relying on the clock having been told. */
@@ -434,7 +438,13 @@ const AUDIO = (() => {
      interruption, and in it the button read "Enable sound" and pressing it turned
      sound OFF. */
   function toggle() {
-    if (on && ctx && ctx.state === 'running') {
+    /* Keyed on intent and nothing else. Every earlier version consulted the context
+       (`on && ctx`, then `ctx.state === 'running'`) and each had a state in which the
+       button could not turn sound off: a context that reports anything but running
+       while the graph is audible, which a browser is free to do for a moment around an
+       output-device change. Off means off. On means on, and start() then does whatever
+       the context needs, and sync() keeps doing it every frame until it is running. */
+    if (on) {
       on = false;
       stop();
     } else {
@@ -448,6 +458,9 @@ const AUDIO = (() => {
     start, unlock, toggle, sync, trill, cue, stop, setScene, intervalModel,
     get running() { return on && !!ctx && ctx.state === 'running'; },
     get enabled() { return on; },
+    /* The raw context state, for the button's tooltip, so a report of the button
+       misbehaving can say what the browser thought at the time. */
+    get state() { return ctx ? ctx.state : 'no context'; },
     /* Beats this module has actually sounded, for the harness: the clock announces
        beats whether or not sound is on, and this is how the difference is asserted. */
     get beats() { return beats; },

@@ -672,22 +672,35 @@ body[data-right="wide"] .fitem .imgthumb{max-width:520px}
    stretcher stands on the same line the card does. The figure column gives way first
    when the window narrows, and below 900 pixels the two stack with the figure above,
    smaller, because a card a resident cannot read is worse than a picture they cannot. */
-.splashwrap{display:grid;grid-template-columns:minmax(240px,1fr) minmax(0,560px);gap:36px;
-  align-items:end;width:100%;max-width:1060px}
-.splashwrap.nofig{grid-template-columns:minmax(0,560px);justify-content:center}
-.spstage{display:flex;align-items:flex-end;justify-content:center;min-height:300px;padding-bottom:6px}
+/* One card, twice as wide: the figure stands in its left half, on the card's bottom
+   edge, and the text fills the right half. The card is the wrapper, so the surface runs
+   on behind the patient rather than stopping at the text. */
+.splashwrap{display:grid;grid-template-columns:minmax(260px,1fr) minmax(0,560px);gap:0 8px;
+  align-items:end;width:100%;max-width:1120px;
+  background:rgba(255,255,255,.96);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:0 32px 70px -40px var(--shadow);overflow:hidden}
+/* The left half is a column: the arrival vitals at the top, the patient pushed to the
+   bottom by the auto margin. The vitals moved here from the text half in v0.17k, which
+   was carrying a title, a quote, a table, a mode choice and a button in 560 pixels. */
+.spleft{display:flex;flex-direction:column;align-self:stretch;min-width:0;padding:26px 0 0 30px}
+.spleft .splashsec{margin-top:0}
+.spstage{display:flex;align-items:flex-end;justify-content:center;margin-top:auto;min-height:260px;
+  padding:20px 0 0}
 .splashwrap.nofig .spstage{display:none}
-.spfig{width:min(100%,460px);filter:drop-shadow(0 0 22px rgba(21,48,66,.20));animation:ptin .7s var(--ease) both}
+.spfig{width:100%;display:block;animation:ptin .7s var(--ease) both}
+.spfig svg{display:block}
 @media (max-width:900px){
-  .splashwrap{grid-template-columns:minmax(0,560px);justify-content:center;gap:12px;align-items:stretch}
-  .spstage{min-height:0}
+  .splashwrap{grid-template-columns:minmax(0,560px);justify-content:center;align-items:stretch}
+  .spleft{padding:26px 30px 0}
+  .spstage{min-height:0;padding:20px 0 0}
   .spfig{width:min(64%,300px)}
 }
 /* Narrower and shorter than it was. With the arrival narrative removed the card
    holds a title, a quote, a mode choice and a button, and a 660px box around
    that much content reads as a page with a hole in it. */
-.splashcard{background:rgba(255,255,255,.96);border:1px solid var(--rule);border-radius:6px;
-  max-width:560px;width:100%;padding:26px 30px 28px;box-shadow:0 32px 70px -40px var(--shadow)}
+/* The text half. Its surface, border and shadow moved up to .splashwrap in v0.17k. */
+.splashcard{background:none;border:0;border-radius:0;box-shadow:none;
+  max-width:560px;width:100%;padding:26px 30px 28px}
 .splashcard .setting{font-family:var(--mono);font-size:11px;color:var(--ink3);
   letter-spacing:.09em;text-transform:uppercase;margin-bottom:14px}
 .splashcard h1{font-size:21px;line-height:1.32;margin:0 0 10px;font-weight:600;letter-spacing:-.01em;
@@ -933,7 +946,12 @@ input:focus,select:focus,button:focus-visible{outline:2px solid var(--act);outli
 /* ---------- halt / debrief ---------- */
 .endview{position:fixed;top:var(--top);left:0;right:0;bottom:0;z-index:45;overflow-y:auto}
 .endwrap{max-width:1000px;margin:0 auto;padding:0 20px 70px}
-.halt{background:var(--harml);border:1px solid var(--harmb);border-left:5px solid var(--harm);
+/* An opaque surface. It was the translucent harm tint alone, over the blurred room,
+   and the one paragraph on the page that explains why the case ended was the hardest
+   one to read. The same glass the other debrief sections stand on, with the tint over it. */
+.halt{background:linear-gradient(var(--harml),var(--harml)),rgba(255,255,255,.94);
+  -webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  border:1px solid var(--harmb);border-left:5px solid var(--harm);
   border-radius:5px;padding:18px 20px;margin:22px 0 0}
 .halt h2{color:var(--harm)}
 .dbf{padding:22px 0 0}
@@ -1087,7 +1105,13 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   <div class="splashwrap" id="splashwrap">
   <!-- The patient, on the stretcher, in the arrival state. Drawn by engine/patient.js from
        the same appearance and state functions the room uses; see renderSplashPatient. -->
-  <div class="spstage" aria-hidden="true"><div class="spfig" id="sp-patient"></div></div>
+  <!-- The left half: the arrival vitals above, the patient below, on the card's bottom edge. -->
+  <div class="spleft">
+    <div class="splashsec" id="sp-vitalsec"><h2>Vitals on arrival</h2>
+      <div class="spvit" id="sp-vitals"></div>
+    </div>
+    <div class="spstage" aria-hidden="true"><div class="spfig" id="sp-patient"></div></div>
+  </div>
   <div class="splashcard">
     <button class="splashback" id="backtopicker">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>All cases</button>
@@ -1095,9 +1119,6 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
     <h1 id="sp-title"></h1>
     <div class="arrival" id="sp-arrival"></div>
     <div class="cc" id="sp-cc"></div>
-    <div class="splashsec" id="sp-vitalsec"><h2>Vitals on arrival</h2>
-      <div class="spvit" id="sp-vitals"></div>
-    </div>
     <div class="splashsec"><h2>Mode</h2>
       <div class="modes" id="sp-modes" role="radiogroup" aria-label="Difficulty"></div>
     </div>
@@ -4307,6 +4328,10 @@ const AUDIO = (() => {
      render that calls this. */
   function sync() {
     if (!on || !ctx) return;
+    /* A context that is on but not running is nudged every frame, not only on the
+       click that switched it on: resume() is asynchronous and can be refused once
+       and honoured later. */
+    if (ctx.state !== 'running') { try { ctx.resume(); } catch (e) {} return; }
     /* Nothing sounds outside a running case. The room stops because it is the room and
        the case is over. The heartbeat stops for the same reason, and onBeat checks the
        scene itself rather than relying on the clock having been told. */
@@ -4392,7 +4417,13 @@ const AUDIO = (() => {
      interruption, and in it the button read "Enable sound" and pressing it turned
      sound OFF. */
   function toggle() {
-    if (on && ctx && ctx.state === 'running') {
+    /* Keyed on intent and nothing else. Every earlier version consulted the context
+       (`on && ctx`, then `ctx.state === 'running'`) and each had a state in which the
+       button could not turn sound off: a context that reports anything but running
+       while the graph is audible, which a browser is free to do for a moment around an
+       output-device change. Off means off. On means on, and start() then does whatever
+       the context needs, and sync() keeps doing it every frame until it is running. */
+    if (on) {
       on = false;
       stop();
     } else {
@@ -4406,6 +4437,9 @@ const AUDIO = (() => {
     start, unlock, toggle, sync, trill, cue, stop, setScene, intervalModel,
     get running() { return on && !!ctx && ctx.state === 'running'; },
     get enabled() { return on; },
+    /* The raw context state, for the button's tooltip, so a report of the button
+       misbehaving can say what the browser thought at the time. */
+    get state() { return ctx ? ctx.state : 'no context'; },
     /* Beats this module has actually sounded, for the harness: the clock announces
        beats whether or not sound is on, and this is how the difference is asserted. */
     get beats() { return beats; },
@@ -5385,8 +5419,9 @@ function renderSound(){
      silence reads as a fault, so the button says which of the two is missing. */
   b.textContent = AUDIO.running
     ? (ST&&ST.monitoring ? 'Sound on' : 'Sound on, no monitor')
-    : (AUDIO.enabled ? 'Enable sound' : 'Sound off');
-  b.setAttribute('aria-pressed', AUDIO.running?'true':'false');
+    : (AUDIO.enabled ? 'Sound starting\u2026' : 'Sound off');
+  b.setAttribute('aria-pressed', AUDIO.enabled?'true':'false');
+  b.title = 'Click to turn sound '+(AUDIO.enabled?'off':'on')+'. Audio context: '+AUDIO.state;
 
 }
 
@@ -5475,8 +5510,12 @@ function renderSplashPatient(){
          at mount, so the measurement has to come after them or it measures a patient
          with no bed and clips the rails off. */
       if(SP._dirty&&SP.reconcile) SP.reconcile();
-      const bb=svg.getBBox(), m=6;
-      svg.setAttribute('viewBox',`${(bb.x-m).toFixed(1)} ${(bb.y-m).toFixed(1)} ${(bb.width+2*m).toFixed(1)} ${(bb.height+2*m).toFixed(1)}`);
+      /* Width from what is drawn, so the rails are in. Height stops at the art's own
+         bottom edge, y=280, where the gown ends: the stretcher runs on below it, and a
+         torso shown with mattress under it read as a torso floating on a bed rather
+         than a patient cropped at the frame, which is what the room does too. */
+      const bb=svg.getBBox(), m=6, bottom=280;
+      svg.setAttribute('viewBox',`${(bb.x-m).toFixed(1)} ${(bb.y-m).toFixed(1)} ${(bb.width+2*m).toFixed(1)} ${(bottom-bb.y+m).toFixed(1)}`);
       svg.style.overflow='hidden'; svg.style.marginBottom='0';
     }catch(e){}
   }
@@ -6895,7 +6934,13 @@ function debriefHTML(){
      reported as missed. The action grid still reads `taken`, so only the button that
      was actually pressed is drawn as used. */
   ST.expected.forEach(id=>{ (ST.satisfied.has(id)?done:omit).push(id); });
-  const rec=[...ST.recommendedTaken];
+  /* Recommended actions, done and not. The ones nobody needs telling about are left
+     out: a line and a monitor are the first two acts of any resuscitation, and a
+     debrief that lists them beside a nitrate infusion has made them look like a
+     finding. Taken through a coverage group counts, as it does for critical actions. */
+  const OBVIOUS=id=>{ const a=ACT[id]||{}; return a.reveals_vitals||a.catalog_id==='insert_iv'||a.catalog_id==='attach_monitor'; };
+  const recDone=[...ST.recommendedTaken].filter(id=>!OBVIOUS(id));
+  const recMissed=[...ST.recommendedExpected].filter(id=>!ST.recommendedTaken.has(id)&&!ST.satisfied.has(id)&&!OBVIOUS(id));
   const dis=[...ST.discouragedTaken];
   const traps=ST.timeline.filter(x=>x.tag==='neutral'&&PROTO.traps.includes(x.id));
   const stillPending=ST.pending.map(p=>p.id);
@@ -6989,15 +7034,21 @@ function debriefHTML(){
     ${ST.halted?`<div class="dbsec"><h2>Harmful action</h2>${item(ST.halted.id,'harmful','p-harm')}</div>`:''}
 
     <div class="dbsec"><h2 class="crith">Critical actions</h2>
-      ${done.length?done.map(id=>item(id,'critical','p-crit',dispExp(id))).join(''):'<p>No critical action was completed.</p>'}
-      ${omit.length?'<h3 class="misshd">Non-Critical Missed Actions</h3>'+omit.map(id=>item(id,'not done','p-harm',dispExp(id))).join(''):''}
-      ${[...ST.fuOutstanding].length?'<h3>Follow-up obligations left open</h3>'+[...ST.fuOutstanding].map(fid=>
+      <h3 class="misshd">Completed</h3>
+      ${done.length?done.map(id=>item(id,'done','p-crit',dispExp(id))).join(''):'<p class="sub">None of this case\'s critical actions were completed.</p>'}
+      <h3 class="misshd">Missed critical actions</h3>
+      ${omit.length?omit.map(id=>item(id,'not done','p-harm',dispExp(id))).join(''):'<p class="sub">None. Every critical action was completed.</p>'}
+      ${[...ST.fuOutstanding].length?'<h3 class="misshd">Follow-up obligations left open</h3>'+[...ST.fuOutstanding].map(fid=>
         `<div class="item"><div class="hd"><span class="nm">${esc(fid.replace(/_/g,' '))}</span>
         <span class="pill p-harm">not done</span></div>
-        <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(FU[fid].debrief_note)}</div></div>`).join(''):''}</div>
+        <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(FU[fid].debrief_note)}</div></div>`).join(''):''}
+      <div class="gatebtns"><button class="btn" id="restart">Replay this case</button>
+      ${CASES.length>1?'<button class="btn ghost" id="pickanother">Choose a different case</button>':''}</div></div>
 
-    ${rec.length?`<div class="dbsec"><h2>Also worth doing</h2>
-      ${rec.map(id=>item(id,'recommended','p-ok')).join('')}</div>`:''}
+    ${(recDone.length||recMissed.length)?`<div class="dbsec"><h2>Other actions worth doing</h2>
+      <p class="sub">Recommended rather than critical: none of these decides the case, and each is the kind of thing a reviewer would ask about.</p>
+      ${recMissed.map(id=>item(id,'not done','p-warn')).join('')}
+      ${recDone.map(id=>item(id,'done','p-ok')).join('')}</div>`:''}
 
     ${dis.length?`<div class="dbsec"><h2>Wrong here, and worth understanding why</h2>
       <p class="sub">These did not stop the case and some of them will have moved a number
@@ -7011,9 +7062,7 @@ function debriefHTML(){
       in ${esc(PROTO.difficulty.modes[MODE].label.toLowerCase())} mode${DM()===1&&MODE!==PROTO.difficulty.default?`, so the nurse prompted at the deadlines the case authored rather than waiting past them`:''}.
       Points direct review; they do not rank you. Critical actions count two, recommended
       actions one, a discouraged action costs one, and a harmful action zeroes its tab.</p>
-      <table class="score"><tr><th>Category</th><th class="n">Score</th><th class="n">Points</th><th>Detail</th></tr>${scoreRows}</table>
-      <div style="margin-top:16px"><button class="btn" id="restart">Replay this case</button>
-      ${CASES.length>1?'<button class="btn ghost" id="pickanother" style="margin-left:8px">Choose a different case</button>':''}</div></div>
+      <table class="score"><tr><th>Category</th><th class="n">Score</th><th class="n">Points</th><th>Detail</th></tr>${scoreRows}</table></div>
 
     ${traps.length?`<div class="dbsec"><h2>Things that looked reasonable and were not</h2>
       ${traps.map(x=>item(x.id,'no benefit here','p-neu')).join('')}
