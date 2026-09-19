@@ -242,8 +242,12 @@ const MONITOR = (() => {
     const tOn = qrs + st, tOff = qt;
     const tPeakFrac = 0.5 + 0.05 * Math.max(0, Math.min(1, (rr - 0.5) / 0.5));
 
-    /* The width blend. 0 at 100 ms and below, 1 at 200 ms and above. */
-    const w = Math.max(0, Math.min(1, (qrs - 0.10) / 0.10));
+    /* The width blend. 0 at 90 ms and below, 1 at 170 ms and above. It starts at the
+       upper edge of normal and saturates well before the widest QRS a case authors,
+       because the thing a monitor has to make legible is the difference between 90 and
+       130 ms, and a blend that only began at 100 left a 132 ms complex looking like a
+       slightly heavy normal one. Timing is still literal: only the shape steepens. */
+    const w = Math.max(0, Math.min(1, (qrs - 0.09) / 0.08));
     const lerp = (a, b) => a + (b - a) * w;
     const qAmp = AMP.q * (1 - w);
     const rAmp = lerp(AMP.r, 0.85);
@@ -416,12 +420,17 @@ const MONITOR = (() => {
 
   /* ---------- the sweep ----------
      Paper speed and gain are in millimetres, as they are on the device being imitated,
-     and a CSS pixel is 1/96 of an inch, so 25 mm/s is about 94 px/s: a 500 px trace
-     holds a little over five seconds. The gain is lower than a diagnostic strip's
+     and a CSS pixel is 1/96 of an inch, so 50 mm/s is about 189 px/s: a 600 px trace
+     holds a little over three seconds. Fifty rather than the diagnostic 25 because the
+     trace is small and the property it most needs to show is QRS width: at 25 mm/s a
+     130 ms complex is twelve pixels against eight for a normal one, which the eye does
+     not read as wide. Doubling the speed is what a clinician does on a real monitor to
+     look at a QRS, and it costs half the seconds on screen, which at three seconds is
+     still five to eight beats. The gain is lower than a diagnostic strip's
      10 mm/mV because the trace is 48 px tall and a 1.1 mV R wave at 10 mm/mV would be
      42 px on its own. Five mm/mV keeps a deep wide S and a discordant T inside the box. */
   const PX_PER_MM = 96 / 25.4;
-  const SWEEP = (MON.sweepMmPerSecond || 25) * PX_PER_MM;      /* px per second */
+  const SWEEP = (MON.sweepMmPerSecond || 50) * PX_PER_MM;      /* px per second */
   const GAIN  = (MON.gainMmPerMillivolt || 5) * PX_PER_MM;     /* px per mV    */
   const GAP   = (MON.eraseGapMm || 6) * PX_PER_MM;             /* px ahead of the pen */
   const FS    = 300;                                           /* samples per second */

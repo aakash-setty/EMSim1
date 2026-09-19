@@ -215,8 +215,10 @@ shared = {
         "_note": ("The live single-lead trace on the monitor (design 8.4c). Drawn by "
                   "engine/monitor.js at sweepMmPerSecond across the trace, at "
                   "gainMmPerMillivolt, with an erase bar eraseGapMm ahead of the pen. "
-                  "A CSS pixel is 1/96 inch, so 25 mm/s is about 94 px/s."),
-        "sweepMmPerSecond": 25,
+                  "A CSS pixel is 1/96 inch, so 50 mm/s is about 189 px/s. Fifty rather "
+                  "than 25 because a small trace has to make QRS width legible, and at "
+                  "25 a 130 ms complex is not visibly wider than a 90 ms one."),
+        "sweepMmPerSecond": 50,
         "gainMmPerMillivolt": 5,
         "eraseGapMm": 6,
         "ecg": {

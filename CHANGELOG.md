@@ -294,6 +294,17 @@ to the new rules. Tested in headless Chromium only.
 
 Engine checks 514 to 537. All four packs validate with 0 errors and every scenario passes.
 
+## v0.16b: the sweep runs at 50 mm/s
+
+The author's report from the diphenhydramine case: the 132 ms arrival QRS did not look
+wide. At 25 mm/s it was twelve pixels against eight for a normal complex, which the eye
+does not read as a difference. The trace now sweeps at 50 mm/s, the other standard monitor
+speed and the one a clinician selects to look at a QRS, so every width doubles; the
+wide-complex blend also begins at 90 ms and saturates at 170 rather than 100 to 200, so a
+borderline complex slurs visibly. Timing is untouched: the QRS still ends where it is
+authored. The cost is half the seconds on screen, about three on a 600 px trace.
+`docs/decisions/live-monitor-trace.md` section 2a.
+
 ## v0.16a: narrower panels, and the room clears the screen
 
 Three interface changes on the author's instruction. The workspace panel opens at half the
@@ -311,7 +322,7 @@ across every state transition.
 **The trace was a picture and the heartbeat was a timer, and the note beside the trace said
 the beats on screen were not the beats being heard.** That was tolerable while the picture
 did not move. The monitor now draws one lead live, the way a bedside monitor does: the pen
-sweeps left to right at 25 mm/s, the newest sample lands at the pen, a short blank gap runs
+sweeps left to right at 50 mm/s, the newest sample lands at the pen, a short blank gap runs
 ahead of it erasing the previous pass, and at the right edge it starts again at the left.
 The last few seconds stay on the screen behind the gap until the pen comes round, so a beat
 that has just happened can still be looked at. The sweep freezes with the case.

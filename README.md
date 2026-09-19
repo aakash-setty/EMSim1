@@ -333,7 +333,7 @@ the provenance note beside them says so: **no case models a rhythm.** See
 ## The trace
 
 The monitor draws one lead, live, the way a bedside monitor does: the pen moves left to
-right at 25 mm/s, the newest sample is drawn at the pen, a short blank gap runs ahead of it
+right at 50 mm/s (the faster standard monitor speed, so QRS width is legible on a small trace), the newest sample is drawn at the pen, a short blank gap runs ahead of it
 erasing the previous pass, and at the right edge it starts again at the left. Nothing
 scrolls, and the last few seconds stay on screen behind the gap until the pen comes round,
 so a beat that has just happened can still be looked at. The sweep freezes with the case.

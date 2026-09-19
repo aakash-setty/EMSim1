@@ -30,12 +30,24 @@ lead looks like. Nothing else changes.
 
 ## 2. The animation, and why it is that one
 
-A bedside monitor does not scroll. The pen moves left to right, the newest sample is drawn
+A bedside monitor does not scroll. The pen moves left to right at 50 mm/s (see section 2a), the newest sample is drawn
 at the pen, a short blank gap runs ahead of it erasing the previous pass, and at the right
 edge it starts again at the left. The last few seconds stay on the screen behind the gap.
 That is what was asked for, and the reason it is the right choice rather than a
 preference is that it leaves a beat that has just happened where it was: a resident who
 heard something odd can look back at it. A scrolling strip carries it away.
+
+### 2a. Paper speed: 50 mm/s, not the diagnostic 25
+
+First built at 25 mm/s, the speed of a printed strip. On a 48 px trace that made a 132 ms
+QRS twelve pixels wide against eight for a normal one, and the author's report from the
+DIPH case was that the complex did not look wide. The property this trace most needs to
+make legible is exactly that width, so the sweep is 50 mm/s, which is the other standard
+monitor speed and is what a clinician selects on a real monitor to look at a QRS. The cost
+is half the seconds on screen: about three seconds on a 600 px trace, which is still five
+to eight beats and enough to see an irregular rhythm. The wide-complex blend also starts
+at 90 ms rather than 100 and saturates at 170, so a borderline complex slurs visibly;
+timing stays literal, only the shape steepens.
 
 ### Rejected: scrolling the strip
 
