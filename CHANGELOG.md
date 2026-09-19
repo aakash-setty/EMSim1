@@ -5,6 +5,51 @@ is usable with learners.
 
 ---
 
+## v0.17j: the card shows the patient, and the record is the only place a result lives
+
+**The splash is two columns.** The patient, on the stretcher, in the arrival state, on the
+left; the case card on the right, bottoms aligned so the stretcher stands on the line the
+card does. It is the same figure the room draws, from the same two functions
+(`figureAppearance`, `figureState`, factored out of `renderPatient`), so the patient a
+resident sees before Begin is the patient they see after it, breathing at the arrival
+rate with the arrival distress on their face. It is mounted when the card is drawn and
+destroyed when the case begins or the resident goes back to the list, so at most one
+figure exists at a time. The stretcher art is drawn well past its box on purpose, because
+in the room it runs on behind the frosted panes; on the card there are no panes, so the
+box is refitted to what is actually drawn, measured after the add-ons have been reconciled
+rather than assumed (measured before, it clipped the rails off), and the rails stop short
+of the text. Below 900 pixels the two stack, figure above. A build without the figure art
+collapses the card back to one column.
+
+**`chooseCase` now folds the chosen case at t=0 and resets the ramp.** Until now ST still
+held the previously bound case on the splash, which is the ramp defect v0.16 noted (the
+first five seconds of a run ramped from the last case's numbers) and would have drawn the
+last case's patient on the card.
+
+**Investigation results are read in the record and nowhere else.** They were repeated under
+the order grid on the Investigations tab, which put the same table on both sides of the
+room. `resultsPanel` is gone. The record's table gained the reference range as a third
+cell, shown when the record is expanded, which is the reading gesture, and hidden while
+docked, where 360 pixels holds a label and a number.
+
+**A thumbnail in the record can now be clicked.** It could be seen and never clicked,
+because the frame loop rewrote the whole chart sixty times a second and the button under
+the pointer was replaced between mousedown and mouseup. `renderFeed` now writes its markup
+only when the markup changes; nothing in the chart carries a live number, so the string is
+the state. A click on a thumbnail in the docked record also no longer expands the record
+behind the picture. The thumbnail is wider when the record is expanded.
+
+**The sound button's action now matches its label.** The label is drawn from the audible
+state; the toggle keyed on `on && ctx`, which differs from it exactly when a context exists
+but is not yet running. That is Safari's normal state right after creation and every
+browser's after an interruption, and in it the button read "Enable sound" and pressing it
+turned sound off. `ensure` also resumes a context in any state but running, including one
+Safari hands back already suspended inside the gesture that created it. This could not be
+reproduced in headless Chromium in either autoplay mode; the change fixes the one
+inconsistency the code had.
+
+---
+
 ## v0.17i: the stretcher is everywhere, and the room falls back
 
 Approved by the author after the trial below. Every patient in every case is now drawn on the

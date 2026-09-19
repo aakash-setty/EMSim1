@@ -142,13 +142,19 @@ const AUDIO = (() => {
 
 
   function ensure() {
+    /* Anything but running is resumed: 'suspended' is the state every browser starts a
+       context in outside a gesture, and 'interrupted' is what Safari reports after a
+       phone call or an output-device change. Resuming a running context is a no-op. */
     if (ctx) {
-      if (ctx.state === 'suspended') ctx.resume();
+      if (ctx.state !== 'running') ctx.resume();
       return true;
     }
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return false;
     ctx = new AC();
+    /* Safari can hand back a context that is already suspended, inside the very gesture
+       that created it, and nothing below resumes a context it has only just made. */
+    if (ctx.state !== 'running') ctx.resume();
     master = ctx.createGain();
     master.gain.value = 0.85;
     master.connect(ctx.destination);
@@ -421,8 +427,14 @@ const AUDIO = (() => {
     return true;
   }
 
+  /* The button's action has to match the button's label. The label is drawn from
+     `running`, which is the audible state; this used to key on `on && ctx`, which
+     differs from it exactly when a context exists but is not yet running. That is
+     Safari's normal state right after creation and every browser's after an
+     interruption, and in it the button read "Enable sound" and pressing it turned
+     sound OFF. */
   function toggle() {
-    if (on && ctx) {
+    if (on && ctx && ctx.state === 'running') {
       on = false;
       stop();
     } else {

@@ -222,6 +222,35 @@ function renderSound(){
    still, for the reason the monitor's jitter stops: movement behind a Paused overlay says
    the case is still going. */
 let PT=null, PT_CASE=null;
+/* What the figure looks like and what it is doing, computed once for the room and once
+   for the splash from the same two functions, so the patient on the card before Begin
+   and the patient in the room after it are the same patient in the same state. */
+function figureAppearance(){
+  /* The standard man or woman by patient.sex, from SHARED.patient.base. A case may author
+     patient.avatar to differ from the base, key by key; none does yet. The appearance is
+     fixed for the whole case: states never touch hair, clothes or colours. The age group
+     is drawn from patient.age, which every case has; avatar.ageGroup may overrule it. */
+  PATIENT.setBases((SHARED.patient||{}).base);
+  const p=CASE.patient||{};
+  const av=Object.assign({ageGroup:PATIENT.ageGroupFor(p.age)},p.avatar||{});
+  return PATIENT.baseFor(p.sex,av);
+}
+function figureState(st,shown){
+  const v=Object.assign({},patientVisual(st).value);
+  if(shown&&typeof shown.respiratory_rate==='number') v.respiratory_rate=shown.respiratory_rate;
+  /* The resting face is drawn from the distress level the phase already authors, the same
+     way the chest is drawn from the rate: passed in here, never authored a second time. */
+  const ap=(PHASE[st.phase]||{}).appearance||{};
+  if(typeof ap.distress_level==='number') v.distress=ap.distress_level;
+  if(typeof ap.alertness_level==='number') v.alertness=ap.alertness_level;
+  /* Every patient is on a stretcher. SHARED.patient.always lists add-ons drawn for every
+     case whatever its rules say, so no case has to author the furniture. ?bed=0 on the
+     address takes the bed away and ?bed=flat draws its unshaded first stage, for comparison. */
+  const always=((SHARED.patient||{}).always||[]).filter(a=>a!=='hospital_bed'||BED_SWITCH!=='off')
+    .map(a=>(a==='hospital_bed'&&BED_SWITCH==='flat')?'hospital_bed_flat':a);
+  if(always.length) v.addons=(v.addons||[]).concat(always.filter(a=>(v.addons||[]).indexOf(a)<0));
+  return v;
+}
 const BED_SWITCH=(function(){ try{ const m=/[?&]bed=(\w+)/.exec(location.search); return !m?'on':m[1]==='0'?'off':m[1]==='flat'?'flat':'on'; }catch(e){ return 'on'; } })();
 function renderPatient(){
   const host=el('patientfig');
@@ -232,35 +261,52 @@ function renderPatient(){
   if(wlVisible()||!el('splash').classList.contains('hidden')){ clearPatient(); return; }
   if(!PT||PT_CASE!==CASE){
     if(PT) PT.destroy();
-    /* The standard man or woman by patient.sex, from SHARED.patient.base. A case may author
-       patient.avatar to differ from the base, key by key; none does yet. The appearance is
-       fixed for the whole case: states never touch hair, clothes or colours. */
-    PATIENT.setBases((SHARED.patient||{}).base);
-    const p=CASE.patient||{};
-    /* The age group is drawn from patient.age, which every case already has. A case may
-       still author avatar.ageGroup to overrule it, for a patient who looks older or younger
-       than their years. Build has no number to come from and is authored. */
-    const av=Object.assign({ageGroup:PATIENT.ageGroupFor(p.age)},p.avatar||{});
-    PT=PATIENT.mount(host,PATIENT.baseFor(p.sex,av)); PT_CASE=CASE;
+    PT=PATIENT.mount(host,figureAppearance()); PT_CASE=CASE;
   }
-  const v=Object.assign({},patientVisual(ST).value);
-  const shown=RAMP_SHOWN||targetVitals()||{};
-  if(typeof shown.respiratory_rate==='number') v.respiratory_rate=shown.respiratory_rate;
-  /* The resting face is drawn from the distress level the phase already authors, the same
-     way the chest is drawn from the rate: passed in here, never authored a second time. */
-  const ap=(PHASE[ST.phase]||{}).appearance||{};
-  if(typeof ap.distress_level==='number') v.distress=ap.distress_level;
-  if(typeof ap.alertness_level==='number') v.alertness=ap.alertness_level;
-  /* Every patient is on a stretcher. SHARED.patient.always lists add-ons drawn for every
-     case whatever its rules say, so no case has to author the furniture. ?bed=0 on the
-     address takes the bed away and ?bed=flat draws its unshaded first stage, for comparison. */
-  const always=((SHARED.patient||{}).always||[]).filter(a=>a!=='hospital_bed'||BED_SWITCH!=='off')
-    .map(a=>(a==='hospital_bed'&&BED_SWITCH==='flat')?'hospital_bed_flat':a);
-  if(always.length) v.addons=(v.addons||[]).concat(always.filter(a=>(v.addons||[]).indexOf(a)<0));
-  PT.setState(v);
+  PT.setState(figureState(ST,RAMP_SHOWN||targetVitals()||{}));
   PATIENT.setPaused(PAUSED||ENDED);
 }
 function clearPatient(){ if(PT){ PT.destroy(); PT=null; PT_CASE=null; } }
+
+/* ---------- the patient on the splash ----------
+   The same figure, on the card before Begin, in the arrival state: phase one's vitals,
+   distress and add-ons, on the stretcher, breathing at the arrival rate. It is mounted
+   when the splash is drawn and destroyed when the case begins or the resident goes back
+   to the list, so at most one figure exists at a time and the room's figure is never
+   animating unseen behind the card. A build without the figure art collapses the card
+   back to one column rather than leaving an empty stage beside it. */
+let SP=null;
+function renderSplashPatient(){
+  const host=el('sp-patient'), wrap=el('splashwrap'); if(!host||!wrap) return;
+  clearSplashPatient();
+  const ok=typeof PATIENT!=='undefined'&&PATIENT.available&&!!ST;
+  wrap.classList.toggle('nofig',!ok);
+  if(!ok) return;
+  SP=PATIENT.mount(host,figureAppearance());
+  SP.setState(figureState(ST,targetVitals()||{}));
+  /* The module's pause flag is global and the last case may have left it set. */
+  PATIENT.setPaused(false);
+  /* The art is drawn past its 264 by 280 box on purpose: in the room the stretcher runs
+     on behind the frosted panes. On the card there are no panes, so the box is refitted
+     to what is actually drawn, measured rather than assumed, and the rails stop short of
+     the text. A few units of margin cover the breath's scale. */
+  const svg=host.querySelector('svg');
+  if(svg&&svg.getBBox){
+    try{
+      /* The stretcher is an add-on, and add-ons are drawn on the first frame rather than
+         at mount, so the measurement has to come after them or it measures a patient
+         with no bed and clips the rails off. */
+      if(SP._dirty&&SP.reconcile) SP.reconcile();
+      const bb=svg.getBBox(), m=6;
+      svg.setAttribute('viewBox',`${(bb.x-m).toFixed(1)} ${(bb.y-m).toFixed(1)} ${(bb.width+2*m).toFixed(1)} ${(bb.height+2*m).toFixed(1)}`);
+      svg.style.overflow='hidden'; svg.style.marginBottom='0';
+    }catch(e){}
+  }
+}
+function clearSplashPatient(){
+  if(SP){ SP.destroy(); SP=null; }
+  const h=el('sp-patient'); if(h) h.innerHTML='';
+}
 
 /* ---------- nurse ---------- */
 function renderNurse(){
@@ -411,25 +457,35 @@ function imageThumb(v){
 function feedPayload(v){
   if(!v||typeof v!=='object') return v?`<div class="fb">${esc(v)}</div>`:'';
   if(v.kind==='image') return imageThumb(v);
+  /* The reference range is the third cell. It is hidden while the record is docked,
+     where 360 pixels holds a label and a number and nothing else, and shown when the
+     record is expanded, which is the reading gesture. */
   if(v.components&&v.components.length)
     return '<table>'+v.components.map(c=>
       `<tr><td class="lb">${esc(c.label)}</td>
-           <td class="vl${c.abnormal?' abn':''}">${esc(c.value)}${c.unit?' '+esc(c.unit):''}</td></tr>`
+           <td class="vl${c.abnormal?' abn':''}">${esc(c.value)}${c.unit?' '+esc(c.unit):''}</td>
+           <td class="rf">${esc(c.reference_range||'')}</td></tr>`
     ).join('')+'</table>';
   const txt=v.report||v.findings||v.value||'';
   return txt?`<div class="fb${v.abnormal?' abn':''}">${esc(txt)}</div>`:'';
 }
 
-let FEED_N=-1;
+let FEED_N=-1, FEED_HTML='';
 function renderFeed(){
   const items=feedItems();
   el('feedcount').textContent = items.length ? items.length : '';
-  el('feed').innerHTML = items.length ? items.map(i=>
+  const html = items.length ? items.map(i=>
     `<div class="fitem k-${i.kind}${(i.payload&&i.payload.abnormal)?' abnormal':''}">
        <div class="fh"><span class="ft">${mmss(i.t)}</span><span class="fn">${esc(i.name)}</span></div>
        ${i.payload!==undefined?feedPayload(i.payload):(i.body?`<div class="fb">${esc(i.body)}</div>`:'')}
      </div>`).join('')
     : '<div class="emptyline">Nothing yet.</div>';
+  /* Written only when it differs. This runs from the frame loop, and assigning the same
+     markup sixty times a second replaced every node in the chart between one mouse
+     button going down and coming up, which is why a thumbnail in the record could be
+     seen and never clicked. Nothing in the chart carries a live number, so the string
+     is the state. */
+  if(html!==FEED_HTML){ FEED_HTML=html; el('feed').innerHTML=html; }
   /* Follow the newest entry only when something has actually been added, so a reader
      scrolled down through earlier results is not yanked back every tick. The newest
      entry is now at the TOP, so following it means scrolling to zero rather than to the
@@ -645,8 +701,11 @@ function renderTab(){
     exam:()=>generalStatusPanel()
              +renderActionTab('exam','Repeat any manoeuvre; it returns the current state.')
              +readoutPanel('exam','Findings'),
+    /* Results are read in the record on the right and nowhere else. They used to be
+       repeated under the order grid here, which put the same table on both sides of the
+       room and left a resident unsure which one the case meant. */
     investigations:()=>renderActionTab('investigations',
-      'A result reflects the patient at the moment it was ordered, not when it arrives.')+resultsPanel(),
+      'A result reflects the patient at the moment it was ordered, not when it arrives. Results appear in the record.'),
     stabilization:()=>renderActionTab('stabilization','Access, airway, oxygen and monitoring.')+blockPanel(),
     interventions:()=>renderActionTab('interventions','')+blockPanel(),
     consultations:()=>renderActionTab('consultations','')
@@ -689,19 +748,6 @@ function blockPanel(){
     `<div class="blockmsg"><b>${esc(dispName(b.id))} did not happen.</b><br>${esc(b.message)}
      <div class="meta">${b.source==='catalog_default'?'catalog default prerequisite':'case prerequisite'}</div></div>`).join('');
   return blk?`<div class="panel"><h3>Recent blocks</h3>${blk}</div>`:'';
-}
-function resultsPanel(){
-  const res=[];
-  Object.keys(ST.orders).forEach(id=>ST.orders[id].forEach(o=>{ if(o.value!==null) res.push({id,o}); }));
-  res.sort((a,b)=>b.o.dueT-a.o.dueT);
-  if(!res.length) return '';
-  return `<div class="panel"><h3>Results</h3>`+res.map(r=>`<div class="read">
-      <h4>${esc(dispName(r.id))}</h4>
-      ${renderPayload(r.o.value)}
-      <div class="meta">ordered ${mmss(r.o.orderT)}, resulted ${mmss(r.o.dueT)},
-      ${r.o.source==='case'?'authored by the case':'catalog default (normal)'}
-</div>
-    </div>`).join('')+'</div>';
 }
 
 /* ---------- arrival ----------
@@ -1358,7 +1404,10 @@ document.addEventListener('click',e=>{
      followed immediately by the panel's own handler. */
   if(t&&t.id==='rp-toggle'){ RIGHT_WIDE?minimiseRecord():expandRecord(); return; }
   if(t&&t.id==='lp-collapse'){ setPanels(false,RIGHT_WIDE); renderTabs(); return; }
-  if(!RIGHT_WIDE && !ENDED && e.target.closest('#rightpanel')){
+  /* A thumbnail is excepted: the click means "show me the picture", and the image
+     handler below takes it. Expanding the record as well left the reader, on closing
+     the picture, in a layout they had not asked for. */
+  if(!RIGHT_WIDE && !ENDED && e.target.closest('#rightpanel') && !e.target.closest('.imgthumb')){
     expandRecord(); renderTabs(); return;
   }
   /* A click on the room behind the panels closes both of them: the workspace slides
@@ -1969,13 +2018,18 @@ function chooseCase(i){
   selectCase(i);
   bindCase();
   MODE=SHARED.difficulty.default;
+  /* Fold the chosen case at t=0 before anything reads ST. Until v0.17 ST still held the
+     previously bound case here, so the first five seconds of a run ramped from the
+     numbers of whichever case had been bound before it, and the splash figure would
+     have drawn that patient's state too. The ramp is reset for the same reason. */
+  refold(); resetRamp();
   el('picker').classList.add('hidden');
   el('splash').classList.remove('hidden');
   renderSplash();
 }
 function backToPicker(){
   VOICE.reset();
-  clearPatient();
+  clearPatient(); clearSplashPatient();
   AUDIO.setScene('idle'); MONITOR.setScene('idle'); MONITOR.reset();
   el('splash').classList.add('hidden');
   el('picker').classList.remove('hidden');
@@ -2000,6 +2054,7 @@ function renderSplash(){
   arr.textContent = room ? 'Patient brought to the '+room : '';
   arr.classList.toggle('hidden', !room);
   renderSplashVitals();
+  renderSplashPatient();
   /* The mode the case starts in is drawn first and as a box; every other mode follows
      it as a line of text. Which is which is read from `difficulty.default` rather than
      from a mode's name, so the card cannot end up recommending one mode while the
@@ -2056,6 +2111,7 @@ function begin(){
      file:// URL in some browsers, and a simulator that will not start because the history
      API refused would be a poor trade for a guard. */
   try{ history.pushState({emsim:1},''); }catch(err){}
+  clearSplashPatient();
   el('splash').classList.add('hidden');
   AUDIO.unlock();
   /* The room starts here rather than on the splash. A case that has been chosen and not
