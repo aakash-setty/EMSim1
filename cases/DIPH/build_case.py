@@ -16,7 +16,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from case_1_shell import META, PATIENT, PHASES
 from case_2_actions import ACTIONS, FOLLOW_UPS
-from case_3_content import EXAM, GENERAL_STATUS, LABS, IMAGING, CONSULTANTS
+from case_3_content import EXAM, GENERAL_STATUS, PATIENT_VISUAL, LABS, IMAGING, CONSULTANTS
 from case_4_interview import TOPICS, GLOBAL_RULES, OUT_OF_SCOPE, AUTHORING_NOTES, KEY_TOPICS
 try:
     from case_4_interview import OUT_OF_SCOPE_BANK
@@ -140,6 +140,7 @@ CASE = {
  "content_keys": {
    "exam": EXAM,
    "general_status": GENERAL_STATUS,
+   "patient_visual": PATIENT_VISUAL,
    "labs": LABS,
    "imaging": IMAGING,
    "consultants": CONSULTANTS,

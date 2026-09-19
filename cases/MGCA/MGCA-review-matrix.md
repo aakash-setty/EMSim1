@@ -834,6 +834,44 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | rule 6 (default) &rarr; ABNORMAL: Ill-appearing young woman, curled on her side, shivering and sweating.... | plausible |
 
 
+### `patient_visual`
+
+| phase | intubated | oxygen_nc | oxygen_nrb | resolves to | reachable? |
+|---|---|---|---|---|---|
+| cardiac_arrest | no | no | no | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
+| cardiac_arrest | no | no | yes | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
+| cardiac_arrest | no | yes | no | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
+| cardiac_arrest | no | yes | yes | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
+| cardiac_arrest | yes | no | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| cardiac_arrest | yes | no | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| cardiac_arrest | yes | yes | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| cardiac_arrest | yes | yes | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| frank_septic_shock | no | no | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| frank_septic_shock | no | no | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| frank_septic_shock | no | yes | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| frank_septic_shock | no | yes | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| frank_septic_shock | yes | no | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| frank_septic_shock | yes | no | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| frank_septic_shock | yes | yes | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| frank_septic_shock | yes | yes | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | no | no | no | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | yes | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | no | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | yes | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | yes | no | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | no | no | no | rule 4 (default) &rarr; figure: eyes open | plausible |
+| «any other phase» | no | no | yes | rule 2 (flag oxygen_nrb set) &rarr; figure: eyes open, +nonrebreather | plausible |
+| «any other phase» | no | yes | no | rule 3 (flag oxygen_nc set) &rarr; figure: eyes open, +nasal_cannula | plausible |
+| «any other phase» | no | yes | yes | rule 2 (flag oxygen_nrb set) &rarr; figure: eyes open, +nonrebreather | plausible |
+| «any other phase» | yes | no | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | no | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | yes | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | yes | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+
+
 ### `labs/basic_chemistry_chem_7`
 
 | phase | steroid_given | resolves to | reachable? |

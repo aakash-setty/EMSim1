@@ -59,6 +59,13 @@ eval(eng[1]);
 const mon = html.match(/\/\*__MONITOR_START__\*\/([\s\S]*?)\/\*__MONITOR_END__\*\//);
 if (mon) global.MONITOR = eval(mon[1] + '\n;MONITOR');
 
+/* patient.js is fenced with its artwork constant. Inert in node: it touches the document
+   only when a figure is mounted, and its matchMedia probe is inside a try. Evaluated here
+   because its vocabulary is restated in two other places and nothing else can notice the
+   three drifting apart. */
+const pat = html.match(/\/\*__PATIENT_START__\*\/([\s\S]*?)\/\*__PATIENT_END__\*\//);
+if (pat) global.PATIENT = eval(pat[1] + '\n;PATIENT');
+
 /* audio.js is fenced separately in the bundle. It is evaluated here because the
    heartbeat's interval model is a claim about physiology rather than a rendering
    detail, and a claim that nothing can check is a claim nobody should trust. Nothing
@@ -1543,6 +1550,94 @@ section('voice orders');
     const ex = VOICE.parse('airway exam and consult cardiology');
     chk('exams and consults are not voice orders', ids(ex).length === 0, JSON.stringify(ex));
   }
+}
+
+section('the patient in the room');
+if (typeof PATIENT === 'undefined') chk('patient block is fenced in the build', false);
+else {
+  const voc = PATIENT.vocabulary(), sp = SHARED.patient || {};
+  const same = (x, y) => JSON.stringify([...x].sort()) === JSON.stringify([...y].sort());
+  chk('the artwork is in the build', PATIENT.available);
+  chk('every avataaars option survived extraction',
+      voc.parts.topType.length === 35 && voc.parts.accessoriesType.length === 7 &&
+      voc.parts.facialHairType.length === 6 && voc.parts.clotheType.length === 10 &&
+      voc.parts.graphicType.length === 11 && voc.parts.eyeType.length === 14 &&
+      voc.parts.eyebrowType.length === 13 && voc.parts.mouthType.length === 12,
+      JSON.stringify(Object.keys(voc.parts).map(k => k + ':' + voc.parts[k].length)));
+  {
+    /* Parts are id-prefixed one at a time when drawn, so a part that points at an id it does
+       not itself define points at nothing. The shirt graphics did, for their mask. */
+    const art = eval(pat[1] + '\n;PATIENT_ART'), dangling = [];
+    for (const g in art.parts) { if (typeof art.parts[g] === 'string') continue;
+      for (const k in art.parts[g]) { const src = art.parts[g][k];
+        const ids = new Set([...src.matchAll(/id="(@@\d+)"/g)].map(m => m[1]));
+        if ([...src.matchAll(/#(@@\d+)/g)].some(m => !ids.has(m[1]))) dangling.push(g + '/' + k); } }
+    chk('no art part references an id it does not define', dangling.length === 0, dangling.join());
+  }
+  chk('registered add-ons are exactly the shared vocabulary', same(voc.addons, sp.addons || []),
+      voc.addons + ' vs ' + sp.addons);
+  const vsrc = fs.readFileSync(path.join(ROOT, 'engine', 'validate_case.py'), 'utf8');
+  const vm = vsrc.match(/PATIENT_ADDONS = \{([^}]*)\}/);
+  chk('the validator restates the same add-ons',
+      !!vm && same(vm[1].split(',').map(x => x.trim().replace(/"/g, '')).filter(Boolean), sp.addons || []));
+  chk('everything drawn for every patient is a registered add-on', (sp.always || []).every(a => voc.addons.includes(a)));
+  chk('eyes and work of breathing vocabularies agree', same(voc.eyes, sp.eyes) && same(voc.work_of_breathing, sp.work_of_breathing));
+  for (const sex of Object.keys(sp.base || {})) {
+    const r = PATIENT.normalizeAppearance(sp.base[sex]);
+    chk('the standard ' + sex + ' patient is drawn from real options', r.problems.length === 0, r.problems.join('; '));
+  }
+  PATIENT.setBases(sp.base);
+  const m = PATIENT.baseFor('male'), f = PATIENT.baseFor('female');
+  chk('the two standard patients differ only in the hair',
+      Object.keys(m).filter(k => m[k] !== f[k]).join() === 'topType');
+  chk('a case avatar overrides the base key by key and notes are dropped',
+      PATIENT.baseFor('female', { skinColor: 'Pale', authoring_note: 'x' }).skinColor === 'Pale' &&
+      PATIENT.baseFor('female', { authoring_note: 'x' }).authoring_note === undefined);
+  chk('an unknown value is reported and falls back', PATIENT.normalizeState({ eyes: 'shut', addons: ['nope'] }).problems.length === 2);
+  {
+    const curve = rr => Array.from({ length: 1000 }, (_, i) => PATIENT._breathCurve(i / 1000, rr));
+    const rest = curve(14), fast = curve(34);
+    chk('a breath starts at 0, peaks at 1 and stays inside 0 to 1',
+        rest[0] === 0 && Math.max(...rest) > 0.999 && rest.every(x => x >= 0 && x <= 1));
+    chk('a resting breath ends in a pause and a fast one does not',
+        rest.slice(900).every(x => x === 0) && fast[990] > 0);
+    chk('expiration lets go quickly and then tails off',
+        (() => { const p = rest.indexOf(Math.max(...rest)), end = rest.findIndex((x, i) => i > p && x === 0);
+                 return rest[Math.round(p + (end - p) / 2)] < 0.35; })());
+    const d = [0, 1, 2, 3].map(n => PATIENT.normalizeState({ distress: n }).state.distress);
+    chk('distress is accepted from the interface and clamped', d.join() === '0,1,2,3' &&
+        PATIENT.normalizeState({ distress: 9 }).state.distress === 3);
+    chk('alertness is accepted from the interface and clamped',
+        [0, 1, 2, 3].map(n => PATIENT.normalizeState({ alertness: n }).state.alertness).join() === '0,1,2,3' &&
+        PATIENT.normalizeState({ alertness: -2 }).state.alertness === 0);
+    chk('the two reduced-alertness eye drawings exist', ['Drowsy', 'Heavy'].every(e => voc.parts.eyeType.includes(e)));
+    chk('age bands: under 40 young, 40 to 59 middle, 60 and over older',
+        [18, 39, 40, 59, 60, 100].map(PATIENT.ageGroupFor).join() === 'young,young,middle,middle,older,older');
+    chk('build and age group are validated like any other avatar key',
+        PATIENT.normalizeAppearance({ build: 'obese', ageGroup: 'older' }).problems.length === 0 &&
+        PATIENT.normalizeAppearance({ build: 'huge', ageGroup: 'ancient' }).problems.length === 2);
+    chk('build and age vocabularies agree with the shared block',
+        same(voc.builds, sp.builds) && same(voc.ageGroups, sp.ageGroups));
+    chk('the standard patient is not smiling', ['male', 'female'].every(s => PATIENT.baseFor(s).mouthType === 'Serious'));
+  }
+  for (let i = 0; i < CASES.length; i++) {
+    bind(i);
+    const rules = (CASE.content_keys.patient_visual || {}).rules;
+    const start = patientVisual(fold(mk([]), 1));
+    chk(PACK.prefix + ': the figure resolves at arrival', !!start.value && start.source === (rules ? 'case' : 'default'));
+    const bad = (rules || []).map(r => PATIENT.normalizeState(r.value).problems).flat()
+      .concat(((CASE.content_keys.patient_visual || {}).also || []).map(r => PATIENT.normalizeState({ addons: r.addons }).problems).flat());
+    for (const r of ((CASE.content_keys.patient_visual || {}).also || [])) {
+      const ph = (r.when.match(/phase is (\w+)/) || [])[1], fl = (r.when.match(/flag (\w+) set/) || [])[1];
+      const st = { phase: ph || START_PHASE, flags: new Set(fl ? [fl] : []), ordered: new Set(), resulted: new Set(), taken: new Set() };
+      if (test(r.when, st)) chk(PACK.prefix + ': also "' + r.when.slice(0, 40) + '" adds ' + r.addons.join('+'),
+          r.addons.every(a => (patientVisual(st).value.addons || []).includes(a)));
+    }
+    chk(PACK.prefix + ': every authored visual state is drawable', bad.length === 0, bad.join('; '));
+    const av = PATIENT.normalizeAppearance(PATIENT.baseFor((CASE.patient || {}).sex, (CASE.patient || {}).avatar));
+    chk(PACK.prefix + ': the appearance is drawable', av.problems.length === 0, av.problems.join('; '));
+  }
+  bind(packIdx);
 }
 
 /* ================= case pack assertions ================= */

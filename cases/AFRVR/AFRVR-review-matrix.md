@@ -515,6 +515,36 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | rule 5 (default) &rarr; ABNORMAL: Awake, anxious and visibly breathless. Sitting upright, hands on his t... | plausible |
 
 
+### `patient_visual`
+
+| phase | intubated | on_niv | resolves to | reachable? |
+|---|---|---|---|---|
+| halted | no | no | rule 1 (phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | rule 1 (phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | yes | no | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated | no | no | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated | no | yes | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated | yes | no | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated | yes | yes | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| presentation | no | no | rule 6 (phase is presentation) &rarr; figure: eyes open, work of breathing increased | plausible |
+| presentation | no | yes | rule 3 (flag on_niv set AND phase is presentation) &rarr; figure: eyes open, work of breathing increased, +bipap_mask | plausible |
+| presentation | yes | no | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| presentation | yes | yes | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| rate_controlled_congested | no | no | rule 5 (phase is respiratory_failure OR phase is rate_controlled_congested) &rarr; figure: eyes open, work of breathing severe | plausible |
+| rate_controlled_congested | no | yes | rule 2 (flag on_niv set AND (phase is respiratory_failure OR phase is rate_controlled_congested)) &rarr; figure: eyes open, work of breathing severe, +bipap_mask | plausible |
+| rate_controlled_congested | yes | no | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| rate_controlled_congested | yes | yes | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| respiratory_failure | no | no | rule 5 (phase is respiratory_failure OR phase is rate_controlled_congested) &rarr; figure: eyes open, work of breathing severe | plausible |
+| respiratory_failure | no | yes | rule 2 (flag on_niv set AND (phase is respiratory_failure OR phase is rate_controlled_congested)) &rarr; figure: eyes open, work of breathing severe, +bipap_mask | plausible |
+| respiratory_failure | yes | no | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| respiratory_failure | yes | yes | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | no | no | rule 7 (default) &rarr; figure: eyes open | plausible |
+| «any other phase» | no | yes | rule 4 (flag on_niv set) &rarr; figure: eyes open, +bipap_mask | plausible |
+| «any other phase» | yes | no | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | yes | rule 0 (flag intubated set OR phase is intubated) &rarr; figure: eyes closed, +intubated | plausible |
+
+
 ### `labs/basic_chemistry_chem_7`
 
 Single unconditional rule; nothing to enumerate.

@@ -5478,6 +5478,68 @@
      }
     }
    ]
+  },
+  "patient_visual": {
+   "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drives the figure in the room (engine/patient.js). Derived from this case's own phase descriptions, alertness levels, general status lines and action flags, and adds no clinical fact of its own: eyes closed where the phase is unresponsive, sedated or arrested; work of breathing where the phase description names it; the mask and the tube where the flag the resident's own action sets is set. The respiratory rate is not authored here, the figure breathes at the monitor's rate. Verify each rule against the phase and flag it names, as for any other content key.",
+   "verify": "frank_septic_shock is drawn intubated with eyes closed because its description places it after induction and positive pressure ventilation; confirm that phase cannot be reached without intubation. Tachypnoea in this case is drawn as rate only, with no increased effort, because no phase description names respiratory effort. The non-rebreather and the nasal cannula follow flags oxygen_nrb and oxygen_nc; if both are set the non-rebreather is drawn. Sweating is drawn in presentation and adrenal_crisis, from the general status lines. The central line follows flag central_access and is drawn in the right internal jugular, which the case does not specify.",
+   "rules": [
+    {
+     "when": "flag intubated set OR phase is frank_septic_shock",
+     "value": {
+      "eyes": "closed",
+      "addons": [
+       "intubated"
+      ]
+     }
+    },
+    {
+     "when": "phase is cardiac_arrest OR phase is halted",
+     "value": {
+      "eyes": "closed"
+     }
+    },
+    {
+     "when": "flag oxygen_nrb set",
+     "value": {
+      "eyes": "open",
+      "work_of_breathing": "normal",
+      "addons": [
+       "nonrebreather"
+      ]
+     }
+    },
+    {
+     "when": "flag oxygen_nc set",
+     "value": {
+      "eyes": "open",
+      "work_of_breathing": "normal",
+      "addons": [
+       "nasal_cannula"
+      ]
+     }
+    },
+    {
+     "when": null,
+     "value": {
+      "eyes": "open",
+      "work_of_breathing": "normal"
+     }
+    }
+   ],
+   "also": [
+    {
+     "when": "phase is presentation OR phase is adrenal_crisis",
+     "addons": [
+      "sweating"
+     ]
+    },
+    {
+     "when": "flag central_access set",
+     "addons": [
+      "central_line"
+     ]
+    }
+   ]
   }
  },
  "interview": {

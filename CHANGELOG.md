@@ -5,6 +5,295 @@ is usable with learners.
 
 ---
 
+## v0.17i: the stretcher is everywhere, and the room falls back
+
+Approved by the author after the trial below. Every patient in every case is now drawn on the
+stretcher. It is not authored per case: `SHARED.patient.always` lists add-ons drawn whatever a
+case's rules choose, and holds `hospital_bed`. `?bed=0` on the address takes it away and
+`?bed=flat` draws the unshaded first stage. The Patient Lab does not add it on its own; it is
+under Add-ons there.
+
+The room photograph's blur went from 3px to 11px, with its overscale from 1.06 to 1.12 to keep
+the blurred edge off screen. The photograph contains its own bed and equipment, and with a
+drawn stretcher in front they have to read as depth and not as a second bed.
+
+Still true from the trial: an upright bust on a raised backrest reads as sitting up at about
+45 degrees, which suits CHFE and AFRVR and does not suit a patient the text says is supine or
+curled on her side.
+
+## v0.17h: a stretcher behind the patient (trial)
+
+On the author's request, to see how it looks on the main screen. A stretcher with the head up,
+drawn behind the bust in the backdrop slot: backrest and mattress, a headboard above it, a
+pillow behind the head and a side rail either side. It is outside the figure rig, so it stays
+still while the patient breathes, nods or seizes against it. It is drawn well beyond the
+viewBox on purpose and runs on behind the panels and off the bottom of the window. Built in
+two stages, both kept: `hospital_bed_flat` is the shapes alone; `hospital_bed` adds gradients
+on the mattress and pillow, fitted-sheet folds as soft blurred bands, pillow creases running
+out from under the head, a piped seam, and blurred contact shadows where the head presses the
+pillow, the pillow presses the mattress and the shoulders press the sheet.
+
+**The plastic was too clunky, twice.** The rails began as solid slabs, became a moulded frame
+with two openings, and on the author's note that the plastic parts were still clunky are now
+slender tube: one bent loop with two uprights, drawn as strokes and not as filled plastic, so
+the room and the sheet show through almost all of it. The headboard went from a slab wider
+than the mattress to a slim rounded bar narrower than it, of which a sliver shows.
+
+**No case uses it.** `?bed=1` on the address draws it behind every patient and `?bed=flat`
+draws the first stage. Open questions if it stays: the patient's white shirt on a white sheet
+relies entirely on the contact shadow for separation; the room photograph already contains a
+bed, so there are now two; and an upright bust against a backrest reads as sitting up at
+about 45 degrees, which is right for CHFE and wrong for a patient the text says is supine or
+curled on her side.
+
+## v0.17g: build and age
+
+**Build.** `patient.avatar.build` is `thin`, `average` or `obese`. avataaars has one head and one
+torso, so both work by suggestion. Obese: a fuller lower face with a second chin under the
+first, drawn in the skin tone beneath the features so jaundice follows it, a head 6 percent
+wider and a torso 14 percent wider, which takes the neck with it. Thin: a head 7 percent
+narrower, a torso 13 percent narrower, hollows under the cheekbones, shadowed temples and the
+two cords of the neck. Every device still fits on both.
+
+**Age.** Three groups on the author's bands: young under 40, middle 40 to 59, older 60 and
+over. The bands as given overlap at 40 and 60; a patient of exactly 40 draws as middle and of
+exactly 60 as older. The hair and any facial hair grey part way at middle and fully at older,
+the eyebrows stay dark, and lines are drawn on the face: at middle a forehead line and the
+folds from nose to mouth, faintly; at older those deeper, two more forehead lines, crow's feet
+and the lower lids. **The age group is not authored.** The interface derives it from
+`patient.age`, which every case has; `avatar.ageGroup` overrules it with a validator warning.
+Hairstyles do not change with age.
+
+**Applied.** By age with no edit: CHFE (65) and AFRVR (68) draw as older, MGCA (21) and DIPH
+(18) as young. No case has a middle-aged patient. By text: CHFE is `obese`, from 'a heavy-set
+older man'. No other case's text describes a build, and none describes a thin patient, so the
+rest stay average; weights alone (84, 60 kg) with no height say nothing.
+
+Both are fixed for the case and mount from the appearance; a case cannot switch them on as
+add-ons. The depiction of obesity and of age on a cartoon face is the model's and is the kind
+of thing worth a second opinion before learners see it.
+
+## v0.17f: a check of the patient figure, and the two defects it found
+
+A scripted check in headless Chromium, 64 assertions across the module and the built
+simulator. What it covered: all 108 part options and every palette colour mount and draw with
+no leftover tokens; two fully loaded patients share no id; every add-on removes every node it
+added, across 300 state changes and all 78 add-on pairs; a truth table of what each state
+draws (alert, closed, drowsy, obtunded, unresponsive, seizure at each, severe breathing, rate
+zero, intubated, authored expression); 24 breaths in 60 seconds at a rate of 24; a blink
+rate between 8 and 25 a minute; reduced motion; garbage input; 0.04 ms of script per frame in
+the heaviest state; layout at six widths from 1920 to 390 px with the workspace open, closed
+and the record expanded; pause and resume; case switching; and every phase of every case
+against thirteen combinations of device flags, asserting that no combination draws two airway
+devices at once.
+
+**Defect 1: the shirt graphics pointed at a mask that did not exist.** Upstream masks each
+graphic with the shirt's mask. Extracted as its own part, the reference named an id the part
+does not carry. Chromium ignores a dangling mask, so it drew; another engine may draw nothing.
+No case uses a graphic shirt. `extract.js` now drops the attribute, which did nothing, and
+refuses to write an art file in which any part references an id it does not define. An engine
+test asserts the same of the built file.
+
+**Defect 2: the patient came back behind the case list.** The frame loop never stops once a
+case has begun, so `backToPicker` removed the figure and the next frame remounted it, animating
+unseen behind the list and the next splash. `renderPatient` now stands down while either is up.
+
+**Not defects, still open.** The arrest and halted phases author a respiratory rate of 4 to 6
+while their text says no respiratory effort, so an arrested patient's shoulders still move
+slowly; that is case content. Nothing was checked in Safari or Firefox. How the motion *looks*
+cannot be asserted and needs eyes.
+
+## v0.17e: three signs, three devices, and add-ons that stack
+
+**Signs.** `jaundice` recolours the skin itself toward yellow, on the fills and not as an
+overlay, so the neck and the chest inside a collar change with the face and the cloth never
+does; it also gives the eyes a yellowed sclera, which the stock eyes lack entirely. On the
+darker skins of the palette the skin change is slight and the sclera carries the sign.
+`sweating` is a forehead sheen and ten beads that form, run and fade on separate clocks.
+`agitation` is motion only: the head turns and will not settle, the eyes dart and hold, the
+body shifts and the mouth works. It is built from unrelated slow sines and held random
+targets so that it is never rhythmic, which is what separates it from the seizure.
+
+**Devices.** `defib_pads` anterolateral, on a bared chest, the apical pad mostly below the
+frame. `central_line` in the patient's right internal jugular with a clear dressing and three
+lumens. `bag_valve_mask` with a gloved hand in a C-E grip; the bag is squeezed as the chest
+rises.
+
+**The shirt comes off for the pads.** On the author's instruction, `defib_pads` hides the
+clothes layer while it is on. Every torso copy already draws the body under its cloth in the
+current skin tone, so hiding the cloth bares the chest for any outfit and follows jaundice
+with nothing extra; recolouring the cloth to the skin tone would have left hoodie strings and
+blazer lapels behind. The chest is a flat silhouette with no anatomy, for either sex.
+
+**`patient_visual.also`.** A first-match list cannot say "pads, and also a line, and also
+sweating" without listing every combination against every airway state. `also` is a list of
+`{when, addons}` in which every matching entry contributes; the engine unions them onto what
+`rules` chose. Airway devices stay in `rules`, where only one can win. `also` is validated but
+**does not appear in the review matrix**, which is a gap in the review artifact.
+
+**Wired from the cases' own text and flags:** sweating in CHFE (arrival, impending failure),
+AFRVR (respiratory failure) and MGCA (arrival, adrenal crisis); agitation on DIPH's arrival
+until the airway is protected; pads from AFRVR's `pacing_pads_placed`; the line from
+`central_access` in AFRVR and MGCA. **Not wired:** jaundice, which no case has, and the
+bag-valve mask, because AFRVR's `preoxygenated` does not say by what, and no case has a flag
+for bagging. The internal jugular site is the model's assumption; no case names one.
+
+All six drawings are the model's and want a clinician's eye, the hand on the mask most of all.
+
+## v0.17d: four faces for four levels of alertness
+
+Authoring section 6 has always said the alertness level governs "eye state, responsiveness".
+The figure now draws it, from `appearance.alertness_level`, passed in by the interface like
+the distress level and rejected by the validator inside `patient_visual`.
+
+- **0 alert.** Open eyes, ordinary blinks.
+- **1 drowsy.** Heavy upper lids, slow blinks, and every six to thirteen seconds the lids close
+  for about a second while the head nods forward and comes back.
+- **2 obtunded.** Eyes closed, opening to a sliver for about a second every five to ten
+  seconds. Head fallen a little to one side, jaw slack, brows and mouth relaxed whatever the
+  distress level was.
+- **3 unresponsive.** The same, with the eyes staying closed and the head further over.
+
+Two eye drawings were added to the art file for this, `Drowsy` and `Heavy`; avataaars has
+nothing between open and shut. A seizure still draws open eyes and a clenched jaw at any
+level, so DIPH's seizing phase (level 3) is unchanged. The slack jaw takes the larger of
+itself and the breathing mouth, so CHFE's obtunded, exhausted phase still mouth-breathes. An
+authored `"eyes": "closed"` still closes the eyes at any level.
+
+**DIPH's `post_ictal` rule is removed.** It drew closed eyes at level 1 only because there was
+no drowsy face. The phase now draws as drowsy. MGCA's two level 1 phases and AFRVR's
+`respiratory_failure` change the same way with no edit.
+
+The torso copy under the head is now clipped to the neck's width above the shoulders. A
+tilted head was showing a second jaw line from the copy beneath it.
+
+The timings and the tilt are the model's choices and want a clinician's eye, as does whether
+level 2 should open its eyes at all without a stimulus.
+
+## v0.17c: nobody ill is smiling, and breathing that looks like breathing
+
+**The standard patient's mouth is `Serious`, not avataaars' `Default`, which is a smile.** On
+the author's instruction, reversing the earlier one to copy the generator's defaults. The
+resting face then follows the distress level each phase already authors: 0 a neutral mouth, 1
+worried brows, 2 a downturned mouth, 3 heavier brows as well. Closed eyes relax the face to
+level 0. The interface passes `appearance.distress_level` to the figure the way it passes the
+respiratory rate, so nothing is authored twice and the validator rejects `distress` inside
+`patient_visual`. An authored `expression` still wins. CHFE, AFRVR and DIPH arrive at distress
+3 or 2 and now look it; MGCA arrives at 2.
+
+**Breathing was a stretch of the whole torso and read as a shirt being pulled.** The torso is
+now drawn once whole and still, with a left and a right half on top, each turning outward
+about the base of the neck. The shoulder tips travel 3, 5 and 7 units at normal, increased and
+severe effort while the collar stays put. The chest widens slightly, the head rides up a
+touch even at rest, and the nostrils flare on inspiration at increased and severe effort. The
+halves are cut with masks, not clip paths, and stop a hair above the hem, because a clip is
+applied per child and the art's layered edges bled a hairline along every cut.
+
+**The breath has three parts.** Inspiration is eased at both ends. Expiration lets go quickly
+and tails off. At resting rates a pause follows, shrinking as the rate climbs and gone by 28,
+while inspiration takes a growing share of the cycle. Engine tests assert the shape.
+
+## v0.17b: a non-rebreather, and shoulders that breathe
+
+`nonrebreather` is a third device add-on: a soft clear mask with side ports, a thin elastic
+strap, a reservoir bag that sags on inspiration and refills on expiration, and narrow green
+oxygen tubing. The mouth shows through it. CHFE and MGCA draw it from `oxygen_nrb`, the flag
+their own action sets, and MGCA now also draws its nasal cannula from `oxygen_nc`. AFRVR's
+`supplemental_o2` and DIPH's `oxygen_applied` do not say which device, so those cases draw
+none; splitting those flags by device is a case-authoring decision.
+
+**Breathing is now visible at rest.** On the author's instruction the shoulders rise and drop
+once per breath at the monitor's rate: 3.2 units of travel at normal effort, 5 at increased,
+6.5 at severe, against 1.1, 2.6 and 4 before, which at the size the figure is drawn in the gap
+was under two pixels at rest. It is a stretch of the torso about the drawing's bottom edge, so
+that edge never lifts off the window. The head does not move at normal effort.
+
+## v0.17a: a mask and a tube
+
+Two add-ons, registered in `engine/patient.js` exactly as its README describes and with no
+other engine change. `bipap_mask` is a clear oronasal shell with four-point headgear over the
+hair and a corrugated hose; the mouth shows through it, so a labouring patient is still seen
+to labour, and glasses come off while it is on. `intubated` is an endotracheal tube taped at
+the lips with a pilot balloon, a connector and a ventilator circuit; it hides the drawn mouth,
+so no behaviour can make an intubated patient grimace or mouth-breathe. Neither decides
+whether the eyes are closed; the case does. Both drawings are the model's and want a
+clinician's eye.
+
+All four cases' `patient_visual` rules now follow the flags the resident's own actions set
+(`on_niv`, `intubated`, DIPH's `airway_protected`) where those exist, so the mask and the tube
+appear when the action takes effect. Phase-only rules remain where a phase itself implies the
+device (CHFE's two post-intubation phases, AFRVR's `intubated`, MGCA's `frank_septic_shock`).
+Intubated is always drawn eyes closed, which assumes sedation. CHFE's nasal cannula is still
+phase-driven. Still model-authored, still unreviewed; each block's `verify` note is updated.
+
+## v0.17: the patient is in the room
+
+**A drawn patient stands in the gap between the workspace and the record.** The figure blinks,
+breathes at the rate the monitor shows, opens its mouth with each breath when the case says
+the work of breathing is up, closes its eyes when the case says so, and shakes when the case
+says the patient is seizing. It is transparent and stands on the bottom edge of the window.
+With the workspace open the face fills the gap and the shoulders run on behind the panes;
+with the workspace closed it moves to the middle of the room and grows; with the record
+expanded it fades. It never takes a click. It freezes while the case is paused.
+
+**The artwork is avataaars** (Pablo Stanley, Fang-Pen Lin, MIT), extracted once into
+`engine/patient-art.json` by `engine/assets/avataaars/extract.js`. Every option of the
+generator is kept, plus a hospital gown and one eyebrow upstream ships and never registers.
+Nothing at run time touches the generator's site, React or npm. The MIT notice is written
+into `build/simulator.html` and `build/patient-lab.html`, because the licence requires it to
+travel with the artwork. `package.json` still says UNLICENSED for this repository's own code;
+that is a separate decision and is untouched.
+
+**One standard man and one standard woman**, on the author's instruction: short flat hair or
+long straight hair, dark brown; brown skin; a grey V-neck; default eyes, brows and mouth. They
+live in `SHARED.patient.base` in `build_simulator.py` and a case draws one by `patient.sex`.
+Hair, clothes and colours never change with state. A case may later author `patient.avatar`
+to differ from the base key by key; none does. **The resting mouth of the base is avataaars'
+`Default`, which is a smile**, as specified. On a patient in extremis that may read oddly;
+`"mouthType": "Serious"` in the base is the one-word change.
+
+**What is visible is a content key.** `content_keys.patient_visual` is a guarded rule list
+resolved by the engine like any other (`patientVisual` in `engine.js`), first match wins, and
+its value is the whole visible state: `eyes`, `seizure`, `work_of_breathing`, an optional
+`expression`, and `addons`. The engine understands none of it. The respiratory rate is not
+authorable there and the validator rejects it: the chest follows the monitor's number,
+including the five-second ramp, and a rate of zero stops it. Both blocks are optional and a
+case with neither draws the standard patient with open eyes.
+
+**Built for add-ons.** `patient.js` is a rig, a pose system and one feature registry. The
+built-in behaviours and every future add-on are the same kind of thing: SVG for any of eight
+named slots, a per-frame tick that writes to additive channels (figure, torso, head, eyes,
+brows, mouth) and to poses, and a list of layers to hide. Because channel contributions add,
+features compose without knowing about each other. Four add-ons ship as worked examples, one
+of each kind: `gaze_left`, `gaze_right` and `nystagmus` are motion with no artwork, and
+`nasal_cannula` is artwork with no motion. **The cannula drawing is a placeholder.** Adding a
+BiPAP mask or a tube is a `register()` call plus the name in two vocabularies, and
+`engine-tests.js` fails if the three lists disagree. The landmarks an SVG is drawn to are in
+`engine/assets/avataaars/README.md` and can be overlaid in the lab.
+
+**`build/patient-lab.html`** is written by every build: pick an appearance, switch states,
+copy the JSON for the case file.
+
+**All four cases author a `patient_visual`, and every rule in them is model-authored.** They
+are derived from each case's own phase descriptions and alertness levels and add no clinical
+fact, but they are clinical depictions and each block carries a `verify` note listing the
+choices to check. Three matter most. DIPH's convulsion is drawn with the eyes open. DIPH's
+figure goes still with eyes closed once `airway_protected` is set, even in the seizing phase.
+CHFE's nasal cannula follows the arrival phase and not the oxygen actions, which is wrong the
+moment the resident changes the oxygen and should move to flags when mask artwork exists. The
+rule lists appear in each review matrix as `patient_visual` rows.
+
+**Motion.** Nothing flashes: a seizure is movement with no change in brightness. Under
+`prefers-reduced-motion` amplitudes fall to about a third. The figure carries a text
+description that tracks the state in observational words only.
+
+**Not done.** At widths under 1000 px the workspace covers the room, so the figure shows only
+with the workspace closed. The welcome board still uses the silhouettes. The seizure is one
+pattern, with no tonic phase and no focal onset. Validator negative tests were not extended
+to the new rules. Tested in headless Chromium only.
+
+Engine checks 514 to 537. All four packs validate with 0 errors and every scenario passes.
+
 ## v0.16a: narrower panels, and the room clears the screen
 
 Three interface changes on the author's instruction. The workspace panel opens at half the

@@ -755,6 +755,24 @@ This is display gating and only display gating. `st.vitals` is computed by the f
 
 **What it deliberately does not do.** It does not enter the condition language, for the reason vitals do not. It does not vary within a phase: a widening QRS is authored as phases, exactly as a falling pressure is, and DIPH does so. It does not draw artefact, ectopy, pacing, f-waves or a second lead. And it is display only: nothing about the trace is stored, folded or read by a rule, and a result ordered while the trace shows one thing reports the phase's authored ECG whatever the picture happened to be.
 
+**8.4d The patient figure.** v0.17. `engine/patient.js` draws a person in the gap between the
+workspace and the record and moves them. It holds no clinical knowledge. The engine resolves
+`content_keys.patient_visual` through the ordinary resolver (`patientVisual`, beside
+`generalStatus`) and the interface hands the value to the figure every frame, adding the
+respiratory rate the monitor last showed so that the chest and the number cannot disagree.
+The figure is drawn whether or not the monitor is attached, because a resident can see a
+patient breathe without one. It freezes when the case is paused or over.
+
+The module is a rig (nested groups: figure, torso, head, eyes, brows, mouth, each with an
+additive channel), a pose system (eyes, brows and mouth each hold several drawings and show
+one) and a single feature registry. Built-in behaviours and add-ons are the same kind of
+object and run in priority order each frame. Rejected: one SVG per state, which cannot
+compose (a seizing patient on a cannula would need its own drawing) and multiplies with every
+add-on; CSS keyframes, which cannot follow a respiratory rate that ramps; and deriving the
+visible state from vitals or alertness inside the engine, which would put a clinical
+association in code that is meant to hold none. Vocabulary lives in `SHARED.patient`; part and
+colour options live in `engine/patient-art.json` and are read, not restated.
+
 ### 8.5 Audio
 
 Three channels. The heartbeat and the nurse's tones are derived from the current phase's authored vitals with any active vital effect applied (2.6), and neither is stored. The heartbeat is additionally gated on the monitor (8.4b); the nurse's tones are not, because she is a person rather than equipment. The third is the room, and it is gated on neither.

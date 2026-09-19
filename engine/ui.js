@@ -212,6 +212,56 @@ function renderSound(){
 
 }
 
+/* ---------- the patient in the room ----------
+   Mounted once per bound case, then told the visible state every frame. setState is a
+   string compare when nothing has changed, so calling it from the frame loop costs nothing.
+   The respiratory rate is the one on the monitor, ramp included, so the chest and the number
+   never disagree; it is read from what the monitor last showed rather than by calling
+   rampedVitals again, which would re-arm the ramp. The figure is there whether or not the
+   monitor is on: a resident can see a patient breathe without a monitor. Paused means
+   still, for the reason the monitor's jitter stops: movement behind a Paused overlay says
+   the case is still going. */
+let PT=null, PT_CASE=null;
+const BED_SWITCH=(function(){ try{ const m=/[?&]bed=(\w+)/.exec(location.search); return !m?'on':m[1]==='0'?'off':m[1]==='flat'?'flat':'on'; }catch(e){ return 'on'; } })();
+function renderPatient(){
+  const host=el('patientfig');
+  if(!host||typeof PATIENT==='undefined'||!PATIENT.available||!ST) return;
+  /* The frame loop never stops once a case has begun, so leaving for the case list or sitting
+     on the next case's splash would otherwise remount the last patient behind it on the next
+     frame and animate them unseen. Found by the v0.17f check. */
+  if(wlVisible()||!el('splash').classList.contains('hidden')){ clearPatient(); return; }
+  if(!PT||PT_CASE!==CASE){
+    if(PT) PT.destroy();
+    /* The standard man or woman by patient.sex, from SHARED.patient.base. A case may author
+       patient.avatar to differ from the base, key by key; none does yet. The appearance is
+       fixed for the whole case: states never touch hair, clothes or colours. */
+    PATIENT.setBases((SHARED.patient||{}).base);
+    const p=CASE.patient||{};
+    /* The age group is drawn from patient.age, which every case already has. A case may
+       still author avatar.ageGroup to overrule it, for a patient who looks older or younger
+       than their years. Build has no number to come from and is authored. */
+    const av=Object.assign({ageGroup:PATIENT.ageGroupFor(p.age)},p.avatar||{});
+    PT=PATIENT.mount(host,PATIENT.baseFor(p.sex,av)); PT_CASE=CASE;
+  }
+  const v=Object.assign({},patientVisual(ST).value);
+  const shown=RAMP_SHOWN||targetVitals()||{};
+  if(typeof shown.respiratory_rate==='number') v.respiratory_rate=shown.respiratory_rate;
+  /* The resting face is drawn from the distress level the phase already authors, the same
+     way the chest is drawn from the rate: passed in here, never authored a second time. */
+  const ap=(PHASE[ST.phase]||{}).appearance||{};
+  if(typeof ap.distress_level==='number') v.distress=ap.distress_level;
+  if(typeof ap.alertness_level==='number') v.alertness=ap.alertness_level;
+  /* Every patient is on a stretcher. SHARED.patient.always lists add-ons drawn for every
+     case whatever its rules say, so no case has to author the furniture. ?bed=0 on the
+     address takes the bed away and ?bed=flat draws its unshaded first stage, for comparison. */
+  const always=((SHARED.patient||{}).always||[]).filter(a=>a!=='hospital_bed'||BED_SWITCH!=='off')
+    .map(a=>(a==='hospital_bed'&&BED_SWITCH==='flat')?'hospital_bed_flat':a);
+  if(always.length) v.addons=(v.addons||[]).concat(always.filter(a=>(v.addons||[]).indexOf(a)<0));
+  PT.setState(v);
+  PATIENT.setPaused(PAUSED||ENDED);
+}
+function clearPatient(){ if(PT){ PT.destroy(); PT=null; PT_CASE=null; } }
+
 /* ---------- nurse ---------- */
 function renderNurse(){
   const n=ST.nurse[ST.nurse.length-1];
@@ -1468,13 +1518,13 @@ function tick(){
        change the ending, since the phase has no exits. */
     if(ST.failed && ST.now >= ST.failed.t + GRACE_S){ finish(); return; }
   }
-  renderMonitor(); renderNurse(); renderRail();
+  renderMonitor(); renderNurse(); renderRail(); renderPatient();
   requestAnimationFrame(tick);
 }
 function render(){
   refold();
   if(ST.halted&&!ENDED){ finish(); return; }
-  renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor();
+  renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor(); renderPatient();
   VOICE.paint();
 }
 /* Rebuild the tab only when something the tab shows has actually changed. A nurse
@@ -1925,6 +1975,7 @@ function chooseCase(i){
 }
 function backToPicker(){
   VOICE.reset();
+  clearPatient();
   AUDIO.setScene('idle'); MONITOR.setScene('idle'); MONITOR.reset();
   el('splash').classList.add('hidden');
   el('picker').classList.remove('hidden');

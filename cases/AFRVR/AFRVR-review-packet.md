@@ -617,3 +617,11 @@ the trace shows one thing returns the phase's authored ECG report whatever the p
 a wide complex are the ECG generator project's placeholders and are not fitted to data. This
 pack does not model an ECG. It says how wide the QRS is and whether there are P waves, and
 the monitor draws a lead with those properties.
+
+## The figure in the room (v0.17, model-authored, not yet reviewed)
+
+`content_keys.patient_visual` drives the drawn patient: eyes open or closed, seizure, work of
+breathing, add-ons. Every rule was written by the model from this case's own phase
+descriptions and alertness levels. Read the `verify` note inside the block, then the
+`patient_visual` rows of the review matrix, and check each against the phase it names and
+against the general status line.

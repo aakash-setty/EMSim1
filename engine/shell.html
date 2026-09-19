@@ -89,13 +89,15 @@ button{font:inherit;color:inherit}
    Most of the blur is baked in there rather than done in CSS: a 1280px JPEG
    that is already soft compresses to about 78 KB, where the same picture kept
    sharp for the browser to blur costs several times that in every build. The
-   CSS blur below only softens the upscale. scale() past the viewport hides the
-   soft edge the filter leaves. If the replacement never happens the URL is
+   CSS blur below was 3px and only softened the upscale; since v0.17i it is 11px,
+   because the patient now lies on a drawn stretcher and the photograph's own bed
+   and equipment have to fall back behind it. scale() past the viewport hides the
+   soft edge the filter leaves, and grew with the blur. If the replacement never happens the URL is
    invalid and the room falls back to flat --paper, which is degraded but not
    broken. */
 .room{position:fixed;inset:0;z-index:0;background:var(--paper) center/cover no-repeat;
   background-image:url("__ROOM_BG__");
-  filter:blur(3px) saturate(.92) brightness(1.02);transform:scale(1.06)}
+  filter:blur(11px) saturate(.9) brightness(1.03);transform:scale(1.12)}
 /* A white scrim rather than a black one: enough to lift the photograph away
    from the panes and keep the gaps between them quiet, not so much that the
    room stops reading as a room. Brightest at the top, where the header sits,
@@ -282,6 +284,38 @@ button{font:inherit;color:inherit}
    countdown bar it refers to */
 .tabbtn .badge{position:absolute;top:5px;right:12px;background:var(--warn);color:#fff;
   border-radius:9px;font-family:var(--mono);font-size:9.5px;font-weight:600;padding:0 4px;line-height:14px}
+
+/* ============================================================
+   THE PATIENT. A drawn figure standing in the room, in the gap between the
+   workspace and the record. It sits above the room photograph and below every
+   panel, so a panel that widens simply covers it, and it never takes a click.
+   The stage spans exactly the gap: its left edge is the workspace's right edge
+   (the same min() the panel uses for its width) or the rail when the workspace
+   is closed, and its right edge is the record. Closing the workspace therefore
+   slides the patient to the middle of the room and lets them grow. With the
+   record expanded there is no gap, and the figure fades rather than peeking out
+   from behind glass. The figure is transparent, as the avataaars generator's
+   Transparent style is, and stands on the bottom edge of the window. The drawing is engine/patient.js.
+   ============================================================ */
+.ptstage{position:fixed;z-index:5;top:var(--top);bottom:0;right:var(--rdock);
+  left:calc(var(--rail) + min(var(--lwidth),calc(100vw - var(--rail) - var(--rdock) - 20px)));
+  display:flex;align-items:flex-end;justify-content:center;pointer-events:none;
+  transition:left .42s var(--ease),right .42s var(--ease),opacity .3s ease}
+body[data-left="closed"] .ptstage{left:var(--rail)}
+body[data-right="wide"] .ptstage{opacity:0}
+/* No disc and no frame: the figure is transparent and stands on the bottom edge of the
+   window, which crops the bust where the drawing ends. The small negative margin pushes the
+   drawing's flat lower edge just out of sight, so a seizure's rotation never lifts a corner
+   of it into view. */
+/* Wider than the gap when the gap is narrow. The head is about two fifths of the drawing's
+   width, so at 175% the face fills the gap and the shoulders run on behind the panes, which
+   are frosted glass and above it: the patient reads as standing between the panels rather
+   than as a thumbnail squeezed into the space they leave. flex-shrink is off so the flex
+   row does not squeeze it back. */
+.ptfig{flex:0 0 auto;width:min(clamp(250px,175%,460px),62vh);margin-bottom:-1.2%;
+  filter:drop-shadow(0 0 22px rgba(21,48,66,.20));animation:ptin .7s var(--ease) both}
+@keyframes ptin{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.pt-svg{display:block;width:100%;height:auto;overflow:visible;margin-bottom:-3%}
 
 /* ============================================================
    LEFT PANEL: the workspace. Slides out from behind the rail.
@@ -946,6 +980,10 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 
 @media (max-width:1000px){
   :root{--rdock:max(30vw,300px)}
+  /* the workspace covers the room at this width, so the figure shows only when it is closed */
+  .ptstage{left:var(--rail);opacity:0}
+  body[data-left="closed"] .ptstage{opacity:1}
+  body[data-left="closed"][data-right="wide"] .ptstage{opacity:0}
   .lpanel{width:calc(100vw - var(--rail) - 12px);z-index:44}
 }
 @media (max-width:760px){
@@ -1093,6 +1131,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 </header>
 
 <div id="playview">
+
+  <div class="ptstage" id="patientstage"><div class="ptfig" id="patientfig"></div></div>
 
   <nav class="tabdock" id="tabbar" role="tablist" aria-label="Case sections"></nav>
 

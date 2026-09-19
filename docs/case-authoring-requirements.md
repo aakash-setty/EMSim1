@@ -479,6 +479,64 @@ Since v0.16 the monitor draws one lead, live, from the same beat the heartbeat s
 - **The tempo follows the ramp continuously.** The beat reads the current rate when it schedules the next beat, so a heart rate sliding from 160 to 108 over five seconds is heard sliding rather than in steps. Nothing to author; worth knowing when you choose the two endpoints.
 - **A result ordered during a ramp freezes at the phase's authored numbers**, not the ramped ones, per fact 7. So a blood gas ordered one second after a transition returns the new phase's values while the monitor is still showing something in between. This is a real inconsistency, it lasts up to five seconds, and it was accepted rather than fixed, because the alternatives are ramping state (which breaks result freezing) or delaying results (which makes the clock lie). It is not worth authoring around; it is worth knowing about if a reviewer reports it as a bug.
 
+### 6.0c The figure in the room, which is a content key and not part of the phase
+
+A drawn patient stands between the panels. Two optional blocks control it, and a case with
+neither gets the standard patient with open eyes.
+
+`patient.avatar` is the fixed appearance, in avataaars option names. **Leave it out.** Every
+case currently draws the standard man or woman by `patient.sex` (`SHARED.patient.base`), and
+the appearance never changes with state. When cases come to choose their own bases, author
+only the keys that differ. `build/patient-lab.html` lists every option and prints the JSON.
+
+Two appearance keys are not avataaars options. `"build"` is `thin`, `average` or `obese`, and
+is the one key worth authoring now: write it only where the seed or the presenting appearance
+says so. The age group is **not authored**: the figure is drawn young under 40, middle from
+40 to 59 and older from 60, from `patient.age`, with greying hair and facial lines.
+`"ageGroup"` in the avatar overrules that, with a validator warning.
+
+`content_keys.patient_visual` says what is visible now. It is a guarded rule list like
+`general_status` (section 11.3), first match wins, and the value is the whole visible state:
+
+```json
+"patient_visual": { "rules": [
+  { "when": "phase is seizing", "value": { "eyes": "open", "seizure": true } },
+  { "when": "flag airway_protected set", "value": { "eyes": "closed" } },
+  { "when": null, "value": {} }
+] }
+```
+
+| Key | Values | Absent means |
+|---|---|---|
+| `eyes` | `open`, `closed` | `open`, blinking |
+| `seizure` | `true`, `false` | `false` |
+| `work_of_breathing` | `normal`, `increased`, `severe` | `normal` |
+| `expression` | `{eyeType, eyebrowType, mouthType}` | the resting face |
+| `addons` | `gaze_left`, `gaze_right`, `nystagmus`, `nasal_cannula`, `nonrebreather`, `bipap_mask`, `intubated`, `bag_valve_mask`, `defib_pads`, `central_line`, `jaundice`, `sweating`, `agitation` | none |
+
+Beside `rules` the block may carry `also`, a list of `{"when": ..., "addons": [...]}`. It is
+not first-match: every entry whose condition holds adds its add-ons to whatever `rules` chose.
+Use it for things independent of the main state, such as pads, a central line or sweating,
+which `rules` could only express by listing every combination. Keep the airway devices in
+`rules`, where only one can win. **`also` does not appear in the review matrix**; read it in
+the case file.
+
+Do not author a respiratory rate or a distress level here; the validator rejects both. The
+shoulders rise and drop at the rate on the monitor, and the resting face is drawn from the
+phase's own `appearance.distress_level`: 0 a neutral mouth, 1 worried brows, 2 a downturned
+mouth, 3 heavier brows as well. Closed eyes relax the face. An authored `expression` wins.
+
+The phase's `appearance.alertness_level` is drawn the same way and is likewise not authored
+here. 0 alert: open eyes, ordinary blinks. 1 drowsy: heavy lids, slow blinks, and now and
+then the lids close and the head nods. 2 obtunded: eyes closed, opening to a sliver for a
+moment every several seconds, head fallen a little to one side, jaw slack. 3 unresponsive: the
+same with the eyes staying closed. So `eyes` in a rule is now only needed to override the
+level: `"eyes": "closed"` for a sedated patient whose phase is not level 3, or a seizure,
+which draws open eyes and a clenched jaw at any level. Keep the block consistent with the general status line and the appearance
+values, since all describe the same patient. Prefer flags to phases for anything a resident's
+action puts on or takes off the patient. It is clinical content: it goes through the review
+matrix and the 14.3 sign-off like every other key.
+
 ### 6.1 Moving a vital with an action, not a phase
 
 A phase is entered once and holds until something moves the case out of it. That makes it the wrong tool for three ordinary clinical facts: an effect that lasts thirty seconds and then is gone, an effect that ends when the drip is stopped or the mask comes off, and a drug that changes the patient without changing the number the resident is watching. Author those on the action:

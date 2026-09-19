@@ -830,6 +830,20 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | rule 6 (default) &rarr; ABNORMAL: Awake, agitated and disorientated, flushed, hot and dry, plucking at t... | plausible |
 
 
+### `patient_visual`
+
+| phase | airway_protected | resolves to | reachable? |
+|---|---|---|---|
+| halted | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| pulseless_vt | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| seizing | no | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
+| seizing | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | no | rule 3 (default) &rarr; figure: eyes open | plausible |
+| «any other phase» | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+
+
 ### `labs/fingerstick_blood_sugar`
 
 Single unconditional rule; nothing to enumerate.

@@ -269,6 +269,52 @@ GENERAL_STATUS = {
 
 # ============================================================== LABORATORY
 # Every value is the author's. Every reference interval is model output.
+# What the figure in the room is doing (engine/patient.js). A guarded rule list like
+# GENERAL_STATUS above, and kept consistent with it: both describe the same patient.
+PATIENT_VISUAL = {
+ "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drives the figure in the room (engine/patient.js). Derived from this case's own phase descriptions, alertness levels, general status lines and action flags, and adds no clinical fact of its own: eyes closed where the phase is unresponsive, sedated or arrested; work of breathing where the phase description names it; the mask and the tube where the flag the resident's own action sets is set. The respiratory rate is not authored here, the figure breathes at the monitor's rate. Verify each rule against the phase and flag it names, as for any other content key.",
+ "verify": "Three choices to check. (1) The convulsion is drawn with the eyes OPEN, on the understanding that the eyes are usually open in a generalised tonic-clonic seizure and that closed eyes during the event point toward a functional seizure; change it if that is not what should be taught. (2) Once airway_protected is set the figure is intubated, still and eyes closed even in the seizing phase, on the assumption of induction and paralysis; a paralysed patient may still be seizing electrically and the figure cannot show that. (3) post_ictal has no rule of its own: it is alertness level 1 and is drawn drowsy, with heavy lids and a nodding head, by the figure itself. Agitation is drawn on arrival, from 'agitated ... plucking at the leads', until the airway is protected. She is 'hot and dry', so she is never drawn sweating.",
+ "rules": [
+  {
+   "when": "flag airway_protected set",
+   "value": {
+    "eyes": "closed",
+    "addons": [
+     "intubated"
+    ]
+   }
+  },
+  {
+   "when": "phase is pulseless_vt OR phase is halted",
+   "value": {
+    "eyes": "closed"
+   }
+  },
+  {
+   "when": "phase is seizing",
+   "value": {
+    "eyes": "open",
+    "seizure": True
+   }
+  },
+  {
+   "when": None,
+   "value": {
+    "eyes": "open",
+    "work_of_breathing": "normal"
+   }
+  }
+ ],
+ "also": [
+  {
+   "when": "phase is presentation AND NOT flag airway_protected set",
+   "addons": [
+    "agitation"
+   ]
+  }
+ ]
+}
+
 LABS = {
  "authoring_note": (
    "Section 11.4. Structured payloads with abnormal flags set by the author of the case file "

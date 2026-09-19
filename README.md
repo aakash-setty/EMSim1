@@ -40,6 +40,9 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `semantic.js` | Optional in-browser embedding model. Loads in the background, may never load |
 | `voice.js` | Voice orders: the normaliser, the phrase parser, the recorder and the dropdown. The parser is fenced for the tests |
 | `monitor.js` | The live trace: the beat clock, the lead II waveform synthesiser and the sweep. Fenced for the tests |
+| `patient.js` | The patient figure in the room: the rig, the poses, and one registry for behaviours and add-ons. Fenced for the tests. How to add an add-on is in `assets/avataaars/README.md` |
+| `patient-art.json` | The avataaars artwork as loose parts with colour slots. Derived by `assets/avataaars/extract.js`, not authored |
+| `patient-lab.html` | Template for `build/patient-lab.html`, a workbench for choosing an appearance and previewing states |
 | `audio.js` | Heartbeat, nurse tones and the looping ward ambience. The heartbeat subscribes to the beat clock in `monitor.js` |
 | `room-bg.txt` | The blurred room background as a data URI |
 | `hero-bg.txt` | The welcome screen photograph as a data URI |

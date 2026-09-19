@@ -2058,6 +2058,98 @@
     }
    ]
   },
+  "patient_visual": {
+   "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drives the figure in the room (engine/patient.js). Derived from this case's own phase descriptions, alertness levels, general status lines and action flags, and adds no clinical fact of its own: eyes closed where the phase is unresponsive, sedated or arrested; work of breathing where the phase description names it; the mask and the tube where the flag the resident's own action sets is set. The respiratory rate is not authored here, the figure breathes at the monitor's rate. Verify each rule against the phase and flag it names, as for any other content key.",
+   "verify": "The mask follows flag on_niv and the tube follows flag intubated. presentation is drawn as increased rather than severe because he can still finish a sentence; rate_controlled_congested is drawn as severe from 'still working hard to breathe' at distress level 3. respiratory_failure is drowsy and is drawn eyes open. Sweating is drawn in respiratory_failure, from 'grey and sweaty'. The pads and the central line follow flags pacing_pads_placed and central_access; the line is drawn in the right internal jugular, which the case does not specify.",
+   "rules": [
+    {
+     "when": "flag intubated set OR phase is intubated",
+     "value": {
+      "eyes": "closed",
+      "addons": [
+       "intubated"
+      ]
+     }
+    },
+    {
+     "when": "phase is halted",
+     "value": {
+      "eyes": "closed"
+     }
+    },
+    {
+     "when": "flag on_niv set AND (phase is respiratory_failure OR phase is rate_controlled_congested)",
+     "value": {
+      "eyes": "open",
+      "work_of_breathing": "severe",
+      "addons": [
+       "bipap_mask"
+      ]
+     }
+    },
+    {
+     "when": "flag on_niv set AND phase is presentation",
+     "value": {
+      "eyes": "open",
+      "work_of_breathing": "increased",
+      "addons": [
+       "bipap_mask"
+      ]
+     }
+    },
+    {
+     "when": "flag on_niv set",
+     "value": {
+      "eyes": "open",
+      "work_of_breathing": "normal",
+      "addons": [
+       "bipap_mask"
+      ]
+     }
+    },
+    {
+     "when": "phase is respiratory_failure OR phase is rate_controlled_congested",
+     "value": {
+      "eyes": "open",
+      "work_of_breathing": "severe"
+     }
+    },
+    {
+     "when": "phase is presentation",
+     "value": {
+      "eyes": "open",
+      "work_of_breathing": "increased"
+     }
+    },
+    {
+     "when": null,
+     "value": {
+      "eyes": "open",
+      "work_of_breathing": "normal"
+     }
+    }
+   ],
+   "also": [
+    {
+     "when": "phase is respiratory_failure",
+     "addons": [
+      "sweating"
+     ]
+    },
+    {
+     "when": "flag pacing_pads_placed set",
+     "addons": [
+      "defib_pads"
+     ]
+    },
+    {
+     "when": "flag central_access set",
+     "addons": [
+      "central_line"
+     ]
+    }
+   ]
+  },
   "labs": {
    "authoring_note": "Section 11.4. Structured payloads with abnormal flags set by the author, not computed by the renderer. Reference intervals are assay- and institution-specific and every one of them is awaiting a physician's signature; see the review packet.",
    "basic_chemistry_chem_7": {

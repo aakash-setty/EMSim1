@@ -311,6 +311,48 @@ shared = {
     },
 }
 
+# The figure in the room. What a case may say about what is visible, and nothing about why.
+# The part and colour options are not restated here: engine/patient-art.json is their one
+# vocabulary, and both the renderer and the validator read it. The add-on list IS restated,
+# in validate_case.py (PATIENT_ADDONS) and in the register() calls in engine/patient.js, and
+# engine-tests.js fails if the three disagree.
+shared["patient"] = {
+    "_note": ("The patient figure (engine/patient.js). content_keys.patient_visual is a guarded "
+              "rule list whose value is the whole visible state; patient.avatar is the fixed "
+              "appearance in avataaars option names. The respiratory rate is never authored "
+              "here: the figure breathes at the monitor's rate. Nothing in this block "
+              "associates any of it with a diagnosis."),
+    # The standard patient, by patient.sex. avataaars option names. Identical but for the hair,
+    # on purpose: until cases choose their own bases, the figure should say nothing about a
+    # patient beyond their sex. A case's patient.avatar overrides these key by key.
+    # The mouth is Serious and not avataaars' Default, which is a smile: nobody arriving in a
+    # resuscitation bay is smiling. The resting mouth and brows then follow the phase's own
+    # appearance.distress_level (DISTRESS_FACE in patient.js).
+    "base": {
+        "male":   {"topType": "ShortHairShortFlat", "accessoriesType": "Blank", "hairColor": "BrownDark",
+                   "facialHairType": "Blank", "clotheType": "ShirtVNeck", "clotheColor": "Gray01",
+                   "eyeType": "Default", "eyebrowType": "Default", "mouthType": "Serious",
+                   "skinColor": "Brown"},
+        "female": {"topType": "LongHairStraight", "accessoriesType": "Blank", "hairColor": "BrownDark",
+                   "facialHairType": "Blank", "clotheType": "ShirtVNeck", "clotheColor": "Gray01",
+                   "eyeType": "Default", "eyebrowType": "Default", "mouthType": "Serious",
+                   "skinColor": "Brown"},
+    },
+    # Two appearance keys that are not avataaars options. build is authored in patient.avatar.
+    # ageGroup is derived from patient.age by the interface (under 40, 40 to 59, 60 and over)
+    # and may be overruled there.
+    "builds": ["thin", "average", "obese"],
+    "ageGroups": ["young", "middle", "older"],
+    # Drawn for every patient in every case, whatever the case's rules choose.
+    "always": ["hospital_bed"],
+    "eyes": ["open", "closed"],
+    "work_of_breathing": ["normal", "increased", "severe"],
+    "addons": ["gaze_left", "gaze_right", "nystagmus", "nasal_cannula", "nonrebreather", "bipap_mask", "intubated",
+               "bag_valve_mask", "defib_pads", "central_line", "jaundice", "sweating", "agitation",
+               "hospital_bed", "hospital_bed_flat"],
+    "visualDefault": {"eyes": "open", "seizure": False, "work_of_breathing": "normal"},
+}
+
 DX_IDS = {d["id"] for d in shared["diagnoses"]}
 
 
@@ -570,8 +612,32 @@ def main():
     # the monitor. Fenced for the same reason audio.js is, because the waveform makes
     # claims (a QRS duration that renders as authored, a mean interval that is the
     # authored rate) that the harness has to be able to assert.
+    # The patient figure. patient-art.json is derived from the avataaars library by
+    # engine/assets/avataaars/extract.js and is injected as a constant ahead of patient.js,
+    # inside the same fence, so the harness can evaluate the pair without the page. The MIT
+    # licence requires its notice to travel with the artwork, so the licence text goes into
+    # every file the artwork goes into. patient.js depends on nothing else in the bundle
+    # and ui.js calls it from the frame loop, so the only ordering rule is: before ui.js.
+    # Optional in the same way the ambience is: without the art file PATIENT.available is
+    # false, the stage stays empty and nothing else changes.
+    art_path = os.path.join(HERE, "patient-art.json")
+    art = json.load(open(art_path)) if os.path.exists(art_path) else None
+    notice = ("Patient artwork: avataaars, https://github.com/fangpenlin/avataaars\n" +
+              open(os.path.join(HERE, "assets", "avataaars", "LICENSE")).read()).replace("*/", "* /")
+    patient_js = open(os.path.join(HERE, "patient.js")).read()
+    patient_block = ("/*\n" + notice + "\n*/\nconst PATIENT_ART=" + jsafe(art) + ";\n" + patient_js)
+    lab_src = os.path.join(HERE, "patient-lab.html")
+    if art and os.path.exists(lab_src):
+        lab = open(lab_src).read()
+        lab = lab.replace("__PATIENT_NOTICE__", notice.replace("--", "- -"))
+        lab = lab.replace("__PATIENT_BASES__", jsafe(shared["patient"]["base"]))
+        lab = lab.replace("__PATIENT_ART__", jsafe(art)).replace("__PATIENT_JS__", patient_js)
+        os.makedirs(BUILD_DIR, exist_ok=True)
+        open(os.path.join(BUILD_DIR, "patient-lab.html"), "w").write(lab)
     bundle = ("/*__ENGINE_START__*/\n" + open(os.path.join(HERE, "engine.js")).read() +
               "\n/*__ENGINE_END__*/\n"
+              "/*__PATIENT_START__*/\n" + patient_block +
+              "\n/*__PATIENT_END__*/\n"
               "/*__MONITOR_START__*/\n" + open(os.path.join(HERE, "monitor.js")).read() +
               "\n/*__MONITOR_END__*/\n"
               "/*__AUDIO_START__*/\n" + open(os.path.join(HERE, "audio.js")).read() +

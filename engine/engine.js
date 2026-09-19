@@ -87,7 +87,7 @@ function resolveText(v,st){
    copy of the catalog. Section 6.2: catalog defaults apply unless the case waives
    them, and case prerequisites are additional rather than a replacement. */
 let CASE=null, PROTO=null, PACK=null;
-let PHASE={}, ACT={}, FU={}, CK=null, CONTENT={}, GENERAL_STATUS=null;
+let PHASE={}, ACT={}, FU={}, CK=null, CONTENT={}, GENERAL_STATUS=null, PATIENT_VISUAL=null, PATIENT_ALSO=[];
 
 function orphanCategory(eff){
   if(eff.indexOf('exam_')===0) return 'exam';
@@ -283,7 +283,30 @@ function selectCase(ref){
     });
   });
   GENERAL_STATUS = CK.general_status ? CK.general_status.rules : null;
+  PATIENT_VISUAL = CK.patient_visual ? CK.patient_visual.rules : null;
+  PATIENT_ALSO = (CK.patient_visual && CK.patient_visual.also) || [];
   return PACK;
+}
+
+/* What the figure in the room is doing. A guarded rule list like any other content key:
+   first match wins and the value is the whole visible state. The engine resolves it and
+   understands none of it; engine/patient.js draws it. A case that authors nothing gets the
+   shared default, a patient with open eyes who is breathing and nothing else. */
+function patientVisual(st){
+  /* `also` is the one place a content key is not first-match: every entry whose condition
+     holds adds its add-ons to what the rules chose. Pads, a line and sweat are independent
+     of each other and of the airway, and a first-match list can only say that by listing
+     every combination. */
+  const extra=[];
+  for(const r of PATIENT_ALSO) if(test(r.when,st)) for(const a of (r.addons||[])) if(extra.indexOf(a)<0) extra.push(a);
+  const withExtra=v=>{ if(!extra.length) return v; const o=Object.assign({},v);
+    o.addons=(v.addons||[]).concat(extra.filter(a=>(v.addons||[]).indexOf(a)<0)); return o; };
+  if(PATIENT_VISUAL){
+    const v=resolve(PATIENT_VISUAL,st);
+    if(v) return {value:withExtra(v),source:'case'};
+  }
+  if(extra.length) return {value:withExtra((SHARED.patient&&SHARED.patient.visualDefault)||{}),source:'case'};
+  return {value:(SHARED.patient&&SHARED.patient.visualDefault)||{},source:'default'};
 }
 
 /* The line above the exam list. Case rules first, catalog default second. */

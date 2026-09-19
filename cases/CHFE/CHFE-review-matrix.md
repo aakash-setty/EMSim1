@@ -542,6 +542,76 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | rule 7 (default) &rarr; ABNORMAL: Comfortable at rest on the mask. Talking in full sentences. GCS 15. | plausible |
 
 
+### `patient_visual`
+
+| phase | intubated | on_niv | oxygen_nrb | resolves to | reachable? |
+|---|---|---|---|---|---|
+| halted | no | no | no | rule 1 (phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | yes | rule 1 (phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | no | rule 1 (phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | yes | rule 1 (phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | yes | no | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| impending_respiratory_failure | no | no | no | rule 8 (phase is impending_respiratory_failure) &rarr; figure: eyes open, work of breathing severe | plausible |
+| impending_respiratory_failure | no | no | yes | rule 5 (flag oxygen_nrb set AND (phase is presentation OR phase is impending_respiratory_failure)) &rarr; figure: eyes open, work of breathing severe, +nonrebreather | plausible |
+| impending_respiratory_failure | no | yes | no | rule 2 (flag on_niv set AND (phase is presentation OR phase is impending_respiratory_failure)) &rarr; figure: eyes open, work of breathing severe, +bipap_mask | plausible |
+| impending_respiratory_failure | no | yes | yes | rule 2 (flag on_niv set AND (phase is presentation OR phase is impending_respiratory_failure)) &rarr; figure: eyes open, work of breathing severe, +bipap_mask | plausible |
+| impending_respiratory_failure | yes | no | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| impending_respiratory_failure | yes | no | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| impending_respiratory_failure | yes | yes | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| impending_respiratory_failure | yes | yes | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated_stabilized | no | no | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated_stabilized | no | no | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated_stabilized | no | yes | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated_stabilized | no | yes | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated_stabilized | yes | no | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated_stabilized | yes | no | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated_stabilized | yes | yes | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| intubated_stabilized | yes | yes | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| nitrate_responding | no | no | no | rule 10 (phase is niv_supported OR phase is nitrate_responding) &rarr; figure: eyes open, work of breathing increased | plausible |
+| nitrate_responding | no | no | yes | rule 6 (flag oxygen_nrb set AND (phase is niv_supported OR phase is nitrate_responding)) &rarr; figure: eyes open, work of breathing increased, +nonrebreather | plausible |
+| nitrate_responding | no | yes | no | rule 3 (flag on_niv set AND (phase is niv_supported OR phase is nitrate_responding)) &rarr; figure: eyes open, work of breathing increased, +bipap_mask | plausible |
+| nitrate_responding | no | yes | yes | rule 3 (flag on_niv set AND (phase is niv_supported OR phase is nitrate_responding)) &rarr; figure: eyes open, work of breathing increased, +bipap_mask | plausible |
+| nitrate_responding | yes | no | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| nitrate_responding | yes | no | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| nitrate_responding | yes | yes | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| nitrate_responding | yes | yes | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| niv_supported | no | no | no | rule 10 (phase is niv_supported OR phase is nitrate_responding) &rarr; figure: eyes open, work of breathing increased | plausible |
+| niv_supported | no | no | yes | rule 6 (flag oxygen_nrb set AND (phase is niv_supported OR phase is nitrate_responding)) &rarr; figure: eyes open, work of breathing increased, +nonrebreather | plausible |
+| niv_supported | no | yes | no | rule 3 (flag on_niv set AND (phase is niv_supported OR phase is nitrate_responding)) &rarr; figure: eyes open, work of breathing increased, +bipap_mask | plausible |
+| niv_supported | no | yes | yes | rule 3 (flag on_niv set AND (phase is niv_supported OR phase is nitrate_responding)) &rarr; figure: eyes open, work of breathing increased, +bipap_mask | plausible |
+| niv_supported | yes | no | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| niv_supported | yes | no | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| niv_supported | yes | yes | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| niv_supported | yes | yes | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| post_intubation_hypotension | no | no | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| post_intubation_hypotension | no | no | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| post_intubation_hypotension | no | yes | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| post_intubation_hypotension | no | yes | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| post_intubation_hypotension | yes | no | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| post_intubation_hypotension | yes | no | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| post_intubation_hypotension | yes | yes | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| post_intubation_hypotension | yes | yes | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| presentation | no | no | no | rule 9 (phase is presentation) &rarr; figure: eyes open, work of breathing severe, +nasal_cannula | plausible |
+| presentation | no | no | yes | rule 5 (flag oxygen_nrb set AND (phase is presentation OR phase is impending_respiratory_failure)) &rarr; figure: eyes open, work of breathing severe, +nonrebreather | plausible |
+| presentation | no | yes | no | rule 2 (flag on_niv set AND (phase is presentation OR phase is impending_respiratory_failure)) &rarr; figure: eyes open, work of breathing severe, +bipap_mask | plausible |
+| presentation | no | yes | yes | rule 2 (flag on_niv set AND (phase is presentation OR phase is impending_respiratory_failure)) &rarr; figure: eyes open, work of breathing severe, +bipap_mask | plausible |
+| presentation | yes | no | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| presentation | yes | no | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| presentation | yes | yes | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| presentation | yes | yes | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | no | no | no | rule 11 (default) &rarr; figure: eyes open | plausible |
+| «any other phase» | no | no | yes | rule 7 (flag oxygen_nrb set) &rarr; figure: eyes open, +nonrebreather | plausible |
+| «any other phase» | no | yes | no | rule 4 (flag on_niv set) &rarr; figure: eyes open, +bipap_mask | plausible |
+| «any other phase» | no | yes | yes | rule 4 (flag on_niv set) &rarr; figure: eyes open, +bipap_mask | plausible |
+| «any other phase» | yes | no | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | no | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | yes | no | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | yes | yes | rule 0 (flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; figure: eyes closed, +intubated | plausible |
+
+
 ### `labs/labs_cbc`
 
 Single unconditional rule; nothing to enumerate.
