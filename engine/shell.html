@@ -58,9 +58,9 @@
   --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
 
   --rail:88px;                /* fixed icon rail, always on screen  */
-  --rdock:360px;              /* right panel, docked width          */
+  --rdock:30vw;               /* right panel, docked width          */
   --rwide:70vw;               /* right panel, expanded width        */
-  --lwidth:60vw;              /* left panel, open width             */
+  --lwidth:50vw;              /* left panel, open width             */
   --top:96px;                 /* set from the header height by JS   */
   --ease:cubic-bezier(.32,.72,.24,1);
   --glass:blur(16px) saturate(1.4);
@@ -945,7 +945,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 *::-webkit-scrollbar-thumb:hover{background:rgba(21,48,66,.34)}
 
 @media (max-width:1000px){
-  :root{--rdock:300px}
+  :root{--rdock:max(30vw,300px)}
   .lpanel{width:calc(100vw - var(--rail) - 12px);z-index:44}
 }
 @media (max-width:760px){

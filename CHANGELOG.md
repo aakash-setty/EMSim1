@@ -5,6 +5,18 @@ is usable with learners.
 
 ---
 
+## v0.16a: narrower panels, and the room clears the screen
+
+Three interface changes on the author's instruction. The workspace panel opens at half the
+viewport rather than 60 percent (`--lwidth`), and the record docks at 30 percent rather than
+a fixed 360 px (`--rdock`, floored at 300 px below 1000 px wide). A click on the room behind
+the panels now closes both of them from any state, leaving the seven tab names and the
+docked record; it used to minimise an expanded record and reopen the workspace on History,
+so clicking the room to be rid of one panel produced another. The minimise button in the
+record's corner, and Escape, still restore the workspace on History, because those are a
+return to work rather than a request for a clear screen. Verified in headless Chromium
+across every state transition.
+
 ## v0.16: the monitor draws the rhythm it is sounding
 
 **The trace was a picture and the heartbeat was a timer, and the note beside the trace said

@@ -58,9 +58,9 @@
   --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
 
   --rail:88px;                /* fixed icon rail, always on screen  */
-  --rdock:360px;              /* right panel, docked width          */
+  --rdock:30vw;               /* right panel, docked width          */
   --rwide:70vw;               /* right panel, expanded width        */
-  --lwidth:60vw;              /* left panel, open width             */
+  --lwidth:50vw;              /* left panel, open width             */
   --top:96px;                 /* set from the header height by JS   */
   --ease:cubic-bezier(.32,.72,.24,1);
   --glass:blur(16px) saturate(1.4);
@@ -945,7 +945,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 *::-webkit-scrollbar-thumb:hover{background:rgba(21,48,66,.34)}
 
 @media (max-width:1000px){
-  :root{--rdock:300px}
+  :root{--rdock:max(30vw,300px)}
   .lpanel{width:calc(100vw - var(--rail) - 12px);z-index:44}
 }
 @media (max-width:760px){
@@ -5419,13 +5419,17 @@ document.addEventListener('click',e=>{
   if(!RIGHT_WIDE && !ENDED && e.target.closest('#rightpanel')){
     expandRecord(); renderTabs(); return;
   }
-  /* The expanded record leaves the room showing to its left. A click on that
-     background is the same gesture as the minimise button in the record's corner:
-     the reader is done with the chart. Anything that is itself a control (the rail,
-     the header, an overlay, the record) keeps its own behaviour. */
-  if(RIGHT_WIDE && !ENDED && !e.target.closest(
-       '#rightpanel,#tabbar,#leftpanel,header,#endview,#pauseview,#leaveview,#picker,#splash,button,a,input')){
-    minimiseRecord(); return;
+  /* A click on the room behind the panels closes both of them: the workspace slides
+     back behind the rail and the record returns to its dock, leaving the seven tab
+     names and the docked record. It is the same gesture from every state, so a learner
+     never has to know which panel is open to clear the screen. Until v0.16 it minimised
+     the record and reopened the workspace on History, which meant clicking the room
+     to get rid of one panel produced another. Anything that is itself a control (the
+     rail, the header, an overlay, either panel) keeps its own behaviour. */
+  if(STARTED && !ENDED && !e.target.closest(
+       '#rightpanel,#tabbar,#leftpanel,header,#endview,#pauseview,#leaveview,#picker,#splash,#imgview,button,a,input')){
+    if(LEFT_OPEN||RIGHT_WIDE){ setPanels(false,false); renderTabs(); }
+    return;
   }
   if(!t) return;
   if(t.dataset.tab){
