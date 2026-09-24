@@ -115,7 +115,7 @@ button{font:inherit;color:inherit}
 .stick{position:fixed;top:0;left:0;right:0;z-index:60}
 .bay{background:rgba(255,255,255,.80);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
   border-bottom:1px solid var(--rule);box-shadow:0 8px 26px -20px var(--shadow)}
-.bayin{padding:12px 20px;display:grid;grid-template-columns:1fr auto auto;gap:24px;align-items:center}
+.bayin{padding:12px 20px;display:grid;grid-template-columns:1fr auto auto auto;gap:24px;align-items:center}
 
 /* The nurse speaks, so the block carries the voice hue, the same violet the patient
    and every consultant use further down the page.
@@ -375,15 +375,9 @@ body[data-right="wide"] .rpanel:hover{border-left-color:var(--rule)}
 .rp-title{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);font-weight:600}
 .rp-hint{margin-left:auto;font-size:11px;color:var(--ink3);font-family:var(--mono);white-space:nowrap}
 body[data-right="wide"] .rp-hint{display:none}
-/* Mini vitals ride along inside the expanded panel, so reading a long chart
-   never means looking away from the numbers. They keep the monitor's screen
-   behind them: the vital hues are calibrated for black and nothing else. */
-.rp-mini{display:none;margin-left:auto;gap:15px;align-items:baseline;font-family:var(--mono);
-  background:var(--screen);border-radius:5px;padding:6px 13px}
-body[data-right="wide"] .rp-mini{display:flex}
-.rp-mini .m{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--temp)}
-.rp-mini .m b{font-weight:600}
-.rp-mini .k{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#83A0AF;margin-right:4px}
+/* The mini vitals that used to ride inside the expanded panel are gone (v0.17o, on the
+   author's instruction). The header carries the full monitor at every panel state and
+   never gets covered, so the copy was the same five numbers twice on one screen. */
 .rp-body{flex:1;min-height:0;overflow-y:auto;padding:12px 14px 24px;display:flex;flex-direction:column}
 body[data-right="wide"] .rp-body{padding:16px 22px 30px}
 
@@ -652,36 +646,31 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .reflectbox:focus{outline:2px solid var(--act);outline-offset:-1px;border-color:var(--act)}
 
 /* ============================================================
-   GLOBAL SEARCH. Same box as the record panel, one layer above it.
+   GLOBAL SEARCH. A dropdown from its own button beside the microphone, built on the
+   voice panel's shell so the two read as the same kind of thing: one is what you say to
+   the room, the other is what you ask the case. It was first put in the record's header
+   and opened over the chart, which made a panel about the record's contents out of a
+   control that searches every tab.
    ============================================================ */
-.rp-search{width:26px;height:26px;flex:0 0 auto;background:var(--pane2);border:1px solid var(--rule);
-  border-radius:3px;color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
-.rp-search:hover{color:var(--act);border-color:var(--actb);background:var(--actl)}
-.rp-search svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round}
-.srch{position:fixed;top:var(--top);right:0;bottom:0;z-index:46;width:var(--rdock);
-  background:rgba(255,255,255,.97);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
-  border-left:1px solid var(--act);box-shadow:-20px 0 50px -30px var(--shadow);
-  display:flex;flex-direction:column;transition:width .42s var(--ease)}
-body[data-right="wide"] .srch{width:min(var(--rwide),calc(100vw - var(--rail)))}
-.srch.hidden{display:none}
-.srch-head{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--rule2);min-height:46px}
+.srchpanel{width:440px}
+.srch-head{display:flex;align-items:center;gap:8px;padding:10px 12px 9px;border-bottom:1px solid var(--rule2);flex:0 0 auto}
 .srch-ic{width:16px;height:16px;flex:0 0 auto;stroke:var(--ink3);fill:none;stroke-width:1.9;stroke-linecap:round}
 .srch-box{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--ink);background:none;border:0;padding:4px 0}
 .srch-box:focus{outline:none}
 .srch-x{width:26px;height:26px;flex:0 0 auto;background:none;border:0;color:var(--ink3);cursor:pointer;
   font-size:19px;line-height:1;border-radius:3px}
 .srch-x:hover{color:var(--act);background:var(--actl)}
-.srch-body{flex:1;min-height:0;overflow-y:auto;padding:8px 10px 24px}
+.srch-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px 8px 10px}
 .srch-sec{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);
-  margin:12px 6px 5px;font-weight:600}
+  margin:10px 6px 4px;font-weight:600}
 .srch-sec:first-child{margin-top:2px}
 .srch-hit{display:block;width:100%;text-align:left;background:none;border:0;border-radius:4px;
-  padding:8px 10px;cursor:pointer;color:var(--ink);font:inherit;font-size:13.5px;line-height:1.35}
+  padding:7px 10px;cursor:pointer;color:var(--ink);font:inherit;font-size:13.5px;line-height:1.35}
 .srch-hit:hover,.srch-hit:focus-visible{background:var(--actl);outline:none}
 .srch-hit b{font-weight:600}
 .srch-hit .sh-meta{display:block;font-size:11.5px;color:var(--ink3);margin-top:2px}
-.srch-hit mark{background:var(--warnl,#fde68a);color:inherit;border-radius:2px;padding:0 1px}
-.srch-none{padding:14px 10px;color:var(--ink3);font-size:13px;line-height:1.5}
+.srch-hit mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px}
+.srch-none{padding:12px 10px;color:var(--ink3);font-size:13px;line-height:1.5}
 
 /* The image viewer, and the thumbnail that opens it. A result that is a picture is shown
    small in the chart, because the chart is a running list and a full tracing in it would
@@ -1243,6 +1232,26 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
         </div>
       </div>
     </div>
+
+    <!-- Search, beside the microphone and built the same way. It searches every tab, so it
+         belongs with the controls that act on the whole case rather than in the record's
+         own header. It navigates and never acts. -->
+    <div class="voice" id="search">
+      <button class="voicebtn" id="searchbtn" type="button" aria-expanded="false" aria-haspopup="true"
+              title="Search everything (Ctrl or Cmd and K)" aria-label="Search everything" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      </button>
+      <span class="voicelab">Search</span>
+      <div class="voicepanel srchpanel" id="searchpanel" role="dialog" aria-label="Search everything" hidden>
+        <div class="srch-head">
+          <svg class="srch-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+          <input type="text" id="searchbox" class="srch-box" autocomplete="off" spellcheck="false"
+                 placeholder="Search actions, results and the chart" aria-label="Search everything">
+          <button class="srch-x" id="searchclose" title="Close the search" aria-label="Close the search">&#215;</button>
+        </div>
+        <div class="srch-body" id="searchresults"></div>
+      </div>
+    </div>
     <div class="monwrap">
       <div class="mon" id="monitor"></div>
       <div class="tracebox"><canvas class="trace" id="trace" aria-hidden="true"></canvas></div>
@@ -1276,13 +1285,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       <button class="rp-toggle" id="rp-toggle" title="Expand the chart" aria-label="Expand the chart" aria-expanded="false">
         <svg viewBox="0 0 24 24" id="rp-icon"><path d="M15 4h5v5M20 4l-7 7M9 20H4v-5M4 20l7-7"/></svg>
       </button>
-      <button class="rp-search" id="rp-search" title="Search everything (/)" aria-label="Search everything"
-              aria-expanded="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
-      </button>
       <span class="rp-title">Record</span>
       <span class="rp-hint">click to expand</span>
-      <div class="rp-mini" id="rp-mini"></div>
     </div>
     <div class="rp-body">
       <div class="railbox">
@@ -1294,20 +1298,6 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
         <div id="feed"></div>
       </div>
     </div>
-  </aside>
-
-  <!-- Global search. It occupies the record panel's own geometry and sits one layer above
-       it, so opening it reads as the record turning into a search rather than as a new
-       window appearing somewhere else. Everything the case holds is in one list: every
-       action on every tab, and every line of the chart. It navigates, and never acts. -->
-  <aside class="srch hidden" id="searchpanel" aria-label="Search everything">
-    <div class="srch-head">
-      <svg class="srch-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
-      <input type="text" id="searchbox" class="srch-box" autocomplete="off" spellcheck="false"
-             placeholder="Search actions, results and the chart" aria-label="Search everything">
-      <button class="srch-x" id="searchclose" title="Close the search" aria-label="Close the search">&#215;</button>
-    </div>
-    <div class="srch-body" id="searchresults"></div>
   </aside>
 
 </div>
@@ -5217,6 +5207,11 @@ const VOICE=(function(){
      spoken into a case survives the case, and a paused case is not listening. */
   function reset(){ abort(); clear(); OPEN=false; if(inBrowser) paint(); }
   function pause(){ if(LISTENING){ WANT_STOP=true; try{ rec.stop(); }catch(err){ finishRecording(); } } }
+  /* Put the dropdown away without throwing away what is in it. Used when the other
+     dropdown in that row opens: two panels from two buttons a few pixels apart cannot
+     both be on screen, and a resident who has spoken three orders and then looks
+     something up should find the three orders still there when they come back. */
+  function collapse(){ if(LISTENING) pause(); OPEN=false; if(inBrowser) paint(); }
   function confirm(){
     const ok=ROWS.filter(r=>r.kind==='ok');
     if(!ok.length) return;
@@ -5328,6 +5323,7 @@ const VOICE=(function(){
     paint();
   }
   return {normalise,build,parse,index:()=>INDEX,supported,listening,arming,bind,paint,reset,pause,typed,
+          collapse,isOpen:()=>OPEN,
           rows:()=>ROWS.slice()};
 })();
 
@@ -5509,15 +5505,9 @@ function renderMonitor(){
     ['RR',   num(v.respiratory_rate,1),                      '/minute','rr'],
     ['T',    (on&&typeof v.temperature_c==='number')?v.temperature_c.toFixed(1):'\u2013','\u00B0C','temp']
   ];
-  /* The header carries the full monitor at every panel state, so vitals are
-     never occluded. The expanded record panel additionally carries a compact
-     copy in its own header, because a resident reading two columns of chart at
-     70% width should not have to look back up to the top of the window. */
-  const mini=el('rp-mini');
-  if(mini) mini.innerHTML = RIGHT_WIDE
-    ? cells.map(c=>`<span class="m"><span class="k">${c[0]}</span><b class="v-${c[3]}">${c[1]}</b></span>`).join('')
-      + `<span class="m"><span class="k">elapsed</span><b>${mmss(ST.now)}</b></span>`
-    : '';
+  /* The header carries the full monitor at every panel state and no panel ever covers it,
+     so the expanded record used to show a second copy of the same five numbers on the same
+     screen. Removed in v0.17o on the author's instruction. */
   el('monitor').innerHTML = cells.map(c=>
     `<div class="vit"><div class="vitlab">${c[0]}</div>
      <div class="vitval v-${c[3]}">${c[1]}</div><div class="vitunit">${c[2]}</div></div>`).join('')
@@ -5534,6 +5524,18 @@ function renderMonitor(){
   MONITOR.sync();
   renderSound();
   AUDIO.sync();
+}
+/* Enabled only inside a case, exactly as the microphone is: there is nothing to search
+   on the case list or on the card. */
+function renderSearchBtn(){
+  const b=el('searchbtn'); if(!b) return;
+  const active=inCase();
+  b.disabled=!active;
+  if(!active&&SEARCH_OPEN) closeSearch();
+  /* The other direction. The microphone's own button is handled inside voice.js, which
+     knows nothing about this panel, so the exclusion is checked here rather than wired
+     through it. */
+  if(SEARCH_OPEN&&VOICE.isOpen&&VOICE.isOpen()) closeSearch();
 }
 function renderSound(){
   const b=el('soundbtn'); if(!b) return;
@@ -6735,7 +6737,7 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
     +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,'
-    +'#rp-toggle,#lp-collapse,#railmenu,#rp-search,#searchclose,[data-sgo],[data-schart]');
+    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart]');
   if(t&&t.id==='soundbtn'){ AUDIO.toggle(); renderSound(); return; }
   AUDIO.unlock();
   /* Panel controls run before the ENDED guard and before the null check: the
@@ -6747,7 +6749,7 @@ document.addEventListener('click',e=>{
   /* Leaving by the rail button asks the same question the browser's back button asks, and
      takes the same route out, so there is one way to end a case early and one guard on it. */
   if(t&&t.id==='railmenu'){ askLeave('menu'); return; }
-  if(t&&t.id==='rp-search'){ SEARCH_OPEN?closeSearch():openSearch(); return; }
+  if(t&&t.id==='searchbtn'){ SEARCH_OPEN?closeSearch():openSearch(); return; }
   if(t&&t.id==='searchclose'){ closeSearch(); return; }
   if(t&&t.dataset.sgo!==undefined){ searchGoTo(t.dataset.sgo); return; }
   if(t&&t.dataset.schart!==undefined){ closeSearch(); expandRecord(); return; }
@@ -6919,13 +6921,13 @@ function tick(){
     if(ST.failed && ST.now >= ST.failed.t + GRACE_S){ finish(); return; }
     if(reflectDue()) openReflect();
   }
-  renderMonitor(); renderNurse(); renderRail(); renderPatient();
+  renderMonitor(); renderNurse(); renderRail(); renderPatient(); renderSearchBtn();
   requestAnimationFrame(tick);
 }
 function render(){
   refold();
   if(ST.halted&&!ENDED){ finish(); return; }
-  renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor(); renderPatient();
+  renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor(); renderPatient(); renderSearchBtn();
   VOICE.paint();
 }
 /* Rebuild the tab only when something the tab shows has actually changed. A nurse
@@ -7607,17 +7609,20 @@ let SEARCH_OPEN=false, SEARCH_Q='';
 function searchOpen(){ return SEARCH_OPEN; }
 function openSearch(){
   if(!inCase()) return;
+  /* Two dropdowns from the same row, so opening one puts the other away. Away, not
+     discarded: orders already spoken into the list are still there on the way back. */
+  if(VOICE.collapse) VOICE.collapse();
   SEARCH_OPEN=true;
-  el('searchpanel').classList.remove('hidden');
-  el('rp-search').setAttribute('aria-expanded','true');
+  el('searchpanel').hidden=false;
+  el('searchbtn').setAttribute('aria-expanded','true');
   const b=el('searchbox'); b.value=SEARCH_Q; b.focus(); b.select();
   renderSearch();
 }
 function closeSearch(){
   if(!SEARCH_OPEN) return;
   SEARCH_OPEN=false;
-  el('searchpanel').classList.add('hidden');
-  el('rp-search').setAttribute('aria-expanded','false');
+  el('searchpanel').hidden=true;
+  el('searchbtn').setAttribute('aria-expanded','false');
 }
 function searchNorm(s){ return String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
 /* Every token has to appear somewhere in the row's text, so "chest x" finds the chest
@@ -7748,7 +7753,7 @@ function releaseClock(){
 el('reflectok').addEventListener('click',closeReflect);
 el('searchbox').addEventListener('input',e=>{ SEARCH_Q=e.target.value; renderSearch(); });
 el('searchbox').addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeSearch(); el('rp-search').focus(); return; }
+  if(e.key==='Escape'){ closeSearch(); el('searchbtn').focus(); return; }
   if(e.key==='Enter'){ const f=el('searchresults').querySelector('[data-sgo]'); if(f) f.click(); }
 });
 el('leavecancel').addEventListener('click',closeLeave);
@@ -7864,8 +7869,15 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!el('leaveview').classList.contains('hidden')){ closeLeave(); return; }
   /* The pause has no key out. Continue is the only way on, which is the point of it. */
   if(REFLECT_OPEN){ if(e.key==='Escape') e.preventDefault(); return; }
-  if(e.key==='Escape'&&searchOpen()){ closeSearch(); return; }
+  if(e.key==='Escape'&&searchOpen()){ closeSearch(); el('searchbtn').focus(); return; }
+  /* Control or Command and K, which is what a search box is opened with everywhere else and,
+     more to the point, is the only thing that works: the History tab puts the cursor in the
+     question box the moment it renders, so a bare "/" is a character the resident is typing
+     at the patient, not a shortcut. "/" is kept for when nothing has the focus. */
   const typing=/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'');
+  if((e.key==='k'||e.key==='K')&&(e.ctrlKey||e.metaKey)&&!e.altKey&&inCase()){
+    e.preventDefault(); searchOpen()?closeSearch():openSearch(); return;
+  }
   if(e.key==='/'&&!typing&&inCase()&&!searchOpen()){ e.preventDefault(); openSearch(); return; }
   const reload=(e.key==='F5')||((e.key==='r'||e.key==='R')&&(e.ctrlKey||e.metaKey)&&!e.altKey);
   if(reload&&inCase()&&!LEAVING){ e.preventDefault(); askLeave('reload'); }

@@ -336,6 +336,11 @@ const VOICE=(function(){
      spoken into a case survives the case, and a paused case is not listening. */
   function reset(){ abort(); clear(); OPEN=false; if(inBrowser) paint(); }
   function pause(){ if(LISTENING){ WANT_STOP=true; try{ rec.stop(); }catch(err){ finishRecording(); } } }
+  /* Put the dropdown away without throwing away what is in it. Used when the other
+     dropdown in that row opens: two panels from two buttons a few pixels apart cannot
+     both be on screen, and a resident who has spoken three orders and then looks
+     something up should find the three orders still there when they come back. */
+  function collapse(){ if(LISTENING) pause(); OPEN=false; if(inBrowser) paint(); }
   function confirm(){
     const ok=ROWS.filter(r=>r.kind==='ok');
     if(!ok.length) return;
@@ -447,5 +452,6 @@ const VOICE=(function(){
     paint();
   }
   return {normalise,build,parse,index:()=>INDEX,supported,listening,arming,bind,paint,reset,pause,typed,
+          collapse,isOpen:()=>OPEN,
           rows:()=>ROWS.slice()};
 })();

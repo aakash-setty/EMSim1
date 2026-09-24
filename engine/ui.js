@@ -174,15 +174,9 @@ function renderMonitor(){
     ['RR',   num(v.respiratory_rate,1),                      '/minute','rr'],
     ['T',    (on&&typeof v.temperature_c==='number')?v.temperature_c.toFixed(1):'\u2013','\u00B0C','temp']
   ];
-  /* The header carries the full monitor at every panel state, so vitals are
-     never occluded. The expanded record panel additionally carries a compact
-     copy in its own header, because a resident reading two columns of chart at
-     70% width should not have to look back up to the top of the window. */
-  const mini=el('rp-mini');
-  if(mini) mini.innerHTML = RIGHT_WIDE
-    ? cells.map(c=>`<span class="m"><span class="k">${c[0]}</span><b class="v-${c[3]}">${c[1]}</b></span>`).join('')
-      + `<span class="m"><span class="k">elapsed</span><b>${mmss(ST.now)}</b></span>`
-    : '';
+  /* The header carries the full monitor at every panel state and no panel ever covers it,
+     so the expanded record used to show a second copy of the same five numbers on the same
+     screen. Removed in v0.17o on the author's instruction. */
   el('monitor').innerHTML = cells.map(c=>
     `<div class="vit"><div class="vitlab">${c[0]}</div>
      <div class="vitval v-${c[3]}">${c[1]}</div><div class="vitunit">${c[2]}</div></div>`).join('')
@@ -199,6 +193,18 @@ function renderMonitor(){
   MONITOR.sync();
   renderSound();
   AUDIO.sync();
+}
+/* Enabled only inside a case, exactly as the microphone is: there is nothing to search
+   on the case list or on the card. */
+function renderSearchBtn(){
+  const b=el('searchbtn'); if(!b) return;
+  const active=inCase();
+  b.disabled=!active;
+  if(!active&&SEARCH_OPEN) closeSearch();
+  /* The other direction. The microphone's own button is handled inside voice.js, which
+     knows nothing about this panel, so the exclusion is checked here rather than wired
+     through it. */
+  if(SEARCH_OPEN&&VOICE.isOpen&&VOICE.isOpen()) closeSearch();
 }
 function renderSound(){
   const b=el('soundbtn'); if(!b) return;
@@ -1400,7 +1406,7 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
     +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,'
-    +'#rp-toggle,#lp-collapse,#railmenu,#rp-search,#searchclose,[data-sgo],[data-schart]');
+    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart]');
   if(t&&t.id==='soundbtn'){ AUDIO.toggle(); renderSound(); return; }
   AUDIO.unlock();
   /* Panel controls run before the ENDED guard and before the null check: the
@@ -1412,7 +1418,7 @@ document.addEventListener('click',e=>{
   /* Leaving by the rail button asks the same question the browser's back button asks, and
      takes the same route out, so there is one way to end a case early and one guard on it. */
   if(t&&t.id==='railmenu'){ askLeave('menu'); return; }
-  if(t&&t.id==='rp-search'){ SEARCH_OPEN?closeSearch():openSearch(); return; }
+  if(t&&t.id==='searchbtn'){ SEARCH_OPEN?closeSearch():openSearch(); return; }
   if(t&&t.id==='searchclose'){ closeSearch(); return; }
   if(t&&t.dataset.sgo!==undefined){ searchGoTo(t.dataset.sgo); return; }
   if(t&&t.dataset.schart!==undefined){ closeSearch(); expandRecord(); return; }
@@ -1584,13 +1590,13 @@ function tick(){
     if(ST.failed && ST.now >= ST.failed.t + GRACE_S){ finish(); return; }
     if(reflectDue()) openReflect();
   }
-  renderMonitor(); renderNurse(); renderRail(); renderPatient();
+  renderMonitor(); renderNurse(); renderRail(); renderPatient(); renderSearchBtn();
   requestAnimationFrame(tick);
 }
 function render(){
   refold();
   if(ST.halted&&!ENDED){ finish(); return; }
-  renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor(); renderPatient();
+  renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor(); renderPatient(); renderSearchBtn();
   VOICE.paint();
 }
 /* Rebuild the tab only when something the tab shows has actually changed. A nurse
@@ -2272,17 +2278,20 @@ let SEARCH_OPEN=false, SEARCH_Q='';
 function searchOpen(){ return SEARCH_OPEN; }
 function openSearch(){
   if(!inCase()) return;
+  /* Two dropdowns from the same row, so opening one puts the other away. Away, not
+     discarded: orders already spoken into the list are still there on the way back. */
+  if(VOICE.collapse) VOICE.collapse();
   SEARCH_OPEN=true;
-  el('searchpanel').classList.remove('hidden');
-  el('rp-search').setAttribute('aria-expanded','true');
+  el('searchpanel').hidden=false;
+  el('searchbtn').setAttribute('aria-expanded','true');
   const b=el('searchbox'); b.value=SEARCH_Q; b.focus(); b.select();
   renderSearch();
 }
 function closeSearch(){
   if(!SEARCH_OPEN) return;
   SEARCH_OPEN=false;
-  el('searchpanel').classList.add('hidden');
-  el('rp-search').setAttribute('aria-expanded','false');
+  el('searchpanel').hidden=true;
+  el('searchbtn').setAttribute('aria-expanded','false');
 }
 function searchNorm(s){ return String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
 /* Every token has to appear somewhere in the row's text, so "chest x" finds the chest
@@ -2413,7 +2422,7 @@ function releaseClock(){
 el('reflectok').addEventListener('click',closeReflect);
 el('searchbox').addEventListener('input',e=>{ SEARCH_Q=e.target.value; renderSearch(); });
 el('searchbox').addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeSearch(); el('rp-search').focus(); return; }
+  if(e.key==='Escape'){ closeSearch(); el('searchbtn').focus(); return; }
   if(e.key==='Enter'){ const f=el('searchresults').querySelector('[data-sgo]'); if(f) f.click(); }
 });
 el('leavecancel').addEventListener('click',closeLeave);
@@ -2529,8 +2538,15 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!el('leaveview').classList.contains('hidden')){ closeLeave(); return; }
   /* The pause has no key out. Continue is the only way on, which is the point of it. */
   if(REFLECT_OPEN){ if(e.key==='Escape') e.preventDefault(); return; }
-  if(e.key==='Escape'&&searchOpen()){ closeSearch(); return; }
+  if(e.key==='Escape'&&searchOpen()){ closeSearch(); el('searchbtn').focus(); return; }
+  /* Control or Command and K, which is what a search box is opened with everywhere else and,
+     more to the point, is the only thing that works: the History tab puts the cursor in the
+     question box the moment it renders, so a bare "/" is a character the resident is typing
+     at the patient, not a shortcut. "/" is kept for when nothing has the focus. */
   const typing=/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'');
+  if((e.key==='k'||e.key==='K')&&(e.ctrlKey||e.metaKey)&&!e.altKey&&inCase()){
+    e.preventDefault(); searchOpen()?closeSearch():openSearch(); return;
+  }
   if(e.key==='/'&&!typing&&inCase()&&!searchOpen()){ e.preventDefault(); openSearch(); return; }
   const reload=(e.key==='F5')||((e.key==='r'||e.key==='R')&&(e.ctrlKey||e.metaKey)&&!e.altKey);
   if(reload&&inCase()&&!LEAVING){ e.preventDefault(); askLeave('reload'); }

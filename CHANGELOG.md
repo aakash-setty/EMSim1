@@ -5,6 +5,26 @@ is usable with learners.
 
 ---
 
+## v0.17o: search is a control of its own, and the monitor is shown once
+
+On the author's instruction, two corrections to v0.17n.
+
+**Search moved out of the record's header and up beside the microphone**, where it is a second
+round button with its own label and its own dropdown, built on the voice panel's shell so the
+two read as the same kind of thing: one is what you say to the room, the other is what you ask
+the case. In the record's header it looked like a search of the record, which it never was; it
+searches every tab. Opening either dropdown puts the other away rather than discarding it, so
+orders already spoken into the voice list are still there on the way back. The button is
+disabled outside a case, exactly as the microphone is.
+
+**The shortcut is Ctrl or Cmd and K**, not "/". The History tab puts the cursor in the question
+box the moment it renders, so a bare "/" was a character the resident was typing at the
+patient and the shortcut never fired. "/" still works when nothing has the focus.
+
+**The mini monitor inside the expanded record is gone.** The header carries the full monitor at
+every panel state and no panel ever covers it, so the expanded record was showing the same five
+numbers and the same clock a second time on the same screen.
+
 ## v0.17n: a pause to think, search over everything, and a wider microphone
 
 **A three-minute pause.** Once per case, at three minutes of case time and wherever the case
@@ -61,6 +81,9 @@ after lookup rather than before it.
 **A wider record, and search over everything.** The docked record went from 30vw to 34vw
 (floor 320px), and expanded from 70vw to 76vw. The cost is the gap the patient stands in,
 which falls from about 200px to about 140px at 1440.
+
+*(v0.17o moved the search control and removed the mini monitor; the paragraphs below
+describe where it first went.)*
 
 Beside the expand control there is now a search button. It opens over the record, in the
 record's own geometry, and holds one list over everything the case has: every action on every
