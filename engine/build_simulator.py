@@ -117,6 +117,11 @@ shared = {
     "diagnoses": [{"id": d["id"], "label": d["display_name"],
                    "syn": d.get("synonyms") or []} for d in dxcat["entries"]],
     "orderableTabs": ["investigations", "stabilization", "interventions"],
+    # What the microphone may say, which is wider than what may be batched into an order.
+    # An exam and a consultation are single acts that take effect when they are confirmed,
+    # exactly as the tab's own button does, so they need no basket; they are excluded from
+    # orderableTabs and included here. v0.17n.
+    "voiceTabs": ["investigations", "stabilization", "interventions", "exam", "consultations"],
     # Tabs whose groups render collapsed until clicked. Investigations and
     # Stabilization carry enough entries that a flat list is unreadable, the same
     # reason Interventions collapses. Exams and Consults stay flat: 14 and 17 entries
@@ -353,6 +358,21 @@ shared["patient"] = {
                "bag_valve_mask", "defib_pads", "central_line", "jaundice", "sweating", "agitation",
                "hospital_bed", "hospital_bed_flat"],
     "visualDefault": {"eyes": "open", "seizure": False, "work_of_breathing": "normal"},
+}
+
+# The three-minute pause. Not a case's to author: it is a property of how the tool teaches,
+# the same for every case, and a case that could turn it off would be a case that could
+# decide a resident does not need to stop and think. The clock is held while it is up, for
+# the reason every modal here holds it: the deadlines a case authors are claims about a
+# patient, and charging a resident for time the interface took from them makes those false.
+shared["reflect"] = {
+    "atSeconds": 180,
+    "title": "Pause: consider your differential diagnosis.",
+    "body": ("Consider the implications of each. What do you need to check or give?"),
+    "placeholder": "Optional free text area for your use",
+    "_note": ("Fires once per case at atSeconds of case time, wherever the case has got to. "
+              "It does not fire after the case has ended, and the note is not scored, not "
+              "logged and not read by the engine."),
 }
 
 DX_IDS = {d["id"] for d in shared["diagnoses"]}

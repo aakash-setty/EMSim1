@@ -43,7 +43,7 @@
   "The catalog's default vascular-access failure message reads 'He doesn't have a line yet', which is wrong for this patient and for MGCA's. A gendered default in a shared catalog is a small defect with no case-level fix."
  ],
  "metadata": {
-  "working_title": "Eighteen year old woman, confusion and fever, brought in by EMS",
+  "working_title": "18-year-old woman, confusion and fever, brought in by EMS",
   "chief_complaint_patient_voice": "She does not give one. She is delirious and does not know where she is. Her mother, at the bedside: 'She wasn't making any sense and she didn't know who I was.'",
   "final_diagnosis": "Diphenhydramine overdose producing an anticholinergic toxidrome with hyperthermia and delirium, complicated by cardiac sodium-channel blockade with QRS prolongation and by a generalised seizure. The teaching claim of the case is that the second half of that sentence changes the management and the first half does not.\n\nThe primary diagnosis is dx_diphenhydramine_overdose, which names the agent. The cardiotoxicity is dx_sodium_channel_blocker_cardiotoxicity and is the first of the five additional diagnoses, because it is the finding that decides the management. Both entries were added to the diagnosis catalog on 5 September 2026 for this case; before that the correct answer had to be recorded as the anticholinergic toxidrome, which is the thing the case exists to say is not the whole story. The toxidrome is now scored twice, as credit when it is named beside the agent and as a defensible-but-incomplete answer when it is offered as the primary.",
   "target_level": [

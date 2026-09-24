@@ -95,6 +95,9 @@ CANON = [
     # fluid names
     [r"(normal saline|sodium chloride|0 9 saline|0 9 normal saline|0 9 percent saline|0 9 percent sodium chloride|point 9 saline|ns|n s)", "saline"],
     [r"(lactated ringers|lactated ringer s|lactated ringer|ringers lactate|ringer lactate|ringers|l r)", "lr"],
+    # British spelling. The recogniser produces it from a British speaker and nothing else
+    # in the table would have matched it. v0.17n.
+    [r"(litre|litres)", "liter"],
     [r"(half normal saline|half normal|0 45 saline|0 45 normal saline|0 45|point 45|1 2 saline|1 2 normal saline|half saline)", "halfnormal"],
     [r"d 5", "d5"], [r"d 50", "d50"], [r"d 10", "d10"], [r"d 25", "d25"], [r"d5 w", "d5w"], [r"d10 w", "d10w"],
     # infusion words and rates
@@ -279,6 +282,10 @@ FILLERS = set("a an the of please thank thanks get give order start send check d
 # EXCEPT that "X off" is handled by the stop canon before fillers run, see STOPS above.
 FILLERS -= {"off"}
 FILLERS |= {"hang", "load", "loading", "loaded"}
+# NOT fillers, though they look like ones. "open" was tried here and collapsed "open chest"
+# onto "chest", which took a refusal about thoracotomy and pointed it at the word every
+# chest study contains. Verbs that carry an order without naming one are dropped later
+# instead, as leftovers, by NOISE in engine/voice.js. v0.17n.
 UNITS = set("mg milligram milligrams mcg microgram micrograms g gram grams gm gms unit units meq milliequivalent milliequivalents cc ccs ml mls milliliter milliliters millilitre millilitres kg kilo kilos kilogram kilograms per hour hours hr hrs minute minutes min mins q every over each dose doses times x mcgs mgs percent iu".split())
 UNITS -= {"percent", "every", "each"}
 
@@ -834,6 +841,61 @@ for p in ["liter of fluid", "liter of fluids", "liter bolus of fluid", "another 
     ambiguous(p, "normal_saline_1l_bolus", "lactated_ringer_s_1l_bolus")
 for p in ["maintenance fluids", "maintenance", "maintenance ivf", "mivf", "maintenance fluid", "maintenance rate", "maintenance iv fluids"]:
     ambiguous(p, "normal_saline_infusion", "lactated_ringer_s_infusion", "d5_1_2_ns_infusion")
+# v0.17n. The generic ways a crystalloid bolus is actually asked for. The four phrases above
+# already resolved, but only when the fluid word stood alone: "bolus of crystalloid" matched
+# the bare word "bolus", which is ambiguous across fluids AND push-dose pressors, and then
+# matched "crystalloid" again, so one spoken order produced two rows and one of them offered
+# a vasopressor. The parser takes the longest phrase it knows, so writing the whole phrase
+# here is what makes it win. Generated rather than listed because the failures were all the
+# same shape: a volume or a bolus word on either side of a generic fluid word.
+CRYST = ["crystalloid", "crystalloids", "fluid", "fluids", "iv fluid", "iv fluids", "ivf", "volume",
+         "bag of fluid", "bag of fluids", "bag of crystalloid", "liter of fluid", "litre of fluid"]
+GIVEV = ["bolus", "bolus of", "push", "iv push", "run in", "run in a", "open", "open up", "hang", "hang a",
+         "wide open", "start", "give", "give a", "give some", "resuscitate with", "fill up with"]
+TRAIL = ["bolus", "now", "stat", "wide open", "challenge", "resuscitation", "for resuscitation"]
+# Only writes a phrase whose normalised form is not already spoken for by something else.
+# "500 of crystalloid" normalises to "crystalloid", because a bare number is dropped unless a
+# rule kept it, and writing it blindly would have narrowed the plain word "crystalloid" to the
+# two half-litre bags. A generated phrase never overrides an authored one. The map of what is
+# taken is built once: normalising every phrase written so far, for every phrase generated
+# below, is minutes of work for a table that does not change while the loop runs.
+_TAKEN = None
+def _cryst_amb(phrase, *cids):
+    global _TAKEN
+    if _TAKEN is None:
+        _TAKEN = {}
+        for p, v in AMBIG.items(): _TAKEN.setdefault(normalise(p), list(v))
+        for c in A:
+            for p in A[c]: _TAKEN.setdefault(normalise(p), [c])
+        for p, v in EXPAND.items(): _TAKEN.setdefault(normalise(p), list(v))
+        for p in UNAVAIL: _TAKEN.setdefault(normalise(p), ["_unavailable"])
+    k = normalise(phrase)
+    if not k: return
+    have = _TAKEN.get(k)
+    if have is not None and have != list(cids): return
+    _TAKEN[k] = list(cids)
+    ambiguous(phrase, *cids)
+_cryst4 = ("normal_saline_1l_bolus", "lactated_ringer_s_1l_bolus", "normal_saline_500ml_bolus", "lactated_ringer_s_500ml_bolus")
+_cryst1l = ("normal_saline_1l_bolus", "lactated_ringer_s_1l_bolus")
+_cryst500 = ("normal_saline_500ml_bolus", "lactated_ringer_s_500ml_bolus")
+for c in CRYST:
+    for v in GIVEV:
+        _cryst_amb(f"{v} {c}", *_cryst4)
+    for t in TRAIL:
+        _cryst_amb(f"{c} {t}", *_cryst4)
+    # a stated volume settles the size but not the fluid
+    for v in LITER:
+        _cryst_amb(f"{v} of {c}", *_cryst1l); _cryst_amb(f"{v} {c}", *_cryst1l)
+        _cryst_amb(f"{c} {v}", *_cryst1l); _cryst_amb(f"bolus {v} of {c}", *_cryst1l)
+    for v in HALF:
+        _cryst_amb(f"{v} of {c}", *_cryst500); _cryst_amb(f"{v} {c}", *_cryst500)
+        _cryst_amb(f"{c} {v}", *_cryst500)
+# Weight-based orders name a volume the catalog does not stock as one entry. The two litre
+# boluses are what is available, and saying so is more use than "not understood".
+for p in ["30 cc per kg", "30 mls per kg", "30 ml per kg", "20 cc per kg", "20 ml per kg",
+          "30 per kilo", "20 per kilo", "weight based bolus", "weight based fluids"]:
+    for c in [""] + [" " + x for x in CRYST]:
+        _cryst_amb((p + c).strip(), *_cryst1l)
 for p in ["plasmalyte", "plasma lyte", "hartmanns", "normosol", "isolyte", "albumin"]:
     unavailable(p, "Not in the catalog. Crystalloids available: normal saline and lactated Ringer's.")
 alias("d5_1_2_ns_infusion", "d5 half normal", "d5 half normal saline", "d5 half ns", "d5 1 2 ns", "d5 half", "d five half normal",
@@ -1819,8 +1881,16 @@ ambiguous("stomach tube", "place_nasogastric_tube", "place_orogastric_tube")
 ambiguous("tube to suction", "place_nasogastric_tube", "place_orogastric_tube")
 ambiguous("tube for decompression", "place_nasogastric_tube", "place_orogastric_tube")
 alias("place_patient_on_isolation_precautions", "isolation", "isolate the patient", "isolate them", "isolate him", "isolate her", "isolation precautions", "isolation room", "put the patient in isolation", "put them in isolation", "put him in isolation", "put her in isolation", "private room", "single room", "move to a private room", "move to a single room", "isolate", "isolation precaution", "on isolation", "in isolation", "isolated", "isolation for the patient", "isolation for them", "isolation for him", "isolation for her", "put on isolation", "put the patient on isolation", "put them on isolation", "put him on isolation", "put her on isolation", "place on isolation", "place the patient on isolation", "place them on isolation", "place him on isolation", "place her on isolation", "place in isolation", "place the patient in isolation", "place them in isolation", "place him in isolation", "place her in isolation", "move to isolation", "move the patient to isolation", "move them to isolation", "move him to isolation", "move her to isolation", "move to an isolation room", "move the patient to an isolation room", "move them to an isolation room", "move him to an isolation room", "move her to an isolation room", "isolation room please", "isolation room stat", "isolation room now", "get an isolation room", "get the isolation room", "find an isolation room", "find the isolation room", "need an isolation room", "need the isolation room", "we need an isolation room", "we need the isolation room", "isolation please", "isolation stat", "isolation now", "standard precautions", "universal precautions", "standard precaution", "universal precaution", "infection control", "infection control precautions", "infection prevention", "infection prevention precautions", "call infection control", "notify infection control", "page infection control", "infection control to bedside", "infection control at bedside", "infection control consult", "consult infection control", "infection control consultation", "infection prevention consult", "consult infection prevention", "infection prevention consultation", "call infection prevention", "notify infection prevention", "page infection prevention", "infection prevention to bedside", "infection prevention at bedside", "epidemiology", "hospital epidemiology", "call epidemiology", "notify epidemiology", "page epidemiology", "call hospital epidemiology", "notify hospital epidemiology", "page hospital epidemiology", "public health", "call public health", "notify public health", "page public health", "department of health", "call the department of health", "notify the department of health", "page the department of health", "health department", "call the health department", "notify the health department", "page the health department", "cdc", "call the cdc", "notify the cdc", "page the cdc", "reportable", "reportable disease", "reportable condition", "report to public health", "report to the health department", "report to the department of health", "report to the cdc", "report to epidemiology", "report to infection control", "report to infection prevention")
-for p in ["standard precautions", "universal precautions", "standard precaution", "universal precaution", "infection control", "infection control precautions", "infection prevention", "infection prevention precautions", "call infection control", "notify infection control", "page infection control", "infection control to bedside", "infection control at bedside", "infection control consult", "consult infection control", "infection control consultation", "infection prevention consult", "consult infection prevention", "infection prevention consultation", "call infection prevention", "notify infection prevention", "page infection prevention", "infection prevention to bedside", "infection prevention at bedside", "epidemiology", "hospital epidemiology", "call epidemiology", "notify epidemiology", "page epidemiology", "call hospital epidemiology", "notify hospital epidemiology", "page hospital epidemiology", "public health", "call public health", "notify public health", "page public health", "department of health", "call the department of health", "notify the department of health", "page the department of health", "health department", "call the health department", "notify the health department", "page the health department", "cdc", "call the cdc", "notify the cdc", "page the cdc", "reportable", "reportable disease", "reportable condition", "report to public health", "report to the health department", "report to the department of health", "report to the cdc", "report to epidemiology", "report to infection control", "report to infection prevention"]:
-    A["place_patient_on_isolation_precautions"].remove(p); unavailable(p, "Notifying infection control or public health is a consult, and consults are not voice orders here.")
+# v0.17n. Every one of these phrasings was an alias of the isolation entry and comes off it
+# here, as before. What changed is where they go: public health, the health department, the
+# CDC and the reporting phrasings are a consultation now that consultations can be said, and
+# only the infection-control ones are still refused, because infection control is not an entry.
+for p in ['standard precautions', 'universal precautions', 'standard precaution', 'universal precaution', 'infection control', 'infection control precautions', 'infection prevention', 'infection prevention precautions', 'call infection control', 'notify infection control', 'page infection control', 'infection control to bedside', 'infection control at bedside', 'infection control consult', 'consult infection control', 'infection control consultation', 'infection prevention consult', 'consult infection prevention', 'infection prevention consultation', 'call infection prevention', 'notify infection prevention', 'page infection prevention', 'infection prevention to bedside', 'infection prevention at bedside', 'epidemiology', 'hospital epidemiology', 'call epidemiology', 'notify epidemiology', 'page epidemiology', 'call hospital epidemiology', 'notify hospital epidemiology', 'page hospital epidemiology', 'public health', 'call public health', 'notify public health', 'page public health', 'department of health', 'call the department of health', 'notify the department of health', 'page the department of health', 'health department', 'call the health department', 'notify the health department', 'page the health department', 'cdc', 'call the cdc', 'notify the cdc', 'page the cdc', 'reportable', 'reportable disease', 'reportable condition', 'report to public health', 'report to the health department', 'report to the department of health', 'report to the cdc']:
+    A["place_patient_on_isolation_precautions"].remove(p)
+for p in ['standard precautions', 'universal precautions', 'standard precaution', 'universal precaution', 'infection control', 'infection control precautions', 'infection prevention', 'infection prevention precautions', 'call infection control', 'notify infection control', 'page infection control', 'infection control to bedside', 'infection control at bedside', 'infection control consult', 'consult infection control', 'infection control consultation', 'infection prevention consult', 'consult infection prevention', 'infection prevention consultation', 'call infection prevention', 'notify infection prevention', 'page infection prevention', 'infection prevention to bedside', 'infection prevention at bedside', 'epidemiology', 'hospital epidemiology', 'call epidemiology', 'notify epidemiology', 'page epidemiology', 'call hospital epidemiology', 'notify hospital epidemiology', 'page hospital epidemiology']:
+    unavailable(p, "Infection control is not a catalog entry. The isolation precautions themselves "
+                   "are on the Stabilization tab, and public health is a consultation.")
+alias("consult_public_health_authorities", 'public health', 'call public health', 'notify public health', 'page public health', 'department of health', 'call the department of health', 'notify the department of health', 'page the department of health', 'health department', 'call the health department', 'notify the health department', 'page the health department', 'cdc', 'call the cdc', 'notify the cdc', 'page the cdc', 'reportable', 'reportable disease', 'reportable condition', 'report to public health', 'report to the health department', 'report to the department of health', 'report to the cdc')
 for p in ["droplet and contact precautions", "contact and droplet precautions", "droplet and contact", "contact and droplet", "droplet contact precautions", "contact droplet precautions", "droplet plus contact", "contact plus droplet", "droplet plus contact precautions", "contact plus droplet precautions"]:
     expand(p, "droplet_precautions", "contact_precautions")
 for p in ["airborne and contact precautions", "contact and airborne precautions", "airborne and contact", "contact and airborne", "airborne contact precautions", "contact airborne precautions", "airborne plus contact", "contact plus airborne", "airborne plus contact precautions", "contact plus airborne precautions"]:
@@ -1881,6 +1951,112 @@ def normlist(ps):
         n = normalise(p)
         if n: out.append(n)
     return dedupe(out)
+
+# ---------------------------------------------------------------------------
+# v0.17n. Examinations and consultations. Both became sayable when SHARED.voiceTabs
+# widened past the order tabs; before that the parser knew the words and refused them.
+# The display names give "perform airway exam" and "consult cardiology" for free, which
+# is not how either is asked for out loud.
+#
+# Two rules held to throughout. A manoeuvre the catalog keeps separate is never merged:
+# "chest exam" is the pulmonary exam and "breathing exam" is the B of the primary survey,
+# and a phrase that could be either is left ambiguous rather than guessed. And a request
+# for everything at once is refused with the reason, because the catalog's fourteen
+# manoeuvres are separate acts and running them all is not one order.
+# "check" and "do" are fillers, so "check the abdomen" and "do an abdomen" both reduce to the
+# bare organ word, which is spoken for elsewhere. The verbs here all survive normalisation.
+EXAM_VERBS = ["perform ", "examine ", "assess ", "look at ",
+              "repeat ", "repeat the ", "auscultate ", "palpate ", "listen to "]
+# The bare organ word is never registered on its own. In this catalog's normalised
+# vocabulary "heart" already means the cardiac ultrasound and "chest" means the chest
+# region, so a bare name would take a word an imaging entry owns. An exam is asked for
+# with a verb or with the word "exam", and both are written out here.
+def examact(cid, *names):
+    for n in names:
+        for v in EXAM_VERBS:
+            alias(cid, f"{v}{n}", f"{v}the {n}")
+        alias(cid, f"{n} exam", f"{n} examination")
+
+examact("exam_airway", "airway", "airway exam", "airway assessment", "patency of the airway")
+examact("exam_breath", "breathing", "breathing exam", "work of breathing", "respiratory effort",
+        "chest rise", "breathing assessment")
+examact("exam_circ", "circulation", "circulation exam", "perfusion", "capillary refill", "cap refill",
+        "peripheral perfusion", "pulses", "peripheral pulses", "circulatory assessment")
+examact("exam_heent", "heent", "head and eyes", "eyes", "pupils", "mouth", "oropharynx", "ears", "nose",
+        "head", "face")
+examact("exam_neck", "neck", "jvp", "jugular venous pressure", "jvd", "jugular venous distension",
+        "hepatojugular reflux", "neck veins")
+examact("exam_card", "cardiovascular", "cv", "precordium", "heart sounds", "heart auscultation",
+        "murmurs", "peripheral edema", "pedal edema")
+alias("exam_card", "listen to the heart", "listen to heart", "auscultate the heart",
+      "auscultate heart", "heart exam", "heart examination", "examine the heart")
+examact("exam_pulm", "pulmonary", "lung fields", "breath sounds", "air entry", "lung bases",
+        "crackles", "wheeze")
+# "lungs", "lung" and "chest" all normalise to one token, so "listen to the lungs" and
+# "listen to the chest" are the same phrase to the parser and there is no way to tell the
+# pulmonary exam from the cardiovascular one by the word said. Both are offered, below.
+examact("exam_abd", "abdomen", "abdominal", "belly", "tummy", "abdo")
+examact("exam_gu", "genitourinary", "gu", "genitals", "perineum")
+# "back" alone is already "lay the patient back", and "respiratory" is already part of
+# preparing for intubation. Both are left to the entries that had them.
+examact("exam_back", "flank", "spine", "back and flank", "costovertebral angle", "cva tenderness")
+examact("exam_msk", "musculoskeletal", "msk", "extremities", "limbs", "joints", "arms and legs")
+examact("exam_skin", "skin", "rash", "the rash", "skin and soft tissue", "petechiae", "purpura",
+        "mottling", "wounds")
+examact("exam_neuro", "neuro", "neurological", "neurologic", "nervous system", "gcs",
+        "glasgow coma scale", "cranial nerves", "power and tone", "focal deficit", "neuro check")
+examact("exam_psych", "psychiatric", "psych", "mental state", "mental status", "mood and affect")
+# Phrases that name a region two manoeuvres share. Offered rather than resolved.
+# Bare "chest" is already answered elsewhere and is left alone.
+for p in ["chest exam", "examine the chest", "listen to the chest", "auscultate the chest"]:
+    ambiguous(p, "exam_pulm", "exam_card")
+for p in ["head and neck", "head and neck exam", "examine the head and neck"]:
+    ambiguous(p, "exam_heent", "exam_neck")
+for p in ["full exam", "complete exam", "full physical", "complete physical", "physical exam",
+          "head to toe", "head to toe exam", "full physical exam", "examine the patient",
+          "primary survey", "secondary survey", "top to toe", "whole exam", "general exam"]:
+    unavailable(p, "Name the examination you want. Each manoeuvre is a separate act and they are "
+                   "listed on the Exam tab.")
+
+CONSULT_VERBS = ["consult", "call", "page", "get", "refer to", "speak to", "talk to", "bring in",
+                 "activate", "notify", "involve", "ask"]
+def consultact(cid, *names):
+    for n in names:
+        alias(cid, n)
+        for v in CONSULT_VERBS:
+            alias(cid, f"{v} {n}", f"{v} the {n}")
+        alias(cid, f"{n} consult", f"{n} consultation", f"{n} referral", f"{n} on the phone",
+              f"{n} at the bedside", f"{n} please")
+
+consultact("consult_cardiology", "cardiology", "cards", "the cardiologist", "cardiologist")
+consultact("consult_critical_care", "critical care", "icu", "intensive care", "intensivist",
+           "the icu team", "critical care team", "icu team")
+consultact("consult_toxicology", "toxicology", "poison control", "poison center", "poison centre",
+           "toxicologist", "medical toxicology")
+consultact("consult_infectious_disease", "infectious disease", "infectious diseases", "id team",
+           "infectious disease team")
+consultact("consult_neurology", "neurology", "neurologist", "the stroke team", "stroke team")
+consultact("consult_neurosurgeon", "neurosurgery", "neurosurgeon", "neuro surgery", "neurosurgical team")
+consultact("consult_renal", "renal", "nephrology", "nephrologist", "the renal team", "renal team")
+consultact("consult_endocrinology", "endocrinology", "endocrine", "endocrinologist")
+consultact("consult_gastroenterology", "gastroenterology", "gastroenterologist", "the gi team", "gi team")
+consultact("consult_general_surgery", "general surgery", "surgery", "the surgeons", "surgeons",
+           "surgeon", "gen surg", "acute care surgery")
+consultact("consult_heme_onc", "hematology", "haematology", "oncology", "heme onc", "haem onc",
+           "hematology oncology", "the oncologist", "oncologist", "hematologist")
+consultact("consult_ob_gyn", "ob gyn", "obgyn", "obstetrics", "gynecology", "gynaecology",
+           "obstetrics and gynecology", "the obstetrician", "obstetrician")
+consultact("consult_orthopedics", "orthopedics", "orthopaedics", "ortho", "orthopedic surgery",
+           "the orthopedic team", "orthopedist")
+consultact("consult_psychiatry", "psychiatry", "psychiatrist", "the psych team", "psych team",
+           "crisis team")
+consultact("consult_public_health_authorities", "public health", "public health authorities",
+           "the health department", "health department", "department of health",
+           "communicable disease team")  # "cdc" alone is already answered elsewhere
+consultact("consult_pulmonology", "pulmonology", "pulmonologist", "respirology", "chest physician")
+consultact("consult_vascular_surgery", "vascular surgery", "vascular", "vascular surgeon",
+           "the vascular team")
+
 
 def dedupe(seq):
     out, seen = [], set()

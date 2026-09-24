@@ -4,7 +4,7 @@ Case author: Kelly Medwid, MD. See DIPH-SEED.md for what is hers and what is not
 """
 
 META = {
- "working_title": "Eighteen year old woman, confusion and fever, brought in by EMS",
+ "working_title": "18-year-old woman, confusion and fever, brought in by EMS",
  "chief_complaint_patient_voice": (
    "She does not give one. She is delirious and does not know where she is. Her mother, "
    "at the bedside: 'She wasn't making any sense and she didn't know who I was.'"),

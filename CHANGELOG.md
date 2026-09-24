@@ -5,6 +5,109 @@ is usable with learners.
 
 ---
 
+## v0.17n: a pause to think, search over everything, and a wider microphone
+
+**A three-minute pause.** Once per case, at three minutes of case time and wherever the case
+has got to, the run stops on a modal: *"Pause: consider your differential diagnosis. Consider
+the implications of each. What do you need to check or give?"*, a free text area, and one
+button, Continue. The clock is held while it is up, by the same hold the leave dialog uses.
+There is no other way out: no Escape, no backdrop click, no cross. A modal a resident can
+flick away without reading is not a pause to think.
+
+The note is theirs. Nothing reads it, nothing scores it, it never reaches the log and it is
+not shown in the debrief. It survives for the run, so reopening does not lose it, and
+`restart()` clears it with everything else. The prompt waits while the case is already paused
+or the leave dialog is up, and never arrives over the debrief. It is in `SHARED.reflect`, not
+in a case: it is a property of how the tool teaches, the same for every case, and a case that
+could switch it off would be a case that could decide a resident need not stop and think.
+
+**The microphone takes examinations and consultations.** They were understood and refused,
+because the index was gated on `orderableTabs` and they are not orders. `SHARED.voiceTabs` is
+the wider list of what may be said; `confirm()` already logs each row exactly as the tab's own
+button does, so a spoken exam or consult takes effect on Confirm with nothing else changed.
+Around 2,200 phrasings were added: every manoeuvre with the verbs it is asked for ("examine
+the abdomen", "listen to the heart", "palpate the belly", "look at the rash") and every
+consultation with the verbs and the names a resident uses ("call cards", "get the ICU
+involved", "page tox", "poison control", "nephrology"). A region two manoeuvres share is
+offered rather than guessed: "chest exam" returns the pulmonary and the cardiovascular exams
+to choose between, and "full exam" is refused with the reason, because the catalog's fourteen
+manoeuvres are separate acts. Public health, the health department, the CDC and the reporting
+phrasings moved off a refusal that said consults are not voice orders and onto the
+consultation.
+
+Three constraints the normaliser imposed. A bare organ word is never registered: "heart"
+already means the cardiac ultrasound in this vocabulary and "chest" means the chest region,
+so an exam is asked for with a verb or with the word "exam". "lungs", "lung" and "chest"
+collapse to one token, so "listen to the lungs" and "listen to the chest" are the same phrase
+to the parser and both are offered. And "check" and "do" are fillers, so "check the abdomen"
+reduces to the bare word and is not written.
+
+**Crystalloid, said the way people say it.** The generic phrases resolved only when the fluid
+word stood alone. "Bolus of crystalloid" matched the bare word "bolus", which is ambiguous
+across the fluids AND the push-dose pressors, then matched "crystalloid" again: one spoken
+order became two rows and one of them offered a vasopressor. "Hang a bag of fluid" matched
+the bag-valve mask. The parser takes the longest phrase it knows, so the whole phrase is now
+written out, generated over the shapes that failed: a volume or a bolus word on either side of
+a generic fluid word, plus the weight-based orders. Eight of them are asserted in
+`engine-tests.js` to be exactly one order, never two, and never a pressor. A generated phrase
+never overrides an authored one: "500 of crystalloid" normalises to "crystalloid", and writing
+it blindly would have narrowed the plain word to the two half-litre bags.
+
+"open" and "run" were briefly made fillers so "open the fluids" and "run in a litre" left no
+stray token. That collapsed "open chest" onto "chest" and pointed a refusal about thoracotomy
+at the word every chest study contains. They are dropped as leftovers instead, in `NOISE`,
+after lookup rather than before it.
+
+**A wider record, and search over everything.** The docked record went from 30vw to 34vw
+(floor 320px), and expanded from 70vw to 76vw. The cost is the gap the patient stands in,
+which falls from about 200px to about 140px at 1440.
+
+Beside the expand control there is now a search button. It opens over the record, in the
+record's own geometry, and holds one list over everything the case has: every action on every
+tab whatever that tab's filter is set to, and every line of the chart. **It navigates and
+never acts.** Opening an action takes the resident to its tab with the tab's filter set to
+that name, which is the state typing the name into the tab would produce, so the accordion
+opens on its group and nothing is ordered on their behalf. Every token has to appear
+somewhere, so "chest x" finds the radiograph. When no name matches, the microphone's 5,000
+phrases are tried before giving up, which is how "adrenaline", "tylenol" and "cxr" find their
+entries; those rows say "matched as a synonym", and a fuzzy voice match is never used, because
+a guess belongs in an order the resident confirms. `/` opens it, Escape closes it.
+
+## v0.17m: a way back to the main menu, from the card and from the case
+
+On the author's instruction. The card's back control is now labelled **Main menu** rather than
+"All cases", and the running case has one of its own: a button at the foot of the icon rail,
+under its own rule and with a house icon, deliberately unlike a tab because it is the only
+thing in the rail that does not switch a view. It lives beside the dock rather than inside it,
+since the dock's contents are rebuilt on every render, and inside `#playview`, so it is gone at
+the debrief and sits under the case list and the card, which are overlays above it.
+
+It asks the question the browser's back button already asked, through the same dialog and the
+same route out, so there is one way to end a case early and one guard on it: **"Are you sure
+you want to leave? You will lose progress. This case cannot be resumed from where it is."**
+
+**The question now holds the case clock.** It is modal and the deadlines a case authors are
+claims about a patient, so charging a resident the seconds they spent deciding would make
+those claims false. It holds the clock directly rather than through `pauseSim()`, because the
+pause overlay showing behind a modal reads as two dialogs at once; a case the resident had
+already paused is left alone and stays paused when they cancel. Verified in headless Chromium:
+the fold clock and the displayed elapsed time both freeze, cancelling resumes without charging
+the held seconds, OK returns to the list and clears the figure, and a fresh case starts after.
+
+## v0.17l: a lighter case card
+
+On the author's instruction. The default mode on the case card is its name and nothing else;
+the three-line paragraph under it is gone from the card and survives as the button's tooltip
+and its screen-reader name. Every other mode keeps its one line, which is the only reason to
+choose it. The card keeps the 556px height it had, so removing the text did not shrink and
+crowd it: it is now a column with Begin on its bottom edge, and the space went into a larger
+title (21 to 25px), a larger quote, and wider gaps round the mode choice. The chosen mode
+carries a filled dot so a one-word box reads as a selection and not a heading.
+
+Case titles give the age in numerals: "68-year-old man", not "Sixty-eight year old man", in
+all four cases, which also changes the case list. Spoken text (handovers, nurse lines) still
+spells numbers out, because it is read aloud.
+
 ## v0.17k: the debrief says which critical actions were missed, and the sound button obeys
 
 **Critical actions, done and missed, under their own names.** The section listed the

@@ -38,7 +38,7 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `engine.js` | The fold, the condition evaluator, the resolvers |
 | `ui.js` | Rendering, the panel state machine, the interview matcher |
 | `semantic.js` | Optional in-browser embedding model. Loads in the background, may never load |
-| `voice.js` | Voice orders: the normaliser, the phrase parser, the recorder and the dropdown. The parser is fenced for the tests |
+| `voice.js` | Voice orders: the normaliser, the phrase parser, the recorder and the dropdown. Takes the order tabs plus examinations and consultations (`SHARED.voiceTabs`). The parser is fenced for the tests |
 | `monitor.js` | The live trace: the beat clock, the lead II waveform synthesiser and the sweep. Fenced for the tests |
 | `patient.js` | The patient figure in the room: the rig, the poses, and one registry for behaviours and add-ons. Fenced for the tests. How to add an add-on is in `assets/avataaars/README.md` |
 | `patient-art.json` | The avataaars artwork as loose parts with colour slots. Derived by `assets/avataaars/extract.js`, not authored |

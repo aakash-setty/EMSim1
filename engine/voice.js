@@ -65,13 +65,19 @@ const VOICE=(function(){
   /* phrase -> {kind:'act'|'expand'|'ambig'|'unavail', ids:[actId...], hint} */
   let INDEX=new Map(), MAXLEN=1, SINGLES=[];
   let RESOLVE=null;             // catalog id -> bound action id, or null if not orderable
-  function orderable(id){
+  /* What may be said, which since v0.17n is wider than what may be batched: an exam and a
+     consultation are single acts that take effect on Confirm, exactly as their own tab button
+     does, and confirm() logs every row the same way, so they need nothing else. A build made
+     before voiceTabs existed falls back to the orders alone. */
+  function sayable(id){
     const a=(typeof ACT!=='undefined'&&ACT)?ACT[id]:null;
-    return !!(a&&PROTO&&PROTO.orderableTabs.indexOf(a.tab)>=0);
+    if(!a||!PROTO) return false;
+    const tabs=PROTO.voiceTabs||PROTO.orderableTabs;
+    return tabs.indexOf(a.tab)>=0;
   }
   function resolveCatalog(cid){
     const eff=((typeof PACK!=='undefined'&&PACK&&PACK.bindings)||{})[cid]||cid;
-    return orderable(eff)?eff:null;
+    return sayable(eff)?eff:null;
   }
   function put(phrase,entry,authored){
     if(!phrase) return;
@@ -119,7 +125,7 @@ const VOICE=(function(){
     }
     for(const p in U) put(normalise(p),{kind:'unavail',ids:[],hint:typeof U[p]==='number'?(H[U[p]]||''):String(U[p]||'')},true);
     for(const id in ACT){
-      if(!orderable(id)) continue;
+      if(!sayable(id)) continue;
       for(const p of derived(id)) put(normalise(p),{kind:'act',ids:[id]},false);
     }
     for(const k of INDEX.keys()){
@@ -161,7 +167,12 @@ const VOICE=(function(){
   const RATIONALE=new Set(['for','because','since','as','so','if','when','while','until','after','before','given','due','secondary','cause','considering']);
   /* Canonical tokens that are qualifiers rather than orders. Left over on their own
      they are a dose or a route that nothing needed, not a thing the parser missed. */
-  const NOISE=new Set(['rate','drip','bolus','transfuse','im','oral','rectal','sublingual','intranasal','noncontrast','contrast',
+  /* v0.17n adds the verbs that carry an order without naming one: "open the fluids", "run in
+     a litre", "get critical care involved". They are dropped here, as leftovers, rather than
+     as fillers: a filler is removed before lookup, and "open" removed before lookup turns
+     "open chest" into "chest". */
+  const NOISE=new Set(['open','opened','run','running','involve','involved','involving','onboard',
+                       'rate','drip','bolus','transfuse','im','oral','rectal','sublingual','intranasal','noncontrast','contrast',
                        'second','stop','maintenance','kvo','wideopen','liter','twoliters','halfliter','quarterliter','fifteenliters',
                        'someliters','thirtyperkilo','precautions','percent','headup','crossmatch','mri','xr','ct','cta']);
   function flush(res,rows){

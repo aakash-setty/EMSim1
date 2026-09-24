@@ -1400,7 +1400,7 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
     +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,'
-    +'#rp-toggle,#lp-collapse');
+    +'#rp-toggle,#lp-collapse,#railmenu,#rp-search,#searchclose,[data-sgo],[data-schart]');
   if(t&&t.id==='soundbtn'){ AUDIO.toggle(); renderSound(); return; }
   AUDIO.unlock();
   /* Panel controls run before the ENDED guard and before the null check: the
@@ -1409,6 +1409,17 @@ document.addEventListener('click',e=>{
      followed immediately by the panel's own handler. */
   if(t&&t.id==='rp-toggle'){ RIGHT_WIDE?minimiseRecord():expandRecord(); return; }
   if(t&&t.id==='lp-collapse'){ setPanels(false,RIGHT_WIDE); renderTabs(); return; }
+  /* Leaving by the rail button asks the same question the browser's back button asks, and
+     takes the same route out, so there is one way to end a case early and one guard on it. */
+  if(t&&t.id==='railmenu'){ askLeave('menu'); return; }
+  if(t&&t.id==='rp-search'){ SEARCH_OPEN?closeSearch():openSearch(); return; }
+  if(t&&t.id==='searchclose'){ closeSearch(); return; }
+  if(t&&t.dataset.sgo!==undefined){ searchGoTo(t.dataset.sgo); return; }
+  if(t&&t.dataset.schart!==undefined){ closeSearch(); expandRecord(); return; }
+  /* Anything else inside the search panel stops here. It covers the record panel, which is
+     a click target in its own right, and a click on the panel's own background must not
+     expand the chart underneath it. After the panel's controls, never before them. */
+  if(e.target.closest&&e.target.closest('#searchpanel')) return;
   /* A thumbnail is excepted: the click means "show me the picture", and the image
      handler below takes it. Expanding the record as well left the reader, on closing
      the picture, in a layout they had not asked for. */
@@ -1571,6 +1582,7 @@ function tick(){
        away. The wait is fixed and short, and nothing the resident does during it can
        change the ending, since the phase has no exits. */
     if(ST.failed && ST.now >= ST.failed.t + GRACE_S){ finish(); return; }
+    if(reflectDue()) openReflect();
   }
   renderMonitor(); renderNurse(); renderRail(); renderPatient();
   requestAnimationFrame(tick);
@@ -1695,6 +1707,9 @@ function restart(){
   closeImage(); IMG_SEEN=new Set(); IMG_QUEUE=[];
   resetRamp();
   Object.keys(FILTERS).forEach(k=>delete FILTERS[k]);
+  REFLECT_DONE=false; REFLECT_NOTE=''; REFLECT_OPEN=false;
+  el('reflectview').classList.add('hidden');
+  SEARCH_Q=''; closeSearch();
   Object.keys(BASKET).forEach(k=>delete BASKET[k]);
   Object.keys(EXPANDED).forEach(k=>delete EXPANDED[k]);
   PENDING_HANDOFF={disposition:null,diagnoses:[]};
@@ -2078,8 +2093,16 @@ function renderSplash(){
   const order=Object.keys(D.modes).sort((a,b)=>(a===D.default?0:1)-(b===D.default?0:1));
   el('sp-modes').innerHTML=order.map(k=>{
     const md=D.modes[k], plain=k!==D.default;
-    return `<button class="mode${plain?' plain':''}" role="radio" data-mode="${k}" aria-checked="${MODE===k}">
-      <b>${esc(md.label)}</b><span>${esc(md.description)}</span></button>`;
+    /* The default mode is a name and nothing else (v0.17l, on the author's instruction): the
+       paragraph under it was the longest thing on the card and said what the debrief says
+       better. Its description stays in SHARED and is the button's tooltip and its name for
+       a screen reader. Every other mode keeps its one line, because that line is the only
+       reason to choose it. */
+    return plain
+      ? `<button class="mode plain" role="radio" data-mode="${k}" aria-checked="${MODE===k}">
+      <b>${esc(md.label)}</b><span>${esc(md.description)}</span></button>`
+      : `<button class="mode" role="radio" data-mode="${k}" aria-checked="${MODE===k}"
+      title="${esc(md.description)}" aria-label="${esc(md.label+'. '+md.description)}"><i class="modedot" aria-hidden="true"></i><b>${esc(md.label)}</b></button>`;
   }).join('');
 
 }
@@ -2201,24 +2224,207 @@ el('resumebtn').addEventListener('click',resumeSim);
    click on the browser's own reload control is not: the only hook is beforeunload, whose
    wording no browser has let a page choose for over a decade. So that path gets the
    native dialog, and the two look different because the platform makes them different. */
+/* ---------- the three-minute pause ----------
+   Once per case, at SHARED.reflect.atSeconds of case time, wherever the case has got to.
+   It holds the clock, it has no way out but Continue, and the note it takes is the
+   resident's own: nothing reads it, nothing scores it and it never reaches the log. It is
+   kept for the run so that reopening the case mid-session does not lose what was written,
+   and restart() clears it with everything else.
+
+   It does not fire over the debrief, over a case the resident has already paused, or over
+   the leave dialog, because in each of those the case is already stopped and a second
+   modal on top of the first is two dialogs arguing. Whichever is up, the check waits. */
+const REFLECT=(SHARED.reflect||{});
+const REFLECT_AT=(typeof REFLECT.atSeconds==='number')?REFLECT.atSeconds:180;
+let REFLECT_DONE=false, REFLECT_NOTE='', REFLECT_OPEN=false;
+function reflectDue(){
+  return !REFLECT_DONE && !REFLECT_OPEN && inCase() && !PAUSED && ST && ST.now>=REFLECT_AT
+         && el('leaveview').classList.contains('hidden');
+}
+function openReflect(){
+  REFLECT_DONE=true; REFLECT_OPEN=true;
+  holdClock();
+  el('reflecttitle').textContent=REFLECT.title||'Pause: consider your differential diagnosis.';
+  el('reflectbody').textContent=REFLECT.body||'';
+  const box=el('reflectnote');
+  box.placeholder=REFLECT.placeholder||'Optional free text area for your use';
+  box.value=REFLECT_NOTE;
+  el('reflectview').classList.remove('hidden');
+  /* The button, not the box: the prompt is a question to think about, and a cursor already
+     blinking in a text field reads as one that has to be answered in writing. */
+  el('reflectok').focus();
+}
+function closeReflect(){
+  if(!REFLECT_OPEN) return;
+  const box=el('reflectnote'); REFLECT_NOTE=box?box.value:'';
+  REFLECT_OPEN=false;
+  el('reflectview').classList.add('hidden');
+  releaseClock();
+}
+
+/* ---------- global search ----------
+   One list over everything the case holds: every action on every tab, whatever the tab's
+   own filter is set to, and every line of the chart. It navigates and never acts. Opening
+   an action takes the resident to its tab with the tab's filter set to its name, which is
+   the same state typing that name into the tab would produce, so the accordion opens on
+   its group and the button is under the cursor. Nothing is ordered on their behalf. */
+let SEARCH_OPEN=false, SEARCH_Q='';
+function searchOpen(){ return SEARCH_OPEN; }
+function openSearch(){
+  if(!inCase()) return;
+  SEARCH_OPEN=true;
+  el('searchpanel').classList.remove('hidden');
+  el('rp-search').setAttribute('aria-expanded','true');
+  const b=el('searchbox'); b.value=SEARCH_Q; b.focus(); b.select();
+  renderSearch();
+}
+function closeSearch(){
+  if(!SEARCH_OPEN) return;
+  SEARCH_OPEN=false;
+  el('searchpanel').classList.add('hidden');
+  el('rp-search').setAttribute('aria-expanded','false');
+}
+function searchNorm(s){ return String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+/* Every token has to appear somewhere in the row's text, so "chest x" finds the chest
+   radiograph and "x chest" finds it too. A row scores higher when a token starts a word in
+   the name than when it only appears in the group or the tab. */
+function searchScore(q,name,extra){
+  const hay=' '+searchNorm(name)+' ', side=' '+searchNorm(extra)+' ';
+  let score=0;
+  for(const t of q){
+    if(hay.indexOf(' '+t)>=0) score+=10;
+    else if(hay.indexOf(t)>=0) score+=6;
+    else if(side.indexOf(' '+t)>=0) score+=3;
+    else if(side.indexOf(t)>=0) score+=2;
+    else return -1;
+  }
+  return score;
+}
+function searchMark(text,q){
+  let out=esc(text);
+  for(const t of q){
+    if(t.length<2) continue;
+    out=out.replace(new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>');
+  }
+  return out;
+}
+function searchHits(){
+  const q=searchNorm(SEARCH_Q).split(' ').filter(Boolean);
+  if(!q.length) return null;
+  const acts=[], lines=[];
+  for(const id in ACT){
+    const a=ACT[id];
+    if(!(PROTO.tabLabel||{})[a.tab]) continue;
+    const groups=(a.groups||[a.group]).filter(Boolean).join(' ');
+    const sc=searchScore(q,a.name,groups+' '+id.replace(/_/g,' ')+' '+(PROTO.tabLabel[a.tab]||''));
+    if(sc>=0) acts.push({id,tab:a.tab,name:a.name,group:groups,score:sc});
+  }
+  acts.sort((x,y)=>y.score-x.score||x.name.localeCompare(y.name));
+  /* Nothing matched by name. The microphone's table knows the brand names, the slang and
+     the abbreviations the display names do not carry, so the same words are tried against
+     it before giving up: "adrenaline" is not in any name in the catalog and is the first
+     word half the room would use. Only exact parses count; a fuzzy one is a guess, and a
+     guess belongs in an order the resident confirms, not in a search result. */
+  if(!acts.length&&typeof VOICE!=='undefined'){
+    const seen=new Set();
+    for(const r of VOICE.parse(SEARCH_Q)){
+      const ids=r.kind==='ok'?[r.id]:(r.kind==='ambiguous'?r.ids:[]);
+      for(const id of ids){
+        if(seen.has(id)||!ACT[id]||r.uncertain) continue;
+        seen.add(id);
+        const a=ACT[id];
+        acts.push({id,tab:a.tab,name:a.name,group:(a.groups||[a.group]).filter(Boolean).join(' '),
+                   score:0,synonym:true});
+      }
+    }
+  }
+  for(const it of feedItems()){
+    const title=it.title||'', body=typeof it.body==='string'?it.body:'';
+    const sc=searchScore(q,title,body);
+    if(sc>=0) lines.push({t:it.t,title,score:sc});
+  }
+  lines.sort((x,y)=>y.score-x.score||y.t-x.t);
+  return {acts:acts.slice(0,40),lines:lines.slice(0,20),q};
+}
+function renderSearch(){
+  const box=el('searchresults'); if(!box) return;
+  const hits=searchHits();
+  if(!hits){
+    box.innerHTML='<div class="srch-none">Type to search every tab at once: an examination, a study, '
+      +'a drug, a consultation, or anything already in the chart.</div>';
+    return;
+  }
+  let html='';
+  if(hits.acts.length){
+    html+='<div class="srch-sec">'+(hits.acts[0].synonym?'Actions, by another name':'Actions')+'</div>'+hits.acts.map(a=>
+      `<button class="srch-hit" data-sgo="${esc(a.id)}"><b>${searchMark(a.name,hits.q)}</b>
+        <span class="sh-meta">${esc(PROTO.tabLabel[a.tab]||a.tab)}${a.group?' &middot; '+esc(a.group):''}${
+          a.synonym?' &middot; matched as a synonym':''}${
+          ST&&ST.taken.has(a.id)?' &middot; already taken':''}</span></button>`).join('');
+  }
+  if(hits.lines.length){
+    html+='<div class="srch-sec">In the chart</div>'+hits.lines.map(l=>
+      `<button class="srch-hit" data-schart="1"><b>${searchMark(l.title,hits.q)}</b>
+        <span class="sh-meta">${mmss(l.t)}</span></button>`).join('');
+  }
+  box.innerHTML=html||'<div class="srch-none">Nothing matches that. Try fewer words.</div>';
+}
+function searchGoTo(id){
+  const a=ACT[id]; if(!a) return;
+  closeSearch();
+  FILTERS[a.tab]=String(a.name||'').toLowerCase();
+  TAB=a.tab;
+  setPanels(true,false);
+  renderTabs(); renderTab(); scrollTabTop();
+}
+
 let LEAVING=false, LEAVE_ACT=null;
 
 function askLeave(action){
   if(!inCase()||LEAVING) return false;
   LEAVE_ACT=action;
+  holdClock();
   el('leaveview').classList.remove('hidden');
   el('leavecancel').focus();
   return true;
 }
-function closeLeave(){ el('leaveview').classList.add('hidden'); LEAVE_ACT=null; }
+function closeLeave(){ el('leaveview').classList.add('hidden'); LEAVE_ACT=null; releaseClock(); }
+/* The question holds the case clock. It is modal and the deadlines a case authors are claims
+   about a patient, so charging a resident the seconds they spent deciding whether to leave
+   would make those claims false. It uses the pause fields directly rather than pauseSim(),
+   because the pause overlay showing behind a modal reads as two dialogs at once. A case the
+   resident had already paused is left alone. */
+let CLOCK_HELD=false;
+function holdClock(){
+  if(PAUSED||CLOCK_HELD||!inCase()) return;
+  CLOCK_HELD=true; PAUSED=true; PAUSED_AT=Date.now();
+  AUDIO.setScene('idle'); MONITOR.setScene('idle');
+}
+function releaseClock(){
+  if(!CLOCK_HELD) return;
+  CLOCK_HELD=false;
+  if(!inCase()||!PAUSED) return;      /* the case ended or was paused for another reason */
+  const away=Date.now()-PAUSED_AT;
+  PAUSED_MS+=away; RAMP_T0+=away; PAUSED=false;
+  AUDIO.unlock(); AUDIO.setScene('case'); MONITOR.setScene('case');
+  render();
+}
 
+el('reflectok').addEventListener('click',closeReflect);
+el('searchbox').addEventListener('input',e=>{ SEARCH_Q=e.target.value; renderSearch(); });
+el('searchbox').addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ closeSearch(); el('rp-search').focus(); return; }
+  if(e.key==='Enter'){ const f=el('searchresults').querySelector('[data-sgo]'); if(f) f.click(); }
+});
 el('leavecancel').addEventListener('click',closeLeave);
 el('leaveok').addEventListener('click',()=>{
   const act=LEAVE_ACT;
+  CLOCK_HELD=false;                    /* leaving for good; restart() resets the clock */
   closeLeave();
   LEAVING=true;
   if(act==='reload'){ location.reload(); return; }
-  /* Back. The guard entry pushed at Begin is popped here. A file opened directly may have
+  /* Back, and the rail's Main menu, which is the same act by another control. The guard
+     entry pushed at Begin is popped here. A file opened directly may have
      nothing behind it, in which case the browser does nothing at all and a resident who
      asked to leave would be stuck looking at the case they asked to leave. So if the
      document is still here a moment later, leaving means what it means inside a
@@ -2321,6 +2527,11 @@ el('imgclose').addEventListener('click',closeImage);
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&imageOpen()){ closeImage(); return; }
   if(e.key==='Escape'&&!el('leaveview').classList.contains('hidden')){ closeLeave(); return; }
+  /* The pause has no key out. Continue is the only way on, which is the point of it. */
+  if(REFLECT_OPEN){ if(e.key==='Escape') e.preventDefault(); return; }
+  if(e.key==='Escape'&&searchOpen()){ closeSearch(); return; }
+  const typing=/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'');
+  if(e.key==='/'&&!typing&&inCase()&&!searchOpen()){ e.preventDefault(); openSearch(); return; }
   const reload=(e.key==='F5')||((e.key==='r'||e.key==='R')&&(e.ctrlKey||e.metaKey)&&!e.altKey);
   if(reload&&inCase()&&!LEAVING){ e.preventDefault(); askLeave('reload'); }
 });

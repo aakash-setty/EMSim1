@@ -1,7 +1,7 @@
 """AFRVR part 1: identity, patient, phases."""
 
 META = {
- "working_title": "Sixty-eight year old man, palpitations and breathlessness, brought in by EMS",
+ "working_title": "68-year-old man, palpitations and breathlessness, brought in by EMS",
  "chief_complaint_patient_voice": "My heart won't stop racing and I can't get my breath.",
  "final_diagnosis": ("Atrial fibrillation with rapid ventricular response, complicated by acute "
    "decompensated heart failure with a newly recognised reduced ejection fraction and cardiogenic "

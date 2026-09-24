@@ -105,6 +105,10 @@
     "lr"
    ],
    [
+    "(litre|litres)",
+    "liter"
+   ],
+   [
     "(half normal saline|half normal|0 45 saline|0 45 normal saline|0 45|point 45|1 2 saline|1 2 normal saline|half saline)",
     "halfnormal"
    ],
@@ -4383,7 +4387,108 @@
   "place_patient_on_isolation_precautions": [
    "move isolation",
    "isolated",
-   "find isolation"
+   "find isolation",
+   "report epidemiology",
+   "report infection control",
+   "report infection prevention"
+  ],
+  "consult_public_health_authorities": [
+   "public health",
+   "call public health",
+   "notify public health",
+   "page public health",
+   "department health",
+   "call department health",
+   "notify department health",
+   "page department health",
+   "health department",
+   "call health department",
+   "notify health department",
+   "page health department",
+   "cdc",
+   "call cdc",
+   "notify cdc",
+   "page cdc",
+   "reportable",
+   "reportable disease",
+   "reportable condition",
+   "report public health",
+   "report health department",
+   "report department health",
+   "report cdc",
+   "consult public health",
+   "refer public health",
+   "speak public health",
+   "talk public health",
+   "bring public health",
+   "activate public health",
+   "involve public health",
+   "ask public health",
+   "public health consult",
+   "public health consultation",
+   "public health referral",
+   "public health phone",
+   "public health bedside",
+   "public health authorities",
+   "consult public health authorities",
+   "call public health authorities",
+   "page public health authorities",
+   "refer public health authorities",
+   "speak public health authorities",
+   "talk public health authorities",
+   "bring public health authorities",
+   "activate public health authorities",
+   "notify public health authorities",
+   "involve public health authorities",
+   "ask public health authorities",
+   "public health authorities consult",
+   "public health authorities consultation",
+   "public health authorities referral",
+   "public health authorities phone",
+   "public health authorities bedside",
+   "consult health department",
+   "refer health department",
+   "speak health department",
+   "talk health department",
+   "bring health department",
+   "activate health department",
+   "involve health department",
+   "ask health department",
+   "health department consult",
+   "health department consultation",
+   "health department referral",
+   "health department phone",
+   "health department bedside",
+   "consult department health",
+   "refer department health",
+   "speak department health",
+   "talk department health",
+   "bring department health",
+   "activate department health",
+   "involve department health",
+   "ask department health",
+   "department health consult",
+   "department health consultation",
+   "department health referral",
+   "department health phone",
+   "department health bedside",
+   "communicable disease team",
+   "consult communicable disease team",
+   "call communicable disease team",
+   "page communicable disease team",
+   "refer communicable disease team",
+   "speak communicable disease team",
+   "talk communicable disease team",
+   "bring communicable disease team",
+   "activate communicable disease team",
+   "notify communicable disease team",
+   "involve communicable disease team",
+   "ask communicable disease team",
+   "communicable disease team consult",
+   "communicable disease team consultation",
+   "communicable disease team referral",
+   "communicable disease team phone",
+   "communicable disease team bedside"
   ],
   "whole_bowel_irrigation_by_ng_tube": [
    "wbi",
@@ -4478,6 +4583,2244 @@
    "factornine replacement",
    "hemophilia b factor",
    "hemophilia b factor replacement"
+  ],
+  "exam_airway": [
+   "perform airway",
+   "examine airway",
+   "assess airway",
+   "look airway",
+   "repeat airway",
+   "auscultate airway",
+   "palpate airway",
+   "listen airway",
+   "airway exam",
+   "airway examination",
+   "perform airway exam",
+   "examine airway exam",
+   "assess airway exam",
+   "look airway exam",
+   "repeat airway exam",
+   "auscultate airway exam",
+   "palpate airway exam",
+   "listen airway exam",
+   "airway exam exam",
+   "airway exam examination",
+   "perform airway assessment",
+   "examine airway assessment",
+   "assess airway assessment",
+   "look airway assessment",
+   "repeat airway assessment",
+   "auscultate airway assessment",
+   "palpate airway assessment",
+   "listen airway assessment",
+   "airway assessment exam",
+   "airway assessment examination",
+   "perform patency airway",
+   "examine patency airway",
+   "assess patency airway",
+   "look patency airway",
+   "repeat patency airway",
+   "auscultate patency airway",
+   "palpate patency airway",
+   "listen patency airway",
+   "patency airway exam",
+   "patency airway examination"
+  ],
+  "exam_breath": [
+   "perform breathing",
+   "examine breathing",
+   "assess breathing",
+   "look breathing",
+   "repeat breathing",
+   "auscultate breathing",
+   "palpate breathing",
+   "listen breathing",
+   "breathing exam",
+   "breathing examination",
+   "perform breathing exam",
+   "examine breathing exam",
+   "assess breathing exam",
+   "look breathing exam",
+   "repeat breathing exam",
+   "auscultate breathing exam",
+   "palpate breathing exam",
+   "listen breathing exam",
+   "breathing exam exam",
+   "breathing exam examination",
+   "perform work breathing",
+   "examine work breathing",
+   "assess work breathing",
+   "look work breathing",
+   "repeat work breathing",
+   "auscultate work breathing",
+   "palpate work breathing",
+   "listen work breathing",
+   "work breathing exam",
+   "work breathing examination",
+   "perform respiratory effort",
+   "examine respiratory effort",
+   "assess respiratory effort",
+   "look respiratory effort",
+   "repeat respiratory effort",
+   "auscultate respiratory effort",
+   "palpate respiratory effort",
+   "listen respiratory effort",
+   "respiratory effort exam",
+   "respiratory effort examination",
+   "perform chest rise",
+   "examine chest rise",
+   "assess chest rise",
+   "look chest rise",
+   "repeat chest rise",
+   "auscultate chest rise",
+   "palpate chest rise",
+   "listen chest rise",
+   "chest rise exam",
+   "chest rise examination",
+   "perform breathing assessment",
+   "examine breathing assessment",
+   "assess breathing assessment",
+   "look breathing assessment",
+   "repeat breathing assessment",
+   "auscultate breathing assessment",
+   "palpate breathing assessment",
+   "listen breathing assessment",
+   "breathing assessment exam",
+   "breathing assessment examination"
+  ],
+  "exam_circ": [
+   "perform circulation",
+   "examine circulation",
+   "assess circulation",
+   "look circulation",
+   "repeat circulation",
+   "auscultate circulation",
+   "palpate circulation",
+   "listen circulation",
+   "circulation exam",
+   "circulation examination",
+   "perform circulation exam",
+   "examine circulation exam",
+   "assess circulation exam",
+   "look circulation exam",
+   "repeat circulation exam",
+   "auscultate circulation exam",
+   "palpate circulation exam",
+   "listen circulation exam",
+   "circulation exam exam",
+   "circulation exam examination",
+   "perform headandneck",
+   "assess headandneck",
+   "look headandneck",
+   "repeat headandneck",
+   "auscultate headandneck",
+   "palpate headandneck",
+   "listen headandneck",
+   "headandneck examination",
+   "perform capillary refill",
+   "examine capillary refill",
+   "assess capillary refill",
+   "look capillary refill",
+   "repeat capillary refill",
+   "auscultate capillary refill",
+   "palpate capillary refill",
+   "listen capillary refill",
+   "capillary refill exam",
+   "capillary refill examination",
+   "perform cap refill",
+   "examine cap refill",
+   "assess cap refill",
+   "look cap refill",
+   "repeat cap refill",
+   "auscultate cap refill",
+   "palpate cap refill",
+   "listen cap refill",
+   "cap refill exam",
+   "cap refill examination",
+   "perform peripheral headandneck",
+   "examine peripheral headandneck",
+   "assess peripheral headandneck",
+   "look peripheral headandneck",
+   "repeat peripheral headandneck",
+   "auscultate peripheral headandneck",
+   "palpate peripheral headandneck",
+   "listen peripheral headandneck",
+   "peripheral headandneck exam",
+   "peripheral headandneck examination",
+   "perform pulses",
+   "examine pulses",
+   "assess pulses",
+   "look pulses",
+   "repeat pulses",
+   "auscultate pulses",
+   "palpate pulses",
+   "listen pulses",
+   "pulses exam",
+   "pulses examination",
+   "perform peripheral pulses",
+   "examine peripheral pulses",
+   "assess peripheral pulses",
+   "look peripheral pulses",
+   "repeat peripheral pulses",
+   "auscultate peripheral pulses",
+   "palpate peripheral pulses",
+   "listen peripheral pulses",
+   "peripheral pulses exam",
+   "peripheral pulses examination",
+   "perform circulatory assessment",
+   "examine circulatory assessment",
+   "assess circulatory assessment",
+   "look circulatory assessment",
+   "repeat circulatory assessment",
+   "auscultate circulatory assessment",
+   "palpate circulatory assessment",
+   "listen circulatory assessment",
+   "circulatory assessment exam",
+   "circulatory assessment examination"
+  ],
+  "exam_heent": [
+   "perform heent",
+   "examine heent",
+   "assess heent",
+   "look heent",
+   "repeat heent",
+   "auscultate heent",
+   "palpate heent",
+   "listen heent",
+   "heent exam",
+   "heent examination",
+   "perform head eyes",
+   "examine head eyes",
+   "assess head eyes",
+   "look head eyes",
+   "repeat head eyes",
+   "auscultate head eyes",
+   "palpate head eyes",
+   "listen head eyes",
+   "head eyes exam",
+   "head eyes examination",
+   "perform eyes",
+   "examine eyes",
+   "assess eyes",
+   "look eyes",
+   "repeat eyes",
+   "auscultate eyes",
+   "palpate eyes",
+   "listen eyes",
+   "eyes exam",
+   "eyes examination",
+   "perform pupils",
+   "examine pupils",
+   "assess pupils",
+   "look pupils",
+   "repeat pupils",
+   "auscultate pupils",
+   "palpate pupils",
+   "listen pupils",
+   "pupils exam",
+   "pupils examination",
+   "perform mouth",
+   "examine mouth",
+   "assess mouth",
+   "look mouth",
+   "repeat mouth",
+   "auscultate mouth",
+   "palpate mouth",
+   "listen mouth",
+   "mouth exam",
+   "mouth examination",
+   "perform oropharynx",
+   "examine oropharynx",
+   "assess oropharynx",
+   "look oropharynx",
+   "repeat oropharynx",
+   "auscultate oropharynx",
+   "palpate oropharynx",
+   "listen oropharynx",
+   "oropharynx exam",
+   "oropharynx examination",
+   "perform ears",
+   "examine ears",
+   "assess ears",
+   "look ears",
+   "repeat ears",
+   "auscultate ears",
+   "palpate ears",
+   "listen ears",
+   "ears exam",
+   "ears examination",
+   "perform nose",
+   "examine nose",
+   "assess nose",
+   "look nose",
+   "repeat nose",
+   "auscultate nose",
+   "palpate nose",
+   "listen nose",
+   "nose exam",
+   "nose examination",
+   "perform head",
+   "examine head",
+   "assess head",
+   "look head",
+   "repeat head",
+   "auscultate head",
+   "palpate head",
+   "listen head",
+   "head exam",
+   "head examination",
+   "perform face",
+   "examine face",
+   "assess face",
+   "look face",
+   "repeat face",
+   "auscultate face",
+   "palpate face",
+   "listen face",
+   "face exam",
+   "face examination"
+  ],
+  "exam_neck": [
+   "perform neck",
+   "examine neck",
+   "assess neck",
+   "look neck",
+   "repeat neck",
+   "auscultate neck",
+   "palpate neck",
+   "listen neck",
+   "neck exam",
+   "neck examination",
+   "perform jvp",
+   "examine jvp",
+   "assess jvp",
+   "look jvp",
+   "repeat jvp",
+   "auscultate jvp",
+   "palpate jvp",
+   "listen jvp",
+   "jvp exam",
+   "jvp examination",
+   "perform jugular dvt pressure",
+   "examine jugular dvt pressure",
+   "assess jugular dvt pressure",
+   "look jugular dvt pressure",
+   "repeat jugular dvt pressure",
+   "auscultate jugular dvt pressure",
+   "palpate jugular dvt pressure",
+   "listen jugular dvt pressure",
+   "jugular dvt pressure exam",
+   "jugular dvt pressure examination",
+   "perform jvd",
+   "examine jvd",
+   "assess jvd",
+   "look jvd",
+   "repeat jvd",
+   "auscultate jvd",
+   "palpate jvd",
+   "listen jvd",
+   "jvd exam",
+   "jvd examination",
+   "perform jugular dvt distension",
+   "examine jugular dvt distension",
+   "assess jugular dvt distension",
+   "look jugular dvt distension",
+   "repeat jugular dvt distension",
+   "auscultate jugular dvt distension",
+   "palpate jugular dvt distension",
+   "listen jugular dvt distension",
+   "jugular dvt distension exam",
+   "jugular dvt distension examination",
+   "perform hepatojugular reflux",
+   "examine hepatojugular reflux",
+   "assess hepatojugular reflux",
+   "look hepatojugular reflux",
+   "repeat hepatojugular reflux",
+   "auscultate hepatojugular reflux",
+   "palpate hepatojugular reflux",
+   "listen hepatojugular reflux",
+   "hepatojugular reflux exam",
+   "hepatojugular reflux examination",
+   "perform neck veins",
+   "examine neck veins",
+   "assess neck veins",
+   "look neck veins",
+   "repeat neck veins",
+   "auscultate neck veins",
+   "palpate neck veins",
+   "listen neck veins",
+   "neck veins exam",
+   "neck veins examination"
+  ],
+  "exam_card": [
+   "perform cardiovascular",
+   "examine cardiovascular",
+   "assess cardiovascular",
+   "look cardiovascular",
+   "repeat cardiovascular",
+   "auscultate cardiovascular",
+   "palpate cardiovascular",
+   "listen cardiovascular",
+   "cardiovascular exam",
+   "cardiovascular examination",
+   "perform cv",
+   "examine cv",
+   "assess cv",
+   "look cv",
+   "repeat cv",
+   "auscultate cv",
+   "palpate cv",
+   "listen cv",
+   "cv exam",
+   "cv examination",
+   "perform precordium",
+   "examine precordium",
+   "assess precordium",
+   "look precordium",
+   "repeat precordium",
+   "auscultate precordium",
+   "palpate precordium",
+   "listen precordium",
+   "precordium exam",
+   "precordium examination",
+   "perform cardiac sounds",
+   "examine cardiac sounds",
+   "assess cardiac sounds",
+   "look cardiac sounds",
+   "repeat cardiac sounds",
+   "auscultate cardiac sounds",
+   "palpate cardiac sounds",
+   "listen cardiac sounds",
+   "cardiac sounds exam",
+   "cardiac sounds examination",
+   "perform cardiac auscultation",
+   "examine cardiac auscultation",
+   "assess cardiac auscultation",
+   "look cardiac auscultation",
+   "repeat cardiac auscultation",
+   "auscultate cardiac auscultation",
+   "palpate cardiac auscultation",
+   "listen cardiac auscultation",
+   "cardiac auscultation exam",
+   "cardiac auscultation examination",
+   "perform murmurs",
+   "examine murmurs",
+   "assess murmurs",
+   "look murmurs",
+   "repeat murmurs",
+   "auscultate murmurs",
+   "palpate murmurs",
+   "listen murmurs",
+   "murmurs exam",
+   "murmurs examination",
+   "perform peripheral edema",
+   "examine peripheral edema",
+   "assess peripheral edema",
+   "look peripheral edema",
+   "repeat peripheral edema",
+   "auscultate peripheral edema",
+   "palpate peripheral edema",
+   "listen peripheral edema",
+   "peripheral edema exam",
+   "peripheral edema examination",
+   "perform pedal edema",
+   "examine pedal edema",
+   "assess pedal edema",
+   "look pedal edema",
+   "repeat pedal edema",
+   "auscultate pedal edema",
+   "palpate pedal edema",
+   "listen pedal edema",
+   "pedal edema exam",
+   "pedal edema examination",
+   "listen cardiac",
+   "auscultate cardiac",
+   "cardiac exam",
+   "cardiac examination",
+   "examine cardiac"
+  ],
+  "exam_pulm": [
+   "perform pulmonary",
+   "examine pulmonary",
+   "assess pulmonary",
+   "look pulmonary",
+   "repeat pulmonary",
+   "auscultate pulmonary",
+   "palpate pulmonary",
+   "listen pulmonary",
+   "pulmonary exam",
+   "pulmonary examination",
+   "perform chest fields",
+   "examine chest fields",
+   "assess chest fields",
+   "look chest fields",
+   "repeat chest fields",
+   "auscultate chest fields",
+   "palpate chest fields",
+   "listen chest fields",
+   "chest fields exam",
+   "chest fields examination",
+   "perform breath sounds",
+   "examine breath sounds",
+   "assess breath sounds",
+   "look breath sounds",
+   "repeat breath sounds",
+   "auscultate breath sounds",
+   "palpate breath sounds",
+   "listen breath sounds",
+   "breath sounds exam",
+   "breath sounds examination",
+   "perform air entry",
+   "examine air entry",
+   "assess air entry",
+   "look air entry",
+   "repeat air entry",
+   "auscultate air entry",
+   "palpate air entry",
+   "listen air entry",
+   "air entry exam",
+   "air entry examination",
+   "perform chest bases",
+   "examine chest bases",
+   "assess chest bases",
+   "look chest bases",
+   "repeat chest bases",
+   "auscultate chest bases",
+   "palpate chest bases",
+   "listen chest bases",
+   "chest bases exam",
+   "chest bases examination",
+   "perform crackles",
+   "examine crackles",
+   "assess crackles",
+   "look crackles",
+   "repeat crackles",
+   "auscultate crackles",
+   "palpate crackles",
+   "listen crackles",
+   "crackles exam",
+   "crackles examination",
+   "perform wheeze",
+   "examine wheeze",
+   "assess wheeze",
+   "look wheeze",
+   "repeat wheeze",
+   "auscultate wheeze",
+   "palpate wheeze",
+   "listen wheeze",
+   "wheeze exam",
+   "wheeze examination"
+  ],
+  "exam_abd": [
+   "perform abdomen",
+   "examine abdomen",
+   "assess abdomen",
+   "look abdomen",
+   "repeat abdomen",
+   "auscultate abdomen",
+   "palpate abdomen",
+   "listen abdomen",
+   "abdomen exam",
+   "abdomen examination",
+   "perform tummy",
+   "examine tummy",
+   "assess tummy",
+   "look tummy",
+   "repeat tummy",
+   "auscultate tummy",
+   "palpate tummy",
+   "listen tummy",
+   "tummy exam",
+   "tummy examination",
+   "perform abdo",
+   "examine abdo",
+   "assess abdo",
+   "look abdo",
+   "repeat abdo",
+   "auscultate abdo",
+   "palpate abdo",
+   "listen abdo",
+   "abdo exam",
+   "abdo examination"
+  ],
+  "exam_gu": [
+   "perform genitourinary",
+   "examine genitourinary",
+   "assess genitourinary",
+   "look genitourinary",
+   "repeat genitourinary",
+   "auscultate genitourinary",
+   "palpate genitourinary",
+   "listen genitourinary",
+   "genitourinary exam",
+   "genitourinary examination",
+   "perform gu",
+   "examine gu",
+   "assess gu",
+   "look gu",
+   "repeat gu",
+   "auscultate gu",
+   "palpate gu",
+   "listen gu",
+   "gu exam",
+   "gu examination",
+   "perform genitals",
+   "examine genitals",
+   "assess genitals",
+   "look genitals",
+   "repeat genitals",
+   "auscultate genitals",
+   "palpate genitals",
+   "listen genitals",
+   "genitals exam",
+   "genitals examination",
+   "perform perineum",
+   "examine perineum",
+   "assess perineum",
+   "look perineum",
+   "repeat perineum",
+   "auscultate perineum",
+   "palpate perineum",
+   "listen perineum",
+   "perineum exam",
+   "perineum examination"
+  ],
+  "exam_back": [
+   "perform flank",
+   "examine flank",
+   "assess flank",
+   "look flank",
+   "repeat flank",
+   "auscultate flank",
+   "palpate flank",
+   "listen flank",
+   "flank exam",
+   "flank examination",
+   "perform spine",
+   "examine spine",
+   "assess spine",
+   "look spine",
+   "repeat spine",
+   "auscultate spine",
+   "palpate spine",
+   "listen spine",
+   "spine exam",
+   "spine examination",
+   "perform back flank",
+   "examine back flank",
+   "assess back flank",
+   "look back flank",
+   "repeat back flank",
+   "auscultate back flank",
+   "palpate back flank",
+   "listen back flank",
+   "back flank exam",
+   "back flank examination",
+   "perform costovertebral angle",
+   "examine costovertebral angle",
+   "assess costovertebral angle",
+   "look costovertebral angle",
+   "repeat costovertebral angle",
+   "auscultate costovertebral angle",
+   "palpate costovertebral angle",
+   "listen costovertebral angle",
+   "costovertebral angle exam",
+   "costovertebral angle examination",
+   "perform cva tenderness",
+   "examine cva tenderness",
+   "assess cva tenderness",
+   "look cva tenderness",
+   "repeat cva tenderness",
+   "auscultate cva tenderness",
+   "palpate cva tenderness",
+   "listen cva tenderness",
+   "cva tenderness exam",
+   "cva tenderness examination"
+  ],
+  "exam_msk": [
+   "perform musculoskeletal",
+   "examine musculoskeletal",
+   "assess musculoskeletal",
+   "look musculoskeletal",
+   "repeat musculoskeletal",
+   "auscultate musculoskeletal",
+   "palpate musculoskeletal",
+   "listen musculoskeletal",
+   "musculoskeletal exam",
+   "musculoskeletal examination",
+   "perform msk",
+   "examine msk",
+   "assess msk",
+   "look msk",
+   "repeat msk",
+   "auscultate msk",
+   "palpate msk",
+   "listen msk",
+   "msk exam",
+   "msk examination",
+   "perform extremities",
+   "examine extremities",
+   "assess extremities",
+   "look extremities",
+   "repeat extremities",
+   "auscultate extremities",
+   "palpate extremities",
+   "listen extremities",
+   "extremities exam",
+   "extremities examination",
+   "perform limbs",
+   "examine limbs",
+   "assess limbs",
+   "look limbs",
+   "repeat limbs",
+   "auscultate limbs",
+   "palpate limbs",
+   "listen limbs",
+   "limbs exam",
+   "limbs examination",
+   "perform joints",
+   "examine joints",
+   "assess joints",
+   "look joints",
+   "repeat joints",
+   "auscultate joints",
+   "palpate joints",
+   "listen joints",
+   "joints exam",
+   "joints examination",
+   "perform arms dvt",
+   "examine arms dvt",
+   "assess arms dvt",
+   "look arms dvt",
+   "repeat arms dvt",
+   "auscultate arms dvt",
+   "palpate arms dvt",
+   "listen arms dvt",
+   "arms dvt exam",
+   "arms dvt examination"
+  ],
+  "exam_skin": [
+   "perform softtissue",
+   "examine softtissue",
+   "assess softtissue",
+   "look softtissue",
+   "repeat softtissue",
+   "auscultate softtissue",
+   "palpate softtissue",
+   "listen softtissue",
+   "softtissue exam",
+   "softtissue examination",
+   "perform rash",
+   "examine rash",
+   "assess rash",
+   "look rash",
+   "repeat rash",
+   "auscultate rash",
+   "palpate rash",
+   "listen rash",
+   "rash exam",
+   "rash examination",
+   "perform softtissue softtissue",
+   "examine softtissue softtissue",
+   "assess softtissue softtissue",
+   "look softtissue softtissue",
+   "repeat softtissue softtissue",
+   "auscultate softtissue softtissue",
+   "palpate softtissue softtissue",
+   "listen softtissue softtissue",
+   "softtissue softtissue exam",
+   "softtissue softtissue examination",
+   "perform petechiae",
+   "examine petechiae",
+   "assess petechiae",
+   "look petechiae",
+   "repeat petechiae",
+   "auscultate petechiae",
+   "palpate petechiae",
+   "listen petechiae",
+   "petechiae exam",
+   "petechiae examination",
+   "perform purpura",
+   "examine purpura",
+   "assess purpura",
+   "look purpura",
+   "repeat purpura",
+   "auscultate purpura",
+   "palpate purpura",
+   "listen purpura",
+   "purpura exam",
+   "purpura examination",
+   "perform mottling",
+   "examine mottling",
+   "assess mottling",
+   "look mottling",
+   "repeat mottling",
+   "auscultate mottling",
+   "palpate mottling",
+   "listen mottling",
+   "mottling exam",
+   "mottling examination",
+   "perform wounds",
+   "examine wounds",
+   "assess wounds",
+   "look wounds",
+   "repeat wounds",
+   "auscultate wounds",
+   "palpate wounds",
+   "listen wounds",
+   "wounds exam",
+   "wounds examination"
+  ],
+  "exam_neuro": [
+   "perform neuro",
+   "examine neuro",
+   "assess neuro",
+   "look neuro",
+   "repeat neuro",
+   "auscultate neuro",
+   "palpate neuro",
+   "listen neuro",
+   "neuro exam",
+   "neuro examination",
+   "perform neurological",
+   "examine neurological",
+   "assess neurological",
+   "look neurological",
+   "repeat neurological",
+   "auscultate neurological",
+   "palpate neurological",
+   "listen neurological",
+   "neurological exam",
+   "neurological examination",
+   "perform neurologic",
+   "examine neurologic",
+   "assess neurologic",
+   "look neurologic",
+   "repeat neurologic",
+   "auscultate neurologic",
+   "palpate neurologic",
+   "listen neurologic",
+   "neurologic exam",
+   "neurologic examination",
+   "perform nervous system",
+   "examine nervous system",
+   "assess nervous system",
+   "look nervous system",
+   "repeat nervous system",
+   "auscultate nervous system",
+   "palpate nervous system",
+   "listen nervous system",
+   "nervous system exam",
+   "nervous system examination",
+   "perform gcs",
+   "examine gcs",
+   "assess gcs",
+   "look gcs",
+   "repeat gcs",
+   "auscultate gcs",
+   "palpate gcs",
+   "listen gcs",
+   "gcs exam",
+   "gcs examination",
+   "perform glasgow coma scale",
+   "examine glasgow coma scale",
+   "assess glasgow coma scale",
+   "look glasgow coma scale",
+   "repeat glasgow coma scale",
+   "auscultate glasgow coma scale",
+   "palpate glasgow coma scale",
+   "listen glasgow coma scale",
+   "glasgow coma scale exam",
+   "glasgow coma scale examination",
+   "perform cranial nerves",
+   "examine cranial nerves",
+   "assess cranial nerves",
+   "look cranial nerves",
+   "repeat cranial nerves",
+   "auscultate cranial nerves",
+   "palpate cranial nerves",
+   "listen cranial nerves",
+   "cranial nerves exam",
+   "cranial nerves examination",
+   "perform power tone",
+   "examine power tone",
+   "assess power tone",
+   "look power tone",
+   "repeat power tone",
+   "auscultate power tone",
+   "palpate power tone",
+   "listen power tone",
+   "power tone exam",
+   "power tone examination",
+   "perform focal deficit",
+   "examine focal deficit",
+   "assess focal deficit",
+   "look focal deficit",
+   "repeat focal deficit",
+   "auscultate focal deficit",
+   "palpate focal deficit",
+   "listen focal deficit",
+   "focal deficit exam",
+   "focal deficit examination"
+  ],
+  "exam_psych": [
+   "perform psychiatric",
+   "examine psychiatric",
+   "assess psychiatric",
+   "look psychiatric",
+   "repeat psychiatric",
+   "auscultate psychiatric",
+   "palpate psychiatric",
+   "listen psychiatric",
+   "psychiatric exam",
+   "psychiatric examination",
+   "perform psych",
+   "examine psych",
+   "assess psych",
+   "look psych",
+   "repeat psych",
+   "auscultate psych",
+   "palpate psych",
+   "listen psych",
+   "psych exam",
+   "psych examination",
+   "perform mental state",
+   "examine mental state",
+   "assess mental state",
+   "look mental state",
+   "repeat mental state",
+   "auscultate mental state",
+   "palpate mental state",
+   "listen mental state",
+   "mental state exam",
+   "mental state examination",
+   "perform mental status",
+   "examine mental status",
+   "assess mental status",
+   "look mental status",
+   "repeat mental status",
+   "auscultate mental status",
+   "palpate mental status",
+   "listen mental status",
+   "mental status exam",
+   "mental status examination",
+   "perform mood affect",
+   "examine mood affect",
+   "assess mood affect",
+   "look mood affect",
+   "repeat mood affect",
+   "auscultate mood affect",
+   "palpate mood affect",
+   "listen mood affect",
+   "mood affect exam",
+   "mood affect examination"
+  ],
+  "consult_cardiology": [
+   "cardiology",
+   "consult cardiology",
+   "call cardiology",
+   "page cardiology",
+   "refer cardiology",
+   "speak cardiology",
+   "talk cardiology",
+   "bring cardiology",
+   "activate cardiology",
+   "notify cardiology",
+   "involve cardiology",
+   "ask cardiology",
+   "cardiology consult",
+   "cardiology consultation",
+   "cardiology referral",
+   "cardiology phone",
+   "cardiology bedside",
+   "cards",
+   "consult cards",
+   "call cards",
+   "page cards",
+   "refer cards",
+   "speak cards",
+   "talk cards",
+   "bring cards",
+   "activate cards",
+   "notify cards",
+   "involve cards",
+   "ask cards",
+   "cards consult",
+   "cards consultation",
+   "cards referral",
+   "cards phone",
+   "cards bedside",
+   "cardiologist",
+   "consult cardiologist",
+   "call cardiologist",
+   "page cardiologist",
+   "refer cardiologist",
+   "speak cardiologist",
+   "talk cardiologist",
+   "bring cardiologist",
+   "activate cardiologist",
+   "notify cardiologist",
+   "involve cardiologist",
+   "ask cardiologist",
+   "cardiologist consult",
+   "cardiologist consultation",
+   "cardiologist referral",
+   "cardiologist phone",
+   "cardiologist bedside"
+  ],
+  "consult_critical_care": [
+   "critical care",
+   "consult critical care",
+   "call critical care",
+   "page critical care",
+   "refer critical care",
+   "speak critical care",
+   "talk critical care",
+   "bring critical care",
+   "activate critical care",
+   "notify critical care",
+   "involve critical care",
+   "ask critical care",
+   "critical care consult",
+   "critical care consultation",
+   "critical care referral",
+   "critical care phone",
+   "critical care bedside",
+   "icu",
+   "consult icu",
+   "call icu",
+   "page icu",
+   "refer icu",
+   "speak icu",
+   "talk icu",
+   "bring icu",
+   "activate icu",
+   "notify icu",
+   "involve icu",
+   "ask icu",
+   "icu consult",
+   "icu consultation",
+   "icu referral",
+   "icu phone",
+   "icu bedside",
+   "intensive care",
+   "consult intensive care",
+   "call intensive care",
+   "page intensive care",
+   "refer intensive care",
+   "speak intensive care",
+   "talk intensive care",
+   "bring intensive care",
+   "activate intensive care",
+   "notify intensive care",
+   "involve intensive care",
+   "ask intensive care",
+   "intensive care consult",
+   "intensive care consultation",
+   "intensive care referral",
+   "intensive care phone",
+   "intensive care bedside",
+   "intensivist",
+   "consult intensivist",
+   "call intensivist",
+   "page intensivist",
+   "refer intensivist",
+   "speak intensivist",
+   "talk intensivist",
+   "bring intensivist",
+   "activate intensivist",
+   "notify intensivist",
+   "involve intensivist",
+   "ask intensivist",
+   "intensivist consult",
+   "intensivist consultation",
+   "intensivist referral",
+   "intensivist phone",
+   "intensivist bedside",
+   "icu team",
+   "consult icu team",
+   "call icu team",
+   "page icu team",
+   "refer icu team",
+   "speak icu team",
+   "talk icu team",
+   "bring icu team",
+   "activate icu team",
+   "notify icu team",
+   "involve icu team",
+   "ask icu team",
+   "icu team consult",
+   "icu team consultation",
+   "icu team referral",
+   "icu team phone",
+   "icu team bedside",
+   "critical care team",
+   "consult critical care team",
+   "call critical care team",
+   "page critical care team",
+   "refer critical care team",
+   "speak critical care team",
+   "talk critical care team",
+   "bring critical care team",
+   "activate critical care team",
+   "notify critical care team",
+   "involve critical care team",
+   "ask critical care team",
+   "critical care team consult",
+   "critical care team consultation",
+   "critical care team referral",
+   "critical care team phone",
+   "critical care team bedside"
+  ],
+  "consult_toxicology": [
+   "toxicology",
+   "consult toxicology",
+   "call toxicology",
+   "page toxicology",
+   "refer toxicology",
+   "speak toxicology",
+   "talk toxicology",
+   "bring toxicology",
+   "activate toxicology",
+   "notify toxicology",
+   "involve toxicology",
+   "ask toxicology",
+   "toxicology consult",
+   "toxicology consultation",
+   "toxicology referral",
+   "toxicology phone",
+   "toxicology bedside",
+   "poison control",
+   "consult poison control",
+   "call poison control",
+   "page poison control",
+   "refer poison control",
+   "speak poison control",
+   "talk poison control",
+   "bring poison control",
+   "activate poison control",
+   "notify poison control",
+   "involve poison control",
+   "ask poison control",
+   "poison control consult",
+   "poison control consultation",
+   "poison control referral",
+   "poison control phone",
+   "poison control bedside",
+   "poison center",
+   "consult poison center",
+   "call poison center",
+   "page poison center",
+   "refer poison center",
+   "speak poison center",
+   "talk poison center",
+   "bring poison center",
+   "activate poison center",
+   "notify poison center",
+   "involve poison center",
+   "ask poison center",
+   "poison center consult",
+   "poison center consultation",
+   "poison center referral",
+   "poison center phone",
+   "poison center bedside",
+   "poison centre",
+   "consult poison centre",
+   "call poison centre",
+   "page poison centre",
+   "refer poison centre",
+   "speak poison centre",
+   "talk poison centre",
+   "bring poison centre",
+   "activate poison centre",
+   "notify poison centre",
+   "involve poison centre",
+   "ask poison centre",
+   "poison centre consult",
+   "poison centre consultation",
+   "poison centre referral",
+   "poison centre phone",
+   "poison centre bedside",
+   "toxicologist",
+   "consult toxicologist",
+   "call toxicologist",
+   "page toxicologist",
+   "refer toxicologist",
+   "speak toxicologist",
+   "talk toxicologist",
+   "bring toxicologist",
+   "activate toxicologist",
+   "notify toxicologist",
+   "involve toxicologist",
+   "ask toxicologist",
+   "toxicologist consult",
+   "toxicologist consultation",
+   "toxicologist referral",
+   "toxicologist phone",
+   "toxicologist bedside",
+   "medical toxicology",
+   "consult medical toxicology",
+   "call medical toxicology",
+   "page medical toxicology",
+   "refer medical toxicology",
+   "speak medical toxicology",
+   "talk medical toxicology",
+   "bring medical toxicology",
+   "activate medical toxicology",
+   "notify medical toxicology",
+   "involve medical toxicology",
+   "ask medical toxicology",
+   "medical toxicology consult",
+   "medical toxicology consultation",
+   "medical toxicology referral",
+   "medical toxicology phone",
+   "medical toxicology bedside"
+  ],
+  "consult_infectious_disease": [
+   "infectious disease",
+   "consult infectious disease",
+   "call infectious disease",
+   "page infectious disease",
+   "refer infectious disease",
+   "speak infectious disease",
+   "talk infectious disease",
+   "bring infectious disease",
+   "activate infectious disease",
+   "notify infectious disease",
+   "involve infectious disease",
+   "ask infectious disease",
+   "infectious disease consult",
+   "infectious disease consultation",
+   "infectious disease referral",
+   "infectious disease phone",
+   "infectious disease bedside",
+   "infectious diseases",
+   "consult infectious diseases",
+   "call infectious diseases",
+   "page infectious diseases",
+   "refer infectious diseases",
+   "speak infectious diseases",
+   "talk infectious diseases",
+   "bring infectious diseases",
+   "activate infectious diseases",
+   "notify infectious diseases",
+   "involve infectious diseases",
+   "ask infectious diseases",
+   "infectious diseases consult",
+   "infectious diseases consultation",
+   "infectious diseases referral",
+   "infectious diseases phone",
+   "infectious diseases bedside",
+   "id team",
+   "consult id team",
+   "call id team",
+   "page id team",
+   "refer id team",
+   "speak id team",
+   "talk id team",
+   "bring id team",
+   "activate id team",
+   "notify id team",
+   "involve id team",
+   "ask id team",
+   "id team consult",
+   "id team consultation",
+   "id team referral",
+   "id team phone",
+   "id team bedside",
+   "infectious disease team",
+   "consult infectious disease team",
+   "call infectious disease team",
+   "page infectious disease team",
+   "refer infectious disease team",
+   "speak infectious disease team",
+   "talk infectious disease team",
+   "bring infectious disease team",
+   "activate infectious disease team",
+   "notify infectious disease team",
+   "involve infectious disease team",
+   "ask infectious disease team",
+   "infectious disease team consult",
+   "infectious disease team consultation",
+   "infectious disease team referral",
+   "infectious disease team phone",
+   "infectious disease team bedside"
+  ],
+  "consult_neurology": [
+   "neurology",
+   "consult neurology",
+   "call neurology",
+   "page neurology",
+   "refer neurology",
+   "speak neurology",
+   "talk neurology",
+   "bring neurology",
+   "activate neurology",
+   "notify neurology",
+   "involve neurology",
+   "ask neurology",
+   "neurology consult",
+   "neurology consultation",
+   "neurology referral",
+   "neurology phone",
+   "neurology bedside",
+   "neurologist",
+   "consult neurologist",
+   "call neurologist",
+   "page neurologist",
+   "refer neurologist",
+   "speak neurologist",
+   "talk neurologist",
+   "bring neurologist",
+   "activate neurologist",
+   "notify neurologist",
+   "involve neurologist",
+   "ask neurologist",
+   "neurologist consult",
+   "neurologist consultation",
+   "neurologist referral",
+   "neurologist phone",
+   "neurologist bedside",
+   "stroke team",
+   "consult stroke team",
+   "call stroke team",
+   "page stroke team",
+   "refer stroke team",
+   "speak stroke team",
+   "talk stroke team",
+   "bring stroke team",
+   "activate stroke team",
+   "notify stroke team",
+   "involve stroke team",
+   "ask stroke team",
+   "stroke team consult",
+   "stroke team consultation",
+   "stroke team referral",
+   "stroke team phone",
+   "stroke team bedside"
+  ],
+  "consult_neurosurgeon": [
+   "neurosurgery",
+   "consult neurosurgery",
+   "call neurosurgery",
+   "page neurosurgery",
+   "refer neurosurgery",
+   "speak neurosurgery",
+   "talk neurosurgery",
+   "bring neurosurgery",
+   "activate neurosurgery",
+   "notify neurosurgery",
+   "involve neurosurgery",
+   "ask neurosurgery",
+   "neurosurgery consult",
+   "neurosurgery consultation",
+   "neurosurgery referral",
+   "neurosurgery phone",
+   "neurosurgery bedside",
+   "neurosurgeon",
+   "consult neurosurgeon",
+   "call neurosurgeon",
+   "page neurosurgeon",
+   "refer neurosurgeon",
+   "speak neurosurgeon",
+   "talk neurosurgeon",
+   "bring neurosurgeon",
+   "activate neurosurgeon",
+   "notify neurosurgeon",
+   "involve neurosurgeon",
+   "ask neurosurgeon",
+   "neurosurgeon consult",
+   "neurosurgeon consultation",
+   "neurosurgeon referral",
+   "neurosurgeon phone",
+   "neurosurgeon bedside",
+   "neuro surgery",
+   "consult neuro surgery",
+   "call neuro surgery",
+   "page neuro surgery",
+   "refer neuro surgery",
+   "speak neuro surgery",
+   "talk neuro surgery",
+   "bring neuro surgery",
+   "activate neuro surgery",
+   "notify neuro surgery",
+   "involve neuro surgery",
+   "ask neuro surgery",
+   "neuro surgery consult",
+   "neuro surgery consultation",
+   "neuro surgery referral",
+   "neuro surgery phone",
+   "neuro surgery bedside",
+   "neurosurgical team",
+   "consult neurosurgical team",
+   "call neurosurgical team",
+   "page neurosurgical team",
+   "refer neurosurgical team",
+   "speak neurosurgical team",
+   "talk neurosurgical team",
+   "bring neurosurgical team",
+   "activate neurosurgical team",
+   "notify neurosurgical team",
+   "involve neurosurgical team",
+   "ask neurosurgical team",
+   "neurosurgical team consult",
+   "neurosurgical team consultation",
+   "neurosurgical team referral",
+   "neurosurgical team phone",
+   "neurosurgical team bedside"
+  ],
+  "consult_renal": [
+   "renal",
+   "consult renal",
+   "call renal",
+   "page renal",
+   "refer renal",
+   "speak renal",
+   "talk renal",
+   "bring renal",
+   "activate renal",
+   "notify renal",
+   "involve renal",
+   "ask renal",
+   "renal consult",
+   "renal consultation",
+   "renal referral",
+   "renal phone",
+   "renal bedside",
+   "nephrology",
+   "consult nephrology",
+   "call nephrology",
+   "page nephrology",
+   "refer nephrology",
+   "speak nephrology",
+   "talk nephrology",
+   "bring nephrology",
+   "activate nephrology",
+   "notify nephrology",
+   "involve nephrology",
+   "ask nephrology",
+   "nephrology consult",
+   "nephrology consultation",
+   "nephrology referral",
+   "nephrology phone",
+   "nephrology bedside",
+   "nephrologist",
+   "consult nephrologist",
+   "call nephrologist",
+   "page nephrologist",
+   "refer nephrologist",
+   "speak nephrologist",
+   "talk nephrologist",
+   "bring nephrologist",
+   "activate nephrologist",
+   "notify nephrologist",
+   "involve nephrologist",
+   "ask nephrologist",
+   "nephrologist consult",
+   "nephrologist consultation",
+   "nephrologist referral",
+   "nephrologist phone",
+   "nephrologist bedside",
+   "renal team",
+   "consult renal team",
+   "call renal team",
+   "page renal team",
+   "refer renal team",
+   "speak renal team",
+   "talk renal team",
+   "bring renal team",
+   "activate renal team",
+   "notify renal team",
+   "involve renal team",
+   "ask renal team",
+   "renal team consult",
+   "renal team consultation",
+   "renal team referral",
+   "renal team phone",
+   "renal team bedside"
+  ],
+  "consult_endocrinology": [
+   "endocrinology",
+   "consult endocrinology",
+   "call endocrinology",
+   "page endocrinology",
+   "refer endocrinology",
+   "speak endocrinology",
+   "talk endocrinology",
+   "bring endocrinology",
+   "activate endocrinology",
+   "notify endocrinology",
+   "involve endocrinology",
+   "ask endocrinology",
+   "endocrinology consult",
+   "endocrinology consultation",
+   "endocrinology referral",
+   "endocrinology phone",
+   "endocrinology bedside",
+   "endocrine",
+   "consult endocrine",
+   "call endocrine",
+   "page endocrine",
+   "refer endocrine",
+   "speak endocrine",
+   "talk endocrine",
+   "bring endocrine",
+   "activate endocrine",
+   "notify endocrine",
+   "involve endocrine",
+   "ask endocrine",
+   "endocrine consult",
+   "endocrine consultation",
+   "endocrine referral",
+   "endocrine phone",
+   "endocrine bedside",
+   "endocrinologist",
+   "consult endocrinologist",
+   "call endocrinologist",
+   "page endocrinologist",
+   "refer endocrinologist",
+   "speak endocrinologist",
+   "talk endocrinologist",
+   "bring endocrinologist",
+   "activate endocrinologist",
+   "notify endocrinologist",
+   "involve endocrinologist",
+   "ask endocrinologist",
+   "endocrinologist consult",
+   "endocrinologist consultation",
+   "endocrinologist referral",
+   "endocrinologist phone",
+   "endocrinologist bedside"
+  ],
+  "consult_gastroenterology": [
+   "gastroenterology",
+   "consult gastroenterology",
+   "call gastroenterology",
+   "page gastroenterology",
+   "refer gastroenterology",
+   "speak gastroenterology",
+   "talk gastroenterology",
+   "bring gastroenterology",
+   "activate gastroenterology",
+   "notify gastroenterology",
+   "involve gastroenterology",
+   "ask gastroenterology",
+   "gastroenterology consult",
+   "gastroenterology consultation",
+   "gastroenterology referral",
+   "gastroenterology phone",
+   "gastroenterology bedside",
+   "gastroenterologist",
+   "consult gastroenterologist",
+   "call gastroenterologist",
+   "page gastroenterologist",
+   "refer gastroenterologist",
+   "speak gastroenterologist",
+   "talk gastroenterologist",
+   "bring gastroenterologist",
+   "activate gastroenterologist",
+   "notify gastroenterologist",
+   "involve gastroenterologist",
+   "ask gastroenterologist",
+   "gastroenterologist consult",
+   "gastroenterologist consultation",
+   "gastroenterologist referral",
+   "gastroenterologist phone",
+   "gastroenterologist bedside",
+   "gi team",
+   "consult gi team",
+   "call gi team",
+   "page gi team",
+   "refer gi team",
+   "speak gi team",
+   "talk gi team",
+   "bring gi team",
+   "activate gi team",
+   "notify gi team",
+   "involve gi team",
+   "ask gi team",
+   "gi team consult",
+   "gi team consultation",
+   "gi team referral",
+   "gi team phone",
+   "gi team bedside"
+  ],
+  "consult_general_surgery": [
+   "general surgery",
+   "consult general surgery",
+   "call general surgery",
+   "page general surgery",
+   "refer general surgery",
+   "speak general surgery",
+   "talk general surgery",
+   "bring general surgery",
+   "activate general surgery",
+   "notify general surgery",
+   "involve general surgery",
+   "ask general surgery",
+   "general surgery consult",
+   "general surgery consultation",
+   "general surgery referral",
+   "general surgery phone",
+   "general surgery bedside",
+   "surgery",
+   "consult surgery",
+   "call surgery",
+   "page surgery",
+   "refer surgery",
+   "speak surgery",
+   "talk surgery",
+   "bring surgery",
+   "activate surgery",
+   "notify surgery",
+   "involve surgery",
+   "ask surgery",
+   "surgery consult",
+   "surgery consultation",
+   "surgery referral",
+   "surgery phone",
+   "surgery bedside",
+   "surgeons",
+   "consult surgeons",
+   "call surgeons",
+   "page surgeons",
+   "refer surgeons",
+   "speak surgeons",
+   "talk surgeons",
+   "bring surgeons",
+   "activate surgeons",
+   "notify surgeons",
+   "involve surgeons",
+   "ask surgeons",
+   "surgeons consult",
+   "surgeons consultation",
+   "surgeons referral",
+   "surgeons phone",
+   "surgeons bedside",
+   "surgeon",
+   "consult surgeon",
+   "call surgeon",
+   "page surgeon",
+   "refer surgeon",
+   "speak surgeon",
+   "talk surgeon",
+   "bring surgeon",
+   "activate surgeon",
+   "notify surgeon",
+   "involve surgeon",
+   "ask surgeon",
+   "surgeon consult",
+   "surgeon consultation",
+   "surgeon referral",
+   "surgeon phone",
+   "surgeon bedside",
+   "gen surg",
+   "consult gen surg",
+   "call gen surg",
+   "page gen surg",
+   "refer gen surg",
+   "speak gen surg",
+   "talk gen surg",
+   "bring gen surg",
+   "activate gen surg",
+   "notify gen surg",
+   "involve gen surg",
+   "ask gen surg",
+   "gen surg consult",
+   "gen surg consultation",
+   "gen surg referral",
+   "gen surg phone",
+   "gen surg bedside",
+   "acute care surgery",
+   "consult acute care surgery",
+   "call acute care surgery",
+   "page acute care surgery",
+   "refer acute care surgery",
+   "speak acute care surgery",
+   "talk acute care surgery",
+   "bring acute care surgery",
+   "activate acute care surgery",
+   "notify acute care surgery",
+   "involve acute care surgery",
+   "ask acute care surgery",
+   "acute care surgery consult",
+   "acute care surgery consultation",
+   "acute care surgery referral",
+   "acute care surgery phone",
+   "acute care surgery bedside"
+  ],
+  "consult_heme_onc": [
+   "hematology",
+   "consult hematology",
+   "call hematology",
+   "page hematology",
+   "refer hematology",
+   "speak hematology",
+   "talk hematology",
+   "bring hematology",
+   "activate hematology",
+   "notify hematology",
+   "involve hematology",
+   "ask hematology",
+   "hematology consult",
+   "hematology consultation",
+   "hematology referral",
+   "hematology phone",
+   "hematology bedside",
+   "haematology",
+   "consult haematology",
+   "call haematology",
+   "page haematology",
+   "refer haematology",
+   "speak haematology",
+   "talk haematology",
+   "bring haematology",
+   "activate haematology",
+   "notify haematology",
+   "involve haematology",
+   "ask haematology",
+   "haematology consult",
+   "haematology consultation",
+   "haematology referral",
+   "haematology phone",
+   "haematology bedside",
+   "oncology",
+   "consult oncology",
+   "call oncology",
+   "page oncology",
+   "refer oncology",
+   "speak oncology",
+   "talk oncology",
+   "bring oncology",
+   "activate oncology",
+   "notify oncology",
+   "involve oncology",
+   "ask oncology",
+   "oncology consult",
+   "oncology consultation",
+   "oncology referral",
+   "oncology phone",
+   "oncology bedside",
+   "heme onc",
+   "consult heme onc",
+   "call heme onc",
+   "page heme onc",
+   "refer heme onc",
+   "speak heme onc",
+   "talk heme onc",
+   "bring heme onc",
+   "activate heme onc",
+   "notify heme onc",
+   "involve heme onc",
+   "ask heme onc",
+   "heme onc consult",
+   "heme onc consultation",
+   "heme onc referral",
+   "heme onc phone",
+   "heme onc bedside",
+   "haem onc",
+   "consult haem onc",
+   "call haem onc",
+   "page haem onc",
+   "refer haem onc",
+   "speak haem onc",
+   "talk haem onc",
+   "bring haem onc",
+   "activate haem onc",
+   "notify haem onc",
+   "involve haem onc",
+   "ask haem onc",
+   "haem onc consult",
+   "haem onc consultation",
+   "haem onc referral",
+   "haem onc phone",
+   "haem onc bedside",
+   "hematology oncology",
+   "consult hematology oncology",
+   "call hematology oncology",
+   "page hematology oncology",
+   "refer hematology oncology",
+   "speak hematology oncology",
+   "talk hematology oncology",
+   "bring hematology oncology",
+   "activate hematology oncology",
+   "notify hematology oncology",
+   "involve hematology oncology",
+   "ask hematology oncology",
+   "hematology oncology consult",
+   "hematology oncology consultation",
+   "hematology oncology referral",
+   "hematology oncology phone",
+   "hematology oncology bedside",
+   "oncologist",
+   "consult oncologist",
+   "call oncologist",
+   "page oncologist",
+   "refer oncologist",
+   "speak oncologist",
+   "talk oncologist",
+   "bring oncologist",
+   "activate oncologist",
+   "notify oncologist",
+   "involve oncologist",
+   "ask oncologist",
+   "oncologist consult",
+   "oncologist consultation",
+   "oncologist referral",
+   "oncologist phone",
+   "oncologist bedside",
+   "hematologist",
+   "consult hematologist",
+   "call hematologist",
+   "page hematologist",
+   "refer hematologist",
+   "speak hematologist",
+   "talk hematologist",
+   "bring hematologist",
+   "activate hematologist",
+   "notify hematologist",
+   "involve hematologist",
+   "ask hematologist",
+   "hematologist consult",
+   "hematologist consultation",
+   "hematologist referral",
+   "hematologist phone",
+   "hematologist bedside"
+  ],
+  "consult_ob_gyn": [
+   "ob gyn",
+   "consult ob gyn",
+   "call ob gyn",
+   "page ob gyn",
+   "refer ob gyn",
+   "speak ob gyn",
+   "talk ob gyn",
+   "bring ob gyn",
+   "activate ob gyn",
+   "notify ob gyn",
+   "involve ob gyn",
+   "ask ob gyn",
+   "ob gyn consult",
+   "ob gyn consultation",
+   "ob gyn referral",
+   "ob gyn phone",
+   "ob gyn bedside",
+   "obgyn",
+   "consult obgyn",
+   "call obgyn",
+   "page obgyn",
+   "refer obgyn",
+   "speak obgyn",
+   "talk obgyn",
+   "bring obgyn",
+   "activate obgyn",
+   "notify obgyn",
+   "involve obgyn",
+   "ask obgyn",
+   "obgyn consult",
+   "obgyn consultation",
+   "obgyn referral",
+   "obgyn phone",
+   "obgyn bedside",
+   "obstetrics",
+   "consult obstetrics",
+   "call obstetrics",
+   "page obstetrics",
+   "refer obstetrics",
+   "speak obstetrics",
+   "talk obstetrics",
+   "bring obstetrics",
+   "activate obstetrics",
+   "notify obstetrics",
+   "involve obstetrics",
+   "ask obstetrics",
+   "obstetrics consult",
+   "obstetrics consultation",
+   "obstetrics referral",
+   "obstetrics phone",
+   "obstetrics bedside",
+   "gynecology",
+   "consult gynecology",
+   "call gynecology",
+   "page gynecology",
+   "refer gynecology",
+   "speak gynecology",
+   "talk gynecology",
+   "bring gynecology",
+   "activate gynecology",
+   "notify gynecology",
+   "involve gynecology",
+   "ask gynecology",
+   "gynecology consult",
+   "gynecology consultation",
+   "gynecology referral",
+   "gynecology phone",
+   "gynecology bedside",
+   "gynaecology",
+   "consult gynaecology",
+   "call gynaecology",
+   "page gynaecology",
+   "refer gynaecology",
+   "speak gynaecology",
+   "talk gynaecology",
+   "bring gynaecology",
+   "activate gynaecology",
+   "notify gynaecology",
+   "involve gynaecology",
+   "ask gynaecology",
+   "gynaecology consult",
+   "gynaecology consultation",
+   "gynaecology referral",
+   "gynaecology phone",
+   "gynaecology bedside",
+   "obstetrics gynecology",
+   "consult obstetrics gynecology",
+   "call obstetrics gynecology",
+   "page obstetrics gynecology",
+   "refer obstetrics gynecology",
+   "speak obstetrics gynecology",
+   "talk obstetrics gynecology",
+   "bring obstetrics gynecology",
+   "activate obstetrics gynecology",
+   "notify obstetrics gynecology",
+   "involve obstetrics gynecology",
+   "ask obstetrics gynecology",
+   "obstetrics gynecology consult",
+   "obstetrics gynecology consultation",
+   "obstetrics gynecology referral",
+   "obstetrics gynecology phone",
+   "obstetrics gynecology bedside",
+   "obstetrician",
+   "consult obstetrician",
+   "call obstetrician",
+   "page obstetrician",
+   "refer obstetrician",
+   "speak obstetrician",
+   "talk obstetrician",
+   "bring obstetrician",
+   "activate obstetrician",
+   "notify obstetrician",
+   "involve obstetrician",
+   "ask obstetrician",
+   "obstetrician consult",
+   "obstetrician consultation",
+   "obstetrician referral",
+   "obstetrician phone",
+   "obstetrician bedside"
+  ],
+  "consult_orthopedics": [
+   "orthopedics",
+   "consult orthopedics",
+   "call orthopedics",
+   "page orthopedics",
+   "refer orthopedics",
+   "speak orthopedics",
+   "talk orthopedics",
+   "bring orthopedics",
+   "activate orthopedics",
+   "notify orthopedics",
+   "involve orthopedics",
+   "ask orthopedics",
+   "orthopedics consult",
+   "orthopedics consultation",
+   "orthopedics referral",
+   "orthopedics phone",
+   "orthopedics bedside",
+   "orthopaedics",
+   "consult orthopaedics",
+   "call orthopaedics",
+   "page orthopaedics",
+   "refer orthopaedics",
+   "speak orthopaedics",
+   "talk orthopaedics",
+   "bring orthopaedics",
+   "activate orthopaedics",
+   "notify orthopaedics",
+   "involve orthopaedics",
+   "ask orthopaedics",
+   "orthopaedics consult",
+   "orthopaedics consultation",
+   "orthopaedics referral",
+   "orthopaedics phone",
+   "orthopaedics bedside",
+   "ortho",
+   "consult ortho",
+   "call ortho",
+   "page ortho",
+   "refer ortho",
+   "speak ortho",
+   "talk ortho",
+   "bring ortho",
+   "activate ortho",
+   "notify ortho",
+   "involve ortho",
+   "ask ortho",
+   "ortho consult",
+   "ortho consultation",
+   "ortho referral",
+   "ortho phone",
+   "ortho bedside",
+   "orthopedic surgery",
+   "consult orthopedic surgery",
+   "call orthopedic surgery",
+   "page orthopedic surgery",
+   "refer orthopedic surgery",
+   "speak orthopedic surgery",
+   "talk orthopedic surgery",
+   "bring orthopedic surgery",
+   "activate orthopedic surgery",
+   "notify orthopedic surgery",
+   "involve orthopedic surgery",
+   "ask orthopedic surgery",
+   "orthopedic surgery consult",
+   "orthopedic surgery consultation",
+   "orthopedic surgery referral",
+   "orthopedic surgery phone",
+   "orthopedic surgery bedside",
+   "orthopedic team",
+   "consult orthopedic team",
+   "call orthopedic team",
+   "page orthopedic team",
+   "refer orthopedic team",
+   "speak orthopedic team",
+   "talk orthopedic team",
+   "bring orthopedic team",
+   "activate orthopedic team",
+   "notify orthopedic team",
+   "involve orthopedic team",
+   "ask orthopedic team",
+   "orthopedic team consult",
+   "orthopedic team consultation",
+   "orthopedic team referral",
+   "orthopedic team phone",
+   "orthopedic team bedside",
+   "orthopedist",
+   "consult orthopedist",
+   "call orthopedist",
+   "page orthopedist",
+   "refer orthopedist",
+   "speak orthopedist",
+   "talk orthopedist",
+   "bring orthopedist",
+   "activate orthopedist",
+   "notify orthopedist",
+   "involve orthopedist",
+   "ask orthopedist",
+   "orthopedist consult",
+   "orthopedist consultation",
+   "orthopedist referral",
+   "orthopedist phone",
+   "orthopedist bedside"
+  ],
+  "consult_psychiatry": [
+   "psychiatry",
+   "consult psychiatry",
+   "call psychiatry",
+   "page psychiatry",
+   "refer psychiatry",
+   "speak psychiatry",
+   "talk psychiatry",
+   "bring psychiatry",
+   "activate psychiatry",
+   "notify psychiatry",
+   "involve psychiatry",
+   "ask psychiatry",
+   "psychiatry consult",
+   "psychiatry consultation",
+   "psychiatry referral",
+   "psychiatry phone",
+   "psychiatry bedside",
+   "psychiatrist",
+   "consult psychiatrist",
+   "call psychiatrist",
+   "page psychiatrist",
+   "refer psychiatrist",
+   "speak psychiatrist",
+   "talk psychiatrist",
+   "bring psychiatrist",
+   "activate psychiatrist",
+   "notify psychiatrist",
+   "involve psychiatrist",
+   "ask psychiatrist",
+   "psychiatrist consult",
+   "psychiatrist consultation",
+   "psychiatrist referral",
+   "psychiatrist phone",
+   "psychiatrist bedside",
+   "psych team",
+   "consult psych team",
+   "call psych team",
+   "page psych team",
+   "refer psych team",
+   "speak psych team",
+   "talk psych team",
+   "bring psych team",
+   "activate psych team",
+   "notify psych team",
+   "involve psych team",
+   "ask psych team",
+   "psych team consult",
+   "psych team consultation",
+   "psych team referral",
+   "psych team phone",
+   "psych team bedside",
+   "crisis team",
+   "consult crisis team",
+   "call crisis team",
+   "page crisis team",
+   "refer crisis team",
+   "speak crisis team",
+   "talk crisis team",
+   "bring crisis team",
+   "activate crisis team",
+   "notify crisis team",
+   "involve crisis team",
+   "ask crisis team",
+   "crisis team consult",
+   "crisis team consultation",
+   "crisis team referral",
+   "crisis team phone",
+   "crisis team bedside"
+  ],
+  "consult_pulmonology": [
+   "pulmonology",
+   "consult pulmonology",
+   "call pulmonology",
+   "page pulmonology",
+   "refer pulmonology",
+   "speak pulmonology",
+   "talk pulmonology",
+   "bring pulmonology",
+   "activate pulmonology",
+   "notify pulmonology",
+   "involve pulmonology",
+   "ask pulmonology",
+   "pulmonology consult",
+   "pulmonology consultation",
+   "pulmonology referral",
+   "pulmonology phone",
+   "pulmonology bedside",
+   "pulmonologist",
+   "consult pulmonologist",
+   "call pulmonologist",
+   "page pulmonologist",
+   "refer pulmonologist",
+   "speak pulmonologist",
+   "talk pulmonologist",
+   "bring pulmonologist",
+   "activate pulmonologist",
+   "notify pulmonologist",
+   "involve pulmonologist",
+   "ask pulmonologist",
+   "pulmonologist consult",
+   "pulmonologist consultation",
+   "pulmonologist referral",
+   "pulmonologist phone",
+   "pulmonologist bedside",
+   "respirology",
+   "consult respirology",
+   "call respirology",
+   "page respirology",
+   "refer respirology",
+   "speak respirology",
+   "talk respirology",
+   "bring respirology",
+   "activate respirology",
+   "notify respirology",
+   "involve respirology",
+   "ask respirology",
+   "respirology consult",
+   "respirology consultation",
+   "respirology referral",
+   "respirology phone",
+   "respirology bedside",
+   "chest physician",
+   "consult chest physician",
+   "call chest physician",
+   "page chest physician",
+   "refer chest physician",
+   "speak chest physician",
+   "talk chest physician",
+   "bring chest physician",
+   "activate chest physician",
+   "notify chest physician",
+   "involve chest physician",
+   "ask chest physician",
+   "chest physician consult",
+   "chest physician consultation",
+   "chest physician referral",
+   "chest physician phone",
+   "chest physician bedside"
+  ],
+  "consult_vascular_surgery": [
+   "vascular surgery",
+   "consult vascular surgery",
+   "call vascular surgery",
+   "page vascular surgery",
+   "refer vascular surgery",
+   "speak vascular surgery",
+   "talk vascular surgery",
+   "bring vascular surgery",
+   "activate vascular surgery",
+   "notify vascular surgery",
+   "involve vascular surgery",
+   "ask vascular surgery",
+   "vascular surgery consult",
+   "vascular surgery consultation",
+   "vascular surgery referral",
+   "vascular surgery phone",
+   "vascular surgery bedside",
+   "vascular",
+   "consult vascular",
+   "call vascular",
+   "page vascular",
+   "refer vascular",
+   "speak vascular",
+   "talk vascular",
+   "bring vascular",
+   "activate vascular",
+   "notify vascular",
+   "involve vascular",
+   "ask vascular",
+   "vascular consult",
+   "vascular consultation",
+   "vascular referral",
+   "vascular phone",
+   "vascular bedside",
+   "vascular surgeon",
+   "consult vascular surgeon",
+   "call vascular surgeon",
+   "page vascular surgeon",
+   "refer vascular surgeon",
+   "speak vascular surgeon",
+   "talk vascular surgeon",
+   "bring vascular surgeon",
+   "activate vascular surgeon",
+   "notify vascular surgeon",
+   "involve vascular surgeon",
+   "ask vascular surgeon",
+   "vascular surgeon consult",
+   "vascular surgeon consultation",
+   "vascular surgeon referral",
+   "vascular surgeon phone",
+   "vascular surgeon bedside",
+   "vascular team",
+   "consult vascular team",
+   "call vascular team",
+   "page vascular team",
+   "refer vascular team",
+   "speak vascular team",
+   "talk vascular team",
+   "bring vascular team",
+   "activate vascular team",
+   "notify vascular team",
+   "involve vascular team",
+   "ask vascular team",
+   "vascular team consult",
+   "vascular team consultation",
+   "vascular team referral",
+   "vascular team phone",
+   "vascular team bedside"
   ]
  },
  "expansions": {
@@ -5350,6 +7693,1778 @@
    "normal_saline_infusion",
    "lactated_ringer_s_infusion",
    "d5_1_2_ns_infusion"
+  ],
+  "bolus crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "run crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "crystalloid wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "crystalloid challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "crystalloid resuscitation": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloid liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloid twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloid thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloid liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloid second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloid liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "run crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "crystalloids bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "crystalloids wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "crystalloids challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "crystalloids resuscitation": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloids liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloids twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloids thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloids liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloids second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "crystalloids liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "run fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fluid wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fluid liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "fluid twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "fluid thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "fluid liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "fluid second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "fluid liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "run fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fluids bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fluids wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fluids challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fluids resuscitation": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fluids liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "fluids twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "fluids thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "fluids liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "fluids second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "fluids liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "run iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "iv fluid bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "iv fluid wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "iv fluid challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "iv fluid resuscitation": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluid liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluid twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluid thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluid liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluid second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluid liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "run iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "iv fluids bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "iv fluids wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "iv fluids challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "iv fluids resuscitation": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluids liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluids twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluids thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluids liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluids second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "iv fluids liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "run ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "ivf bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "ivf wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "ivf challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "ivf resuscitation": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "ivf liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "ivf twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "ivf thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "ivf liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "ivf second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "ivf liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "run volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "volume bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "volume wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "volume challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "volume liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "volume twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "volume thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "volume liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "volume second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "volume liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "run bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag fluid bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag fluid wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag fluid challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag fluid resuscitation": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluid liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluid twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluid thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluid liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluid second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluid liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "run bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag fluids bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag fluids wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag fluids challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag fluids resuscitation": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluids liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluids twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluids thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluids liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluids second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag fluids liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "run bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag crystalloid bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag crystalloid wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag crystalloid challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "bag crystalloid resuscitation": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag crystalloid liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag crystalloid twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag crystalloid thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag crystalloid liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag crystalloid second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bag crystalloid liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "run liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "open up liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "wideopen liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "resuscitate liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "fill up liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter fluid bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter fluid wideopen": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter fluid challenge": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter fluid resuscitation": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus",
+   "normal_saline_500ml_bolus",
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "liter liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter fluid liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "twoliters liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter fluid twoliters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus twoliters liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "thirtyperkilo liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter fluid thirtyperkilo": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus thirtyperkilo liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus wideopen liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liters liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter fluid liters": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liters liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "second liter liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter fluid second liter": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus second liter liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter bolus liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "liter fluid liter bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "bolus liter bolus liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based bolus liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids crystalloids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids iv fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids iv fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids ivf": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids volume": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids bag fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids bag fluids": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids bag crystalloid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
+  ],
+  "weight based fluids liter fluid": [
+   "normal_saline_1l_bolus",
+   "lactated_ringer_s_1l_bolus"
   ],
   "unsynced shock": [
    "defibrillate",
@@ -7905,6 +12020,34 @@
    "factor_viii",
    "factor_ix",
    "prothrombin_complex_concentrate"
+  ],
+  "chest exam": [
+   "exam_pulm",
+   "exam_card"
+  ],
+  "examine chest": [
+   "exam_pulm",
+   "exam_card"
+  ],
+  "listen chest": [
+   "exam_pulm",
+   "exam_card"
+  ],
+  "auscultate chest": [
+   "exam_pulm",
+   "exam_card"
+  ],
+  "headandneck": [
+   "exam_heent",
+   "exam_neck"
+  ],
+  "headandneck exam": [
+   "exam_heent",
+   "exam_neck"
+  ],
+  "examine headandneck": [
+   "exam_heent",
+   "exam_neck"
   ]
  },
  "unavailable": {
@@ -8678,32 +12821,6 @@
   "call hospital epidemiology": 65,
   "notify hospital epidemiology": 65,
   "page hospital epidemiology": 65,
-  "public health": 65,
-  "call public health": 65,
-  "notify public health": 65,
-  "page public health": 65,
-  "department health": 65,
-  "call department health": 65,
-  "notify department health": 65,
-  "page department health": 65,
-  "health department": 65,
-  "call health department": 65,
-  "notify health department": 65,
-  "page health department": 65,
-  "cdc": 65,
-  "call cdc": 65,
-  "notify cdc": 65,
-  "page cdc": 65,
-  "reportable": 65,
-  "reportable disease": 65,
-  "reportable condition": 65,
-  "report public health": 65,
-  "report health department": 65,
-  "report department health": 65,
-  "report cdc": 65,
-  "report epidemiology": 65,
-  "report infection control": 65,
-  "report infection prevention": 65,
   "peg": 34,
   "peg solution": 34,
   "polyethylene glycol": 34,
@@ -8944,7 +13061,21 @@
   "mulpleta": 25,
   "il": 25,
   "oprelvekin": 25,
-  "neumega": 25
+  "neumega": 25,
+  "full exam": 66,
+  "complete exam": 66,
+  "full physical": 66,
+  "complete physical": 66,
+  "physical exam": 66,
+  "head toe": 66,
+  "head toe exam": 66,
+  "full physical exam": 66,
+  "examine": 66,
+  "primary survey": 66,
+  "secondary survey": 66,
+  "top toe": 66,
+  "whole exam": 66,
+  "general exam": 66
  },
  "hints": [
   "Name the labs. \"Labs\" on its own is not an order the nurse can send.",
@@ -9012,6 +13143,7 @@
   "Not in the catalog. The urinary catheter available is the indwelling Foley.",
   "Not in the catalog. The positioning acts available are lowering the head of the bed and positioning for intubation.",
   "Gastric lavage is not in the catalog. The NG tube is, and whole bowel irrigation by NG tube is.",
-  "Notifying infection control or public health is a consult, and consults are not voice orders here."
+  "Infection control is not a catalog entry. The isolation precautions themselves are on the Stabilization tab, and public health is a consultation.",
+  "Name the examination you want. Each manoeuvre is a separate act and they are listed on the Exam tab."
  ]
 }

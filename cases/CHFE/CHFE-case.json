@@ -46,7 +46,7 @@
   "interface_note": "The interface no longer displays provenance warnings, unverified-content notices or default-served annotations, on author instruction. That information now lives only here and in CHFE-review-packet.md. Nothing in this case has been signed off by a physician."
  },
  "metadata": {
-  "working_title": "Sixty-five year old man, worsening breathlessness, brought in by EMS",
+  "working_title": "65-year-old man, worsening breathlessness, brought in by EMS",
   "chief_complaint_patient_voice": "I can't get my breath.",
   "final_diagnosis": "Acute decompensated heart failure with reduced ejection fraction (acute on chronic), presenting as hypertensive acute cardiogenic pulmonary edema, precipitated by loop diuretic non-adherence and dietary sodium load.",
   "target_level": [

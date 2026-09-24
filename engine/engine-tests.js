@@ -1546,9 +1546,28 @@ section('voice orders');
       .filter(id => { const r = VOICE.parse(A[id].name); return !(r.length >= 1 && r.some(x => x.kind === 'ok' && x.id === id) || r.some(x => x.kind === 'ambiguous' && x.ids.includes(id))); });
     chk('every orderable action is reachable by its display name', unreachable.length === 0,
         unreachable.slice(0, 8).map(id => id + ' ("' + A[id].name + '" -> ' + kinds(VOICE.parse(A[id].name)) + ')').join(' | '));
-    /* Nothing outside the orderable tabs is ever an order. */
+    /* v0.17n: an exam and a consultation CAN be said. They are not batched into an order,
+       which is why they are absent from orderableTabs; confirm() logs every row it holds and
+       that is what taking one of these is. */
     const ex = VOICE.parse('airway exam and consult cardiology');
-    chk('exams and consults are not voice orders', ids(ex).length === 0, JSON.stringify(ex));
+    chk('an exam and a consultation are both heard', ids(ex).join() === res('exam_airway') + ',' + res('consult_cardiology'),
+        JSON.stringify(ex));
+    chk('every exam and consultation is reachable by a spoken phrase',
+        Object.keys(A).filter(id => ['exam', 'consultations'].includes(A[id].tab))
+          .filter(id => !VOICE.parse(A[id].name).some(r => r.kind === 'ok' && r.id === id)).length === 0,
+        Object.keys(A).filter(id => ['exam', 'consultations'].includes(A[id].tab))
+          .filter(id => !VOICE.parse(A[id].name).some(r => r.kind === 'ok' && r.id === id)).join());
+    /* The generic crystalloid phrasings. Each is one order, never two, and never a pressor. */
+    for (const p of ['crystalloid bolus', 'bolus of crystalloid', 'give a fluid bolus', 'push fluids',
+                     'open the fluids', 'hang a bag of fluid', 'IV fluid bolus now', 'a litre of crystalloid']) {
+      const r = VOICE.parse(p);
+      /* ids are the bound case ids, so the check is against what the catalog entries resolve
+         to in this pack rather than against their catalog names. */
+      const fluid = ['normal_saline_1l_bolus', 'lactated_ringer_s_1l_bolus', 'normal_saline_500ml_bolus',
+                     'lactated_ringer_s_500ml_bolus'].map(res).filter(Boolean);
+      chk('"' + p + '" is one fluid order', r.length === 1 && r[0].kind === 'ambiguous' &&
+          r[0].ids.length >= 2 && r[0].ids.every(id => fluid.includes(id)), JSON.stringify(r));
+    }
   }
 }
 

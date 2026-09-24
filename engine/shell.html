@@ -58,8 +58,8 @@
   --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
 
   --rail:88px;                /* fixed icon rail, always on screen  */
-  --rdock:30vw;               /* right panel, docked width          */
-  --rwide:70vw;               /* right panel, expanded width        */
+  --rdock:34vw;               /* right panel, docked width          */
+  --rwide:76vw;               /* right panel, expanded width        */
   --lwidth:50vw;              /* left panel, open width             */
   --top:96px;                 /* set from the header height by JS   */
   --ease:cubic-bezier(.32,.72,.24,1);
@@ -263,7 +263,20 @@ button{font:inherit;color:inherit}
 .tabdock{position:fixed;top:var(--top);left:0;bottom:0;width:var(--rail);z-index:50;
   background:rgba(255,255,255,.86);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
   border-right:1px solid var(--rule);
-  display:flex;flex-direction:column;gap:2px;padding:10px 0;overflow-y:auto;overflow-x:hidden}
+  display:flex;flex-direction:column;gap:2px;padding:10px 0 64px;overflow-y:auto;overflow-x:hidden}
+/* The main menu control, at the foot of the rail. Deliberately unlike a tab: it is the only
+   thing in the rail that does not switch a view, so it sits behind its own rule, and the
+   dock above is given 64px of padding so no tab can scroll under it. */
+.railmenu{position:fixed;left:0;bottom:0;width:var(--rail);z-index:51;border:0;
+  background:rgba(255,255,255,.92);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  border-top:1px solid var(--rule);border-right:1px solid var(--rule);
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:11px 4px 13px;cursor:pointer;color:var(--ink3);transition:color .16s ease,background .16s ease}
+.railmenu svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+.railmenu .lb{font-size:9px;letter-spacing:.02em;text-transform:uppercase;line-height:1.15;text-align:center}
+.railmenu:hover{color:var(--act);background:var(--actl)}
+.railmenu:focus-visible{outline:2px solid var(--act);outline-offset:-2px}
 .tabdock::-webkit-scrollbar{width:0}
 .tabbtn{position:relative;background:none;border:0;width:100%;padding:9px 4px 8px;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ink3);
@@ -628,6 +641,47 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .leavecard h2{margin:0 0 8px;font-size:17px;font-weight:600;letter-spacing:-.01em}
 .leavecard p{margin:0 0 18px;color:var(--ink2);font-size:14px;line-height:1.5}
 .leavebtns{display:flex;justify-content:flex-end;gap:9px}
+/* The three-minute pause. Wider than the leave dialog because it carries a question and a
+   box to answer it in, and its only control is Continue: there is no way to dismiss it
+   unanswered, which is the point of stopping the case. */
+.reflectcard{max-width:560px;width:min(560px,calc(100vw - 48px))}
+.reflectlab{display:block;font-size:12px;color:var(--ink3);margin:0 0 6px}
+.reflectbox{display:block;width:100%;font:inherit;font-size:14px;line-height:1.5;color:var(--ink);
+  background:var(--pane2);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;
+  margin:0 0 16px;resize:vertical;min-height:96px}
+.reflectbox:focus{outline:2px solid var(--act);outline-offset:-1px;border-color:var(--act)}
+
+/* ============================================================
+   GLOBAL SEARCH. Same box as the record panel, one layer above it.
+   ============================================================ */
+.rp-search{width:26px;height:26px;flex:0 0 auto;background:var(--pane2);border:1px solid var(--rule);
+  border-radius:3px;color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.rp-search:hover{color:var(--act);border-color:var(--actb);background:var(--actl)}
+.rp-search svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round}
+.srch{position:fixed;top:var(--top);right:0;bottom:0;z-index:46;width:var(--rdock);
+  background:rgba(255,255,255,.97);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  border-left:1px solid var(--act);box-shadow:-20px 0 50px -30px var(--shadow);
+  display:flex;flex-direction:column;transition:width .42s var(--ease)}
+body[data-right="wide"] .srch{width:min(var(--rwide),calc(100vw - var(--rail)))}
+.srch.hidden{display:none}
+.srch-head{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--rule2);min-height:46px}
+.srch-ic{width:16px;height:16px;flex:0 0 auto;stroke:var(--ink3);fill:none;stroke-width:1.9;stroke-linecap:round}
+.srch-box{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--ink);background:none;border:0;padding:4px 0}
+.srch-box:focus{outline:none}
+.srch-x{width:26px;height:26px;flex:0 0 auto;background:none;border:0;color:var(--ink3);cursor:pointer;
+  font-size:19px;line-height:1;border-radius:3px}
+.srch-x:hover{color:var(--act);background:var(--actl)}
+.srch-body{flex:1;min-height:0;overflow-y:auto;padding:8px 10px 24px}
+.srch-sec{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);
+  margin:12px 6px 5px;font-weight:600}
+.srch-sec:first-child{margin-top:2px}
+.srch-hit{display:block;width:100%;text-align:left;background:none;border:0;border-radius:4px;
+  padding:8px 10px;cursor:pointer;color:var(--ink);font:inherit;font-size:13.5px;line-height:1.35}
+.srch-hit:hover,.srch-hit:focus-visible{background:var(--actl);outline:none}
+.srch-hit b{font-weight:600}
+.srch-hit .sh-meta{display:block;font-size:11.5px;color:var(--ink3);margin-top:2px}
+.srch-hit mark{background:var(--warnl,#fde68a);color:inherit;border-radius:2px;padding:0 1px}
+.srch-none{padding:14px 10px;color:var(--ink3);font-size:13px;line-height:1.5}
 
 /* The image viewer, and the thumbnail that opens it. A result that is a picture is shown
    small in the chart, because the chart is a running list and a full tracing in it would
@@ -699,21 +753,40 @@ body[data-right="wide"] .fitem .imgthumb{max-width:520px}
    holds a title, a quote, a mode choice and a button, and a 660px box around
    that much content reads as a page with a hole in it. */
 /* The text half. Its surface, border and shadow moved up to .splashwrap in v0.17k. */
+/* v0.17l. The card keeps the height it had when the default mode carried a paragraph
+   (556px), so the splash does not shrink and crowd. It is a column whose last row, the
+   Begin button, is pushed to the bottom edge, and the height the paragraph gave up went
+   into the type and the gaps above it: a larger title, a larger quote, more air round the
+   mode choice. Below 900px the card stacks under the figure and takes its natural height. */
 .splashcard{background:none;border:0;border-radius:0;box-shadow:none;
-  max-width:560px;width:100%;padding:26px 30px 28px}
+  max-width:560px;width:100%;padding:26px 30px 30px;
+  display:flex;flex-direction:column;align-items:stretch;min-height:556px;align-self:stretch}
+.splashcard .splashback{align-self:flex-start}
+.splashcard .splashactions{margin-top:auto;padding-top:20px}
+@media (max-width:900px){ .splashcard{min-height:0} }
 .splashcard .setting{font-family:var(--mono);font-size:11px;color:var(--ink3);
   letter-spacing:.09em;text-transform:uppercase;margin-bottom:14px}
-.splashcard h1{font-size:21px;line-height:1.32;margin:0 0 10px;font-weight:600;letter-spacing:-.01em;
+.splashcard h1{font-size:25px;line-height:1.28;margin:0 0 14px;font-weight:600;letter-spacing:-.01em;
   text-wrap:balance;max-width:34ch}
 /* The one line of scene the learner gets before pressing Begin. Set as a small
    meta row rather than a section, because it is a fact about the room and not
    part of the history. */
-.arrival{font-size:12.5px;color:var(--ink2);margin:0 0 14px;
+.arrival{font-size:13.5px;color:var(--ink2);margin:0 0 22px;
   display:flex;align-items:center;gap:7px}
 .arrival::before{content:"";width:6px;height:6px;border-radius:50%;
   background:var(--act);flex:0 0 auto}
-.splashcard .cc{border-left:3px solid var(--voice);background:var(--voicel);padding:12px 15px;
-  font-size:16px;border-radius:3px;margin-bottom:2px}
+.splashcard .cc{border-left:3px solid var(--voice);background:var(--voicel);padding:16px 18px;
+  font-size:17.5px;line-height:1.45;border-radius:3px;margin-bottom:2px}
+.splashcard .splashsec{margin-top:32px}
+.splashcard .splashsec h2{margin-bottom:10px}
+/* The default mode: one line, with a filled dot so it reads as the chosen option and not as
+   a heading. */
+.splashcard .mode:not(.plain){display:flex;align-items:center;gap:11px;padding:15px 16px}
+.splashcard .mode:not(.plain) b{margin:0;font-size:15.5px}
+.modedot{flex:0 0 auto;width:15px;height:15px;border-radius:50%;border:1.5px solid var(--ink3);background:#fff;
+  box-shadow:inset 0 0 0 3px #fff}
+.mode[aria-checked="true"] .modedot{border-color:var(--act);background:var(--act)}
+.splashcard .mode.plain{margin-top:4px}
 .splashsec{margin-top:22px}
 /* The arrival vitals, and deliberately NOT the monitor. The monitor is the one dark
    object in the product and is dark until the resident attaches it; if this strip were
@@ -1019,7 +1092,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 *::-webkit-scrollbar-thumb:hover{background:rgba(21,48,66,.34)}
 
 @media (max-width:1000px){
-  :root{--rdock:max(30vw,300px)}
+  :root{--rdock:max(34vw,320px)}
   /* the workspace covers the room at this width, so the figure shows only when it is closed */
   .ptstage{left:var(--rail);opacity:0}
   body[data-left="closed"] .ptstage{opacity:1}
@@ -1114,7 +1187,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   </div>
   <div class="splashcard">
     <button class="splashback" id="backtopicker">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>All cases</button>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Main menu</button>
     <div class="setting" id="sp-setting"></div>
     <h1 id="sp-title"></h1>
     <div class="arrival" id="sp-arrival"></div>
@@ -1184,6 +1257,13 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 
   <nav class="tabdock" id="tabbar" role="tablist" aria-label="Case sections"></nav>
 
+  <!-- The way out of a running case. It lives beside the dock rather than inside it,
+       because the dock's contents are rebuilt on every render and the control that leaves
+       a case must not depend on that. Inside #playview, so it is gone at the debrief and
+       under the case list and the card, which are overlays above it. -->
+  <button class="railmenu" id="railmenu" title="Leave this case and return to the main menu">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6.2 10.4V19a1 1 0 0 0 1 1h9.6a1 1 0 0 0 1-1v-8.6"/></svg><span class="lb">Main menu</span></button>
+
   <aside class="lpanel" id="leftpanel" aria-label="Workspace">
     <button class="lp-collapse" id="lp-collapse" title="Collapse this panel" aria-label="Collapse this panel">
       <svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6"/></svg>
@@ -1195,6 +1275,10 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
     <div class="rp-head">
       <button class="rp-toggle" id="rp-toggle" title="Expand the chart" aria-label="Expand the chart" aria-expanded="false">
         <svg viewBox="0 0 24 24" id="rp-icon"><path d="M15 4h5v5M20 4l-7 7M9 20H4v-5M4 20l7-7"/></svg>
+      </button>
+      <button class="rp-search" id="rp-search" title="Search everything (/)" aria-label="Search everything"
+              aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
       </button>
       <span class="rp-title">Record</span>
       <span class="rp-hint">click to expand</span>
@@ -1212,6 +1296,34 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
     </div>
   </aside>
 
+  <!-- Global search. It occupies the record panel's own geometry and sits one layer above
+       it, so opening it reads as the record turning into a search rather than as a new
+       window appearing somewhere else. Everything the case holds is in one list: every
+       action on every tab, and every line of the chart. It navigates, and never acts. -->
+  <aside class="srch hidden" id="searchpanel" aria-label="Search everything">
+    <div class="srch-head">
+      <svg class="srch-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <input type="text" id="searchbox" class="srch-box" autocomplete="off" spellcheck="false"
+             placeholder="Search actions, results and the chart" aria-label="Search everything">
+      <button class="srch-x" id="searchclose" title="Close the search" aria-label="Close the search">&#215;</button>
+    </div>
+    <div class="srch-body" id="searchresults"></div>
+  </aside>
+
+</div>
+
+<!-- The three-minute pause. Every case, wherever it has got to, once. The clock is held
+     while it is up and the note is the resident's own: nothing reads it. -->
+<div id="reflectview" class="leaveview hidden" role="dialog" aria-modal="true" aria-labelledby="reflecttitle">
+  <div class="leavecard reflectcard">
+    <h2 id="reflecttitle"></h2>
+    <p id="reflectbody"></p>
+    <label class="reflectlab" for="reflectnote">Your thinking, if you want it written down</label>
+    <textarea id="reflectnote" class="reflectbox" rows="5"></textarea>
+    <div class="leavebtns">
+      <button id="reflectok" class="btn" type="button">Continue</button>
+    </div>
+  </div>
 </div>
 
 <div id="endview" class="endview hidden"></div>
