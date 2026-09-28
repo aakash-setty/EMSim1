@@ -1,0 +1,55 @@
+# Publishes the case packs to Supabase on every push to main.
+#
+# Vercel deploys site/ from the same push on its own. Packs are stored by content hash
+# (see engine/publish_packs.js), so it does not matter which of the two finishes first:
+# an older page keeps loading its own packs, and the new page's packs appear within a
+# minute or two.
+#
+# One repository secret is needed: SUPABASE_SECRET_KEY (Settings, Secrets and variables,
+# Actions). It never appears in the site, the repository or the log.
+name: Publish case packs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-packs
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Build every case
+        run: python3 engine/build_simulator.py
+
+      # The site Vercel serves is the committed site/index.html. If it is not what this
+      # commit builds, its pack hashes point at packs nobody uploads.
+      - name: Check the committed site matches the build
+        run: |
+          if ! git diff --quiet -- site/index.html vercel.json; then
+            echo "::error::site/index.html or vercel.json in this commit is not what the build produces. Run python3 engine/build_simulator.py, commit site/ and vercel.json, and push again."
+            git diff --stat -- site/index.html vercel.json
+            exit 1
+          fi
+
+      - name: Upload the packs
+        env:
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: node engine/publish_packs.js

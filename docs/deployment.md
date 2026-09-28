@@ -1,131 +1,110 @@
-# Deploying EMSim (v0.18)
+# Deploying EMSim
 
-How the deployed site works, and every step to set it up. You paste things into the
-Supabase dashboard and click through Vercel; nothing here needs a terminal except the
-build, which you already run.
+How the live site works and how a change reaches it. Since v0.18e the normal path is a push
+to GitHub. Nothing is pasted into a dashboard by hand.
 
-Dashboard menu names below are as of September 2026 and may move. If a label differs,
-look for the nearest match.
+Live site: https://em-case-simulator-v1.vercel.app. Supabase project: `brhtyuahzbecpnqlgxib`
+(EMSim, us-west-2).
 
 ## How it works
 
-`python3 engine/build_simulator.py` now writes three things:
+`python3 engine/build_simulator.py` writes three things:
 
 | Output | What it is | Where it goes |
 |---|---|---|
 | `build/simulator.html` | Every case inlined, no backend. For you, reviewers and the tests | Nowhere. Never deploy it |
-| `site/index.html` | The engine, the case list and the sign-in form. No case content | Vercel serves the `site/` folder |
-| `private-packs/*.json` | One file per case | Uploaded by hand to the private `case-packs` bucket in Supabase |
+| `site/index.html` | The engine, the case list and the sign-in form. No case content | Vercel serves `site/` |
+| `private-packs/*.json` | One file per case. Not committed | The GitHub Action uploads them to the private `case-packs` bucket |
 
 When an invited user signs in and opens a case, the site calls the `case-pack` edge
-function with their session. The function checks the account is active, applies the rate
-limit, logs the attempt, and returns the pack. The site checks the pack's SHA-256 against
-the value built into `site/index.html` before playing it, so a stale or altered pack is
-refused with "This case is being updated".
+function with their session, the case name and the SHA-256 of the pack this build expects.
+The function checks the account, applies the rate limit, logs the attempt, and returns
+`case-packs/<PREFIX>/<sha256>.json`. The site checks the hash again before playing it.
+
+Packs are stored by content, so every version stays in the bucket. A page built before a
+change keeps loading its own packs, and a new page loads the new ones. That is why the site
+and the packs can go live in either order.
 
 **While the GitHub repository is public, this protects nothing.** `cases/`, `build/` and
 the git history are readable on GitHub. The protection starts when the repository is
-private. Copies already cloned stay out there.
+private.
 
-## 1. Create the Supabase project
+## Making a change
 
-1. Create the project. Pick the region nearest most users.
-2. Settings, API Keys: copy the **Project URL** and the **publishable key** (or the legacy
-   `anon` key). Both are public values that end up in the site. Send them to Claude or put
-   them in `engine/site-config.json` as `supabaseUrl` and `supabaseKey`, then rebuild.
-   Done in v0.18d for the project `brhtyuahzbecpnqlgxib`. The build refuses a secret or
-   service_role key, so pasting the wrong one stops the build instead of publishing it.
-   The "Connect" dialog in the dashboard shows Next.js steps (`npm install`, `.env.local`).
-   They do not apply here: the site is one static page with supabase-js already inside it.
-3. Never copy the **secret** or **service_role** key anywhere outside the dashboard. The
-   edge function reads it from its own environment.
+1. Change the cases or the engine, then run `python3 engine/build_simulator.py`.
+2. Commit everything the build changed, including `site/index.html` and `vercel.json`, and
+   push to `main`.
+3. Two things then happen on their own:
+   - Vercel deploys `site/` (about a minute).
+   - The GitHub Action "Publish case packs" builds the same commit, checks that the
+     committed `site/index.html` is exactly what the build produces, and uploads any new
+     packs, reading each back to check its hash. See the Actions tab on GitHub.
+4. For about a minute after a push, a case that changed may say "This case is not available
+   right now. If it was just updated, try again in a minute." Unchanged cases keep working.
 
-## 2. Authentication settings
+If the Action fails with "not what the build produces", step 1 or 2 was skipped: rebuild,
+commit and push again.
 
-1. Authentication, Sign In / Providers: turn **off** "Allow new users to sign up". Email
-   and password stays on. This is what makes it invite-only.
-2. Authentication, URL Configuration: set **Site URL** to the Vercel address once you have
-   it.
-3. Add each person: Authentication, Users, Add user, **Create new user**, enter email and
-   a password, tick **Auto Confirm User**. Send them the password by a private channel.
-   A profile row is made for them automatically. Since v0.18a the edge function refuses any
-   account whose email is not confirmed, and any anonymous account, so a user added without
-   Auto Confirm cannot open cases until they confirm.
+**Database and function changes** (new tables, a new rule in the edge function): Claude
+writes them as a new numbered file in `supabase/migrations/` or an edit to
+`supabase/functions/case-pack/index.ts`, and applies them through the Supabase connector in
+Claude. The files in git are the record of what is live.
+
+## What is set up, and where
+
+| Piece | Where it lives | Who changes it |
+|---|---|---|
+| Tables, rate limit, bucket | `supabase/migrations/001_access.sql`, applied 29 Sep 2026 | Claude, via the connector |
+| Edge function `case-pack` (Verify JWT on) | `supabase/functions/case-pack/index.ts` | Claude, via the connector |
+| Allowed site address | `DEFAULT_ORIGINS` in the function. The secret `ALLOWED_ORIGINS` overrides it if set | Code change |
+| Rate limits | 20 per hour, 100 per day. Secrets `CASE_LOADS_PER_HOUR` and `CASE_LOADS_PER_DAY` override them | Dashboard, Edge Functions, Secrets |
+| Supabase URL and publishable key | `engine/site-config.json` (public by design) | Code change |
+| Pack upload | `.github/workflows/publish-packs.yml` and `engine/publish_packs.js` | Code change |
+| Secret key for uploads | GitHub secret `SUPABASE_SECRET_KEY` | You only |
+| Sign-ups off, Site URL | Supabase dashboard, Authentication | Dashboard |
+| Users and passwords | Supabase dashboard, Authentication, Users | You only |
+
+## One-time setup (done once per project)
+
+1. **Secret key into GitHub.** Supabase dashboard, Project Settings, API Keys, Secret keys:
+   create or reveal one and copy it (`sb_secret_...`). GitHub repository, Settings, Secrets
+   and variables, Actions, New repository secret: name `SUPABASE_SECRET_KEY`, paste, save.
+   Never put this key anywhere else. It bypasses every access rule in the database.
+2. **Authentication settings.** Authentication, Sign In / Providers: turn off "Allow new
+   users to sign up" (email and password stays on). Authentication, URL Configuration:
+   Site URL `https://em-case-simulator-v1.vercel.app`.
+3. **Vercel.** Project Settings, Build and Deployment: Root Directory empty, Framework
+   Preset Other, no overrides. `vercel.json` sets the output folder and the headers. If
+   the live page title says "(local build)", the Root Directory is wrong.
+4. **First upload.** GitHub, Actions, "Publish case packs", Run workflow (or push any commit).
+
+## Adding a user
+
+Authentication, Users, Add user, **Create new user**, enter email and a password, tick
+**Auto Confirm User**. Send them the password by a private channel. A profile row is made
+automatically. The function refuses unconfirmed and anonymous accounts.
 
 Supabase's built-in email is for testing only. Its documentation says the rate is "set to
 2 messages per hour" and that it "will only send messages to" members of the project
-team ([source](https://supabase.com/docs/guides/auth/auth-smtp)). That is why this setup
-creates users with a password instead of sending invitations, and why the sign-in form
-says to ask the inviter for a forgotten password. Set up an email provider before you
-rely on email.
+team ([source](https://supabase.com/docs/guides/auth/auth-smtp)). Set up an email provider
+before relying on email.
 
-## 3. Run the SQL
+## Check after a change
 
-SQL Editor, New query, paste all of `supabase/migrations/001_access.sql`, Run. It is safe to
-run again. It creates:
+1. Open the site signed out: every case has a lock, "Invite only" above the list, title "EMSim".
+2. Sign in, open a case, play a minute.
+3. Browser console: no "Content Security Policy" messages.
+4. Claude can confirm through the connector: a new `ok` row in `case_access`, and the
+   function logs.
 
-- `profiles`: one row per user, `status` active or suspended, `plan` free for now.
-- `case_access`: one row per attempt to open a case, with the result.
-- `claim_case_load`: the rate limit and the log in one step. Only the edge function can call it.
-- the private storage bucket `case-packs`.
-
-Check: Table Editor shows `profiles` and `case_access`, both with RLS enabled. Storage shows
-`case-packs` marked private.
-
-## 4. Upload the case packs
-
-Storage, `case-packs`, Upload, select every file in `private-packs/`. When a file already
-exists, choose to overwrite it.
-
-Re-upload all of them after any rebuild that changed a case or the engine. Upload the packs
-**before** pushing the new site. If the order is reversed, users see "This case is being
-updated" until the packs catch up, which is safe but confusing. A rebuild that changed
-nothing produces identical files.
-
-## 5. Deploy the edge function
-
-1. Edge Functions, Deploy a new function, Via Editor. Name it exactly `case-pack`.
-2. Replace the example code with all of `supabase/functions/case-pack/index.ts`. Deploy.
-3. Leave **Verify JWT** on.
-4. Edge Functions, Secrets, add:
-
-| Name | Value | Required |
-|---|---|---|
-| `ALLOWED_ORIGINS` | Your site address, for example `https://emsim.vercel.app`. Comma-separate several. Add `http://localhost:8000` to test locally | Yes. With none set, every request is refused |
-| `CASE_LOADS_PER_HOUR` | 20 | No, 20 is the default |
-| `CASE_LOADS_PER_DAY` | 100 | No, 100 is the default |
-
-The function finds `SUPABASE_URL` and the secret key on its own.
-
-## 6. Deploy the site on Vercel
-
-1. Rebuild after step 1 so `site/index.html` carries the URL and key, and commit `site/`
-   and `vercel.json`. `private-packs/` is ignored by git on purpose.
-2. Vercel, Add New, Project, import the GitHub repository. Framework preset: Other. Leave
-   the build and output settings alone: `vercel.json` says to serve `site/` with no build.
-3. Deploy. Put the address it gives you into `ALLOWED_ORIGINS` (step 5) and Site URL (step 2).
-
-`vercel.json` also sets the security headers, including a Content-Security-Policy that lists
-the hash of each inline script. The build regenerates it, so always commit the two
-together.
+To test locally against the real project: set the secret `ALLOWED_ORIGINS` to
+`https://em-case-simulator-v1.vercel.app,http://localhost:8000`, then
+`python3 -m http.server 8000 --directory site`. Local servers do not send the `vercel.json`
+headers, so this does not test the CSP.
 
 Vercel's Hobby plan is for non-commercial use: "Hobby teams are restricted to non-commercial
-personal use only", and taking payment counts as commercial
-([source](https://vercel.com/docs/limits/fair-use-guidelines)). Move to Pro before Paddle
-goes live.
-
-## 7. Check it
-
-1. Open the site signed out: four cases with a lock, "Invite only" above the list.
-2. Sign in with a test user, open a case, play a minute of it.
-3. Open the browser console. There should be no "Content Security Policy" messages. The
-   interview model loads from jsDelivr and Hugging Face; this was not testable before
-   deployment, so if the console shows it blocked, tell Claude.
-4. Table Editor, `case_access`: one `ok` row for the case you opened.
-
-To test locally against the real project: add `http://localhost:8000` to `ALLOWED_ORIGINS`,
-then `python3 -m http.server 8000 --directory site`. Local servers do not send the
-`vercel.json` headers, so this does not test the CSP.
+personal use only" ([source](https://vercel.com/docs/limits/fair-use-guidelines)). Move to
+Pro before Paddle goes live.
 
 ## Managing access
 
@@ -160,9 +139,9 @@ profile row is refused without a log row.
 | That email and password do not match an invited account | Wrong password, or no such user |
 | Your account does not have access to cases right now | Profile suspended, no profile row, an anonymous account, or an email that is not confirmed |
 | You have opened a lot of cases in a short time | Rate limit (step 5) |
-| This case is not available right now | The pack is missing from the bucket |
-| This case is being updated | The pack in the bucket is not the one this site was built with. Re-upload `private-packs/` |
-| Could not reach the server | Network, the function is not deployed, or the site's address is missing from `ALLOWED_ORIGINS` (the browser reports that as a network failure) |
+| This case is not available right now | The pack for this build is not in the bucket yet. Normal for a minute after a push. Longer means the Action failed: check GitHub, Actions |
+| This case is being updated | The pack came back with different bytes than this build expects. Should not happen with content-addressed packs; tell Claude |
+| Could not reach the server | Network, the function is not deployed, or the site's address is not in the function's allowed origins (the browser reports that as a network failure) |
 
 ## Not built yet
 

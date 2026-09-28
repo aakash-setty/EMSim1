@@ -1,10 +1,10 @@
 // EMSim v0.18: the case-pack edge function.
 //
-// POST { "prefix": "CHFE" } with the signed-in user's access token. Returns the pack JSON
+// POST { "prefix": "CHFE", "sha256": "<64 hex>" } with the signed-in user's access token. Returns the pack JSON
 // exactly as uploaded, so the browser can check it against the SHA-256 in the site build.
 //
-// Deploy: Supabase dashboard, Edge Functions, Deploy a new function, name it `case-pack`,
-// paste this file. Keep "Verify JWT" on. Set the secrets listed in docs/deployment.md.
+// Deploy: Claude deploys it through the Supabase connector (name `case-pack`, Verify JWT on).
+// By hand: dashboard, Edge Functions, paste this file. Secrets are listed in docs/deployment.md.
 //
 // Order of checks: method, origin, signed-in user, case name, then the database decides
 // (active account, rate limit) and logs the attempt, then storage. Nothing is read from
@@ -28,15 +28,21 @@ function secretKey(): string {
   }
 }
 
-// Comma-separated list of the site origins allowed to call this function, for example
-// "https://emsim.vercel.app,http://localhost:8000". Required: with none set, every browser
-// request is refused.
-const ALLOWED_ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") ?? "")
+// The site origins allowed to call this function. The secret ALLOWED_ORIGINS, a
+// comma-separated list such as "https://em-case-simulator-v1.vercel.app,http://localhost:8000",
+// replaces the default when it is set. The default lives here, in git, so a new site address
+// is a code change that deploys like any other.
+const DEFAULT_ORIGINS = "https://em-case-simulator-v1.vercel.app";
+const ALLOWED_ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") || DEFAULT_ORIGINS)
   .split(",").map((s) => s.trim().replace(/\/+$/, "")).filter(Boolean);
 const PER_HOUR = positiveInt(Deno.env.get("CASE_LOADS_PER_HOUR"), 20);
 const PER_DAY = positiveInt(Deno.env.get("CASE_LOADS_PER_DAY"), 100);
 const BUCKET = "case-packs";
 const PREFIX_RE = /^[A-Z][A-Z0-9]{1,15}$/;
+// Packs are stored by content: case-packs/<PREFIX>/<sha256>.json. A new site build asks for
+// its own version while an older build still open in a browser keeps getting the older one,
+// so the site and the packs can be deployed in either order.
+const SHA_RE = /^[0-9a-f]{64}$/;
 
 function positiveInt(v: string | undefined, fallback: number): number {
   const n = Number(v);
@@ -92,14 +98,15 @@ Deno.serve(async (req: Request) => {
   // confirmed, gets nothing even if a setting is later changed to allow them to exist.
   if (user.is_anonymous || !user.email_confirmed_at) return reply(403, { error: "no_access" }, origin);
 
-  let prefix = "";
+  let prefix = "", sha = "";
   try {
     const body = await req.json();
     prefix = typeof body?.prefix === "string" ? body.prefix : "";
+    sha = typeof body?.sha256 === "string" ? body.sha256 : "";
   } catch {
     return reply(400, { error: "bad_request" }, origin);
   }
-  if (!PREFIX_RE.test(prefix)) return reply(400, { error: "bad_request" }, origin);
+  if (!PREFIX_RE.test(prefix) || !SHA_RE.test(sha)) return reply(400, { error: "bad_request" }, origin);
 
   const { data: verdict, error: rpcError } = await admin.rpc("claim_case_load", {
     p_user: user.id, p_prefix: prefix, p_per_hour: PER_HOUR, p_per_day: PER_DAY,
@@ -111,7 +118,7 @@ Deno.serve(async (req: Request) => {
   if (verdict === "rate_limited") return reply(429, { error: "rate_limited" }, origin);
   if (verdict !== "ok") return reply(403, { error: "no_access" }, origin);
 
-  const { data: file, error: fileError } = await admin.storage.from(BUCKET).download(`${prefix}.json`);
+  const { data: file, error: fileError } = await admin.storage.from(BUCKET).download(`${prefix}/${sha}.json`);
   if (fileError || !file) return reply(404, { error: "not_found" }, origin);
 
   // Sent as the exact bytes stored, never re-serialised: the browser hashes them.

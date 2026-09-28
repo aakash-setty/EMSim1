@@ -5,6 +5,31 @@ is usable with learners.
 
 ---
 
+## v0.18e: push to deploy
+
+A push to `main` now deploys everything. Vercel serves `site/` as before, and a new GitHub
+Action (`.github/workflows/publish-packs.yml`) builds the same commit, refuses to continue if
+the committed `site/index.html` differs from the build, and uploads the case packs with
+`engine/publish_packs.js`, which reads each one back and checks its hash. The Action needs one
+repository secret, `SUPABASE_SECRET_KEY`.
+
+Packs are stored by content: `case-packs/<PREFIX>/<sha256>.json`. The site sends the hash it
+expects, and the edge function serves that exact file. An open page built before a change
+keeps working, and the site and the packs can go live in either order. A missing pack now
+says "If it was just updated, try again in a minute."
+
+The edge function's allowed site address defaults to `https://em-case-simulator-v1.vercel.app`
+in code; the `ALLOWED_ORIGINS` secret still overrides it. Supabase setup done through the
+Supabase connector: `001_access.sql` applied (tables, RLS, grants, trigger and private bucket
+verified; the security advisor's only note is the intended "RLS enabled, no policy" on
+`case_access`), and `case-pack` deployed with Verify JWT on. A request with no session is
+refused with 401 by the function on the live project.
+
+`docs/deployment.md` is rewritten around the new flow. The site check adds three publisher
+checks (40 ok).
+
+---
+
 ## v0.18d: the Supabase project is connected
 
 `engine/site-config.json` now holds the project URL (`https://brhtyuahzbecpnqlgxib.supabase.co`)

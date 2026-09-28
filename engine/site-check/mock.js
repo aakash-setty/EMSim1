@@ -1,6 +1,7 @@
 // Mock of the Supabase endpoints the site and the edge function call. Functions are proxied
 // to the real edge function running under Deno on :8001.
-const http=require('http'), fs=require('fs');
+const http=require('http'), fs=require('fs'), crypto=require('crypto');
+const STORE=new Map();
 const PACKS=(process.env.PACKS_DIR||'private-packs').replace(/\/?$/,'/');
 const S={rpc:'ok', tamper:false, userOk:true, unconfirmed:false, calls:{fn:0,rpc:0,storage:0,user:0,token:0}, log:[]};
 const USER={id:'11111111-1111-1111-1111-111111111111',aud:'authenticated',role:'authenticated',email:'res@example.com',email_confirmed_at:new Date().toISOString(),is_anonymous:false,app_metadata:{},user_metadata:{},created_at:new Date().toISOString()};
@@ -44,11 +45,26 @@ http.createServer(async (req,res)=>{
     res.writeHead(200,{'Content-Type':'application/json'}); res.end(JSON.stringify(S.rpc)); return;
   }
   if(u.pathname.startsWith('/storage/v1/object/')){
+    // Packs live at case-packs/<PREFIX>/<sha256>.json. Uploads (from publish_packs.js) go to an
+    // in-memory store and record the auth headers. Downloads read the store, then, unless
+    // __ctl {storeOnly:true}, fall back to private-packs/<PREFIX>.json when its hash matches.
     S.calls.storage++; S.lastStorage=u.pathname;
-    const name=u.pathname.split('/').pop();
-    const f=PACKS+name;
-    if(!/^[A-Z0-9]+\.json$/.test(name)||!fs.existsSync(f)){res.writeHead(400,{'Content-Type':'application/json'});res.end(JSON.stringify({statusCode:'404',error:'not_found',message:'Object not found'}));return;}
-    let data=fs.readFileSync(f); if(S.tamper) data=Buffer.concat([data,Buffer.from(' ')]);
+    const key=decodeURIComponent(u.pathname.replace(/^\/storage\/v1\/object\/(authenticated\/)?/,''));
+    if(req.method==='POST'||req.method==='PUT'){
+      const b=await body(req); S.uploads=(S.uploads||[]);
+      S.uploads.push({key,bytes:b.length,apikey:req.headers.apikey||null,auth:req.headers.authorization||null,upsert:req.headers['x-upsert']||null,type:req.headers['content-type']||null});
+      if(!(req.headers.apikey==='sb_secret_test')){res.writeHead(403,{'Content-Type':'application/json'});res.end(JSON.stringify({statusCode:'403',error:'Unauthorized',message:'bad key'}));return;}
+      STORE.set(key,b); res.writeHead(200,{'Content-Type':'application/json'}); res.end(JSON.stringify({Key:key})); return;
+    }
+    const nf=()=>{res.writeHead(400,{'Content-Type':'application/json'});res.end(JSON.stringify({statusCode:'404',error:'not_found',message:'Object not found'}));};
+    let data=STORE.get(key);
+    if(!data&&!S.storeOnly){
+      const m=key.match(/^case-packs\/([A-Z0-9]+)\/([0-9a-f]{64})\.json$/);
+      const f=m&&PACKS+m[1]+'.json';
+      if(f&&fs.existsSync(f)){ const d=fs.readFileSync(f); if(crypto.createHash('sha256').update(d).digest('hex')===m[2]) data=d; }
+    }
+    if(!data) return nf();
+    if(S.tamper) data=Buffer.concat([data,Buffer.from(' ')]);
     res.writeHead(200,{'Content-Type':'application/json'}); res.end(data); return;
   }
   res.writeHead(404); res.end('no mock for '+u.pathname);

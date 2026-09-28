@@ -45,3 +45,12 @@ trap 'kill $P1 $P2 $P3 $P4 $P5 2>/dev/null || true' EXIT
 for i in $(seq 1 60); do curl -s -o /dev/null http://localhost:8000/ && break; sleep 1; done
 node engine/site-check/flow.js
 SITE_CONFIGURED=$(cat "$T/configured") node engine/site-check/deep.js
+# The pack publisher (run by the GitHub Action) against the mock bucket: uploads all, then
+# finds them all present, then refuses a pack that reads back altered.
+curl -s -XPOST http://localhost:54321/__ctl -d '{"storeOnly":true,"tamper":false}' > /dev/null
+P="env SUPABASE_URL=http://localhost:54321 SUPABASE_SECRET_KEY=sb_secret_test node engine/publish_packs.js"
+$P | tail -1 | grep -q ", 0 already present" && echo "ok   publisher uploads every pack" || echo "FAIL publisher uploads every pack"
+$P | tail -1 | grep -q " 0 uploaded" && echo "ok   publisher skips packs already there" || echo "FAIL publisher skips packs already there"
+curl -s -XPOST http://localhost:54321/__ctl -d '{"storeOnly":true,"tamper":true}' > /dev/null
+curl -s -XPOST http://localhost:54321/__ctl -d '{}' > /dev/null
+if $P > /dev/null 2>&1; then echo "FAIL publisher trusts a pack that reads back altered"; else echo "ok   publisher refuses a pack that reads back altered"; fi

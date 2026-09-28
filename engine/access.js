@@ -158,13 +158,13 @@ const ACCESS_UI = (function(){
       res=await fetch(CFG.supabaseUrl.replace(/\/+$/,'')+'/functions/v1/'+encodeURIComponent(CFG.edgeFunction||'case-pack'),{
         method:'POST', signal:ctl.signal,
         headers:{'Authorization':'Bearer '+s.access_token,'apikey':CFG.supabaseKey,'Content-Type':'application/json'},
-        body:JSON.stringify({prefix:stub.prefix})});
+        body:JSON.stringify({prefix:stub.prefix, sha256:stub.packSha256})});
     }catch(e){
       throw fail(e&&e.name==='AbortError'?'The case took too long to download. Try again.':'Could not reach the server. Check your connection and try again.');
     }finally{ clearTimeout(timer); }
     if(res.status===401) throw fail('Your session has ended. Sign in again.','signin');
     if(res.status===403) throw fail('Your account does not have access to cases right now.');
-    if(res.status===404) throw fail('This case is not available right now.');
+    if(res.status===404) throw fail('This case is not available right now. If it was just updated, try again in a minute.');
     if(res.status===429) throw fail('You have opened a lot of cases in a short time. Try again later.');
     if(!res.ok) throw fail('The server could not send this case ('+res.status+'). Try again.');
     const text=await res.text();
