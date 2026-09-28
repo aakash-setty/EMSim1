@@ -79,6 +79,8 @@ const dispLabel = id => (PROTO.dispLabels||{})[id] || (id?id.replace(/_/g,' '):'
 let PAUSED=false, PAUSED_AT=0, PAUSED_MS=0;
 const elapsedMs = ()=> (PAUSED?PAUSED_AT:Date.now()) - T0 - PAUSED_MS;
 const now = ()=> ENDED ? ST.now : (STARTED ? Math.max(0,elapsedMs())/1000 : 0);
+/* v0.18f. Analytics: a no-op outside the deployed site (see analytics.js). */
+const AN=(typeof ANALYTICS==='object'&&ANALYTICS)||{track(){},count(){},takeCounts(){return {};}};
 function log(e){ e.seq=SEQ++; e.t=now(); LOG.push(e); refold(); }
 function refold(){ ST=fold(LOG,now(),DM()); }
 
@@ -1680,7 +1682,7 @@ function gateHTML(){
 }
 
 function revealAnswers(){
-  REVEALED=true;
+  REVEALED=true; AN.track('debrief_revealed',{case:PACK.prefix});
   const v=el('endview');
   v.innerHTML='<div class="endwrap">'
     +(ST.halted?haltCard():'')+(ST.failed?failCard():'')+debriefHTML()+'</div>';
@@ -1732,6 +1734,17 @@ function finish(){
   const v=el('endview'); v.classList.remove('hidden');
   REVEALED=false;
   v.innerHTML='<div class="endwrap">'+gateHTML()+'</div>';
+  /* Counts and kinds only. No orders, answers, diagnoses or notes leave the page. */
+  try{
+    const c=AN.takeCounts(), kinds={};
+    LOG.forEach(e=>{ const k=e.kind||(e.actionId?'action':'other'); kinds[k]=(kinds[k]||0)+1; });
+    AN.track('case_finished',{case:PACK.prefix, mode:MODE, outcome:endingKind(),
+      ended_by: ST.halted?'harmful_action':(ST.failed?(ST.failed.byClock?'clock':'action'):(ST.earlyExit?'early_exit':'completed')),
+      sim_seconds: Math.round(ST.now||0),
+      critical_done:[...ST.expected].filter(id=>ST.satisfied.has(id)).length, critical_total:ST.expected.size,
+      actions:kinds.action||0, interview_questions:kinds.interview||0, exams:kinds.exam||0,
+      voice_orders:c.voice_orders||0, search_opens:c.search_opens||0});
+  }catch(err){}
   v.scrollTop=0;
 }
 function restart(){
@@ -2177,6 +2190,7 @@ function chooseCase(i){
   selectCase(i);
   bindCase();
   MODE=SHARED.difficulty.default;
+  AN.track('case_opened',{case:PACK.prefix});
   /* Fold the chosen case at t=0 before anything reads ST. Until v0.17 ST still held the
      previously bound case here, so the first five seconds of a run ramped from the
      numbers of whichever case had been bound before it, and the splash figure would
@@ -2273,6 +2287,7 @@ function renderSplashVitals(){
 }
 
 function begin(){
+  AN.takeCounts(); AN.track('case_started',{case:PACK.prefix, mode:MODE});
   STARTED=true; T0=Date.now(); PAUSED=false; PAUSED_MS=0; PAUSED_AT=0;
   /* A history entry to pop, so the back button has something to catch. It can throw on a
      file:// URL in some browsers, and a simulator that will not start because the history
@@ -2401,6 +2416,7 @@ let SEARCH_OPEN=false, SEARCH_Q='';
 function searchOpen(){ return SEARCH_OPEN; }
 function openSearch(){
   if(!inCase()) return;
+  AN.count('search_opens');
   /* Two dropdowns from the same row, so opening one puts the other away. Away, not
      discarded: orders already spoken into the list are still there on the way back. */
   if(VOICE.collapse) VOICE.collapse();

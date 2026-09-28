@@ -356,6 +356,7 @@ const VOICE=(function(){
        the fold applies them in sequence and every prerequisite evaluates as it would
        one at a time. */
     for(const r of ok) log({actionId:r.id});
+    if(typeof ANALYTICS==='object') ANALYTICS.count('voice_orders', ok.length);
     clear(); OPEN=false;
     render(); paint();
   }

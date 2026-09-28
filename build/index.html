@@ -5362,6 +5362,7 @@ const VOICE=(function(){
        the fold applies them in sequence and every prerequisite evaluates as it would
        one at a time. */
     for(const r of ok) log({actionId:r.id});
+    if(typeof ANALYTICS==='object') ANALYTICS.count('voice_orders', ok.length);
     clear(); OPEN=false;
     render(); paint();
   }
@@ -5472,6 +5473,74 @@ const VOICE=(function(){
 
 /*__VOICE_END__*/
 
+/* ---------- analytics (v0.18f) ----------
+   Product analytics through PostHog, in the deployed site only. The local build and the
+   tests never load PostHog; every call here is then a no-op.
+
+   What is sent, and what is not. Events carry the case prefix, the difficulty, counts and
+   durations, and the kind of ending. They never carry case text, typed questions, orders,
+   diagnoses, the reflection note or anything a learner writes. Autocapture is off because it
+   reads the text of what is clicked, and much of what is clicked here is case content.
+   Session recording is off, and the vendored build cannot load it later.
+
+   Who. A learner is identified by their Supabase user id and nothing else: no email, no
+   name. Before sign-in they are an anonymous visitor, and person profiles are only made
+   for identified users. */
+const ANALYTICS = (function(){
+  const CFG = (typeof ACCESS==='object' && ACCESS) || {mode:'local'};
+  const on = CFG.mode==='site' && !!CFG.posthogKey && typeof posthog==='object' && posthog && typeof posthog.init==='function';
+  let ready=false, errors=0, uid=null;
+  const counts={};
+
+  function init(){
+    if(!on||ready) return;
+    try{
+      posthog.init(CFG.posthogKey, {
+        api_host: CFG.posthogHost || 'https://us.i.posthog.com',
+        ui_host: 'https://us.posthog.com',
+        person_profiles: 'identified_only',
+        autocapture: false,
+        capture_pageview: true,
+        capture_pageleave: true,
+        disable_session_recording: true,
+        disable_surveys: true,
+        disable_external_dependency_loading: true,
+        advanced_disable_toolbar_metrics: true,
+        mask_all_text: true,
+        mask_all_element_attributes: true,
+      });
+      ready=true;
+    }catch(e){ ready=false; }
+    window.addEventListener('error', e=>jsError(e && e.message));
+    window.addEventListener('unhandledrejection', e=>jsError(e && e.reason && (e.reason.message||String(e.reason))));
+  }
+  function track(name, props){
+    if(!ready) return;
+    try{ posthog.capture(name, props||{}); }catch(e){}
+  }
+  /* Called by access.js whenever the session changes. */
+  function user(id){
+    if(!ready) return;
+    try{
+      if(id && id!==uid){ posthog.identify(id); uid=id; }
+      else if(!id && uid){ posthog.reset(); uid=null; }
+    }catch(e){}
+  }
+  /* A tally for the current run, sent with case_finished and then cleared. */
+  function count(key, n){ counts[key]=(counts[key]||0)+(n||1); }
+  function takeCounts(){ const c=Object.assign({},counts); Object.keys(counts).forEach(k=>delete counts[k]); return c; }
+  /* Errors, at most five per page load, with the message cut to 200 characters. A stopgap
+     until Sentry. */
+  function jsError(msg){
+    if(!ready || errors>=5) return;
+    errors++;
+    track('js_error', {message: String(msg||'unknown').slice(0,200),
+                       case: (typeof PACK==='object' && PACK && PACK.prefix) || null});
+  }
+  return {init, track, user, count, takeCounts, enabled:()=>ready};
+})();
+
+
 /*__ACCESS_START__*/
 /* ---------- access (v0.18) ----------
    Who may open which case, in the deployed build.
@@ -5490,6 +5559,8 @@ const VOICE=(function(){
    Nothing here is a secret. The Supabase URL and key in ACCESS are the public ones; what
    a user may fetch is decided by the edge function and the database, not by this file. */
 const ACCESS_UI = (function(){
+  /* Analytics calls are no-ops unless ANALYTICS is present and configured (site build). */
+  const A = (typeof ANALYTICS==='object' && ANALYTICS) || {track(){}, user(){}, count(){}};
   const CFG = (typeof ACCESS==='object' && ACCESS) || {mode:'local'};
   const SITE = CFG.mode==='site';
   const $ = id => document.getElementById(id);
@@ -5504,13 +5575,14 @@ const ACCESS_UI = (function(){
     if(legal) legal.textContent=[CFG.legal||'', draft?'Cases are drafts under clinical review and are not for patient care.':'']
       .filter(Boolean).join(' ');
     if(!SITE) return;
+    if(typeof ANALYTICS==='object') ANALYTICS.init();
     $('wl-acct').hidden=false;
     bindDialog();
     if(!configured()){ msg='Sign-in is not configured for this build.'; paint(); return; }
     client = supabase.createClient(CFG.supabaseUrl, CFG.supabaseKey,
       {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:false}});
-    client.auth.onAuthStateChange((_ev,s)=>{ session=s||null; paint(); });
-    client.auth.getSession().then(({data})=>{ session=(data&&data.session)||null; paint(); })
+    client.auth.onAuthStateChange((_ev,s)=>{ session=s||null; A.user(session&&session.user&&session.user.id); paint(); });
+    client.auth.getSession().then(({data})=>{ session=(data&&data.session)||null; A.user(session&&session.user&&session.user.id); paint(); })
       .catch(()=>{ session=null; paint(); });
     paint();
   }
@@ -5567,20 +5639,24 @@ const ACCESS_UI = (function(){
     try{
       const {data,error}=await client.auth.signInWithPassword({email,password});
       if(error){
+        A.track('signin_failed', {reason: /invalid/i.test(error.message||'') ? 'wrong_credentials' : 'other'});
         $('signinerr').textContent = /invalid/i.test(error.message||'')
           ? 'That email and password do not match an invited account.'
           : 'Sign-in failed: '+(error.message||'unknown error')+'.';
         return;
       }
       session=data.session; msg='';
+      A.user(session&&session.user&&session.user.id); A.track('signin_succeeded');
       const want=pending; hideDialog(); paint();
       if(want>=0) open(want);
     }catch(err){
+      A.track('signin_failed', {reason:'network'});
       $('signinerr').textContent='Could not reach the sign-in service. Check your connection and try again.';
     }finally{ ok.disabled=false; }
   }
   async function signOut(){
     /* Local scope: this browser only. The default signs the account out on every device. */
+    A.track('signed_out'); A.user(null);
     try{ await client.auth.signOut({scope:'local'}); }catch(e){}
     /* Reloading drops every pack already fetched in this tab along with the session. */
     location.reload();
@@ -5599,13 +5675,16 @@ const ACCESS_UI = (function(){
     }
     if(!session){ busy=false; showDialog(i); return; }
     say(''); loading=i; paintRow();
+    const t0=Date.now(), prefix=CASES[i].prefix;
     try{
       const pack=await fetchPack(CASES[i]);
+      A.track('case_loaded', {case:prefix, ms:Date.now()-t0, bytes:CASES[i].packBytes||null});
       CASES[i]=pack;
       busy=false; loading=-1; paintRow();
       chooseCase(i);
     }catch(err){
       loading=-1;
+      A.track('case_load_failed', {case:prefix, reason:(err&&err.reason)||(err&&err.code)||'other', status:(err&&err.status)||null});
       if(err&&err.code==='signin'){ session=null; paint(); showDialog(i); }
       else say((err&&err.userMessage)||'This case could not be opened. Try again.');
     }finally{
@@ -5618,7 +5697,7 @@ const ACCESS_UI = (function(){
     document.querySelectorAll('.wl-case.loading').forEach(r=>r.classList.remove('loading'));
     if(loading>=0){ const r=document.querySelector('.wl-case[data-case="'+loading+'"]'); if(r) r.classList.add('loading'); }
   }
-  function fail(userMessage,code){ const e=new Error(userMessage); e.userMessage=userMessage; e.code=code; return e; }
+  function fail(userMessage,code,reason,status){ const e=new Error(userMessage); e.userMessage=userMessage; e.code=code; e.reason=reason; e.status=status; return e; }
   async function fetchPack(stub){
     let s=null, gsErr=null;
     try{ const r=await client.auth.getSession(); s=r.data&&r.data.session; gsErr=r.error; }  // refreshes an expired token
@@ -5635,17 +5714,17 @@ const ACCESS_UI = (function(){
         headers:{'Authorization':'Bearer '+s.access_token,'apikey':CFG.supabaseKey,'Content-Type':'application/json'},
         body:JSON.stringify({prefix:stub.prefix, sha256:stub.packSha256})});
     }catch(e){
-      throw fail(e&&e.name==='AbortError'?'The case took too long to download. Try again.':'Could not reach the server. Check your connection and try again.');
+      throw fail(e&&e.name==='AbortError'?'The case took too long to download. Try again.':'Could not reach the server. Check your connection and try again.',undefined,e&&e.name==='AbortError'?'timeout':'network');
     }finally{ clearTimeout(timer); }
-    if(res.status===401) throw fail('Your session has ended. Sign in again.','signin');
-    if(res.status===403) throw fail('Your account does not have access to cases right now.');
-    if(res.status===404) throw fail('This case is not available right now. If it was just updated, try again in a minute.');
-    if(res.status===429) throw fail('You have opened a lot of cases in a short time. Try again later.');
-    if(!res.ok) throw fail('The server could not send this case ('+res.status+'). Try again.');
+    if(res.status===401) throw fail('Your session has ended. Sign in again.','signin','session_ended',401);
+    if(res.status===403) throw fail('Your account does not have access to cases right now.',undefined,'no_access',403);
+    if(res.status===404) throw fail('This case is not available right now. If it was just updated, try again in a minute.',undefined,'not_found',404);
+    if(res.status===429) throw fail('You have opened a lot of cases in a short time. Try again later.',undefined,'rate_limited',429);
+    if(!res.ok) throw fail('The server could not send this case ('+res.status+'). Try again.',undefined,'server_error',res.status);
     const text=await res.text();
     const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));
     const hex=[...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
-    if(hex!==stub.packSha256) throw fail('This case is being updated. Try again in a few minutes.');
+    if(hex!==stub.packSha256) throw fail('This case is being updated. Try again in a few minutes.',undefined,'hash_mismatch');
     let pack;
     try{ pack=JSON.parse(text); }catch(e){ throw fail('The case download was damaged. Try again.'); }
     if(!pack||pack.prefix!==stub.prefix||pack.locked) throw fail('The server sent the wrong case. Try again.');
@@ -5738,6 +5817,8 @@ const dispLabel = id => (PROTO.dispLabels||{})[id] || (id?id.replace(/_/g,' '):'
 let PAUSED=false, PAUSED_AT=0, PAUSED_MS=0;
 const elapsedMs = ()=> (PAUSED?PAUSED_AT:Date.now()) - T0 - PAUSED_MS;
 const now = ()=> ENDED ? ST.now : (STARTED ? Math.max(0,elapsedMs())/1000 : 0);
+/* v0.18f. Analytics: a no-op outside the deployed site (see analytics.js). */
+const AN=(typeof ANALYTICS==='object'&&ANALYTICS)||{track(){},count(){},takeCounts(){return {};}};
 function log(e){ e.seq=SEQ++; e.t=now(); LOG.push(e); refold(); }
 function refold(){ ST=fold(LOG,now(),DM()); }
 
@@ -7339,7 +7420,7 @@ function gateHTML(){
 }
 
 function revealAnswers(){
-  REVEALED=true;
+  REVEALED=true; AN.track('debrief_revealed',{case:PACK.prefix});
   const v=el('endview');
   v.innerHTML='<div class="endwrap">'
     +(ST.halted?haltCard():'')+(ST.failed?failCard():'')+debriefHTML()+'</div>';
@@ -7391,6 +7472,17 @@ function finish(){
   const v=el('endview'); v.classList.remove('hidden');
   REVEALED=false;
   v.innerHTML='<div class="endwrap">'+gateHTML()+'</div>';
+  /* Counts and kinds only. No orders, answers, diagnoses or notes leave the page. */
+  try{
+    const c=AN.takeCounts(), kinds={};
+    LOG.forEach(e=>{ const k=e.kind||(e.actionId?'action':'other'); kinds[k]=(kinds[k]||0)+1; });
+    AN.track('case_finished',{case:PACK.prefix, mode:MODE, outcome:endingKind(),
+      ended_by: ST.halted?'harmful_action':(ST.failed?(ST.failed.byClock?'clock':'action'):(ST.earlyExit?'early_exit':'completed')),
+      sim_seconds: Math.round(ST.now||0),
+      critical_done:[...ST.expected].filter(id=>ST.satisfied.has(id)).length, critical_total:ST.expected.size,
+      actions:kinds.action||0, interview_questions:kinds.interview||0, exams:kinds.exam||0,
+      voice_orders:c.voice_orders||0, search_opens:c.search_opens||0});
+  }catch(err){}
   v.scrollTop=0;
 }
 function restart(){
@@ -7836,6 +7928,7 @@ function chooseCase(i){
   selectCase(i);
   bindCase();
   MODE=SHARED.difficulty.default;
+  AN.track('case_opened',{case:PACK.prefix});
   /* Fold the chosen case at t=0 before anything reads ST. Until v0.17 ST still held the
      previously bound case here, so the first five seconds of a run ramped from the
      numbers of whichever case had been bound before it, and the splash figure would
@@ -7932,6 +8025,7 @@ function renderSplashVitals(){
 }
 
 function begin(){
+  AN.takeCounts(); AN.track('case_started',{case:PACK.prefix, mode:MODE});
   STARTED=true; T0=Date.now(); PAUSED=false; PAUSED_MS=0; PAUSED_AT=0;
   /* A history entry to pop, so the back button has something to catch. It can throw on a
      file:// URL in some browsers, and a simulator that will not start because the history
@@ -8060,6 +8154,7 @@ let SEARCH_OPEN=false, SEARCH_Q='';
 function searchOpen(){ return SEARCH_OPEN; }
 function openSearch(){
   if(!inCase()) return;
+  AN.count('search_opens');
   /* Two dropdowns from the same row, so opening one puts the other away. Away, not
      discarded: orders already spoken into the list are still there on the way back. */
   if(VOICE.collapse) VOICE.collapse();

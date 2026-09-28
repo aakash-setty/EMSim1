@@ -59,6 +59,7 @@ Claude. The files in git are the record of what is live.
 | Allowed site address | `DEFAULT_ORIGINS` in the function. The secret `ALLOWED_ORIGINS` overrides it if set | Code change |
 | Rate limits | 20 per hour, 100 per day. Secrets `CASE_LOADS_PER_HOUR` and `CASE_LOADS_PER_DAY` override them | Dashboard, Edge Functions, Secrets |
 | Supabase URL and publishable key | `engine/site-config.json` (public by design) | Code change |
+| PostHog project key and host | `engine/site-config.json` (public by design) | Code change |
 | Pack upload | `.github/workflows/publish-packs.yml` and `engine/publish_packs.js` | Code change |
 | Secret key for uploads | GitHub secret `SUPABASE_SECRET_KEY` | You only |
 | Sign-ups off, Site URL | Supabase dashboard, Authentication | Dashboard |
@@ -77,6 +78,34 @@ Claude. The files in git are the record of what is live.
    Preset Other, no overrides. `vercel.json` sets the output folder and the headers. If
    the live page title says "(local build)", the Root Directory is wrong.
 4. **First upload.** GitHub, Actions, "Publish case packs", Run workflow (or push any commit).
+
+## Analytics (PostHog)
+
+The site sends product events to PostHog (US cloud) once `posthogKey` in
+`engine/site-config.json` holds the project API key (`phc_...`, public by design). The
+local build never loads PostHog. `engine/analytics.js` has the code, and the library is the
+vendored no-external build in `engine/vendor/posthog-js/`, so recording, surveys and the
+toolbar cannot be switched on from the PostHog dashboard.
+
+Choices (29 Sep 2026): no session recording, autocapture off (it reads the text of what is
+clicked, which is often case content), learners identified by Supabase user id only, never
+email or name. Events never carry case text, typed questions, orders, diagnoses or notes.
+
+| Event | Properties |
+|---|---|
+| `$pageview`, `$pageleave` | PostHog defaults |
+| `signin_succeeded`, `signin_failed` | `reason`: wrong_credentials, network, other |
+| `signed_out` | |
+| `case_loaded`, `case_load_failed` | `case`, `ms`, `bytes`, or `reason` and `status` |
+| `case_opened`, `case_started` | `case`, `mode` |
+| `case_finished` | `case`, `mode`, `outcome` (all, missed, failed), `ended_by`, `sim_seconds`, `critical_done`, `critical_total`, `actions`, `interview_questions`, `exams`, `voice_orders`, `search_opens` |
+| `debrief_revealed` | `case` |
+| `js_error` | `message` (200 characters), `case`. At most five per page load |
+
+PostHog drops events from browsers that identify as automated, so test runs of the site
+check do not appear in PostHog.
+
+Recommended PostHog project settings: Settings, Project, turn on "Discard client IP data".
 
 ## Adding a user
 

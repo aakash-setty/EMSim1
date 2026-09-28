@@ -48,6 +48,8 @@ PACKS_DIR = os.path.join(ROOT, "private-packs")
 SITE_CONFIG = os.path.join(HERE, "site-config.json")
 SUPABASE_JS = os.path.join(HERE, "vendor", "supabase-js", "supabase.umd.js")
 SUPABASE_LICENSE = os.path.join(HERE, "vendor", "supabase-js", "LICENSE")
+POSTHOG_JS = os.path.join(HERE, "vendor", "posthog-js", "posthog.no-external.js")
+POSTHOG_LICENSE = os.path.join(HERE, "vendor", "posthog-js", "LICENSE")
 
 catalog = json.load(open(catalog_path("action-catalog.json"), encoding="utf-8"))
 dxcat = json.load(open(catalog_path("diagnosis-catalog.json"), encoding="utf-8"))
@@ -648,6 +650,18 @@ def check_public_key(key, url):
         raise SystemExit("site-config.json: supabaseUrl should look like https://<project-ref>.supabase.co")
 
 
+def check_posthog(key, host):
+    """The project API key (phc_) is public and write-only. A personal API key (phx_) can read
+    and change the whole PostHog account and must never be published."""
+    if not key:
+        return
+    if not key.startswith("phc_"):
+        raise SystemExit("site-config.json: posthogKey must be the project API key (phc_...). "
+                         "A phx_ personal key must never go in the site; revoke it if it was pasted.")
+    if not re.fullmatch(r"https://(us|eu)\.i\.posthog\.com", host or ""):
+        raise SystemExit("site-config.json: posthogHost should be https://us.i.posthog.com or https://eu.i.posthog.com")
+
+
 def write_headers(site_html):
     hashes = []
     for m in re.finditer(r"<script(?P<attrs>[^>]*)>(?P<body>.*?)</script>", site_html, re.S):
@@ -663,6 +677,13 @@ def write_headers(site_html):
         csp["connect-src"] = [h for h in CSP_BASE["connect-src"] if "supabase.co" not in h] + [url]
     else:
         csp["connect-src"] = [h for h in CSP_BASE["connect-src"] if not h.startswith("wss:")]
+    # PostHog's ingestion host, only when analytics is configured.
+    ph = json.load(open(SITE_CONFIG, encoding="utf-8"))
+    if ph.get("posthogKey") and ph.get("posthogHost"):
+        # Events go to the ingestion host. The library also fetches its remote settings (JSON,
+        # not code) from the matching assets host. script-src stays closed to PostHog.
+        host = ph["posthogHost"].rstrip("/")
+        csp["connect-src"] = csp["connect-src"] + [host, host.replace(".i.posthog.com", "-assets.i.posthog.com")]
     policy = "; ".join(k + " " + " ".join(v) for k, v in csp.items())
     conf = {
         "buildCommand": "",
@@ -777,6 +798,10 @@ def main():
               # harness can evaluate it without the page.
               "\n/*__VOICE_START__*/\n" + open(os.path.join(HERE, "voice.js"), encoding="utf-8").read() +
               "\n/*__VOICE_END__*/\n" +
+              # analytics.js (v0.18f) declares `const ANALYTICS`, read by access.js when it
+              # loads, so it comes first. It does nothing unless the page is the site build
+              # with a PostHog key.
+              "\n" + open(os.path.join(HERE, "analytics.js"), encoding="utf-8").read() + "\n" +
               # access.js (v0.18) declares `const ACCESS_UI`, which ui.js calls from boot() and
               # from chooseCase, so it too comes before ui.js.
               "\n/*__ACCESS_START__*/\n" + open(os.path.join(HERE, "access.js"), encoding="utf-8").read() +
@@ -863,13 +888,22 @@ def main():
         check_public_key(cfg.get("supabaseKey", ""), cfg.get("supabaseUrl", ""))
         access = {"mode": "site", "product": product, "legal": legal,
                   "supabaseUrl": cfg.get("supabaseUrl", ""), "supabaseKey": cfg.get("supabaseKey", ""),
-                  "edgeFunction": cfg.get("edgeFunction", "case-pack")}
+                  "edgeFunction": cfg.get("edgeFunction", "case-pack"),
+                  "posthogKey": cfg.get("posthogKey", ""), "posthogHost": cfg.get("posthogHost", "")}
+        check_posthog(access["posthogKey"], access["posthogHost"])
         lib_js = open(SUPABASE_JS, encoding="utf-8").read()
         if "</script" in lib_js.lower():
             raise SystemExit("vendored supabase-js contains </script and cannot be inlined")
         lib_notice = open(SUPABASE_LICENSE, encoding="utf-8").read().replace("*/", "* /")
         lib = ("<script>/*\nsupabase-js 2.117.2, https://github.com/supabase/supabase-js\n" +
                lib_notice + "\n*/\n" + lib_js + "\n</script>")
+        if access["posthogKey"]:
+            ph_js = open(POSTHOG_JS, encoding="utf-8").read()
+            if "</script" in ph_js.lower():
+                raise SystemExit("vendored posthog-js contains </script and cannot be inlined")
+            ph_notice = open(POSTHOG_LICENSE, encoding="utf-8").read().replace("*/", "* /")
+            lib += ("\n<script>/*\nposthog-js 1.434.17 (no-external build), https://github.com/PostHog/posthog-js\n" +
+                    ph_notice + "\n*/\n" + ph_js + "\n</script>")
         site = page(product, site_cases, access, lib)
         # The review tools are for authors and reviewers and never ship.
         if "REVIEW_SPEED" in site or "__REVIEW_START__" in site:

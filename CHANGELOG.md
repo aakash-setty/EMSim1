@@ -5,6 +5,27 @@ is usable with learners.
 
 ---
 
+## v0.18f: PostHog analytics
+
+The site sends product events to PostHog (US cloud, project key in
+`engine/site-config.json`). `engine/analytics.js` holds the code, and the library is the
+vendored no-external build of posthog-js 1.434.17, inlined into the site only. The CSP adds
+`https://us.i.posthog.com` (events) and `https://us-assets.i.posthog.com` (the library's
+remote settings, JSON only) to connect-src when a key is set. script-src stays closed to
+PostHog. The build refuses a `phx_`
+personal key.
+
+No session recording and no autocapture. Learners are identified by Supabase user id only.
+Events: sign-in success and failure, sign-out, case loaded or failed with the reason, case
+opened, started and finished (outcome, how it ended, case time, critical actions done, and
+counts of actions, interview questions, exams, voice orders and search opens), debrief
+revealed, and up to five JavaScript errors per page. No case text, questions, orders,
+diagnoses or notes are sent. Tested against a mock PostHog server: every event arrived with
+the expected fields and no email. PostHog drops events from automated browsers, so test
+runs do not reach the real project.
+
+---
+
 ## v0.18e: push to deploy
 
 A push to `main` now deploys everything. Vercel serves `site/` as before, and a new GitHub
