@@ -79,6 +79,28 @@ Claude. The files in git are the record of what is live.
    the live page title says "(local build)", the Root Directory is wrong.
 4. **First upload.** GitHub, Actions, "Publish case packs", Run workflow (or push any commit).
 
+## Google sign-in
+
+The site offers "Continue with Google" when `googleSignIn` is true in
+`engine/site-config.json`. Sign-ups stay off, so only invited email addresses get in: an
+invited user who picks Google with the same address is linked to their existing account.
+Anyone else sees "That Google account is not on the invite list".
+
+One-time setup, before turning it on:
+
+1. Google Auth Platform (console.cloud.google.com/auth): create a project if needed, set the
+   audience to External, and add the app name and a support email.
+2. Clients, Create client, type **Web application**.
+   - Authorized JavaScript origins: `https://em-case-simulator-v1.vercel.app`
+   - Authorized redirect URIs: `https://brhtyuahzbecpnqlgxib.supabase.co/auth/v1/callback`
+   Create, then copy the Client ID and Client Secret.
+3. Supabase, Authentication, Sign In / Providers, Google: turn it on, paste the Client ID and
+   Client Secret, save. The secret stays in Supabase only.
+4. Set `googleSignIn` to true, rebuild, commit and push.
+
+Source: [Login with Google](https://supabase.com/docs/guides/auth/social-login/auth-google),
+[Identity linking](https://supabase.com/docs/guides/auth/auth-identity-linking).
+
 ## Analytics (PostHog)
 
 The site sends product events to PostHog (US cloud) once `posthogKey` in

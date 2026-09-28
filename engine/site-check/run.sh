@@ -18,7 +18,7 @@ built = json.loads(m.group(1))
 def write(path, **over):
     a = dict(built, **over)
     open(path, "w", encoding="utf-8").write(s[:m.start(1)] + json.dumps(a) + s[m.end(1):])
-write(t + "/site/index.html", supabaseUrl="http://localhost:54321", supabaseKey="anon-key")
+write(t + "/site/index.html", supabaseUrl="http://localhost:54321", supabaseKey="anon-key", googleSignIn=True)
 write(t + "/site0/index.html", supabaseUrl="", supabaseKey="")
 # The built site and its headers must agree: a configured project has to be in connect-src,
 # or every sign-in is blocked by the browser.
@@ -45,6 +45,7 @@ trap 'kill $P1 $P2 $P3 $P4 $P5 2>/dev/null || true' EXIT
 for i in $(seq 1 60); do curl -s -o /dev/null http://localhost:8000/ && break; sleep 1; done
 node engine/site-check/flow.js
 SITE_CONFIGURED=$(cat "$T/configured") node engine/site-check/deep.js
+node engine/site-check/google.js
 # The pack publisher (run by the GitHub Action) against the mock bucket: uploads all, then
 # finds them all present, then refuses a pack that reads back altered.
 curl -s -XPOST http://localhost:54321/__ctl -d '{"storeOnly":true,"tamper":false}' > /dev/null

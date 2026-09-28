@@ -25,3 +25,6 @@ node_modules/
 private-packs/
 # Local secrets, if any tool ever needs one. Nothing in the repository reads this.
 .env.local
+
+# Scratch folder for files waiting to be deleted by hand. Never committed.
+_to_delete/

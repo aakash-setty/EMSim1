@@ -2267,6 +2267,20 @@ function renderSplash(){
    numbers whichever case is selected and shows them before the clock has started. A
    half-authored case with null vitals hides the section rather than printing dashes:
    the picker offers skeletons on purpose and an empty panel teaches nothing. */
+/* Adult resting ranges for the arrival card. Every current case is an adult (18 to 68).
+   A pediatric case would need age-based ranges before this is used for it.
+   HR 60 to 100, systolic 90 to 139 and diastolic under 90, SpO2 94 or more, RR 12 to 20,
+   temperature 36.0 to 37.9. */
+function splashVitalAbnormal(v){
+  const n=x=>typeof x==='number';
+  return {
+    hr:   n(v.heart_rate) && (v.heart_rate<60 || v.heart_rate>100),
+    bp:   (n(v.systolic_bp) && (v.systolic_bp<90 || v.systolic_bp>=140)) || (n(v.diastolic_bp) && v.diastolic_bp>=90),
+    spo2: n(v.oxygen_saturation) && v.oxygen_saturation<94,
+    rr:   n(v.respiratory_rate) && (v.respiratory_rate<12 || v.respiratory_rate>20),
+    t:    n(v.temperature_c) && (v.temperature_c<36 || v.temperature_c>=38)
+  };
+}
 function renderSplashVitals(){
   const sec=el('sp-vitalsec'), box=el('sp-vitals');
   if(!sec||!box) return;
@@ -2274,14 +2288,16 @@ function renderSplashVitals(){
   const num=x=>typeof x==='number';
   if(!v||!num(v.heart_rate)){ sec.classList.add('hidden'); box.innerHTML=''; return; }
   sec.classList.remove('hidden');
+  /* v0.18g. Values outside the adult resting range are red, as on a triage sheet. */
+  const ab=splashVitalAbnormal(v);
   const cells=[
-    ['HR', num(v.heart_rate)?String(v.heart_rate):'\u2013', '/minute'],
-    ['BP', (num(v.systolic_bp)&&num(v.diastolic_bp))?v.systolic_bp+'/'+v.diastolic_bp:'\u2013','mmHg'],
-    ['SpO\u2082', num(v.oxygen_saturation)?String(v.oxygen_saturation):'\u2013','%'],
-    ['RR', num(v.respiratory_rate)?String(v.respiratory_rate):'\u2013','/minute'],
-    ['T',  num(v.temperature_c)?v.temperature_c.toFixed(1):'\u2013','\u00B0C']
+    ['HR', num(v.heart_rate)?String(v.heart_rate):'\u2013', '/minute', ab.hr],
+    ['BP', (num(v.systolic_bp)&&num(v.diastolic_bp))?v.systolic_bp+'/'+v.diastolic_bp:'\u2013','mmHg', ab.bp],
+    ['SpO\u2082', num(v.oxygen_saturation)?String(v.oxygen_saturation):'\u2013','%', ab.spo2],
+    ['RR', num(v.respiratory_rate)?String(v.respiratory_rate):'\u2013','/minute', ab.rr],
+    ['T',  num(v.temperature_c)?v.temperature_c.toFixed(1):'\u2013','\u00B0C', ab.t]
   ];
-  box.innerHTML=cells.map(c=>`<div class="spvitcell"><div class="spvitlab">${c[0]}</div>
+  box.innerHTML=cells.map(c=>`<div class="spvitcell${c[3]?' abn':''}"><div class="spvitlab">${c[0]}</div>
     <div class="spvitval">${esc(c[1])}</div>
     <div class="spvitunit">${c[2]}</div></div>`).join('');
 }

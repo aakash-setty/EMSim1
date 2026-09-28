@@ -33,6 +33,15 @@ http.createServer(async (req,res)=>{
     res.writeHead(200,{'Content-Type':'application/json'});
     res.end(JSON.stringify({access_token:'good-token',token_type:'bearer',expires_in:3600,expires_at:now+3600,refresh_token:'r1',user:USER}));return;
   }
+  // v0.18h. Google sign-in: the authorize endpoint sends the browser straight back with a
+  // code (or, with __ctl {oauthDenied:true}, with the error Supabase gives an uninvited account).
+  if(u.pathname==='/auth/v1/authorize'){
+    S.calls.authorize=(S.calls.authorize||0)+1; S.lastAuthorize=Object.fromEntries(u.searchParams);
+    const back=new URL(u.searchParams.get('redirect_to'));
+    if(S.oauthDenied){ back.searchParams.set('error','access_denied'); back.searchParams.set('error_code','signup_disabled'); back.searchParams.set('error_description','Signups not allowed for this instance'); }
+    else back.searchParams.set('code','test-auth-code');
+    res.writeHead(302,{Location:back.toString()}); res.end(); return;
+  }
   if(u.pathname==='/auth/v1/logout'){res.writeHead(204);res.end();return;}
   if(u.pathname==='/auth/v1/user'){
     S.calls.user++;

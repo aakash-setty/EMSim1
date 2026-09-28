@@ -5,6 +5,37 @@ is usable with learners.
 
 ---
 
+## v0.18h: Google sign-in
+
+The sign-in dialog can offer "Continue with Google" above the email and password form. It is
+off until `googleSignIn` in `engine/site-config.json` is true, which should happen only after
+the Google provider is enabled in Supabase (docs/deployment.md, "Google sign-in").
+
+It uses Supabase's PKCE redirect flow. Invite-only still holds: sign-ups are off, so a Google
+account whose email was not invited is refused with "That Google account is not on the invite
+list", and an invited email is linked to its Google identity automatically. The case the
+learner clicked before leaving for Google opens when they come back, and the code or error is
+removed from the address bar. Turned on 29 Sep 2026 after the Google provider was enabled
+(Supabase now redirects to Google with the project's client ID). Sign-in events now carry `method` (password or google), and
+Google refusals are reported as `not_invited`.
+
+The site check covers the round trip, the returning case and the refusal against the mock
+(48 ok).
+
+---
+
+## v0.18g: readability
+
+The arrival vitals on the case start card show values outside the adult resting range in
+red: heart rate under 60 or over 100, systolic under 90 or 140 and over, diastolic 90 and
+over, SpO2 under 94, respiratory rate under 12 or over 20, temperature under 36.0 or 38.0
+and over. All four cases are adults; a pediatric case would need age-based ranges first.
+
+Lab result tables (in the Record, the Investigations tab and the debrief) shade every
+second row with a faint wash (`--stripe`, 3.5 percent ink) so a long panel reads across.
+
+---
+
 ## v0.18f: PostHog analytics
 
 The site sends product events to PostHog (US cloud, project key in

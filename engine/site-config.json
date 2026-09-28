@@ -6,6 +6,7 @@
   "supabaseUrl": "https://brhtyuahzbecpnqlgxib.supabase.co",
   "supabaseKey": "sb_publishable_DgJr_idTGmiuUi7oUtwDJw_V1kJK24Q",
   "edgeFunction": "case-pack",
+  "googleSignIn": true,
   "posthogKey": "phc_n32mR8aqsbpf2j9mc5wxmJQUrvoD9gGMguGBfBHi4jjK",
   "posthogHost": "https://us.i.posthog.com",
   "freeCases": []

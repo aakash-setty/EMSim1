@@ -889,6 +889,7 @@ def main():
         access = {"mode": "site", "product": product, "legal": legal,
                   "supabaseUrl": cfg.get("supabaseUrl", ""), "supabaseKey": cfg.get("supabaseKey", ""),
                   "edgeFunction": cfg.get("edgeFunction", "case-pack"),
+                  "googleSignIn": bool(cfg.get("googleSignIn", False)),
                   "posthogKey": cfg.get("posthogKey", ""), "posthogHost": cfg.get("posthogHost", "")}
         check_posthog(access["posthogKey"], access["posthogHost"])
         lib_js = open(SUPABASE_JS, encoding="utf-8").read()

@@ -35,12 +35,64 @@ const ACCESS_UI = (function(){
     $('wl-acct').hidden=false;
     bindDialog();
     if(!configured()){ msg='Sign-in is not configured for this build.'; paint(); return; }
+    /* v0.18h. Google sign-in uses the PKCE redirect flow: Supabase sends the browser to
+       Google and back to this page with ?code=..., which supabase-js exchanges for a
+       session because detectSessionInUrl is on. Invite-only still holds: sign-ups are off
+       in Supabase, so a Google account whose email was not invited is refused, and an
+       invited email is linked to its Google identity automatically. */
+    const oauthReturn = readOAuthReturn();
     client = supabase.createClient(CFG.supabaseUrl, CFG.supabaseKey,
-      {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:false}});
+      {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:!!CFG.googleSignIn, flowType:'pkce'}});
     client.auth.onAuthStateChange((_ev,s)=>{ session=s||null; A.user(session&&session.user&&session.user.id); paint(); });
-    client.auth.getSession().then(({data})=>{ session=(data&&data.session)||null; A.user(session&&session.user&&session.user.id); paint(); })
-      .catch(()=>{ session=null; paint(); });
+    client.auth.getSession().then(({data})=>{
+        session=(data&&data.session)||null; A.user(session&&session.user&&session.user.id);
+        afterOAuthReturn(oauthReturn); paint(); })
+      .catch(()=>{ session=null; afterOAuthReturn(oauthReturn); paint(); });
+    if(CFG.googleSignIn){ $('signingoogle').hidden=false; $('signinor').hidden=false; }
     paint();
+  }
+
+  /* ---- Google (v0.18h) ---- */
+  const PENDING_KEY='emsim.pendingCase';
+  function readOAuthReturn(){
+    const q=new URLSearchParams(location.search), h=new URLSearchParams(location.hash.replace(/^#/,''));
+    const err=q.get('error_description')||h.get('error_description')||q.get('error')||h.get('error');
+    const code=q.get('error_code')||h.get('error_code')||'';
+    return {returned: q.has('code')||!!err, error: err?String(err).replace(/\+/g,' '):'', code};
+  }
+  function cleanUrl(){
+    try{ history.replaceState(history.state, '', location.pathname); }catch(e){}
+  }
+  function afterOAuthReturn(r){
+    if(!r.returned) return;
+    cleanUrl();
+    let prefix=''; try{ prefix=sessionStorage.getItem(PENDING_KEY)||''; sessionStorage.removeItem(PENDING_KEY); }catch(e){}
+    if(r.error || !session){
+      const notInvited=/signup|not allowed|access_denied/i.test(r.code+' '+r.error);
+      A.track('signin_failed',{method:'google', reason: notInvited?'not_invited':'other'});
+      say(notInvited
+        ? 'That Google account is not on the invite list. Sign in with the email address you were invited with, or ask the person who invited you.'
+        : 'Google sign-in did not finish. Try again.');
+      return;
+    }
+    A.track('signin_succeeded',{method:'google'});
+    const i=prefix?CASES.findIndex(c=>c.prefix===prefix):-1;
+    if(i>=0) open(i);
+  }
+  async function google(){
+    const b=$('signingoogle'); b.disabled=true; $('signinerr').textContent='';
+    try{
+      const want=pending>=0&&CASES[pending]?CASES[pending].prefix:'';
+      try{ if(want) sessionStorage.setItem(PENDING_KEY,want); else sessionStorage.removeItem(PENDING_KEY); }catch(e){}
+      const {error}=await client.auth.signInWithOAuth({provider:'google',
+        options:{redirectTo: location.origin+location.pathname, queryParams:{prompt:'select_account'}}});
+      if(error) throw error;
+      /* The browser is now leaving for Google. */
+    }catch(err){
+      b.disabled=false;
+      A.track('signin_failed',{method:'google', reason:'start_failed'});
+      $('signinerr').textContent='Could not start Google sign-in. Check your connection and try again.';
+    }
   }
 
   const signedIn = () => !!session;
@@ -70,6 +122,7 @@ const ACCESS_UI = (function(){
     if(bound) return; bound=true;
     $('signinform').addEventListener('submit',e=>{ e.preventDefault(); submit(); });
     $('signincancel').addEventListener('click',hideDialog);
+    $('signingoogle').addEventListener('click',google);
     $('signinview').addEventListener('click',e=>{ if(e.target===$('signinview')) hideDialog(); });
     document.addEventListener('keydown',e=>{
       if(!modalOpen()) return;
@@ -95,14 +148,14 @@ const ACCESS_UI = (function(){
     try{
       const {data,error}=await client.auth.signInWithPassword({email,password});
       if(error){
-        A.track('signin_failed', {reason: /invalid/i.test(error.message||'') ? 'wrong_credentials' : 'other'});
+        A.track('signin_failed', {method:'password', reason: /invalid/i.test(error.message||'') ? 'wrong_credentials' : 'other'});
         $('signinerr').textContent = /invalid/i.test(error.message||'')
           ? 'That email and password do not match an invited account.'
           : 'Sign-in failed: '+(error.message||'unknown error')+'.';
         return;
       }
       session=data.session; msg='';
-      A.user(session&&session.user&&session.user.id); A.track('signin_succeeded');
+      A.user(session&&session.user&&session.user.id); A.track('signin_succeeded',{method:'password'});
       const want=pending; hideDialog(); paint();
       if(want>=0) open(want);
     }catch(err){
