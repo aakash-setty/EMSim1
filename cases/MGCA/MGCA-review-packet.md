@@ -68,7 +68,7 @@ The validator was mutation-tested rather than trusted. Six seeded defects were e
 | 0, initial presentation | `presentation` | arrival |
 | 1, early improvement | `improving` | antibiotic, glucocorticoid and volume all given |
 | 2, adrenal crisis progression | `adrenal_crisis` | fluid or dextrose given, glucocorticoid not |
-| 3, progressive meningococcaemia | `progressive_meningococcaemia` | glucocorticoid and volume given, antibiotic not |
+| 3, progressive meningococcaemia | `progressive_meningococcemia` | glucocorticoid and volume given, antibiotic not |
 | 4, frank septic shock | `frank_septic_shock` | intubation, **or the clock at 210s from either deterioration branch** |
 | 5, stabilised septic shock | `stabilized_shock` | antibiotic, glucocorticoid and vasopressor all present |
 
@@ -82,9 +82,9 @@ five of them:
 | From | At | Fires if | To |
 |---|---|---|---|
 | `presentation` | 240s | glucocorticoid still not given | `adrenal_crisis` |
-| `presentation` | 240s | antibiotic still not given | `progressive_meningococcaemia` |
+| `presentation` | 240s | antibiotic still not given | `progressive_meningococcemia` |
 | `adrenal_crisis` | 210s | glucocorticoid still not given | `frank_septic_shock` |
-| `progressive_meningococcaemia` | 210s | antibiotic still not given | `frank_septic_shock` |
+| `progressive_meningococcemia` | 210s | antibiotic still not given | `frank_septic_shock` |
 | `frank_septic_shock` | 300s | any of the three still missing | `cardiac_arrest`, terminal |
 
 Intubation still reaches `frank_septic_shock` instantly, because that physiology is real and worth
@@ -127,14 +127,14 @@ you should confirm you accept it for this case.
 None of these raised an error anywhere. All were found by reading the resolved values state by state, and all are fixed in the file you have.
 
 1. **Cerebrospinal fluid glucose was clinically wrong on one of the two paths that can reach it.** A single authored value of 34 mg/dL is a normal ratio against the arrival serum glucose of 53 and a frankly low ratio against the improving-phase glucose of 96, which reads as bacterial meningitis in a patient whose fluid is normal. Now two rules.
-2. **Platelet count rose across a transition.** The resolution phases carried a single value of 108, reachable from `progressive_meningococcaemia` at 75 and `frank_septic_shock` at 55. Split into 95 for `improving` and 58 for `stabilized_shock`.
+2. **Platelet count rose across a transition.** The resolution phases carried a single value of 108, reachable from `progressive_meningococcemia` at 75 and `frank_septic_shock` at 55. Split into 95 for `improving` and 58 for `stabilized_shock`.
 3. **Same defect in the coagulation panel and the D-dimer.** INR fell from 1.8 to 1.3 and the D-dimer from over 20 to 8.9 across a transition measured in minutes. Split by phase.
 4. **Creatinine fell from 1.9 to 1.5 across a transition.** Creatinine lags the insult by a day or more and cannot fall inside this encounter. The improving-phase value is now 1.7 with a comment saying so.
 5. **Cardiac ultrasound recovered systolic function across a transition.** The frank shock phase showed septic cardiomyopathy and the stabilised phase showed a normal ventricle. The septic cardiomyopathy rule was removed rather than papered over, which also removes an addition that was beyond your seed.
 6. **Lumbar puncture was permitted, and tagged recommended, in the vasopressor-dependent phase.** Your instruction was "only if not hypotensive". A patient holding a mean pressure of 65 on norepinephrine with a falling platelet count is not a patient to position for a lumbar puncture. The gate now excludes `stabilized_shock` as well as the three hypotensive phases.
 7. **Four consultants quoted arrival laboratory values in phases where the values differ.** Endocrinology said "sodium 128, potassium 5.4, glucose 53" in a phase where they read 127, 5.7 and 48; nephrology and critical care did the same with the creatinine and the potassium. All numeric quotes that vary by phase are now replaced with descriptions, except drug doses.
 
-**Residual limitation you cannot fix inside this schema.** Content keys are keyed on phase, and a phase can be reached from more than one predecessor, so a value that trends correctly on one path trends wrongly on another. The remaining instance: a patient who reaches `improving` from `progressive_meningococcaemia` sees the platelet count go from 75 to 95, which the disease does not do. The value chosen is correct for the intended path, which is arrival to improving. Section 11.4 forbids faking a delta by gating on an unrelated flag, so the alternative is to split `improving` into two phases, which takes the case to seven clinical phases and past the section 3.3 ceiling. Flagged rather than solved, and it is a spec-level point as much as a case-level one. See OQ-2.
+**Residual limitation you cannot fix inside this schema.** Content keys are keyed on phase, and a phase can be reached from more than one predecessor, so a value that trends correctly on one path trends wrongly on another. The remaining instance: a patient who reaches `improving` from `progressive_meningococcemia` sees the platelet count go from 75 to 95, which the disease does not do. The value chosen is correct for the intended path, which is arrival to improving. Section 11.4 forbids faking a delta by gating on an unrelated flag, so the alternative is to split `improving` into two phases, which takes the case to seven clinical phases and past the section 3.3 ceiling. Flagged rather than solved, and it is a spec-level point as much as a case-level one. See OQ-2.
 
 ---
 
@@ -328,7 +328,7 @@ blocks were authored from this pack's own ECG reports. Sinus tachycardia in ever
 |---|---|---|
 | `presentation` | P waves, QRS 82 ms, PR 132 ms, QTc 448 ms | author_note |
 | `adrenal_crisis` | P waves, QRS 84 ms, PR 132 ms, QTc 458 ms | report |
-| `progressive_meningococcaemia` | P waves, QRS 84 ms, PR 132 ms, QTc 458 ms | report |
+| `progressive_meningococcemia` | P waves, QRS 84 ms, PR 132 ms, QTc 458 ms | report |
 | `frank_septic_shock` | P waves, QRS 84 ms, PR 128 ms, QTc 468 ms | report |
 | `improving` | P waves, QRS 84 ms, PR 132 ms, QTc 448 ms | report |
 | `stabilized_shock` | P waves, QRS 84 ms, PR 132 ms, QTc 448 ms | report |

@@ -4,11 +4,14 @@
  "catalog_version": "0.2-draft",
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
-  "exact": 104,
+  "exact": 110,
   "mapped": 0,
   "unmatched": 1
  },
  "group_coverage": {
+  "defibrillate": [
+   "unsynchronized_cardioversion"
+  ],
   "lorazepam_bolus": [
    "midazolam_bolus"
   ],
@@ -133,7 +136,10 @@
    "case_id": "defibrillate",
    "catalog_id": "defibrillate",
    "status": "exact",
-   "note": null
+   "note": "v0.18a. An unsynchronized cardioversion delivers the same shock as defibrillation, so the same tag and note cover it.",
+   "also_covers": [
+    "unsynchronized_cardioversion"
+   ]
   },
   {
    "case_id": "synchronized_cardioversion",
@@ -671,6 +677,42 @@
    "catalog_id": null,
    "status": "unmatched",
    "note": "The catalog has no handoff tab and no handoff action; it is listed in the catalog's own known_gaps. Rendered anyway so the case is playable."
+  },
+  {
+   "case_id": "diltiazem_bolus",
+   "catalog_id": "diltiazem_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "metoprolol_bolus",
+   "catalog_id": "metoprolol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "esmolol_drip",
+   "catalog_id": "esmolol_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "labetalol_bolus",
+   "catalog_id": "labetalol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propranolol_bolus",
+   "catalog_id": "propranolol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "epinephrine_bolus",
+   "catalog_id": "epinephrine_bolus",
+   "status": "exact",
+   "note": null
   }
  ]
 }

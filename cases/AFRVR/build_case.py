@@ -22,6 +22,10 @@ from case_2_actions import ACTIONS, FOLLOW_UPS
 from case_3_content import EXAM, GENERAL_STATUS, PATIENT_VISUAL, LABS, IMAGING, CONSULTANTS
 from case_4_interview import TOPICS, GLOBAL_RULES, OUT_OF_SCOPE, AUTHORING_NOTES
 try:
+    from case_4_interview import VOLUNTEER_SETTINGS   # v0.18a, catalog/author_interview_volunteers.py
+except ImportError:
+    VOLUNTEER_SETTINGS = {}
+try:
     from case_4_interview import OUT_OF_SCOPE_BANK
 except ImportError:          # before the expansion script has run
     OUT_OF_SCOPE_BANK = []
@@ -45,7 +49,7 @@ CASE = {
    "conformance_note": (
      "Written against v0.7 of the authoring requirements, so it uses the five-tier tag vocabulary "
      "including discouraged, structured result payloads with author-set abnormal flags, the closed "
-     "set of fourteen exam manoeuvres with the catalog routing map, the two-sentence arrival "
+     "set of fourteen exam maneuvers with the catalog routing map, the two-sentence arrival "
      "handover with no background paragraph behind it, time-guarded phase transitions, and vital "
      "effects rebased so that no phase double-counts a gain an action supplies."),
  },
@@ -115,7 +119,7 @@ CASE = {
  "prerequisite_semantics_note": (
    "A prerequisite is a requirement that must already hold, not a condition that blocks. Two are "
    "authored here beyond the catalog defaults: positive pressure requires that the patient is not "
-   "already intubated, and synchronised cardioversion requires that he has been given something "
+   "already intubated, and synchronized cardioversion requires that he has been given something "
    "for sedation, because he is awake and talking."),
  "content_keys": {
    "exam": EXAM,
@@ -135,6 +139,7 @@ CASE = {
      "catalog/expand_interview_variants.py from catalog/interview_out_of_scope.py, filtered to the "
      "concepts this case does not cover. The matcher embeds them beside the topic bank."),
    "topics": TOPICS,
+   **VOLUNTEER_SETTINGS,
    # v0.9. The topics whose answers change management here, read by the summary's History
    # score (asked / listed). Every other topic is still answerable and charted; it just does
    # not count. Seeded from the held-out matcher evaluation's management_changing list.
@@ -143,7 +148,7 @@ CASE = {
                   "past_medical_history", "chest_pain", "orthopnea",
                   "paroxysmal_nocturnal_dyspnea", "thyroid_symptoms", "alcohol_and_binge",
                   "syncope_presyncope", "code_status_goals_of_care"],
-   "key_topics_note": ("Author judgement, unreviewed. Read by the summary's History score; "
+   "key_topics_note": ("Author judgment, unreviewed. Read by the summary's History score; "
                        "topics not listed are answerable but unscored."),
  },
  "handoff": HANDOFF,
@@ -163,12 +168,12 @@ CASE = {
    "arrival phase are timed. Intubation is checked first everywhere, so a learner who intubates "
    "from any state reaches the ventilated phase rather than an improvement phase. Positive "
    "pressure is checked before rate control in the arrival phase, so a learner who gives both in "
-   "one batch of orders moves to the breathing-supported phase immediately and then to stabilised "
+   "one batch of orders moves to the breathing-supported phase immediately and then to stabilized "
    "ten seconds later, rather than waiting ten seconds for either.\n\n"
    "The respiratory failure phase deliberately has no rate-control exit. A learner who arrives "
    "there and responds by giving a rate-controlling drug has the flag recorded and the credit "
    "given and sees no improvement, because the problem in that phase is the lung. Applying "
-   "positive pressure afterwards goes straight to the stabilised phase, since the rate control is "
+   "positive pressure afterwards goes straight to the stabilized phase, since the rate control is "
    "already in and has had time to work."),
 }
 
@@ -206,6 +211,9 @@ for a in ACTIONS:
           "anticoagulant was heparin.")
     elif cid == "normal_saline_1l_bolus":
         row["also_covers_group"] = "crystalloid_bolus"
+        # v0.18a: the catalog's D5 NS bolus is outside the group and reached the same harm
+        # unguarded.
+        row["also_covers"] = ["d5_ns_bolus"]
         row["note"] = (
           "Harmful here. The catalog offers four crystalloid boluses and every one of them reaches "
           "the same harm in a patient with an ejection fraction of 30 to 35 percent and a flooded "
@@ -232,7 +240,7 @@ BINDING = {
  "map_version": "0.1",
  "case_id": CASE["case_id"],
  "status": "DRAFT. Every row whose catalog_id differs from case_id, and every also_covers row, is "
-           "an author judgement and needs review.",
+           "an author judgment and needs review.",
  "how_to_read": {
    "catalog_id equals case_id": "exact; nothing to review",
    "catalog_id null": "unmatched; a catalog change request",

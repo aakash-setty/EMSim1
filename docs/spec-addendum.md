@@ -81,10 +81,10 @@ clinically adjacent (`ketamine_bolus` and `ketamine_infusion`, `normal_saline_1l
 
 **Proposed.** Either the case file references catalog ids directly, or a binding file sits
 between them with an explicit status per row: `exact`, `mapped`, or `unmatched`. Mapped rows
-carry an author note, because a mapping is a clinical judgement. Unmatched rows are validator
+carry an author note, because a mapping is a clinical judgment. Unmatched rows are validator
 errors, not dropped rows.
 
-**Result for this case:** 15 exact, 39 mapped, 11 unmatched. (It was 6, 44 and 13 before the exam findings were redistributed onto the catalog manoeuvres; see section 7a.)
+**Result for this case:** 15 exact, 39 mapped, 11 unmatched. (It was 6, 44 and 13 before the exam findings were redistributed onto the catalog maneuvers; see section 7a.)
 
 ---
 
@@ -222,16 +222,16 @@ will be served in its place.
 
 ## 7a. The exam set is closed, and the case must fit it
 
-**Required, and now satisfied.** The catalog states that its 14 exam manoeuvres are the
+**Required, and now satisfied.** The catalog states that its 14 exam maneuvers are the
 complete set, supplies a default finding for each, supplies a `general_status` line rendered
 above them, and supplies `exam_finding_routing`, a map fixing where a finding belongs when its
-anatomy does not match a manoeuvre.
+anatomy does not match a maneuver.
 
 None of that is in either design document. Section 6 of the system design describes appearance
 and vitals; nothing says the exam surface is closed, and nothing tells an author that inventing
-a manoeuvre produces content no learner can reach.
+a maneuver produces content no learner can reach.
 
-This case had four such manoeuvres: general appearance, jugular venous pressure, hepatojugular
+This case had four such maneuvers: general appearance, jugular venous pressure, hepatojugular
 reflux, and extremities. Every finding in them was unreachable in the interface.
 
 **Proposed.** Section 7 of the authoring requirements states that the exam set is closed,
@@ -250,7 +250,7 @@ key displays that line above a patient in severe respiratory distress, and it is
 finding the learner cannot choose to skip. The catalog flags this risk in its own `verify`
 note; the validator now errors when the key is missing.
 
-**Validator additions:** the case may not author findings for a manoeuvre outside the catalog
+**Validator additions:** the case may not author findings for a maneuver outside the catalog
 set; every catalog exam must carry a default; the general status key must exist; exam and
 general status payloads must carry `abnormal` and findings text.
 
@@ -259,7 +259,7 @@ routing map exactly. Three categories had no prior authored content and were wri
 the move from findings the case already asserted elsewhere (airway, breathing, psychological);
 they are recorded in `provenance.exam_redistribution` so a reviewer knows which sentences are
 new. The hepatojugular reflux ceases to be a discrete act, which is a real loss of a
-separately scorable manoeuvre.
+separately scorable maneuver.
 
 **One remaining request.** A hepatojugular reflux entry, if the design owner agrees it is a
 distinct act rather than part of the neck exam. Everything else this case needed from the exam
@@ -288,9 +288,9 @@ harmful tags evaluate exactly as they would one at a time. Verified: a batch con
 harmful action halts on that action and discards everything selected after it, and the actions
 before it are applied normally.
 
-That behaviour is correct and will surprise learners, who tend to expect a submitted set to go
+That behavior is correct and will surprise learners, who tend to expect a submitted set to go
 through as a set. Whether the interface should warn before submitting a batch that will halt is
-a design decision; warning would leak the answer, so the current behaviour is probably right.
+a design decision; warning would leak the answer, so the current behavior is probably right.
 
 ### 7b.3 What it does change
 
@@ -336,7 +336,7 @@ safe ones, which leaks information.
 
 Turnaround times are worse: showing "5s" next to a laboratory test tells the resident the
 simulator's clock rather than anything clinical, and it invites gaming the order in which
-studies are sent. Pending and resulted state is still visible through colour and the pending
+studies are sent. Pending and resulted state is still visible through color and the pending
 rail, which is the information a resident actually needs.
 
 ---
@@ -355,7 +355,7 @@ its 3-second override, which section 8.1 says should stay unused.
 ## 9. Audio
 
 **New.** Not covered by either document. Implemented in the prototype; specified here so the
-behaviour is reviewable rather than incidental.
+behavior is reviewable rather than incidental.
 
 ### 9.1 Continuous heartbeat
 
@@ -424,7 +424,7 @@ Added to `validate_case.py`:
 - a study named in a condition or tagged critical but unauthored warns, naming the default
   that will be served
 - exam and general status payloads carry `abnormal` and findings text
-- the case authors no exam manoeuvre outside the catalog's closed set of 14
+- the case authors no exam maneuver outside the catalog's closed set of 14
 - every catalog exam carries a default finding
 - the `general_status` content key exists, so the learner does not see the catalog's generic
   "No acute distress" line above a critically unwell patient

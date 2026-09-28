@@ -301,7 +301,15 @@ const VOICE=(function(){
     OPEN=true; paint();
   }
   function stop(){ if(!LISTENING) return; WANT_STOP=true; try{ rec.stop(); }catch(err){ finishRecording(); } }
-  function abort(){ if(!LISTENING) return; WANT_STOP=true; try{ rec.abort(); }catch(err){} }
+  /* Abandoning a recording, on leaving or restarting a case. The handlers are detached first:
+     the browser fires onend after abort() returns, and finishRecording would then parse
+     what was heard into the next case's order list. */
+  function abort(){
+    if(!LISTENING) return; WANT_STOP=true;
+    const r=rec;
+    if(r){ r.onresult=r.onend=r.onerror=r.onaudiostart=null; try{ r.abort(); }catch(err){} }
+    LISTENING=false; ARMED=false; LIVE=false; rec=null; FINAL=''; INTERIM='';
+  }
   function finishRecording(){
     LISTENING=false; ARMED=false; LIVE=false; rec=null;
     const heard=(FINAL+' '+INTERIM).trim();

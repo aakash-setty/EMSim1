@@ -7,7 +7,7 @@ Every `display_name` and every `group` is transcribed verbatim from a screenshot
 Everything else -- ids, turnaround classes, state_changing, dose_required,
 narration templates, default prerequisites -- is DERIVED and flagged as such in
 `field_provenance`. Nothing clinical is asserted here: the catalog holds no
-appropriateness judgement, per section 3 of the system design.
+appropriateness judgment, per section 3 of the system design.
 
 Regenerate with:  python3 build_catalog.py > action-catalog.json
 """
@@ -48,7 +48,7 @@ PRE_VASCULAR = [{
 }]
 PRE_RSI = [{
     "when": "flag sedation_given set AND flag paralytic_given set",
-    "failure_message": "{He's} not sedated or paralysed yet. We need induction and a paralytic before we tube {him}.",
+    "failure_message": "{He's} not sedated or paralyzed yet. We need induction and a paralytic before we tube {him}.",
     "source": "system-design-v2.md 6.1",
 }]
 PRE_PADS = [{
@@ -88,7 +88,7 @@ for d in STAB_TOP:
 # simulator shows no vitals and plays no heartbeat, because the resident has no
 # monitor to read them from. That is a property of the act, not of any case, so
 # it lives here rather than in a case file. It is a capability flag, not a
-# clinical judgement: it says the act reveals the numbers, and says nothing
+# clinical judgment: it says the act reveals the numbers, and says nothing
 # about whether attaching the monitor was the right thing to do.
 
 STAB = {
@@ -119,7 +119,7 @@ STAB = {
     # nursing acts a resident orders and the nurse performs: they change the state
     # of the room rather than of the patient, so each one sets a flag and none of
     # them carries a result, a turnaround or a vital effect. Whether isolation was
-    # indicated, and whether warming or cooling helped, is a case's judgement to
+    # indicated, and whether warming or cooling helped, is a case's judgment to
     # make through its tags.
     "Nursing": ["Droplet Precautions", "Contact Precautions", "Airborne Precautions",
                 "Warming Measures", "Cooling Measures"],
@@ -133,6 +133,12 @@ for group, items in STAB.items():
         if group == "Intubation Drugs":
             kw.update(dose_required=True, default_prerequisites=PRE_VASCULAR,
                       narration_template="Giving {dose} of {name}.")
+            # v0.18a. The intubation prerequisite asks for these two flags and until now no
+            # catalog entry set them, so a case that did not author them could never intubate.
+            if d in ("Midazolam bolus", "Etomidate bolus", "Ketamine bolus", "Propofol bolus"):
+                kw.update(flags_set_default=["sedation_given"])
+            if d in ("Succinylcholine bolus", "Rocuronium bolus"):
+                kw.update(flags_set_default=["paralytic_given"])
         if d == "Intubate (Rapid Sequence)":
             kw.update(default_prerequisites=PRE_RSI, flags_set_default=["intubated"])
         if d == "Cardiac Pacing":
@@ -291,7 +297,7 @@ AUTHOR_ADDED = {"Meds - Vasoactive Agents": ["Dobutamine drip"],
                 # lesson is what happens when it is given to a patient whose QRS is
                 # already wide, and an action a case cannot offer is an action no
                 # learner can get wrong. Placed under Meds - Tox beside the other
-                # antidotes. The catalog holds no appropriateness judgement about it,
+                # antidotes. The catalog holds no appropriateness judgment about it,
                 # exactly as it holds none about naloxone or flumazenil.
                 "Meds - Tox": ["Physostigmine"],
                 # v0.9, author instruction: magnesium sulfate as an ordinary intravenous
@@ -331,7 +337,12 @@ ROUTE_AMBIGUOUS = {"Acetaminophen", "Ibuprofen", "Dexamethasone", "Diphenhydrami
                    "Ondansetron", "Metoclopramide", "Thiamine", "Oxytocin IM/IV",
                    "RhoGAM", "Haloperidol", "Olanzapine", "Ziprasidone",
                    "Potassium Chloride (KCl)", "N-acetylcysteine", "Oseltamivir",
-                   "Amoxicillin", "Doxycycline", "Minocycline", "Rifampin"}
+                   "Amoxicillin", "Doxycycline", "Minocycline", "Rifampin",
+                   # v0.18a. Each has a standard route that needs no line (intramuscular or
+                   # intranasal naloxone, intramuscular glucagon for hypoglycemia,
+                   # intramuscular hydrocortisone in adrenal crisis), so gating them on IV
+                   # access taught a delay that does not exist.
+                   "Naloxone bolus", "Glucagon", "Hydrocortisone bolus"}
 INDEX = {e["id"]: e for e in ENTRIES}
 
 def add_or_place(display, tab, group, **kw):
@@ -369,6 +380,13 @@ for group, items in MEDS.items():
                                          else "Giving {dose} of {name}."))
         if infusion:
             INDEX[sid(d)]["persistent"] = True   # author: drips stay running once started
+        if d == "Hypertonic saline (25%) bolus":
+            # v0.18a. Concentrated saline (23.4 percent is the product sold) is given through
+            # a central line; a peripheral or intraosseous line is not an acceptable route.
+            INDEX[sid(d)]["default_prerequisites"] = [{
+                "when": "flag central_access set",
+                "failure_message": "That concentration has to go through a central line. Do you want one placed?",
+                "source": "derived: concentrated sodium chloride is a central-line drug"}]
         if d in AUTHOR_ADDED.get(group, []):
             INDEX[sid(d)]["source"] = "author-supplied, not in screenshots"
 
@@ -382,7 +400,7 @@ INDEX["magnesium_sulfate"]["route_class"] = "iv_timed_infusion"
 INDEX["magnesium_sulfate"]["indications_note"] = (
     "Placed under Respiratory (severe asthma), Cardiac (prolonged QT, torsades de pointes), "
     "Miscellaneous (repletion) and OB/GYN (pre-eclampsia, eclampsia). Dose and rate are the "
-    "case's to author; the catalog holds no appropriateness judgement.")
+    "case's to author; the catalog holds no appropriateness judgment.")
 
 # ================================================ STOP ACTIONS
 # Infusions are persistent: once started they run for the rest of the case. Without a
@@ -402,7 +420,7 @@ for e in STOPPABLE:
         repeatable=False,
         dose_required=False,
         route_class="none",
-        narration_template="Stopping the {name_lower}.",
+        narration_template="Stopping the {name}.",
         stops=e["id"],
         source="derived: every persistent infusion needs a way to withdraw it")
 
@@ -582,7 +600,7 @@ CATALOG = {
         "Culture defaults read 'no growth to date' because the 5-second lab turnaround cannot represent a 24-48 hour culture. Cases whose teaching point is a positive culture cannot be authored honestly.",
         "Peak expiratory flow has no meaningful global normal, since predicted values depend on age, sex and height. Its default is a placeholder.",
         "ABG defaults assume room air. On supplemental oxygen the same numbers are abnormal, and nothing in the schema knows that.",
-        "Dose behaviour is not visible in the screenshots; dose_required is a guess per category and no dose values are recorded.",
+        "Dose behavior is not visible in the screenshots; dose_required is a guess per category and no dose values are recorded.",
         "route_class is derived, not transcribed. Entries marked 'unspecified' need author confirmation because the vascular-access prerequisite depends on it.",
         "Infusions are persistent=true. Stopping one is a separate action rather than a toggle, so a case must author the stop as its own step.",
         "Meds - Cardiac now holds both 'Nitroglycerin' (transcribed, route unspecified) and 'Nitroglycerin sublingual' (author-supplied). If the transcribed entry IS the sublingual one, these are duplicates and one must be removed.",

@@ -65,7 +65,7 @@ DEFAULTS = {
                          "fluid. Negative sonographic Murphy sign. Common bile duct normal "
                          "caliber."),
 "ultrasound_soft_tissue": report("No discrete fluid collection or abscess. No cobblestoning. "
-                                 "No radiopaque foreign body identified."),
+                                 "No echogenic foreign body identified."),
 
 # --------------------------------------------------------------- lab work
 "arterial_blood_gas": panel(
@@ -100,12 +100,13 @@ DEFAULTS = {
     verify="Creatinine range is sex- and muscle-mass-dependent; 0.6-1.2 is a "
            "combined range. Glucose range differs fasting vs random."),
 "blood_type_and_screen": panel(
-    ("ABO/Rh", "O negative", "", "not applicable"),
+    ("ABO/Rh", "O positive", "", "not applicable"),
     ("Antibody screen", "Negative", "", "negative"),
-    verify="Author choice: O negative. Blood type is a patient attribute, not a "
-           "normal value. Every unauthored patient is now universal-donor type, "
-           "which no case should ever depend on. Cases turning on type-specific "
-           "transfusion, Rh status or RhoGAM must override this."),
+    verify="v0.18a: O positive, the commonest type, so that an unauthored patient does not "
+           "create an Rh immune globulin indication (O negative until v0.18a). Blood type is "
+           "a patient attribute, not a normal value, and no case should depend on this "
+           "default. Cases turning on type-specific transfusion, Rh status or RhoGAM must "
+           "override this."),
 "calcium_ionized": value("Ionized calcium", "1.22", "mmol/L", "1.12-1.32"),
 "calcium_level": value("Total calcium", "9.4", "mg/dL", "8.5-10.5"),
 "coagulation_panel": panel(
@@ -179,9 +180,9 @@ DEFAULTS = {
 "csf_cell_count": panel(
     ("CSF WBC", "1", "/mm3", "0-5"),
     ("CSF RBC", "0", "/mm3", "0"),
-    ("Differential", "Lymphocyte predominant", "", "lymphocyte predominant")),
+    ("Differential", "Not performed (too few cells)", "", "mononuclear cells only")),
 "csf_culture": report("Cultures pending.", verify="See blood culture note."),
-"csf_glucose": value("CSF glucose", "60", "mg/dL", "50-80, roughly two thirds of serum"),
+"csf_glucose": value("CSF glucose", "60", "mg/dL", "40-70, CSF:serum ratio at least 0.6"),
 "csf_gram_stain": report("No organisms seen. No white cells seen."),
 "csf_protein": value("CSF protein", "35", "mg/dL", "15-45"),
 "csf_rapid_antigen_test_for_n_meningitidis": report("Negative."),
@@ -195,7 +196,7 @@ DEFAULTS = {
                            "cell morphology with no immature forms. Platelets adequate "
                            "in number and morphology."),
 "salicylate_aspirin_level": value("Salicylate", "Not detected", "mg/dL", "< 4"),
-"serum_hcg_quantitative": value("Serum beta-hCG", "Negative", "", "negative",
+"serum_hcg_quantitative": value("Serum beta-hCG", "< 5", "mIU/mL", "< 5 (non-pregnant)",
     verify="Author choice: negative. Pregnancy is a patient attribute, not a "
            "normal value. Every unauthored patient is now not pregnant, including "
            "male patients, for whom the study should arguably be unavailable. Any "
@@ -275,59 +276,25 @@ def exam(text, **kw):
     return dict(kind="exam_findings", abnormal=False, findings=text, **kw)
 
 EXAM_DEFAULTS = {
-"exam_airway": exam(
-    "Airway patent and self-maintained. Speaking in full sentences. No stridor, "
-    "drooling, or oropharyngeal swelling. No foreign body visible. Mouth opening "
-    "and thyromental distance normal."),
-"exam_breath": exam(
-    "Breathing spontaneously at a normal rate. Chest rises symmetrically. No "
-    "accessory muscle use and no retractions. Air entry equal bilaterally."),
-"exam_circ": exam(
-    "Warm and dry peripherally. Capillary refill under two seconds. Radial and "
-    "dorsalis pedis pulses palpable and equal bilaterally. No external hemorrhage."),
-"exam_heent": exam(
-    "Normocephalic and atraumatic. Pupils equal, round and reactive to light. "
-    "Extraocular movements intact. Conjunctivae and sclerae normal. Tympanic "
-    "membranes normal. Oropharynx moist and clear without erythema or exudate."),
-"exam_neck": exam(
-    "Supple with full range of motion. No jugular venous distension. Trachea "
-    "midline. No lymphadenopathy, thyromegaly or carotid bruit. No midline "
-    "cervical tenderness."),
-"exam_card": exam(
-    "Regular rate and rhythm. Normal S1 and S2. No murmur, rub or gallop. Point "
-    "of maximal impulse not displaced. No peripheral edema."),
-"exam_pulm": exam(
-    "Clear to auscultation bilaterally. No crackles, wheezes or rhonchi. "
-    "Resonant to percussion. Symmetric chest expansion."),
-"exam_abd": exam(
-    "Soft, non-distended and non-tender. No guarding or rebound. Bowel sounds "
-    "present and normal. No organomegaly, palpable mass or pulsatile mass. No "
-    "hernia."),
+# v0.18a: one short line each. A normal maneuver reads as a chart line, not a paragraph,
+# so the abnormal findings a case authors stand out against it.
+"exam_airway": exam("Patent. Speaking in full sentences. No stridor or swelling."),
+"exam_breath": exam("Normal rate and effort. Symmetric chest rise. No accessory muscle use."),
+"exam_circ": exam("Warm, well perfused. Capillary refill under 2 seconds. Pulses equal."),
+"exam_heent": exam("Pupils equal and reactive. Moist mucous membranes. Oropharynx clear."),
+"exam_neck": exam("Supple. No JVD. Trachea midline. No lymphadenopathy."),
+"exam_card": exam("Regular rate and rhythm. No murmur, rub or gallop. No edema."),
+"exam_pulm": exam("Clear bilaterally. No crackles or wheeze."),
+"exam_abd": exam("Soft, non-tender, non-distended. Normal bowel sounds. No mass."),
 "exam_gu": exam(
-    "External genitalia normal without lesion, swelling or discharge. No "
-    "testicular tenderness or asymmetry. No vaginal bleeding or discharge. No "
-    "suprapubic tenderness.",
-    verify="Written to cover both sexes in one string, so part of it is always "
-           "irrelevant. If the renderer cannot select by patient sex, this "
-           "should be split into two defaults."),
-"exam_back": exam(
-    "No midline spinal tenderness, step-off or deformity. No costovertebral "
-    "angle tenderness bilaterally. No rash or lesion over the back or flanks."),
-"exam_msk": exam(
-    "No deformity, swelling or joint effusion. Full active and passive range of "
-    "motion. No focal bony tenderness. Compartments soft. Distal pulses, "
-    "sensation and motor function intact in all four limbs."),
-"exam_skin": exam(
-    "Warm and dry with normal color. No rash, petechiae, purpura or bruising. "
-    "No wounds, ulcers or cellulitis. No diaphoresis."),
-"exam_neuro": exam(
-    "Alert and oriented to person, place and time. GCS 15. Speech fluent. "
-    "Cranial nerves II through XII intact. Strength 5 out of 5 throughout. "
-    "Sensation intact. Coordination and gait normal. No pronator drift."),
-"exam_psych": exam(
-    "Calm and cooperative with appropriate affect. Thought linear and goal "
-    "directed. No suicidal or homicidal ideation. No hallucinations. Insight "
-    "and judgment intact."),
+    "Normal external genitalia. No discharge, bleeding or suprapubic tenderness.",
+    verify="Written to cover both sexes in one string. If the renderer can select by "
+           "patient sex, this should be split into two defaults."),
+"exam_back": exam("No spinal or costovertebral angle tenderness. No rash."),
+"exam_msk": exam("No deformity or tenderness. Full range of motion. Distal neurovascular status intact."),
+"exam_skin": exam("Warm and dry. No rash, petechiae or wounds."),
+"exam_neuro": exam("Alert and oriented, GCS 15. No focal deficit."),
+"exam_psych": exam("Calm and cooperative. Thought linear. No suicidal or homicidal ideation."),
 }
 
 # The General Status line rendered above the exam list. Not an exam and not

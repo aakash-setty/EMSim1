@@ -58,7 +58,7 @@ simulator goes white after applying this, check the order first.
 ### Failure modes if you skip these
 
 - Skip edit 1: the build still succeeds and the simulator still runs. The
-  background image is absent and the room falls back to flat colour. No error.
+  background image is absent and the room falls back to flat color. No error.
 - Skip edit 2: `SEM` is undefined and the page does not render at all. Loud,
   which is the right way round for this one.
 

@@ -13,6 +13,9 @@
    "lactated_ringer_s_1l_bolus",
    "lactated_ringer_s_500ml_bolus",
    "normal_saline_500ml_bolus"
+  ],
+  "ceftriaxone": [
+   "cefotaxime"
   ]
  },
  "blocking": [],
@@ -194,13 +197,10 @@
    "case_id": "ceftriaxone",
    "catalog_id": "ceftriaxone",
    "status": "exact",
-   "note": null
-  },
-  {
-   "case_id": "cefotaxime",
-   "catalog_id": "cefotaxime",
-   "status": "exact",
-   "note": null
+   "note": null,
+   "also_covers": [
+    "cefotaxime"
+   ]
   },
   {
    "case_id": "cefepime",
@@ -535,6 +535,12 @@
   {
    "case_id": "venous_blood_gas",
    "catalog_id": "venous_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas",
    "status": "exact",
    "note": null
   },

@@ -75,7 +75,7 @@ Sections 2, 4, 5, 7, 10, 11, 13, 14, 15 and 17 change. The authoring consequence
 `case-authoring-requirements.md` v0.5, sections 0, 5, 9 and 14.
 
 **Why this was worth breaking an invariant for.** The static-patient rule bought coherence cheaply
-and it bought it by making a whole category of case unauthorable. Meningococcaemia, anaphylaxis,
+and it bought it by making a whole category of case unauthorable. Meningococcemia, anaphylaxis,
 status epilepticus, tension pneumothorax, a tricyclic overdose and an untreated STEMI all share a
 teaching point that cannot be expressed as a consequence of an action, because the point is that
 nothing was done. Before v0.6 the only way to author those was to substitute a proxy: make the
@@ -106,7 +106,7 @@ This is a teaching tool, not a certification instrument. That sets several defau
 
 **The debrief is the product.** In simulation education the debrief is generally where learning consolidates, with the scenario as the material it works on. The score exists to direct review, not to rank. Report by clinical domain rather than as a single number (section 11).
 
-**Case content is effectively public.** In a free open-source project the case files live in a public repository, so any learner can read them. Server-side rendering still matters, because it prevents spoiling a case mid-run, but treat it as user experience rather than protection. Design nothing that depends on the learner not knowing the answer.
+**Case content reaches the learner's browser.** Since v0.18 EMSim is proprietary and freemium, and the deployed site serves each case pack only to a signed-in user (see `docs/deployment.md`). That limits bulk copying, but any pack a browser loads can be read by the person using it. Server-side rendering still matters, because it prevents spoiling a case mid-run, but treat it as user experience rather than protection. Design nothing that depends on the learner not knowing the answer.
 
 **What does not change.** Clinical accuracy requirements are, if anything, higher. A learner will believe what this tool teaches, and there is no examiner downstream to catch an error. Every constraint in `case-authoring-requirements.md` about physician review and the prohibition on AI-invented clinical facts holds without modification.
 
@@ -175,7 +175,7 @@ The third requires an `unguarded_rationale`, because a transition that fires reg
 resident does is a scripted trajectory and should be a deliberate choice rather than an oversight.
 
 **A negative guard can only be falsified, never re-satisfied**, because flags are permanent. So once
-the resident gives the drug, that deterioration is cancelled for the remainder of the case, not
+the resident gives the drug, that deterioration is canceled for the remainder of the case, not
 merely deferred. This is the property that makes the mechanism reviewable: each time-guarded rule is
 a single question, "was this done in time", with a yes or no answer.
 
@@ -208,7 +208,7 @@ pressure, is the same contradiction pointing the other way.
 
 **A prompt in a phase with a time-guarded exit may name the consequence.** "If we don't get an
 antibiotic into her she is going to get worse" is now a true statement in such a phase, where before
-it was false everywhere. It is still not licence to describe the numbers as moving.
+it was false everywhere. It is still not license to describe the numbers as moving.
 
 **Audio inherits this constraint.** See section 8.5. A pitch that falls as saturation falls is legitimate, because saturation genuinely changed at a phase boundary. A pitch that drifts downward while the phase is unchanged would be the audible version of the same contradiction and must not be built.
 
@@ -251,7 +251,7 @@ Add a heartbeat roughly every 5 seconds while a case is active, as a safety net 
 
 ### 2.5 Session time
 
-Elapsed time runs from case start to handoff confirmation or halt. Behaviour on abandonment and pause is an open decision (section 14).
+Elapsed time runs from case start to handoff confirmation or halt. Behavior on abandonment and pause is an open decision (section 14).
 
 **Order batching interacts with this.** See section 17.2: with batching, the log records the moment of submission rather than the moment of decision, which changes what timing feedback measures.
 
@@ -277,7 +277,7 @@ Neither bound is an event: nothing is scheduled, the fold simply stops counting 
 
 **`while`, an ordinary section 4 condition.** Evaluated against the state as it now stands, not as it stood when the action was taken. This is how an effect ends when the mask comes off or the drip is stopped, without the case having to author a second action whose only job is to undo the first.
 
-**`key`, defaulting to the action id.** Effects sharing a key do not stack; the most recent administration wins. Repeating a drug therefore repeats its effect rather than doubling it, which is the behaviour every drug in the catalog actually has and no drug in the catalog would have by summation. Two routes to the same drug must be given the same explicit key, for the same reason a harmful tag has to cover every route to the same act (3.7a): a mechanism that a sibling entry escapes is not a mechanism.
+**`key`, defaulting to the action id.** Effects sharing a key do not stack; the most recent administration wins. Repeating a drug therefore repeats its effect rather than doubling it, which is the behavior every drug in the catalog actually has and no drug in the catalog would have by summation. Two routes to the same drug must be given the same explicit key, for the same reason a harmful tag has to cover every route to the same act (3.7a): a mechanism that a sibling entry escapes is not a mechanism.
 
 **Terminal phases are exempt.** `halted` and `case_complete` author the numbers a reader is meant to be left looking at. An effect still running when the case ends would edit the ending, and the halt card would disagree with the debrief above it.
 
@@ -366,7 +366,7 @@ Every drug, exam maneuver, lab, imaging study, ECG, consultant, stabilization ta
 | `flags_set_default` | Flags the action sets everywhere, for example `insert_iv` sets `iv_access` |
 | `default_result` | For investigations and exams: the normal finding, see 3.2 |
 | `reveals_vitals` | v0.7. True on the act that puts numbers on the screen. See 8.4b |
-| `persistent`, `repeatable`, `dose_required` | Display and behaviour hints |
+| `persistent`, `repeatable`, `dose_required` | Display and behavior hints |
 
 No clinical judgment lives here, because appropriateness is case-dependent. Every value that is not transcribed from the interface should record its provenance, because a field derived by convention and a field taken from a real menu need different levels of scrutiny.
 
@@ -384,7 +384,7 @@ Resolution order for any study or exam:
 
 Every component of a default is in range and carries `abnormal: false` explicitly.
 
-**The renderer does not recompute in-range.** A case that overrides a value must set `abnormal` itself. Two reasons. First, reference intervals are assay- and institution-specific and a renderer that decides for itself will disagree with the laboratory the case is modelling. Second, the interpretation is often not the number: a pO2 of 95 is normal on room air and alarming on a non-rebreather, and no renderer can know which.
+**The renderer does not recompute in-range.** A case that overrides a value must set `abnormal` itself. Two reasons. First, reference intervals are assay- and institution-specific and a renderer that decides for itself will disagree with the laboratory the case is modeling. Second, the interpretation is often not the number: a pO2 of 95 is normal on room air and alarming on a non-rebreather, and no renderer can know which.
 
 **A normal default is not a neutral default.** If an author forgets the troponin in a myocardial infarction case, the resident is shown a normal troponin and is taught the wrong thing, with no error raised anywhere. Section 13 requires a warning for this, and section 11.1 requires the debrief to list what was answered by a default rather than by the case.
 
@@ -455,7 +455,7 @@ A large searchable list used at handoff, matched on display name and synonyms so
 
 Metadata, patient definition, phases, case actions, content rules, interview bank, prompts, and handoff definition. Detailed in `case-authoring-requirements.md`.
 
-The client receives only resolved content for the current state, so a case is not spoiled mid-run. As noted in section 1, this is not a protection mechanism in an open-source project.
+The client receives only resolved content for the current state, so a case is not spoiled mid-run. As noted in section 1, this is not a protection mechanism: the whole pack still reaches the browser.
 
 ### 3.7a Equivalence groups
 
@@ -472,10 +472,10 @@ A case authored before the catalog existed, or authored by someone thinking in c
 Either the case references catalog ids directly, or a **binding file** sits between them with an explicit status per row:
 
 - `exact` the case id is already a catalog id
-- `mapped` a different id for the same action; the mapping is an author judgement and carries a note
+- `mapped` a different id for the same action; the mapping is an author judgment and carries a note
 - `unmatched` the catalog has no entry; this is a validator error and a catalog change request
 
-**One case action may bind to several catalog entries**, and for harmful actions it usually must. If the case tags a one litre crystalloid bolus as harmful and binds it only to normal saline, a resident who reaches for lactated Ringer's causes the same harm and the case does not halt. A harmful tag has to cover every route to the harm.
+**One case action may bind to several catalog entries**, and for harmful actions it usually must. If the case tags a one liter crystalloid bolus as harmful and binds it only to normal saline, a resident who reaches for lactated Ringer's causes the same harm and the case does not halt. A harmful tag has to cover every route to the harm.
 
 Where two case actions bind to one catalog entry the interface can offer only one button, and the second case action is unreachable. The build must report this rather than dropping it.
 
@@ -591,7 +591,7 @@ A prompt for critical action A in phase P with deadline D is due at (phase P ent
 This is fully derivable from the log, so nothing extra is stored and no read writes to state. The debrief determines prompted versus unprompted by comparing timestamps.
 
 Deadlines are measured from phase entry. On a phase change, whether caused by an action or by the
-clock, outstanding prompts for the previous phase are cancelled and new deadlines begin.
+clock, outstanding prompts for the previous phase are canceled and new deadlines begin.
 
 **This creates a defect a case can have and no reviewer will notice by reading.** A prompt at 260
 seconds in a phase with a time-guarded exit at 240 can never fire. The validator checks for it (13.1)
@@ -606,12 +606,12 @@ After a state-changing action the transition checker evaluates the current phase
 
 **In v0.6 the next evaluation is not necessarily the next action.** In a phase carrying at least one
 time-guarded rule the checker also runs on a tick, so an already-satisfied instantaneous rule fires
-within one tick rather than waiting for the resident. This is a behaviour change and it is confined
+within one tick rather than waiting for the resident. This is a behavior change and it is confined
 to phases that have a time-guarded rule, which means no case written before v0.6 is affected. Inside
-such a phase the cascade resolves promptly, which is the more coherent behaviour: a patient should
+such a phase the cascade resolves promptly, which is the more coherent behavior: a patient should
 not sit in a phase whose exit condition is already met while a deterioration clock runs against her.
 
-This is reachable in practice: a resident who gives the diuretic early can satisfy the improving-phase transition before ever entering the stabilizing phase, and the next action then advances two phases in one step. Single-step evaluation is the specified behaviour. Authors should be aware that prompt deadlines are measured from phase entry, so a phase entered and left in the same step issues no prompts.
+This is reachable in practice: a resident who gives the diuretic early can satisfy the improving-phase transition before ever entering the stabilizing phase, and the next action then advances two phases in one step. Single-step evaluation is the specified behavior. Authors should be aware that prompt deadlines are measured from phase entry, so a phase entered and left in the same step issues no prompts.
 
 ---
 
@@ -623,11 +623,11 @@ These are different mechanisms and are easy to conflate. Keep them separate.
 
 Each action may carry an ordered list of prerequisite rules, each with a condition and a failure message.
 
-**The condition is a requirement that must be TRUE**, not a block trigger. Write `flag iv_access set`, meaning the line must already be in, not `NOT flag iv_access set`. Both readings are grammatical and the resulting behaviour is exactly opposite, so this must be stated rather than inferred.
+**The condition is a requirement that must be TRUE**, not a block trigger. Write `flag iv_access set`, meaning the line must already be in, not `NOT flag iv_access set`. Both readings are grammatical and the resulting behavior is exactly opposite, so this must be stated rather than inferred.
 
 When the resident selects an action, the server evaluates the prerequisites. On failure it returns the message, logs a blocked entry, and does not change state.
 
-**Actions remain visible and selectable.** Hiding or greying out a blocked action teaches nothing. Letting the resident attempt it and receive "the patient is not sedated or paralyzed; give induction and paralytic agents before attempting intubation" teaches the sequence. This is the pedagogical point of the mechanism.
+**Actions remain visible and selectable.** Hiding or graying out a blocked action teaches nothing. Letting the resident attempt it and receive "the patient is not sedated or paralyzed; give induction and paralytic agents before attempting intubation" teaches the sequence. This is the pedagogical point of the mechanism.
 
 **Do not print prerequisites on the button either.** Annotating an entry with "needs a line" is the same information delivered as a label rather than as a lesson, and it makes the gated actions visibly different from the ungated ones, which leaks structure.
 
@@ -653,7 +653,7 @@ An action may declare follow-up requirements, each with a condition determining 
 
 Post-intubation analgesia and sedation are the canonical example. **They cannot be prerequisites of intubation, because they come after it.** A requirement that must be satisfied before an action is a prerequisite; one triggered by an action is a follow-up, enforced by prompting and surfaced as an omission. Conflating the two makes post-intubation medication unreachable.
 
-**`satisfied_by` must list every catalog entry that discharges the obligation.** If sedation can be propofol or ketamine and the list names only propofol, a resident who chose ketamine is told they failed to sedate a paralysed patient.
+**`satisfied_by` must list every catalog entry that discharges the obligation.** If sedation can be propofol or ketamine and the list names only propofol, a resident who chose ketamine is told they failed to sedate a paralyzed patient.
 
 ### 6.4 Validator obligations
 
@@ -719,7 +719,7 @@ What is left is the two that have no other home: a **prompt**, which appears now
 
 Two interface requirements, both learned by getting them wrong:
 
-- **A study appears twice**, once when sent and once when it returns. Under the same name that reads as a duplicate, so the order entry is labelled as an order.
+- **A study appears twice**, once when sent and once when it returns. Under the same name that reads as a duplicate, so the order entry is labeled as an order.
 - **Auto-scroll only on change.** Following the newest entry every render pulls a reader who has scrolled away through earlier results back repeatedly. Scroll when the item count changes, not every tick. With newest-first that means scrolling to zero rather than to the full height.
 - **A question the patient did not understand is not a chart entry.** v0.7. When the matcher finds no topic, the case's `out_of_scope_fallback` answers and the patient says they do not follow. That is feedback about the phrasing, not something learned about the patient, and a chart of "I don't know what you mean" three times over buries the history that was actually taken. The exchange stays on the History tab, where the resident can see which of their questions did not land and rephrase, and it does not enter the chart. The readout records the matched topic and is `null` exactly when the fallback answered, so this is one test and not a string comparison against the fallback text.
 
@@ -751,9 +751,9 @@ This is display gating and only display gating. `st.vitals` is computed by the f
 
 **What a phase may say about the picture.** A phase may carry an `ecg` block beside its `rhythm` (authoring 6.0b). The vocabulary is deliberately what a single monitor lead can show: whether P waves are present, the QRS duration, the ST level at the J point, the T amplitude, the PR and QTc intervals, and two patterns with no complexes at all, ventricular fibrillation and asystole. A phase with no block draws a narrow complex with P waves, or without them under an irregularly irregular rhythm, which is what the decorative trace already drew. The complexes are built from compact-support primitives ported from the ECG generator project, so the QRS duration an author writes is the duration that renders and the baseline between complexes is exactly flat.
 
-**The engine holds no association between any of this and a diagnosis.** A case says "no P waves, QRS 180 ms" and never says why, in the same way it says `irregularly_irregular` and never says atrial fibrillation. The amplitudes and the blend from a narrow complex to a wide one are authored stylisations, recorded as such in `SHARED.monitor.ecg.provenance`, and **no case should be described as modelling an ECG.** What the case controls is a handful of properties a resident can read off the screen, and the reason it controls them is that a tracing which disagrees with the phase's own ECG report is the same class of defect as a nurse line describing a trajectory over static vitals.
+**The engine holds no association between any of this and a diagnosis.** A case says "no P waves, QRS 180 ms" and never says why, in the same way it says `irregularly_irregular` and never says atrial fibrillation. The amplitudes and the blend from a narrow complex to a wide one are authored stylizations, recorded as such in `SHARED.monitor.ecg.provenance`, and **no case should be described as modeling an ECG.** What the case controls is a handful of properties a resident can read off the screen, and the reason it controls them is that a tracing which disagrees with the phase's own ECG report is the same class of defect as a nurse line describing a trajectory over static vitals.
 
-**What it deliberately does not do.** It does not enter the condition language, for the reason vitals do not. It does not vary within a phase: a widening QRS is authored as phases, exactly as a falling pressure is, and DIPH does so. It does not draw artefact, ectopy, pacing, f-waves or a second lead. And it is display only: nothing about the trace is stored, folded or read by a rule, and a result ordered while the trace shows one thing reports the phase's authored ECG whatever the picture happened to be.
+**What it deliberately does not do.** It does not enter the condition language, for the reason vitals do not. It does not vary within a phase: a widening QRS is authored as phases, exactly as a falling pressure is, and DIPH does so. It does not draw artifact, ectopy, pacing, f-waves or a second lead. And it is display only: nothing about the trace is stored, folded or read by a rule, and a result ordered while the trace shows one thing reports the phase's authored ECG whatever the picture happened to be.
 
 **8.4d The patient figure.** v0.17. `engine/patient.js` draws a person in the gap between the
 workspace and the record and moves them. It holds no clinical knowledge. The engine resolves
@@ -765,13 +765,13 @@ patient breathe without one. It freezes when the case is paused or over.
 
 The module is a rig (nested groups: figure, torso, head, eyes, brows, mouth, each with an
 additive channel), a pose system (eyes, brows and mouth each hold several drawings and show
-one) and a single feature registry. Built-in behaviours and add-ons are the same kind of
+one) and a single feature registry. Built-in behaviors and add-ons are the same kind of
 object and run in priority order each frame. Rejected: one SVG per state, which cannot
 compose (a seizing patient on a cannula would need its own drawing) and multiplies with every
 add-on; CSS keyframes, which cannot follow a respiratory rate that ramps; and deriving the
 visible state from vitals or alertness inside the engine, which would put a clinical
 association in code that is meant to hold none. Vocabulary lives in `SHARED.patient`; part and
-colour options live in `engine/patient-art.json` and are read, not restated.
+color options live in `engine/patient-art.json` and are read, not restated.
 
 ### 8.5 Audio
 
@@ -788,7 +788,7 @@ The shipped configuration is A6 (1760 Hz) at 100 percent saturation, one semiton
 **The shape of one beat, since v0.8.** A sine at a fixed frequency under a gated envelope:
 an 8 ms raised-cosine rise, 45 ms held at full gain, a 25 ms raised-cosine fall, 78 ms in
 total. A faint octave partial at ten percent of the body's gain runs under it on a shorter
-44 ms window, so it colours the arrival and is gone before the body ends. The duration is
+44 ms window, so it colors the arrival and is gone before the body ends. The duration is
 fixed rather than derived from the interval, so the beat is the same sound at 60 and at 180
 and only the spacing changes.
 
@@ -820,20 +820,20 @@ and the suite holds it at 15 ms or less.
 
 **The beat is a self-rescheduling chain, not a fixed interval.** Each beat reads the current rate, saturation and rhythm when it schedules its successor. That is what lets the tempo follow the five-second ramp continuously instead of being restarted whenever a quantised rate crosses a step, and it is what makes an uneven rhythm expressible at all. Exactly one beat is ever pending; the render loop starts the chain and stops it and does nothing else. Since v0.16 the chain lives in the monitor module and drives the trace as well as the sound (8.4c); it runs whether or not sound is on, and the audio module is one of its two subscribers.
 
-**Rhythm.** A phase may declare `rhythm`, from a closed vocabulary held in `SHARED.audio.rhythm`. `regular` is the default and is bit-identical to the behaviour before this existed. `irregularly_irregular` draws each interval independently as a shifted exponential:
+**Rhythm.** A phase may declare `rhythm`, from a closed vocabulary held in `SHARED.audio.rhythm`. `regular` is the default and is bit-identical to the behavior before this existed. `irregularly_irregular` draws each interval independently as a shifted exponential:
 
 ```
 interval = mean * (s + (1 - s) * Exp(1))
 ```
 
-A fraction `s` of the mean is refractory and the remainder is exponentially distributed, which is right-skewed and therefore produces the occasional long pause that makes such a rhythm recognisable. Two properties are enforced and asserted:
+A fraction `s` of the mean is refractory and the remainder is exponentially distributed, which is right-skewed and therefore produces the occasional long pause that makes such a rhythm recognizable. Two properties are enforced and asserted:
 
 - **The mean is preserved exactly.** `E[Exp(1)] = 1`, so the expected interval is the authored one. The rate on the monitor and the average rate in the ear are the same number.
 - **The spread narrows as the rate rises.** `s` is raised wherever a fixed refractory floor would otherwise be breached, rather than clamping the draw, which would push a third of the beats at 220 bpm onto the floor and move the mean off the authored rate. The coefficient of variation is `1 - s`. The floor also guarantees that one beat's second sound can never land on the next beat's first.
 
 An uneven rhythm additionally varies the loudness of each beat with the length of the interval preceding it, because a long diastole fills the ventricle more. Without it the ear hears mistimed identical beats rather than a heart.
 
-**Every one of those parameters is a teaching choice and none is measured.** They live in `SHARED.audio.rhythm` with a provenance note saying so. The engine holds no association between a rhythm and a diagnosis, exactly as it holds no appropriateness judgement about a drug.
+**Every one of those parameters is a teaching choice and none is measured.** They live in `SHARED.audio.rhythm` with a provenance note saying so. The engine holds no association between a rhythm and a diagnosis, exactly as it holds no appropriateness judgment about a drug.
 
 **The ECG trace follows the same beat.** Until v0.16 the trace was decorative: under an irregular rhythm it drew six unevenly spaced complexes without P waves, deterministically per rate, and the beats on screen were not the beats being heard. It is now drawn live from the beat clock the sound uses, so every complex on the screen is a beat that sounded, at the interval the model drew for it (8.4c).
 
@@ -851,11 +851,11 @@ An uneven rhythm additionally varies the loudness of each beat with the length o
 
 **It changes 8.4b, and the change is an improvement.** The room is no longer silent before a monitor is attached: what is missing then is the monitor's sound, which is the whole of the point being made, and a ward that fell silent until somebody attached a monitor was the less truthful half of it. Nothing else about 8.4b moves.
 
-**The asset is derived, normalised and optional.** It is peak-normalised at build time so the gain figure means something against a known reference rather than against whatever a particular recording happened to be; it is crossfaded so it repeats without a seam; it is decoded once from base64 in the page and looped as a buffer with loop points set inside the encoder padding. Every failure path ends in a silent room rather than an error, and a build made without the asset is a working simulator that is smaller. **No case should depend on it**, which is the same rule as nothing depending on sound at all.
+**The asset is derived, normalized and optional.** It is peak-normalized at build time so the gain figure means something against a known reference rather than against whatever a particular recording happened to be; it is crossfaded so it repeats without a seam; it is decoded once from base64 in the page and looped as a buffer with loop points set inside the encoder padding. Every failure path ends in a silent room rather than an error, and a build made without the asset is a working simulator that is smaller. **No case should depend on it**, which is the same rule as nothing depending on sound at all.
 
 ### 8.6 Pausing, and leaving
 
-**A window nobody is looking at stops the case.** The clock is wall-clock time and every deadline a case authors is a claim about a patient, so charging a resident for the minutes they spent in another window would make those claims false. Both signals are used, because they cover different things: `visibilitychange` catches a hidden tab and a minimised window, `blur` catches a window still on screen with the focus elsewhere. Time away is accumulated and subtracted, so the clock freezes rather than jumping.
+**A window nobody is looking at stops the case.** The clock is wall-clock time and every deadline a case authors is a claim about a patient, so charging a resident for the minutes they spent in another window would make those claims false. Both signals are used, because they cover different things: `visibilitychange` catches a hidden tab and a minimized window, `blur` catches a window still on screen with the focus elsewhere. Time away is accumulated and subtracted, so the clock freezes rather than jumping.
 
 **It never resumes on its own.** Coming back to a case that has been running without you is worse than coming back to one that waited, so resuming is a deliberate click on an overlay that covers the workspace. Sound stops with the clock, through the same scene mechanism the debrief uses.
 
@@ -916,7 +916,7 @@ Termination and restart are separate decisions. **Restart should be offered, not
 
 Clinical tags are rule lists, not fixed values, so the same action can be harmful in one phase and appropriate in another. The tag is evaluated against current state at the moment of the action.
 
-**A batch that contains a harmful action halts on it** and discards everything selected after it. Actions before it in the batch are applied normally. This is correct and will surprise learners who expected a submitted set to go through as a set. Warning before submission would leak the answer, so the behaviour stands.
+**A batch that contains a harmful action halts on it** and discards everything selected after it. Actions before it in the batch are applied normally. This is correct and will surprise learners who expected a submitted set to go through as a set. Warning before submission would leak the answer, so the behavior stands.
 
 **The halted phase has one vitals block for every halt reason.** A metoprolol arrest and a fluid-overload decompensation display identical numbers. This is a known limitation; see section 15.
 
@@ -1027,7 +1027,7 @@ say the patient ended up in a bad phase but not why, and "you missed the antibio
 deteriorated at four minutes because the antibiotic had not been given" are different sentences with
 different teaching in them.
 
-**Item 8 matters more than it looks.** It is the only place a normal-by-omission becomes visible. A resident reading "your lipase and your orthopaedics consult were answered by a default" learns that the case had nothing to say about them, which is different from learning that they were normal.
+**Item 8 matters more than it looks.** It is the only place a normal-by-omission becomes visible. A resident reading "your lipase and your orthopedics consult were answered by a default" learns that the case had nothing to say about them, which is different from learning that they were normal.
 
 **Teaching notes are collapsed by default**, each behind its own expander next to the action. The notes are the most valuable content in the debrief and also the longest; printed in full for every action they become a wall of text that gets skimmed, and the list of what was done and what was missed stops being readable at a glance. Use a native disclosure element rather than a scripted toggle, so the open state survives a re-render.
 
@@ -1078,7 +1078,7 @@ Case-agnostic. No clinical knowledge, no case names, no drug behavior. An `if` s
 | **Vital effect resolver** | v0.7. Reduces the recorded administrations to the effects acting now, one per key, and adds them to the phase baseline. Nothing schedules an expiry; the resolver is a function of the clock |
 | **Flag grant ledger** | v0.8. Records, per flag, whether an action has granted it permanently and the latest deadline any timed grant runs to. A lapse is a scheduled event that removes the flag and re-checks transitions, so a case can react to something wearing off |
 | **Beat clock** | v0.16. One self-rescheduling chain per running, monitored case. Each beat reads the displayed rate and the phase's rhythm, draws the next interval from the interval model, and announces itself to the trace and the audio. Runs whether or not sound is on |
-| **Waveform synthesiser** | v0.16. Builds one lead II complex per beat from the phase's `ecg` block, out of compact-support primitives, so authored intervals render literally. Holds no association between a picture and a diagnosis |
+| **Waveform synthesizer** | v0.16. Builds one lead II complex per beat from the phase's `ecg` block, out of compact-support primitives, so authored intervals render literally. Holds no association between a picture and a diagnosis |
 
 **The folder is not independent of the resolver and transition checker.** Phase changes come from transition rules, and results freeze at order-time state, both computed during the chronological walk. Implementing fold-then-resolve produces a system that appears correct while silently breaking result freezing, showing an early gas with the improved value. Build it as one ordered replay.
 
@@ -1201,7 +1201,7 @@ Two categories, both belonging on the human checklist:
 9. **Whether the clock pauses.** Time-guarded transitions make this consequential where it was
    cosmetic. A resident reading a long consultant response or composing a batch of orders is on the
    same clock as one who is stuck, and a deterioration that fires while they are reading is unfair in
-   a way a prompt firing is not. Shipped behaviour is that the clock does not pause, on the grounds
+   a way a prompt firing is not. Shipped behavior is that the clock does not pause, on the grounds
    that one clock with one set of semantics is worth more than the fairness it costs, and that the
    30-second floor and the mandatory preceding prompt are the mitigations. Revisit with a real
    learner.
@@ -1262,7 +1262,7 @@ tooling, which had been accumulating case data without anyone noticing.
 case's correct diagnosis by searching the catalog for "reduced ejection" or "hfref". It is
 obviously case content in engine code, and it was also masking the fact that the case had
 never named a real catalog id. Removing the fallback broke the handoff at once, which is
-the correct behaviour and the reason section 9 now requires ids rather than labels.
+the correct behavior and the reason section 9 now requires ids rather than labels.
 
 The general lesson: a fallback that guesses on behalf of a case will hide the very defect
 the fallback exists to work around, and it will hide it for as long as the guess happens
@@ -1279,7 +1279,7 @@ each case's finished action table, which was 227 KB and 95 percent catalog data,
 file grew by roughly 370 KB per case. The catalog is now emitted once and the engine
 merges it with the case bindings on selection. Per-case cost falls to the size of the
 case file. It is also the right home for the merge: section 6.2 describes catalog-default
-and case-prerequisite merging as engine behaviour, and it had been living in the build.
+and case-prerequisite merging as engine behavior, and it had been living in the build.
 
 **The picker names what is wrong with a case rather than hiding it.** A case whose build
 produced notes, such as a diagnosis that does not resolve or an action with no placement,
@@ -1381,7 +1381,7 @@ sentences. See section 18 and authoring section 3.2.
 **Care setting is authored per case, not per deployment.** It reads as a property of the
 institution, but the correct disposition depends on it: a case written for a critical
 access hospital with no cardiology on site has a different right answer. Default is a
-quaternary Level 1 centre with everything available.
+quaternary Level 1 center with everything available.
 
 **The clock reads zero until Begin.** Reading the scene is not part of the resuscitation
 and should not be timed.
@@ -1401,7 +1401,7 @@ and a run began in easy, which made the assisted pacing the one a resident had t
 of and made the prompted-versus-independent report in 11.2 an exception rather than the
 measurement. The interface reads `difficulty.default` to decide both which mode a run
 starts in and which one is drawn as the box, so the emphasis on the card cannot disagree
-with the behaviour. The mode was called `hard` until v0.14; nothing stored it, so the
+with the behavior. The mode was called `hard` until v0.14; nothing stored it, so the
 rename touched the catalog, the splash and these documents and nothing else.
 
 The multiplier scales prompt deadlines, prompt escalations and follow-up prompt
@@ -1435,7 +1435,7 @@ never compared against one taken under different pacing.
 
 The tabs are defined by catalog `placements`, not by the engine. The current set:
 
-| Tab | Contents | Behaviour |
+| Tab | Contents | Behavior |
 |---|---|---|
 | History | Demographics, the arrival handover, then the free-text interview | Fires on submit |
 | Exam | General status line, then the 14 maneuvers | Fires on click |
@@ -1476,7 +1476,7 @@ several groups and a long list; it is a cost when it has one.
 This is presentation only. It changes nothing about what is orderable, what any action does,
 or what the engine sees. Which tabs collapse is configuration.
 
-**Case actions with no catalog entry** should not exist. Where they do, during migration, render them in a separately labelled group so the case remains playable while the gap stays visible, and error in the validator.
+**Case actions with no catalog entry** should not exist. Where they do, during migration, render them in a separately labeled group so the case remains playable while the gap stays visible, and error in the validator.
 
 ---
 
@@ -1541,7 +1541,7 @@ selected. It runs in about a millisecond and needs nothing from the network.
 
 Three extensions were added in v0.5, all of them aimed at the same gap: residents type
 clinical shorthand, and the authored variants are in lay register because they are what
-the patient would recognise.
+the patient would recognize.
 
 - **A clinical lexicon**, roughly ninety entries, rewriting abbreviations and clinical
   terms into the words the banks actually contain: `pnd` to `wake night gasping breath`,
@@ -1551,7 +1551,7 @@ the patient would recognise.
   `orthopnea` as a variant is not rewritten out of its own match.
 - **Single-edit typo repair** against the case's vocabulary, using optimal string
   alignment so a transposition costs one rather than two. Words shorter than five
-  characters are never repaired, because at four characters a one-edit neighbourhood
+  characters are never repaired, because at four characters a one-edit neighborhood
   contains most of the short English vocabulary. Ties break lexicographically so the
   result is deterministic.
 - **Compound splitting.** A question is split on `and`, `or`, `also`, `plus`, commas,
@@ -1615,7 +1615,7 @@ topic under a reserved id, and a win for it is a fallback. Before this existed, 
 thirty unrelated questions on AFRVR were answered with a confident wrong topic, and the
 cosine ranges of in-scope and out-of-scope questions overlapped so completely that no
 threshold could have separated them: "Have you had a colonoscopy?" is not far from "When did
-you last eat?" in embedding space. Giving "nothing relevant" its own neighbourhood is what
+you last eat?" in embedding space. Giving "nothing relevant" its own neighborhood is what
 moved that number, not a threshold.
 
 **Two lexical precision defects were fixed in the same pass.** The rare-word override, which
@@ -1715,6 +1715,15 @@ clear the threshold, the patient asks which was meant, naming both echoes, and n
 marked as asked. On the held-out sets this converted two confident wrong answers and two
 out-of-scope false accepts into questions, at the cost of two correct answers that now take
 an extra turn; on the tuning sets it fires on about three percent of questions.
+
+**Volunteering** (v0.18a). A topic may list `adjacent` topics. On its first answer the fold
+(`volunteersFor`) appends the `volunteer` line of each adjacent topic that has not been
+spoken about, joined into the same stretch of speech, and adds that topic to `askedTopics`
+and `volunteered`. It is skipped for topics in `interview.must_ask`, while any global answer
+rule holds, and while `interview.volunteer_blocked_when` holds. A repeat, a fact, a
+clarification and "anything else?" volunteer nothing. A volunteered topic asked later still
+gives its whole answer, because it was mentioned rather than answered. The timeline label
+records what was volunteered ("Asked about onset (also mentioned timing progression)").
 
 The defaults for all of this live in `SHARED.interviewDefaults` and a case may override any
 of them under `interview`. The speech is written in the patient's voice, in the same quoted

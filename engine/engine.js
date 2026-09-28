@@ -87,7 +87,7 @@ function resolveText(v,st){
    copy of the catalog. Section 6.2: catalog defaults apply unless the case waives
    them, and case prerequisites are additional rather than a replacement. */
 let CASE=null, PROTO=null, PACK=null;
-let PHASE={}, ACT={}, FU={}, CK=null, CONTENT={}, GENERAL_STATUS=null, PATIENT_VISUAL=null, PATIENT_ALSO=[];
+let PHASE={}, ACT={}, FU={}, CK=null, CONTENT={}, GENERAL_STATUS=null, PATIENT_VISUAL=null, PATIENT_ALSO=[], DEVICE_BY_ID={};
 
 function orphanCategory(eff){
   if(eff.indexOf('exam_')===0) return 'exam';
@@ -285,6 +285,15 @@ function selectCase(ref){
   GENERAL_STATUS = CK.general_status ? CK.general_status.rules : null;
   PATIENT_VISUAL = CK.patient_visual ? CK.patient_visual.rules : null;
   PATIENT_ALSO = (CK.patient_visual && CK.patient_visual.also) || [];
+  /* v0.17p. The airway device on the figure follows the button pressed, in every case, and
+     not a flag each case happened to author: AFRVR's cannula set a flag nothing drew, DIPH
+     sent three devices to one flag, CHFE had no cannula action of its own and MGCA's
+     first-match list kept a mask on after the cannula went back on. SHARED.patient.
+     deviceActions names the device per catalog entry; the case id it is pressed under is
+     whatever the pack binds that entry to. */
+  DEVICE_BY_ID={};
+  const _dev=(SHARED.patient&&SHARED.patient.deviceActions)||{};
+  for(const cid in _dev){ const eff=(PACK.bindings||{})[cid]||cid; if(ACT[eff]) DEVICE_BY_ID[eff]=_dev[cid]; }
   return PACK;
 }
 
@@ -301,12 +310,35 @@ function patientVisual(st){
   for(const r of PATIENT_ALSO) if(test(r.when,st)) for(const a of (r.addons||[])) if(extra.indexOf(a)<0) extra.push(a);
   const withExtra=v=>{ if(!extra.length) return v; const o=Object.assign({},v);
     o.addons=(v.addons||[]).concat(extra.filter(a=>(v.addons||[]).indexOf(a)<0)); return o; };
+  let out;
   if(PATIENT_VISUAL){
     const v=resolve(PATIENT_VISUAL,st);
-    if(v) return {value:withExtra(v),source:'case'};
+    if(v) out={value:withExtra(v),source:'case'};
   }
-  if(extra.length) return {value:withExtra((SHARED.patient&&SHARED.patient.visualDefault)||{}),source:'case'};
-  return {value:(SHARED.patient&&SHARED.patient.visualDefault)||{},source:'default'};
+  if(!out&&extra.length) out={value:withExtra((SHARED.patient&&SHARED.patient.visualDefault)||{}),source:'case'};
+  if(!out) out={value:(SHARED.patient&&SHARED.patient.visualDefault)||{},source:'default'};
+  return withDevice(out,st);
+}
+/* The airway device the resident last put on replaces whatever airway the case's rules drew,
+   and a tube, from the rules or the button, replaces every other device. With no device
+   pressed the rules' choice stands, so CHFE's patient still arrives on the EMS cannula.
+   Only a press that went through counts: a blocked one never reaches st.takenAt. */
+const AIRWAY=['nasal_cannula','nonrebreather','bipap_mask','bag_valve_mask','intubated'];
+function deviceNow(st){
+  let best=null, bestAt=0, tube=false;
+  for(const id in DEVICE_BY_ID){
+    const at=(st.takenAt||{})[id]; if(!at) continue;
+    if(DEVICE_BY_ID[id]==='intubated') tube=true;
+    if(at>bestAt){ bestAt=at; best=DEVICE_BY_ID[id]; }
+  }
+  return tube?'intubated':best;
+}
+function withDevice(out,st){
+  const d=deviceNow(st), cur=out.value.addons||[];
+  if(!d&&cur.indexOf('intubated')<0) return out;
+  const dev=cur.indexOf('intubated')>=0?'intubated':d;
+  const addons=cur.filter(a=>AIRWAY.indexOf(a)<0).concat([dev]);
+  return {value:Object.assign({},out.value,{addons}),source:out.source,device:d||null};
 }
 
 /* The line above the exam list. Case rules first, catalog default second. */
@@ -346,6 +378,11 @@ function dispName(id){ return (ACT[id]&&ACT[id].name)||id.replace(/_/g,' '); }
 /* ---------- result resolution: case, then catalog default, then nothing ------ */
 function resolveResult(id,snap){
   if(CONTENT[id]) return {value:resolve(CONTENT[id],snap),source:'case'};
+  /* v0.18a. A study covered by another (also_covers) is the same act, so it returns that
+     action's authored result rather than a catalog "normal". CHFE's cardiac ultrasound
+     read as a normal ventricle in a man with an ejection fraction of 25 percent. */
+  const via=(ACT[id]||{}).covered_by;
+  if(via&&CONTENT[via]) return {value:resolve(CONTENT[via],snap),source:'case'};
   const d=(ACT[id]||{}).default_result;
   if(d) return {value:d,source:'catalog_default'};
   return {value:null,source:'none'};
@@ -370,6 +407,7 @@ function fold(log, now, difficultyMultiplier){
   const DM = difficultyMultiplier || 1;
   const st={
     phase:CASE.phases[0].id, flags:new Set(), ordered:new Set(), resulted:new Set(), taken:new Set(),
+    takenAt:{}, takenSeq:0,
     /* Two sets, because they answer two different questions and conflating them put a
        pressed highlight on a button nobody had pressed.
 
@@ -406,7 +444,7 @@ function fold(log, now, difficultyMultiplier){
     recommendedExpected:new Set(),
     /* v0.9. Every interview topic the resident's questions reached, whether or not the
        case also binds it as an action. The summary's History score reads it. */
-    askedTopics:new Set(),
+    askedTopics:new Set(), volunteered:new Set(),
     /* Section 7.3's fifth tier. It was defined in the spec, authored by MGCA on 31
        tag rules, recorded on the timeline, and then read by nothing: the debrief
        surfaced critical, recommended, harmful and the neutral traps, so a
@@ -568,8 +606,11 @@ function fold(log, now, difficultyMultiplier){
        more      the next untold facts of the topic, or that there are none
        repeat    a topic already answered gets a short restatement, not the paragraph
        first ask the topic's answer, with every fact it carries marked told, and an
-                 echo of the topic in front when the match was uncertain */
-  const said={topics:{},facts:new Set()};
+                 echo of the topic in front when the match was uncertain. Since v0.18a
+                 the patient also volunteers the adjacent topics the case lists for it
+                 (see volunteersFor), so a learner needs fewer questions to see the
+                 picture. */
+  const said={topics:{},facts:new Set(),volunteered:new Set()};
   const IV=CASE.interview, DEF=(PROTO.interviewDefaults||{});
   const G=IV.global_answer_rules||[];
   const gated=(rules)=>resolve(G.concat(rules),st);
@@ -634,8 +675,40 @@ function fold(log, now, difficultyMultiplier){
       const e=echoOf(T);
       body=quoteJoin(e.charAt(0).toUpperCase()+e.slice(1)+'?',body);
     }
-    push(T.topic,body,T.topic,label);
+    const vols=body?volunteersFor(T):[];
+    vols.forEach(v=>{ body=joinSpeech(body,v.line); said.volunteered.add(v.topic); });
+    push(T.topic,body,T.topic,label+(vols.length?' (also mentioned '+vols.map(v=>v.topic.replace(/_/g,' ')).join(' and ')+')':''));
     satisfy(T.topic);
+    vols.forEach(v=>{ st.volunteered.add(v.topic); satisfy(v.topic); });
+  }
+  /* v0.18a. Volunteering. A topic may list `adjacent` topics; each adjacent topic that has
+     a short `volunteer` line, has not been spoken about, and is not one of the case's
+     `must_ask` safety screens is added to the first answer, in the patient's own voice,
+     and counts as asked. Nothing is volunteered while a global rule is speaking for the
+     patient (intubated, unresponsive, the relative out of the room) or while the case's
+     `volunteer_blocked_when` holds (a confused patient answers only what is asked). A
+     topic volunteered this way still gives its full answer when it is asked later. */
+  function volunteersFor(T){
+    if(!T||!T.adjacent||!T.adjacent.length) return [];
+    if(G.some(r=>test(r.when,st))) return [];
+    if(IV.volunteer_blocked_when&&test(IV.volunteer_blocked_when,st)) return [];
+    const must=new Set(IV.must_ask||[]);
+    const out=[];
+    for(const id of T.adjacent){
+      const Y=IV.topics.find(x=>x.topic===id);
+      if(!Y||!Y.volunteer||must.has(id)||said.topics[id]||said.volunteered.has(id)) continue;
+      const line=resolve(Array.isArray(Y.volunteer)?Y.volunteer:[{when:null,value:Y.volunteer}],st);
+      if(line) out.push({topic:id,line});
+    }
+    return out;
+  }
+  /* Two stretches of quoted speech become one: 'A.' + 'B.' reads 'A. B.' rather than two
+     quotations side by side. Anything else is joined with a space. */
+  function joinSpeech(a,b){
+    const x=String(a||'').trim(), y=String(b||'').trim();
+    if(!x) return y; if(!y) return x;
+    for(const q of ["'",'"']) if(x.endsWith(q)&&y.startsWith(q)) return x.slice(0,-1).trimEnd()+' '+y.slice(1);
+    return x+' '+y;
   }
   function satisfy(topic){
     st.askedTopics.add(topic);
@@ -734,6 +807,7 @@ function fold(log, now, difficultyMultiplier){
     }
 
     st.taken.add(id);
+    st.takenAt[id]=++st.takenSeq;   // order of the last press, for the airway device (v0.17p)
     st.satisfied.add(id);
     /* An entry covered through also_covers borrows the covering action's tag, flags and
        note, so it already advances the case and is scored the same way. It was not
@@ -1022,6 +1096,7 @@ function narrationFor(id){
              .replace(/\s+at\s+\{dose\}/g,'')
              .replace(/\{dose\}/g,'')
              .replace('{name}',softLower(a.name))
+             .replace('{name_lower}',softLower(a.name))   // an older template spelling
              .replace(/\s{2,}/g,' ').trim());
   }
   if(IS_STUDY(id)) return sentence(dispName(id))+' is away.';

@@ -17,7 +17,7 @@ let st=fold(mk([[1,'attach_monitor'],[2,'insert_iv'],[3,'ecg_12_lead'],[4,'ultra
                 [5,'ultrasound_lung'],[6,'non_invasive_positive_pressure_ventilation'],
                 [8,'furosemide_40_mg_iv'],[10,'digoxin_bolus'],[45,'digoxin_bolus'],
                 [50,'apixaban']]),120);
-chk('reaches the stabilised phase',st.phase==='stabilized',st.phase);
+chk('reaches the stabilized phase',st.phase==='stabilized',st.phase);
 chk('phase sequence',
     JSON.stringify(st.phaseSeq.map(p=>p.id))==='["presentation","breathing_supported","stabilized"]',
     JSON.stringify(st.phaseSeq.map(p=>p.id)));
@@ -136,7 +136,7 @@ chk('a third dose changes nothing further',
 section('the nurse says the agents take time, in red and in the chart');
 const said=t=>fold(rc1,t).nurse.filter(x=>/take a bit of time to kick in/i.test(x.text));
 chk('she says it when the drug is given',said(20).length===1,String(said(20).length));
-chk("it is an alert, so it is coloured and it goes into the running chart",
+chk("it is an alert, so it is colored and it goes into the running chart",
     said(20).every(x=>x.kind==='alert'),said(20).map(x=>x.kind).join(','));
 chk('it is not a prompt, so it does not consume a prompt slot and does not trill',
     said(20).every(x=>x.kind!=='prompt'));
@@ -240,7 +240,7 @@ for(const bag of ['normal_saline_1l_bolus','normal_saline_500ml_bolus',
 }
 st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
             [3,'digoxin_bolus'],[5,'digoxin_bolus'],[80,'normal_saline_1l_bolus']]),120);
-chk('the same bolus once stabilised is discouraged rather than lethal',
+chk('the same bolus once stabilized is discouraged rather than lethal',
     !st.halted&&st.phase==='stabilized',st.phase);
 st=fold(mk([[1,'insert_iv'],[400,'normal_saline_1l_bolus']]),500);
 chk('a harmful action still halts after a deadline has passed',st.phase==='halted',st.phase);
@@ -272,7 +272,7 @@ section('coverage groups satisfy the critical action they cover');
 for(const agent of ['amiodarone_bolus_infusion','metoprolol_bolus']){
   const s=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
                    [3,agent],[5,agent]]),60);
-  chk(agent+' reaches the stabilised phase',s.phase==='stabilized',s.phase);
+  chk(agent+' reaches the stabilized phase',s.phase==='stabilized',s.phase);
   chk(agent+' satisfies the covering critical action',s.satisfied.has('digoxin_bolus'));
   chk(agent+' does NOT mark the covering button as pressed',!s.taken.has('digoxin_bolus'));
   chk(agent+' marks its own button as pressed',s.taken.has(agent));
@@ -372,8 +372,10 @@ chk('every non-terminal phase is irregular',
     CASE.phases.filter(p=>!p.terminal).every(p=>p.rhythm==='irregularly_irregular'),
     CASE.phases.filter(p=>!p.terminal&&p.rhythm!=='irregularly_irregular')
       .map(p=>p.id).join(', '));
-chk('the generic peri-arrest block is regular, because it is not his rhythm',
-    RH_OF.halted==='regular',String(RH_OF.halted));
+/* v0.18a: the only halting action here (a crystalloid bolus) causes respiratory failure,
+   so the halted block now carries his own rhythm and those numbers, not an arrest. */
+chk('the halted block is his own rhythm in respiratory failure',
+    RH_OF.halted==='irregularly_irregular',String(RH_OF.halted));
 
 /* The rates this case actually authors, against the model that will sound them. The
    floor has to clear the lub-dub gap at the fastest rate in the case, and the average

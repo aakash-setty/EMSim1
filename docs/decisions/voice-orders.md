@@ -1,7 +1,7 @@
 # Orders that are spoken
 
 Design v0.13. One feature, five decisions, and the alternatives that were set aside.
-Kept for what was rejected. The current behaviour is described at the top of
+Kept for what was rejected. The current behavior is described at the top of
 `engine/voice.js` and `catalog/build_voice_aliases.py`; this file is not a source of
 truth for how the system behaves.
 
@@ -90,7 +90,7 @@ one click and never orders the wrong drug.
 
 **Decision.** Units, numbers that discriminate nothing, and a reason after the order are
 removed before lookup. A number survives only where it selects an entry (500 against a
-litre, fifteen litres on a mask, three percent against twenty-three). Route words
+liter, fifteen liters on a mask, three percent against twenty-three). Route words
 (bolus, drip, IM, sublingual) survive because they select entries.
 
 **Why.** The catalog has no dose field a spoken dose could fill, so parsing one would
@@ -107,8 +107,8 @@ and a microphone stricter than the buttons would only push residents back to the
 
 ## 5. Two normalisers, one test, a fixed point
 
-**Decision.** The Python script normalises every phrase before storing it; `voice.js`
-carries the same pipeline for speech; `engine-tests.js` normalises the shipped table
+**Decision.** The Python script normalizes every phrase before storing it; `voice.js`
+carries the same pipeline for speech; `engine-tests.js` normalizes the shipped table
 with the JS pipeline and requires every phrase back unchanged. Both pipelines iterate to
 a fixed point, bounded at four rounds.
 
@@ -116,7 +116,7 @@ a fixed point, bounded at four rounds.
 and the check is cheap. The fixed point was not in the first version: dropping "by" from
 "oxygen by mask" produced "oxygen mask", which a rule names, and "kidney function"
 became "renal function", which another rule names, and eight phrases shipped half
-normalised. The test found them; the loop fixed them.
+normalized. The test found them; the loop fixed them.
 
 ### Rejected: one implementation, shared
 
@@ -134,5 +134,5 @@ name that is more than one letter from any phrase is shown as not understood rat
 than guessed, which is the safe failure but a frequent one for polysyllabic generics;
 the fix is a row in the table, and the table is where such fixes belong. The parser
 knows no doses, so "two units" of blood is one transfusion and "another liter" is one
-litre. Consults and exams are not spoken; the author asked for investigations and
+liter. Consults and exams are not spoken; the author asked for investigations and
 interventions, and stabilization was added by agreement.

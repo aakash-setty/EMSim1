@@ -52,12 +52,11 @@
    "catalog_id": "cefepime"
   },
   {
-   "case_id": "cefotaxime",
-   "catalog_id": "cefotaxime"
-  },
-  {
    "case_id": "ceftriaxone",
-   "catalog_id": "ceftriaxone"
+   "catalog_id": "ceftriaxone",
+   "also_covers": [
+    "cefotaxime"
+   ]
   },
   {
    "case_id": "central_venous_catheter_triple_lumen",
@@ -495,6 +494,10 @@
   {
    "case_id": "venous_blood_gas",
    "catalog_id": "venous_blood_gas"
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas"
   },
   {
    "case_id": "xr_chest",

@@ -83,7 +83,7 @@ chk('no reference to a study never ordered',!/troponin/i.test(c0)||/send|get|nee
 section('interview');
 st=fold([{seq:0,t:1,kind:'interview',topic:'orthopnea',q:'how many pillows'}],5);
 chk('answer resolved from authored rules',st.readouts[0].body.length>10);
-st=fold([{seq:0,t:1,kind:'interview',topic:null,q:'what is your favourite colour'}],5);
+st=fold([{seq:0,t:1,kind:'interview',topic:null,q:'what is your favorite color'}],5);
 chk('unmatched uses fallback',st.readouts[0].body.length>10&&st.readouts[0].matched===null);
 st=fold(mk([[1,'iv_access_peripheral'],[2,'etomidate_iv'],[3,'rocuronium_iv'],[4,'intubation_rsi']]).concat([{seq:9,t:6,kind:'interview',topic:'onset',q:'when did it start'}]),20);
 chk('alertness gating: intubated patient gives no history',/cannot give any history|does not respond/i.test(st.readouts[st.readouts.length-1].body));
@@ -283,4 +283,18 @@ section('the monitor is what shows the vitals');
       fold(mk([[1,'iv_access_peripheral'],[6,'niv_bipap_cpap']]),300).monitoring===null);
   chk('attaching it is enough on its own',
       !!fold(mk([[2,'cardiac_monitor']]),5).monitoring);
+}
+
+section('v0.18a audit fixes');
+{
+  let s=fold(mk([[1,'iv_access_peripheral'],[2,'ultrasound_cardiac']]),30);
+  const us=(s.orders.ultrasound_cardiac||[])[0];
+  chk('the cardiac ultrasound returns the authored scan, not a normal ventricle',!!us&&us.source==='case'&&/reduced/i.test(JSON.stringify(us.value)),us?us.source:'not ordered');
+  s=fold(mk([[1,'iv_access_peripheral'],[2,'labs_abg']]),30);
+  const ab=(s.orders.labs_abg||[])[0];
+  chk('the arterial gas is authored, not a normal default',!!ab&&ab.source==='case',ab?ab.source:'not ordered');
+  s=fold(mk([[1,'iv_access_peripheral'],[2,'labetalol_bolus']]),20);
+  chk('labetalol is the same error as metoprolol',s.phase==='halted',s.phase);
+  s=fold(mk([[1,'iv_access_peripheral'],[2,'epinephrine_push_dose']]),20);
+  chk('a push-dose epinephrine bolus does not count as a running pressor',!s.flags.has('pressor_running'));
 }

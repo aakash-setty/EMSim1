@@ -190,12 +190,12 @@
   {
    "register": "expansion",
    "q": "Any diarrhoea or vomiting?",
-   "expect": "diarrhoea"
+   "expect": "diarrhea"
   },
   {
    "register": "expansion",
    "q": "Right. Any loose stools?",
-   "expect": "diarrhoea"
+   "expect": "diarrhea"
   },
   {
    "register": "expansion",

@@ -90,7 +90,7 @@ const SEM = (function () {
      no retry loop: a learner who is offline should not have the tab repeatedly
      trying to pull 23 MB while they work. */
   let state = 'idle';
-  let extractor = null;
+  let extractor = null, extractorP = null;
   let vecs = null;      // Float32Array of rows.length * DIM, unit length, row major
   let rows = [];        // [{topic, form}] parallel to vecs
   let bankKey = null;
@@ -220,9 +220,12 @@ const SEM = (function () {
 
     try {
       if (!extractor) {
-        const lib = await withTimeout(import(LIB_URL), LIB_TIMEOUT_MS, 'the embedding library');
-        if (myGen !== gen) return;
-        extractor = await withTimeout(makeExtractor(lib), BANK_TIMEOUT_MS, 'the embedding model');
+        /* One load shared by every caller. Choosing a second case while the first load was
+           still running used to start a second model and leak the first. */
+        extractorP = extractorP || withTimeout(import(LIB_URL), LIB_TIMEOUT_MS, 'the embedding library')
+          .then(lib => withTimeout(makeExtractor(lib), BANK_TIMEOUT_MS, 'the embedding model'));
+        try { extractor = await extractorP; }
+        catch (e) { extractorP = null; throw e; }
         if (myGen !== gen) return;
       }
 

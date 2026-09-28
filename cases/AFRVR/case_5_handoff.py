@@ -6,7 +6,7 @@ HANDOFF = {
    "label": "Intensive care or coronary care unit",
    "level_of_care": "critical_care",
    "explanation": (
-     "He is on non-invasive ventilation, he has a newly recognised ejection fraction of 30 to 35 "
+     "He is on non-invasive ventilation, he has a newly recognized ejection fraction of 30 to 35 "
      "percent, and he has just had a rate-controlling drug. The unit that takes him has to be able "
      "to continue positive pressure, run continuous cardiac monitoring, reassess him frequently in "
      "the next few hours, and intubate him without moving him if the mask fails. In most "
@@ -35,7 +35,7 @@ HANDOFF = {
      "reassessment the next few hours need. There is a version of this patient for whom this is "
      "the right answer, and it is the version who has been weaned off positive pressure, is "
      "comfortable on room air or a cannula, and has a stable rate: that is a reasonable "
-     "twelve-hour destination and not a reasonable one from the department. The judgement error "
+     "twelve-hour destination and not a reasonable one from the department. The judgment error "
      "here is treating improvement as resolution. He looks much better than he did on arrival "
      "because of two things a general ward cannot continue.")},
   {"id": "observation_unit",
@@ -44,11 +44,11 @@ HANDOFF = {
    "explanation": (
      "Observation pathways exist for both atrial fibrillation and heart failure and both have "
      "narrow entry criteria that this patient fails. The atrial fibrillation pathways are for "
-     "recent-onset arrhythmia in patients without heart failure, without hypoxaemia and without "
-     "haemodynamic consequence, with a plan for cardioversion or rate control and discharge. The "
+     "recent-onset arrhythmia in patients without heart failure, without hypoxemia and without "
+     "hemodynamic consequence, with a plan for cardioversion or rate control and discharge. The "
      "heart failure pathways are for mild congestion without ventilatory support and with a prompt "
      "response to a single diuretic dose. He required positive pressure ventilation, he has newly "
-     "recognised moderate to severe systolic dysfunction, and his arrhythmia has no established "
+     "recognized moderate to severe systolic dysfunction, and his arrhythmia has no established "
      "onset time.")},
   {"id": "discharge_home",
    "label": "Discharge home on rate control and anticoagulation with cardiology follow-up",
@@ -56,35 +56,35 @@ HANDOFF = {
    "explanation": (
      "Unsafe. There is a real population of patients with new atrial fibrillation who are "
      "discharged from the emergency department on rate control and anticoagulation, and every one "
-     "of them is well, oxygenating, and has no heart failure. This man presented in hypoxaemic "
+     "of them is well, oxygenating, and has no heart failure. This man presented in hypoxemic "
      "respiratory failure, required ventilatory support, and has an ejection fraction nobody knew "
      "about an hour ago. That he improved quickly does not undo any of it. Early mortality after "
      "a first admission for decompensated heart failure is substantial, and the newly discovered "
      "cardiomyopathy is by itself a reason for an inpatient workup.")},
   {"id": "cardiac_catheterization_lab",
-   "label": "Direct to the cardiac catheterisation laboratory",
+   "label": "Direct to the cardiac catheterization laboratory",
    "verdict": "incorrect",
    "explanation": (
      "Choosing this almost always means the troponin of 38 or the lateral ST depression was read "
      "as an acute coronary occlusion. Neither is. The ST depression is rate-related "
-     "repolarisation change in a patient at 160 and it improves when the rate comes down, which is "
-     "why the repeat tracing is worth taking. The troponin is a demand pattern. Acute coronary "
+     "repolarization change in a patient at 160 and it improves when the rate comes down, which is "
+     "why the repeat tracing is worth taking. The troponin most likely reflects demand, which a repeat value will confirm or refute. Acute coronary "
      "syndrome is a real precipitant of new atrial fibrillation and of decompensation and deserves "
      "inpatient consideration and a repeat troponin, but nothing here justifies emergent "
-     "revascularisation, and taking a hypoxaemic patient on non-invasive ventilation to the "
+     "revascularization, and taking a hypoxemic patient on non-invasive ventilation to the "
      "laboratory has its own cost.")},
  ],
 
  "disposition_display_order": ["discharge_home", "observation_unit", "medical_floor_telemetry",
                                "stepdown_telemetry", "icu_or_ccu", "cardiac_catheterization_lab"],
  "disposition_display_order_note": (
-   "Least to most intensive, with the catheterisation laboratory last because it is a different "
+   "Least to most intensive, with the catheterization laboratory last because it is a different "
    "axis rather than a more intensive ward."),
 
  "correct_diagnosis": {
    "catalog_id": "dx_atrial_fibrillation_with_rapid_ventricular_response",
    "label": "Atrial fibrillation with rapid ventricular response, with acute decompensated heart "
-            "failure and cardiogenic pulmonary edema on a newly recognised reduced ejection "
+            "failure and cardiogenic pulmonary edema on a newly recognized reduced ejection "
             "fraction",
    "explanation": (
      "New atrial fibrillation with a rapid ventricular response in a man with previously "
@@ -104,7 +104,7 @@ HANDOFF = {
    "verdict": "acceptable_with_qualification",
    "explanation": (
      "This is the other half of the same answer and it is marked defensible rather than wrong. A "
-     "learner who selected it has recognised the pulmonary edema and the reduced ejection "
+     "learner who selected it has recognized the pulmonary edema and the reduced ejection "
      "fraction, which is the harder half of the case. What it leaves out is the arrhythmia driving "
      "it, and the reason that matters is that it is the half that generates the rate-control and "
      "anticoagulation decisions. The full formulation names both, and if you can only choose one "
@@ -124,7 +124,7 @@ HANDOFF = {
      "there is lateral ST depression. Both have a better explanation. The ST depression is "
      "rate-related and improves with rate control, and the troponin is a demand pattern in a "
      "ventricle running at 160 with an ejection fraction of 30 to 35 percent, which is type 2 "
-     "myocardial injury rather than plaque rupture. Distinguishing type 1 from type 2 injury is "
+     "myocardial injury rather than plaque rupture. Distinguishing type 1 from type 2 infarction is "
      "the skill this alternative is testing, and the discriminators are the trajectory of the "
      "troponin, the presence or absence of an occlusion pattern on the tracing, and whether there "
      "is a better explanation for the demand. Here there is.")},
@@ -133,11 +133,11 @@ HANDOFF = {
    "explanation": (
      "Usually selected downstream of a D-dimer that should not have been sent. The pretest "
      "probability is low: gradual onset over more than a day, symmetrical bilateral leg edema "
-     "with no calf tenderness or asymmetry, no immobilisation, travel, surgery or malignancy, and "
+     "with no calf tenderness or asymmetry, no immobilization, travel, surgery or malignancy, and "
      "a complete alternative explanation for every symptom. The bedside ultrasound settles it: "
      "diffuse bilateral B-lines with a poorly contracting left ventricle and a plethoric inferior "
      "vena cava is left heart failure, and pulmonary embolism large enough to cause this degree of "
-     "hypoxaemia would show a dilated hypokinetic right ventricle with clear lung fields. Atrial "
+     "hypoxemia would usually show a dilated right ventricle and would not produce diffuse bilateral B-lines. Atrial "
      "fibrillation does raise the D-dimer on its own.")},
   {"catalog_id": "dx_community_acquired_pneumonia",
    "label": "Community-acquired pneumonia",
@@ -152,7 +152,7 @@ HANDOFF = {
    "label": "Supraventricular tachycardia",
    "explanation": (
      "A rhythm error, and it is the one that leads to adenosine. The R-R intervals are irregularly "
-     "irregular and there is no organised atrial activity, which is not compatible with a "
+     "irregular and there is no organized atrial activity, which is not compatible with a "
      "re-entrant supraventricular tachycardia. Atrial flutter with variable block is the harder "
      "distinction and is excluded by the absence of flutter waves and by the irregularity being "
      "random rather than patterned. Reading the rhythm strip properly is the whole of the "
@@ -164,7 +164,7 @@ HANDOFF = {
      "new atrial fibrillation, which is exactly why the thyroid function test is worth sending, "
      "but thyroid storm is a different clinical picture: fever, agitation or delirium, "
      "gastrointestinal symptoms, and usually a known or clinically obvious thyroid problem. He is "
-     "afebrile, oriented, has no goitre and no eye signs, and his TSH is normal.")},
+     "afebrile, oriented, has no goiter and no eye signs, and his TSH is normal.")},
  ],
 
  # v0.9. What is also true of this patient and appropriate to name beside the primary at
@@ -192,7 +192,7 @@ HANDOFF = {
       "rate of thirty. Named beside the arrhythmia and the ventricular dysfunction it is a "
       "finding with a cause; named alone it is a finding without one.")},
    {"catalog_id": "dx_acute_hypoxemic_respiratory_failure",
-    "label": "Acute hypoxaemic respiratory failure",
+    "label": "Acute hypoxemic respiratory failure",
     "explanation": (
       "A saturation of 88 percent on room air with a respiratory rate of thirty and accessory "
       "muscle use is respiratory failure, and the receiving team needs to hear that he was in it "
@@ -252,15 +252,14 @@ DEBRIEF = {
  ],
  "intended_path": ["presentation", "breathing_supported", "stabilized", "case_complete"],
  "trap_actions": ["d_dimer", "ct_pulmonary_embolus", "adenosine_bolus", "aspirin", "clopidogrel",
-                  "ultrasound_lower_extremity_venous", "nitroglycerin_sublingual",
-                  "nitroglycerin_drip", "dobutamine_drip", "urinalysis"],
+                  "ultrasound_lower_extremity_venous", "dobutamine_drip", "urinalysis"],
  "trap_actions_note": (
    "Actions that look reasonable and are not. Most of them are tagged discouraged and appear in "
    "their own debrief section; the ones tagged neutral appear under things that looked reasonable. "
    "The D-dimer and the computed tomography are listed together because they are one error with "
    "two steps, and the second step is the expensive one."),
  "cross_cutting_teaching_points": [
-  "The organising question in this case is not what the rhythm is. It is what the ventricle is "
+  "The organizing question in this case is not what the rhythm is. It is what the ventricle is "
   "doing, because that is what decides the drug. Atrial fibrillation with a rapid ventricular "
   "response has a standard answer, and this patient is the exception to it, and the only thing "
   "standing between a learner and the exception is a minute with an ultrasound probe. Getting into "
@@ -273,7 +272,7 @@ DEBRIEF = {
   "changed, not what you have treated.",
   "A drug can do exactly what you asked of it and still be the wrong drug. Diltiazem lowers the "
   "ventricular rate in this patient and it is contraindicated in his ventricle, and the feedback "
-  "the monitor gives you is reassuring while the treatment is wrong. This generalises well beyond "
+  "the monitor gives you is reassuring while the treatment is wrong. This generalizes well beyond "
   "atrial fibrillation and is worth naming explicitly when you teach it.",
   "New information should change the plan. Reaching for diltiazem on arrival, before the ejection "
   "fraction is known, is defensible. Continuing it after the ultrasound is the error, and it is an "

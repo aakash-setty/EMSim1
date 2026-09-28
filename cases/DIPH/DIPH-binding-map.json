@@ -1,7 +1,7 @@
 {
  "map_version": "0.1",
  "case_id": "diphenhydramine-overdose-qrs-01",
- "status": "DRAFT. Every also_covers row is an author judgement about two catalog entries being the same act for this case's purposes, and needs review. Every other row binds a case id to the identical catalog id.",
+ "status": "DRAFT. Every also_covers row is an author judgment about two catalog entries being the same act for this case's purposes, and needs review. Every other row binds a case id to the identical catalog id.",
  "how_to_read": {
   "catalog_id equals case_id": "exact; nothing to review",
   "catalog_id null": "unmatched; a catalog change request",
@@ -78,7 +78,11 @@
   },
   {
    "case_id": "defibrillate",
-   "catalog_id": "defibrillate"
+   "catalog_id": "defibrillate",
+   "also_covers": [
+    "unsynchronized_cardioversion"
+   ],
+   "note": "v0.18a. An unsynchronized cardioversion delivers the same shock as defibrillation, so the same tag and note cover it."
   },
   {
    "case_id": "synchronized_cardioversion",
@@ -448,6 +452,30 @@
     "group": "Not in the catalog"
    },
    "unmatched_narration": "I'll get the notes together for the unit."
+  },
+  {
+   "case_id": "diltiazem_bolus",
+   "catalog_id": "diltiazem_bolus"
+  },
+  {
+   "case_id": "metoprolol_bolus",
+   "catalog_id": "metoprolol_bolus"
+  },
+  {
+   "case_id": "esmolol_drip",
+   "catalog_id": "esmolol_drip"
+  },
+  {
+   "case_id": "labetalol_bolus",
+   "catalog_id": "labetalol_bolus"
+  },
+  {
+   "case_id": "propranolol_bolus",
+   "catalog_id": "propranolol_bolus"
+  },
+  {
+   "case_id": "epinephrine_bolus",
+   "catalog_id": "epinephrine_bolus"
   }
  ]
 }

@@ -61,7 +61,7 @@ CONCEPTS = {
 ],
 "character_dyspnea": [
   "Describe the breathlessness.", "What does the breathing feel like?",
-  "Is it hard to breathe in or out?", "Character of the dyspnoea?", "Character of the dyspnea?",
+  "Is it hard to breathe in or out?", "Character of the dyspnea?", "Character of the dyspnoea?",
   "Does it feel tight or like you cannot get enough air?", "Any wheeze with it?",
   "Is it a tightness or a smothering feeling?", "Do you feel you are drowning?",
   "Is it painful to breathe?", "Are you breathing fast or just struggling?",
@@ -79,7 +79,7 @@ CONCEPTS = {
   "Where is the pain?", "Show me where it hurts.", "Point to where it hurts.",
   "Location of the pain?", "Where exactly is it?", "Is it in one place or all over?",
   "Where do you feel it most?", "Which part of you hurts?", "Is it your arms, your legs, or everywhere?",
-  "Can you localise the pain?", "Where is it worst?", "Is the pain in your muscles?",
+  "Can you localize the pain?", "Where is it worst?", "Is the pain in your muscles?",
   "Are your legs the worst of it?", "Where does it hurt right now?",
 ],
 "radiation_pain": [
@@ -158,18 +158,18 @@ CONCEPTS = {
   "How do you sleep at night, flat or propped?", "Number of pillows at night?",
 ],
 "pnd": [
-  "PND?", "Any PND?", "Paroxysmal nocturnal dyspnoea?", "Paroxysmal nocturnal dyspnea?",
+  "PND?", "Any PND?", "Paroxysmal nocturnal dyspnea?", "Paroxysmal nocturnal dyspnoea?",
   "Do you wake up gasping?", "Do you wake at night breathless?", "Woken up short of breath?",
   "Do you wake up fighting for breath?", "Ever wake in the night unable to breathe?",
   "Do you have to get up at night to catch your breath?", "Any breathlessness waking you?",
-  "Do you wake up choking?", "Nocturnal dyspnoea?", "Night-time breathlessness?",
+  "Do you wake up choking?", "Nocturnal dyspnea?", "Night-time breathlessness?",
   "Do you sit on the edge of the bed at night to breathe?",
 ],
 "leg_swelling": [
-  "Any ankle swelling?", "Ankle oedema?", "Ankle edema?", "Pedal oedema?", "Pedal edema?",
+  "Any ankle swelling?", "Ankle edema?", "Ankle oedema?", "Pedal edema?", "Pedal oedema?",
   "Are your legs swollen?", "Swollen feet?", "Any swelling in your legs?", "Leg swelling?",
-  "Do your shoes feel tight?", "Have your ankles puffed up?", "Any oedema?", "Any edema?",
-  "Are your legs bigger than usual?", "Do your socks leave marks?", "Peripheral oedema?",
+  "Do your shoes feel tight?", "Have your ankles puffed up?", "Any edema?", "Any oedema?",
+  "Are your legs bigger than usual?", "Do your socks leave marks?", "Peripheral edema?",
   "Any fluid in the legs?", "Have your calves swollen?",
 ],
 "weight_gain": [
@@ -189,7 +189,7 @@ CONCEPTS = {
 ],
 "cough_sputum": [
   "Any cough?", "Cough?", "Have you been coughing?", "Are you bringing anything up?",
-  "Any phlegm?", "Sputum?", "What colour is the sputum?", "Productive cough?",
+  "Any phlegm?", "Sputum?", "What color is the sputum?", "Productive cough?",
   "Is the cough dry or chesty?", "Coughing anything up?", "Any mucus?", "Frothy sputum?",
   "Is there anything coming up when you cough?", "Any pink froth?", "Cough productive?",
   "Have you got a chesty cough?",
@@ -204,7 +204,7 @@ CONCEPTS = {
   "Are you breathless?", "Short of breath?", "SOB?", "Any SOB?", "Any shortness of breath?",
   "Any difficulty breathing?", "Is it hard to breathe?", "Are you struggling to breathe?",
   "Any breathing problems?", "Do you feel you cannot get your breath?", "Breathless at all?",
-  "Dyspnoea?", "Dyspnea?", "Any trouble with your breathing?", "Is your breathing okay?",
+  "Dyspnea?", "Dyspnoea?", "Any trouble with your breathing?", "Is your breathing okay?",
   "Are you getting enough air?",
 ],
 "fever_chills": [
@@ -217,7 +217,7 @@ CONCEPTS = {
 "cold_extremities": [
   "Are your hands cold?", "Cold hands and feet?", "Are your feet cold?", "Do your hands feel icy?",
   "Cold peripheries?", "Have your hands and feet gone cold?", "Do you feel cold in your hands?",
-  "Are your extremities cold?", "Are your fingers cold?", "Have your hands changed colour?",
+  "Are your extremities cold?", "Are your fingers cold?", "Have your hands changed color?",
   "Do your feet feel like ice?", "Cold to the touch?",
 ],
 
@@ -297,7 +297,7 @@ CONCEPTS = {
 "thyroid": [
   "Any thyroid problems?", "Thyroid history?", "Thyroid?", "Any thyroid disease?", "Are you on thyroxine?",
   "Do you feel hot all the time?", "Any heat intolerance?", "Have you lost weight without trying?",
-  "Any tremor?", "Have you been sweaty and shaky?", "Any change in your neck?", "Any goitre?",
+  "Any tremor?", "Have you been sweaty and shaky?", "Any change in your neck?", "Any goiter?",
   "Overactive thyroid?", "Any weight loss or feeling hot?", "Have you been told your thyroid is overactive?",
   "Hyperthyroid symptoms?",
 ],
@@ -359,7 +359,7 @@ CONCEPTS = {
   "Any long-haul travel?", "Been abroad?",
 ],
 "travel": [
-  "Any recent travel?", "Been abroad recently?", "Have you travelled?", "Any foreign travel?",
+  "Any recent travel?", "Been abroad recently?", "Have you traveled?", "Any foreign travel?",
   "Travel history?", "Have you been out of the country?", "Any trips recently?", "Where have you been recently?",
   "Any travel in the last few months?", "Have you been anywhere unusual?", "Any overseas travel?",
   "Been away anywhere?",
@@ -386,8 +386,8 @@ CONCEPTS = {
 "snoring_osa": [
   "Do you snore?", "Any sleep apnoea?", "Any sleep apnea?", "OSA?", "Do you stop breathing in your sleep?",
   "Has anyone said you snore?", "Do you use a CPAP machine?", "Are you tired during the day?",
-  "Do you wake up unrefreshed?", "Any snoring?", "Sleep apnoea history?", "Do you fall asleep in the day?",
-  "Has your partner noticed you stop breathing at night?", "Any obstructive sleep apnoea?",
+  "Do you wake up unrefreshed?", "Any snoring?", "Sleep apnea history?", "Do you fall asleep in the day?",
+  "Has your partner noticed you stop breathing at night?", "Any obstructive sleep apnea?",
 ],
 "code_status": [
   "Code status?", "Have you thought about resuscitation?", "Do you have an advance directive?",
@@ -436,9 +436,9 @@ CONCEPTS = {
   "Is the brightness painful?", "Do bright lights make it worse?", "Any sensitivity to light?",
   "Do you prefer it dark?", "Does looking at the light hurt?",
 ],
-"diarrhoea": [
-  "Any diarrhoea?", "Diarrhea?", "Any loose stools?", "Any loose motions?", "Have your bowels been loose?",
-  "Any change in your bowels?", "Been to the toilet a lot?", "Any runny stools?", "Any diarrhoea or vomiting?",
+"diarrhea": [
+  "Any diarrhea?", "Diarrhea?", "Any loose stools?", "Any loose motions?", "Have your bowels been loose?",
+  "Any change in your bowels?", "Been to the toilet a lot?", "Any runny stools?", "Any diarrhea or vomiting?",
   "Have you had the runs?", "Bowels okay?", "Any loose bowel movements?", "How are your bowels?",
 ],
 "abdominal_pain": [
@@ -454,7 +454,7 @@ CONCEPTS = {
 ],
 "confusion": [
   "Any confusion?", "Have you felt confused?", "Are you thinking clearly?", "Do you know where you are?",
-  "Have you been muddled?", "Any change in your thinking?", "Do you feel foggy?", "Have you been disorientated?",
+  "Have you been muddled?", "Any change in your thinking?", "Do you feel foggy?", "Have you been disoriented?",
   "Are you having trouble concentrating?", "Do you know what day it is?", "Any memory problems today?",
   "Have you been making sense to people?", "Any altered mental state?",
 ],
@@ -488,9 +488,9 @@ CONCEPTS = {
   "Any history of sexually transmitted infections?",
 ],
 "vaccinations": [
-  "Are your vaccinations up to date?", "Vaccination history?", "Vaccines?", "Any immunisations?",
-  "Have you had your jabs?", "Immunisation history?", "Have you had the meningitis vaccine?",
-  "Are you vaccinated?", "Did you have your school vaccines?", "Are your immunisations current?",
+  "Are your vaccinations up to date?", "Vaccination history?", "Vaccines?", "Any immunizations?",
+  "Have you had your jabs?", "Immunization history?", "Have you had the meningitis vaccine?",
+  "Are you vaccinated?", "Did you have your school vaccines?", "Are your immunizations current?",
   "Any vaccines recently?", "Have you had all your childhood vaccines?", "Meningococcal vaccine?",
   "Have you been vaccinated against meningitis?",
 ],

@@ -1,0 +1,10 @@
+{
+  "_note": "Values the deployed site needs. Everything here ends up in the public site/index.html, so nothing secret belongs in it. supabaseKey is the publishable (anon) key, never the secret or service role key. freeCases lists prefixes shipped whole in the site so they play without signing in; every other case is a stub until an invited user signs in. See docs/deployment.md.",
+  "productName": "EMSim",
+  "copyrightHolder": "Aakash Setty",
+  "copyrightYear": 2026,
+  "supabaseUrl": "",
+  "supabaseKey": "",
+  "edgeFunction": "case-pack",
+  "freeCases": []
+}

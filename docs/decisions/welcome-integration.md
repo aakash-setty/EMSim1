@@ -37,7 +37,7 @@ on the resident's first action.
 ## 1. engine.js: time-guarded transitions
 
 Four edits in `fold()`. This is the only part of the change that touches case
-behaviour, and it is the part to review closely.
+behavior, and it is the part to review closely.
 
 **1.1 Two new pieces of fold state.** Find the `st` initialiser and add:
 
@@ -111,7 +111,7 @@ prompt deadline or a result arrival, so it joins the schedule the fold already
 merges in timestamp order, and the existing tiebreak (log entries before derived
 events at equal timestamps) means a resident who gets the drug in *on* the
 deadline is credited. Replay stays honest because nothing is stored. Deadlines are
-cancelled on any phase change, including a time-driven one.
+canceled on any phase change, including a time-driven one.
 
 **Difficulty is deliberately not applied.** `DM` scales prompt deadlines only. See
 system design 17.1 for why scaling deterioration would make normal mode more

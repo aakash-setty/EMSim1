@@ -1,7 +1,12 @@
-# EM Case Simulator
+# EMSim
 
-A browser-based emergency medicine case simulator. Free and open source. No backend,
-no accounts, no server-side state: the whole product builds to one HTML file.
+A browser-based emergency medicine case simulator. EMSim is proprietary and freemium:
+most features are free to learners and some will be paid. See `LICENSE`.
+
+The engine runs entirely in the browser. Since v0.18 there are two builds. `build/` is the
+local build: every case inlined, no backend, for authoring, review and the test suites.
+`site/` is what gets deployed: the same engine with no case content in it, which loads each
+case pack from Supabase after an invited user signs in. See `docs/deployment.md`.
 
 **Nothing in this repository has been reviewed by a physician.** See Status, below,
 before using any of it with a learner.
@@ -13,10 +18,13 @@ engine/     case-agnostic code and tools. No clinical content, no case names.
 catalog/    global action and diagnosis catalogs, and their generators.
 cases/      one folder per case. CHFE is the reference case; MGCA, AFRVR and DIPH follow it.
 docs/       specification, and decisions/ holding one rationale record per change.
-build/      generated. simulator.html and an identical index.html.
+build/      generated. The local build: every case inlined. Never deployed.
+site/       generated. The deployed build: engine and case list only, packs load after sign-in.
+supabase/   SQL and the edge function, pasted into the Supabase dashboard.
+private-packs/  generated, not committed. One JSON file per case, uploaded to Supabase Storage.
 ```
 
-Nothing in `engine/` names a case. Nothing in `cases/` implements engine behaviour.
+Nothing in `engine/` names a case. Nothing in `cases/` implements engine behavior.
 If you find an `if` about a specific drug in `engine/`, it belongs in a case file. If
 you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 
@@ -25,7 +33,7 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | File | What it is |
 |---|---|
 | `paths.py` | The canonical layout. Every tool resolves a case pack through this |
-| `build_simulator.py` | Packs the shell, the catalogs and every case pack into one HTML file |
+| `build_simulator.py` | Builds the local file with every case, the deployed site without them, and the private packs |
 | `new_case.py` | Scaffolds `cases/<PREFIX>/`, including the seed template |
 | `bind_catalog.py` | Resolves a case's binding map against the action catalog |
 | `validate_case.py` | Structural and conformance checks. Runs against half-authored cases |
@@ -39,15 +47,15 @@ you find condition-parsing or fold logic in `cases/`, it belongs in the engine.
 | `ui.js` | Rendering, the panel state machine, the interview matcher |
 | `semantic.js` | Optional in-browser embedding model. Loads in the background, may never load |
 | `voice.js` | Voice orders: the normaliser, the phrase parser, the recorder and the dropdown. Takes the order tabs plus examinations and consultations (`SHARED.voiceTabs`). The parser is fenced for the tests |
-| `monitor.js` | The live trace: the beat clock, the lead II waveform synthesiser and the sweep. Fenced for the tests |
-| `patient.js` | The patient figure in the room: the rig, the poses, and one registry for behaviours and add-ons. Fenced for the tests. How to add an add-on is in `assets/avataaars/README.md` |
-| `patient-art.json` | The avataaars artwork as loose parts with colour slots. Derived by `assets/avataaars/extract.js`, not authored |
+| `monitor.js` | The live trace: the beat clock, the lead II waveform synthesizer and the sweep. Fenced for the tests |
+| `patient.js` | The patient figure in the room: the rig, the poses, and one registry for behaviors and add-ons. Fenced for the tests. How to add an add-on is in `assets/avataaars/README.md` |
+| `patient-art.json` | The avataaars artwork as loose parts with color slots. Derived by `assets/avataaars/extract.js`, not authored |
 | `patient-lab.html` | Template for `build/patient-lab.html`, a workbench for choosing an appearance and previewing states |
 | `audio.js` | Heartbeat, nurse tones and the looping ward ambience. The heartbeat subscribes to the beat clock in `monitor.js` |
 | `room-bg.txt` | The blurred room background as a data URI |
 | `hero-bg.txt` | The welcome screen photograph as a data URI |
 | `avatar-male.txt`, `avatar-female.txt` | Patient silhouettes, used as CSS masks so they follow the theme |
-| `nurse-avatar.txt` | The nurse's portrait, beside the line she speaks. Full colour, not a mask |
+| `nurse-avatar.txt` | The nurse's portrait, beside the line she speaks. Full color, not a mask |
 | `ambience.txt` | A 45-second ward ambience loop as base64 mp3. Optional; without it the room is silent |
 | `assets/` | Sources for the derived assets above, kept so a crop or a recut can be redone |
 
@@ -118,13 +126,20 @@ python3 engine/build_simulator.py
 ```
 
 Packs **every** case in `cases/` into `build/simulator.html`, and writes the same bytes
-to `build/index.html` so `build/` can be served as a site root. Opening it shows a case
+to `build/index.html` so `build/` can be served locally. A full build (no case names on the
+command line) also writes `site/index.html`, `private-packs/` and `vercel.json` for the
+deployed site; see `docs/deployment.md`. Opening it shows a case
 picker; with a single case the picker is skipped. Cases share one copy of the catalog,
 so a second case costs only the size of its own case file. A case that still has
 unresolved build problems is listed and flagged rather than hidden, so a half-authored
 case is playable while it is being written.
 
 ## Running it as a website
+
+**v0.18: the deployed site is `site/`, not `build/`.** `site/index.html` has no case content
+and loads each pack from Supabase after an invited user signs in. The full setup is in
+`docs/deployment.md`. Everything below still applies to both builds, and to serving
+`build/` locally.
 
 The build is a single self-contained file, so hosting is deployment of one static file.
 Two things make that less trivial than it sounds.
@@ -244,6 +259,16 @@ browser's own reload control is not: the only hook is `beforeunload`, whose word
 browser has let a page choose for over a decade, so that path gets the native dialog
 instead. The two look different because the platform makes them different.
 
+## Review speed (local build only)
+
+Since v0.18a `build/simulator.html` has a **Review speed** control at the bottom right while a
+case runs: 1x, 2x, 4x, 8x or 16x real time, also on the `[` and `]` keys when the cursor is
+not in a text box. It moves the clock's start time back, so every deadline, prompt and
+transition happens exactly as at 1x, only sooner, and pausing still stops the clock. A run
+that used it says so at the top of its debrief. It lives in `engine/review.js`, which the
+build inlines into the local build only; the build refuses to write a `site/index.html` that
+contains it, and the site check asserts it is absent.
+
 ## How a case ends, and what the debrief shows first
 
 There are three endings and the interface treats them as three. A harmful action halts the
@@ -271,6 +296,13 @@ case considers also true of the patient that were not named. Lab panels show the
 and nothing else while the case runs; the case's own reading of each panel is printed in the
 debrief under *Your results, read*.
 
+Since v0.18a the revealed debrief also carries *What happened, in order*, every action and
+every change in the patient at its time on the case clock, with the note on each timed
+change; the learner's own note from the reflection pause beside the case's diagnosis; three
+take-home points directly under the critical actions; and, for a run that ended in an arrest
+or on a harmful action, a plain statement that it is not scored, with the category table
+behind an expander.
+
 ## The room
 
 A 45-second loop of ward ambience runs under everything at a very low level, from the
@@ -289,7 +321,7 @@ the less truthful half of it.
 
 The asset is derived from the author's recording by `engine/assets/make-ambience.py`, which
 records the three decisions in it: where the loop is cut from, why the seam is an
-equal-power crossfade rather than a linear one, and why it is peak-normalised, which is
+equal-power crossfade rather than a linear one, and why it is peak-normalized, which is
 what makes the gain figure in `audio.js` mean something. It is decoded once from base64 in
 the page and looped as an `AudioBuffer` with the loop points set a little inside the
 buffer, so mp3 encoder padding cannot click. Every failure path ends in a silent room
@@ -326,7 +358,7 @@ The ECG trace is drawn from the same beats, so what is seen and what is heard ar
 rhythm; see the next section.
 
 The engine holds no association between a rhythm and a diagnosis, exactly as the catalog
-holds no appropriateness judgement about a drug. Every parameter is a teaching choice and
+holds no appropriateness judgment about a drug. Every parameter is a teaching choice and
 the provenance note beside them says so: **no case models a rhythm.** See
 `docs/decisions/rhythm-and-the-heartbeat-chain.md` for what was rejected.
 
@@ -355,7 +387,7 @@ bicarbonate. The complexes are built from compact-support primitives ported from
 generator project, so an authored QRS duration renders literally.
 
 The engine holds no association between any of it and a diagnosis, and the amplitudes are
-authored stylisations with a provenance note in `SHARED.monitor.ecg`: **no case models an
+authored stylizations with a provenance note in `SHARED.monitor.ecg`: **no case models an
 ECG.** Authoring section 6.0b; design 8.4c; `docs/decisions/live-monitor-trace.md`.
 
 ## The monitor, and what an action can do to a vital
@@ -508,9 +540,9 @@ only as conclusions. They are not a source of truth for how the system behaves.
 ## Status
 
 All four cases pass the validator with no errors. CHFE walks 20 authored scenarios,
-MGCA 26, AFRVR 31 and DIPH 44. CHFE passes 455 engine assertions, MGCA 435, AFRVR 509 and
-DIPH 531, which is the same case-agnostic suite plus each pack's own; each passes 55
-validator negative tests, DIPH 57. Each carries one warning, in every case about actions the catalog does not
+MGCA 26, AFRVR 31 and DIPH 48. CHFE passes 548 engine assertions, MGCA 528, AFRVR 600 and
+DIPH 628, which is the same case-agnostic suite plus each pack's own; each passes 76
+validator negative tests, DIPH 78 (v0.18b). Each carries one warning, in every case about actions the catalog does not
 hold, which the prototype renders anyway so the gap stays visible. Those are catalog change
 requests rather than defects.
 
@@ -518,7 +550,9 @@ That is a structural claim only.
 
 **Nothing here has been reviewed by a physician**: not the reference case, not the
 300-entry action catalog, and not the 488-entry diagnosis catalog, which was generated
-from model memory with no source consulted. AFRVR and DIPH are the closest to exceptions
+from model memory with no source consulted. The v0.18a review was a model-assisted clinical
+read of each case and of the catalog, not a physician's, and its corrections are drafts like
+everything else. AFRVR and DIPH are the closest to exceptions
 and neither is one: a physician supplied AFRVR's clinical seed, and DIPH is a conversion of
 a complete simulation case written by a physician and used with her permission. Everything
 expanded from either, including every reference interval and every reference, is unsigned.

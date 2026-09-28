@@ -236,10 +236,14 @@ if (HARMFUL.length) {
      A harmful rule no phase can satisfy is a rule that will never fire. */
   const unreachable = [], noReason = [];
   for (const h of HARMFUL) {
-    const hit = CASE.phases.some(ph => tagOf(h, {
-      phase: ph.id, flags: new Set(), ordered: new Set(),
+    /* A rule may also turn on flags (flumazenil is harmful only once a benzodiazepine has
+       been given), so each phase is tried with no flags and with every flag its tag names. */
+    const named = new Set(((A[h].tag || []).map(r => r.when || '').join(' ').match(/flag \w+ set/g) || [])
+      .map(m => m.split(' ')[1]));
+    const hit = CASE.phases.some(ph => [new Set(), named].some(fl => tagOf(h, {
+      phase: ph.id, flags: fl, ordered: new Set(),
       resulted: new Set(), taken: new Set()
-    }) === 'harmful');
+    }) === 'harmful'));
     if (!hit) unreachable.push(h);
     const r = A[h].halt_reason;
     if (!r || r.length < 20) noReason.push(h);
@@ -475,13 +479,17 @@ section('the patient\'s side of the conversation (design 10.7)');
   const IV = CASE.interview;
   const D = PROTO.interviewDefaults || {};
   const withFacts = IV.topics.find(t => t.facts && t.facts.length >= 2);
-  const plain = IV.topics.find(t => !t.facts || !t.facts.length) || IV.topics[0];
+  /* v0.18a: a topic with no facts and nothing to volunteer, so its first answer is exactly
+     the authored paragraph. Volunteering has its own section below. */
+  const plain = IV.topics.find(t => (!t.facts || !t.facts.length) && !(t.adjacent || []).length)
+             || IV.topics.find(t => !t.facts || !t.facts.length) || IV.topics[0];
   const speech = st => st.readouts.filter(r => r.kind === 'speech');
   const ask = (t, extra) => Object.assign({ t, kind: 'interview', q: 'q' + t }, extra);
   const first = fold(mk([ask(1, { topic: plain.topic })]), 5);
   const firstBody = speech(first)[0].body;
+  const authored = resolve((IV.global_answer_rules || []).concat(plain.answer), first);
   chk('the first ask of a topic is its authored answer',
-      firstBody === resolve((IV.global_answer_rules || []).concat(plain.answer), first));
+      firstBody === authored || firstBody.startsWith(String(authored).replace(/['"]$/, '')));
 
   /* Asking twice does not produce the paragraph twice. */
   const twice = fold(mk([ask(1, { topic: plain.topic }), ask(2, { topic: plain.topic })]), 5);
@@ -548,6 +556,46 @@ section('the patient\'s side of the conversation (design 10.7)');
   const b = fold(mk([ask(1, { topic: plain.topic }), ask(2, { topic: plain.topic }), ask(3, { topic: null, clarify: [ta.topic, tb.topic] })]), 5);
   chk('the conversation is a pure function of the log',
       JSON.stringify(speech(a).map(x => x.body)) === JSON.stringify(speech(b).map(x => x.body)));
+}
+
+section('volunteered answers (v0.18a)');
+{
+  /* A first answer carries the adjacent topics the case lists, in the patient's voice, and
+     they count as asked. Safety screens are never volunteered. A volunteered topic asked
+     later still gives its whole answer. */
+  const IV = CASE.interview, must = new Set(IV.must_ask || []);
+  const speech = st => st.readouts.filter(r => r.kind === 'speech');
+  const ask = (t, extra) => Object.assign({ t, kind: 'interview', q: 'q' + t }, extra);
+  const inner = s => String(s).trim().replace(/^['"]|['"]$/g, '');
+  const volOf = y => y && y.volunteer;
+  const byId = id => IV.topics.find(y => y.topic === id);
+  chk('no safety screen is listed as adjacent or carries a volunteer line',
+      IV.topics.every(t => (t.adjacent || []).every(a => !must.has(a)) && !(must.has(t.topic) && t.volunteer)));
+  const X = IV.topics.find(t => (t.adjacent || []).some(a => volOf(byId(a))));
+  if (!X) chk('this pack authors no volunteered answers, so the rest is not asserted', true);
+  else {
+    const Yid = X.adjacent.find(a => volOf(byId(a))), Y = byId(Yid);
+    const st1 = fold(mk([ask(1, { topic: X.topic })]), 5);
+    const blocked = (IV.global_answer_rules || []).some(r => test(r.when, st1))
+                 || (IV.volunteer_blocked_when && test(IV.volunteer_blocked_when, st1));
+    if (blocked) chk('the patient cannot volunteer on arrival in this pack, so the rest is not asserted', true);
+    else {
+      const line = resolve(Array.isArray(Y.volunteer) ? Y.volunteer : [{ when: null, value: Y.volunteer }], st1);
+      const b = speech(st1)[0].body;
+      chk('the first answer carries the adjacent topic\'s volunteer line', b.indexOf(inner(line)) >= 0, b.slice(-90));
+      chk('as one stretch of speech, not two quotations side by side', !/['"]\s+['"]/.test(b), b.slice(-90));
+      chk('the volunteered topic counts as asked', st1.askedTopics.has(Yid) && st1.volunteered.has(Yid));
+      const later = fold(mk([ask(1, { topic: X.topic }), ask(2, { topic: Yid })]), 5);
+      const full = inner(resolve((IV.global_answer_rules || []).concat(Y.answer), later));
+      chk('asked later, it gives its whole answer rather than a repeat',
+          speech(later)[1].body.indexOf(full.slice(0, 30)) >= 0, speech(later)[1].body.slice(0, 60));
+      const again = fold(mk([ask(1, { topic: X.topic }), ask(2, { topic: X.topic })]), 5);
+      chk('a repeat of the first topic volunteers nothing', speech(again)[1].body.indexOf(inner(line)) < 0);
+      const G = IV.global_answer_rules || [];
+      chk('nothing is volunteered while a global rule speaks for the patient',
+          G.length === 0 || G.every(r => r.value && inner(r.value).indexOf(inner(line)) < 0));
+    }
+  }
 }
 
 section('monitor gating');
@@ -1405,8 +1453,10 @@ section('the seven-category summary (v0.9)');
     ? CASE.interview.key_topics : CASE.interview.topics.map(t => t.topic);
   chk('history max is the number of key topics', rows[0].max === key.length, String(rows[0].max));
   const asked = fold(mk([{ t: 2, kind: 'interview', topic: key[0], q: 'q' }]), 10);
-  chk('asking a key topic scores one point', summaryScores(asked)[0].points === 1,
-      String(summaryScores(asked)[0].points));
+  /* v0.18a: plus one for each key topic the answer volunteered, which counts as asked. */
+  const volKey = [...asked.volunteered].filter(t => key.includes(t)).length;
+  chk('asking a key topic scores one point, plus any key topic it volunteered',
+      summaryScores(asked)[0].points === 1 + volKey, String(summaryScores(asked)[0].points) + ' vs ' + (1 + volKey));
   const examined = fold(mk([[1, EXAMS[0]]]), 10);
   const ph = summaryScores(examined)[1];
   chk('examining a region counts when the region is expected',
@@ -1655,6 +1705,46 @@ else {
     chk(PACK.prefix + ': every authored visual state is drawable', bad.length === 0, bad.join('; '));
     const av = PATIENT.normalizeAppearance(PATIENT.baseFor((CASE.patient || {}).sex, (CASE.patient || {}).avatar));
     chk(PACK.prefix + ': the appearance is drawable', av.problems.length === 0, av.problems.join('; '));
+    /* v0.17p. The device follows the button in every case, by catalog id through the bindings. */
+    const eff = cid => (PACK.bindings || {})[cid] || cid;
+    const dev = (SHARED.patient || {}).deviceActions || {};
+    const airway = ['nasal_cannula', 'nonrebreather', 'bipap_mask', 'bag_valve_mask', 'intubated'];
+    const shown = log => (patientVisual(fold(mk(log), log.length + 2)).value.addons || []).filter(a => airway.includes(a));
+    const blocked = log => fold(mk(log), log.length + 2).blocked.length > 0;
+    for (const cid in dev) {
+      if (!ACT[eff(cid)] || blocked([[1, eff(cid)]])) continue;
+      const got = shown([[1, eff(cid)]]);
+      chk(PACK.prefix + ': ' + cid + ' puts ' + dev[cid] + ' on the figure, and nothing else',
+          got.length === 1 && got[0] === dev[cid], got.join('+'));
+    }
+    const nc = eff('nasal_cannula_oxygen'), nrb = eff('non_rebreather_mask'), niv = eff('non_invasive_positive_pressure_ventilation');
+    if (ACT[nc] && ACT[nrb]) {
+      chk(PACK.prefix + ': cannula, then mask, then cannula shows the cannula',
+          shown([[1, nc], [2, nrb], [3, nc]]).join() === 'nasal_cannula', shown([[1, nc], [2, nrb], [3, nc]]).join());
+    }
+    if (ACT[nc] && ACT[niv] && !blocked([[1, nc], [2, niv]]))
+      chk(PACK.prefix + ': cannula then NIPPV shows the NIPPV mask', shown([[1, nc], [2, niv]]).join() === 'bipap_mask');
+    const tube = eff('intubate_rapid_sequence');
+    /* Intubation needs induction first: press one action setting each flag its prerequisite names. */
+    const needs = (id, seen) => {
+      if (seen.includes(id) || !ACT[id]) return seen;
+      for (const p of (ACT[id].prerequisites || [])) {
+        const w = p.when.replace(/NOT (flag \w+ set|action \w+ taken)/g, '');
+        for (const m of (w.match(/flag \w+ set/g) || [])) {
+          const f = m.split(' ')[1], by = Object.keys(ACT).find(k => (ACT[k].flags_set || []).includes(f));
+          if (by) seen = needs(by, seen);
+        }
+        for (const m of (w.match(/action \w+ taken/g) || [])) seen = needs(m.split(' ')[1], seen);
+      }
+      return seen.includes(id) ? seen : seen.concat([id]);
+    };
+    const induce = ACT[tube] ? needs(tube, []).filter(id => id !== tube) : [];
+    const rsi = induce.map((id, i) => [i + 1, id]).concat([[induce.length + 1, tube]]);
+    if (ACT[niv] && ACT[tube] && !blocked(rsi)) {
+      const after = rsi.concat([[rsi.length + 1, niv]]);
+      chk(PACK.prefix + ': a tube replaces the cannula and stays on when a mask is pressed afterwards',
+          shown([[0, nc]].concat(rsi)).join() === 'intubated' && shown(after).join() === 'intubated', shown(after).join());
+    } else chk(PACK.prefix + ': intubation can be reached for the device check', false, JSON.stringify(induce));
   }
   bind(packIdx);
 }

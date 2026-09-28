@@ -19,6 +19,10 @@ from case_2_actions import ACTIONS, FOLLOW_UPS
 from case_3_content import EXAM, GENERAL_STATUS, PATIENT_VISUAL, LABS, IMAGING, CONSULTANTS
 from case_4_interview import TOPICS, GLOBAL_RULES, OUT_OF_SCOPE, AUTHORING_NOTES, KEY_TOPICS
 try:
+    from case_4_interview import VOLUNTEER_SETTINGS   # v0.18a, catalog/author_interview_volunteers.py
+except ImportError:
+    VOLUNTEER_SETTINGS = {}
+try:
     from case_4_interview import OUT_OF_SCOPE_BANK
 except ImportError:          # before the expansion script has run
     OUT_OF_SCOPE_BANK = []
@@ -36,7 +40,7 @@ CASE = {
    "diagnosis_catalog": "diagnosis-catalog.json",
    "conformance_note": (
      "Five-tier tags as ordered rule lists, structured result payloads with author-set abnormal "
-     "flags, the closed set of fourteen exam manoeuvres with the catalog routing map, the "
+     "flags, the closed set of fourteen exam maneuvers with the catalog routing map, the "
      "two-sentence arrival handover, time-guarded phase transitions including one terminal one "
      "with an explicit opt-in, vital effects rebased so that no phase double-counts a gain an "
      "action supplies, flags granted on the Nth administration, the seven-score summary with "
@@ -64,13 +68,13 @@ CASE = {
      "authored as a scheduled natural history at her own four minutes. Section 5.1 requires an "
      "unguarded_rationale for exactly this construct, and hers is quoted in it.\n\n"
      "It is unguarded and, since 5 September 2026, not unavoidable. The rule listed above it "
-     "moves a patient who has received sodium bicarbonate out of the arrival phase after ten "
+     "moves a patient who has received both sodium bicarbonate and a benzodiazepine out of the arrival phase after ten "
      "seconds, so a resident who treats the conduction before about 230 seconds never reaches "
      "the seizure rule. Nothing about the seizure rule changed; it was given an escape, on "
      "instruction, and the rationale on the escape sets out why the pharmacology behind it is "
      "weak and what deleting it would restore."),
    "three_ways_into_the_narrowing_phase": (
-     "The stabilising phase is reached from the arrival phase, from the post-ictal phase and "
+     "The stabilizing phase is reached from the arrival phase, from the post-ictal phase and "
      "from the wide-complex rhythm, on the same guard and the same ten seconds each time. Its "
      "authored vitals therefore have to be true of a patient who never convulsed and of one "
      "who came within two minutes of arresting, which is why the temperature sits at 39.6 "
@@ -84,9 +88,7 @@ CASE = {
      "case reaches cardiac arrest, and that is a decision the seed records rather than an "
      "oversight. Sodium bicarbonate is prompted for in every phase on that path."),
    "the_two_delayed_consequences": (
-     "Bicarbonate narrows the QRS ten seconds after it is given rather than on the click, and "
-     "physostigmine produces its seizure ten seconds after it is given. Both are delayed "
-     "consequences of the resident's own action in the sense of section 5.1, so the five-second "
+     "Bicarbonate narrows the QRS ten seconds after it is given rather than on the click, in the arrival, post-ictal and wide-complex phases alike. These are delayed consequences of the resident's own action in the sense of section 5.1, so the five-second "
      "floor applies rather than the thirty-second one. The bicarbonate delay is paired with a "
      "nurse_alert said the instant the drug goes in, because a delay with no explanation reads "
      "as a drug that has failed."),
@@ -155,9 +157,10 @@ CASE = {
      "catalog/expand_interview_variants.py from catalog/interview_out_of_scope.py, filtered to "
      "the concepts this case does not cover. The matcher embeds them beside the topic bank."),
    "topics": TOPICS,
+   **VOLUNTEER_SETTINGS,
    "key_topics": KEY_TOPICS,
    "key_topics_note": (
-     "Author judgement, unreviewed. Read by the summary's History score, asked over listed. "
+     "Author judgment, unreviewed. Read by the summary's History score, asked over listed. "
      "Twelve of forty-one, and they are the ones whose answers change what happens: what was "
      "found by the bed, what she took, what else is in the house, when she was last well, the "
      "absence of any medical history or medication that could explain this, the mental health "
@@ -177,19 +180,15 @@ CASE = {
      "Every laboratory value in this case is Dr Medwid's. Not one reference interval is: the "
      "source document contains no intervals at all, so every one is model output, and the "
      "abnormal flags follow from intervals nobody has signed. Three panels carry a verify note "
-     "naming a specific problem: the corrected bicarbonate, the female haemoglobin and "
-     "haematocrit, and the invented magnesium."),
+     "naming a specific problem: the corrected bicarbonate, the female hemoglobin and "
+     "hematocrit, and the invented magnesium."),
  },
  "phases_note": (
    "Read the transition lists in order, because first match wins. The handoff rule is first in "
    "every list so that submitting a handover is never overtaken by a clinical rule in the same "
-   "step. In the arrival phase the physostigmine rule is checked before the unguarded seizure "
-   "rule, which matters only for a resident who gives physostigmine at around the four-minute "
-   "mark; both land in the same phase either way.\n\n"
-   "A harmful action bypasses every rule here and goes straight to the halted phase, so the "
-   "physostigmine transition in the arrival phase is reachable only when the tag has evaluated "
-   "to discouraged, which means the ECG had already resulted.\n\n"
-   "The seizing phase is reachable from arrival by two routes and from nowhere else. The "
+   "step. In the wide-complex phase the amiodarone rule is first among the clinical rules, then the rescue that needs bicarbonate and an anticonvulsant, then the return to the seizing phase that needs bicarbonate alone, so a resident who gives both drugs at once reaches stabilizing.\n\n"
+   "A harmful action bypasses every rule here and goes straight to the halted phase. Physostigmine is harmful in every phase in which the QRS is wide, so since v0.18a it has no transition of its own.\n\n"
+   "The seizing phase is reachable from arrival on the clock, and from the wide-complex phase when bicarbonate has been given without an anticonvulsant. The loop between them runs at most once, because the way back needs bicarbonate and the way out needs it absent. The "
    "wide-complex phase is reachable from the seizing phase and from the post-ictal phase, both "
    "on the clock. Every one of those has an exit that an action can take, except the arrest, "
    "which is terminal by design."),
@@ -228,6 +227,11 @@ COVERAGE = {
      "discouraged tag once the toxicology screen has resulted. Acyclovir is deliberately NOT in "
      "this group: it is a different question and is authored as its own action."),
  },
+ "defibrillate": {
+   "also_covers": ["unsynchronized_cardioversion"],
+   "note": ("v0.18a. An unsynchronized cardioversion delivers the same shock as defibrillation, "
+            "so the same tag and note cover it."),
+ },
  "magnesium_sulfate": {
    "also_covers": ["magnesium_sulfate_bolus"],
    "note": (
@@ -255,7 +259,7 @@ for a in ACTIONS:
 BINDING = {
  "map_version": "0.1",
  "case_id": CASE["case_id"],
- "status": ("DRAFT. Every also_covers row is an author judgement about two catalog entries being "
+ "status": ("DRAFT. Every also_covers row is an author judgment about two catalog entries being "
             "the same act for this case's purposes, and needs review. Every other row binds a "
             "case id to the identical catalog id."),
  "how_to_read": {

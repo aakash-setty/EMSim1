@@ -2,7 +2,7 @@
 
 Design v0.9. One change, and three things found while making it.
 
-Kept for what was rejected. The current behaviour is in `docs/system-design-v2.md`
+Kept for what was rejected. The current behavior is in `docs/system-design-v2.md`
 section 8.5 and in `docs/case-authoring-requirements.md` section 6.0a. This file is not a
 source of truth for how the system behaves.
 
@@ -12,7 +12,7 @@ source of truth for how the system behaves.
 
 The third case is atrial fibrillation. Its ECG report says the R-R intervals are
 irregularly irregular, its cardiovascular examination says the first heart sound varies in
-intensity from beat to beat, its whole management turns on recognising the rhythm, and the
+intensity from beat to beat, its whole management turns on recognizing the rhythm, and the
 monitor beat a metronome. A resident could hear a perfectly even beat while reading that
 the rhythm was uneven, and the sound was the more immediate of the two.
 
@@ -31,7 +31,7 @@ reads it. Nothing else changes.
 
 The obvious shortcut, and it puts clinical knowledge in `engine/`. The engine would have
 had to hold a map from diagnosis catalog ids to rhythms, which is an appropriateness
-judgement of exactly the kind section 3 of the design keeps out of the catalog and out of
+judgment of exactly the kind section 3 of the design keeps out of the catalog and out of
 the engine. It also fails on the first case that needs it: a patient can be in a rhythm
 the final diagnosis does not name, and this one is in atrial fibrillation in the phase
 where the case's diagnosis is still unknown to everybody including the resident.
@@ -87,7 +87,7 @@ landing on the next beat's lub, which sounds like a fault rather than like a fas
 At 240 ms there is no possible collision, and the test suite asserts it rather than
 trusting it.
 
-### Rejected: modelling correlation between consecutive intervals
+### Rejected: modeling correlation between consecutive intervals
 
 Real R-R series in atrial fibrillation are not perfectly independent. Adding correlation
 would have been unwarranted: the case is not measured against a rhythm strip, nobody can

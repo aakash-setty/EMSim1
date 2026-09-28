@@ -31,7 +31,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 5. 120s `normal_saline_1l_bolus` (escalation)
 6. 140s `hydrocortisone_bolus` (escalation)
 
-**Rule 6: at 240s (measured from phase_entry) → `progressive_meningococcaemia`**
+**Rule 6: at 240s (measured from phase_entry) → `progressive_meningococcemia`**
 
 - guard: `NOT flag abx_given set`
 - destination vitals: HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2
@@ -80,7 +80,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 8. 120s `normal_saline_1l_bolus` (escalation)
 9. 140s `hydrocortisone_bolus` (escalation)
 
-### `progressive_meningococcaemia`: Progressive meningococcaemia with worsening disseminated intravascular coagulation
+### `progressive_meningococcemia`: Progressive meningococcaemia with worsening disseminated intravascular coagulation
 
 Vitals in this phase: HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2
 
@@ -161,9 +161,9 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 | from | at | to | vitals immediately after | the line |
 |---|---|---|---|---|
 | `presentation` | 240s | `adrenal_crisis` | HR 136, BP 88/54, RR 28, SpO2 97%, T 39.0 | “She's harder to rouse than she was ten minutes ago, doctor, and she's gone a worse colour. Her pressure's come down too. I don't think she's holding.” |
-| `presentation` | 240s | `progressive_meningococcaemia` | HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2 | “The spots on her ankles have joined up into patches while we've been standing here, and there are new ones on her forearms. She's oozing round the cannula site now too.” |
+| `presentation` | 240s | `progressive_meningococcemia` | HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2 | “The spots on her ankles have joined up into patches while we've been standing here, and there are new ones on her forearms. She's oozing round the cannula site now too.” |
 | `adrenal_crisis` | 210s | `frank_septic_shock` | HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8 | “Her pressure's in the seventies now and she's not answering me properly. I can't feel a radial pulse on either side.” |
-| `progressive_meningococcaemia` | 210s | `frank_septic_shock` | HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8 | “The purpura is spreading up both legs and onto her belly, and she's stopped answering me. Her pressure is seventy over forty.” |
+| `progressive_meningococcemia` | 210s | `frank_septic_shock` | HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8 | “The purpura is spreading up both legs and onto her belly, and she's stopped answering me. Her pressure is seventy over forty.” |
 | `frank_septic_shock` | 300s | `cardiac_arrest` | HR 26, BP 44/24, RR 4, SpO2 58%, T 38.2 | “She's lost her output. No pulse. I'm starting compressions.” |
 
 Compare each line with the row before it in section 2, not only with the destination: a line saying a number has fallen must be preceded by a phase in which it was higher.

@@ -3,7 +3,7 @@
 **Superseded as a description of the system.** What was built is documented in
 `system-design-v2.md` v0.5 section 20 (architecture) and
 `case-authoring-requirements.md` v0.4 section 10.6 (measurements and authoring rules).
-Read those for current behaviour. This document is retained because it holds the
+Read those for current behavior. This document is retained because it holds the
 diagnosis that motivated the work and the options that were rejected, neither of which
 survives in the current documents.
 
@@ -30,7 +30,7 @@ list.
 
 **Caveats that matter.**
 
-- The expected label for each question is my judgement of what the case author
+- The expected label for each question is my judgment of what the case author
   would want, not ground truth from the author. Category C in particular is
   arguable: I marked "has this ever happened before" as `past_medical_history`,
   and a reasonable author might not.
@@ -38,7 +38,7 @@ list.
   23/25 on held-out phrasings, which is consistent with my category A alone
   (84%). The overall drop comes from categories the spec did not test.
 - Category D scored 100% only because I counted a hit if *either* topic matched.
-  The real behaviour is that one topic is answered and the other is dropped with
+  The real behavior is that one topic is answered and the other is dropped with
   no signal. See failure mode 4.
 - Category F has n=5. Every claim about out-of-scope rejection below rests on a
   sample too small to put a confidence interval on. It is enough to show the
@@ -149,7 +149,7 @@ matches. Does not violate section 10.4, which constrains answers.
 **0b. Go from 10 variants to 20.** Section 10.1 already asks for this and calls
 ten "the floor", and notes the measured error rate at the floor is not
 comfortable. Every one of the 34 topics in the CHFE case is at exactly ten. The
-spec's own prioritisation applies: expand first on topics where a wrong answer
+spec's own prioritization applies: expand first on topics where a wrong answer
 changes management.
 
 Cost: author time, and it is not small. Benefit: measurable, and it improves
@@ -188,7 +188,7 @@ matcher, semantic included, matches against this bank.)*
 Use an LLM at **authoring** time to expand each topic to 50 to 100 paraphrases
 spanning lay, clinical and shorthand registers, then ship the expanded bank. No
 model at runtime, so the single-file no-backend architecture survives intact and
-behaviour stays deterministic.
+behavior stays deterministic.
 
 Costs: bundle size (340 variants to roughly 2,500 needs measuring against the
 current 155 KB case payload), and review burden, since section 10.1 marks
@@ -236,7 +236,7 @@ document and is **not author-written**: see the caveats there and the
 `provenance` field in the file itself.
 
 Nothing in section 4 should be tuned before a real held-out set exists, or the
-result measures memorisation. The spec says this explicitly and it is worth
+result measures memorization. The spec says this explicitly and it is worth
 repeating.
 
 What it needs beyond what the spec describes:
@@ -262,7 +262,7 @@ What it needs beyond what the spec describes:
    1a I am least sure of. "Do you mean whether he sleeps flat, or whether he
    wakes at night?" tells the resident that both are things worth asking. That is
    a hint they did not earn, delivered at the moment they were closest to
-   missing something. It may be that the honest behaviour is the fallthrough,
+   missing something. It may be that the honest behavior is the fallthrough,
    and that the fix belongs entirely in the bank rather than in the interaction.
    A physician educator should decide this, not me.
 
@@ -272,7 +272,7 @@ What it needs beyond what the spec describes:
 4. **How much authoring budget exists per case?** Section 10.5 already notes that
    distressed-phase answers roughly double interview authoring effort. Tier 0
    roughly doubles it again. If that budget does not exist, Tier 2 or Tier 3
-   stops being an optimisation and becomes the only route.
+   stops being an optimization and becomes the only route.
 
 ## 7. What I would do, in order
 

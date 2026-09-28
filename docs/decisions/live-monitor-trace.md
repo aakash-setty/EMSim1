@@ -2,7 +2,7 @@
 
 Design v0.16. One change, the beat clock it forced, and the authoring field it needed.
 
-Kept for what was rejected. The current behaviour is in `docs/system-design-v2.md`
+Kept for what was rejected. The current behavior is in `docs/system-design-v2.md`
 sections 8.4c and 8.5 and in `docs/case-authoring-requirements.md` section 6.0b. This file
 is not a source of truth for how the system behaves.
 
@@ -147,16 +147,16 @@ it says `irregularly_irregular` and never says atrial fibrillation.
 A case could have carried its own amplitudes. Then two cases could disagree about what a
 narrow complex looks like and each would have to be reviewed separately. The amplitudes
 and the wide-complex blend are global, with a provenance note saying they are
-stylisations, and a case chooses only the properties above.
+stylizations, and a case chooses only the properties above.
 
-### Rejected: a second lead, artefact, ectopy, f-waves
+### Rejected: a second lead, artifact, ectopy, f-waves
 
 Each is a real thing a monitor shows and each is a claim a case would then be making.
 None of the four packs needs one, and the seizing phase in DIPH, whose report mentions
-both ectopics and movement artefact, says in its `verify` note that the monitor draws
+both ectopics and movement artifact, says in its `verify` note that the monitor draws
 neither. The field is closed; extending it is a decision, not an edit.
 
-### Accepted: the wide complex is a stylisation
+### Accepted: the wide complex is a stylization
 
 The blend from a narrow complex to a wide one follows the ECG generator project's
 sodium-channel pattern in lead II: the initial r held short, the extra duration in a deep
@@ -178,7 +178,7 @@ slow, wide, P-less idioventricular rhythm for generic peri-arrest numbers. Each 
 one block. The review packets carry an addendum listing them.
 
 MGCA's arrest phase is worth naming: it authors a rate of 26 and a pressure of 44/24,
-which is a slow organised rhythm with almost no output rather than fibrillation or
+which is a slow organized rhythm with almost no output rather than fibrillation or
 asystole, and the picture follows the numbers. Whether the numbers are what the author
 meant is a question for the author.
 

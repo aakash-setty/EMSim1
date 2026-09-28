@@ -24,139 +24,77 @@ RF   = "phase is respiratory_failure"
 SUPPORTED = "phase is breathing_supported OR phase is stabilized"
 
 EXAM = {
- "authoring_note": ("Section 11.2. Twelve of the fourteen catalog manoeuvres are authored; "
+ "authoring_note": ("Section 11.2. Twelve of the fourteen catalog maneuvers are authored; "
    "genitourinary and back inherit the catalog default. Peripheral edema sits on the "
    "cardiovascular examination and jugular venous pressure on the neck, per exam_finding_routing, "
    "not where a clinician would instinctively look for them."),
 
  "exam_airway": [
-   {"when": VENT, "value": ex("Endotracheal tube in place at 23 cm at the teeth. Cuff inflated. "
-      "Waveform capnography with a normal square trace.")},
-   {"when": RF, "value": ex("Airway still patent but he is no longer talking. Answers in single "
-      "words when pushed. No stridor and no secretions, but he is not going to protect this "
-      "airway for much longer at this rate of work.")},
-   {"when": None, "value": ex("Patent and self-maintained. He can complete a short sentence "
-      "before he has to stop for a breath. No stridor, no drooling, no oropharyngeal swelling. "
-      "Voice normal.", abnormal=False)},
+   {"when": VENT, "value": ex("Endotracheal tube at 23 cm at the teeth, cuff inflated. Normal capnography waveform.")},
+   {"when": RF, "value": ex("Patent, but he has stopped talking. Single words when pushed. No stridor or secretions.")},
+   {"when": None, "value": ex("Patent. Speaks a short sentence before stopping to breathe. No stridor.", abnormal=False)},
  ],
 
  "exam_breath": [
-   {"when": VENT, "value": ex("Ventilated. Chest rises symmetrically with each delivered breath. "
-      "No spontaneous respiratory effort against the ventilator at present.")},
-   {"when": RF, "value": ex("Respiratory rate 38 and shallow. Marked accessory muscle use with "
-      "sternocleidomastoid and scalene recruitment, intercostal indrawing, and paradoxical "
-      "abdominal movement on inspiration. He has stopped talking. This is a fatiguing pattern.")},
-   {"when": SUPPORTED, "value": ex("Respiratory rate down and the pattern is deeper and more "
-      "regular on positive pressure. Much less accessory muscle use. He is tolerating the mask "
-      "and no longer bracing against it. Chest expansion symmetrical.")},
-   {"when": None, "value": ex("Respiratory rate 30 and shallow. Sitting bolt upright and will not "
-      "lie back. Visible sternocleidomastoid and scalene use with mild intercostal indrawing. "
-      "Speaks in short sentences, stopping to breathe. Chest expansion symmetrical, no "
-      "splinting.")},
+   {"when": VENT, "value": ex("Ventilated. Symmetric chest rise. No effort against the ventilator.")},
+   {"when": RF, "value": ex("Rate 38, shallow. Marked accessory muscle use, retractions, paradoxical abdominal movement. Stopped talking.")},
+   {"when": SUPPORTED, "value": ex("Rate down, deeper and more regular on the mask. Much less accessory muscle use.")},
+   {"when": None, "value": ex("Rate 30, shallow. Bolt upright. Neck accessory muscle use, mild retractions. Short sentences.")},
  ],
 
  "exam_circ": [
-   {"when": VENT, "value": ex("Peripheries warm. Capillary refill 2 seconds. Radial pulse "
-      "irregularly irregular with variable volume. No pulse deficit appreciable at this rate.")},
+   {"when": VENT, "value": ex("Warm. Capillary refill 2 seconds. Irregularly irregular radial pulse, variable volume.")},
    {"when": "phase is rate_controlled_congested OR phase is stabilized",
-    "value": ex("Radial pulse still irregularly irregular but slower and much easier to count, "
-      "with far less beat-to-beat variation in volume. The radial and apical rates now agree, so "
-      "the pulse deficit has closed. Peripheries warm, capillary refill 2 seconds, no mottling.")},
-   {"when": None, "value": ex("Radial pulse irregularly irregular, thready and impossible to count "
-      "reliably at the wrist. Marked beat-to-beat variation in volume. Auscultated apical rate is "
-      "around 160 while the palpated radial rate is nearer 130: a pulse deficit of about 30, "
-      "because the shortest cycles do not fill the ventricle enough to open the aortic valve "
-      "usefully. Peripheries are warm and capillary refill is 2 seconds. No mottling, no cool "
-      "line up the limbs.")},
+    "value": ex("Irregularly irregular but slower and countable. No pulse deficit now. Warm, capillary refill 2 seconds.")},
+   {"when": None, "value": ex("Irregularly irregular, thready radial pulse. Apical about 160, radial about 130: a pulse deficit. Warm, capillary refill 2 seconds.")},
  ],
 
  "exam_neck": [
-   {"when": VENT, "value": ex("Jugular venous pulsation elevated, harder to assess against "
-      "positive pressure ventilation but clearly above the clavicle at 45 degrees. Trachea "
-      "midline. No goitre, no thyroid nodule, no bruit.")},
-   {"when": None, "value": ex("Jugular venous pulsation visible two thirds of the way up the neck "
-      "with the head of the bed at 45 degrees, roughly 12 cm of water, with no discernible "
-      "waveform because the rhythm is irregular and the a wave is absent. Elevated. Trachea "
-      "midline. No lymphadenopathy. Thyroid not enlarged, no nodule, no bruit. Sustained pressure "
-      "over the right upper quadrant raises the venous column and it does not fall back while "
-      "pressure is maintained: hepatojugular reflux positive.")},
+   {"when": VENT, "value": ex("JVP elevated above the clavicle at 45 degrees. Trachea midline. No goiter.")},
+   {"when": None, "value": ex("JVP two thirds up the neck at 45 degrees, about 12 cm, no a wave. Hepatojugular reflux positive. No goiter.")},
  ],
 
  "exam_card": [
-   {"when": VENT, "value": ex("Irregularly irregular, rate around 118. Heart sounds distant "
-      "against the ventilator. Bilateral pitting edema to mid-shin, unchanged.")},
+   {"when": VENT, "value": ex("Irregularly irregular, about 118. Distant heart sounds. 2+ pitting edema to mid-shins.")},
    {"when": "phase is rate_controlled_congested OR phase is stabilized",
-    "value": ex("Irregularly irregular at a rate you can now count, around 105. First heart sound "
-      "still varies in intensity from beat to beat, which is expected in atrial fibrillation "
-      "because the diastolic filling time varies. Apex is displaced laterally to the anterior "
-      "axillary line in the sixth interspace. No murmur audible. Bilateral pitting edema to "
-      "mid-shin, unchanged: days of accumulated fluid do not leave in ten minutes.")},
-   {"when": None, "value": ex("Irregularly irregular, far too fast to count accurately by "
-      "auscultation, around 160. The first heart sound varies in intensity beat to beat. No "
-      "murmur that can be characterised at this rate. A third heart sound cannot be excluded and "
-      "cannot be confirmed at 160. Apex beat displaced laterally to the anterior axillary line in "
-      "the sixth interspace, diffuse rather than tapping. Bilateral pitting edema to mid-shin, "
-      "symmetrical, pitting to about 2 cm.")},
+    "value": ex("Irregularly irregular, about 105. Variable S1. Displaced apex. No murmur. 2+ edema to mid-shins.")},
+   {"when": None, "value": ex("Irregularly irregular, about 160. Variable S1. Displaced, diffuse apex. 2+ pitting edema to mid-shins.")},
  ],
 
  "exam_pulm": [
-   {"when": VENT, "value": ex("Coarse crackles throughout both lung fields on the ventilator, "
-      "worse at the bases. No wheeze. No focal dullness.")},
+   {"when": VENT, "value": ex("Coarse crackles throughout on the ventilator, worse at the bases. No wheeze.")},
    {"when": "flag diuretic_given set AND flag on_niv set",
-    "value": ex("Fine inspiratory crackles now confined to both bases rather than reaching the "
-      "mid-zones. Air entry good throughout. No wheeze. Percussion note dull at both bases, "
-      "unchanged, consistent with small effusions.")},
-   {"when": None, "value": ex("Fine inspiratory crackles in both lung fields to the mid-zones, "
-      "symmetrical, worse at the bases. Scattered expiratory wheeze in both lower zones, which in "
-      "this patient is peribronchial edema rather than bronchospasm. Percussion note dull at both "
-      "bases. No focal consolidation, no pleural rub.")},
+    "value": ex("Fine crackles at the bases only. Good air entry. Dull at both bases. No wheeze.")},
+   {"when": None, "value": ex("Fine crackles to the mid-zones, worse at the bases. Scattered expiratory wheeze. Dull at both bases.")},
  ],
 
  "exam_abd": [
-   {"when": None, "value": ex("Soft. Mildly tender in the right upper quadrant. Liver edge "
-      "palpable 3 cm below the costal margin, smooth and tender, and it is pulsatile. No ascites, "
-      "no guarding, no rebound. Bowel sounds present.")},
+   {"when": None, "value": ex("Tender, pulsatile liver edge 3 cm below the costal margin. Soft, no ascites or guarding.")},
  ],
 
  "exam_msk": [
-   {"when": None, "value": ex("Symmetrical pitting edema of both lower limbs to mid-shin. No "
-      "unilateral calf swelling, no calf tenderness, no palpable cord, no asymmetry in calf "
-      "circumference. Dorsalis pedis and posterior tibial pulses present bilaterally and "
-      "irregular. Full range of movement at both ankles and knees.", abnormal=False)},
+   {"when": None, "value": ex("Symmetric pitting edema to mid-shins. No calf tenderness, cord or asymmetry. Pedal pulses present.", abnormal=False)},
  ],
 
  "exam_skin": [
-   {"when": VENT, "value": ex("Warm and dry. Colour good. No rash, no mottling.", abnormal=False)},
-   {"when": RF, "value": ex("Clammy and grey. Diaphoretic across the forehead and upper chest. "
-      "Dusky discoloration of the lips and nailbeds. No rash.")},
-   {"when": None, "value": ex("Warm to the touch with a light sweat over the forehead and upper "
-      "chest. Colour is reasonable centrally with no frank cyanosis. No rash, no petechiae, no "
-      "wounds, no cellulitis. Skin over both shins is taut and shiny with the edema.")},
+   {"when": VENT, "value": ex("Warm and dry. Good color. No mottling.", abnormal=False)},
+   {"when": RF, "value": ex("Clammy, gray, sweating. Dusky lips and nailbeds.")},
+   {"when": None, "value": ex("Warm, light sweat. No cyanosis. Shins taut and shiny with edema. No rash.")},
  ],
 
  "exam_neuro": [
-   {"when": VENT, "value": ex("Sedated and ventilated. Glasgow Coma Scale 3T on the current "
-      "sedation. Pupils 3 mm and reactive bilaterally. No spontaneous movement.")},
-   {"when": RF, "value": ex("Glasgow Coma Scale 14: eyes open to voice, confused, obeys commands. "
-      "Drowsy and difficult to keep engaged, and he has stopped answering questions in the middle "
-      "of them. No focal deficit, no asymmetry, plantars downgoing. This is the carbon dioxide, "
-      "not a new neurological event.")},
-   {"when": None, "value": ex("Glasgow Coma Scale 15. Alert, oriented to person, place and time. "
-      "Cranial nerves intact. Power 5 out of 5 and symmetrical in all four limbs. No pronator "
-      "drift, no ataxia, plantars downgoing. No focal deficit.", abnormal=False)},
+   {"when": VENT, "value": ex("Sedated, GCS 3T. Pupils 3 mm, reactive. No spontaneous movement.")},
+   {"when": RF, "value": ex("GCS 13 (E3 V4 M6). Drowsy, confused, obeys commands. No focal deficit.")},
+   {"when": None, "value": ex("Alert and oriented, GCS 15. No focal deficit.", abnormal=False)},
  ],
 
  "exam_psych": [
    {"when": VENT, "value": ex("Sedated. Not assessable.")},
-   {"when": None, "value": ex("Anxious and frightened, and appropriately so. Cooperative with "
-      "examination. Thought content coherent, no delusional material, no hallucinations. He keeps "
-      "asking whether he is having a heart attack. Insight intact.")},
+   {"when": None, "value": ex("Anxious and frightened, cooperative. Keeps asking if he is having a heart attack.")},
  ],
 
  "exam_heent": [
-   {"when": None, "value": ex("Normocephalic, atraumatic. Conjunctivae not pale, sclerae not "
-      "icteric. No lid lag, no lid retraction, no proptosis. Pupils equal and reactive. Mucous "
-      "membranes moist. Oropharynx clear. No thyroid enlargement palpable from the front.",
+   {"when": None, "value": ex("No lid lag, proptosis or pallor. Moist mucous membranes. No thyroid enlargement.",
       abnormal=False)},
  ],
 }
@@ -166,19 +104,15 @@ GENERAL_STATUS = {
    "one examination finding every learner sees. Kept consistent with the neurological examination "
    "and with the appearance values in each phase."),
  "rules": [
-  {"when": VENT, "value": gs("Intubated and sedated on the ventilator. Not responsive. Colour good.")},
-  {"when": RF, "value": gs("Severe respiratory distress and tiring. Drowsy, grey and sweaty, "
-     "speaking in single words. GCS 14.")},
+  {"when": VENT, "value": gs("Intubated and sedated. Good color.")},
+  {"when": RF, "value": gs("Severe distress, tiring. Drowsy, gray, sweaty, single words. GCS 13.")},
   {"when": "phase is rate_controlled_congested",
-   "value": gs("Still in obvious respiratory distress, sitting bolt upright, speaking in short "
-     "phrases. Heart rate visibly slower on the monitor. GCS 15.")},
+   "value": gs("Still in obvious distress, bolt upright, short phrases. Visibly slower rate. GCS 15.")},
   {"when": "phase is breathing_supported",
-   "value": gs("Moderate respiratory distress, improving behind the mask. Tolerating positive "
-     "pressure. GCS 15.")},
+   "value": gs("Moderate distress, improving on the mask. GCS 15.")},
   {"when": "phase is stabilized",
-   "value": gs("Comfortable at rest on the mask, settled and talking between breaths. GCS 15.")},
-  {"when": None, "value": gs("Awake, anxious and visibly breathless. Sitting upright, hands on "
-     "his thighs, speaking in short sentences. GCS 15.")},
+   "value": gs("Comfortable at rest on the mask. GCS 15.")},
+  {"when": None, "value": gs("Awake, anxious, visibly breathless. Upright, hands on thighs, short sentences. GCS 15.")},
  ],
 }
 
@@ -186,7 +120,7 @@ GENERAL_STATUS = {
 # GENERAL_STATUS above, and kept consistent with it: both describe the same patient.
 PATIENT_VISUAL = {
  "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drives the figure in the room (engine/patient.js). Derived from this case's own phase descriptions, alertness levels, general status lines and action flags, and adds no clinical fact of its own: eyes closed where the phase is unresponsive, sedated or arrested; work of breathing where the phase description names it; the mask and the tube where the flag the resident's own action sets is set. The respiratory rate is not authored here, the figure breathes at the monitor's rate. Verify each rule against the phase and flag it names, as for any other content key.",
- "verify": "The mask follows flag on_niv and the tube follows flag intubated. presentation is drawn as increased rather than severe because he can still finish a sentence; rate_controlled_congested is drawn as severe from 'still working hard to breathe' at distress level 3. respiratory_failure is drowsy and is drawn eyes open. Sweating is drawn in respiratory_failure, from 'grey and sweaty'. The pads and the central line follow flags pacing_pads_placed and central_access; the line is drawn in the right internal jugular, which the case does not specify.",
+ "verify": "The mask follows flag on_niv and the tube follows flag intubated. presentation is drawn as increased rather than severe because he can still finish a sentence; rate_controlled_congested is drawn as severe from 'still working hard to breathe' at distress level 3. respiratory_failure is drowsy and is drawn eyes open. Sweating is drawn in respiratory_failure, from 'gray and sweaty'. The pads and the central line follow flags pacing_pads_placed and central_access; the line is drawn in the right internal jugular, which the case does not specify.",
  "rules": [
   {
    "when": "flag intubated set OR phase is intubated",
@@ -305,7 +239,7 @@ LABS = {
      comment="Low. Worth correcting: magnesium is a cofactor for the sodium-potassium pump so a "
              "low potassium will not correct while this is low, and intravenous magnesium has "
              "been reported as a useful adjunct to nodal blockade in rapid atrial fibrillation on "
-             "the evidence of small randomised trials.")}]},
+             "the evidence of small randomized trials.")}]},
 
  "troponin_t": {"changes_with_state": False, "rules": [
    {"when": None, "value": val([
@@ -331,10 +265,10 @@ LABS = {
  "complete_blood_count_cbc": {"changes_with_state": False, "rules": [
    {"when": None, "value": panel([
      c("White cell count", "8.4", "x10^9/L", "4.0-11.0", False),
-     c("Haemoglobin", "13.9", "g/dL", "13.5-17.5", False),
-     c("Haematocrit", "41", "%", "38-50", False),
+     c("Hemoglobin", "13.9", "g/dL", "13.5-17.5", False),
+     c("Hematocrit", "41", "%", "38-50", False),
      c("Platelets", "232", "x10^9/L", "150-400", False)],
-     comment="Unremarkable. Anaemia is a genuine precipitant of decompensation and is excluded here.")}]},
+     comment="Unremarkable. Anemia is a genuine precipitant of decompensation and is excluded here.")}]},
 
  "tsh": {"changes_with_state": False, "rules": [
    {"when": None, "value": val([
@@ -364,11 +298,29 @@ LABS = {
              "that fast, a carbon dioxide that is not low is a warning. This is the finding that "
              "argues for bilevel rather than continuous positive pressure.")}]},
 
+ # v0.18a: an arterial gas returned a normal default (pH 7.40, pCO2 40) in a man with a
+ # respiratory acidosis on the venous gas. Derived from the venous values.
+ "arterial_blood_gas": {"changes_with_state": True, "rules": [
+   {"when": RF, "value": panel([
+     c("pH", "7.26", "", "7.35-7.45", True),
+     c("pCO2", "58", "mmHg", "35-45", True),
+     c("pO2", "48", "mmHg", "80-100", True),
+     c("Bicarbonate", "25", "mEq/L", "22-26", False),
+     c("Lactate", "3.1", "mmol/L", "under 2.0", True)],
+     comment="Worsening acute respiratory acidosis with hypoxemia. He is tiring.")},
+   {"when": None, "value": panel([
+     c("pH", "7.34", "", "7.35-7.45", True),
+     c("pCO2", "46", "mmHg", "35-45", True),
+     c("pO2", "58", "mmHg", "80-100", True),
+     c("Bicarbonate", "24", "mEq/L", "22-26", False),
+     c("Lactate", "2.4", "mmol/L", "under 2.0", True)],
+     comment="Hypoxemia with a carbon dioxide that is not low despite a respiratory rate of 30.")}]},
+
  "lactate": {"changes_with_state": False, "rules": [
    {"when": None, "value": val([
      c("Lactate", "2.4", "mmol/L", "under 2.0", True)],
      comment="Mildly raised, and in this patient attributable to the work of breathing and the "
-             "tachycardia rather than to sepsis or mesenteric ischaemia. It should fall with "
+             "tachycardia rather than to sepsis or mesenteric ischemia. It should fall with "
              "treatment. One that does not fall deserves a different explanation.")}]},
 
  "d_dimer": {"changes_with_state": False, "rules": [
@@ -460,6 +412,12 @@ IMAGING = {
       "confluent at the bases. Symmetrical. Lung sliding present throughout. Small "
       "bilateral pleural effusions. No consolidation.")}]},
 
+ # v0.18a: a chest CT returned "Lungs clear" by default in a man with pulmonary edema.
+ "ct_chest": {"changes_with_state": False, "rules": [
+   {"when": None, "value": rep("CT chest without contrast. Cardiomegaly with enlargement of the left atrium. "
+     "Bilateral perihilar ground-glass opacity with smooth interlobular septal thickening and small "
+     "bilateral pleural effusions. No consolidation, no mass. Findings are consistent with pulmonary edema.")}]},
+
  "xr_chest": {"changes_with_state": False, "result_shape": "structured", "rules": [
    {"when": None,
     "value": rep("Portable semi-erect film. Cardiomegaly, cardiothoracic ratio about 0.58. "
@@ -495,7 +453,7 @@ CONSULTANTS = {
    "value": "Cardiology fellow: good, that is a rate I can live with, and he does not have to be "
      "in sinus rhythm today. Nobody can tell me how long he has been in it, so I am not "
      "cardioverting him and neither should you. Three things before he leaves you. He needs to be "
-     "anticoagulated, and his CHA2DS2-VASc is at least three so there is no argument to have "
+     "anticoagulated, and his CHA2DS2-VASc is at least four so there is no argument to have "
      "about it. He needs a bed that can keep the mask on him and watch the rate, because a "
      "ventricle at thirty to thirty-five percent that has just been slowed can go the other way "
      "if the edema is not treated. And he needs a formal echocardiogram this admission, because "
@@ -510,7 +468,7 @@ CONSULTANTS = {
      "And know when to stop. If he is still fast after two decent doses, that is telling you "
      "something rather than asking for a third: a rate that will not come down in acute "
      "decompensated heart failure is usually being driven by the decompensation. At that point "
-     "the treatment is the edema and the hypoxaemia, not more nodal blockade in a ventricle that "
+     "the treatment is the edema and the hypoxemia, not more nodal blockade in a ventricle that "
      "is already struggling. Get the positive pressure on him and diurese him, and the rate will "
      "often follow."},
   {"when": DX_KNOWN + " AND " + ECG_DONE,
@@ -520,9 +478,8 @@ CONSULTANTS = {
      "inotropes and the guideline is explicit about avoiding them when systolic function is "
      "significantly reduced. Digoxin or amiodarone are the sensible choices, and if you want a "
      "beta blocker use a small dose and only once his oxygenation is sorted out, because he is "
-     "leaning on his sympathetic tone at the moment. Expect to give it twice: one dose will take "
-     "the edge off and will not get him where you want him. Second thing: anticoagulate him. His "
-     "CHA2DS2-VASc is at least three and there is nothing stopping you, and I would not cardiovert "
+     "leaning on his sympathetic tone at the moment. Expect it to take more than one dose: the first will take the edge off and will not get him where you want him, and digoxin in particular is loaded over hours. Second thing: anticoagulate him. His "
+     "CHA2DS2-VASc is at least four and there is nothing stopping you, and I would not cardiovert "
      "him today because nobody can tell me how long he has been in it. Get the positive pressure "
      "on, diurese him, slow him down, and we will see him upstairs. He needs a formal "
      "echocardiogram this admission."},
@@ -530,7 +487,7 @@ CONSULTANTS = {
    "value": "Cardiology fellow: an ejection fraction of thirty to thirty-five in a man who has "
      "never had an echocardiogram is a significant finding and it changes your drug choice, so "
      "stay away from diltiazem. I have not seen a twelve-lead on him though, and I am not going "
-     "to commit to anything about the rhythm or about ischaemia until somebody shows me one. Send "
+     "to commit to anything about the rhythm or about ischemia until somebody shows me one. Send "
      "it through."},
   {"when": ECG_DONE,
    "value": "Cardiology fellow: I have the tracing. That is atrial fibrillation with a rapid "
@@ -580,7 +537,7 @@ CONSULTANTS = {
      "this is a primary lung problem. Diffuse symmetrical B-lines, a raised jugular venous "
      "pressure and peripheral edema in a man in fast atrial fibrillation is cardiogenic pulmonary "
      "edema, and the wheeze you are hearing is edema around the airways rather than "
-     "bronchospasm. Treat the heart. If you want us later for the sleep apnoea question, that is "
+     "bronchospasm. Treat the heart. If you want us later for the sleep apnea question, that is "
      "an outpatient conversation."},
  ],
 }

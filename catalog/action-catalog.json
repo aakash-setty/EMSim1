@@ -132,7 +132,7 @@
     "Culture defaults read 'no growth to date' because the 5-second lab turnaround cannot represent a 24-48 hour culture. Cases whose teaching point is a positive culture cannot be authored honestly.",
     "Peak expiratory flow has no meaningful global normal, since predicted values depend on age, sex and height. Its default is a placeholder.",
     "ABG defaults assume room air. On supplemental oxygen the same numbers are abnormal, and nothing in the schema knows that.",
-    "Dose behaviour is not visible in the screenshots; dose_required is a guess per category and no dose values are recorded.",
+    "Dose behavior is not visible in the screenshots; dose_required is a guess per category and no dose values are recorded.",
     "route_class is derived, not transcribed. Entries marked 'unspecified' need author confirmation because the vascular-access prerequisite depends on it.",
     "Infusions are persistent=true. Stopping one is a separate action rather than a toggle, so a case must author the stop as its own step.",
     "Meds - Cardiac now holds both 'Nitroglycerin' (transcribed, route unspecified) and 'Nitroglycerin sublingual' (author-supplied). If the transcribed entry IS the sublingual one, these are duplicates and one must be removed.",
@@ -182,7 +182,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Airway patent and self-maintained. Speaking in full sentences. No stridor, drooling, or oropharyngeal swelling. No foreign body visible. Mouth opening and thyromental distance normal."
+        "findings": "Patent. Speaking in full sentences. No stridor or swelling."
       }
     },
     {
@@ -206,7 +206,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Breathing spontaneously at a normal rate. Chest rises symmetrically. No accessory muscle use and no retractions. Air entry equal bilaterally."
+        "findings": "Normal rate and effort. Symmetric chest rise. No accessory muscle use."
       }
     },
     {
@@ -230,7 +230,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Warm and dry peripherally. Capillary refill under two seconds. Radial and dorsalis pedis pulses palpable and equal bilaterally. No external hemorrhage."
+        "findings": "Warm, well perfused. Capillary refill under 2 seconds. Pulses equal."
       }
     },
     {
@@ -254,7 +254,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Normocephalic and atraumatic. Pupils equal, round and reactive to light. Extraocular movements intact. Conjunctivae and sclerae normal. Tympanic membranes normal. Oropharynx moist and clear without erythema or exudate."
+        "findings": "Pupils equal and reactive. Moist mucous membranes. Oropharynx clear."
       }
     },
     {
@@ -278,7 +278,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Supple with full range of motion. No jugular venous distension. Trachea midline. No lymphadenopathy, thyromegaly or carotid bruit. No midline cervical tenderness."
+        "findings": "Supple. No JVD. Trachea midline. No lymphadenopathy."
       }
     },
     {
@@ -302,7 +302,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Regular rate and rhythm. Normal S1 and S2. No murmur, rub or gallop. Point of maximal impulse not displaced. No peripheral edema."
+        "findings": "Regular rate and rhythm. No murmur, rub or gallop. No edema."
       }
     },
     {
@@ -326,7 +326,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Clear to auscultation bilaterally. No crackles, wheezes or rhonchi. Resonant to percussion. Symmetric chest expansion."
+        "findings": "Clear bilaterally. No crackles or wheeze."
       }
     },
     {
@@ -350,7 +350,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Soft, non-distended and non-tender. No guarding or rebound. Bowel sounds present and normal. No organomegaly, palpable mass or pulsatile mass. No hernia."
+        "findings": "Soft, non-tender, non-distended. Normal bowel sounds. No mass."
       }
     },
     {
@@ -374,8 +374,8 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "External genitalia normal without lesion, swelling or discharge. No testicular tenderness or asymmetry. No vaginal bleeding or discharge. No suprapubic tenderness.",
-        "verify": "Written to cover both sexes in one string, so part of it is always irrelevant. If the renderer cannot select by patient sex, this should be split into two defaults."
+        "findings": "Normal external genitalia. No discharge, bleeding or suprapubic tenderness.",
+        "verify": "Written to cover both sexes in one string. If the renderer can select by patient sex, this should be split into two defaults."
       }
     },
     {
@@ -399,7 +399,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "No midline spinal tenderness, step-off or deformity. No costovertebral angle tenderness bilaterally. No rash or lesion over the back or flanks."
+        "findings": "No spinal or costovertebral angle tenderness. No rash."
       }
     },
     {
@@ -423,7 +423,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "No deformity, swelling or joint effusion. Full active and passive range of motion. No focal bony tenderness. Compartments soft. Distal pulses, sensation and motor function intact in all four limbs."
+        "findings": "No deformity or tenderness. Full range of motion. Distal neurovascular status intact."
       }
     },
     {
@@ -447,7 +447,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Warm and dry with normal color. No rash, petechiae, purpura or bruising. No wounds, ulcers or cellulitis. No diaphoresis."
+        "findings": "Warm and dry. No rash, petechiae or wounds."
       }
     },
     {
@@ -471,7 +471,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Alert and oriented to person, place and time. GCS 15. Speech fluent. Cranial nerves II through XII intact. Strength 5 out of 5 throughout. Sensation intact. Coordination and gait normal. No pronator drift."
+        "findings": "Alert and oriented, GCS 15. No focal deficit."
       }
     },
     {
@@ -495,7 +495,7 @@
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
-        "findings": "Calm and cooperative with appropriate affect. Thought linear and goal directed. No suicidal or homicidal ideation. No hallucinations. Insight and judgment intact."
+        "findings": "Calm and cooperative. Thought linear. No suicidal or homicidal ideation."
       }
     },
     {
@@ -1087,7 +1087,7 @@
       "default_prerequisites": [
         {
           "when": "flag sedation_given set AND flag paralytic_given set",
-          "failure_message": "{He's} not sedated or paralysed yet. We need induction and a paralytic before we tube {him}.",
+          "failure_message": "{He's} not sedated or paralyzed yet. We need induction and a paralytic before we tube {him}.",
           "source": "system-design-v2.md 6.1"
         }
       ],
@@ -1164,7 +1164,9 @@
           "source": "derived"
         }
       ],
-      "flags_set_default": []
+      "flags_set_default": [
+        "sedation_given"
+      ]
     },
     {
       "id": "etomidate_bolus",
@@ -1195,7 +1197,9 @@
           "source": "derived"
         }
       ],
-      "flags_set_default": []
+      "flags_set_default": [
+        "sedation_given"
+      ]
     },
     {
       "id": "ketamine_bolus",
@@ -1226,7 +1230,9 @@
           "source": "derived"
         }
       ],
-      "flags_set_default": []
+      "flags_set_default": [
+        "sedation_given"
+      ]
     },
     {
       "id": "propofol_bolus",
@@ -1257,7 +1263,9 @@
           "source": "derived"
         }
       ],
-      "flags_set_default": []
+      "flags_set_default": [
+        "sedation_given"
+      ]
     },
     {
       "id": "succinylcholine_bolus",
@@ -1284,7 +1292,9 @@
           "source": "derived"
         }
       ],
-      "flags_set_default": []
+      "flags_set_default": [
+        "paralytic_given"
+      ]
     },
     {
       "id": "rocuronium_bolus",
@@ -1311,7 +1321,9 @@
           "source": "derived"
         }
       ],
-      "flags_set_default": []
+      "flags_set_default": [
+        "paralytic_given"
+      ]
     },
     {
       "id": "phenylephrine_bolus",
@@ -1730,7 +1742,7 @@
       "default_result": {
         "kind": "report",
         "abnormal": false,
-        "report": "No discrete fluid collection or abscess. No cobblestoning. No radiopaque foreign body identified."
+        "report": "No discrete fluid collection or abscess. No cobblestoning. No echogenic foreign body identified."
       }
     },
     {
@@ -1957,7 +1969,7 @@
         "components": [
           {
             "label": "ABO/Rh",
-            "value": "O negative",
+            "value": "O positive",
             "unit": "",
             "reference_range": "not applicable",
             "abnormal": false
@@ -1970,7 +1982,7 @@
             "abnormal": false
           }
         ],
-        "verify": "Author choice: O negative. Blood type is a patient attribute, not a normal value. Every unauthored patient is now universal-donor type, which no case should ever depend on. Cases turning on type-specific transfusion, Rh status or RhoGAM must override this."
+        "verify": "v0.18a: O positive, the commonest type, so that an unauthored patient does not create an Rh immune globulin indication (O negative until v0.18a). Blood type is a patient attribute, not a normal value, and no case should depend on this default. Cases turning on type-specific transfusion, Rh status or RhoGAM must override this."
       }
     },
     {
@@ -2794,9 +2806,9 @@
           },
           {
             "label": "Differential",
-            "value": "Lymphocyte predominant",
+            "value": "Not performed (too few cells)",
             "unit": "",
-            "reference_range": "lymphocyte predominant",
+            "reference_range": "mononuclear cells only",
             "abnormal": false
           }
         ]
@@ -2863,7 +2875,7 @@
             "label": "CSF glucose",
             "value": "60",
             "unit": "mg/dL",
-            "reference_range": "50-80, roughly two thirds of serum",
+            "reference_range": "40-70, CSF:serum ratio at least 0.6",
             "abnormal": false
           }
         ]
@@ -3189,9 +3201,9 @@
         "components": [
           {
             "label": "Serum beta-hCG",
-            "value": "Negative",
-            "unit": "",
-            "reference_range": "negative",
+            "value": "< 5",
+            "unit": "mIU/mL",
+            "reference_range": "< 5 (non-pregnant)",
             "abnormal": false
           }
         ],
@@ -4857,7 +4869,7 @@
       "flags_set_default": [],
       "route_class": "iv_timed_infusion",
       "source": "author-supplied, not in screenshots (v0.9)",
-      "indications_note": "Placed under Respiratory (severe asthma), Cardiac (prolonged QT, torsades de pointes), Miscellaneous (repletion) and OB/GYN (pre-eclampsia, eclampsia). Dose and rate are the case's to author; the catalog holds no appropriateness judgement."
+      "indications_note": "Placed under Respiratory (severe asthma), Cardiac (prolonged QT, torsades de pointes), Miscellaneous (repletion) and OB/GYN (pre-eclampsia, eclampsia). Dose and rate are the case's to author; the catalog holds no appropriateness judgment."
     },
     {
       "id": "metoprolol_bolus",
@@ -5097,15 +5109,9 @@
       "dose_required": true,
       "turnaround_class": null,
       "narration_template": "Giving {dose} of {name}.",
-      "default_prerequisites": [
-        {
-          "when": "flag iv_access set OR flag central_access set OR flag io_access set",
-          "failure_message": "No line in {him} yet. Do you want me to get IV access first?",
-          "source": "derived"
-        }
-      ],
+      "default_prerequisites": [],
       "flags_set_default": [],
-      "route_class": "iv_bolus"
+      "route_class": "unspecified"
     },
     {
       "id": "metoclopramide",
@@ -6125,15 +6131,9 @@
       "dose_required": true,
       "turnaround_class": null,
       "narration_template": "Giving {dose} of {name}.",
-      "default_prerequisites": [
-        {
-          "when": "flag iv_access set OR flag central_access set OR flag io_access set",
-          "failure_message": "No line in {him} yet. Do you want me to get IV access first?",
-          "source": "derived"
-        }
-      ],
+      "default_prerequisites": [],
       "flags_set_default": [],
-      "route_class": "iv_bolus"
+      "route_class": "unspecified"
     },
     {
       "id": "physostigmine",
@@ -6360,15 +6360,9 @@
       "dose_required": true,
       "turnaround_class": null,
       "narration_template": "Giving {dose} of {name}.",
-      "default_prerequisites": [
-        {
-          "when": "flag iv_access set OR flag central_access set OR flag io_access set",
-          "failure_message": "No line in {him} yet. Do you want me to get IV access first?",
-          "source": "derived"
-        }
-      ],
+      "default_prerequisites": [],
       "flags_set_default": [],
-      "route_class": "iv_bolus"
+      "route_class": "unspecified"
     },
     {
       "id": "hypertonic_saline_25_bolus",
@@ -6386,9 +6380,9 @@
       "narration_template": "Giving {dose} of {name}.",
       "default_prerequisites": [
         {
-          "when": "flag iv_access set OR flag central_access set OR flag io_access set",
-          "failure_message": "No line in {him} yet. Do you want me to get IV access first?",
-          "source": "derived"
+          "when": "flag central_access set",
+          "failure_message": "That concentration has to go through a central line. Do you want one placed?",
+          "source": "derived: concentrated sodium chloride is a central-line drug"
         }
       ],
       "flags_set_default": [],
@@ -6673,7 +6667,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6694,7 +6688,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6715,7 +6709,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6736,7 +6730,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6757,7 +6751,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6778,7 +6772,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6799,7 +6793,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6820,7 +6814,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6841,7 +6835,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6862,7 +6856,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6883,7 +6877,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6904,7 +6898,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6925,7 +6919,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6946,7 +6940,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6967,7 +6961,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -6988,7 +6982,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -7009,7 +7003,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -7030,7 +7024,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -7051,7 +7045,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,
@@ -7072,7 +7066,7 @@
       "state_changing": true,
       "dose_required": false,
       "turnaround_class": null,
-      "narration_template": "Stopping the {name_lower}.",
+      "narration_template": "Stopping the {name}.",
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": false,

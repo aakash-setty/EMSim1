@@ -1,4 +1,4 @@
-/* Case assertions for MGCA (meningococcaemia with septic shock and adrenal crisis).
+/* Case assertions for MGCA (meningococcemia with septic shock and adrenal crisis).
  *
  * Run by engine/engine-tests.js, which supplies chk, section, mk and the engine.
  * Everything here names a specific drug, study or phase and therefore belongs to the
@@ -22,16 +22,19 @@ chk('no halt',!st.halted);
 chk('no deterioration fired',st.timeFires.length===0,JSON.stringify(st.timeFires));
 
 section('the two deficits need two drugs');
-st=fold(mk([[1,'insert_iv'],[2,'normal_saline_1l_bolus']]),20);
+/* v0.18a: the crisis follows 90 seconds after volume without glucocorticoid, not on the click. */
+st=fold(mk([[1,'insert_iv'],[2,'normal_saline_1l_bolus']]),60);
+chk('volume alone does not change her on the same click',st.phase==='presentation',st.phase);
+st=fold(mk([[1,'insert_iv'],[2,'normal_saline_1l_bolus']]),120);
 chk('volume without glucocorticoid enters the adrenal branch',st.phase==='adrenal_crisis',st.phase);
 st=fold(mk([[1,'insert_iv'],[2,'normal_saline_1l_bolus'],[3,'hydrocortisone_bolus']]),20);
-chk('glucocorticoid without the organism enters the meningococcaemia branch',
-    st.phase==='progressive_meningococcaemia',st.phase);
+chk('glucocorticoid without the organism enters the meningococcemia branch',
+    st.phase==='progressive_meningococcemia',st.phase);
 st=fold(mk([[1,'insert_iv'],[2,'normal_saline_1l_bolus'],[3,'hydrocortisone_bolus'],
             [4,'vancomycin']]),20);
 chk('vancomycin does not count as treating the organism',
-    st.phase==='progressive_meningococcaemia',st.phase);
-st=fold(mk([[1,'insert_iv'],[2,'normal_saline_1l_bolus'],[3,'ceftriaxone'],[4,'prednisone']]),20);
+    st.phase==='progressive_meningococcemia',st.phase);
+st=fold(mk([[1,'insert_iv'],[2,'normal_saline_1l_bolus'],[3,'ceftriaxone'],[4,'prednisone']]),120);
 chk('oral steroid does not count as replacement',st.phase==='adrenal_crisis',st.phase);
 
 section('time-guarded transitions');
@@ -61,10 +64,10 @@ chk('antibiotic alone still arrests',st.phase==='cardiac_arrest',st.phase);
 /* The pair that carries the lesson: the difference between them is one action inside
    the last window, so a window nobody can hit would show up here. */
 st=fold(mk([[10,'insert_iv'],[250,'ceftriaxone'],[470,'hydrocortisone_bolus'],
-            [480,'norepinephrine_drip']]),800);
+            [475,'normal_saline_1l_bolus'],[480,'norepinephrine_drip']]),800);
 chk('rescued inside the last window',st.phase==='stabilized_shock',st.phase);
 st=fold(mk([[10,'insert_iv'],[760,'ceftriaxone'],[770,'hydrocortisone_bolus'],
-            [780,'norepinephrine_drip']]),800);
+            [775,'normal_saline_1l_bolus'],[780,'norepinephrine_drip']]),800);
 chk('one action too late arrests',st.phase==='cardiac_arrest',st.phase);
 
 section('the nurse narrates a deterioration, and only then');
@@ -89,19 +92,24 @@ chk('the glucocorticoid is prompted before the 240s deadline',!!firstSteroid&&fi
 section('harmful halts');
 for(const h of ['metoprolol_bolus','propranolol_bolus','esmolol_drip','labetalol_bolus',
                 'labetalol_drip','diltiazem_bolus','insulin_bolus','insulin_drip',
-                'potassium_chloride_kcl','hypertonic_saline_3_infusion',
-                'hypertonic_saline_25_bolus']){
+                'potassium_chloride_kcl']){
   const s=fold(mk([[1,'insert_iv'],[5,h]]),20);
   chk(h+' halts',s.halted&&s.halted.id===h&&s.phase==='halted');
   chk(h+' has a halt reason',!!(s.halted&&s.halted.reason&&s.halted.reason.length>20));
 }
+/* v0.18a: hypertonic saline is wrong here but not a bedside death, and the 25 percent bag
+   needs a central line. */
+st=fold(mk([[1,'insert_iv'],[5,'hypertonic_saline_3_infusion']]),20);
+chk('hypertonic saline infusion is discouraged, not halting',!st.halted&&st.discouragedTaken.has('hypertonic_saline_3_infusion'));
+st=fold(mk([[1,'insert_iv'],[5,'hypertonic_saline_25_bolus']]),20);
+chk('concentrated saline is refused through a peripheral line',st.blocked.some(b=>b.id==='hypertonic_saline_25_bolus')&&!st.halted);
 st=fold(mk([[1,'insert_iv'],[400,'metoprolol_bolus']]),800);
 chk('a harmful action still halts after a deadline has passed',st.phase==='halted',st.phase);
 
 section('prerequisites');
 st=fold(mk([[1,'ceftriaxone']]),10);
 chk('drug blocked without a line',st.blocked.length===1&&!st.flags.has('abx_given'));
-st=fold(mk([[1,'insert_iv'],[2,'normal_saline_1l_bolus'],[3,'lumbar_puncture']]),20);
+st=fold(mk([[1,'insert_iv'],[2,'normal_saline_1l_bolus'],[100,'lumbar_puncture']]),120);
 chk('lumbar puncture blocked once hypotensive',
     st.blocked.some(b=>b.id==='lumbar_puncture')&&!st.flags.has('lumbar_puncture_performed'));
 st=fold(mk([[1,'insert_iv'],[2,'lumbar_puncture']]),20);
@@ -115,7 +123,7 @@ chk('intubation blocked without sedation and paralysis',!st.flags.has('intubated
 section('equivalence group coverage');
 for(const bag of ['lactated_ringer_s_1l_bolus','normal_saline_500ml_bolus',
                   'lactated_ringer_s_500ml_bolus']){
-  const s=fold(mk([[1,'insert_iv'],[2,bag]]),20);
+  const s=fold(mk([[1,'insert_iv'],[2,bag]]),120);
   chk(bag+' satisfies the volume requirement',s.phase==='adrenal_crisis',s.phase);
 }
 
@@ -127,10 +135,14 @@ chk('lactate resolves from the case, not a catalog default',
     st.orders.lactate&&st.orders.lactate[0].source==='case',
     st.orders.lactate?st.orders.lactate[0].source:'not ordered');
 st=fold(mk([[1,'insert_iv'],[2,'fingerstick_blood_sugar'],[3,'normal_saline_1l_bolus'],
-            [20,'fingerstick_blood_sugar']]),40);
+            [100,'fingerstick_blood_sugar']]),120);
 const sugars=(st.orders.fingerstick_blood_sugar||[]).map(o=>o.value&&o.value.components[0].value);
 chk('a repeat glucose in the adrenal branch reads lower than on arrival',
     sugars.length===2&&Number(sugars[1])<Number(sugars[0]),sugars.join(' then '));
+st=fold(mk([[1,'insert_iv'],[2,'d50_bolus'],[4,'fingerstick_blood_sugar'],[200,'fingerstick_blood_sugar']]),220);
+const dsug=(st.orders.fingerstick_blood_sugar||[]).map(o=>o.value&&o.value.components[0].value);
+chk('dextrose raises the glucose, then without glucocorticoid it falls again',
+    dsug.length===2&&Number(dsug[0])>100&&Number(dsug[1])<70,dsug.join(' then '));
 /* Result freezing: a study ordered in one phase keeps that phase's value even though
    the patient has since moved on. */
 st=fold(mk([[1,'insert_iv'],[2,'lactate'],[3,'normal_saline_1l_bolus']]),40);
@@ -146,3 +158,21 @@ st=fold(mk([[1,'insert_iv'],[2,'ceftriaxone'],[3,'hydrocortisone_bolus'],
 chk('handoff completes the case',st.phase==='case_complete'&&st.complete);
 chk('the correct diagnosis resolves to a catalog id',
     PROTO.correctDxId==='dx_meningococcemia',String(PROTO.correctDxId));
+
+section('volunteered answers (v0.18a)');
+{
+  const sp = st => st.readouts.filter(r => r.kind === 'speech');
+  const onArrival = fold(mk([{ t: 5, kind: 'interview', topic: 'headache', q: 'Any headache?' }]), 10);
+  const b = sp(onArrival)[0].body;
+  chk('on arrival a headache answer also says her neck and the light are fine',
+      /neck's fine/.test(b) && /light doesn't bother/.test(b), b.slice(-120));
+  chk('and neck stiffness and photophobia count as asked',
+      onArrival.askedTopics.has('neck_stiffness') && onArrival.askedTopics.has('photophobia'));
+  const crisis = fold(mk([{ t: 250, kind: 'interview', topic: 'headache', q: 'Any headache?' }]), 260);
+  chk('in adrenal crisis she is confused and answers only what is asked',
+      crisis.phase === 'adrenal_crisis' && sp(crisis)[0].body === '"Bit of a headache. Not the worst thing."' &&
+      !crisis.askedTopics.has('neck_stiffness'), crisis.phase + ' ' + sp(crisis)[0].body);
+  chk('the menstrual and tampon screen is never volunteered',
+      CASE.interview.must_ask.includes('menstrual_and_tampon') &&
+      !CASE.interview.topics.some(t => (t.adjacent || []).includes('menstrual_and_tampon')));
+}

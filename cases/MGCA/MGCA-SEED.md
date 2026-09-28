@@ -18,7 +18,7 @@ same document, kept here so the seed can be read on its own.
 | 0, initial presentation | `presentation` | arrival |
 | 1, early improvement | `improving` | antibiotic, glucocorticoid and volume all given |
 | 2, adrenal crisis progression | `adrenal_crisis` | fluid or dextrose given, glucocorticoid not |
-| 3, progressive meningococcaemia | `progressive_meningococcaemia` | glucocorticoid and volume given, antibiotic not |
+| 3, progressive meningococcaemia | `progressive_meningococcemia` | glucocorticoid and volume given, antibiotic not |
 | 4, frank septic shock | `frank_septic_shock` | intubation, **or the clock at 210s from either deterioration branch** |
 | 5, stabilised septic shock | `stabilized_shock` | antibiotic, glucocorticoid and vasopressor all present |
 
@@ -32,9 +32,9 @@ five of them:
 | From | At | Fires if | To |
 |---|---|---|---|
 | `presentation` | 240s | glucocorticoid still not given | `adrenal_crisis` |
-| `presentation` | 240s | antibiotic still not given | `progressive_meningococcaemia` |
+| `presentation` | 240s | antibiotic still not given | `progressive_meningococcemia` |
 | `adrenal_crisis` | 210s | glucocorticoid still not given | `frank_septic_shock` |
-| `progressive_meningococcaemia` | 210s | antibiotic still not given | `frank_septic_shock` |
+| `progressive_meningococcemia` | 210s | antibiotic still not given | `frank_septic_shock` |
 | `frank_septic_shock` | 300s | any of the three still missing | `cardiac_arrest`, terminal |
 
 Intubation still reaches `frank_septic_shock` instantly, because that physiology is real and worth

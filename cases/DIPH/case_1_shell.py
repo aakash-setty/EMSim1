@@ -6,12 +6,11 @@ Case author: Kelly Medwid, MD. See DIPH-SEED.md for what is hers and what is not
 META = {
  "working_title": "18-year-old woman, confusion and fever, brought in by EMS",
  "chief_complaint_patient_voice": (
-   "She does not give one. She is delirious and does not know where she is. Her mother, "
-   "at the bedside: 'She wasn't making any sense and she didn't know who I was.'"),
+   "Her mother: 'She wasn't making any sense and she didn't know who I was.'"),
  "final_diagnosis": (
    "Diphenhydramine overdose producing an anticholinergic toxidrome with hyperthermia and "
    "delirium, complicated by cardiac sodium-channel blockade with QRS prolongation and by a "
-   "generalised seizure. The teaching claim of the case is that the second half of that "
+   "generalized seizure. The teaching claim of the case is that the second half of that "
    "sentence changes the management and the first half does not.\n\n"
    "The primary diagnosis is dx_diphenhydramine_overdose, which names the agent. The "
    "cardiotoxicity is dx_sodium_channel_blocker_cardiotoxicity and is the first of the five "
@@ -24,7 +23,7 @@ META = {
  "target_level": ["junior_resident", "senior_resident"],
  "estimated_runtime_seconds": 720,
  "learning_objectives": [
-   "Recognise the clinical features of diphenhydramine toxicity at the bedside: the delirium, the mydriasis, the dry hot skin, the absent bowel sounds, the retained urine and the temperature.",
+   "Recognize the clinical features of diphenhydramine toxicity at the bedside: the delirium, the mydriasis, the dry hot skin, the absent bowel sounds, the retained urine and the temperature.",
    "Obtain an early twelve-lead ECG in any significant overdose, and identify the findings of cardiac sodium-channel blockade on it: a QRS above 100 milliseconds, a terminal R wave in lead aVR, and a rightward terminal axis.",
    "Separate uncomplicated anticholinergic delirium from life-threatening cardiotoxicity, and state what changes when the QRS is wide.",
    "Give sodium bicarbonate for QRS widening or ventricular dysrhythmia, and titrate repeat boluses to the QRS and the blood pressure rather than to a fixed number of ampoules.",
@@ -32,7 +31,7 @@ META = {
    "Treat the agitation, the seizure and the hyperthermia with benzodiazepines, sedation and active cooling rather than with antipsychotics and antipyretics.",
  ],
  "teaching_frame": (
-   "A resident who reaches the end of this case having recognised an anticholinergic toxidrome, "
+   "A resident who reaches the end of this case having recognized an anticholinergic toxidrome, "
    "and having done nothing about the QRS, has failed the case while feeling that they passed "
    "it. The toxidrome is easy and visible and is on the first page of every toxicology lecture. "
    "The conduction abnormality is on a tracing nobody has ordered yet, and it is what kills her. "
@@ -41,8 +40,8 @@ META = {
  "care_setting": {
    "label": "Urban academic emergency department",
    "detail": (
-     "Adult and paediatric emergency department at a hospital with a medical toxicology service, "
-     "a regional poison centre on the telephone, intensive care beds and inpatient psychiatry. "
+     "Adult and pediatric emergency department at a hospital with a medical toxicology service, "
+     "a regional poison center on the telephone, intensive care beds and inpatient psychiatry. "
      "Full laboratory and imaging on site. Nothing in this case is limited by resources."),
    "provenance": (
      "Setting is a deployment property and not a clinical fact. The author did not specify one. "
@@ -82,11 +81,11 @@ PATIENT = {
    "questions with words that do not go together. She pushes hands away when anyone reaches for "
    "her. Her skin is hot and completely dry."),
  "ems_handover_text": (
-   "Eighteen year old female, mum came in from work about an hour ago and found her like this in "
-   "her bedroom. Mum says she was completely normal this morning. She's been confused the whole "
+   "Eighteen year old female, mom came in from work about an hour ago and found her like this in "
+   "her bedroom. Mom says she was asleep when she left this morning. She's been confused the whole "
    "way in, doesn't know where she is, kept trying to get off the trolley. She's very warm to "
    "touch and she's dry as a bone. Rate was 130 to 140 on our monitor, regular. We didn't get a "
-   "line in, she wouldn't have it. No injuries we could find. Mum's just behind us."),
+   "line in, she wouldn't have it. No injuries we could find. Mom's just behind us."),
  "arrival_handover": (
    "Eighteen year old, her mom found her like this when she got in from work about an hour ago. "
    "She's been fighting us the whole way in and she's burning up."),
@@ -156,7 +155,7 @@ ECG = {
                    "verify": "Arrival tracing: QRS 132 ms, QTc 495 ms. " + ECG_SOURCE},
   "seizing": {"p_waves": True, "qrs_ms": 148, "qtc_ms": 512,
               "verify": ("Seizing tracing: QRS 148 ms, QTc 512 ms. The report also describes "
-                         "frequent ventricular ectopics and movement artefact, neither of which "
+                         "frequent ventricular ectopics and movement artifact, neither of which "
                          "the monitor draws; the trace shows the widened sinus complexes and "
                          "nothing else. " + ECG_SOURCE)},
   "post_ictal": {"p_waves": True, "qrs_ms": 132, "qtc_ms": 495,
@@ -169,9 +168,9 @@ ECG = {
                                           "report says. The terminal R in aVR and the rightward "
                                           "axis are not visible in lead II. " + ECG_SOURCE)},
   "stabilizing": {"p_waves": True, "qrs_ms": 104, "qtc_ms": 470,
-                  "verify": "Stabilising tracing: QRS 104 ms, QTc 470 ms. " + ECG_SOURCE},
+                  "verify": "Stabilizing tracing: QRS 104 ms, QTc 470 ms. " + ECG_SOURCE},
   "stabilized": {"p_waves": True, "qrs_ms": 96, "qtc_ms": 445,
-                 "verify": "Stabilised tracing: QRS 96 ms, QTc 445 ms. " + ECG_SOURCE},
+                 "verify": "Stabilized tracing: QRS 96 ms, QTc 445 ms. " + ECG_SOURCE},
   "pulseless_vt": {"p_waves": False, "qrs_ms": 200,
                    "verify": ("Wide-complex tachycardia at 190 with a QRS of 200 ms and no "
                               "mechanical activity: the same rhythm as the phase before it, "
@@ -184,10 +183,14 @@ ECG = {
                         "reviewer who prefers asystole sets pattern to asystole here. "
                         "[UNVERIFIED, confirm before release]")},
   "case_complete": {"p_waves": True, "qrs_ms": 100, "qtc_ms": 460,
-                    "author_note": ("Handed over between the stabilising and stabilised figures, "
+                    "author_note": ("Handed over between the stabilizing and stabilized figures, "
                                     "as the vitals for this phase are; no tracing is authored for "
                                     "it.")},
 }
+
+# v0.18a: the actions that end a convulsion in this case. Used by every guard that asks
+# whether the seizure has been treated, so a benzodiazepine and propofol count the same way.
+SEIZURE_STOPPED = "(flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)"
 
 HANDOFF_T = {"when": "action handoff_submit taken", "to": "case_complete",
              "author_note": "First in every list so that a handoff is never overtaken by a "
@@ -202,8 +205,7 @@ SEIZURE_RATIONALE = (
   "ingestion large enough to widen the QRS is going to seize. The deadline is her own four "
   "minutes, carried at its authored value.\n\n"
   "**The rule is unguarded and it is no longer unavoidable, and the difference matters.** "
-  "Since 5 September 2026 the rule above it moves a patient who has received sodium "
-  "bicarbonate out of this phase after ten seconds, so a resident who treats the conduction "
+  "Since 5 September 2026 the rule above it moves a patient who has received both sodium bicarbonate and a benzodiazepine out of this phase after ten seconds, so a resident who treats the conduction "
   "before four minutes never reaches this rule at all. Nothing about this rule changed; it "
   "was given an escape. Whether that escape should exist is the open question in the "
   "rationale on the rule above, and it is the one place in this pack where the conversion "
@@ -214,59 +216,30 @@ SEIZURE_NARRATION = (
   "Her sats are dropping.")
 
 SEIZURE_NOTE = (
-  "She seized. This was going to happen: it is written into the case as the natural history of "
+  "She seized. The case schedules this at four minutes as the natural history of the ingestion, and only a run that gave both a benzodiazepine and sodium bicarbonate before then avoids it: it is written into the case as the natural history of "
   "the ingestion rather than as a consequence of anything done or not done, and it fires at four "
   "minutes whatever the resident has achieved by then. What the four minutes before it were for "
   "was the monitor, the line, the glucose and above all the ECG, because the seizure is far "
   "easier to manage in a patient whose conduction you already understand.\n\n"
   "The physiology worth carrying away: the seizure is not an isolated neurological event here. "
-  "Convulsion produces lactate and carbon dioxide, and acidaemia increases the fraction of the "
-  "drug that is un-ionised and available to block the cardiac sodium channel. A seizure in a "
+  "Convulsion produces lactate and carbon dioxide, and acidemia increases the fraction of the drug that is ionized, which is the charged form that binds the cardiac sodium channel. A seizure in a "
   "sodium-channel-blocker overdose therefore makes the cardiotoxicity worse while it is "
   "happening, which is why it is terminated with a benzodiazepine at once and why ventilation "
   "matters as much as the anticonvulsant does.")
 
-PHYSO_SEIZURE_NARRATION = (
-  "Her heart rate's come right down and now she's fitting again. That went in about ten seconds "
-  "ago.")
-
-PHYSO_SEIZURE_NOTE = (
-  "The seizure followed the physostigmine. Physostigmine is a carbamate acetylcholinesterase "
-  "inhibitor, and the acetylcholine it leaves in the synapse is the reason it reverses "
-  "anticholinergic delirium and also the reason it causes bradycardia and lowers the seizure "
-  "threshold. In a patient whose sodium channels are already blocked, both of those land on a "
-  "myocardium that has no reserve.\n\n"
-  "The case does not halt here because the seizure is survivable and because what happens next "
-  "is the lesson: the QRS is still wide, it is now wider, and the treatment is sodium "
-  "bicarbonate. Terminate the seizure with a benzodiazepine, then treat the conduction. Do not "
-  "give a second dose of physostigmine, and do not give atropine unless the bradycardia is "
-  "haemodynamically significant.\n\n"
-  "See the physostigmine action's own note for why it should not have been given at all.")
+# v0.18a: the physostigmine seizure arrow and its narration were removed. Physostigmine is
+# harmful in every phase in which the QRS is wide, so the arrow could never fire.
 
 PHASES = [
  phase("presentation",
-   "Anticholinergic toxidrome with unrecognised sodium-channel blockade",
+   "Anticholinergic toxidrome with unrecognized sodium-channel blockade",
    "on arrival",
    "Awake, delirious, agitated and hyperthermic, with dry hot skin, mydriasis, absent bowel "
    "sounds and a palpable bladder. The QRS is already 132 milliseconds and nobody has looked "
    "at it. She is perfusing and her saturation is normal.",
    135, 130, 75, 25, 98, 40.1, 3, 0,
    [HANDOFF_T,
-    {"when": "flag physostigmine_given set",
-     "after_seconds": 10,
-     "measured_from": "guard_true",
-     "to": "seizing",
-     "narration": PHYSO_SEIZURE_NARRATION,
-     "debrief_note": PHYSO_SEIZURE_NOTE,
-     "author_rationale": (
-       "A delayed consequence of the resident's own action, in the sense of authoring section "
-       "5.1, so the five-second floor applies rather than the thirty-second one. Ten seconds "
-       "is a compression: physostigmine given as a slow push over one to two minutes produces "
-       "its cholinergic effects during and shortly after the injection. Reaching this rule at "
-       "all means the tag evaluated to discouraged rather than harmful, which means the ECG "
-       "had already resulted. Given before the ECG the action halts the case and this rule is "
-       "never reached, because a harmful action bypasses transitions entirely.")},
-    {"when": "flag bicarb_given set AND flag benzo_given set",
+    {"when": "flag bicarb_given set AND " + SEIZURE_STOPPED,
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "stabilizing",
@@ -299,8 +272,7 @@ PHASES = [
        "The guard requires BOTH drugs, and that is what makes the claim defensible. An "
        "earlier draft required sodium bicarbonate alone, which was a weak claim dressed as a "
        "mechanism: bicarbonate is not an anticonvulsant. It treats the cardiac sodium-channel "
-       "blockade and, by correcting the acidaemia, reduces the un-ionised fraction of drug "
-       "available to that channel, which is an indirect argument at best, and the agent "
+       "blockade and, by correcting the acidemia, reduces the ionized fraction of drug that binds that channel, which is an indirect argument at best, and the agent "
        "lowering her seizure threshold is still on board and still being absorbed from a gut "
        "its own antimuscarinic effect has slowed down. The drug that prevents a drug-induced "
        "seizure is a benzodiazepine, and the guard now says so.\n\n"
@@ -325,38 +297,35 @@ PHASES = [
    ),
 
  phase("seizing",
-   "Generalised tonic-clonic seizure",
+   "Generalized tonic-clonic seizure",
    "seizing",
-   "Generalised convulsion with no airway protection and falling saturation. Entered either on "
-   "the clock at four minutes, which is the author's natural history, or ten seconds after "
-   "physostigmine. The QRS is wider than it was.",
+   "Generalized convulsion with no airway protection and falling saturation. Entered on the clock at four minutes, which is the author's natural history, or from the wide-complex phase when bicarbonate has been given without an anticonvulsant. The QRS is wider than on arrival.",
    150, 145, 90, 8, 84, 40.4, 3, 3, react="sluggish",
    transitions=[HANDOFF_T,
-    {"when": "flag benzo_given set", "to": "post_ictal",
+    {"when": SEIZURE_STOPPED, "to": "post_ictal",
      "author_note": "Instantaneous. A benzodiazepine terminates most drug-induced seizures "
                     "within a minute or two and the case does not model the delay, because "
                     "nothing here turns on how long it takes."},
-    {"when": "NOT flag benzo_given set",
+    {"when": "NOT " + SEIZURE_STOPPED + " AND NOT flag bicarb_given set",
      "after_seconds": 120,
      "measured_from": "phase_entry",
      "to": "wide_complex_tachycardia",
-     "narration": "She's still fitting and the complexes on the monitor have gone broad and fast. I can't get a pressure on her.",
+     "narration": "She's still fitting and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.",
      "debrief_note": (
        "Two minutes of untreated convulsion took her into a wide-complex tachycardia. The chain "
        "is the one the seizure note describes: the convulsion produces a lactic and respiratory "
-       "acidosis, the acidaemia increases the un-ionised fraction of the drug at the cardiac "
-       "sodium channel, and conduction that was already slowed slows further until the "
+       "acidosis, the acidemia increases the ionized fraction of the drug, the form that binds the cardiac sodium channel, and conduction that was already slowed slows further until the "
        "ventricle takes over.\n\n"
        "The action that would have prevented this is a benzodiazepine, and the nurse asked for "
        "one twice. Once the wide-complex rhythm is established the treatment is sodium "
        "bicarbonate, and the benzodiazepine is still needed."),
      "author_rationale": (
-       "Two minutes of continuous convulsion in a patient who is already acidaemic at pH 7.28 "
-       "with a QRS of 132 milliseconds. The number is a drafting judgement and not the "
+       "Two minutes of continuous convulsion in a patient who is already acidemic at pH 7.28 "
+       "with a QRS of 132 milliseconds. The number is a drafting judgment and not the "
        "author's: she specifies that the seizure happens and that lorazepam and bicarbonate "
        "are given, and does not say how long an untreated seizure is tolerated. It is set at "
        "the shorter end of what is defensible because the case has already established the "
-       "acidaemia. Needs the author's signature.")}],
+       "acidemia. Needs the author's signature.")}],
    ),
 
  phase("post_ictal",
@@ -379,13 +348,13 @@ PHASES = [
        "because a number that moves on the same click as the injection teaches that "
        "bicarbonate is a button.\n\n"
        "Both halves of the mechanism matter. The sodium load raises the electrochemical "
-       "gradient across a channel that is partially blocked, and the alkalinisation reduces "
+       "gradient across a channel that is partially blocked, and the alkalinization reduces "
        "the fraction of drug bound to it. That is why hyperventilation alone is not the same "
-       "treatment and why hypertonic saline is the rescue when alkalaemia is already at its "
+       "treatment and why hypertonic saline is the rescue when alkalemia is already at its "
        "ceiling."),
      "author_rationale": (
        "A delayed consequence of the resident's own action, so the five-second floor applies. "
-       "The size of the compression is a drafting judgement.")},
+       "The size of the compression is a drafting judgment.")},
     {"when": "NOT flag bicarb_given set",
      "after_seconds": 180,
      "measured_from": "phase_entry",
@@ -405,11 +374,11 @@ PHASES = [
        "QRS of 132 milliseconds who has just convulsed. The direction is the author's, who "
        "writes that without bicarbonate the patient 'will first develop hemodynamically "
        "stable ventricular tachycardia (VT), then pulseless VT'. The three minutes is a "
-       "drafting judgement and needs the author's signature.")}],
+       "drafting judgment and needs the author's signature.")}],
    ),
 
  phase("wide_complex_tachycardia",
-   "Haemodynamically stable wide-complex tachycardia",
+   "Hemodynamically stable wide-complex tachycardia",
    "wide-complex",
    "Monomorphic wide-complex tachycardia at 180 from untreated sodium-channel blockade. She "
    "still has a blood pressure and she still has a pulse. This is the author's stable VT and it "
@@ -436,7 +405,7 @@ PHASES = [
        "and amiodarone in the same batch of orders gets the amiodarone consequence rather "
        "than the rescue. That is deliberate: the amiodarone is the more instructive event, "
        "and treating the mechanism does not undo an agent that adds to the block.")},
-    {"when": "flag bicarb_given set",
+    {"when": "flag bicarb_given set AND " + SEIZURE_STOPPED,
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "stabilizing",
@@ -449,17 +418,38 @@ PHASES = [
        "Give it as repeated boluses of 1 to 2 mEq/kg and reassess the QRS and the pressure "
        "after each one, rather than deciding in advance how many ampoules the patient will "
        "get. Follow it with an infusion once the complexes have narrowed, and watch the sodium, "
-       "the potassium, the ionised calcium and the pH, because the complications of the "
-       "treatment are hypernatraemia, hypokalaemia and alkalaemia."),
+       "the potassium, the ionized calcium and the pH, because the complications of the "
+       "treatment are hypernatremia, hypokalemia and alkalemia."),
      "author_rationale": "As above. A delayed consequence of the resident's own action."},
+    # Placed after the rescue so that bicarbonate and an anticonvulsant together still
+    # reach stabilizing when both are due at once. Its guard names no negated flag, so it
+    # is a delayed consequence of the bicarbonate rather than a deterioration on inaction.
+    {"when": "flag bicarb_given set",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "seizing",
+     "narration": ("The complexes have narrowed and the rate's come down since the bicarb. "
+                   "She's still fitting, though."),
+     "debrief_note": (
+       "Sodium bicarbonate narrowed the complexes and ended the wide-complex rhythm, but it is "
+       "not an anticonvulsant and she kept seizing. The convulsion goes on producing heat and "
+       "acid, and both will widen the QRS again. A benzodiazepine is what ends it, with "
+       "propofol as the next step if it does not."),
+     "author_rationale": (
+       "Added in the v0.18a review. Without it a resident who gave bicarbonate but no "
+       "anticonvulsant stayed in the wide-complex phase with no exit except the handoff, "
+       "showing a rate of 180 after the drug that treats it. Returning to the seizing phase "
+       "keeps the rhythm and the seizure consistent with what was given. Ten seconds matches "
+       "the other bicarbonate transitions. A resident who gives the anticonvulsant a few "
+       "seconds after the bicarbonate passes through the seizing phase on the way and still "
+       "reaches stabilizing, ten seconds later. Needs the author's signature.")},
     {"when": "NOT flag bicarb_given set",
      "after_seconds": 120,
      "measured_from": "phase_entry",
      "to": "pulseless_vt",
      "narration": "I've lost the pulse. Same rhythm on the monitor and there's no output. I'm starting compressions.",
      "debrief_note": (
-       "She arrested in pulseless ventricular tachycardia. This is the end of the path the "
-       "author describes: stable VT first, then pulseless VT. Sodium bicarbonate was never "
+       "She arrested in pulseless ventricular tachycardia. This is where an untreated sodium-channel crisis leads: stable VT first, then pulseless VT. Sodium bicarbonate was never "
        "given, and it was indicated from the moment the first ECG resulted with a QRS of 132 "
        "milliseconds and a terminal R wave in aVR.\n\n"
        "The single most useful thing to carry out of this run: in a poisoning with a wide QRS, "
@@ -468,8 +458,8 @@ PHASES = [
        "is what the two minutes in this phase were spent on."),
      "author_rationale": (
        "Two minutes of untreated stable ventricular tachycardia at 180 with a systolic pressure "
-       "of 95 in a hyperthermic acidaemic patient. The progression from stable to pulseless VT "
-       "is the author's, stated in her narrative. The two minutes is a drafting judgement and "
+       "of 95 in a hyperthermic acidemic patient. The progression from stable to pulseless VT "
+       "is the author's, stated in her narrative. The two minutes is a drafting judgment and "
        "is the single most consequential unsigned number in this pack, because it is the one "
        "that decides whether the case can kill the patient. Needs the author's signature."),
      "allow_time_to_terminal": True,
@@ -504,7 +494,7 @@ PHASES = [
 
  phase("stabilized",
    "Cooled, conduction treated, ready for critical care",
-   "stabilised",
+   "stabilized",
    "Narrow complexes, a controlled rate, an improving temperature and a toxicology plan. Still "
    "drowsy and still mydriatic. This is the intended endpoint and it is not a well patient: she "
    "needs a monitored bed and serial tracings.",
@@ -518,7 +508,7 @@ PHASES = [
    "arrested",
    "Terminal phase entered by the clock, not by an action, after two minutes of stable "
    "wide-complex tachycardia with no sodium bicarbonate given.",
-   190, 44, 22, 4, 52, 39.8, 0, 3, react="fixed", terminal=True,
+   190, 0, 0, 4, 52, 39.8, 0, 3, react="fixed", terminal=True,
    transitions=[],
    timeout_reason=(
      "She lost mechanical output in a wide-complex tachycardia. Conduction through a sodium "
@@ -556,8 +546,7 @@ PHASES = [
    transitions=[],
    schema_gap_note=(
      "Generic peri-arrest numbers, as in the reference case. This case has four halting "
-     "actions and they do not share a physiology: physostigmine before the ECG produces "
-     "cholinergic bradycardia, flumazenil produces refractory seizure, a further dose of "
+     "actions and they do not share a physiology: physostigmine while the QRS is wide produces cholinergic bradycardia, flumazenil produces refractory seizure, a further dose of "
      "diphenhydramine deepens the block, and procainamide widens it into a pulseless rhythm. "
      "One block of numbers cannot be all four, and the bradycardia these carry fits the first "
      "and fits the others less well. The halt reason on each action carries the physiology; "

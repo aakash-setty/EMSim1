@@ -145,6 +145,26 @@ def atoms_of(node, acc=None):
     return acc
 
 
+def required_literals(node):
+    """(must be true, must be false): atom keys that hold in EVERY assignment satisfying
+    the guard. Sound rather than complete: an OR keeps only what both sides require."""
+    if isinstance(node, Atom):
+        return {node.key()}, set()
+    if isinstance(node, Not):
+        x = node.x
+        if isinstance(x, Atom):
+            return set(), {x.key()}
+        if isinstance(x, Not):
+            return required_literals(x.x)
+        flip = "AND" if x.op == "OR" else "OR"
+        return required_literals(BinOp(flip, Not(x.l), Not(x.r)))
+    lp, ln = required_literals(node.l)
+    rp, rn = required_literals(node.r)
+    if node.op == "AND":
+        return lp | rp, ln | rn
+    return lp & rp, ln & rn
+
+
 def evaluate(node, assign):
     """assign: dict mapping ('phase', id)/('flag', id)/('ordered', id)/... -> bool"""
     if isinstance(node, Atom):
@@ -676,7 +696,11 @@ def run_checks(case):
                         errors.append(f"[time] {loc}: fires at {n}s on flag {f!r} and no action "
                                       f"prompting in this phase sets it. A deterioration nobody "
                                       f"was warned about is a trap rather than a lesson")
-            time_edges.append((ph["id"], tr["to"]))
+            try:
+                lits = required_literals(parse_condition(tr["when"])[0]) if tr.get("when") else (set(), set())
+            except ParseError:
+                lits = (set(), set())
+            time_edges.append((ph["id"], tr["to"], lits))
 
         # Only a deadline measured from PHASE ENTRY can strand a prompt, because prompt
         # deadlines are measured from phase entry too. A guard_true rule's clock starts
@@ -694,26 +718,42 @@ def run_checks(case):
                     warnings.append(f"[time] {aid} escalates at {last}s in {ph['id']!r}, which "
                                     f"has a time-guarded exit at {earliest}s")
 
+    # v0.18a. A loop is a case that plays itself only if it can go round more than once.
+    # Flags granted for good, actions taken and studies ordered or resulted never revert,
+    # so a loop in which one edge needs such an atom true and another needs it false is
+    # traversed at most once. That is reported as a note rather than an error.
+    monotone = lambda k: (k[0] in ("action", "ordered", "resulted")
+                          or (k[0] == "flag" and k[1] in perm_flags and k[1] not in timed_flags))
     adj = {}
-    for a, b in time_edges:
-        adj.setdefault(a, set()).add(b)
-    seen, stack = set(), []
+    for a, b, lits in time_edges:
+        adj.setdefault(a, []).append((b, lits))
+    reported = set()
 
-    def _cycle(node):
-        if node in stack:
-            errors.append("[time] cycle composed only of time edges: "
-                          + " -> ".join(stack[stack.index(node):] + [node])
-                          + ". A loop with no resident involvement is a case that plays itself")
-            return
-        if node in seen:
-            return
-        seen.add(node); stack.append(node)
-        for nxt in adj.get(node, ()):
-            _cycle(nxt)
-        stack.pop()
+    def _walk(start, node, path, edges):
+        for nxt, lits in adj.get(node, ()):
+            if nxt == start:
+                loop = path + [start]
+                pos = set().union(*(e[0] for e in edges + [lits]))
+                neg = set().union(*(e[1] for e in edges + [lits]))
+                broken = sorted(k for k in pos & neg if monotone(k))
+                key = (frozenset(zip(loop, loop[1:])), bool(broken))
+                if key in reported:
+                    continue
+                reported.add(key)
+                if broken:
+                    notes.append("[time] loop of time edges " + " -> ".join(loop)
+                                 + " runs at most once, because it needs "
+                                 + ", ".join(f"{k[0]} {k[1]}" for k in broken)
+                                 + " both unset and set, and that never reverts")
+                else:
+                    errors.append("[time] cycle composed only of time edges: "
+                                  + " -> ".join(loop)
+                                  + ". A loop with no resident involvement is a case that plays itself")
+            elif nxt not in path and len(path) < 20:
+                _walk(start, nxt, path + [nxt], edges + [lits])
 
-    for node in list(adj):
-        _cycle(node)
+    for node in sorted(adj):
+        _walk(node, node, [node], [])
 
     # -- F: harmful tags carry a halt reason
     for a in case["case_actions"]:
@@ -1368,6 +1408,51 @@ def run_checks(case):
                             f"the debrief will print the name and nothing under it")
     if ho.get("additional_diagnoses"):
         notes.append(f"additional diagnoses: {len(ho['additional_diagnoses'])}")
+
+    # -- volunteered answers (v0.18a) --------------------------------------
+    # A topic's `adjacent` topics are volunteered with its first answer. Safety screens
+    # in `must_ask` are never volunteered, so they may carry no volunteer line and no
+    # topic may list them. A volunteer line is a clause, not a second answer.
+    tids = {t["topic"] for t in iv["topics"]}
+    must = set(iv.get("must_ask") or [])
+    for m in must - tids:
+        errors.append(f"[interview] must_ask names {m!r}, which is not a topic")
+    if iv.get("volunteer_blocked_when"):
+        try:
+            parse_condition(iv["volunteer_blocked_when"])
+        except ParseError as e:
+            errors.append(f"[interview] volunteer_blocked_when does not parse: {e}")
+    vol_targets = set()
+    for t in iv["topics"]:
+        adj = t.get("adjacent") or []
+        if len(adj) > 2:
+            warnings.append(f"[interview] {t['topic']} volunteers {len(adj)} topics; two keeps an "
+                            f"answer short enough to read")
+        for a in adj:
+            if a not in tids:
+                errors.append(f"[interview] {t['topic']} lists adjacent topic {a!r}, which does not exist")
+            elif a == t["topic"]:
+                errors.append(f"[interview] {t['topic']} lists itself as adjacent")
+            elif a in must:
+                errors.append(f"[interview] {t['topic']} lists {a!r} as adjacent, but it is a must_ask "
+                              f"safety screen and is never volunteered")
+            vol_targets.add(a)
+        v = t.get("volunteer")
+        if v is not None:
+            if t["topic"] in must:
+                errors.append(f"[interview] {t['topic']} is a must_ask safety screen and carries a "
+                              f"volunteer line; it would never be used")
+            lines = [r.get("value") for r in v] if isinstance(v, list) else [v]
+            for line in lines:
+                if line and len(str(line).split()) > 25:
+                    warnings.append(f"[interview] {t['topic']} volunteer line is "
+                                    f"{len(str(line).split())} words; it rides on another answer, "
+                                    f"so keep it under 25")
+    for a in sorted(vol_targets & tids):
+        tt = next(t for t in iv["topics"] if t["topic"] == a)
+        if a not in must and not tt.get("volunteer"):
+            warnings.append(f"[interview] {a} is listed as adjacent but has no volunteer line, so "
+                            f"nothing is volunteered for it")
 
     # -- alertness gating coverage -----------------------------------------
     gated = set()

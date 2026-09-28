@@ -9,7 +9,7 @@
   "provenance": {
     "assembled_by": "drafting AI, not a physician",
     "codes": "none. ICD-10 and SNOMED codes are deliberately absent rather than generated from memory.",
-    "review_required": "list composition is a clinical judgement and an omission is invisible to the learner."
+    "review_required": "list composition is a clinical judgment and an omission is invisible to the learner."
   },
   "search_contract": {
     "match_on": [
@@ -456,7 +456,7 @@
       "display_name": "Massive pulmonary embolism",
       "category": "respiratory",
       "synonyms": [
-        "saddle PE"
+        "high-risk PE"
       ]
     },
     {
@@ -2141,7 +2141,7 @@
       "display_name": "Acute mountain sickness",
       "category": "environmental",
       "synonyms": [
-        "AMS"
+        "altitude sickness"
       ]
     },
     {

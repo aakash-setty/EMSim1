@@ -5,7 +5,7 @@ let LOG=[], SEQ=0, T0=Date.now(), ST=null, TAB='history', ENDED=false;
 /* v0.9: `diagnoses` is an ordered list and its first entry is the primary. The
    singular is filled in at submit for readers written before the list existed. */
 let PENDING_HANDOFF={disposition:null,diagnoses:[]};
-let LASTNURSE=-1, LASTPHASE=null, ASKTEXT='', DXTEXT='';
+let LASTNURSE=-1, LASTPHASE=null, ASKTEXT='', DXTEXT='', RUNID=0;
 /* Filter text and the pending order basket are per tab, so switching tabs and
    coming back leaves both exactly as they were. */
 const FILTERS={}, BASKET={};
@@ -39,7 +39,7 @@ function setPanels(leftOpen,rightWide){
   document.body.dataset.right = RIGHT_WIDE ? 'wide' : 'dock';
   const b=el('rp-toggle');
   if(b){
-    const lbl=RIGHT_WIDE?'Minimise the chart':'Expand the chart';
+    const lbl=RIGHT_WIDE?'Minimize the chart':'Expand the chart';
     b.title=lbl; b.setAttribute('aria-label',lbl);
     b.setAttribute('aria-expanded',RIGHT_WIDE?'true':'false');
     const ic=el('rp-icon'); if(ic) ic.innerHTML=RIGHT_WIDE?ICON_SHRINK:ICON_EXPAND;
@@ -450,7 +450,10 @@ function feedItems(){
    ships no images costs nothing here and a payload naming a missing one degrades to a line
    of text rather than to a broken image icon. The validator catches that case before it
    ever ships; this is the runtime half of the same guarantee. */
-function imageSrc(id){ return (PROTO.media||{})[id]||null; }
+/* Only an inline raster image is ever used as a src: every picture in a pack is one, and
+   anything else in that slot is refused rather than written into the page. */
+const IMG_DATA=/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+\/=]+$/;
+function imageSrc(id){ const s=(PROTO.media||{})[id]; return typeof s==='string'&&IMG_DATA.test(s)?s:null; }
 
 function imageThumb(v){
   const src=imageSrc(v.image);
@@ -555,7 +558,7 @@ function renderTabs(){
     let badge='';
     if(id==='investigations'&&ST.pending.length) badge=`<span class="badge">${ST.pending.length}</span>`;
     const lab=esc(PROTO.tabLabel[id]);
-    return `<button class="tabbtn" role="tab" aria-selected="${id===TAB&&LEFT_OPEN}" data-tab="${id}"
+    return `<button class="tabbtn" role="tab" aria-selected="${id===TAB&&LEFT_OPEN}" data-tab="${esc(id)}"
       title="${lab}"><svg viewBox="0 0 24 24" aria-hidden="true">${TABICON[id]||TABICON.patient}</svg>
       <span class="lb">${lab}</span>${badge}</button>`;
   }).join('');
@@ -622,7 +625,7 @@ function actionButton(id,tab){
   } else if(ST.taken.has(id)) cls+=' done';
   if(a.orphan) cls+=' orphan';
   if(tab&&basketOf(tab).has(id)) cls+=' picked';
-  return `<button class="${cls}" data-act="${id}" data-tabof="${tab||''}">${esc(a.name)}</button>`;
+  return `<button class="${cls}" data-act="${esc(id)}" data-tabof="${esc(tab||'')}">${esc(a.name)}</button>`;
 }
 function renderActionTab(tab,intro){
   const groups=actionsFor(tab);
@@ -710,7 +713,7 @@ function renderTab(){
   const R={
     history:tabHistory, handoff:tabHandoff,
     exam:()=>generalStatusPanel()
-             +renderActionTab('exam','Repeat any manoeuvre; it returns the current state.')
+             +renderActionTab('exam','Repeat any maneuver; it returns the current state.')
              +readoutPanel('exam','Findings'),
     /* Results are read in the record on the right and nowhere else. They used to be
        repeated under the order grid here, which put the same table on both sides of the
@@ -871,15 +874,15 @@ function tabHandoff(){
     <p class="sub">Submitting and confirming ends the case and generates the debrief.
     The diagnosis list is the full catalog, ${PROTO.diagnoses.length} entries.</p>
     <h3>Level of care</h3>
-    ${disp.map(d=>`<button class="opt" data-disp="${d.id}" aria-pressed="${PENDING_HANDOFF.disposition===d.id}">${esc(d.label)}</button>`).join('')}
+    ${disp.map(d=>`<button class="opt" data-disp="${esc(d.id)}" aria-pressed="${PENDING_HANDOFF.disposition===d.id}">${esc(d.label)}</button>`).join('')}
     <h3>Diagnoses</h3>
     <p class="sub">Name everything you are handing over. The first entry is your primary
     diagnosis; add as many others as apply to this patient.</p>
     ${dxs.length?`<ol class="dxlist">${dxs.map((id,i)=>`<li class="dxrow${i?'':' primary'}">
         <span class="dxrank">${i?i+1:'Primary'}</span>
         <span class="dxname">${esc(dxLabel(id))}</span>
-        ${i?`<button class="dxbtn" data-dxup="${id}" title="Make this the primary diagnosis" aria-label="Make ${esc(dxLabel(id))} the primary diagnosis">Make primary</button>`:''}
-        <button class="dxbtn" data-dxrm="${id}" title="Remove" aria-label="Remove ${esc(dxLabel(id))}">\u00D7</button>
+        ${i?`<button class="dxbtn" data-dxup="${esc(id)}" title="Make this the primary diagnosis" aria-label="Make ${esc(dxLabel(id))} the primary diagnosis">Make primary</button>`:''}
+        <button class="dxbtn" data-dxrm="${esc(id)}" title="Remove" aria-label="Remove ${esc(dxLabel(id))}">\u00D7</button>
       </li>`).join('')}</ol>`:''}
     <input type="text" id="dxbox" placeholder="${dxs.length?'Add another diagnosis':'Search '+PROTO.diagnoses.length+' diagnoses'}" autocomplete="off"
       value="${esc(DXTEXT)}">
@@ -1549,7 +1552,7 @@ document.addEventListener('input',e=>{
       !PENDING_HANDOFF.diagnoses.includes(d.id)&&
       (d.label.toLowerCase().includes(q)||d.syn.some(s=>s.toLowerCase().includes(q)))).slice(0,10);
     el('dxhits').innerHTML=hits.length?`<div class="hits">${hits.map(d=>
-      `<button class="hit" data-dx="${d.id}">${esc(d.label)}${d.syn.length?`<span class="syn">${esc(d.syn.join(', '))}</span>`:''}</button>`).join('')}</div>`:'';
+      `<button class="hit" data-dx="${esc(d.id)}">${esc(d.label)}${d.syn.length?`<span class="syn">${esc(d.syn.join(', '))}</span>`:''}</button>`).join('')}</div>`:'';
   }
 });
 /* Asking is asynchronous now, because embedding the question takes a few tens
@@ -1561,11 +1564,13 @@ let ASKING=false;
 async function ask(q){
   if(ASKING||ENDED) return;
   ASKING=true;
+  const run=RUNID;
   ASKTEXT=''; const b=el('askbox'); if(b) b.value='';
   let ms;
   try{ ms=await matchQuestion(q); }
   catch(e){ const l=matchTopic(q); ms=[{topic:l.topic,score:l.score,matcher:'lexical',q}]; }
   finally{ ASKING=false; }
+  if(run!==RUNID||ENDED) return;      // the case ended or restarted while the matcher ran
   /* One log entry per topic asked about. They share an instant, exactly as a
      submitted order basket does, so the fold applies them in sequence and each
      answer is produced by the authored rules for its own topic. */
@@ -1591,8 +1596,12 @@ function tick(){
     if(reflectDue()) openReflect();
   }
   renderMonitor(); renderNurse(); renderRail(); renderPatient(); renderSearchBtn();
-  requestAnimationFrame(tick);
+  /* One loop at a time, and none once the case is over. Until v0.18a every Begin started a
+     further loop and none ever stopped, so each replay added a full render per frame. */
+  RAF=ENDED?0:requestAnimationFrame(tick);
 }
+let RAF=0;
+function startLoop(){ if(RAF) cancelAnimationFrame(RAF); RAF=requestAnimationFrame(tick); }
 function render(){
   refold();
   if(ST.halted&&!ENDED){ finish(); return; }
@@ -1605,7 +1614,7 @@ function render(){
 const tabFingerprint=()=>ST?ST.resulted.size+':'+ST.pending.length+':'+ST.blocked.length
                             +':'+ST.readouts.length+':'+ST.phase:'';
 setInterval(()=>{
-  if(ENDED) return;
+  if(ENDED||!CASE) return;             // the deployed build can sit on the case list with nothing bound
   const before=tabFingerprint();
   refold();
   if(tabFingerprint()!==before){ renderTabs(); renderTab(); }
@@ -1684,9 +1693,27 @@ function revealAnswers(){
    instantaneous transition does have an action to name, and the action's own debrief note
    names it; the phase's timeout_reason then has to be true of both routes, which is a
    constraint on the case rather than on this card. */
+/* v0.18a. A terminal phase reached by an instantaneous transition was caused by an action
+   taken at that moment. It is named on the card and in its own debrief section, and it is
+   left out of the list of actions that "did not stop the case", which it did. The action
+   is the one at that second whose id or flag the transition's guard names, or failing that
+   the last one taken at that second. */
+function failCause(){
+  if(!ST||!ST.failed||ST.failed.byClock) return null;
+  const at=ST.timeline.filter(x=>x.type==='state-changing'&&x.t===ST.failed.t);
+  if(!at.length) return null;
+  const seq=ST.phaseSeq, from=seq.length>1?seq[seq.length-2].id:null;
+  const tr=from&&PHASE[from]?(PHASE[from].transitions||[])
+    .find(t=>t.to===ST.failed.phase&&t.after_seconds===undefined):null;
+  const hay=' '+String((tr&&tr.when)||'').replace(/[()]/g,' ')+' ';
+  const named=at.filter(x=>hay.includes(' '+x.id+' ')
+    ||((ACT[x.id]||{}).flags_set||[]).some(f=>hay.includes(' '+f+' ')));
+  return (named.length?named[named.length-1]:at[at.length-1]).id;
+}
 function failCard(){
+  const cause=failCause();
   return `<div class="halt"><h2>The case ended here</h2>
-    <p><b>${esc(PHASE[ST.failed.phase].label||ST.failed.phase)}</b> at ${mmss(ST.failed.t)}.</p>
+    <p><b>${esc(PHASE[ST.failed.phase].label||ST.failed.phase)}</b> at ${mmss(ST.failed.t)}${cause?`, straight after <b>${esc(dispName(cause))}</b>`:''}.</p>
     ${ST.failed.reason?`<p>${esc(ST.failed.reason)}</p>`:''}
     <p style="color:var(--ink2);font-size:13.5px">Nothing you did before this is lost.
     It is all below.</p></div>`;
@@ -1696,7 +1723,7 @@ function finish(){
   /* The room goes quiet with the case. A debrief is reading rather than resuscitating,
      and ambience still humming under it is the interface not noticing the case is over.
      setScene('idle') stops the heartbeat and the room together. */
-  refold(); ENDED=true; AUDIO.setScene('idle'); MONITOR.setScene('idle');
+  refold(); ENDED=true; RUNID++; AUDIO.setScene('idle'); MONITOR.setScene('idle');
   VOICE.reset();
   /* Neither overlay belongs over a debrief. The case is over, so there is nothing to
      resume and nothing left to lose by leaving. */
@@ -1709,6 +1736,7 @@ function finish(){
 }
 function restart(){
   LOG=[];SEQ=0;ENDED=false;STARTED=false;TAB='history';LASTNURSE=-1;LASTPHASE=null;
+  RUNID++; ASKTEXT=''; DXTEXT='';
   VOICE.reset();
   closeImage(); IMG_SEEN=new Set(); IMG_QUEUE=[];
   resetRamp();
@@ -1737,6 +1765,27 @@ function haltCard(){
 }
 
 /* ---------- debrief (section 11) ---------- */
+/* v0.18a. Verification markers such as "[UNVERIFIED, confirm before release]" are notes to
+   the reviewing physician. They stay in the case file and the review packet and are removed
+   from anything the learner reads, wherever in the text they sit. */
+function learnerText(s){
+  return String(s||'').replace(/\s*\[(?:UNVERIFIED|PubMed|VERIFY|MODEL OUTPUT)[^\]]*\]/g,'').trim();
+}
+/* v0.18a. The note written at the reflection pause, printed beside the case's diagnosis so
+   the learner can compare what they thought at the time with what it was. Nothing is
+   printed when the box was left empty. */
+function reflectHTML(){
+  const n=String(REFLECT_NOTE||'').trim();
+  if(!n) return '';
+  return `<div class="item"><div class="hd"><span class="nm">Your differential at ${mmss(REFLECT_AT)}</span>
+      <span class="pill p-neu">your note</span></div>
+      <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0;white-space:pre-wrap">${esc(n)}</div></div>`;
+}
+function dxAnswerHTML(){
+  return `<div class="item"><div class="hd"><span class="nm">${esc('The case\'s diagnosis: '+dxLabel(PROTO.correctDxId))}</span>
+      <span class="pill p-neu">answer</span></div>
+      ${PROTO.correctDxExplanation?`<div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(PROTO.correctDxExplanation)}</div>`:''}</div>`;
+}
 function debriefHTML(){
   const done=[],omit=[];
   /* `satisfied`, so a critical action performed through a coverage group is not
@@ -1750,16 +1799,17 @@ function debriefHTML(){
   const OBVIOUS=id=>{ const a=ACT[id]||{}; return a.reveals_vitals||a.catalog_id==='insert_iv'||a.catalog_id==='attach_monitor'; };
   const recDone=[...ST.recommendedTaken].filter(id=>!OBVIOUS(id));
   const recMissed=[...ST.recommendedExpected].filter(id=>!ST.recommendedTaken.has(id)&&!ST.satisfied.has(id)&&!OBVIOUS(id));
-  const dis=[...ST.discouragedTaken];
+  const cause=failCause();
+  const dis=[...ST.discouragedTaken].filter(id=>id!==cause);
   const traps=ST.timeline.filter(x=>x.tag==='neutral'&&PROTO.traps.includes(x.id));
   const stillPending=ST.pending.map(p=>p.id);
-  const noteOf=id=>(ACT[id]||{}).debrief_note;
+  const noteOf=id=>learnerText((ACT[id]||{}).debrief_note);
   /* References carry a verification marker in the case file, for example
      "[PubMed record checked]" or "[UNVERIFIED, confirm before release]". That is a note
      to the reviewing physician, not to the learner, and it stays in the case file and the
      review packet rather than being printed in the debrief. */
   const refsOf=id=>((ACT[id]||{}).references||[])
-    .map(r=>r.replace(/\s*\[[^\]]*\]\s*$/,'').trim());
+    .map(r=>learnerText(r.replace(/\s*\[[^\]]*\]\s*$/,''))).filter(Boolean);
   /* The teaching note is the most valuable thing in the debrief and also the longest.
      Printed in full for every action it becomes a wall of text that gets skimmed, so each
      one sits behind its own expander and the list of what was done and missed stays
@@ -1809,6 +1859,7 @@ function debriefHTML(){
         ${why?`<div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(why)}</div>`:''}</div>`;
     const named=dx.rows.some(r=>r.verdict==='primary_correct'||r.verdict==='main_not_primary');
     ho=`<div class="dbsec"><h2>Handoff</h2>
+      ${reflectHTML()}
       <div class="item"><div class="hd"><span class="nm">Level of care: ${esc(dispLabel(dId))}</span>
         <span class="pill ${dV[1]}">${dV[0]}</span></div>
         <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(dExp)}</div></div>
@@ -1819,9 +1870,11 @@ function debriefHTML(){
       ${named?'':dxItem('The case\'s diagnosis: '+dxLabel(PROTO.correctDxId),['answer','p-neu'],PROTO.correctDxExplanation)}
       </div>`;
   } else if(ST.earlyExit){
-    ho=`<div class="dbsec"><h2>Handoff</h2><p>You ended the case early, so this debrief is marked incomplete.</p></div>`;
+    ho=`<div class="dbsec"><h2>Handoff</h2><p>You ended the case early, so this debrief is marked incomplete.</p>${reflectHTML()}${reflectHTML()?dxAnswerHTML():''}</div>`;
   } else if(ST.halted){
-    ho=`<div class="dbsec"><h2>Handoff</h2><p>The case halted before a handoff.</p></div>`;
+    ho=`<div class="dbsec"><h2>Handoff</h2><p>The case halted before a handoff.</p>${reflectHTML()}${reflectHTML()?dxAnswerHTML():''}</div>`;
+  } else if(ST.failed){
+    ho=`<div class="dbsec"><h2>Handoff</h2><p>The case ended before a handoff.</p>${reflectHTML()}${reflectHTML()?dxAnswerHTML():''}</div>`;
   }
 
   const defaults=[...ST.defaultsServed];
@@ -1837,10 +1890,66 @@ function debriefHTML(){
   }));
   read.sort((a,b)=>a.o.dueT-b.o.dueT);
 
+  /* v0.18a. What happened, in order: every action and every change in the patient at its
+     time on the case clock. The description and analysis phases of a debrief start from a
+     shared account of events, and until this existed the running chart disappeared with
+     the play view and the notes on timed transitions were never shown. */
+  const TAGPILL={critical:['critical','p-crit'],recommended:['recommended','p-ok'],
+                 discouraged:['discouraged','p-warn'],harmful:['harmful','p-harm'],neutral:['neutral','p-neu']};
+  const when=t=>`<span class="tlt">${mmss(t)}</span>`;
+  const rows=[];
+  ST.timeline.forEach((x,k)=>{
+    if(x.type==='state-changing'){
+      const tp=TAGPILL[x.tag]||['','p-neu'];
+      rows.push({t:x.t,k,html:`<div class="item"><div class="hd">${when(x.t)}<span class="nm">${esc(x.label)}</span>
+        <span class="pill ${tp[1]}">${tp[0]}</span>${ST.prompted.has(x.id)?'<span class="pill p-warn">prompted</span>':''}</div></div>`});
+    } else if(x.type==='blocked'){
+      rows.push({t:x.t,k,html:`<div class="item"><div class="hd">${when(x.t)}<span class="nm">${esc(x.label)}</span>
+        <span class="pill p-warn">did not happen</span></div></div>`});
+    } else if(x.type==='end'){
+      rows.push({t:x.t,k,html:`<div class="item"><div class="hd">${when(x.t)}<span class="nm">${esc(x.label)}</span></div></div>`});
+    } else {
+      const asked=String(x.id).startsWith('interview:');
+      rows.push({t:x.t,k,html:`<div class="item"><div class="hd">${when(x.t)}<span class="nm" style="font-weight:400">${esc(asked?'Asked: '+x.label:x.label)}</span></div></div>`});
+    }
+  });
+  ST.phaseSeq.forEach((ph,i)=>{
+    if(!PHASE[ph.id]) return;
+    const tf=i?ST.timeFires.find(f=>f.to===ph.id&&f.t===ph.t):null;
+    const note=tf?learnerText(tf.note):'';
+    const label=(i?'The patient: ':'On arrival: ')+(PHASE[ph.id].label||ph.id);
+    const head=`${when(ph.t)}<span class="nm">${esc(label)}</span>`;
+    /* A change of state lands after the action that caused it in the same second. */
+    rows.push({t:ph.t,k:i?1e6+i:-1,html:note
+      ?`<div class="item"><details class="teach"><summary class="hd">${head}<span class="expand">Why</span></summary>
+         <div class="note" style="background:none;border:0;padding:0;margin:8px 0 0">${esc(note)}</div></details></div>`
+      :`<div class="item"><div class="hd">${head}</div></div>`});
+  });
+  rows.sort((a,b)=>a.t-b.t||a.k-b.k);
+  const timeline=`<div class="dbsec"><h2>What happened, in order</h2>
+    <p class="sub">Every action you took and every change in the patient, at its time on the case clock.
+    Where the patient changed on a clock, open the line to read why.</p>
+    ${rows.map(r=>r.html).join('')}</div>`;
+
+  /* v0.18a. Three take-home points directly under the critical actions, where they are
+     read, and the rest at the end. */
+  const points=(CASE.debrief_configuration.cross_cutting_teaching_points||[])
+    .map(p=>learnerText(typeof p==='string'?p:p.point||'')).filter(Boolean);
+  const pointItem=p=>`<div class="item"><div class="note" style="background:none;border:0;padding:0;margin:0">${esc(p)}</div></div>`;
+
+  /* v0.18a. A run that ended in an arrest or a harmful action is not scored. A percentage
+     for the parts of that run points review at the wrong thing; the table stays available
+     behind an expander for anyone reviewing the run. */
+  const endLabel=ST.failed?(PHASE[ST.failed.phase].label||ST.failed.phase):'';
+  const notScored=ST.halted?'Not scored: a harmful action ended the case.'
+    :(ST.failed?'Not scored: the case ended in '+endLabel.charAt(0).toLowerCase()+endLabel.slice(1)+'.':'');
+  const scoreTable=`<table class="score"><tr><th>Category</th><th class="n">Score</th><th class="n">Points</th><th>Detail</th></tr>${scoreRows}</table>`;
+
   /* Critical actions lead. They are what the case is about, and a resident reading top
      to bottom should meet the medicine before the scoreboard. */
   return `<div class="dbf">
     ${ST.halted?`<div class="dbsec"><h2>Harmful action</h2>${item(ST.halted.id,'harmful','p-harm')}</div>`:''}
+    ${cause?`<div class="dbsec"><h2>The action that ended the case</h2>${item(cause,'ended the case','p-harm')}</div>`:''}
 
     <div class="dbsec"><h2 class="crith">Critical actions</h2>
       <h3 class="misshd">Completed</h3>
@@ -1853,6 +1962,11 @@ function debriefHTML(){
         <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(FU[fid].debrief_note)}</div></div>`).join(''):''}
       <div class="gatebtns"><button class="btn" id="restart">Replay this case</button>
       ${CASES.length>1?'<button class="btn ghost" id="pickanother">Choose a different case</button>':''}</div></div>
+
+    ${points.length?`<div class="dbsec"><h2>Points to carry out of this case</h2>
+      ${points.slice(0,3).map(pointItem).join('')}</div>`:''}
+
+    ${timeline}
 
     ${(recDone.length||recMissed.length)?`<div class="dbsec"><h2>Other actions worth doing</h2>
       <p class="sub">Recommended rather than critical: none of these decides the case, and each is the kind of thing a reviewer would ask about.</p>
@@ -1871,7 +1985,9 @@ function debriefHTML(){
       in ${esc(PROTO.difficulty.modes[MODE].label.toLowerCase())} mode${DM()===1&&MODE!==PROTO.difficulty.default?`, so the nurse prompted at the deadlines the case authored rather than waiting past them`:''}.
       Points direct review; they do not rank you. Critical actions count two, recommended
       actions one, a discouraged action costs one, and a harmful action zeroes its tab.</p>
-      <table class="score"><tr><th>Category</th><th class="n">Score</th><th class="n">Points</th><th>Detail</th></tr>${scoreRows}</table></div>
+      ${notScored?`<p><b>${esc(notScored)}</b> Start with what ended it, above.</p>
+        <details class="teach"><summary class="hd"><span class="nm" style="font-weight:400">Show the category scores anyway</span><span class="expand">Show</span></summary>${scoreTable}</details>`
+        :scoreTable}</div>
 
     ${traps.length?`<div class="dbsec"><h2>Things that looked reasonable and were not</h2>
       ${traps.map(x=>item(x.id,'no benefit here','p-neu')).join('')}
@@ -1897,9 +2013,8 @@ function debriefHTML(){
       ${stillPending.length?`<p>Still pending when the case ended: ${stillPending.map(i=>esc(dispName(i))).join(', ')}.</p>`:''}
       <p class="sub">Handing over with a result you never looked at is a real handover failure.</p></div>`:''}
 
-    <div class="dbsec"><h2>Points to carry out of this case</h2>
-      ${(CASE.debrief_configuration.cross_cutting_teaching_points||[]).map(p=>
-        `<div class="item"><div class="note" style="background:none;border:0;padding:0;margin:0">${esc(typeof p==='string'?p:p.point||'')}</div></div>`).join('')}</div>
+    ${points.length>3?`<div class="dbsec"><h2>More points from this case</h2>
+      ${points.slice(3).map(pointItem).join('')}</div>`:''}
 
   </div>`;
 }
@@ -1916,7 +2031,9 @@ const WL_LABEL={male:'Male patient',female:'Female patient'};
 
 function wlModel(){
   return CASES.map((c,i)=>{
-    const k=c.card||{}, p=(c.case&&c.case.patient)||{};
+    /* A locked stub in the deployed build has no case yet, only its card and the patient's
+       age and sex (engine/access.js). */
+    const k=c.card||{}, p=(c.case&&c.case.patient)||c.patient||{};
     /* "medical student, intern, junior resident" is a range and reads better as one */
     const lvs=(Array.isArray(k.target_level)?k.target_level:[k.target_level||''])
       .filter(Boolean).map(x=>String(x).replace(/_/g,' '));
@@ -1928,7 +2045,8 @@ function wlModel(){
       level:lv.charAt(0).toUpperCase()+lv.slice(1),
       mins:k.runtime_seconds?Math.round(k.runtime_seconds/60):null,
       unreviewed:k.unreviewed!==false,
-      broken:(c.buildNotes||[]).length};
+      locked:!!c.locked,
+      broken:c.locked?(c.buildNoteCount||0):(c.buildNotes||[]).length};
   });
 }
 function wlCats(m){ const o=[]; for(const c of m) if(!o.includes(c.category)) o.push(c.category); return o.sort(); }
@@ -1973,9 +2091,10 @@ function renderPicker(){
                   (WL_LABEL[c.sex]||'Patient')+', '+(c.age!==undefined?c.age+' years old':'age not recorded'),
                   c.category,c.level,c.mins?'about '+c.mins+' minutes':'',
                   c.unreviewed?'Unsigned draft.':'Reviewed.',
+                  c.locked&&!ACCESS_UI.signedIn()?'Sign in to open.':'',
                   c.broken?'Incomplete: '+c.broken+' build problems, this case will not run correctly.':''
                  ].filter(Boolean).join('. ');
-      html+=`<button class="wl-case" type="button" role="option" data-case="${c.i}"
+      html+=`<button class="wl-case${ACCESS_UI.loadingIndex()===c.i?' loading':''}" type="button" role="option" data-case="${c.i}"
         data-row="${WL_ROWS.indexOf(c)}" aria-label="${esc(aria)}">
         <span class="wl-face">${face}</span>
         <span class="wl-body">
@@ -1986,6 +2105,7 @@ function renderPicker(){
             <span class="rt">${c.mins?c.mins+' min':''}</span>
           </span>
         </span>
+        ${c.locked&&!ACCESS_UI.signedIn()?`<svg class="wl-lock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>`:''}
         <span class="wl-state${c.unreviewed?'':' ok'}" title="${c.unreviewed?'Unsigned draft':'Reviewed'}"></span>
       </button>`;
     }
@@ -2028,6 +2148,7 @@ function wlBind(){
   /* Scoped to the welcome screen so none of these keys reach a running case. */
   document.addEventListener('keydown',e=>{
     if(!wlVisible()) return;
+    if(ACCESS_UI.modalOpen()) return;   // typing a password must not search or open a case
     const q=el('wl-q');
     if(e.key==='/'&&document.activeElement!==q){ e.preventDefault(); q.focus(); q.select(); return; }
     if(e.key==='Escape'){
@@ -2051,6 +2172,8 @@ function wlBind(){
   });
 }
 function chooseCase(i){
+  /* A locked stub is fetched first; access.js calls back here once the pack is in place. */
+  if(ACCESS_UI.isLocked(i)){ ACCESS_UI.open(i); return; }
   selectCase(i);
   bindCase();
   MODE=SHARED.difficulty.default;
@@ -2105,9 +2228,9 @@ function renderSplash(){
        a screen reader. Every other mode keeps its one line, because that line is the only
        reason to choose it. */
     return plain
-      ? `<button class="mode plain" role="radio" data-mode="${k}" aria-checked="${MODE===k}">
+      ? `<button class="mode plain" role="radio" data-mode="${esc(k)}" aria-checked="${MODE===k}">
       <b>${esc(md.label)}</b><span>${esc(md.description)}</span></button>`
-      : `<button class="mode" role="radio" data-mode="${k}" aria-checked="${MODE===k}"
+      : `<button class="mode" role="radio" data-mode="${esc(k)}" aria-checked="${MODE===k}"
       title="${esc(md.description)}" aria-label="${esc(md.label+'. '+md.description)}"><i class="modedot" aria-hidden="true"></i><b>${esc(md.label)}</b></button>`;
   }).join('');
 
@@ -2163,7 +2286,7 @@ function begin(){
   AUDIO.setScene('case'); MONITOR.setScene('case');
   render();
   VOICE.paint();
-  requestAnimationFrame(tick);
+  startLoop();
 }
 
 /* The header is fixed and its height varies with the nurse line, so every
@@ -2309,13 +2432,13 @@ function searchScore(q,name,extra){
   }
   return score;
 }
+/* One pass over the raw text, escaping each piece. Replacing token by token on the escaped
+   string let a later token match inside an earlier <mark> or an entity ("ma", "amp"). */
 function searchMark(text,q){
-  let out=esc(text);
-  for(const t of q){
-    if(t.length<2) continue;
-    out=out.replace(new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>');
-  }
-  return out;
+  const ts=q.filter(t=>t.length>=2).map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+  if(!ts.length) return esc(text);
+  return String(text).split(new RegExp('('+ts.join('|')+')','ig'))
+    .map((part,i)=>i%2?'<mark>'+esc(part)+'</mark>':esc(part)).join('');
 }
 function searchHits(){
   const q=searchNorm(SEARCH_Q).split(' ').filter(Boolean);
@@ -2348,7 +2471,7 @@ function searchHits(){
     }
   }
   for(const it of feedItems()){
-    const title=it.title||'', body=typeof it.body==='string'?it.body:'';
+    const title=it.name||it.title||'', body=typeof it.body==='string'?it.body:'';
     const sc=searchScore(q,title,body);
     if(sc>=0) lines.push({t:it.t,title,score:sc});
   }
@@ -2397,7 +2520,7 @@ function askLeave(action){
   el('leavecancel').focus();
   return true;
 }
-function closeLeave(){ el('leaveview').classList.add('hidden'); LEAVE_ACT=null; releaseClock(); }
+function closeLeave(){ el('leaveview').classList.add('hidden'); LEAVE_ACT=null; if(!REFLECT_OPEN) releaseClock(); }
 /* The question holds the case clock. It is modal and the deadlines a case authors are claims
    about a patient, so charging a resident the seconds they spent deciding whether to leave
    would make those claims false. It uses the pause fields directly rather than pauseSim(),
@@ -2574,16 +2697,21 @@ document.addEventListener('keydown',e=>{
    With a single case the picker is skipped, because choosing from a list of one is a
    step that teaches nothing. */
 function boot(){
-  if(CASES.length===1){
+  ACCESS_UI.init();
+  /* The first case that is actually here. In the deployed build every case may be a locked
+     stub, and then nothing is bound until one is fetched: begin() renders everything once
+     a case is chosen, so the first-render calls below are only for a build that has one. */
+  const first=CASES.findIndex(c=>!c.locked);
+  if(CASES.length===1&&first===0){
     chooseCase(0);
     el('picker').classList.add('hidden');
     const back=el('backtopicker'); if(back) back.style.display='none';
   } else {
-    selectCase(0); bindCase();         // bind something so the first render has data
+    if(first>=0){ selectCase(first); bindCase(); }   // bind something so the first render has data
     renderPicker();
   }
   setPanels(true,false);
   VOICE.bind();
-  refold(); renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor();
+  if(CASE){ refold(); renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor(); }
 }
 boot();

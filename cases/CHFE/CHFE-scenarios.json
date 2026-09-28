@@ -90,10 +90,11 @@
     "intubation_rsi",
     "crystalloid_bolus_1l"
    ],
-   "expect_phase": "halted"
+   "expect_phase": "post_intubation_hypotension",
+   "note": "v0.18a: discouraged rather than halting after intubation. Volume is the wrong answer in a congested ventricle, but a single bolus in a hypotensive intubated patient is not an instant death."
   },
   {
-   "name": "Restarting the nitrate after vasopressor rescue is harmful",
+   "name": "Restarting the nitrate after vasopressor rescue is discouraged",
    "steps": [
     "iv_access_peripheral",
     "nitroglycerin_infusion",
@@ -104,7 +105,8 @@
     "norepinephrine_infusion",
     "nitroglycerin_infusion"
    ],
-   "expect_phase": "halted"
+   "expect_phase": "intubated_stabilized",
+   "note": "v0.18a: harmful only while he is hypotensive; once rescued, restarting it is discouraged."
   },
   {
    "name": "Diuretic given before positive pressure still reaches stabilizing",
@@ -118,7 +120,7 @@
    "note": "Previously named niv_bipap, which the binding shadowed, so the step was silently discarded and the scenario reached presentation instead. Fixed by the NIV consolidation."
   },
   {
-   "name": "Harmful: a litre of Ringer's reaches the same halt through the equivalence group",
+   "name": "Harmful: a liter of Ringer's reaches the same halt through the equivalence group",
    "steps": [
     "iv_access_peripheral",
     "lactated_ringer_s_1l_bolus"

@@ -452,5 +452,47 @@ expect("a ten-second deterioration on inaction is still rejected",
            {"when": "NOT flag iv_access set", "to": c["phases"][1]["id"], "after_seconds": 10}),
        "below the 30s floor")
 
+# v0.18a. A loop of time edges that can go round forever is rejected. A loop in which one
+# edge needs a permanent flag set and another needs it unset runs at most once, so it passes
+# with a note. Both directions, so the one-way exemption cannot swallow the rule.
+def _loop(c, broken):
+    a, b = c["phases"][0], c["phases"][1]
+    # Only these two edges leave the two phases on a clock, so no loop the case already
+    # has can pass through them and blur which edge the rule is reacting to.
+    for ph in (a, b):
+        ph["transitions"] = [t for t in ph.get("transitions", []) if "after_seconds" not in t]
+    act(c).setdefault("flags_set", []).append("vt_loop_flag")
+    a["transitions"].insert(0, {"when": "NOT flag vt_loop_flag set" if broken else None,
+                                "to": b["id"], "after_seconds": 90,
+                                "measured_from": "phase_entry"})
+    b["transitions"].insert(0, {"when": "flag vt_loop_flag set" if broken else None,
+                                "to": a["id"], "after_seconds": 90,
+                                "measured_from": "guard_true" if broken else "phase_entry"})
+expect("a loop of time edges that can repeat is rejected",
+       lambda c: _loop(c, False), "cycle composed only of time edges")
+expect_clean("a loop that a permanent flag breaks is not an error",
+             lambda c: _loop(c, True), "cycle composed only of time edges")
+expect("a loop that a permanent flag breaks is noted",
+       lambda c: _loop(c, True), "runs at most once", where="notes")
+
+# v0.18a. Volunteered answers: a safety screen is never volunteered, and adjacency names
+# real topics only.
+def _must(c, how):
+    iv = c["interview"]; t0, t1 = iv["topics"][0], iv["topics"][1]
+    iv["must_ask"] = [t1["topic"]]
+    t1.pop("volunteer", None)
+    if how == "adjacent":
+        t0["adjacent"] = [t1["topic"]]
+    elif how == "volunteer":
+        t1["volunteer"] = "'x'"
+    elif how == "missing":
+        t0["adjacent"] = ["no_such_topic"]
+expect("a must_ask safety screen listed as adjacent is rejected",
+       lambda c: _must(c, "adjacent"), "is never volunteered")
+expect("a must_ask safety screen with a volunteer line is rejected",
+       lambda c: _must(c, "volunteer"), "would never be used")
+expect("an adjacent topic that does not exist is rejected",
+       lambda c: _must(c, "missing"), "does not exist")
+
 print(f"\n  {COUNT} checks, " + (f"{len(FAILS)} FAILURES" if FAILS else "all passed"))
 sys.exit(1 if FAILS else 0)

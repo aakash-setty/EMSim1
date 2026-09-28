@@ -2,7 +2,7 @@
 
 Design v0.8. One change, and three things found while making it.
 
-Kept for what was rejected. The current behaviour is in `docs/system-design-v2.md`
+Kept for what was rejected. The current behavior is in `docs/system-design-v2.md`
 sections 2.6 through 2.9, 13.1 and 17, and in `docs/case-authoring-requirements.md`
 sections 6.1 through 6.6. This file is not a source of truth for how the system behaves.
 
@@ -87,7 +87,7 @@ granted both ways, because it is usually right and always invisible.
 
 **A timed grant extends to the later deadline.** The earlier expiry event still arrives,
 sees a later grant standing, and does nothing. So a resident who redoses two seconds
-before the deadline is not overtaken by it, which is the behaviour a resident would expect
+before the deadline is not overtaken by it, which is the behavior a resident would expect
 and the opposite of what a naive "latest grant replaces" would give.
 
 **A lapse costs nothing.** No timeline entry, no score, no nurse line. It is a thing that

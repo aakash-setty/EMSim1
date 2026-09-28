@@ -14,7 +14,7 @@ Three consequences, and the second is the one a reviewer should push on.
    not been told any. She does not name a diagnosis anywhere.
 2. The history does not disappear when the patient's alertness falls. In every other pack an
    obtunded or intubated patient ends the interview. Here the mother is still in the
-   department, so the history stays available in the post-ictal and stabilising phases, which
+   department, so the history stays available in the post-ictal and stabilizing phases, which
    is a departure from how every other pack behaves. It is withdrawn only where the team
    would genuinely have moved her out: during the convulsion, during the wide-complex phases
    and after the case has ended. That is what GLOBAL_RULES does.
@@ -64,7 +64,7 @@ topic("onset", "When did this start?",
   ["When did this start?", "How long has she been like this?", "When did you first notice?",
    "What time did this begin?", "How long has this been going on?",
    "When did she start acting strangely?", "When did it come on?", "How long ago?",
-   "When did you realise something was wrong?"],
+   "When did you realize something was wrong?"],
   ("'I got in from work at about four and she was already like this. So an hour and a bit? "
    "I don't know how long she'd been that way before I found her. I was at work all day.'"),
   "when I found her",
@@ -155,7 +155,7 @@ topic("medicines_in_the_house", "What medicines do you keep in the house?",
    "Any other medicines at home?", "What has she got access to at home?"],
   ("'Not much. Paracetamol and ibuprofen in the kitchen drawer, and the Benadryl. I take "
    "something for my blood pressure, ramipril, and that's in my bedroom and the packet's still "
-   "full, I checked it in the ambulance. There's nothing strong in the house. Nobody's got "
+   "full, I checked it before we left. There's nothing strong in the house. Nobody's got "
    "anything for pain or anything like that.'"),
   "what's in the house")
 
@@ -169,7 +169,7 @@ topic("past_medical_history", "Does she have any medical problems?",
   "her health")
 
 topic("past_surgical_history", "Has she had any operations?",
-  ["Any operations?", "Has she had surgery?", "Any previous surgery?", "Been under anaesthetic?",
+  ["Any operations?", "Has she had surgery?", "Any previous surgery?", "Been under anesthetic?",
    "Any procedures?", "PSH?"],
   "'No. Never.'", "operations")
 
@@ -192,7 +192,7 @@ topic("family_history", "Is there anything that runs in the family?",
   ["Any family history?", "Does anything run in the family?", "Any illness in the family?",
    "Family history?", "Anyone in the family with heart problems?",
    "Anyone else in the family unwell?", "Any epilepsy in the family?"],
-  ("'High blood pressure on my side, me and my mum. Her dad's not in the picture and I don't "
+  ("'High blood pressure on my side, me and my mom. Her dad's not in the picture and I don't "
    "know about his lot. Nobody's got fits, if that's what you're asking, and nobody's got "
    "anything with their heart.'"),
   "the family")
@@ -218,7 +218,7 @@ topic("mental_health_history", "How has her mood been?",
     fact("how_long", ["how long", "since when", "when did it start", "how many months"],
          "'Since about February. So six months, seven.'", restate=True),
     fact("professional_help", ["has she seen anyone", "is she under a psychiatrist",
-                               "has she had counselling", "has she seen the GP",
+                               "has she had counseling", "has she seen the GP",
                                "is she on antidepressants"],
          "'No. Nobody. She's never been to the doctor about it and she's not on anything.'"),
     fact("what_changed", ["what did you notice", "how was she different", "what changed",
@@ -248,7 +248,7 @@ topic("bullying_and_school", "Has anything been happening at school?",
    "How's school been?", "Any social media problems?", "Has anyone been picking on her?"],
   ("'There was something online. In the spring. Some girls in her year set up an account and "
    "were putting things on it about her, and it went round the whole school. I only found out "
-   "because another mum told me. The school said they dealt with it.'\n\n'She stopped talking to "
+   "because another mom told me. The school said they dealt with it.'\n\n'She stopped talking to "
    "the two friends she had left after that. I don't know if they were part of it or if she just "
    "cut everyone off.'"),
   "what's been going on at school")
@@ -288,7 +288,7 @@ topic("smoking", "Does she smoke?",
 topic("fever_or_infection", "Has she been unwell or feverish recently?",
   ["Has she had a fever?", "Has she been unwell?", "Any infection?", "Any cough or cold?",
    "Has she had a temperature before today?", "Any sore throat?", "Has she been ill?",
-   "Any infectious symptoms?", "Any diarrhoea or vomiting recently?"],
+   "Any infectious symptoms?", "Any diarrhea or vomiting recently?"],
   ("'No. Nothing. She's not had so much as a cold. She said she had a headache last night and "
    "that's the only thing, and I think that was an excuse not to go in today.'"),
   "whether she's been ill")
@@ -331,7 +331,7 @@ topic("diabetes", "Is she diabetic?",
 
 topic("vomiting", "Has she been sick?",
   ["Has she vomited?", "Any vomiting?", "Has she been sick?", "Any nausea?",
-   "Did she throw up?", "Any diarrhoea?"],
+   "Did she throw up?", "Any diarrhea?"],
   "'Not that I've seen. Nothing in the room and nothing in the ambulance.'", "being sick")
 
 topic("abdominal_pain", "Has she complained of tummy pain?",
@@ -387,14 +387,14 @@ topic("pregnancy", "Is there any chance she's pregnant?",
    "was.'"),
   "whether she could be pregnant")
 
-topic("travel_and_contacts", "Has she travelled or been around anyone unwell?",
+topic("travel_and_contacts", "Has she traveled or been around anyone unwell?",
   ["Any recent travel?", "Has she been abroad?", "Any sick contacts?",
    "Has she been around anyone ill?", "Any travel history?", "Anyone else at home unwell?"],
   "'No travel, nowhere. Nobody's ill at home and nobody's ill at school that I've heard about.'",
   "travel and contacts")
 
-topic("immunisations", "Are her vaccinations up to date?",
-  ["Is she vaccinated?", "Any immunisations?", "Are her jabs up to date?",
+topic("immunizations", "Are her vaccinations up to date?",
+  ["Is she vaccinated?", "Any immunizations?", "Are her jabs up to date?",
    "Has she had her meningitis vaccine?", "Vaccination history?"],
   "'Yes, everything. She had the meningitis one at school when she was fourteen.'",
   "her jabs")
@@ -424,7 +424,7 @@ GLOBAL_RULES = [
            "Elsewhere the rule says the patient cannot speak. Here the patient has not been "
            "speaking usefully since before she arrived, and what changes in these phases is that "
            "the person who can speak has been moved out of the room while the team resuscitates. "
-           "That is why the history returns in the post-ictal and stabilising phases rather than "
+           "That is why the history returns in the post-ictal and stabilizing phases rather than "
            "being gone for the rest of the case: the mother comes back.\n\n"
            "The validator requires that every phase at alertness 2 or above is covered by a "
            "global rule. It is covered here, and the coverage is doing something slightly "
@@ -516,7 +516,7 @@ KEY_TOPICS = ["bottle_or_pills_found", "what_she_took", "medicines_in_the_house"
 # because they were added in a second pass. They are not generated and they are not the
 # expansion library: the generated phrasings live in the EXPANDED block below and are
 # marked as such on each topic.
-MORE = {'onset': ['Do you know when this started?', 'How long has she been confused?', 'When did she become like this?', 'What time did you find her?', 'How many hours has she been this way?', 'Time of onset?', 'Time of ingestion?', 'When did she take it?', 'How long since the ingestion?', 'When did you get home?', 'What time did you get in?', 'When was she found?'], 'last_seen_well': ['When was she last completely normal?', 'Was she alright yesterday?', 'When did you last see her acting normally?', 'Was she well before today?', 'Last time she seemed fine?', 'Had she been herself recently?', 'Was she normal this morning?', 'Last known well?', 'When was she last known well?'], 'progression': ['Is she deteriorating?', 'Has she got worse since you found her?', 'Any change on the way in?', 'Was she more awake earlier?', "Is this the worst she's been?", 'Has the confusion got worse?', 'Any improvement at all?'], 'what_she_was_doing': ['Was she at school today?', 'Had she been out with anyone?', 'Was anyone with her at home?', 'What was her day like?', 'Did she go anywhere today?', 'Was she on her own all day?', "Any idea what she'd been doing?"], 'bottle_or_pills_found': ['Was there a bottle by the bed?', 'Any containers near her?', 'Have you checked her room?', "Could you look and see if anything's missing?", 'Was anything found with her?', 'Anything at the scene?', 'Any containers at the scene?', 'Did anyone look for a bottle?'], 'what_she_took': ['Could she have swallowed something?', "Is there any chance she's taken pills?", 'Do you think this is an overdose?', "Any chance she's taken tablets?", 'Has she taken anything at all?', "What do you think she's had?", 'Any ingestion?'], 'medicines_in_the_house': ['What tablets are at home?', 'Any painkillers in the house?', 'Does anyone at home take medication?', "What's in your medicine cupboard?", 'Are there any pills she could reach?', 'Any over-the-counter medicines at home?', 'Anything of yours she could have got?'], 'past_medical_history': ['Has she got any health conditions?', 'Anything wrong with her normally?', 'Any chronic illness?', 'Has she been in hospital before?', 'Does she have a GP she sees regularly?', 'Any diagnoses?', 'Past med hx?', 'Med hx?', 'Any background history?', 'Has she ever been treated for anything?', 'Is she known to any specialty?'], 'past_surgical_history': ['Has she ever had an operation?', 'Any previous procedures?', 'Has she been to theatre before?', 'Any surgical history at all?', 'Has she ever had a general anaesthetic?', 'Any operations as a child?', 'Anything ever removed?', 'Any past surgery?', 'Has she had anything done?', 'Surgical hx?', 'Any surgical hx?', 'Op history?'], 'allergies': ['Does she react to any medicines?', 'Any known allergies?', "Is there anything she can't have?", 'Any food or drug allergies?', 'Has she ever had a reaction to anything?', "Anything we shouldn't give her?", 'Any allergy to penicillin?', 'Does she carry an EpiPen?', 'Any intolerances?', 'Allergy status?', 'Allergy hx?', 'Any known allergies at all?'], 'family_history': ['Anything medical in the family?', 'Any heart conditions in the family?', 'Does anyone in the family have seizures?', 'Any sudden deaths in the family?', 'Any mental health problems in the family?', "What about her father's side?", 'Anyone else in the family had anything like this?', 'Any inherited conditions?', 'Family hx?', 'Any FHx?'], 'who_lives_at_home': ['How many people live at home?', 'Is there anyone else in the house?', 'Does she have brothers or sisters?', "Who's her next of kin?", 'Is her father involved?', 'Who else could we speak to?', 'Who was in the house today?', 'Is there anyone else at home?', 'Any siblings?', 'Living situation?', 'Social situation?'], 'previous_self_harm': ['Any history of overdose?', 'Has she taken tablets before?', 'Any previous episodes like this?', 'Has she ever been to hospital for self-harm?', 'Has she done anything to hurt herself in the past?', 'Any past deliberate self-harm?', 'Is this the first time?', 'Any prior self-harm?', 'Any previous OD?', 'Prior DSH?', 'Any history of deliberate self-harm?', 'Has she overdosed before?'], 'suicidal_intent': ['Was there any note?', 'Had she threatened anything?', 'Did she say goodbye to anyone?', 'Any indication she was planning this?', 'Had she talked about not wanting to be here?', 'Did anything she said worry you?', 'Any suicidal ideation that you knew about?', 'Any suicidal intent?', 'Any stated intent?', 'Was there a note left?'], 'bullying_and_school': ['Has anything happened at school?', 'Is she being picked on?', 'Any issues with other students?', 'How is she getting on at school?', 'Has she been going to school?', 'Any bullying you know about?', 'Has anyone been giving her trouble online?', 'Anything on social media?', 'Has she been having a hard time with anyone?', 'Any bullying?', 'Any problems with people at school?', 'Anything happening online?'], 'relationship': ['Is she in a relationship?', 'Any boyfriend or girlfriend?', 'Has anything happened with a partner?', 'Any recent loss?', 'Has anyone close to her died?', 'Any bereavement?', 'Any recent upset at home?'], 'mental_health_history': ['Any history of depression?', 'Has she seen a psychiatrist?', 'Is she under mental health services?', 'Has she been diagnosed with anything psychiatric?', 'Any anxiety or depression?', 'Has she ever been on antidepressants?', 'Psych hx?', 'Any psychiatric history?', 'Mental health hx?', 'Tell me about her mood.', 'How has her mood been over the last few months?', 'Has her mood changed?', 'Any low mood?'], 'sleep_and_appetite': ['Is she sleeping normally?', 'Any weight loss?', 'Has her eating changed?', 'Has she been withdrawn?', 'Is she still doing the things she enjoys?', 'Any change in her energy?', 'Has she been staying in bed?', 'Any change in her routine?', 'Any biological symptoms?', 'How is her sleep and appetite?'], 'alcohol_and_drugs': ['Does she use any substances?', 'Any recreational drug use?', 'Could she have taken something at a party?', 'Does she drink much?', 'Any cannabis?', 'Any history of substance misuse?', 'Substance hx?', 'Any illicit drug use?', 'Recreational drugs?'], 'smoking': ['Does she use tobacco?', 'Any vaping?', 'Is she a smoker?', 'Does she smoke cigarettes?', 'How much does she smoke?', 'Has she ever smoked?', 'Any nicotine use?', 'Does she smoke or vape?', 'Social history for smoking?', 'Any tobacco history?', 'Smoking hx?', 'Any tobacco?'], 'fever_or_infection': ['Has she had a temperature recently?', 'Any recent illness?', 'Has she been off colour?', 'Any sign of infection?', 'Has she had flu-like symptoms?', 'Any recent virus?', 'Any preceding illness?', 'Any prodrome?'], 'headache': ['Has she complained of head pain?', 'Any headaches recently?', 'Was she getting headaches before today?', 'Did she mention her head hurting?', 'Any migraines?', 'Has she had a bad headache?', 'Any headache before this?', 'Worst headache of her life?', 'Was the headache sudden?', 'Any neck or head pain?'], 'neck_stiffness': ['Can she move her neck?', 'Any pain when you move her neck?', 'Has she complained of a stiff neck?', 'Does bright light bother her?', 'Any meningism?', 'Has she been avoiding the light?', 'Any neck symptoms?', 'Any stiffness anywhere?', 'Any signs of meningitis?'], 'rash': ['Has she got a rash anywhere?', 'Any purple or red marks?', 'Any non-blanching spots?', 'Have you noticed anything on her skin?', 'Any petechiae?', 'Any skin rash?', "Any bruising you've noticed?", 'Anything on her arms or legs?', 'Any skin changes at all?'], 'head_injury': ['Any chance she fell?', "Was there any sign she'd collapsed?", 'Any bruises or bumps on her head?', 'Could she have hit anything?', 'Was anything knocked over in her room?', 'Any recent injury?', 'Any trauma at all?', 'Did she hit her head when she went down?', 'Any head strike?', 'Any evidence of trauma?'], 'seizure_history': ['Has she ever had a convulsion?', 'Any history of fits?', 'Is she known to have epilepsy?', 'Has she ever fitted before?', 'Any funny turns in the past?', 'Any blackouts before?', 'Has she had anything like this before?', 'Any previous seizures?', 'Any epilepsy history?', 'Any epilepsy hx?', 'Seizure hx?', 'Any prior fits?'], 'diabetes': ['Any sugar problems?', 'Does she have type 1 diabetes?', 'Is she on insulin?', 'Any history of low blood sugar?', 'Has she ever had hypos?', 'Any endocrine problems?', 'Is there diabetes in the family?', 'Does she check her blood sugar?', 'Any thyroid or diabetes?', "Has she ever been told she's diabetic?"], 'vomiting': ['Has she been sick at all?', 'Any retching?', 'Did she vomit at home?', 'Was there any vomit in the room?', 'Any sickness today?', 'Has she brought anything up?', 'Any nausea or vomiting?', 'Did she vomit in the ambulance?', 'Any loose stools?'], 'abdominal_pain': ['Any belly pain?', 'Has she held her tummy at all?', 'Any pain in the stomach?', 'Has she complained of cramps?', 'Any abdominal symptoms?', 'Does her tummy seem to hurt?', 'Any pain when you touch her belly?', 'Any GI symptoms?', 'Has she been constipated?', 'Any bowel problems?'], 'pain_anywhere': ['Where is the pain?', 'Is anything painful?', 'Has she complained of pain anywhere?', 'Any discomfort?', 'Does the pain move anywhere?', 'How severe is it?', 'What sort of pain is it?'], 'urinary_symptoms': ['When did she last go to the toilet?', 'Any trouble weeing?', 'Has she wet herself?', 'Any incontinence?', 'Any urinary problems?', 'Has she been passing water normally?', 'Any pain passing urine?', 'Any frequency or urgency?', 'How much urine has she passed?'], 'chest_or_palpitations': ['Any chest tightness?', 'Has she said her heart was racing?', 'Any complaints about her chest?', 'Has she had chest pain before?', 'Any cardiac symptoms?', 'Has she felt her heart pounding?', 'Any history of heart problems?', 'Any chest discomfort?', 'Any fluttering in the chest?'], 'breathing': ['Any shortness of breath?', 'Has she been breathless?', 'Any wheezing?', 'Does she have asthma?', 'Any inhalers?', 'Any cough?', 'Has her breathing changed?', 'Any difficulty breathing?', 'Any chest infection recently?'], 'vision_or_hallucinations': ['Has she been talking to herself?', "Is she reaching for things that aren't there?", 'Any strange behaviour?', 'Has she been seeing or hearing things?', 'Any delusions?', 'Has she said anything odd?', 'Is she picking at things?', 'Any visual disturbance?', 'Has she been paranoid?', 'Is she hallucinating at all?', 'Any visual hallucinations?'], 'last_oral_intake': ['Has she eaten today?', 'When did she last have a meal?', 'Any food or drink today?', 'When did she last drink anything?', 'Has she had breakfast?', 'Is she nil by mouth?', 'How long since she last ate?', 'Anything to eat or drink in the last few hours?', 'Any fluids today?', 'NPO status?', 'Last meal?', 'Last oral intake?'], 'pregnancy': ['Could she be pregnant?', 'Is she on contraception?', 'When was her last menstrual period?', 'Any chance of pregnancy at all?', 'Has she missed a period?', 'Is she sexually active that you know of?', 'Any pregnancy test recently?', 'Are her periods regular?', 'LMP?', 'Any chance she is pregnant at all?', 'Obstetric history?'], 'travel_and_contacts': ['Has she been abroad recently?', 'Anyone at home unwell?', 'Any contact with anyone infectious?', 'Has she been camping or outdoors?', 'Any tick bites?', 'Anyone at school off sick?', 'Any recent trips?', 'Has she been anywhere unusual?', 'Any exposure history?', 'Travel hx?', 'Any contact history?'], 'immunisations': ['Has she had all her vaccines?', 'Any missed immunisations?', 'Did she have the meningococcal vaccine?', 'Is her childhood schedule complete?', 'Any recent vaccinations?', 'Has she had the HPV jab?', 'Are her boosters up to date?', 'Any vaccine history?', 'Is she fully immunised?', 'Any vaccines in the last month?', 'Vaccination hx?', 'Immunisation status?'], 'what_ems_said': ['What did the ambulance find?', 'Did the crew give her anything?', 'What were her observations in the ambulance?', 'How was she on the way in?', 'Did she change en route?', 'What did the paramedics tell you?', 'Anything happen in the ambulance?', 'Did the crew say anything about her heart?', 'What treatment did she get before arriving?', 'What did the crew hand over?', 'EMS handover?', 'Prehospital findings?'], 'collateral_from_brother': ['Is there anyone else who saw her?', 'Can we speak to anyone at the house?', 'Did anyone hear anything?', 'Who else was there?', 'Has anyone looked round her room?', 'Is there anyone at home now?', 'Could someone check the house?', 'Did her brother notice anything?', 'Any other witnesses?', 'Anyone else who could tell us more?', 'Any collateral history?', 'Is there any collateral?'], 'current_medications': ['Does she take any tablets regularly?', 'Any repeat prescriptions?', 'Is she on anything from the doctor?', 'Any medication at all?', 'Does she take vitamins or supplements?', 'Any herbal remedies?', 'Regular meds?', 'Home meds?']}
+MORE = {'onset': ['Do you know when this started?', 'How long has she been confused?', 'When did she become like this?', 'What time did you find her?', 'How many hours has she been this way?', 'Time of onset?', 'Time of ingestion?', 'When did she take it?', 'How long since the ingestion?', 'When did you get home?', 'What time did you get in?', 'When was she found?'], 'last_seen_well': ['When was she last completely normal?', 'Was she alright yesterday?', 'When did you last see her acting normally?', 'Was she well before today?', 'Last time she seemed fine?', 'Had she been herself recently?', 'Was she normal this morning?', 'Last known well?', 'When was she last known well?'], 'progression': ['Is she deteriorating?', 'Has she got worse since you found her?', 'Any change on the way in?', 'Was she more awake earlier?', "Is this the worst she's been?", 'Has the confusion got worse?', 'Any improvement at all?'], 'what_she_was_doing': ['Was she at school today?', 'Had she been out with anyone?', 'Was anyone with her at home?', 'What was her day like?', 'Did she go anywhere today?', 'Was she on her own all day?', "Any idea what she'd been doing?"], 'bottle_or_pills_found': ['Was there a bottle by the bed?', 'Any containers near her?', 'Have you checked her room?', "Could you look and see if anything's missing?", 'Was anything found with her?', 'Anything at the scene?', 'Any containers at the scene?', 'Did anyone look for a bottle?'], 'what_she_took': ['Could she have swallowed something?', "Is there any chance she's taken pills?", 'Do you think this is an overdose?', "Any chance she's taken tablets?", 'Has she taken anything at all?', "What do you think she's had?", 'Any ingestion?'], 'medicines_in_the_house': ['What tablets are at home?', 'Any painkillers in the house?', 'Does anyone at home take medication?', "What's in your medicine cupboard?", 'Are there any pills she could reach?', 'Any over-the-counter medicines at home?', 'Anything of yours she could have got?'], 'past_medical_history': ['Has she got any health conditions?', 'Anything wrong with her normally?', 'Any chronic illness?', 'Has she been in hospital before?', 'Does she have a GP she sees regularly?', 'Any diagnoses?', 'Past med hx?', 'Med hx?', 'Any background history?', 'Has she ever been treated for anything?', 'Is she known to any specialty?'], 'past_surgical_history': ['Has she ever had an operation?', 'Any previous procedures?', 'Has she been to theater before?', 'Any surgical history at all?', 'Has she ever had a general anesthetic?', 'Any operations as a child?', 'Anything ever removed?', 'Any past surgery?', 'Has she had anything done?', 'Surgical hx?', 'Any surgical hx?', 'Op history?'], 'allergies': ['Does she react to any medicines?', 'Any known allergies?', "Is there anything she can't have?", 'Any food or drug allergies?', 'Has she ever had a reaction to anything?', "Anything we shouldn't give her?", 'Any allergy to penicillin?', 'Does she carry an EpiPen?', 'Any intolerances?', 'Allergy status?', 'Allergy hx?', 'Any known allergies at all?'], 'family_history': ['Anything medical in the family?', 'Any heart conditions in the family?', 'Does anyone in the family have seizures?', 'Any sudden deaths in the family?', 'Any mental health problems in the family?', "What about her father's side?", 'Anyone else in the family had anything like this?', 'Any inherited conditions?', 'Family hx?', 'Any FHx?'], 'who_lives_at_home': ['How many people live at home?', 'Is there anyone else in the house?', 'Does she have brothers or sisters?', "Who's her next of kin?", 'Is her father involved?', 'Who else could we speak to?', 'Who was in the house today?', 'Is there anyone else at home?', 'Any siblings?', 'Living situation?', 'Social situation?'], 'previous_self_harm': ['Any history of overdose?', 'Has she taken tablets before?', 'Any previous episodes like this?', 'Has she ever been to hospital for self-harm?', 'Has she done anything to hurt herself in the past?', 'Any past deliberate self-harm?', 'Is this the first time?', 'Any prior self-harm?', 'Any previous OD?', 'Prior DSH?', 'Any history of deliberate self-harm?', 'Has she overdosed before?'], 'suicidal_intent': ['Was there any note?', 'Had she threatened anything?', 'Did she say goodbye to anyone?', 'Any indication she was planning this?', 'Had she talked about not wanting to be here?', 'Did anything she said worry you?', 'Any suicidal ideation that you knew about?', 'Any suicidal intent?', 'Any stated intent?', 'Was there a note left?'], 'bullying_and_school': ['Has anything happened at school?', 'Is she being picked on?', 'Any issues with other students?', 'How is she getting on at school?', 'Has she been going to school?', 'Any bullying you know about?', 'Has anyone been giving her trouble online?', 'Anything on social media?', 'Has she been having a hard time with anyone?', 'Any bullying?', 'Any problems with people at school?', 'Anything happening online?'], 'relationship': ['Is she in a relationship?', 'Any boyfriend or girlfriend?', 'Has anything happened with a partner?', 'Any recent loss?', 'Has anyone close to her died?', 'Any bereavement?', 'Any recent upset at home?'], 'mental_health_history': ['Any history of depression?', 'Has she seen a psychiatrist?', 'Is she under mental health services?', 'Has she been diagnosed with anything psychiatric?', 'Any anxiety or depression?', 'Has she ever been on antidepressants?', 'Psych hx?', 'Any psychiatric history?', 'Mental health hx?', 'Tell me about her mood.', 'How has her mood been over the last few months?', 'Has her mood changed?', 'Any low mood?'], 'sleep_and_appetite': ['Is she sleeping normally?', 'Any weight loss?', 'Has her eating changed?', 'Has she been withdrawn?', 'Is she still doing the things she enjoys?', 'Any change in her energy?', 'Has she been staying in bed?', 'Any change in her routine?', 'Any biological symptoms?', 'How is her sleep and appetite?'], 'alcohol_and_drugs': ['Does she use any substances?', 'Any recreational drug use?', 'Could she have taken something at a party?', 'Does she drink much?', 'Any cannabis?', 'Any history of substance misuse?', 'Substance hx?', 'Any illicit drug use?', 'Recreational drugs?'], 'smoking': ['Does she use tobacco?', 'Any vaping?', 'Is she a smoker?', 'Does she smoke cigarettes?', 'How much does she smoke?', 'Has she ever smoked?', 'Any nicotine use?', 'Does she smoke or vape?', 'Social history for smoking?', 'Any tobacco history?', 'Smoking hx?', 'Any tobacco?'], 'fever_or_infection': ['Has she had a temperature recently?', 'Any recent illness?', 'Has she been off color?', 'Any sign of infection?', 'Has she had flu-like symptoms?', 'Any recent virus?', 'Any preceding illness?', 'Any prodrome?'], 'headache': ['Has she complained of head pain?', 'Any headaches recently?', 'Was she getting headaches before today?', 'Did she mention her head hurting?', 'Any migraines?', 'Has she had a bad headache?', 'Any headache before this?', 'Worst headache of her life?', 'Was the headache sudden?', 'Any neck or head pain?'], 'neck_stiffness': ['Can she move her neck?', 'Any pain when you move her neck?', 'Has she complained of a stiff neck?', 'Does bright light bother her?', 'Any meningism?', 'Has she been avoiding the light?', 'Any neck symptoms?', 'Any stiffness anywhere?', 'Any signs of meningitis?'], 'rash': ['Has she got a rash anywhere?', 'Any purple or red marks?', 'Any non-blanching spots?', 'Have you noticed anything on her skin?', 'Any petechiae?', 'Any skin rash?', "Any bruising you've noticed?", 'Anything on her arms or legs?', 'Any skin changes at all?'], 'head_injury': ['Any chance she fell?', "Was there any sign she'd collapsed?", 'Any bruises or bumps on her head?', 'Could she have hit anything?', 'Was anything knocked over in her room?', 'Any recent injury?', 'Any trauma at all?', 'Did she hit her head when she went down?', 'Any head strike?', 'Any evidence of trauma?'], 'seizure_history': ['Has she ever had a convulsion?', 'Any history of fits?', 'Is she known to have epilepsy?', 'Has she ever fitted before?', 'Any funny turns in the past?', 'Any blackouts before?', 'Has she had anything like this before?', 'Any previous seizures?', 'Any epilepsy history?', 'Any epilepsy hx?', 'Seizure hx?', 'Any prior fits?'], 'diabetes': ['Any sugar problems?', 'Does she have type 1 diabetes?', 'Is she on insulin?', 'Any history of low blood sugar?', 'Has she ever had hypos?', 'Any endocrine problems?', 'Is there diabetes in the family?', 'Does she check her blood sugar?', 'Any thyroid or diabetes?', "Has she ever been told she's diabetic?"], 'vomiting': ['Has she been sick at all?', 'Any retching?', 'Did she vomit at home?', 'Was there any vomit in the room?', 'Any sickness today?', 'Has she brought anything up?', 'Any nausea or vomiting?', 'Did she vomit in the ambulance?', 'Any loose stools?'], 'abdominal_pain': ['Any belly pain?', 'Has she held her tummy at all?', 'Any pain in the stomach?', 'Has she complained of cramps?', 'Any abdominal symptoms?', 'Does her tummy seem to hurt?', 'Any pain when you touch her belly?', 'Any GI symptoms?', 'Has she been constipated?', 'Any bowel problems?'], 'pain_anywhere': ['Where is the pain?', 'Is anything painful?', 'Has she complained of pain anywhere?', 'Any discomfort?', 'Does the pain move anywhere?', 'How severe is it?', 'What sort of pain is it?'], 'urinary_symptoms': ['When did she last go to the toilet?', 'Any trouble weeing?', 'Has she wet herself?', 'Any incontinence?', 'Any urinary problems?', 'Has she been passing water normally?', 'Any pain passing urine?', 'Any frequency or urgency?', 'How much urine has she passed?'], 'chest_or_palpitations': ['Any chest tightness?', 'Has she said her heart was racing?', 'Any complaints about her chest?', 'Has she had chest pain before?', 'Any cardiac symptoms?', 'Has she felt her heart pounding?', 'Any history of heart problems?', 'Any chest discomfort?', 'Any fluttering in the chest?'], 'breathing': ['Any shortness of breath?', 'Has she been breathless?', 'Any wheezing?', 'Does she have asthma?', 'Any inhalers?', 'Any cough?', 'Has her breathing changed?', 'Any difficulty breathing?', 'Any chest infection recently?'], 'vision_or_hallucinations': ['Has she been talking to herself?', "Is she reaching for things that aren't there?", 'Any strange behavior?', 'Has she been seeing or hearing things?', 'Any delusions?', 'Has she said anything odd?', 'Is she picking at things?', 'Any visual disturbance?', 'Has she been paranoid?', 'Is she hallucinating at all?', 'Any visual hallucinations?'], 'last_oral_intake': ['Has she eaten today?', 'When did she last have a meal?', 'Any food or drink today?', 'When did she last drink anything?', 'Has she had breakfast?', 'Is she nil by mouth?', 'How long since she last ate?', 'Anything to eat or drink in the last few hours?', 'Any fluids today?', 'NPO status?', 'Last meal?', 'Last oral intake?'], 'pregnancy': ['Could she be pregnant?', 'Is she on contraception?', 'When was her last menstrual period?', 'Any chance of pregnancy at all?', 'Has she missed a period?', 'Is she sexually active that you know of?', 'Any pregnancy test recently?', 'Are her periods regular?', 'LMP?', 'Any chance she is pregnant at all?', 'Obstetric history?'], 'travel_and_contacts': ['Has she been abroad recently?', 'Anyone at home unwell?', 'Any contact with anyone infectious?', 'Has she been camping or outdoors?', 'Any tick bites?', 'Anyone at school off sick?', 'Any recent trips?', 'Has she been anywhere unusual?', 'Any exposure history?', 'Travel hx?', 'Any contact history?'], 'immunizations': ['Has she had all her vaccines?', 'Any missed immunizations?', 'Did she have the meningococcal vaccine?', 'Is her childhood schedule complete?', 'Any recent vaccinations?', 'Has she had the HPV jab?', 'Are her boosters up to date?', 'Any vaccine history?', 'Is she fully immunized?', 'Any vaccines in the last month?', 'Vaccination hx?', 'Immunization status?'], 'what_ems_said': ['What did the ambulance find?', 'Did the crew give her anything?', 'What were her observations in the ambulance?', 'How was she on the way in?', 'Did she change en route?', 'What did the paramedics tell you?', 'Anything happen in the ambulance?', 'Did the crew say anything about her heart?', 'What treatment did she get before arriving?', 'What did the crew hand over?', 'EMS handover?', 'Prehospital findings?'], 'collateral_from_brother': ['Is there anyone else who saw her?', 'Can we speak to anyone at the house?', 'Did anyone hear anything?', 'Who else was there?', 'Has anyone looked round her room?', 'Is there anyone at home now?', 'Could someone check the house?', 'Did her brother notice anything?', 'Any other witnesses?', 'Anyone else who could tell us more?', 'Any collateral history?', 'Is there any collateral?'], 'current_medications': ['Does she take any tablets regularly?', 'Any repeat prescriptions?', 'Is she on anything from the doctor?', 'Any medication at all?', 'Does she take vitamins or supplements?', 'Any herbal remedies?', 'Regular meds?', 'Home meds?']}
 for _t in TOPICS:
     for _v in MORE.get(_t["topic"], []):
         if _v not in _t["variants"]:
@@ -860,7 +860,7 @@ EXPANDED = {
     'Is it in one place or all over?',
     'Which part of you hurts?',
     'Is it your arms, your legs, or everywhere?',
-    'Can you localise the pain?',
+    'Can you localize the pain?',
     'Where is it worst?',
     'Is the pain in your muscles?',
     'Where does it hurt right now?',
@@ -969,8 +969,8 @@ EXPANDED = {
     'Is it hard to breathe?',
     'Do you feel you cannot get your breath?',
     'Breathless at all?',
-    'Dyspnoea?',
     'Dyspnea?',
+    'Dyspnoea?',
     'Any trouble with your breathing?',
     'Are you getting enough air?',
     'I need to know, are you breathless?',
@@ -1045,7 +1045,7 @@ EXPANDED = {
   ],
   'travel_and_contacts': [
     'Been abroad recently?',
-    'Have you travelled?',
+    'Have you traveled?',
     'Any foreign travel?',
     'Travel history?',
     'Have you been out of the country?',
@@ -1066,17 +1066,17 @@ EXPANDED = {
     'Right. Any recent travel?',
     'Just so I know, been abroad recently?',
     'I need to know, been abroad recently?',
-    'And have you travelled?',
-    'Can I ask, have you travelled?',
+    'And have you traveled?',
+    'Can I ask, have you traveled?',
   ],
-  'immunisations': [
+  'immunizations': [
     'Are your vaccinations up to date?',
     'Vaccines?',
     'Have you had your jabs?',
-    'Immunisation history?',
+    'Immunization history?',
     'Have you had the meningitis vaccine?',
     'Did you have your school vaccines?',
-    'Are your immunisations current?',
+    'Are your immunizations current?',
     'Any vaccines recently?',
     'Have you had all your childhood vaccines?',
     'Meningococcal vaccine?',
@@ -1084,7 +1084,7 @@ EXPANDED = {
     'Quick one: are your vaccinations up to date?',
     'One more thing. Vaccination history?',
     'Okay, vaccination history?',
-    'I need to know, any immunisations?',
+    'I need to know, any immunizations?',
   ],
   'collateral_from_brother': [
     'Anyone else unwell?',
@@ -1103,7 +1103,7 @@ OUT_OF_SCOPE_BANK = [
   'Any heartburn?',
   'Any indigestion after meals?',
   'Any change in your bowel habit?',
-  'Any diarrhoea at all?',
+  'Any diarrhea at all?',
   'Have you had piles?',
   'Any black stools?',
   'Any yellowing of your skin or eyes?',
@@ -1176,3 +1176,113 @@ for _t in TOPICS:
         _t['expanded_variants'] = list(EXPANDED[_t['topic']])
         _t['variants_provenance'] = "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
 # ---- END EXPANDED VARIANTS ----
+
+# ---- VOLUNTEERED ANSWERS (generated, do not edit by hand) ----
+# Written by catalog/author_interview_volunteers.py (v0.18a). See that file for the rules.
+ADJACENT = {
+ "onset": [
+  "last_seen_well",
+  "what_she_was_doing"
+ ],
+ "last_seen_well": [
+  "what_she_was_doing"
+ ],
+ "medicines_in_the_house": [
+  "current_medications"
+ ],
+ "past_medical_history": [
+  "seizure_history",
+  "current_medications"
+ ],
+ "past_surgical_history": [
+  "past_medical_history"
+ ],
+ "current_medications": [
+  "past_medical_history"
+ ],
+ "who_lives_at_home": [
+  "collateral_from_brother"
+ ],
+ "bullying_and_school": [
+  "relationship"
+ ],
+ "relationship": [
+  "sleep_and_appetite"
+ ],
+ "fever_or_infection": [
+  "travel_and_contacts",
+  "rash"
+ ],
+ "headache": [
+  "neck_stiffness"
+ ],
+ "neck_stiffness": [
+  "rash"
+ ],
+ "rash": [
+  "neck_stiffness"
+ ],
+ "vomiting": [
+  "abdominal_pain"
+ ],
+ "abdominal_pain": [
+  "vomiting"
+ ],
+ "chest_or_palpitations": [
+  "breathing"
+ ],
+ "breathing": [
+  "chest_or_palpitations"
+ ],
+ "vision_or_hallucinations": [
+  "progression"
+ ],
+ "last_oral_intake": [
+  "vomiting"
+ ],
+ "travel_and_contacts": [
+  "fever_or_infection"
+ ],
+ "what_ems_said": [
+  "progression"
+ ]
+}
+VOLUNTEER = {
+ "last_seen_well": "'She was fine when I looked in at half seven this morning.'",
+ "what_she_was_doing": "'She'd stayed off school today, so she was home on her own.'",
+ "vision_or_hallucinations": "'In the ambulance she was reaching for people who weren't there.'",
+ "current_medications": "'She doesn't take anything regularly.'",
+ "seizure_history": "'She's never had a fit.'",
+ "past_medical_history": "'She's never been in hospital.'",
+ "collateral_from_brother": "'Her brother got home about three and says he didn't hear anything.'",
+ "relationship": "'She broke up with her boyfriend three or four weeks ago.'",
+ "sleep_and_appetite": "'She's been up half the night and not eating with us for weeks.'",
+ "travel_and_contacts": "'Nobody at home or at school has been ill.'",
+ "rash": "'She's gone red in the face and chest, but there are no spots.'",
+ "neck_stiffness": "'She's not had a stiff neck.'",
+ "fever_or_infection": "'She hasn't had so much as a cold.'",
+ "abdominal_pain": "'She hasn't complained of her stomach.'",
+ "vomiting": "'She hasn't been sick that I've seen.'",
+ "breathing": "'She's breathing fast now, though.'",
+ "chest_or_palpitations": "'She's never had anything wrong with her heart.'",
+ "progression": "'She's got worse since I found her, and hotter.'"
+}
+VOLUNTEER_SETTINGS = {
+ "must_ask": [
+  "allergies",
+  "pregnancy",
+  "alcohol_and_drugs",
+  "smoking",
+  "mental_health_history",
+  "previous_self_harm",
+  "suicidal_intent",
+  "bottle_or_pills_found",
+  "what_she_took"
+ ],
+ "volunteers_note": "adjacent, volunteer, must_ask and volunteer_blocked_when were written by catalog/author_interview_volunteers.py (v0.18a). A first answer carries the volunteer line of each adjacent topic, and the adjacent topic counts as asked. must_ask topics are safety screens and are never volunteered. Every volunteer line restates part of that topic's own answer. Not physician-reviewed."
+}
+for _t in TOPICS:
+    _t.pop('adjacent', None); _t.pop('volunteer', None)
+    if _t['topic'] in ADJACENT: _t['adjacent'] = ADJACENT[_t['topic']]
+    if _t['topic'] in VOLUNTEER: _t['volunteer'] = VOLUNTEER[_t['topic']]
+# ---- END VOLUNTEERED ANSWERS ----

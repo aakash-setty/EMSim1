@@ -2015,7 +2015,7 @@ for p in ["head and neck", "head and neck exam", "examine the head and neck"]:
 for p in ["full exam", "complete exam", "full physical", "complete physical", "physical exam",
           "head to toe", "head to toe exam", "full physical exam", "examine the patient",
           "primary survey", "secondary survey", "top to toe", "whole exam", "general exam"]:
-    unavailable(p, "Name the examination you want. Each manoeuvre is a separate act and they are "
+    unavailable(p, "Name the examination you want. Each maneuver is a separate act and they are "
                    "listed on the Exam tab.")
 
 CONSULT_VERBS = ["consult", "call", "page", "get", "refer to", "speak to", "talk to", "bring in",

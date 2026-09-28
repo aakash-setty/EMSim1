@@ -10,7 +10,7 @@ real cognitive task rather than a lookup.
 STATUS: DRAFT, NOT CLINICALLY REVIEWED. This list was assembled by the drafting
 AI. Diagnosis naming is not a clinical fact in the sense of section 2 of the
 authoring requirements (no symptom, finding, value, or recommendation is asserted
-here), but list COMPOSITION is a clinical judgement, and an omission is invisible
+here), but list COMPOSITION is a clinical judgment, and an omission is invisible
 to the learner: a resident who cannot find the right answer cannot tell "wrong"
 from "not in the list". A physician must review before release.
 
@@ -72,7 +72,7 @@ CATALOG = {
     ("Aspiration pneumonia", []), ("Aspiration pneumonitis", []),
     ("COPD exacerbation", ["AECOPD", "emphysema exacerbation"]),
     ("Asthma exacerbation", []), ("Status asthmaticus", []),
-    ("Pulmonary embolism", ["PE"]), ("Massive pulmonary embolism", ["saddle PE"]),
+    ("Pulmonary embolism", ["PE"]), ("Massive pulmonary embolism", ["high-risk PE"]),
     ("Primary spontaneous pneumothorax", []),
     ("Secondary spontaneous pneumothorax", []),
     ("Tension pneumothorax", []), ("Hemothorax", []),
@@ -235,7 +235,7 @@ CATALOG = {
     # Sodium channel blocker cardiotoxicity is deliberately a mechanism rather than an
     # agent, because that is how it is handed over and because it is the thing a receiving
     # team acts on: the same entry serves tricyclic, diphenhydramine, cocaine, bupropion,
-    # flecainide and local anaesthetic poisoning, all of which are treated the same way.
+    # flecainide and local anesthetic poisoning, all of which are treated the same way.
     # It is the entry a wide QRS after any exposure should resolve to.
     #
     # Drug-induced seizure exists because the nearest previous fit was status epilepticus,
@@ -270,7 +270,7 @@ CATALOG = {
     ("Arterial gas embolism", []),
     ("High-altitude cerebral edema", ["HACE"]),
     ("High-altitude pulmonary edema", ["HAPE"]),
-    ("Acute mountain sickness", ["AMS"]),
+    ("Acute mountain sickness", ["altitude sickness"]),
     ("Electrical injury", []), ("Lightning injury", []),
     ("Thermal burn", []), ("Chemical burn", []),
     ("Inhalation injury", []), ("Acute radiation syndrome", []),
@@ -436,7 +436,7 @@ OUT = {
       "assembled_by": "drafting AI, not a physician",
       "codes": "none. ICD-10 and SNOMED codes are deliberately absent rather "
                "than generated from memory.",
-      "review_required": "list composition is a clinical judgement and an "
+      "review_required": "list composition is a clinical judgment and an "
                          "omission is invisible to the learner.",
   },
   "search_contract": {

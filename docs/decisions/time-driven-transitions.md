@@ -17,15 +17,15 @@ so flatly, and section 4 refused a time predicate in the condition language.
 That invariant bought coherence cheaply. It also made a category of case unauthorable, and not a
 marginal one. Consider what these presentations have in common:
 
-- meningococcal septicaemia
+- meningococcal septicemia
 - anaphylaxis
 - status epilepticus
 - tension pneumothorax
 - occlusive myocardial infarction
 - tricyclic antidepressant overdose
-- hyperkalaemia with a widening QRS
-- massive haemorrhage
-- necrotising soft tissue infection
+- hyperkalemia with a widening QRS
+- massive hemorrhage
+- necrotizing soft tissue infection
 
 In every one of them the thing being taught is that the passage of time costs something. Not that a
 particular action is wrong, and not that a particular action is right, but that a correct action
@@ -34,7 +34,7 @@ nothing. A simulator in which an untreated patient is indistinguishable from a t
 say that. It can only say it in the debrief, afterwards, as a number.
 
 **What authors did instead was worse.** The only available workaround was to substitute a proxy: find
-an action the resident might plausibly take and hang the deterioration on it. The meningococcaemia
+an action the resident might plausibly take and hang the deterioration on it. The meningococcemia
 case reached its refractory shock phase by intubation, because intubating a vasoplegic
 glucocorticoid-deficient patient genuinely does collapse her and it was the only action-shaped route
 available. That is defensible physiology and it is the wrong lesson. It teaches "intubation caused
@@ -77,7 +77,7 @@ action's halt reason, and telling a resident "you gave metoprolol and she arrest
 arrested because nothing was given attributes an omission to a commission. A case that can end on the
 clock authors its own terminal phase with its own `timeout_reason`.
 
-**Ticking every phase.** Rejected because it would change the behaviour of every case already
+**Ticking every phase.** Rejected because it would change the behavior of every case already
 written. Section 5.6 specifies that an already-satisfied transition does not fire until the next
 state-changing action, and a universal tick would silently make cascades resolve on their own.
 Ticking only in phases that carry a time-guarded rule keeps every v0.5 case bit-identical.
@@ -137,8 +137,8 @@ That is why a third review artifact was added rather than the second one being w
 | Delayed consequence of an action | `flag F set` | `guard_true` | An action whose effect is not instantaneous |
 | Scheduled natural history | `null` | `phase_entry` | The illness does something regardless |
 
-The second is worth dwelling on, because it improves cases that have nothing to do with delay. Modelling
-peri-intubation collapse as instantaneous teaches that the tube caused it. Modelling it forty-five
+The second is worth dwelling on, because it improves cases that have nothing to do with delay. Modeling
+peri-intubation collapse as instantaneous teaches that the tube caused it. Modeling it forty-five
 seconds after induction teaches that the induction agent and the positive pressure caused it, and
 leaves a window in which a resident who anticipated it can have a pressor running. The clinical
 lesson is in the window.
@@ -188,20 +188,20 @@ Worked examples, each of which the mechanism supports without extension:
 | Occlusive infarction | `NOT flag reperfusion_activated set`, 300s, → cardiogenic shock | Time is muscle, expressed as physiology rather than as a debrief line |
 | Tension pneumothorax | `NOT flag needle_decompression set`, 90s, → arrest, terminal, opt-in | The one presentation where a very short deadline is defensible |
 | Tricyclic overdose | `NOT flag bicarbonate_given set`, 240s, → wide-complex arrhythmia | The QRS is the clock, and the case can show it widening as a step |
-| Hyperkalaemia | `NOT flag calcium_given set`, 180s, → sine wave | Membrane stabilisation is time-critical in a way potassium shifting is not |
-| Massive haemorrhage | `NOT flag blood_products_given set`, 180s, → coagulopathic shock | Crystalloid does not satisfy the guard, which is the lesson |
+| Hyperkalemia | `NOT flag calcium_given set`, 180s, → sine wave | Membrane stabilization is time-critical in a way potassium shifting is not |
+| Massive hemorrhage | `NOT flag blood_products_given set`, 180s, → coagulopathic shock | Crystalloid does not satisfy the guard, which is the lesson |
 | Simple febrile seizure | no guard, 90s, → postictal | Natural history: it stops on its own, and the teaching is that nothing needed doing |
 | Biphasic anaphylaxis | no guard, 400s, → recurrence | The reason the patient is observed rather than discharged |
 | Any case with an airway | `flag intubated set`, 45s, `guard_true` → peri-intubation hypotension | Improves cases that have no time pressure at all |
 
 The last two rows are the ones worth noticing. This is not only a deterioration mechanism. Scheduled
-natural history and delayed consequences are both better modelled with it than without, and neither
+natural history and delayed consequences are both better modeled with it than without, and neither
 punishes the resident for being slow.
 
 **A convention worth adopting across the library:** where a case uses deterioration on inaction, the
 deadline should be roughly three times the prompt deadline for the action that prevents it. That puts
 the escalation prompt comfortably inside the window and leaves a resident who acts on the second
-prompt with time to spare. The meningococcaemia case runs at 240 seconds against a 45-second
+prompt with time to spare. The meningococcemia case runs at 240 seconds against a 45-second
 antibiotic prompt and a 90-second escalation, which is a ratio of about five and is on the generous
 side deliberately, because it is the first case to use the feature.
 

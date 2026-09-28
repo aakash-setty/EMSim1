@@ -28,7 +28,7 @@ add(A("attach_monitor", tag=CRIT_ALWAYS, flags=["monitor_attached"],
   debrief_note=(
     "Until an action carrying the monitor capability is taken, every cell on the monitor reads a "
     "dash and there is no heartbeat. That is a property of the simulator that mirrors the "
-    "department: nobody knows the rate is 160 and irregular until somebody puts leads on him. In a "
+    "department: the crew gave you numbers from the road, and only the monitor tells you what he is doing now. In a "
     "case whose entire management hinges on a rate and a rhythm, attaching the monitor is not "
     "housekeeping. It is the first diagnostic act, and it is scored as one.")))
 
@@ -58,7 +58,7 @@ NIV_STEPS = [
      "key, because effects sharing a key do not stack. All four are guarded on not being "
      "intubated: the mask comes off at intubation and the ventilated phase authors its own "
      "saturation. The size and the tempo are teaching choices. No trial supports either number, "
-     "and the review packet says so rather than implying the simulator is modelling alveolar "
+     "and the review packet says so rather than implying the simulator is modeling alveolar "
      "recruitment.")},
 ]
 
@@ -95,7 +95,7 @@ add(A("non_invasive_positive_pressure_ventilation",
     "between the modes in mortality or intubation rate, and bilevel is often preferred when the "
     "patient is tiring and hypercapnic, as this one is on his venous gas. Be honest about the "
     "evidence. Meta-analyses report reductions in intubation and mortality against standard oxygen "
-    "therapy; 3CPO, the largest randomised trial, found no difference in seven-day mortality or "
+    "therapy; 3CPO, the largest randomized trial, found no difference in seven-day mortality or "
     "intubation rate. The strongest defensible claim is faster symptomatic and physiological "
     "improvement, with intubation avoidance supported by meta-analytic but not by single-trial "
     "evidence. The historical concern that bilevel increased myocardial infarction has not been "
@@ -117,13 +117,13 @@ add(A("nasal_cannula_oxygen", tag=RECOMMENDED, flags=["supplemental_o2"],
                            "positive pressure is on, because the cannula comes off when the mask "
                            "goes on and the two are not additive. Deliberately not enough: a "
                            "resident who reaches for oxygen and watches the number go from 88 to "
-                           "91 has learned that oxygen treats hypoxaemia and not the flooded "
+                           "91 has learned that oxygen treats hypoxemia and not the flooded "
                            "alveoli causing it.")}],
   debrief_note=(
-    "Reasonable and insufficient. Supplemental oxygen corrects some of the hypoxaemia and does "
+    "Reasonable and insufficient. Supplemental oxygen corrects some of the hypoxemia and does "
     "nothing about the water in the alveoli, the work of breathing, or the ventricular filling "
     "time. It is not a wrong action and it is not a substitute for positive pressure. Note also "
-    "that oxygen has no benefit in a patient who is not hypoxaemic; this one is, so it is "
+    "that oxygen has no benefit in a patient who is not hypoxemic; this one is, so it is "
     "indicated here on that ground alone.")))
 
 add(A("non_rebreather_mask", tag=RECOMMENDED, flags=["supplemental_o2"],
@@ -132,7 +132,7 @@ add(A("non_rebreather_mask", tag=RECOMMENDED, flags=["supplemental_o2"],
                   "note": "Same key as the nasal cannula, so the most recent of the two wins and "
                           "neither stacks with positive pressure."}],
   debrief_note=(
-    "Corrects more of the hypoxaemia than a cannula and still leaves the mechanism untreated. The "
+    "Corrects more of the hypoxemia than a cannula and still leaves the mechanism untreated. The "
     "reason to know this is that a saturation restored by a high fraction of inspired oxygen can "
     "make a tiring patient look better on the monitor than he is at the bedside. The respiratory "
     "rate and the work of breathing are the numbers to watch here, not the saturation.")))
@@ -146,8 +146,7 @@ add(A("intubate_rapid_sequence",
   debrief_note=(
     "Appropriate for a patient who has already failed or cannot tolerate non-invasive support, and "
     "premature in a man who is awake, protecting his airway, and has not yet had a mask on his "
-    "face. Most patients in acute cardiogenic pulmonary edema who are intubated are intubated "
-    "because positive pressure was started too late. Two specific hazards worth naming before you "
+    "face. Some patients in acute cardiogenic pulmonary edema who end up intubated might have avoided it with earlier positive pressure. Two specific hazards worth naming before you "
     "do it in this patient: induction removes the endogenous sympathetic drive that a poorly "
     "contracting ventricle is leaning on, and positive pressure ventilation reduces venous return, "
     "so the blood pressure after the tube is frequently much lower than the blood pressure before "
@@ -160,15 +159,17 @@ for cid, fl, nm in [("etomidate_bolus", "sedation_given", None),
                     ("propofol_bolus", "sedation_given", None),
                     ("rocuronium_bolus", "paralytic_given", None),
                     ("succinylcholine_bolus", "paralytic_given", None)]:
-    add(A(cid, tag=RECOMMENDED, flags=[fl],
+    # v0.18a: credited only where intubation is the right call, not counted as missed elsewhere.
+    add(A(cid, tag=[{"when": "phase is respiratory_failure", "value": "recommended"},
+                    {"when": None, "value": "neutral"}], flags=[fl],
       debrief_note=(
         "Induction and paralysis are prerequisites of intubation in this simulator, which is the "
         "sequence teaching rather than a scoring opportunity. Agent choice matters in this patient: "
         "he has a poorly contracting ventricle and is depending on his own adrenergic tone, so an "
-        "agent with less haemodynamic cost is the safer choice and a large dose of any of them is "
+        "agent with less hemodynamic cost is the safer choice and a large dose of any of them is "
         "not." if fl == "sedation_given" else
         "A paralytic is a prerequisite of intubation here. It creates an obligation rather than "
-        "discharging one: a paralysed patient who is not sedated is awake, aware and unable to "
+        "discharging one: a paralyzed patient who is not sedated is awake, aware and unable to "
         "signal, which is why post-intubation sedation is tracked as a follow-up.")))
 
 for cid in ("propofol_infusion", "ketamine_infusion", "fentanyl_bolus"):
@@ -190,40 +191,33 @@ add(A("place_pads_for_monitoring", tag=RECOMMENDED, flags=["pacing_pads_placed"]
     "Sensible in any patient in a tachyarrhythmia, because it is the difference between deciding "
     "to cardiovert and being able to. It commits you to nothing.")))
 
-add(A("synchronized_cardioversion", tag=DISCOURAGED, flags=["cardioverted"],
+add(A("synchronized_cardioversion", tag=[{"when": "phase is respiratory_failure", "value": "neutral"}, {"when": None, "value": "discouraged"}], flags=["cardioverted"],
   prerequisites=[{"when": "flag sedation_given set",
                   "failure_message": "He's wide awake and talking to us. Do you want to give him "
                                      "something before we shock him?",
                   "source": "case"}],
   follow_ups_triggered=["anticoagulation_after_cardioversion"],
   debrief_note=(
-    "Immediate synchronised cardioversion is the right answer for atrial fibrillation with a rapid "
-    "ventricular response causing hypotension, ischaemic chest pain, acute heart failure "
-    "attributable to the rate, or altered mental status. This patient has none of those in the "
-    "form that mandates electricity: his systolic pressure is 132, he is awake and oriented, and "
-    "he has no severe chest pain. The heart failure argument is the one worth arguing about, "
-    "because he does have pulmonary edema and the rate is plausibly driving it, and a reviewer "
-    "who wants to defend electricity here has a case to make. Two things weigh against it. The "
-    "duration of the arrhythmia is unknown and longer than forty-eight hours cannot be excluded, "
-    "so cardioversion without anticoagulation or a transoesophageal echocardiogram carries a "
-    "thromboembolic risk that is not trivial. And cardioversion of an arrhythmia driven by an "
+    "Immediate synchronized cardioversion is the right answer for atrial fibrillation with a rapid "
+    "ventricular response causing hypotension, ischemic chest pain, acute heart failure "
+    "attributable to the rate, or altered mental status. The AHA tachycardia algorithm lists acute heart failure alongside hypotension, altered mental status, shock and ischemic chest discomfort as reasons for synchronized cardioversion, so a resident who reaches for electricity here is following a real rule. His systolic pressure is 132, he is awake and oriented, and he has no severe chest pain, so the heart failure is the only criterion he meets, and the rate is plausibly driving it. Two things weigh against it. His palpitations began suddenly about eighteen hours ago, but a week of leg swelling before that leaves open the possibility that he was in atrial fibrillation without feeling it. With a CHA2DS2-VASc of at least four, cardioversion without anticoagulation is a real thromboembolic risk, and the 2024 ESC guideline advises against early cardioversion without anticoagulation or transoesophageal imaging once atrial fibrillation has lasted more than 24 hours. If you do shock him, sedate him, synchronize, and start at a high biphasic energy rather than escalating. And cardioversion of an arrhythmia driven by an "
     "underlying decompensation tends not to hold. It is tagged discouraged rather than harmful "
     "because it is a defensible decision made on incomplete reasoning, not a lethal one."),
   references=[
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis "
-    "and Management of Atrial Fibrillation. Circulation. 2023;148(9):e1-e156. "
+    "and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. "
     "[UNVERIFIED in this pack, confirm before release]"]))
 
 add(A("unsynchronized_cardioversion", tag=DISCOURAGED, flags=[],
   debrief_note=(
-    "Unsynchronised shock delivered to an organised rhythm with a palpable pulse risks inducing "
+    "Unsynchronized shock delivered to an organized rhythm with a palpable pulse risks inducing "
     "ventricular fibrillation by landing the shock on a T wave. If the decision is to cardiovert "
-    "atrial fibrillation, the shock is synchronised. This is a button-selection error rather than "
+    "atrial fibrillation, the shock is synchronized. This is a button-selection error rather than "
     "a reasoning error, and it is the reason the sync button exists.")))
 
 # ------------------------------------------------------------------ rate control
 # What the nurse says the moment any rate-controlling drug goes in. It is a nurse_alert
-# rather than an ordinary narration, so it is coloured and it goes into the running chart:
+# rather than an ordinary narration, so it is colored and it goes into the running chart:
 # a resident deciding ten seconds later whether the drug has failed needs to be able to
 # find this line again, and by then it has scrolled off the nurse's banner.
 #
@@ -245,7 +239,7 @@ RATE_CONTROL_HR_EFFECTS = [
      "is the point: the drug worked, and the patient is still in a rapid ventricular "
      "response, and the answer is another dose rather than another drug. Guarded on the "
      "three phases where the rate is not already carried by the phase itself, because in "
-     "the rate-controlled and stabilised phases the authored number is the controlled one "
+     "the rate-controlled and stabilized phases the authored number is the controlled one "
      "and this would subtract from it twice. Twenty-two is a teaching choice.")},
   {"vital": "heart_rate", "delta": -13, "key": "rate_control_hr_in_failure",
    "while": "phase is respiratory_failure AND flag rate_control_adequate set",
@@ -278,9 +272,7 @@ add(A("digoxin_bolus",
   flags_set_repeat=RATE_CONTROL_REPEAT,
   follow_ups_triggered=["second_rate_control_dose"],
   debrief_note=(
-    "This entry stands for the act of rate control rather than for one drug: digoxin, amiodarone "
-    "and metoprolol are bound together, any of the three satisfies the critical action, and all "
-    "three carry this note. That is deliberate, because the defensible answer here is a strategy "
+    "This entry stands for the act of rate control rather than for one drug: digoxin, amiodarone and metoprolol are scored as one choice, so any of the three satisfies the critical action, and all three carry this note. That is deliberate, because the defensible answer here is a strategy "
     "rather than a named agent, and it should respond to the patient in front of you.\n\n"
     "Why not diltiazem, which is the reflex answer for atrial fibrillation with a rapid "
     "ventricular response: non-dihydropyridine calcium channel blockers are negatively inotropic, "
@@ -305,7 +297,7 @@ add(A("digoxin_bolus",
     "less certain, and the endpoint that matters here is clinical response rather than a number."),
   references=[
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis "
-    "and Management of Atrial Fibrillation. Circulation. 2023;148(9):e1-e156. "
+    "and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. "
     "[UNVERIFIED in this pack, confirm before release]",
     "Van Gelder IC, Groenveld HF, Crijns HJGM, et al. Lenient versus strict rate control in "
     "patients with atrial fibrillation (RACE II). N Engl J Med. 2010;362(15):1363-73. "
@@ -334,24 +326,19 @@ add(A("diltiazem_bolus", tag=[
     "This is the decision the case is built around, and the tag is discouraged rather than harmful "
     "on purpose.\n\n"
     "Giving diltiazem on arrival, to a man in atrial fibrillation with a rapid ventricular "
-    "response, a systolic pressure of 132 and no known cardiomyopathy, is a defensible first move "
-    "and is what most guidelines would support for that patient as described. It is scored as a "
-    "deduction rather than a failure because the ejection fraction was knowable at the bedside in "
-    "under a minute and had not been looked for. The lesson is not that you should have known; it "
+    "response, a systolic pressure of 132 and no known cardiomyopathy, is a common first move and a defensible one if the heart failure has not yet been recognized. It is scored as a deduction rather than a failure because the ejection fraction was knowable at the bedside in under a minute, and because the crackles, the raised venous pressure and the hypoxemia were already saying this was not uncomplicated atrial fibrillation. The lesson is not that you should have known; it "
     "is that you could have.\n\n"
     "Continuing it after the POCUS shows an ejection fraction of 30 to 35 percent is the actual "
     "error, and it is a specific and common one: the drug produced exactly the effect that was "
     "asked of it, the rate came down, and it is still the wrong drug for the disease underneath. "
-    "The 2023 ACC/AHA/ACCP/HRS guideline advises avoiding non-dihydropyridine calcium channel "
-    "blockers in patients with significant left ventricular systolic dysfunction, because their "
-    "negative inotropy reduces stroke volume in a ventricle that has none to spare. Watch what "
+    "The 2023 ACC/AHA/ACCP/HRS guideline recommends against intravenous non-dihydropyridine calcium channel blockers in patients with significant left ventricular systolic dysfunction, as a harm recommendation, because their negative inotropy reduces stroke volume in a ventricle that has none to spare. Watch what "
     "happened to the blood pressure on your monitor after you gave it.\n\n"
     "A drug that produces the physiological effect you wanted can still be the wrong treatment for "
     "the patient's underlying disease. That is the transferable point, and it is worth more than "
     "the drug name."),
   references=[
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis "
-    "and Management of Atrial Fibrillation. Circulation. 2023;148(9):e1-e156. "
+    "and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. "
     "[UNVERIFIED in this pack, confirm before release]"]))
 
 add(A("adenosine_bolus", tag=DISCOURAGED, flags=[], prerequisites=[PRE_IV],
@@ -362,7 +349,7 @@ add(A("adenosine_bolus", tag=DISCOURAGED, flags=[], prerequisites=[PRE_IV],
     "undifferentiated narrow-complex tachycardia is diagnostic, to slow conduction long enough to "
     "see the atrial activity underneath, and that question is already answered here: the rhythm is "
     "irregularly irregular with no P waves. It also causes a period of asystole that is "
-    "unpleasant in a patient who is already hypoxaemic and frightened.")))
+    "unpleasant in a patient who is already hypoxemic and frightened.")))
 
 add(A("propranolol_bolus", tag=DISCOURAGED, flags=["rate_control_given"], prerequisites=[PRE_IV],
   nurse_alert=RATE_CONTROL_ALERT,
@@ -371,12 +358,11 @@ add(A("propranolol_bolus", tag=DISCOURAGED, flags=["rate_control_given"], prereq
   vital_effects=RATE_CONTROL_HR_EFFECTS,
   debrief_note=(
     "Non-selective beta blockade with a long-acting agent is the least controllable way to slow "
-    "this patient. If a beta blocker is the chosen strategy, a short-acting and titratable one is "
-    "the safer route in a ventricle whose function you have only just measured. The flag is set, "
+    "this patient. If a beta blocker is chosen at all, it should be a small dose of a cardioselective agent given after the mask is on in a ventricle whose function you have only just measured. The flag is set, "
     "so the rate does come down, which is the point: it works and it is still not the choice to "
     "make.")))
 
-add(A("esmolol_drip", tag=DISCOURAGED, flags=["rate_control_given"], prerequisites=[PRE_IV],
+add(A("esmolol_drip", tag=[{"when": "flag on_niv set", "value": "neutral"}, {"when": None, "value": "discouraged"}], flags=["rate_control_given"], prerequisites=[PRE_IV],
   nurse_alert=RATE_CONTROL_ALERT,
   flags_set_repeat=RATE_CONTROL_REPEAT,
   follow_ups_triggered=["second_rate_control_dose"],
@@ -386,10 +372,7 @@ add(A("esmolol_drip", tag=DISCOURAGED, flags=["rate_control_given"], prerequisit
     "poorly tolerated it can be withdrawn in minutes, which is a real advantage in a patient whose "
     "ventricle you do not trust. The argument against it here is that this patient has active "
     "pulmonary edema and beta blockade in acute decompensation removes compensation along with "
-    "rate. Reasonable clinicians differ. It is tagged discouraged rather than recommended because "
-    "in a patient at a saturation of 88 percent with diffuse B-lines it is not the first thing to "
-    "reach for, and because there are two agents on the menu with a better risk profile in this "
-    "specific physiology.")))
+    "rate. Reasonable clinicians differ. It is tagged discouraged before positive pressure, because in a patient at a saturation of 88 percent with diffuse B-lines no beta blocker is the first thing to reach for, and digoxin and amiodarone have a better risk profile in this physiology. Once he is on the mask it is neutral, and if you do choose beta blockade then, esmolol is the most reversible way to do it.")))
 
 add(A("procainamide_drip", tag=DISCOURAGED, flags=[], prerequisites=[PRE_IV],
   debrief_note=(
@@ -442,19 +425,13 @@ add(A("magnesium_sulfate_bolus", tag=RECOMMENDED, flags=["magnesium_given"],
   prerequisites=[PRE_IV],
   debrief_note=(
     "His magnesium is 1.6 mg/dL. Correcting it is straightforward, cheap and safe, and it is worth "
-    "doing for two reasons: magnesium is a cofactor for the sodium-potassium pump so hypokalaemia "
-    "and hypomagnesemia travel together and neither corrects properly while the other is low, and "
+    "doing for two reasons: magnesium is a cofactor for the sodium-potassium pump so hypokalemia "
+    "and hypomagnesemia travel together and potassium does not correct properly while magnesium is low, and "
     "intravenous magnesium has been reported to improve rate control and increase conversion when "
     "added to standard atrioventricular nodal blockade in rapid atrial fibrillation. The evidence "
-    "for that second claim rests on small randomised trials and a meta-analysis of them, not on a "
-    "large definitive trial, so it is a reasonable adjunct rather than a core therapy.\n\n"
-    "AUTHOR NOTE, and this needs your decision. Your brief bundled correcting the hypomagnesemia "
-    "into critical action four alongside the loop diuretic. It is tagged recommended here rather "
-    "than critical, because the set of critical actions a phase expects is computed once on entry "
-    "to that phase, so a tag that only becomes critical after the magnesium level results can "
-    "never appear in the missed list, and an unconditionally critical tag tells a resident who "
-    "never had reason to suspect hypomagnesemia that they missed a critical action. If you want "
-    "it critical, that is a one-line change and the review packet says where."),
+    "for that second claim rests on small randomized trials and a meta-analysis of them, not on a "
+    "large definitive trial, so it is a reasonable adjunct rather than a core therapy."
+    ""),
   references=[
     "Bouida W, Beltaief K, Msolli MA, et al. Low-dose magnesium sulfate versus high dose in the "
     "early management of rapid atrial fibrillation (LOMAGHI). Acad Emerg Med. 2019;26(2):183-91. "
@@ -466,19 +443,12 @@ add(A("potassium_chloride_kcl", tag=RECOMMENDED, flags=[],
                 "Supplementing is defensible and is not scored here. Note that potassium will not "
                 "correct properly while the magnesium is low.")))
 
-add(A("nitroglycerin_drip", tag=DISCOURAGED, flags=[], prerequisites=[PRE_IV],
+add(A("nitroglycerin_drip", tag=NEUTRAL, flags=[], prerequisites=[PRE_IV],
   debrief_note=(
-    "Nitrates are the pharmacological priority in hypertensive acute cardiogenic pulmonary edema, "
-    "where a systolic pressure of 180 or more means most of the edema is redistribution against "
-    "afterload. That is a different patient from this one. This man's systolic pressure is 132, so "
-    "there is little afterload to unload and a meaningful chance of dropping a pressure that is "
-    "already only adequate, in a ventricle that is preload dependent and filling badly because of "
-    "the rate. It is not absurd and it is not the treatment this presentation is asking for. "
-    "Recognising which pulmonary edema phenotype is in front of you is the transferable skill.")))
+    "Nitrates are the pharmacological priority in hypertensive acute cardiogenic pulmonary edema, where high doses unload afterload. This man is not that patient, and here nitroglycerin is an optional adjunct rather than a priority. At low to moderate doses it is mainly a venodilator, so it lowers preload and pulmonary capillary pressure in a ventricle that is overfilled, and heart failure guidelines allow it alongside the diuretic in a patient who is not hypotensive. The evidence is weak and the caution is real. His systolic pressure is 132 and rate control and positive pressure will both lower it, so if you start it, start low, titrate to the pressure, and stop it if the pressure drifts. It does not replace the mask or the diuretic.")))
 
-add(A("nitroglycerin_sublingual", tag=DISCOURAGED, flags=[],
-  debrief_note=("Same reasoning as the infusion. He is not hypertensive, so there is little to "
-                "unload and a pressure to lose.")))
+add(A("nitroglycerin_sublingual", tag=NEUTRAL, flags=[],
+  debrief_note=("Same reasoning as the infusion. Optional here, and an infusion is easier to titrate and to stop.")))
 
 add(A("dobutamine_drip", tag=DISCOURAGED, flags=[], prerequisites=[PRE_IV],
   debrief_note=(
@@ -503,18 +473,11 @@ add(A("apixaban", tag=CRIT_ALWAYS, flags=["anticoagulated"],
           "text": "Pharmacy is asking whether you want him started on anything for stroke "
                   "prevention while he's in this rhythm."},
   debrief_note=(
-    "This entry stands for the act of anticoagulating rather than for one agent: apixaban, "
-    "enoxaparin and a heparin infusion are bound together and any of the three satisfies the "
-    "critical action.\n\n"
-    "The risk assessment first. Counting CHA2DS2-VASc for this man: hypertension one, age 65 to 74 "
-    "one, diabetes one, and vascular disease one on the basis of documented coronary artery "
-    "disease, which gives four. Whether the vascular disease point applies turns on how the "
-    "coronary disease is documented, and a reviewer who counts three rather than four reaches the "
-    "same decision, because either score is comfortably above the threshold at which "
-    "anticoagulation is recommended for a man. There is nothing in his history that "
+    "This entry stands for the act of anticoagulating rather than for one agent: apixaban, enoxaparin and a heparin infusion are scored as one choice, and any of the three satisfies the critical action.\n\n"
+    "The risk assessment first. Counting CHA2DS2-VASc for this man: congestive heart failure one, which the ultrasound has just given him, hypertension one, age 65 to 74 one, and diabetes one, which gives four. Vascular disease would make it five, and whether that point applies turns on how the coronary disease is documented, because moderate non-obstructive plaque on a CT coronary angiogram may not meet the definition. Either score is comfortably above the threshold at which anticoagulation is recommended for a man. There is nothing in his history that "
     "contraindicates it.\n\n"
     "On the choice of agent. A direct oral anticoagulant is preferred for non-valvular atrial "
-    "fibrillation, is what he will go home on, and can be started in the department. A heparin "
+    "fibrillation, is what he will go home on, and can be started in the department once he can safely swallow. While he is on a mask and may still need a tube, a heparin infusion is often the more practical first choice. A heparin "
     "infusion is a reasonable choice when the plan may include cardioversion or an early "
     "procedure, when renal function is uncertain, or when the admitting team wants something they "
     "can switch off; its disadvantage is that it needs monitoring and it delays the drug he will "
@@ -526,7 +489,7 @@ add(A("apixaban", tag=CRIT_ALWAYS, flags=["anticoagulated"],
     "the anticoagulation question and the cardioversion question cannot be separated."),
   references=[
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis "
-    "and Management of Atrial Fibrillation. Circulation. 2023;148(9):e1-e156. "
+    "and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. "
     "[UNVERIFIED in this pack, confirm before release]"]))
 
 add(A("aspirin", tag=DISCOURAGED, flags=[],
@@ -551,19 +514,19 @@ add(A("normal_saline_1l_bolus", name="Crystalloid bolus",
   flags=["fluid_given"],
   prerequisites=[PRE_IV],
   halt_reason=(
-    "You gave a litre of crystalloid to a man with an ejection fraction of 30 to 35 percent whose "
-    "lungs were already full of fluid and who was hypoxaemic on room air. The extra preload went "
+    "You gave a crystalloid bolus to a man with an ejection fraction of 30 to 35 percent whose "
+    "lungs were already full of fluid and who was hypoxemic on room air. The extra preload went "
     "straight into the alveoli, his saturation fell away, and he required emergency intubation for "
     "a pulmonary edema you had made worse."),
   debrief_note=(
     "The reasoning that leads here is worth naming because it is not stupid: the patient is "
-    "tachycardic, tachycardia is often hypovolaemia, and a fluid challenge is the reflex. In this "
+    "tachycardic, tachycardia is often hypovolemia, and a fluid challenge is the reflex. In this "
     "patient the tachycardia is an arrhythmia and the ventricle is failing, so volume has nowhere "
     "to go but the lungs. Every route to a crystalloid bolus reaches the same harm, so this tag "
-    "covers the whole equivalence group: saline and Ringer's, a litre and 500 mL.\n\n"
+    "covers the whole equivalence group: saline and Ringer's, a liter and 500 mL.\n\n"
     "The tag is phase-dependent. Once he is on positive pressure with a controlled rate and "
     "diuresing, a small fluid challenge is wrong rather than lethal, and it is tagged discouraged "
-    "there. Before that it kills him. The general point: in a hypoxaemic tachycardic patient, find "
+    "there. Before that it can tip him into respiratory failure and onto a ventilator. The general point: in a hypoxemic tachycardic patient, find "
     "out whether the lungs are wet before you fill them. The lung ultrasound takes under a minute "
     "and answers the question.")))
 
@@ -571,7 +534,7 @@ add(A("normal_saline_1l_bolus", name="Crystalloid bolus",
 add(A("ecg_12_lead", tag=CRIT_ALWAYS, flags=[],
   debrief_note=(
     "Mandatory, and for three separate questions rather than one. What is the rhythm: irregularly "
-    "irregular, no organised atrial activity, so atrial fibrillation and not sinus tachycardia, "
+    "irregular, no organized atrial activity, so atrial fibrillation and not sinus tachycardia, "
     "atrial flutter with variable block, or multifocal atrial tachycardia. Is the QRS narrow and "
     "is there pre-excitation, because pre-excited atrial fibrillation is a different disease with "
     "a different and nearly opposite drug list. And is there an acute coronary occlusion driving "
@@ -617,9 +580,7 @@ add(A("xr_chest", tag=RECOMMENDED, flags=[],
 add(A("troponin_t", tag=RECOMMENDED, flags=[],
   debrief_note=(
     "Worth sending, and the single value is nearly uninterpretable on its own. A modest elevation "
-    "in a patient at a ventricular rate of 160 with a poorly contracting ventricle is a demand "
-    "pattern: supply-demand mismatch from shortened diastole and raised wall stress, which is type "
-    "2 myocardial injury and not acute coronary occlusion. What distinguishes the two is the "
+    "in a patient at a ventricular rate of 160 with a poorly contracting ventricle is most likely supply-demand mismatch from shortened diastole and raised wall stress, which would make it myocardial injury or a type 2 infarction rather than acute coronary occlusion. What distinguishes the two is the "
     "trajectory over one to three hours and the clinical picture, not the first number. Treat this "
     "result as a reason to repeat it on the ward rather than as a reason to activate the "
     "laboratory, unless the ECG or the story changes your mind.")))
@@ -646,7 +607,7 @@ add(A("magnesium_level", tag=RECOMMENDED, flags=[],
     "chemistry panel, so it has to be asked for deliberately.")))
 
 add(A("complete_blood_count_cbc", tag=RECOMMENDED, flags=[],
-  debrief_note=("Normal here. Anaemia is a genuine precipitant of both high-output symptoms and "
+  debrief_note=("Normal here. Anemia is a genuine precipitant of both high-output symptoms and "
                 "decompensation, and it is worth excluding before you decide the arrhythmia is the "
                 "whole story.")))
 
@@ -666,15 +627,15 @@ add(A("venous_blood_gas", tag=RECOMMENDED, flags=[],
 
 add(A("lactate", tag=RECOMMENDED, flags=[],
   debrief_note=("Mildly raised. In this patient that is the work of breathing and the tachycardia "
-                "rather than sepsis or mesenteric ischaemia, and it should fall as he is treated. "
+                "rather than sepsis or mesenteric ischemia, and it should fall as he is treated. "
                 "A lactate that does not fall is worth taking seriously.")))
 
 add(A("d_dimer", tag=DISCOURAGED, flags=[],
   debrief_note=(
     "This is a trap and it works because the reflex is strong. His pretest probability of pulmonary "
-    "embolism is low: gradual onset over more than a day, an irregularly irregular rhythm with an "
+    "embolism is low: palpitations of sudden onset followed by breathlessness that built over hours, an irregularly irregular rhythm with an "
     "obvious alternative explanation for every symptom, no unilateral leg swelling, no "
-    "immobilisation, surgery or malignancy, and a bedside ultrasound showing a poorly contracting "
+    "immobilization, surgery or malignancy, and a bedside ultrasound showing a poorly contracting "
     "left ventricle with diffuse B-lines rather than a strained right ventricle with clear lungs. "
     "A D-dimer sent in that setting is very likely to be raised, because it is raised by heart "
     "failure, atrial fibrillation and being 68 years old, and the raised result then commits you to "
@@ -684,7 +645,7 @@ add(A("d_dimer", tag=DISCOURAGED, flags=[],
 add(A("ct_pulmonary_embolus", tag=DISCOURAGED, flags=[],
   debrief_note=(
     "Almost always ordered downstream of the D-dimer. It is negative, it delays treatment by the "
-    "time it takes to move an unstable hypoxaemic patient out of the department, and it gives a "
+    "time it takes to move an unstable hypoxemic patient out of the department, and it gives a "
     "contrast load to a man in acute heart failure. If you genuinely suspect pulmonary embolism in "
     "a patient like this, the bedside ultrasound is the first study, not the last: a dilated "
     "hypokinetic right ventricle with a small underfilled left ventricle is a different picture "
@@ -698,7 +659,7 @@ add(A("ultrasound_lower_extremity_venous", tag=DISCOURAGED, flags=[],
 add(A("urinalysis", tag=NEUTRAL, flags=[],
   debrief_note="Neither indicated nor harmful. Nothing in this presentation points at the urinary tract."))
 
-add(A("insert_foley_catheter", tag=RECOMMENDED, flags=["foley_in"],
+add(A("insert_foley_catheter", tag=NEUTRAL, flags=["foley_in"],
   debrief_note=("Reasonable once a diuretic has been given, both for the patient's comfort and "
                 "because urine output is the most direct measure of whether the diuretic has "
                 "worked. Not required, and it is an infection risk in a man who can use a bottle.")))
@@ -710,7 +671,7 @@ add(A("consult_cardiology", tag=RECOMMENDED, flags=[],
     "start positive pressure, a diuretic or a rate-controlling drug, and calling before you have a "
     "rhythm, an ejection fraction and a plan produces a conversation nobody benefits from. Once "
     "you have those three, the questions worth asking are the rate-control agent in a newly "
-    "recognised reduced ejection fraction, whether they want a rhythm-control strategy considered, "
+    "recognized reduced ejection fraction, whether they want a rhythm-control strategy considered, "
     "and what they want done about the anticoagulation and the formal echocardiogram.")))
 
 add(A("consult_critical_care", tag=RECOMMENDED, flags=[],
@@ -739,10 +700,9 @@ EXAM_NOTES = {
    "is what tells you he is congested and still perfusing rather than in cardiogenic shock.",
  "exam_neck": "The jugular venous pressure is the single most useful bedside finding for "
    "separating cardiogenic from non-cardiogenic breathlessness, and it is elevated here at about "
-   "12 cm. It is also difficult to read in a tachypnoeic patient at a rate of 160, so read it with "
+   "12 cm. It is also difficult to read in a tachypneic patient at a rate of 160, so read it with "
    "the ultrasound view of the inferior vena cava rather than instead of it.",
- "exam_card": "Peripheral edema is routed here by the catalog rather than to the musculoskeletal "
-   "examination, which is worth knowing so you look in the right place. The auscultatory findings "
+ "exam_card": "In this simulator peripheral edema is reported under the cardiac examination rather than the musculoskeletal one, so look for it here. The auscultatory findings "
    "in fast atrial fibrillation are unreliable: an S3 is very hard to hear at 160 and a variable "
    "first heart sound is expected. The edema does not resolve during this case, and it should "
    "not: days of accumulated fluid do not leave in ten minutes.",
@@ -761,9 +721,9 @@ EXAM_NOTES = {
  "exam_neuro": "Normal on arrival and it is the finding that matters most if it changes. A patient "
    "in respiratory failure who becomes drowsy is not settling, and in this case the drop in the "
    "Glasgow Coma Scale is the clinical sign of the rising carbon dioxide.",
- "exam_psych": "Anxiety in a hypoxaemic patient is a physical sign. It is worth recording because "
+ "exam_psych": "Anxiety in a hypoxemic patient is a physical sign. It is worth recording because "
    "it is one of the things that improves visibly once positive pressure goes on, and because "
-   "treating it as anxiety rather than as hypoxaemia is a recognised way to lose this patient.",
+   "treating it as anxiety rather than as hypoxemia is a recognized way to lose this patient.",
  "exam_heent": "Normal, and the negatives are the point: no thyromegaly, no lid lag, no proptosis. "
    "Hyperthyroidism is a treatable precipitant of new atrial fibrillation and this is where you "
    "look for it at the bedside while you wait for the thyroid function test that will not be back "
@@ -783,10 +743,10 @@ FOLLOW_UPS = [
   "applies_when": "flag intubated set",
   "deadline_seconds": 60,
   "satisfied_by": ["propofol_infusion", "ketamine_infusion", "fentanyl_bolus", "midazolam_bolus"],
-  "nurse_prompt": "He's tubed and he's still paralysed from the induction. Do you want to write "
+  "nurse_prompt": "He's tubed and he's still paralyzed from the induction. Do you want to write "
                   "him up for sedation and something for pain?",
   "debrief_note": (
-    "A paralysed patient without sedation is awake, aware and unable to signal. The obligation is "
+    "A paralyzed patient without sedation is awake, aware and unable to signal. The obligation is "
     "created by the intubation and cannot precede it, which is why it is a follow-up rather than a "
     "prerequisite. Choose the agent with his blood pressure in mind: his cardiac output is preload "
     "and rate sensitive and a propofol infusion will drop it.")},
@@ -808,9 +768,7 @@ FOLLOW_UPS = [
                   "up another dose?",
   "debrief_note": (
     "One dose is a trial, not a treatment. A single intravenous dose of any of the agents this "
-    "case accepts produces a partial fall in the ventricular rate, and the correct response to a "
-    "partial response is another dose of the same agent, not a different agent and not the "
-    "conclusion that the drug failed. That is the specific error this obligation exists to catch: "
+    "case accepts produces a partial fall in the ventricular rate, and the correct response to a partial response is usually another dose of the same agent on that agent's schedule, not a switch of drug class and not the conclusion that the drug failed. Digoxin is the exception to the tempo: its loading doses are spaced over hours, and a partial response in the first minutes is expected rather than a reason to redose. One combination to avoid is an intravenous beta blocker given shortly after intravenous diltiazem, which stacks two negatively inotropic nodal blockers. In a ventricle at 30 to 35 percent the safer second agent is digoxin or amiodarone. That is the specific error this obligation exists to catch: "
     "a resident who reads 160 becoming 138 as a failure will reach for something else, and what "
     "they reach for in atrial fibrillation with a reduced ejection fraction is usually the "
     "calcium channel blocker.\n\n"
@@ -822,7 +780,7 @@ FOLLOW_UPS = [
     "Know when to stop. If the rate is still fast after two adequate doses, that is information "
     "rather than a reason for a third: a ventricular rate that will not come down in acute "
     "decompensated heart failure is usually being driven by the decompensation, and the "
-    "treatment is the pulmonary edema and the hypoxaemia rather than more nodal blockade in a "
+    "treatment is the pulmonary edema and the hypoxemia rather than more nodal blockade in a "
     "ventricle that is already struggling.")},
  {"id": "anticoagulation_after_cardioversion",
   "triggered_by": "synchronized_cardioversion",
@@ -860,7 +818,7 @@ add(A("central_venous_catheter_triple_lumen", tag=DISCOURAGED, flags=["central_a
 add(A("central_venous_catheter_cordis", tag=DISCOURAGED, flags=["central_access"],
   debrief_note=("Same reasoning as the triple lumen, and a large-bore introducer is a volume "
                 "line in a patient who must not be given volume.")))
-add(A("intraosseous_line", tag=RECOMMENDED, flags=["io_access"],
+add(A("intraosseous_line", tag=[{"when": "flag iv_access set", "value": "neutral"}, {"when": None, "value": "recommended"}], flags=["io_access"],
   debrief_note=(
     "A reasonable rescue if peripheral access fails, which it can in a patient with swollen, "
     "congested arms. It unlocks every intravenous drug in this case. It is uncomfortable in a "
@@ -868,3 +826,29 @@ add(A("intraosseous_line", tag=RECOMMENDED, flags=["io_access"],
 add(A("arterial_line", tag=NEUTRAL, flags=[],
   debrief_note=("Reasonable if he ends up intubated and on vasoactive support, and unnecessary "
                 "otherwise. It is not a reason to delay anything.")))
+
+# ------------------------------------------------------------------ v0.18a: traps that were unguarded
+# Each of these defaulted to neutral because it was not authored, which the authoring
+# requirements (7.3) name as a case error for exactly these drugs.
+for cid, note in [
+  ("morphine_bolus", "No longer a routine treatment for acute pulmonary edema. It depresses the drive of a man who is already tiring and retaining carbon dioxide."),
+  ("albuterol", "The wheeze is peribronchial edema, not bronchospasm, and a beta agonist speeds conduction through the node you are trying to slow."),
+  ("labetalol_bolus", "Beta blockade chosen for blood pressure in a man who is not hypertensive, with none of esmolol's reversibility."),
+  ("labetalol_drip", "Beta blockade chosen for blood pressure in a man who is not hypertensive, with none of esmolol's reversibility."),
+  ("nicardipine_drip", "An arterial vasodilator for a blood pressure of 132 in a man whose pressure rate control and positive pressure are about to lower anyway."),
+  ("nitroglycerin", "A high-dose nitrate bolus is a treatment for hypertensive pulmonary edema. At a systolic of 132 it risks the pressure for little gain; if you want a nitrate here, a low-dose infusion is the titratable way to give one."),
+  ("normal_saline_infusion", "Maintenance fluid in a man whose lungs are already full. Keep the line open with a saline lock instead."),
+  ("lactated_ringer_s_infusion", "Maintenance fluid in a man whose lungs are already full. Keep the line open with a saline lock instead."),
+  ("defibrillate", "Unsynchronized shocks are for pulseless ventricular rhythms. In atrial fibrillation with a pulse, a shock that lands on the T wave can cause ventricular fibrillation."),
+  ("dopamine_drip", "He is not hypotensive, and dopamine's chronotropy is the opposite of what a ventricle at 160 needs."),
+  ("epinephrine_drip", "He is not hypotensive, and an adrenergic infusion drives the rate you are trying to slow."),
+  ("atropine_bolus", "Atropine speeds atrioventricular conduction. At a ventricular rate of 160 it can only make things worse.")]:
+    add(A(cid, tag=DISCOURAGED, flags=[], debrief_note=note))
+
+add(A("arterial_blood_gas", tag=NEUTRAL, flags=[],
+  debrief_note=("Adds an oxygen tension to what the venous gas already told you, at the cost of an "
+                "arterial puncture in a man who is fighting for breath and about to be anticoagulated.")))
+add(A("ct_chest", tag=DISCOURAGED, flags=[],
+  debrief_note=("The radiograph and the lung ultrasound have already shown pulmonary edema, and a CT "
+                "changes nothing in the next hour. Lying a man who cannot lie flat in a scanner is a "
+                "hazard in itself.")))

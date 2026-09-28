@@ -31,7 +31,7 @@ ROOT = os.path.dirname(HERE)
 
 GASP = "phase is respiratory_failure"                                      # AFRVR
 PRES = "phase is presentation"                                             # CHFE
-SICK = "phase is adrenal_crisis OR phase is progressive_meningococcaemia"  # MGCA
+SICK = "phase is adrenal_crisis OR phase is progressive_meningococcemia"  # MGCA
 
 def F(id, asks, short_when, short, full, restate=False):
     d = {"id": id, "asks": asks, "value": [{"when": short_when, "value": short}, {"when": None, "value": full}]}
@@ -52,7 +52,7 @@ ECHO = {
   "medication_adherence": "whether I take them", "allergies": "allergies", "alcohol_and_binge": "drink",
   "caffeine_and_stimulants": "coffee and that", "thyroid_symptoms": "my thyroid", "social_history_smoking": "smoking",
   "family_history": "the family", "last_oral_intake": "when I last ate", "recent_illness_or_sick_contacts": "whether I've been unwell",
-  "travel_immobility_surgery": "travelling", "calf_pain_or_asymmetry": "my calves", "urine_output": "passing water",
+  "travel_immobility_surgery": "traveling", "calf_pain_or_asymmetry": "my calves", "urine_output": "passing water",
   "nausea_and_vomiting": "feeling sick", "snoring_and_sleep_apnea": "snoring", "code_status_goals_of_care": "what I'd want if it got worse",
  },
  "CHFE": {
@@ -62,7 +62,7 @@ ECHO = {
   "weight_gain": "my weight", "cough_and_sputum": "the cough", "chest_pain": "chest pain", "palpitations": "my heart racing",
   "fever_and_chills": "a temperature", "syncope_and_dizziness": "fainting", "nausea_and_vomiting": "feeling sick",
   "abdominal_fullness": "my stomach", "urine_output": "passing water", "calf_pain_or_asymmetry": "my calves",
-  "travel_immobility_surgery": "travelling", "hemoptysis": "blood in the phlegm", "medication_adherence": "taking my tablets",
+  "travel_immobility_surgery": "traveling", "hemoptysis": "blood in the phlegm", "medication_adherence": "taking my tablets",
   "dietary_sodium": "salt", "current_medications": "my tablets", "past_medical_history": "my medical history",
   "past_surgical_history": "operations", "allergies": "allergies", "social_history_smoking_alcohol": "smoking and drinking",
   "substance_use_stimulants": "drugs", "family_history": "the family", "last_oral_intake": "when I last ate",
@@ -74,14 +74,14 @@ ECHO = {
   "location_of_pain": "where it hurts", "radiation_of_pain": "whether it spreads", "severity": "how bad it is",
   "aggravating_relieving": "what makes it better or worse", "rash": "the spots", "fever_and_chills": "a temperature",
   "headache": "my head", "neck_stiffness": "my neck", "photophobia": "the lights", "nausea_vomiting": "being sick",
-  "diarrhoea": "diarrhoea", "abdominal_pain": "my stomach", "chest_pain": "chest pain", "breathing": "my breathing",
+  "diarrhea": "diarrhea", "abdominal_pain": "my stomach", "chest_pain": "chest pain", "breathing": "my breathing",
   "cough_sore_throat": "a cough or sore throat", "urine_output": "passing urine", "dizziness_syncope": "feeling faint",
   "confusion": "whether I'm confused", "cold_extremities": "my hands and feet", "joint_pain": "my joints",
   "dysuria_gu_symptoms": "my waterworks", "menstrual_and_tampon": "my period", "pregnancy": "being pregnant",
   "sexual_history": "sex", "past_medical_history": "my medical history", "past_surgical_history": "operations",
   "current_medications": "my medication", "allergies": "allergies", "social_history": "smoking and drinking and that",
   "family_history": "the family", "last_oral_intake": "when I last ate", "vaccinations": "my vaccines",
-  "sick_contacts": "whether anyone else is ill", "travel_history": "travelling",
+  "sick_contacts": "whether anyone else is ill", "travel_history": "traveling",
   "tick_and_outdoor_exposure": "ticks and being outdoors", "recent_antibiotics_healthcare": "antibiotics or seeing a doctor",
   "functional_baseline": "what I'm normally like", "code_status_goals": "what I'd want if it got worse",
  },
@@ -212,7 +212,7 @@ FACTS = {
       SICK, "'Ankles. Feet.'", "'On my ankles and the tops of my feet.'", restate=True),
     F("when", ["when did you notice it", "when did the spots come", "how long has the rash been there", "who saw it"],
       SICK, "'This morning. Roommate.'", "'My roommate saw them this morning when she was helping me up, maybe two hours ago.'"),
-    F("look", ["what do they look like", "what colour", "do they itch", "do they hurt", "do they blanch"],
+    F("look", ["what do they look like", "what color", "do they itch", "do they hurt", "do they blanch"],
       SICK, "'Dark red dots. Don't itch.'", "'Little dark red dots. They don't itch, they don't hurt, they're just there.'"),
     F("spreading", ["are they spreading", "are there more", "is it getting worse", "any new ones"],
       SICK, "'More now.'", "'I looked again in the ambulance and I think there are more of them now.'"),

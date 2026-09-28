@@ -10,7 +10,7 @@ Why this exists: on the AFRVR held-out set, nineteen of thirty unrelated questio
 were answered with a confident wrong topic, and the cosine scores of in-scope and
 out-of-scope questions overlapped so completely that no threshold could separate
 them. "Have you had a colonoscopy?" is not far from "When did you last eat?" in
-embedding space. The fix is to give "nothing relevant" its own neighbourhood.
+embedding space. The fix is to give "nothing relevant" its own neighborhood.
 
 Each entry is (phrasing, covers). `covers` lists concepts from interview_phrasings.py:
 if a case authors any of them, the entry is dropped for that case, because there the
@@ -29,8 +29,8 @@ OUT_OF_SCOPE = [
   ("Any heartburn?", []),
   ("Any indigestion after meals?", []),
   ("Any trouble swallowing?", []),
-  ("Any change in your bowel habit?", ["diarrhoea"]),
-  ("Any diarrhoea at all?", ["diarrhoea"]),
+  ("Any change in your bowel habit?", ["diarrhea"]),
+  ("Any diarrhea at all?", ["diarrhea"]),
   ("Any pain in your tummy?", ["abdominal_pain", "abdominal_fullness"]),
   ("Have you had piles?", []),
   ("Any black stools?", []),
@@ -116,7 +116,7 @@ OUT_OF_SCOPE = [
   ("Do you have any religious needs we should know about?", []),
 
   # ---- small talk and the room
-  ("What is your favourite food?", ["last_oral_intake", "dietary_sodium"]),
+  ("What is your favorite food?", ["last_oral_intake", "dietary_sodium"]),
   ("Do you have any pets at home?", ["tick_outdoor"]),
   ("What do you do for a living?", []),
   ("What did you do before you retired?", []),

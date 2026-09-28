@@ -29,7 +29,7 @@
    "expect_phase": "case_complete"
   },
   {
-   "name": "Intended path reaches stabilised before the handoff",
+   "name": "Intended path reaches stabilized before the handoff",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -120,7 +120,7 @@
    "expect_phase": "breathing_supported"
   },
   {
-   "name": "Wrong path 3 rescued with rate control already in: straight to stabilised",
+   "name": "Wrong path 3 rescued with rate control already in: straight to stabilized",
    "steps": [
     "insert_iv",
     "digoxin_bolus",
@@ -201,7 +201,7 @@
    "expect_phase": "halted"
   },
   {
-   "name": "The same bolus once he is stabilised is discouraged rather than lethal",
+   "name": "The same bolus once he is stabilized is discouraged rather than lethal",
    "steps": [
     "insert_iv",
     "non_invasive_positive_pressure_ventilation",

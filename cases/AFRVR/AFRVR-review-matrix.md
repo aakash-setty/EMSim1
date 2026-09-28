@@ -49,32 +49,50 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/etomidate_bolus`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/ketamine_bolus`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/midazolam_bolus`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/propofol_bolus`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/rocuronium_bolus`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/succinylcholine_bolus`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/propofol_infusion`
@@ -109,7 +127,10 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/synchronized_cardioversion`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/unsynchronized_cardioversion`
@@ -143,7 +164,10 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/esmolol_drip`
 
-Single unconditional rule; nothing to enumerate.
+| phase | on_niv | resolves to | reachable? |
+|---|---|---|---|
+| «any phase» | no | rule 1 (default) | plausible |
+| «any phase» | yes | rule 0 (flag on_niv set) | plausible |
 
 
 ### `action_tag/procainamide_drip`
@@ -392,10 +416,83 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/intraosseous_line`
 
-Single unconditional rule; nothing to enumerate.
+| phase | iv_access | resolves to | reachable? |
+|---|---|---|---|
+| «any phase» | no | rule 1 (default) | plausible |
+| «any phase» | yes | rule 0 (flag iv_access set) | plausible |
 
 
 ### `action_tag/arterial_line`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/morphine_bolus`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/albuterol`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/labetalol_bolus`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/labetalol_drip`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/nicardipine_drip`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/nitroglycerin`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/normal_saline_infusion`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/lactated_ringer_s_infusion`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/defibrillate`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/dopamine_drip`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/epinephrine_drip`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/atropine_bolus`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/arterial_blood_gas`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/ct_chest`
 
 Single unconditional rule; nothing to enumerate.
 
@@ -404,62 +501,62 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Endotracheal tube in place at 23 cm at the teeth. Cuff inflated. Wavef... | plausible |
-| respiratory_failure | rule 1 (phase is respiratory_failure) &rarr; ABNORMAL: Airway still patent but he is no longer talking. Answers in single wor... | plausible |
-| «any other phase» | rule 2 (default) &rarr; normal: Patent and self-maintained. He can complete a short sentence before he... | plausible |
+| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Endotracheal tube at 23 cm at the teeth, cuff inflated. Normal capnogr... | plausible |
+| respiratory_failure | rule 1 (phase is respiratory_failure) &rarr; ABNORMAL: Patent, but he has stopped talking. Single words when pushed. No strid... | plausible |
+| «any other phase» | rule 2 (default) &rarr; normal: Patent. Speaks a short sentence before stopping to breathe. No stridor... | plausible |
 
 
 ### `exam/exam_breath`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| breathing_supported | rule 2 (phase is breathing_supported OR phase is stabilized) &rarr; ABNORMAL: Respiratory rate down and the pattern is deeper and more regular on po... | plausible |
-| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Ventilated. Chest rises symmetrically with each delivered breath. No s... | plausible |
-| respiratory_failure | rule 1 (phase is respiratory_failure) &rarr; ABNORMAL: Respiratory rate 38 and shallow. Marked accessory muscle use with ster... | plausible |
-| stabilized | rule 2 (phase is breathing_supported OR phase is stabilized) &rarr; ABNORMAL: Respiratory rate down and the pattern is deeper and more regular on po... | plausible |
-| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Respiratory rate 30 and shallow. Sitting bolt upright and will not lie... | plausible |
+| breathing_supported | rule 2 (phase is breathing_supported OR phase is stabilized) &rarr; ABNORMAL: Rate down, deeper and more regular on the mask. Much less accessory mu... | plausible |
+| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Ventilated. Symmetric chest rise. No effort against the ventilator. | plausible |
+| respiratory_failure | rule 1 (phase is respiratory_failure) &rarr; ABNORMAL: Rate 38, shallow. Marked accessory muscle use, retractions, paradoxica... | plausible |
+| stabilized | rule 2 (phase is breathing_supported OR phase is stabilized) &rarr; ABNORMAL: Rate down, deeper and more regular on the mask. Much less accessory mu... | plausible |
+| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Rate 30, shallow. Bolt upright. Neck accessory muscle use, mild retrac... | plausible |
 
 
 ### `exam/exam_circ`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Peripheries warm. Capillary refill 2 seconds. Radial pulse irregularly... | plausible |
-| rate_controlled_congested | rule 1 (phase is rate_controlled_congested OR phase is stabilized) &rarr; ABNORMAL: Radial pulse still irregularly irregular but slower and much easier to... | plausible |
-| stabilized | rule 1 (phase is rate_controlled_congested OR phase is stabilized) &rarr; ABNORMAL: Radial pulse still irregularly irregular but slower and much easier to... | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Radial pulse irregularly irregular, thready and impossible to count re... | plausible |
+| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Warm. Capillary refill 2 seconds. Irregularly irregular radial pulse, ... | plausible |
+| rate_controlled_congested | rule 1 (phase is rate_controlled_congested OR phase is stabilized) &rarr; ABNORMAL: Irregularly irregular but slower and countable. No pulse deficit now. ... | plausible |
+| stabilized | rule 1 (phase is rate_controlled_congested OR phase is stabilized) &rarr; ABNORMAL: Irregularly irregular but slower and countable. No pulse deficit now. ... | plausible |
+| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Irregularly irregular, thready radial pulse. Apical about 160, radial ... | plausible |
 
 
 ### `exam/exam_neck`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Jugular venous pulsation elevated, harder to assess against positive p... | plausible |
-| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Jugular venous pulsation visible two thirds of the way up the neck wit... | plausible |
+| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: JVP elevated above the clavicle at 45 degrees. Trachea midline. No goi... | plausible |
+| «any other phase» | rule 1 (default) &rarr; ABNORMAL: JVP two thirds up the neck at 45 degrees, about 12 cm, no a wave. Hepa... | plausible |
 
 
 ### `exam/exam_card`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Irregularly irregular, rate around 118. Heart sounds distant against t... | plausible |
-| rate_controlled_congested | rule 1 (phase is rate_controlled_congested OR phase is stabilized) &rarr; ABNORMAL: Irregularly irregular at a rate you can now count, around 105. First h... | plausible |
-| stabilized | rule 1 (phase is rate_controlled_congested OR phase is stabilized) &rarr; ABNORMAL: Irregularly irregular at a rate you can now count, around 105. First h... | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Irregularly irregular, far too fast to count accurately by auscultatio... | plausible |
+| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Irregularly irregular, about 118. Distant heart sounds. 2+ pitting ede... | plausible |
+| rate_controlled_congested | rule 1 (phase is rate_controlled_congested OR phase is stabilized) &rarr; ABNORMAL: Irregularly irregular, about 105. Variable S1. Displaced apex. No murm... | plausible |
+| stabilized | rule 1 (phase is rate_controlled_congested OR phase is stabilized) &rarr; ABNORMAL: Irregularly irregular, about 105. Variable S1. Displaced apex. No murm... | plausible |
+| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Irregularly irregular, about 160. Variable S1. Displaced, diffuse apex... | plausible |
 
 
 ### `exam/exam_pulm`
 
 | phase | diuretic_given | on_niv | resolves to | reachable? |
 |---|---|---|---|---|
-| intubated | no | no | rule 0 (phase is intubated) &rarr; ABNORMAL: Coarse crackles throughout both lung fields on the ventilator, worse a... | plausible |
-| intubated | no | yes | rule 0 (phase is intubated) &rarr; ABNORMAL: Coarse crackles throughout both lung fields on the ventilator, worse a... | plausible |
-| intubated | yes | no | rule 0 (phase is intubated) &rarr; ABNORMAL: Coarse crackles throughout both lung fields on the ventilator, worse a... | plausible |
-| intubated | yes | yes | rule 0 (phase is intubated) &rarr; ABNORMAL: Coarse crackles throughout both lung fields on the ventilator, worse a... | plausible |
-| «any other phase» | no | no | rule 2 (default) &rarr; ABNORMAL: Fine inspiratory crackles in both lung fields to the mid-zones, symmet... | plausible |
-| «any other phase» | no | yes | rule 2 (default) &rarr; ABNORMAL: Fine inspiratory crackles in both lung fields to the mid-zones, symmet... | plausible |
-| «any other phase» | yes | no | rule 2 (default) &rarr; ABNORMAL: Fine inspiratory crackles in both lung fields to the mid-zones, symmet... | plausible |
-| «any other phase» | yes | yes | rule 1 (flag diuretic_given set AND flag on_niv set) &rarr; ABNORMAL: Fine inspiratory crackles now confined to both bases rather than reach... | plausible |
+| intubated | no | no | rule 0 (phase is intubated) &rarr; ABNORMAL: Coarse crackles throughout on the ventilator, worse at the bases. No w... | plausible |
+| intubated | no | yes | rule 0 (phase is intubated) &rarr; ABNORMAL: Coarse crackles throughout on the ventilator, worse at the bases. No w... | plausible |
+| intubated | yes | no | rule 0 (phase is intubated) &rarr; ABNORMAL: Coarse crackles throughout on the ventilator, worse at the bases. No w... | plausible |
+| intubated | yes | yes | rule 0 (phase is intubated) &rarr; ABNORMAL: Coarse crackles throughout on the ventilator, worse at the bases. No w... | plausible |
+| «any other phase» | no | no | rule 2 (default) &rarr; ABNORMAL: Fine crackles to the mid-zones, worse at the bases. Scattered expirato... | plausible |
+| «any other phase» | no | yes | rule 2 (default) &rarr; ABNORMAL: Fine crackles to the mid-zones, worse at the bases. Scattered expirato... | plausible |
+| «any other phase» | yes | no | rule 2 (default) &rarr; ABNORMAL: Fine crackles to the mid-zones, worse at the bases. Scattered expirato... | plausible |
+| «any other phase» | yes | yes | rule 1 (flag diuretic_given set AND flag on_niv set) &rarr; ABNORMAL: Fine crackles at the bases only. Good air entry. Dull at both bases. N... | plausible |
 
 
 ### `exam/exam_abd`
@@ -476,18 +573,18 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| intubated | rule 0 (phase is intubated) &rarr; normal: Warm and dry. Colour good. No rash, no mottling. | plausible |
-| respiratory_failure | rule 1 (phase is respiratory_failure) &rarr; ABNORMAL: Clammy and grey. Diaphoretic across the forehead and upper chest. Dusk... | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Warm to the touch with a light sweat over the forehead and upper chest... | plausible |
+| intubated | rule 0 (phase is intubated) &rarr; normal: Warm and dry. Good color. No mottling. | plausible |
+| respiratory_failure | rule 1 (phase is respiratory_failure) &rarr; ABNORMAL: Clammy, gray, sweating. Dusky lips and nailbeds. | plausible |
+| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Warm, light sweat. No cyanosis. Shins taut and shiny with edema. No ra... | plausible |
 
 
 ### `exam/exam_neuro`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Sedated and ventilated. Glasgow Coma Scale 3T on the current sedation.... | plausible |
-| respiratory_failure | rule 1 (phase is respiratory_failure) &rarr; ABNORMAL: Glasgow Coma Scale 14: eyes open to voice, confused, obeys commands. D... | plausible |
-| «any other phase» | rule 2 (default) &rarr; normal: Glasgow Coma Scale 15. Alert, oriented to person, place and time. Cran... | plausible |
+| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Sedated, GCS 3T. Pupils 3 mm, reactive. No spontaneous movement. | plausible |
+| respiratory_failure | rule 1 (phase is respiratory_failure) &rarr; ABNORMAL: GCS 13 (E3 V4 M6). Drowsy, confused, obeys commands. No focal deficit. | plausible |
+| «any other phase» | rule 2 (default) &rarr; normal: Alert and oriented, GCS 15. No focal deficit. | plausible |
 
 
 ### `exam/exam_psych`
@@ -495,7 +592,7 @@ Single unconditional rule; nothing to enumerate.
 | phase | resolves to | reachable? |
 |---|---|---|
 | intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Sedated. Not assessable. | plausible |
-| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Anxious and frightened, and appropriately so. Cooperative with examina... | plausible |
+| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Anxious and frightened, cooperative. Keeps asking if he is having a he... | plausible |
 
 
 ### `exam/exam_heent`
@@ -507,12 +604,12 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| breathing_supported | rule 3 (phase is breathing_supported) &rarr; ABNORMAL: Moderate respiratory distress, improving behind the mask. Tolerating p... | plausible |
-| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Intubated and sedated on the ventilator. Not responsive. Colour good. | plausible |
-| rate_controlled_congested | rule 2 (phase is rate_controlled_congested) &rarr; ABNORMAL: Still in obvious respiratory distress, sitting bolt upright, speaking ... | plausible |
-| respiratory_failure | rule 1 (phase is respiratory_failure) &rarr; ABNORMAL: Severe respiratory distress and tiring. Drowsy, grey and sweaty, speak... | plausible |
-| stabilized | rule 4 (phase is stabilized) &rarr; ABNORMAL: Comfortable at rest on the mask, settled and talking between breaths. ... | plausible |
-| «any other phase» | rule 5 (default) &rarr; ABNORMAL: Awake, anxious and visibly breathless. Sitting upright, hands on his t... | plausible |
+| breathing_supported | rule 3 (phase is breathing_supported) &rarr; ABNORMAL: Moderate distress, improving on the mask. GCS 15. | plausible |
+| intubated | rule 0 (phase is intubated) &rarr; ABNORMAL: Intubated and sedated. Good color. | plausible |
+| rate_controlled_congested | rule 2 (phase is rate_controlled_congested) &rarr; ABNORMAL: Still in obvious distress, bolt upright, short phrases. Visibly slower... | plausible |
+| respiratory_failure | rule 1 (phase is respiratory_failure) &rarr; ABNORMAL: Severe distress, tiring. Drowsy, gray, sweaty, single words. GCS 13. | plausible |
+| stabilized | rule 4 (phase is stabilized) &rarr; ABNORMAL: Comfortable at rest on the mask. GCS 15. | plausible |
+| «any other phase» | rule 5 (default) &rarr; ABNORMAL: Awake, anxious, visibly breathless. Upright, hands on thighs, short se... | plausible |
 
 
 ### `patient_visual`
@@ -586,6 +683,14 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | rule 1 (default) &rarr; **pH 7.30**; **pCO2 52 mmHg**; pO2 33 mmHg; Bicarbonate 25 mEq/L; **Lactate 2.4 mmol/L** | plausible |
 
 
+### `labs/arterial_blood_gas`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| respiratory_failure | rule 0 (phase is respiratory_failure) &rarr; **pH 7.26**; **pCO2 58 mmHg**; **pO2 48 mmHg**; Bicarbonate 25 mEq/L; **Lactate 3.1 mmol/L** | plausible |
+| «any other phase» | rule 1 (default) &rarr; **pH 7.34**; **pCO2 46 mmHg**; **pO2 58 mmHg**; Bicarbonate 24 mEq/L; **Lactate 2.4 mmol/L** | plausible |
+
+
 ### `labs/lactate`
 
 Single unconditional rule; nothing to enumerate.
@@ -637,6 +742,11 @@ Single unconditional rule; nothing to enumerate.
 | «any phase» | no | yes | rule 2 (default) &rarr; ABNORMAL: Diffuse bilateral B-lines, three or more per field in every zone and c... | plausible |
 | «any phase» | yes | no | rule 1 (flag diuretic_given set) &rarr; ABNORMAL: B-lines reduced in number anteriorly, still confluent in the lower zon... | plausible |
 | «any phase» | yes | yes | rule 0 (flag diuretic_given set AND flag on_niv set) &rarr; ABNORMAL: B-lines reduced in number and now confined to the dependent posterolat... | plausible |
+
+
+### `imaging/ct_chest`
+
+Single unconditional rule; nothing to enumerate.
 
 
 ### `imaging/xr_chest`

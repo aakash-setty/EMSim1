@@ -4,17 +4,17 @@ META = {
  "working_title": "68-year-old man, palpitations and breathlessness, brought in by EMS",
  "chief_complaint_patient_voice": "My heart won't stop racing and I can't get my breath.",
  "final_diagnosis": ("Atrial fibrillation with rapid ventricular response, complicated by acute "
-   "decompensated heart failure with a newly recognised reduced ejection fraction and cardiogenic "
+   "decompensated heart failure with a newly recognized reduced ejection fraction and cardiogenic "
    "pulmonary edema. The arrhythmia and the ventricular dysfunction are each plausibly cause and "
    "consequence of the other, and the case does not require the learner to decide which came first."),
  "target_level": ["intern", "junior_resident", "senior_resident"],
  "estimated_runtime_seconds": 600,
  "learning_objectives": [
-   "Recognise atrial fibrillation with a rapid ventricular response on a twelve-lead ECG and separate it from the other narrow-complex tachycardias.",
+   "Recognize atrial fibrillation with a rapid ventricular response on a twelve-lead ECG and separate it from the other narrow-complex tachycardias.",
    "Identify acute decompensated heart failure and cardiogenic pulmonary edema in a patient with no prior diagnosis of either.",
    "Use cardiac and lung point-of-care ultrasound to establish reduced left ventricular systolic function at the bedside, and treat that finding as the pivot the rest of the case turns on.",
    "Select a rate-control strategy that accounts for reduced systolic function, and state why a non-dihydropyridine calcium channel blocker is the wrong agent once the ejection fraction is known.",
-   "Sequence non-invasive positive pressure ventilation and diuresis alongside rate control rather than after it, and recognise that a lower heart rate is not by itself a resuscitated patient.",
+   "Sequence non-invasive positive pressure ventilation and diuresis alongside rate control rather than after it, and recognize that a lower heart rate is not by itself a resuscitated patient.",
    "Assess thromboembolic risk in new atrial fibrillation and initiate anticoagulation, including the reason the uncertain duration of the arrhythmia matters if cardioversion is being considered.",
    "Reassess after treatment against clinical response rather than against a target number, and disposition to a setting that can continue what the department started.",
  ],
@@ -22,7 +22,7 @@ META = {
    "ventricle is what decides the treatment. The case is built so that the correct management of "
    "the visible problem changes once the invisible one is found, which is what the POCUS is for."),
  "care_setting": {
-   "label": "Quaternary care, Level 1 trauma centre",
+   "label": "Quaternary care, Level 1 trauma center",
    "detail": ("Adult emergency department. Full laboratory, imaging and blood bank on site. "
      "Cardiology and critical care are available in house at all hours, and there are both "
      "intensive care and step-down beds. Nothing in this case is limited by resources, which "
@@ -91,7 +91,7 @@ PATIENT = {
 # phase in which the rhythm becomes regular. The one exception is the halted phase, and
 # the reason is in its own note. The heartbeat is the only place a resident can perceive
 # the rhythm before they order a tracing, and in a case whose whole management hinges on
-# recognising the rhythm, a regular beat would be the monitor telling them the wrong
+# recognizing the rhythm, a regular beat would be the monitor telling them the wrong
 # answer out loud.
 def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp,
           distress, alert, transitions, terminal=False, pupil="normal", react="reactive",
@@ -130,7 +130,7 @@ RATE_CONTROL_RATIONALE = (
   "rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is "
   "a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three "
   "agents in the group even though their real onsets differ by an order of magnitude. It was "
-  "thirty seconds until v0.9 and the author shortened it: the judgement was that thirty felt like "
+  "thirty seconds until v0.9 and the author shortened it: the judgment was that thirty felt like "
   "a fault rather than like a drug taking effect, and the nurse's line about the agents needing "
   "time carries what the delay was there to teach. The validator's thirty-second floor does not "
   "apply to this pattern, a delayed consequence of the resident's own action, only a five-second "
@@ -157,13 +157,8 @@ ECG = {
                  "author_note": "Rate-controlled tracing: QRS 92 ms, QTc 442 ms."},
   "intubated": {"p_waves": False, "qrs_ms": 92, "qtc_ms": 444,
                 "author_note": "Post-intubation tracing: QRS 92 ms, QTc 444 ms."},
-  "halted": {"p_waves": False, "qrs_ms": 180,
-             "verify": ("MODEL OUTPUT, NOT IN THE SOURCE. The halted phase authors a regular "
-                        "rhythm at 38 with a pressure of 62/34 and says nothing about the "
-                        "tracing, so the monitor draws a slow, wide, P-less idioventricular "
-                        "rhythm, the generic peri-arrest picture. A reviewer who reads the "
-                        "author's 'regular' as a converted sinus bradycardia sets p_waves to "
-                        "true and qrs_ms to 90 here. [UNVERIFIED, confirm before release]")},
+  "halted": {"p_waves": False, "qrs_ms": 88,
+             "verify": ("v0.18a. His own rhythm at the point of respiratory failure: atrial fibrillation with a narrow QRS.")},
   "case_complete": {"p_waves": False, "qrs_ms": 92, "qtc_ms": 442,
                     "author_note": "Handed over on the rate-controlled figures."},
 }
@@ -172,7 +167,7 @@ PHASES = [
   phase("presentation",
     "Atrial fibrillation with rapid ventricular response and cardiogenic pulmonary edema",
     "on arrival",
-    "Awake, anxious, tachypnoeic and hypoxaemic with an irregularly irregular ventricular rate of "
+    "Awake, anxious, tachypneic and hypoxemic with an irregularly irregular ventricular rate of "
     "160. Congested and perfusing. The reduced ejection fraction has not yet been found.",
     160, 132, 78, 30, 88, 37.0, 2, 0,
     [
@@ -193,7 +188,7 @@ PHASES = [
        "narration": "He's wearing out. He's stopped talking to me and his sat has dropped "
                     "since you came in.",
        "debrief_note": (
-         "Four minutes of hypoxaemic respiratory failure at a respiratory rate of thirty, with no "
+         "Four minutes of hypoxemic respiratory failure at a respiratory rate of thirty, with no "
          "positive pressure and no supplemental oxygen that changes anything, and he tired. This is "
          "the commonest way this case is lost: the rate is the visible abnormality, the learner "
          "spends the first four minutes on it, and the problem that was going to kill him first was "
@@ -203,7 +198,7 @@ PHASES = [
          "pressure it lowers both preload and left ventricular transmural pressure. Applying it in "
          "the first minutes is what keeps most of these patients off a ventilator. Be honest with "
          "learners about the strength of the claim: meta-analyses report reductions in intubation "
-         "rate, and the largest single randomised trial, 3CPO, found no difference in seven-day "
+         "rate, and the largest single randomized trial, 3CPO, found no difference in seven-day "
          "mortality or intubation against standard oxygen therapy. The defensible claim is faster "
          "physiological and symptomatic improvement."),
        "author_rationale": (
@@ -221,8 +216,8 @@ PHASES = [
   phase("respiratory_failure",
     "Tiring on an untreated flooded lung",
     "in respiratory failure",
-    "Hypoxaemic and hypercapnic respiratory failure from untreated cardiogenic pulmonary edema. "
-    "Drowsy, tachypnoeic, and no longer able to sustain the work of breathing. Still perfusing. "
+    "Hypoxemic and hypercapnic respiratory failure from untreated cardiogenic pulmonary edema. "
+    "Drowsy, tachypneic, and no longer able to sustain the work of breathing. Still perfusing. "
     "The authored heart rate here is the UNTREATED one. A patient who reached this phase with "
     "one dose of a nodal blocker on board reads about 22 beats lower and one with two doses "
     "about 35 lower, through two vital effects on the rate-control actions guarded on this "
@@ -245,8 +240,8 @@ PHASES = [
       "There is deliberately no rate-control exit from this phase. A learner who reaches "
       "respiratory failure and responds by giving another rate-controlling drug sees the flag set, "
       "the debrief credit the critical action, and the patient not improve, which is the whole "
-      "lesson of wrong path one stated as behaviour. The flag is remembered, so applying positive "
-      "pressure afterwards goes straight to the stabilised phase.")),
+      "lesson of wrong path one stated as behavior. The flag is remembered, so applying positive "
+      "pressure afterwards goes straight to the stabilized phase.")),
 
   phase("breathing_supported",
     "Oxygenating on positive pressure, ventricular rate still uncontrolled",
@@ -269,7 +264,7 @@ PHASES = [
     "Ventricular rate controlled, lung still flooded",
     "rate controlled, still congested",
     "The ventricular rate has come down and nothing has been done for the pulmonary edema. "
-    "Tachypnoeic, hypoxaemic, and still working hard to breathe.",
+    "Tachypneic, hypoxemic, and still working hard to breathe.",
     108, 118, 70, 32, 86, 37.0, 3, 0,
     [
       {"when": "flag intubated set", "to": "intubated"},
@@ -324,20 +319,13 @@ PHASES = [
   phase("halted", "Case halted after a harmful action", "stopped",
     "Terminal phase entered directly when a harmful action is taken, carrying that action's halt "
     "reason. Not reached through transition rules.",
-    38, 62, 34, 6, 76, 36.8, 0, 3, [], terminal=True, pupil="large", react="sluggish",
-    rhythm="regular",
+    150, 104, 62, 40, 76, 37.0, 3, 1, [], terminal=True,
     schema_gap_note=(
-      "Generic peri-arrest numbers. This case has one halting action, so unlike CHFE there is no "
-      "second physiology these numbers have to cover. The rhythm here is regular rather than "
-      "irregularly irregular, and that is deliberate: these are not this patient's numbers, they "
-      "are the generic peri-arrest block every halt shows, and asserting that a man who has just "
-      "been killed by a fluid bolus is still in atrial fibrillation at 38 beats per minute would "
-      "be a clinical claim the case has no basis for. In practice the beat is stopped the moment "
-      "the case ends, so almost nobody hears it either way.")),
+      "v0.18a. This case has one halting action, a crystalloid bolus, and its halt reason describes hypoxemic respiratory failure needing intubation, not an arrest. These are his numbers at that point: still in atrial fibrillation at 150, pressure holding, saturation 76 on a respiratory rate of 40. Until v0.18a this block was a generic bradycardic peri-arrest, which contradicted the halt reason.")),
 
   phase("case_complete", "Handoff confirmed", "handed over",
     "Terminal phase entered when the resident confirms a handoff. The debrief is generated from here.",
-    104, 124, 74, 20, 95, 37.0, 0, 0, [], terminal=True,
+    104, 124, 74, 20, 89, 37.0, 0, 0, [], terminal=True,
     schema_gap_note=(
       "Placeholder, as in the reference case. A completion phase should inherit the vitals of the "
       "phase the resident handed off from and the schema cannot express that. The saturation of 95 "

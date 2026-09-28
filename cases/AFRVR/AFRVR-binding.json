@@ -4,7 +4,7 @@
  "catalog_version": "0.2-draft",
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
-  "exact": 74,
+  "exact": 88,
   "mapped": 0,
   "unmatched": 1
  },
@@ -21,6 +21,7 @@
    "heparin_bolus_drip"
   ],
   "normal_saline_1l_bolus": [
+   "d5_ns_bolus",
    "lactated_ringer_s_1l_bolus",
    "lactated_ringer_s_500ml_bolus",
    "normal_saline_500ml_bolus"
@@ -261,6 +262,7 @@
    "status": "exact",
    "note": "Harmful here. The catalog offers four crystalloid boluses and every one of them reaches the same harm in a patient with an ejection fraction of 30 to 35 percent and a flooded lung, so the tag covers the whole equivalence group rather than one entry. A harmful tag on saline alone would leave Ringer's as an unguarded route to the same death.",
    "also_covers": [
+    "d5_ns_bolus",
     "lactated_ringer_s_1l_bolus",
     "lactated_ringer_s_500ml_bolus",
     "normal_saline_500ml_bolus"
@@ -491,6 +493,90 @@
   {
    "case_id": "arterial_line",
    "catalog_id": "arterial_line",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "morphine_bolus",
+   "catalog_id": "morphine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "albuterol",
+   "catalog_id": "albuterol",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "labetalol_bolus",
+   "catalog_id": "labetalol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "labetalol_drip",
+   "catalog_id": "labetalol_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "nicardipine_drip",
+   "catalog_id": "nicardipine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "nitroglycerin",
+   "catalog_id": "nitroglycerin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "normal_saline_infusion",
+   "catalog_id": "normal_saline_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lactated_ringer_s_infusion",
+   "catalog_id": "lactated_ringer_s_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "defibrillate",
+   "catalog_id": "defibrillate",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "dopamine_drip",
+   "catalog_id": "dopamine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "epinephrine_drip",
+   "catalog_id": "epinephrine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "atropine_bolus",
+   "catalog_id": "atropine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ct_chest",
+   "catalog_id": "ct_chest",
    "status": "exact",
    "note": null
   }

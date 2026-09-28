@@ -110,9 +110,9 @@ The dividing line: anything a resident could act on clinically is author-only. A
 
 **Three additions to that rule in v0.3.**
 
-*A mapped binding row is a clinical judgement.* Deciding that a case's high-sensitivity troponin I binds to the catalog's troponin T entry is not an id lookup, it is a claim that the two are interchangeable for this case, and here it is false. The AI proposes the mapping and records its reasoning; the author accepts or rejects each row.
+*A mapped binding row is a clinical judgment.* Deciding that a case's high-sensitivity troponin I binds to the catalog's troponin T entry is not an id lookup, it is a claim that the two are interchangeable for this case, and here it is false. The AI proposes the mapping and records its reasoning; the author accepts or rejects each row.
 
-*An abnormal flag is a clinical judgement.* The AI can carry a flag across from prose that already said "(high)". It cannot decide that a value is abnormal.
+*An abnormal flag is a clinical judgment.* The AI can carry a flag across from prose that already said "(high)". It cannot decide that a value is abnormal.
 
 *A reference interval is a clinical fact.* Where the catalog supplies one, use it. Where it does not, the author supplies it, and the payload carries a `verify` note until they do.
 
@@ -140,7 +140,7 @@ Supplied before any AI drafting begins. For a case the author knows well this sh
 - Age, sex, weight, relevant background
 - Presenting vital signs
 - Presenting appearance in one or two sentences
-- **The care setting**, if it is not a quaternary Level 1 centre with everything available. This is not scene-setting: the correct disposition depends on it, and a case written for a hospital with no cardiology on site has a different right answer
+- **The care setting**, if it is not a quaternary Level 1 center with everything available. This is not scene-setting: the correct disposition depends on it, and a case written for a hospital with no cardiology on site has a different right answer
 - **How the patient arrived**, as three separate fields, described below
 
 **Arrival. Changed in v0.4 and this is the change most likely to catch out an author who has written a case before.**
@@ -170,9 +170,9 @@ Through v0.3 arrival was free prose, it was shown on the splash screen, and it w
 - **Exactly two sentences.** More than two is an error. Roughly 45 words is the practical ceiling and the validator warns beyond it.
 - **No vital signs.** They are on the monitor. Quoting them in the handover is a warning.
 - **No past medical history, no medication list, no allergies.** Every one of those is an interview topic. Putting it in the handover means the resident gets it without asking, which is the failure the Patient tab was removed to prevent.
-- **No pertinent negatives.** "Denies chest pain" hands over the single most useful discriminator in most dyspnoea cases.
+- **No pertinent negatives.** "Denies chest pain" hands over the single most useful discriminator in most dyspnea cases.
 - **No diagnosis, and no word that names one.** Not "CHF exacerbation", not "fluid overloaded", not "septic". A crew radioing in may say those things; a case that says them has ended the case.
-- **Write it badly on purpose.** This is the hard part and it is not enforceable. A real handover from a busy crew is vague, partly wrong about timing, and organised around what was visible rather than what matters. Aim for that. The temptation is to write a competent summary, and a competent summary is worse than no handover, because it teaches that the handover can be trusted.
+- **Write it badly on purpose.** This is the hard part and it is not enforceable. A real handover from a busy crew is vague, partly wrong about timing, and organized around what was visible rather than what matters. Aim for that. The temptation is to write a competent summary, and a competent summary is worse than no handover, because it teaches that the handover can be trusted.
 
 **What a triage handover sounds like, versus an EMS one.** The triage nurse has the patient's own account and a set of observations from the waiting room; the crew has the scene, the family and what happened in the ambulance. Neither has a chart.
 
@@ -203,7 +203,7 @@ The count refers to clinical phases. The two terminal phases (halted, complete) 
 - **Recommended actions**: good practice but not case-determining
 - **Traps**: plausible-looking actions that are wrong here, and why. Most traps are `discouraged`; a few are `harmful`
 
-For each harmful and discouraged action, name **every route to it**. If a fluid bolus is harmful, say so for saline and for Ringer's and for each volume; if a bronchodilator is a trap, say so for the combination nebuliser and for each agent alone. The catalog often lists as separate entries what a clinician thinks of as one act, and an unbound sibling is an escape hatch from the lesson.
+For each harmful and discouraged action, name **every route to it**. If a fluid bolus is harmful, say so for saline and for Ringer's and for each volume; if a bronchodilator is a trap, say so for the combination nebulizer and for each agent alone. The catalog often lists as separate entries what a clinician thinks of as one act, and an unbound sibling is an escape hatch from the lesson.
 
 **Where the catalog declares an equivalence group, use it.** `equivalence_groups` names sets the catalog considers interchangeable, such as the four crystalloid boluses. Binding one case action to a group with `also_covers_group` applies its tag, halt reason and debrief note to every member, so the coverage cannot drift as the catalog grows. Each entry keeps its own button and its own name; only the case-specific fields are shared. Use it wherever the case is making a claim about **the act** rather than about one particular agent, in either direction: a harmful tag that must not be escapable, or a required action that any member should satisfy.
 
@@ -283,7 +283,7 @@ Transition conditions should gate on the critical actions of that phase, so the 
 
 Harmful actions bypass transition rules entirely and move directly to a terminal halted phase carrying that action's halt reason.
 
-**Note on prompt deadlines:** they are measured from phase entry. When a phase changes, outstanding prompts for the previous phase are cancelled and new deadlines begin. Authors should therefore set deadlines relative to the start of the phase the action belongs to, not relative to case start.
+**Note on prompt deadlines:** they are measured from phase entry. When a phase changes, outstanding prompts for the previous phase are canceled and new deadlines begin. Authors should therefore set deadlines relative to the start of the phase the action belongs to, not relative to case start.
 
 **Transitions do not cascade within one action.** If the resident satisfies a later phase's transition before entering it, the phase machine advances one step per state-changing action, so the next action advances two phases at once. A phase entered and left in the same step issues no prompts. Check your simulator scenarios for orderings that produce this.
 
@@ -324,13 +324,13 @@ is still true. A rule without a deadline is instantaneous and behaves as it alwa
 *Deterioration on inaction.* A negative guard, `NOT flag F set`, measured from phase entry. The
 common case, and the one the feature exists for. Because flags are permanent, a negative guard can
 only be falsified and never re-satisfied, so once the resident gives the drug that deterioration is
-cancelled for the rest of the case rather than deferred. Each rule is one question with a yes or no
+canceled for the rest of the case rather than deferred. Each rule is one question with a yes or no
 answer: was this done in time.
 
 *Delayed consequence of an action.* A positive guard, `flag F set`, with
 `measured_from: "guard_true"`. Use this where an action has a consequence that is not instantaneous.
-Peri-intubation collapse is the obvious one: modelling it as instant teaches that the tube caused it,
-where modelling it forty-five seconds later teaches that the induction agent and the positive
+Peri-intubation collapse is the obvious one: modeling it as instant teaches that the tube caused it,
+where modeling it forty-five seconds later teaches that the induction agent and the positive
 pressure did, and leaves room for the resident to have a pressor ready.
 
 *Scheduled natural history.* No guard. The illness does something regardless: a simple febrile
@@ -429,11 +429,11 @@ A phase may carry a `rhythm`, a sibling of `vitals` and `appearance` rather than
   "rhythm": "irregularly_irregular" }
 ```
 
-**Author it wherever the rhythm is part of the finding.** The heartbeat is the only channel through which a resident can perceive a rhythm before they order a tracing, and in a case that turns on recognising one, a regular beat is the monitor telling them the wrong answer out loud. It also has to agree with everything else the case says: an ECG report describing irregularly irregular R-R intervals over a metronomic beat is the same class of contradiction as a nurse prompt describing a trajectory over static vitals, and no validator can see it either.
+**Author it wherever the rhythm is part of the finding.** The heartbeat is the only channel through which a resident can perceive a rhythm before they order a tracing, and in a case that turns on recognizing one, a regular beat is the monitor telling them the wrong answer out loud. It also has to agree with everything else the case says: an ECG report describing irregularly irregular R-R intervals over a metronomic beat is the same class of contradiction as a nurse prompt describing a trajectory over static vitals, and no validator can see it either.
 
 **The heart rate stays the heart rate.** The interval model preserves the mean exactly, so the number on the monitor is the true average rate however uneven the individual beats are. Do not compensate for the irregularity when choosing the number.
 
-**Two things it is not.** It is not a description of a diagnosis: the engine has no idea which conditions produce which rhythm, in the same way it has no idea which drugs are harmful, and `irregularly_irregular` names a finding that atrial fibrillation is the commonest but not the only cause of. And it is not a physiological model. The interval distribution, its spread, and the beat-to-beat variation in loudness are all authored parameters in `SHARED.audio.rhythm`, with a provenance note there saying so. **No case should be described as modelling a rhythm.**
+**Two things it is not.** It is not a description of a diagnosis: the engine has no idea which conditions produce which rhythm, in the same way it has no idea which drugs are harmful, and `irregularly_irregular` names a finding that atrial fibrillation is the commonest but not the only cause of. And it is not a physiological model. The interval distribution, its spread, and the beat-to-beat variation in loudness are all authored parameters in `SHARED.audio.rhythm`, with a provenance note there saying so. **No case should be described as modeling a rhythm.**
 
 Adding a third value, for a regularly irregular beat such as bigeminy or Wenckebach, is a request to extend the global audio module. It would need its own model rather than different parameters for this one, so escalate rather than reaching for the nearest existing value.
 
@@ -465,7 +465,7 @@ Since v0.16 the monitor draws one lead, live, from the same beat the heartbeat s
 
 **Author the terminal phases.** `halted` and `cardiac_arrest` phases carry vitals and no ECG report, and a resident spends the last five seconds of a run looking at their monitor. Say what it shows. The shipped packs draw a slow, wide, P-less idioventricular rhythm for their generic peri-arrest phases, and each says in `verify` that a reviewer who prefers asystole, or a converted sinus bradycardia, changes the block and nothing else.
 
-**What it is not.** It is not a twelve-lead. A terminal R in aVR, lateral ST depression, anterior Q waves and reciprocal change are findings a lead II monitor does not show, and the block has no fields for them; they belong in the report. It is not a model: the amplitudes and the shape of a wide complex are stylisations with a provenance note in `SHARED.monitor.ecg`, and **no case should be described as modelling an ECG.** And it is not read by anything: no rule, tag, prerequisite or transition can see it, for the reason none can see a vital.
+**What it is not.** It is not a twelve-lead. A terminal R in aVR, lateral ST depression, anterior Q waves and reciprocal change are findings a lead II monitor does not show, and the block has no fields for them; they belong in the report. It is not a model: the amplitudes and the shape of a wide complex are stylizations with a provenance note in `SHARED.monitor.ecg`, and **no case should be described as modeling an ECG.** And it is not read by anything: no rule, tag, prerequisite or transition can see it, for the reason none can see a vital.
 
 **A widening QRS is phases, not a parameter.** The trace cannot change within a phase. DIPH shows the QRS at 132 ms on arrival, 148 ms seizing, 180 ms in the wide-complex phase and 104 ms once bicarbonate has acted, because those are four phases; that is the same rule as for a pressure that falls.
 
@@ -492,7 +492,7 @@ only the keys that differ. `build/patient-lab.html` lists every option and print
 Two appearance keys are not avataaars options. `"build"` is `thin`, `average` or `obese`, and
 is the one key worth authoring now: write it only where the seed or the presenting appearance
 says so. The age group is **not authored**: the figure is drawn young under 40, middle from
-40 to 59 and older from 60, from `patient.age`, with greying hair and facial lines.
+40 to 59 and older from 60, from `patient.age`, with graying hair and facial lines.
 `"ageGroup"` in the avatar overrules that, with a validator warning.
 
 `content_keys.patient_visual` says what is visible now. It is a guarded rule list like
@@ -562,11 +562,11 @@ A phase is entered once and holds until something moves the case out of it. That
 
 **Rebase your phases, or the number is counted twice.** This is the mistake, it is easy to make, and the validator catches only the half of it that leaves the plausible range. If positive pressure adds three points and the phase a resident reaches by applying positive pressure also raises the saturation, the resident sees both. Every non-terminal phase's authored vitals must be what the patient would show **with nothing running**. In CHFE that meant `stabilizing` and `improving` both carry the arrival saturation of 87, and the only durable gain in the case comes from the mask.
 
-**Decide deliberately which vitals a treatment does not move.** The reason to author this at all is usually the thing that does *not* happen. CHFE's furosemide carries no effect, so a resident who reaches for the diuretic first and watches the saturation sees nothing move, while the heart rate, pressure and respiratory rate all improve on the phase change. That is the case's second learning objective stated as behaviour instead of as a sentence in the debrief. If every treatment in your case raises the number, you have authored a case in which sequencing does not matter.
+**Decide deliberately which vitals a treatment does not move.** The reason to author this at all is usually the thing that does *not* happen. CHFE's furosemide carries no effect, so a resident who reaches for the diuretic first and watches the saturation sees nothing move, while the heart rate, pressure and respiratory rate all improve on the phase change. That is the case's second learning objective stated as behavior instead of as a sentence in the debrief. If every treatment in your case raises the number, you have authored a case in which sequencing does not matter.
 
 **Give two routes to the same drug the same key.** DIPH's four routes to oxygen share `oxygen_support`, so a resident cannot stack a cannula, a mask and a bag into an improvement none of them would produce. This is the same obligation as covering every route with a harmful tag, and it fails the same way if you forget: the lesson has a sibling entry that walks around it.
 
-**Sizes are teaching choices and should be labelled as such.** Four points for positive pressure in CHFE, eight for the mask in AFRVR, are authored numbers. No trial supports a specific figure, the patient in front of you is not the mean of a trial population, and the review packet should say so rather than implying the simulator is modelling physiology. Put the reasoning in a `note` on the effect; the field is carried through and printed nowhere, which is what a note to a reviewer should be.
+**Sizes are teaching choices and should be labeled as such.** Four points for positive pressure in CHFE, eight for the mask in AFRVR, are authored numbers. No trial supports a specific figure, the patient in front of you is not the mean of a trial population, and the review packet should say so rather than implying the simulator is modeling physiology. Put the reasoning in a `note` on the effect; the field is carried through and printed nowhere, which is what a note to a reviewer should be.
 
 **What is out of reach.** Effects add; they do not multiply, ramp, titrate, or depend on a dose, because doses are not implemented. An effect cannot read another effect. Nothing in the condition language can test a vital, so you cannot author "if the saturation is below 90, then". If your case needs any of that, it needs a phase.
 
@@ -662,7 +662,7 @@ Section 15 says flags are binary and permanent and tells you not to build cases 
 | `after_administrations` | yes | At least 2. One is what `flags_set` already does |
 | `counter` | no, defaults to the act | The tally this administration adds to |
 
-**The counter is the interesting field and it is a clinical judgement.** Left to default it counts the act, so a sibling covered through `also_covers` adds to the same tally and two routes to one act are two doses. Named explicitly, several separate case actions share one tally, which is what you want when four different drugs are four attempts at the same physiological manoeuvre. Getting it wrong is silent: two actions granting one flag at different totals means whichever tally fills first wins, and the validator warns rather than guessing which you meant.
+**The counter is the interesting field and it is a clinical judgment.** Left to default it counts the act, so a sibling covered through `also_covers` adds to the same tally and two routes to one act are two doses. Named explicitly, several separate case actions share one tally, which is what you want when four different drugs are four attempts at the same physiological maneuver. Getting it wrong is silent: two actions granting one flag at different totals means whichever tally fills first wins, and the validator warns rather than guessing which you meant.
 
 **Two flags, not one, and both earn their place.** `flags_set` fires on every administration including the first and is what says an attempt has been made; the repeat flag is what says enough attempts have been made. A case usually needs both, the first to drive a vital effect and a follow-up obligation, the second to drive the phase.
 
@@ -724,11 +724,11 @@ Transitions live on phases, not on actions. Section 5 is authoritative.
 
 If you write the case in catalog ids, nothing further is needed. If you write it in your own ids, a binding file records one row per case action with a status of `exact`, `mapped` or `unmatched`.
 
-**Every `mapped` row is a clinical judgement and needs your signature.** Look particularly for:
+**Every `mapped` row is a clinical judgment and needs your signature.** Look particularly for:
 
 - **Assay mismatches.** A numeric high-sensitivity troponin I does not transfer to a qualitative troponin T entry. A BNP does not transfer to an NT-proBNP entry (the catalog carries NT-proBNP, `nt_probnp`, and no BNP). Same analyte family, different reference intervals, different numbers.
 - **Route and formulation splits.** A bolus and an infusion are different catalog entries and often different clinical acts.
-- **Composite actions.** A combined lung and cardiac ultrasound may be two catalog entries. A combination nebuliser may be two drugs. Bind to both or the unbound half is unreachable.
+- **Composite actions.** A combined lung and cardiac ultrasound may be two catalog entries. A combination nebulizer may be two drugs. Bind to both or the unbound half is unreachable.
 - **Collapsed entries.** Where the catalog collapses two acts you score separately, the interface can offer only one button and the second is unreachable. Decide which one it should be.
 
 **`unmatched` is an error, not a warning.** Fix it by requesting the catalog entry or by changing the case. A case that cannot bind cannot run.
@@ -791,7 +791,7 @@ Each prerequisite has a **condition** and a **failure message** written in the n
 
 **Case prerequisites are additive.** A prerequisite you write is added to the catalog defaults, not substituted for them. If you want a catalog default gone, waive it explicitly through `prerequisite_overrides`, naming what is waived and giving the clinical reason. A crash airway in a patient already in arrest does not require sedation and paralysis; say so.
 
-**Blocked actions stay visible and selectable, and unannotated.** Hiding or greying out teaches nothing. Neither does printing "needs a line" on the button: that turns a lesson into a label and makes gated actions visibly different from ungated ones. Let the resident attempt it and read why it failed.
+**Blocked actions stay visible and selectable, and unannotated.** Hiding or graying out teaches nothing. Neither does printing "needs a line" on the button: that turns a lesson into a label and makes gated actions visibly different from ungated ones. Let the resident attempt it and read why it failed.
 
 ### 8.2 Follow-ups create an obligation afterwards
 
@@ -811,7 +811,7 @@ Each follow-up requires:
 
 **`satisfied_when` exists because `satisfied_by` is set membership and cannot express "again".** An obligation to repeat a dose is created by the first dose and would be discharged by it, because the action that would satisfy it is already in the taken set. Author it against the flag the repeat grants instead (6.5). Anything the condition language can say is available, so the same field also covers "unless they intubated instead".
 
-**List every satisfier.** If sedation may be propofol or ketamine and you name only propofol, a resident who chose ketamine is told they left a paralysed patient unsedated.
+**List every satisfier.** If sedation may be propofol or ketamine and you name only propofol, a resident who chose ketamine is told they left a paralyzed patient unsedated.
 
 ### 8.3 Validator obligations
 
@@ -832,7 +832,7 @@ The nurse sits at top center and has four functions. Three are largely automatic
 | Field | What it does |
 |---|---|
 | `narration_override` | Replaces the catalog line entirely. Use it only where the standard line would be wrong or confusing |
-| `nurse_alert` | A second line, said straight after the catalog's own, **coloured and filed in the running chart**. Use it where the standard line is correct and there is something the resident will need again later |
+| `nurse_alert` | A second line, said straight after the catalog's own, **colored and filed in the running chart**. Use it where the standard line is correct and there is something the resident will need again later |
 
 A `nurse_alert` is the one to reach for when a case has authored a delay or a repeat. A resident who pushes a rate-controlling drug and watches an incompletely controlled rate will reasonably conclude the drug failed; the nurse saying "these agents can take a bit of time to kick in" costs one line and prevents it. **The reason it goes in the chart is that it is needed after it has scrolled away**: the moment it matters is half a minute later, when the resident is deciding whether the drug worked, and by then the nurse's banner has moved on.
 
@@ -876,7 +876,7 @@ antibiotic into her, she's going to get worse" is a true statement in such a pha
 false everywhere before. It is still not permission to describe the numbers as moving.
 
 - Acceptable: "He's still working hard to breathe. Do you want to do anything about the airway?"
-- Acceptable: "His sat is sitting at 87 on six litres."
+- Acceptable: "His sat is sitting at 87 on six liters."
 - Not acceptable: "He's crashing." / "His pressure is dropping."
 
 No validator can catch this. It is a review checklist item, and it is the constraint most likely to be violated without anyone noticing, because the failure is a contradiction between the text and the monitor rather than an error in either.
@@ -1030,7 +1030,7 @@ One harness, `engine/matcher_eval.mjs`, runs every pack against the built protot
 
 Read the columns separately, because they are not equally bad. **Wrong topic** is the number this section has always said matters most, and it roughly halved. **Asked to clarify** is new: the patient names the two topics the matcher could not choose between and commits to neither, which costs the learner a turn and is visible, where a wrong topic is neither. Of the eight clarifications on the held-out sets, four had the right topic in the pair, two replaced a wrong answer, two replaced an out-of-scope false accept. **Out-of-scope refused** doubled, and that is almost entirely the bank.
 
-CHFE moved least because its held-out set was already mostly well-formed lay sentences, which is the register this section warns an author's own set over-represents; its three remaining wrong answers are genuine ambiguities ("does lying flat make it worse" sits between orthopnoea and aggravating factors for both stages).
+CHFE moved least because its held-out set was already mostly well-formed lay sentences, which is the register this section warns an author's own set over-represents; its three remaining wrong answers are genuine ambiguities ("does lying flat make it worse" sits between orthopnea and aggravating factors for both stages).
 
 **What is still unmeasured.** Nothing here was collected from residents. The held-out sets were written by an AI assistant and a case author, and the tuning sets are the library's own withheld phrasings, so they measure the matcher against the registers the library anticipated. An opt-in export of real question logs remains the best evaluation source that exists and does not yet exist here.
 
@@ -1038,7 +1038,7 @@ CHFE moved least because its held-out set was already mostly well-formed lay sen
 
 **The number to watch is the wrong-topic rate on topics whose answers change management.** Each held-out file lists those topics under `management_changing`; the harness reports them separately.
 
-**Measure it, and measure the shipped matcher.** `node engine/matcher_eval.mjs --semantic` quotes the held-out sets. `--sweep` reads only the tuning sets and refuses to run without one. Do not tune against the held-out set and then quote it; that measures memorisation rather than coverage.
+**Measure it, and measure the shipped matcher.** `node engine/matcher_eval.mjs --semantic` quotes the held-out sets. `--sweep` reads only the tuning sets and refuses to run without one. Do not tune against the held-out set and then quote it; that measures memorization rather than coverage.
 
 **The extraction contract.** The harness slices two regions out of the built file by marker comment (system design 20.3) and evaluates them with a shim for the model. Anything placed in those regions is measured; anything after `bindCase()` is not.
 
@@ -1054,6 +1054,14 @@ New in v0.8, and the reason "natural" is now partly an authoring property. Each 
 
 Without facts a topic still gains repeat handling, "anything else?", and the echo. With them it gains follow-ups and partial answers.
 
+**`adjacent` and `volunteer`** (v0.18a): a real patient answering "when did this start?" says how it has gone since. A topic may list up to two `adjacent` topics. When it is first asked, the `volunteer` line of each adjacent topic that has not been spoken about is added to the answer in the same voice, and the adjacent topic counts as asked, for the History score and for any `interview_topic_` action. Rules:
+
+1. A volunteer line is one short clause, under 25 words, restating part of that topic's own answer. It adds nothing, and it does not repeat what the answer it rides on has just said. It may be phase-conditional like an answer; a rule whose value is null volunteers nothing in that phase.
+2. Safety screens go in `interview.must_ask` and are never volunteered: allergies, recreational drugs, pregnancy, sexual and menstrual history, self-harm and intent, anticoagulant and bleeding history, goals of care, and anything the case is built around the learner discovering. The validator refuses a must-ask topic that carries a volunteer line or is listed as adjacent.
+3. Nothing is volunteered while a global rule speaks for the patient, or while `interview.volunteer_blocked_when` holds. Use it for a patient too confused or too breathless to say more than was asked.
+
+`catalog/author_interview_volunteers.py` holds all four packs' lines.
+
 **Do not author the scaffolding into answers.** "Like I said", "Sorry, do you mean", "No, that's everything" come from `interviewDefaults` and may be overridden per case under `interview` (`repeat_prefixes`, `clarify_template`, `nothing_more`). An answer that begins "As I said" will read wrongly the first time it is given.
 
 ---
@@ -1068,7 +1076,7 @@ Resolution order is: **your case content, then the catalog default, then an erro
 
 The catalog default is normal. So a study you forget to author does not fail; it returns a normal result, confidently, and teaches the resident the wrong thing with no error raised anywhere.
 
-Three defences, all of which should be used:
+Three defenses, all of which should be used:
 
 1. The validator warns when a study is named in a condition or tagged critical but has no authored result, naming the default that will be served instead.
 2. The debrief lists everything answered by a default rather than by the case, so the omission is visible after the fact.
@@ -1103,6 +1111,10 @@ The map exists so that a resident learns where to look rather than learning that
 **Where a maneuver absorbs a finding that used to be its own act**, put the teaching note there too. A hepatojugular reflux folded into the neck exam should still teach the hepatojugular reflux.
 
 Author only maneuvers whose findings are abnormal or change with treatment. The rest inherit the catalog default. Exams may be repeated freely and return current state each time.
+
+**Spelling** (v0.18c): US spelling everywhere a learner reads (hemoglobin, edema, color, liter, maneuver). Interview variants may keep a British alternate beside the US one so that either matches.
+
+**Keep a finding to a chart line** (v0.18a): about 15 words, abnormal findings first, pertinent negatives only where they carry the case (no neck stiffness in a febrile patient, no calf asymmetry with leg swelling). Clipped phrases are fine. Interpretation ("this is carbon dioxide, not a neurological event") belongs in the debrief note, not in the finding. The catalog defaults follow the same rule, so an authored abnormal finding stands out against them.
 
 ### 11.3 The general status line
 
@@ -1350,7 +1362,7 @@ reached by nobody doing anything. The timeline has three parts:
 **Clinical content**
 - [ ] Every abnormal finding, lab, and imaging result is clinically correct for this diagnosis
 - [ ] Every abnormal value carries an abnormal flag, and no normal value carries one
-- [ ] Reference intervals are right for the assays this case is modelling
+- [ ] Reference intervals are right for the assays this case is modeling
 - [ ] Every harmful action is genuinely harmful, and its halt reason is accurate
 - [ ] Nothing tagged harmful should have been discouraged, and nothing discouraged should have been harmful
 - [ ] No action tagged critical is actually optional; no action tagged neutral is actually critical
@@ -1399,7 +1411,7 @@ reached by nobody doing anything. The timeline has three parts:
 - [ ] Every non-terminal phase's authored vitals are the **unsupported** baseline, so nothing is counted twice
 - [ ] You have played the case with each effect-bearing action alone and read the number off the monitor, rather than trusting the arithmetic
 - [ ] Every route to the same drug shares one key, and no two keys name the same act
-- [ ] Every delta and duration is a teaching choice you are willing to have called a teaching choice in the review packet, and none of them is presented as a modelled quantity
+- [ ] Every delta and duration is a teaching choice you are willing to have called a teaching choice in the review packet, and none of them is presented as a modeled quantity
 - [ ] The treatments that move nothing move nothing on purpose, and the debrief says why
 - [ ] The terminal phases read correctly, remembering that they ignore every effect
 - [ ] Every onset and duration window in the validator's note is the window you meant
@@ -1460,7 +1472,7 @@ About an hour for a case you know well. Nothing downstream can be right if this 
 
 **Before you write the action spine, open the catalog** and check that the actions your case turns on actually exist. This is the cheapest possible moment to discover that the rescue for your deterioration branch is not in the product.
 
-**Write the arrival block and the two-sentence handover here, not later.** Section 3.2. The handover is the only thing the resident has before they start asking, so it is a clinical decision about how hard the case opens, and it is the one piece of prose in the seed where writing it well makes the case worse. Deciding it at the end, after you have the full history in front of you, reliably produces a handover that summarises the case.
+**Write the arrival block and the two-sentence handover here, not later.** Section 3.2. The handover is the only thing the resident has before they start asking, so it is a clinical decision about how hard the case opens, and it is the one piece of prose in the seed where writing it well makes the case worse. Deciding it at the end, after you have the full history in front of you, reliably produces a handover that summarizes the case.
 
 ### Step 3. Bind to the catalog (section 7.2). AUTHOR-ONLY sign-off.
 Produce a binding row per action. The AI proposes; you accept each `mapped` row. Any `unmatched` row is a decision: request a catalog entry, or change the case.

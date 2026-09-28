@@ -104,138 +104,95 @@ EXAM = {
 
  "exam_heent": [
    {"when": SEIZ, "value": ex(
-     "Eyes deviated and rolling. Pupils are 7 millimetres and equal, sluggish. Mucous membranes "
-     "are dry. There is saliva at the corner of the mouth and no tongue injury you can see.")},
+     "Eyes deviated and roving. Pupils 7 mm, equal, sluggish. Dry mucosa. Saliva at the mouth.")},
    {"when": RESOLVING, "value": ex(
-     "Pupils remain 7 millimetres, equal and now briskly reactive. Mucous membranes are still "
-     "dry. The roving eye movements have settled.")},
+     "Pupils 7 mm, equal, sluggish. Mucosa still dry. Roving eye movements settled.")},
    {"when": None, "value": ex(
-     "Pupils are equal at about 7 millimetres, large, and reactive. There are roving conjugate "
-     "eye movements that will not fix on you, which the author describes as opsoclonus. Mucous "
-     "membranes are completely dry and the tongue is like paper. No head injury, no facial "
-     "asymmetry, no oral burns or corrosion.")}],
+     "Pupils 7 mm, equal, reactive. Roving eye movements. Mucosa bone dry. No head injury.")}],
 
  "exam_neck": always(ex(
-   "Supple. No meningism and no pain on passive flexion. Trachea central. No lymphadenopathy, "
-   "no jugular venous distension, no thyroid mass or bruit.", abnormal=False)),
+   "Supple. No meningism. Trachea central. No JVD or thyroid mass.", abnormal=False)),
 
  "exam_card": [
    {"when": WIDE, "value": ex(
-     "Regular wide-complex tachycardia at about 180. Heart sounds are present and soft. "
-     "Peripheral pulses are palpable but thready. No murmur. No peripheral oedema.")},
+     "Regular wide-complex tachycardia, about 180. Soft heart sounds. Thready pulses.")},
    {"when": "phase is stabilized", "value": ex(
-     "Regular sinus rhythm at about 100. Normal first and second heart sounds, no murmur. "
-     "Pulses full. No peripheral oedema.", abnormal=False)},
+     "Sinus rhythm, about 100. Normal heart sounds. Pulses full.", abnormal=False)},
    {"when": "phase is stabilizing", "value": ex(
-     "Regular sinus tachycardia at about 115, slower than it was. Normal heart sounds, no "
-     "murmur. No peripheral oedema.")},
+     "Sinus tachycardia, about 115, slower than before. Normal heart sounds.")},
    {"when": None, "value": ex(
-     "Regular sinus tachycardia at about 135. Normal first and second heart sounds, no murmur, "
-     "no rub, no gallop. Apex beat not displaced. No peripheral oedema.")}],
+     "Sinus tachycardia, about 135. Normal heart sounds, no murmur or gallop.")}],
 
  "exam_pulm": always(ex(
-   "Clear breath sounds bilaterally with equal air entry. No crackles, no wheeze, no bronchial "
-   "breathing, no dullness.", abnormal=False)),
+   "Clear, equal air entry. No crackles or wheeze.", abnormal=False)),
 
  "exam_abd": [
    {"when": RESOLVING, "value": ex(
-     "Soft and non-tender. Bowel sounds are sparse but present. The bladder is no longer "
-     "palpable if it has been drained.")},
+     "Soft, non-tender. Sparse bowel sounds. Bladder no longer palpable if drained.")},
    {"when": None, "value": ex(
-     "Soft, non-tender, not distended. Bowel sounds are absent over four quadrants after a full "
-     "minute of listening. There is a firm, non-tender mass arising out of the pelvis to just "
-     "below the umbilicus, which is a full bladder. No guarding, no organomegaly.")}],
+     "Absent bowel sounds after a full minute. Distended bladder to below the umbilicus. Soft, non-tender.")}],
 
  "exam_gu": [
    {"when": "flag bladder_drained set", "value": ex(
-     "Catheterised, with about 700 mL drained on insertion and dark amber urine in the bag. The "
-     "bladder is no longer palpable. No external abnormality.")},
+     "Catheterized, 700 mL drained, dark amber urine. Bladder no longer palpable.")},
    {"when": None, "value": ex(
-     "The bladder is palpable well above the pubic symphysis and is dull to percussion. She has "
-     "not passed urine since her mother found her. No external abnormality.")}],
+     "Bladder palpable well above the pubis, dull to percussion. No urine passed since she was found.")}],
 
  "exam_skin": [
    {"when": RESOLVING, "value": ex(
-     "Cooler than she was and the flush has faded, though she is still warm and the skin is "
-     "still dry: there is no sweat anywhere, which is the antimuscarinic effect and outlasts "
-     "the temperature. No rash. No needle marks, no patches, no wounds.")},
+     "Still warm and completely dry, no sweat anywhere. Flush fading. No rash or needle marks.")},
    {"when": None, "value": ex(
-     "Hot to the touch everywhere, and completely dry. There is no sweat in the axillae, on the "
-     "forehead or on the palms. Diffusely flushed, most obviously over the face and upper chest. "
-     "No rash of any kind, blanching or non-blanching. No needle marks, no patches, no wounds.")}],
+     "Hot, flushed and completely dry, no sweat even in the axillae. No rash or needle marks.")}],
 
  "exam_neuro": [
    {"when": SEIZ, "value": ex(
-     "Generalised tonic-clonic activity, not rousable, not protecting her airway. Eyes deviated. "
-     "No focus to the movements that you can see.")},
+     "Generalized tonic-clonic seizure. Not rousable, eyes deviated, not protecting her airway.")},
    {"when": POST, "value": ex(
-     "Drowsy and rousable to voice with effort. Moves all four limbs to command inconsistently. "
-     "Reflexes are present and symmetrical, no clonus, plantars downgoing. No lateralising sign. "
-     "Not orientated to place or time.")},
+     "Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmetric reflexes, no lateralizing signs.")},
    {"when": RESOLVING, "value": ex(
-     "Drowsy but rousable and settling. Orientated to person, not consistently to place. No "
-     "focal deficit, no clonus, no meningism.")},
+     "Drowsy but rousable, settling. Oriented to person only. No focal deficit or clonus.")},
    {"when": None, "value": ex(
-     "Awake, agitated, disorientated in place, time and situation. Will not sustain attention "
-     "and does not follow a two-step command. No focal motor or sensory deficit that can be "
-     "demonstrated. Reflexes are symmetrical. No clonus and no hyperreflexia. No meningism. "
-     "Plantars downgoing. Gait not tested.")}],
+     "Agitated, disoriented, inattentive. No focal deficit. Symmetric reflexes, no clonus or hyperreflexia. No meningism.")}],
 
  "exam_psych": [
    {"when": SEIZ + " OR " + POST, "value": ex(
-     "Not assessable. She is not able to converse.")},
+     "Not assessable. Unable to converse.")},
    {"when": RESOLVING, "value": ex(
-     "Drowsy and settled. Not able to give a reliable account of herself, and this is not the "
-     "moment to take a psychiatric history.")},
+     "Drowsy and settled. Cannot give a reliable account yet.")},
    {"when": None, "value": ex(
-     "Agitated and restless. Plucking repeatedly at the sheet and at the monitoring leads. "
-     "Speech is present, fluent and largely nonsensical. She looks past you and does not "
-     "consistently register that you are there. She reaches for things that are not in the room. "
-     "No sustained eye contact. Pushes hands away when touched. No expressed thought content "
-     "that can be assessed.")}],
+     "Agitated, plucking at the sheets and leads, reaching for things not there. Nonsensical speech.")}],
 
  "exam_airway": [
    {"when": "flag airway_protected set", "value": ex(
-     "Endotracheal tube in place, cuff up, waveform capnography with a normal square trace.")},
+     "Endotracheal tube in place, cuff up. Normal capnography waveform.")},
    {"when": SEIZ, "value": ex(
-     "Not protecting her airway. Secretions at the mouth, teeth clenched, and she is not "
-     "ventilating adequately between the movements.")},
+     "Not protecting her airway. Clenched teeth, secretions at the mouth.")},
    {"when": POST, "value": ex(
-     "Patent with a jaw thrust. Gag is reduced. She is snoring intermittently and will need "
-     "watching or securing.")},
+     "Patent with a jaw thrust. Reduced gag, intermittent snoring.")},
    {"when": None, "value": ex(
-     "Patent and self-maintained. She is speaking, though not sensibly. No stridor, no swelling, "
-     "no drooling. Mucous membranes are dry.", abnormal=False)}],
+     "Patent. Talking, though not sensibly. No stridor. Dry mucosa.", abnormal=False)}],
 
  "exam_breath": [
    {"when": SEIZ, "value": ex(
-     "Not ventilating adequately. Chest movement is irregular with the convulsion and there is "
-     "no useful tidal volume.")},
+     "Not ventilating adequately. Irregular chest movement with the seizure.")},
    {"when": RESOLVING, "value": ex(
-     "Breathing quietly at a normal rate with no increased work. Chest expansion equal.",
+     "Normal rate, no increased work. Equal expansion.",
      abnormal=False)},
    {"when": POST, "value": ex(
-     "Breathing spontaneously at a normal rate. Shallow, and she needs watching, but there is "
-     "no increased work of breathing.")},
+     "Spontaneous, normal rate but shallow. No increased work.")},
    {"when": None, "value": ex(
-     "Tachypnoeic at about 25 with no increased work of breathing. No accessory muscle use, no "
-     "tracheal tug, no intercostal recession. Chest expansion is equal. This is the respiratory "
-     "compensation for a metabolic acidosis rather than a lung problem.")}],
+     "Rate about 25, no increased work of breathing. No accessory muscle use.")}],
 
  "exam_circ": [
    {"when": WIDE, "value": ex(
-     "Cool peripheries for the first time. Capillary refill is three seconds. Radial pulse is "
-     "weak and very fast.")},
+     "Cool peripheries. Capillary refill 3 seconds. Weak, very fast radial pulse.")},
    {"when": RESOLVING, "value": ex(
-     "Warm and well perfused. Capillary refill under two seconds. Pulse regular and slower "
-     "than it was. The flush has faded.", abnormal=False)},
+     "Warm, capillary refill under 2 seconds. Regular pulse, slower than before. Flush faded.", abnormal=False)},
    {"when": None, "value": ex(
-     "Warm and flushed to the fingertips. Capillary refill under two seconds. Pulse is regular, "
-     "fast and full. Skin is hot and dry.")}],
+     "Warm and flushed to the fingertips. Capillary refill under 2 seconds. Fast, full pulse.")}],
 
  "exam_msk": always(ex(
-   "No deformity, no bruising and no wound. Full passive range of movement at every joint. No "
-   "oedema. No compartment is tense. Nothing to suggest she fell or was injured.", abnormal=False)),
+   "No deformity, bruising or wounds. Full range of movement. No sign of a fall.", abnormal=False)),
 }
 
 # ============================================================== GENERAL STATUS
@@ -245,25 +202,22 @@ GENERAL_STATUS = {
    "examination finding every learner sees. Kept consistent with the neurological and "
    "psychiatric examinations and with the appearance values of each phase."),
  "rules": [
+   {"when": "flag airway_protected set", "value": gs(
+     "Intubated and sedated. Hot to touch.")},
    {"when": SEIZ, "value": gs(
-     "Generalised seizure in progress. Not responsive, not protecting her airway, cyanosing at "
-     "the lips.")},
+     "Generalized seizure. Unresponsive, not protecting her airway, cyanosed lips.")},
    {"when": WIDE, "value": gs(
-     "Obtunded and grey. Rousable only to pain. A fast wide-complex rhythm on the monitor with a "
-     "thready pulse. GCS 9.")},
+     "Obtunded and gray, responds only to pain. Wide-complex rhythm, thready pulse. GCS 9.")},
    {"when": POST, "value": gs(
-     "Post-ictal. Drowsy, rousable to voice, still hot to touch and still flushed. Not orientated. "
-     "GCS 12.")},
+     "Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. GCS 12.")},
    {"when": "phase is stabilizing", "value": gs(
-     "Settled and drowsy. Colour better and the flush is fading. Still warm. Complexes on the "
-     "monitor look narrower than they did. GCS 13.")},
+     "Settled and drowsy, still warm, flush fading. Narrower complexes on the monitor. GCS 13.")},
    {"when": "phase is stabilized", "value": gs(
-     "Drowsy but rousable and comfortable, on the monitor, cooling. Pupils are still large. GCS 14.")},
+     "Drowsy but rousable, comfortable. Pupils still large. GCS 14.")},
    {"when": "phase is pulseless_vt", "value": gs(
-     "In cardiac arrest. No pulse, no respiratory effort, wide complexes on the monitor.")},
+     "Cardiac arrest. No pulse or breathing. Wide complexes on the monitor.")},
    {"when": None, "value": gs(
-     "Awake, agitated and disorientated, flushed, hot and dry, plucking at the leads. Speaking "
-     "but not making sense. Two people are keeping her on the trolley. GCS 13.")},
+     "Agitated, disoriented, flushed, hot and dry, plucking at the leads. Nonsense speech. GCS 13.")},
  ],
 }
 
@@ -273,7 +227,7 @@ GENERAL_STATUS = {
 # GENERAL_STATUS above, and kept consistent with it: both describe the same patient.
 PATIENT_VISUAL = {
  "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drives the figure in the room (engine/patient.js). Derived from this case's own phase descriptions, alertness levels, general status lines and action flags, and adds no clinical fact of its own: eyes closed where the phase is unresponsive, sedated or arrested; work of breathing where the phase description names it; the mask and the tube where the flag the resident's own action sets is set. The respiratory rate is not authored here, the figure breathes at the monitor's rate. Verify each rule against the phase and flag it names, as for any other content key.",
- "verify": "Three choices to check. (1) The convulsion is drawn with the eyes OPEN, on the understanding that the eyes are usually open in a generalised tonic-clonic seizure and that closed eyes during the event point toward a functional seizure; change it if that is not what should be taught. (2) Once airway_protected is set the figure is intubated, still and eyes closed even in the seizing phase, on the assumption of induction and paralysis; a paralysed patient may still be seizing electrically and the figure cannot show that. (3) post_ictal has no rule of its own: it is alertness level 1 and is drawn drowsy, with heavy lids and a nodding head, by the figure itself. Agitation is drawn on arrival, from 'agitated ... plucking at the leads', until the airway is protected. She is 'hot and dry', so she is never drawn sweating.",
+ "verify": "Three choices to check. (1) The convulsion is drawn with the eyes OPEN, on the understanding that the eyes are usually open in a generalized tonic-clonic seizure and that closed eyes during the event point toward a functional seizure; change it if that is not what should be taught. (2) Once airway_protected is set the figure is intubated, still and eyes closed even in the seizing phase, on the assumption of induction and paralysis; a paralyzed patient may still be seizing electrically and the figure cannot show that. (3) post_ictal has no rule of its own: it is alertness level 1 and is drawn drowsy, with heavy lids and a nodding head, by the figure itself. Agitation is drawn on arrival, from 'agitated ... plucking at the leads', until the airway is protected. She is 'hot and dry', so she is never drawn sweating.",
  "rules": [
   {
    "when": "flag airway_protected set",
@@ -336,19 +290,19 @@ LABS = {
    "changes_with_state": True,
    "rules": [
      {"when": "flag bicarb_given set", "value": panel([
-        comp("Sodium", "146", "mEq/L", "135-145", True),
+        comp("Sodium", "141", "mEq/L", "135-145", False),
         comp("Potassium", "3.1", "mEq/L", "3.5-5.0", True),
-        comp("Chloride", "104", "mEq/L", "98-107", False),
-        comp("Bicarbonate", "27", "mEq/L", "22-29", False),
+        comp("Chloride", "107", "mEq/L", "98-107", False),
+        comp("Bicarbonate", "21", "mEq/L", "22-29", True),
         comp("BUN", "12", "mg/dL", "7-20", False),
         comp("Creatinine", "0.8", "mg/dL", "0.6-1.2", False),
         comp("Glucose", "126", "mg/dL", "70-140 (random)", False)],
-        comment=("Drawn after sodium bicarbonate. The acidosis has corrected, and the sodium "
+        comment=("Drawn after sodium bicarbonate. The acidosis is correcting, and the sodium "
                  "and potassium have moved in the directions the treatment moves them: a rising "
-                 "sodium from the sodium load and a falling potassium from the alkalinisation "
+                 "sodium from the sodium load and a falling potassium from the alkalinization "
                  "driving potassium into cells. Both are complications of the treatment rather "
                  "than of the poisoning, and the potassium is the one to replace, because "
-                 "hypokalaemia lengthens a QT that is already long."),
+                 "hypokalemia lengthens a QT that is already long."),
         verify=("This panel is entirely model output. The author supplied one chemistry panel "
                 "and it is the pre-treatment one below. The direction of every change here is "
                 "textbook and the magnitudes are invented."))},
@@ -360,63 +314,58 @@ LABS = {
         comp("BUN", "12", "mg/dL", "7-20", False),
         comp("Creatinine", "0.8", "mg/dL", "0.6-1.2", False),
         comp("Glucose", "120", "mg/dL", "70-140 (random)", False)],
-        comment=("A metabolic acidosis with an anion gap of 13, which agrees with the blood gas "
-                 "and with the lactate. The renal function is normal, which is the baseline the "
+        comment=("A metabolic acidosis with an anion gap of 13, near normal, so the lactate explains only part of the fall in bicarbonate. The renal function is normal, which is the baseline the "
                  "rhabdomyolysis will be followed against."),
         verify=("The source gives CO2 as 34 in this panel and HCO3 as 13 on the gas. The two "
                 "cannot both be true and 13 is the one consistent with the pH and the anion "
-                "gap. Corrected on drafting judgement and needs the author's signature."))}]},
+                "gap. Corrected on drafting judgment and needs the author's signature."))}]},
 
  "complete_blood_count_cbc": {
    "changes_with_state": False,
    "rules": always(panel([
      comp("White cell count", "16.0", "K/uL", "4.0-11.0", True),
-     comp("Haemoglobin", "16.9", "g/dL", "12.0-16.0 (female)", True),
-     comp("Haematocrit", "47.2", "%", "36-46 (female)", True),
+     comp("Hemoglobin", "16.9", "g/dL", "12.0-16.0 (female)", True),
+     comp("Hematocrit", "47.2", "%", "36-46 (female)", True),
      comp("Platelets", "250", "K/uL", "150-400", False)],
-     comment=("A leucocytosis without a source, and a haemoglobin and haematocrit at the top of "
+     comment=("A leukocytosis without a source, and a hemoglobin and hematocrit at the top of "
               "or above the female interval."),
      verify=("All four values are the author's. The source writes the white count as '16 L/ul', "
-             "taken here as 16 K/microlitre. The haemoglobin of 16.9 and haematocrit of 47.2 "
+             "taken here as 16 K/microlitre. The hemoglobin of 16.9 and hematocrit of 47.2 "
              "are above the usual female interval and are flagged abnormal on that basis; "
-             "haemoconcentration is a plausible reading in a hyperthermic patient who has not "
+             "hemoconcentration is a plausible reading in a hyperthermic patient who has not "
              "drunk for hours, but it is a reading and not the author's statement.")))},
 
  "arterial_blood_gas": {
    "changes_with_state": True,
    "rules": [
      {"when": SEIZ, "value": panel([
-        comp("pH", "7.15", "", "7.35-7.45", True),
+        comp("pH", "6.99", "", "7.35-7.45", True),
         comp("pCO2", "52", "mmHg", "35-45", True),
         comp("pO2", "61", "mmHg", "80-100", True),
         comp("Bicarbonate", "12", "mEq/L", "22-26", True),
         comp("Lactate", "6.4", "mmol/L", "0.5-2.0", True)],
         comment=("A mixed metabolic and respiratory acidosis during the convulsion. This is the "
-                 "worst the pH gets and it is not only a respiratory problem: acidaemia "
-                 "increases the un-ionised fraction of the drug available to the cardiac sodium "
-                 "channel, so the gas is a cardiac measurement here as well as a respiratory "
+                 "worst the pH gets and it is not only a respiratory problem: acidemia increases the ionized fraction of the drug, the form that binds the cardiac sodium channel, so the gas is a cardiac measurement here as well as a respiratory "
                  "one."),
         verify="Model output. The author supplies one gas and it is the arrival one below.")},
      {"when": "flag bicarb_given set", "value": panel([
-        comp("pH", "7.51", "", "7.35-7.45", True),
-        comp("pCO2", "36", "mmHg", "35-45", False),
+        comp("pH", "7.47", "", "7.35-7.45", True),
+        comp("pCO2", "30", "mmHg", "35-45", True),
         comp("pO2", "142", "mmHg", "80-100", True),
-        comp("Bicarbonate", "28", "mEq/L", "22-26", True),
+        comp("Bicarbonate", "21", "mEq/L", "22-26", True),
         comp("Lactate", "2.2", "mmol/L", "0.5-2.0", True)],
-        comment=("Drawn after bicarbonate. A pH of 7.51 is inside the range usually aimed at "
-                 "when alkalinising for sodium-channel blockade, commonly taken to about 7.50 "
-                 "to 7.55. Further alkalinisation past that buys little and costs potassium and "
-                 "ionised calcium. The pO2 reflects supplemental oxygen and the reference "
+        comment=("Drawn after bicarbonate. A pH of 7.47 is approaching the range usually aimed at when alkalinizing for sodium-channel blockade, commonly taken to about 7.50 to 7.55. Further alkalinization past that buys little and costs potassium and "
+                 "ionized calcium. The pO2 reflects supplemental oxygen and the reference "
                  "interval quoted assumes room air, which is a known limitation of the catalog "
                  "default."),
         verify="Model output.")},
      {"when": None, "value": panel([
         comp("pH", "7.28", "", "7.35-7.45", True),
-        comp("pCO2", "34", "mmHg", "35-45", True),
+        comp("pCO2", "28", "mmHg", "35-45", True),
         comp("pO2", "94", "mmHg", "80-100", False),
         comp("Bicarbonate", "13", "mEq/L", "22-26", True),
         comp("Lactate", "3.1", "mmol/L", "0.5-2.0", True)],
-        comment=("A partly compensated metabolic acidosis on room air. The author's values."),
+        comment=("An appropriately compensated metabolic acidosis on room air. The pCO2 is revised from the source's 34 to 28 so that the three values agree."),
         verify=("The five values are the author's. The reference intervals are not, and the "
                 "catalog's own note applies: an ABG default assumes room air and nothing in "
                 "the schema knows when supplemental oxygen is running."))}]},
@@ -425,13 +374,13 @@ LABS = {
    "changes_with_state": True,
    "rules": [
      {"when": "flag bicarb_given set", "value": panel([
-        comp("pH", "7.47", "", "7.31-7.41", True),
-        comp("pCO2", "42", "mmHg", "41-51", False),
-        comp("Bicarbonate", "28", "mEq/L", "22-26", True)],
+        comp("pH", "7.41", "", "7.31-7.41", False),
+        comp("pCO2", "34", "mmHg", "41-51", True),
+        comp("Bicarbonate", "21", "mEq/L", "22-26", True)],
         comment="Adequate for following the pH and the bicarbonate.", verify="Model output.")},
      {"when": None, "value": panel([
         comp("pH", "7.25", "", "7.31-7.41", True),
-        comp("pCO2", "38", "mmHg", "41-51", True),
+        comp("pCO2", "31", "mmHg", "41-51", True),
         comp("Bicarbonate", "13", "mEq/L", "22-26", True)],
         comment=("The venous equivalent of the arterial sample. Adequate for the two numbers "
                  "this case follows, which are the pH and the bicarbonate."),
@@ -511,11 +460,11 @@ LABS = {
  "urinalysis": {
    "changes_with_state": False,
    "rules": always(panel([
-     comp("Colour", "Dark amber", "", "Yellow", True),
-     comp("Blood", "3+", "", "Negative", True),
+     comp("Color", "Amber", "", "Yellow", True),
+     comp("Blood", "1+", "", "Negative", True),
      comp("Red cells", "0-2", "/hpf", "0-2", False),
      comp("Protein", "Trace", "", "Negative", True),
-     comp("Leucocyte esterase", "Negative", "", "Negative", False),
+     comp("Leukocyte esterase", "Negative", "", "Negative", False),
      comp("Nitrite", "Negative", "", "Negative", False),
      comp("Ketones", "1+", "", "Negative", True)],
      comment=("Dipstick positive for blood with no red cells on microscopy."),
@@ -537,12 +486,12 @@ LABS = {
  "calcium_ionized": {
    "changes_with_state": True,
    "rules": [
-     {"when": "flag bicarb_given set", "value": val("Ionised calcium", "1.09", "mmol/L",
+     {"when": "flag bicarb_given set", "value": val("Ionized calcium", "1.09", "mmol/L",
         "1.12-1.32", True,
-        comment=("Fallen after alkalinisation, which is expected: a rising pH increases the "
-                 "fraction of calcium bound to albumin and lowers the ionised fraction."),
+        comment=("Fallen after alkalinization, which is expected: a rising pH increases the "
+                 "fraction of calcium bound to albumin and lowers the ionized fraction."),
         verify="Model output.")},
-     {"when": None, "value": val("Ionised calcium", "1.18", "mmol/L", "1.12-1.32", False,
+     {"when": None, "value": val("Ionized calcium", "1.18", "mmol/L", "1.12-1.32", False,
         comment="Normal before treatment.", verify="Model output.")}]},
 
  "liver_function_tests_lfts": {
@@ -568,7 +517,7 @@ LABS = {
  "troponin_t": {
    "changes_with_state": False,
    "rules": always(val("Troponin T", "0.04", "ng/mL", "<0.01", True,
-     comment=("Mildly raised without an ischaemic pattern on the tracing. Demand and a poisoned "
+     comment=("Mildly raised without an ischemic pattern on the tracing. Demand and a poisoned "
               "myocardium rather than an acute coronary syndrome. It does not change what you "
               "do."),
      verify="Model output. The author does not supply a troponin."))},
@@ -611,7 +560,7 @@ IMAGING = {
    "result_shape": "structured",
    "rules": [
      {"when": "phase is pulseless_vt", "value": report(
-       "Wide-complex tachycardia at approximately 190 per minute. No organised mechanical "
+       "Wide-complex tachycardia at approximately 190 per minute. No organized mechanical "
        "activity. QRS duration approximately 200 ms.")},
      {"when": WIDE, "value": report(
        "Monomorphic wide-complex tachycardia at approximately 180 per minute. QRS duration "
@@ -620,7 +569,7 @@ IMAGING = {
      {"when": SEIZ, "value": report(
        "Sinus tachycardia at approximately 150 per minute. QRS duration 148 ms, wider than on "
        "the previous tracing. Terminal R wave in aVR of 6 mm. Rightward terminal QRS axis. QTc "
-       "512 ms. Frequent ventricular ectopics. Baseline heavily obscured by movement artefact.")},
+       "512 ms. Frequent ventricular ectopics. Baseline heavily obscured by movement artifact.")},
      {"when": "phase is stabilized", "value": report(
        "Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms. Terminal R wave "
        "in aVR now 1 mm with an R to S ratio below 0.7. Normal QRS axis. QTc 445 ms. No ST "
@@ -634,6 +583,11 @@ IMAGING = {
        "Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms, narrower than "
        "on the arrival tracing. Terminal R wave in aVR now 2 mm with an R to S ratio below "
        "0.7. QTc 470 ms, still prolonged. No ST elevation.")},
+     # v0.18a: bicarbonate given before the seizure narrows the QRS in the arrival phase too,
+     # so a repeat tracing does not tell the resident that the drug failed.
+     {"when": "phase is presentation AND flag bicarb_given set", "value": report(
+       "Sinus tachycardia at approximately 135 per minute. QRS duration 116 ms, narrower than "
+       "on the arrival tracing. Terminal R wave in aVR of 3 mm. QTc 480 ms. No ST elevation.")},
      {"when": None, "value": image(ECG_ARRIVAL, "Twelve-lead ECG")}],
    "verify": (
      "The arrival tracing is the case. The author's narrative says the examinee 'should "
@@ -657,14 +611,14 @@ IMAGING = {
  "ct_head": {
    "changes_with_state": False,
    "rules": always(report(
-     "No intracranial haemorrhage. No mass, no midline shift, no established infarct. "
+     "No intracranial hemorrhage. No mass, no midline shift, no established infarct. "
      "Ventricles and sulci normal for age. No skull fracture.", abnormal=False))},
 
  "ultrasound_cardiac": {
    "changes_with_state": True,
    "rules": [
      {"when": WIDE, "value": report(
-       "Fast, poorly organised ventricular contraction with reduced systolic function. No "
+       "Fast, poorly organized ventricular contraction with reduced systolic function. No "
        "pericardial effusion. Inferior vena cava small and collapsing.")},
      {"when": None, "value": report(
        "Vigorous left ventricular systolic function at a fast rate. No pericardial effusion. No "
@@ -680,14 +634,14 @@ CONSULTANTS = {
    "discusses a result that has not come back. Each has a pending tier, because with a "
    "ten-second turnaround there is a real window in which the ECG is ordered and not resulted.\n\n"
    "Only toxicology is state-changing: it sets tox_consulted, which is one of the two flags the "
-   "stabilised phase requires."),
+   "stabilized phase requires."),
 
  "consult_toxicology": [
    {"when": "study ecg_12_lead resulted AND flag bicarb_given set",
     "value": ("Toxicology fellow: good, you have treated the QRS and that is the right call. "
               "Keep going on the same principle. Repeat boluses of 1 to 2 mEq/kg until the QRS "
               "narrows, then put up an infusion, and take her pH to about 7.50 to 7.55 and no "
-              "further. Watch the sodium, the potassium and the ionised calcium, because you "
+              "further. Watch the sodium, the potassium and the ionized calcium, because you "
               "will move all three. Serial tracings, and I want continuous monitoring wherever "
               "she goes.\n\nThree other things. Do not give her physostigmine, whatever the "
               "delirium looks like, while that QRS is anything other than normal. Do not use a "
@@ -785,7 +739,7 @@ CONSULTANTS = {
               "unknown ingestion is a provoked seizure until proven otherwise, and I would not "
               "be loading her with an anticonvulsant. Benzodiazepines, find and fix the "
               "provocation, and get a head CT if you have not. Do not use phenytoin in an "
-              "overdose you have not characterised.")}],
+              "overdose you have not characterized.")}],
 
  "consult_cardiology": [
    # The escape hatch for a resident who cannot read the tracing, and it is deliberately not
@@ -805,10 +759,10 @@ CONSULTANTS = {
               "first one the rate is about 135 and it is sinus, so the tachycardia itself is "
               "not the problem. The QRS is 132 milliseconds, which is wide for a young woman "
               "with no bundle branch block, and look at aVR: there is a terminal R wave of "
-              "about 5 millimetres and the R to S ratio there is over 0.7. The terminal axis "
+              "about 5 millimeters and the R to S ratio there is over 0.7. The terminal axis "
               "is rightward. That combination is sodium-channel blockade and it is the same "
               "picture a tricyclic gives you.\n\nOn the repeat the QRS is about 104 and the "
-              "aVR R wave is down to a couple of millimetres, so whatever you gave is working. "
+              "aVR R wave is down to a couple of millimeters, so whatever you gave is working. "
               "Keep going and keep repeating it. The QTc is still long, so no QT-prolonging "
               "drugs and keep her potassium and magnesium up.\n\nNothing here needs a "
               "cardiologist. It needs toxicology and it needs a monitored bed.")},
@@ -817,10 +771,10 @@ CONSULTANTS = {
               "and only one is obvious.\n\nThe rate is about 135 and it is sinus. The QRS is "
               "132 milliseconds, which is wide, and there is no bundle branch morphology to "
               "explain it in an eighteen year old. Now look at aVR specifically: terminal R "
-              "wave about 5 millimetres, R to S ratio over 0.7, and the terminal part of the "
+              "wave about 5 millimeters, R to S ratio over 0.7, and the terminal part of the "
               "QRS is swinging rightward. The QTc is about 495.\n\nThat is sodium-channel "
               "blockade, and it is the same tracing a tricyclic overdose gives you. It is not "
-              "ischaemia, it is not a bundle, and it is not something for the catheter "
+              "ischemia, it is not a bundle, and it is not something for the catheter "
               "laboratory. The treatment is sodium bicarbonate and the call is to toxicology "
               "rather than to me. Repeat the tracing after each dose and watch that QRS.")},
    {"when": "study ecg_12_lead ordered",
@@ -839,7 +793,7 @@ CONSULTANTS = {
               "so this is volume and observation rather than anything from me. Keep her filled, "
               "measure the urine output, repeat the creatine kinase and the electrolytes. Call "
               "me if the creatine kinase climbs into the thousands or the creatinine moves.\n\n"
-              "On the drug itself: diphenhydramine is not effectively removed by haemodialysis, "
+              "On the drug itself: diphenhydramine is not effectively removed by hemodialysis, "
               "so there is no clearance argument for putting her on a machine.")},
    {"when": None,
     "value": ("Renal registrar: nothing for me yet. Send a creatine kinase and a creatinine and "

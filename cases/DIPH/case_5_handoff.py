@@ -39,7 +39,7 @@ HANDOFF = {
     "explanation": (
       "The most instructive wrong answer available in this case, and the reason psychiatry is "
       "tagged discouraged as an early consultation.\n\n"
-      "Medical clearance is not a status conferred by recognising that an overdose was "
+      "Medical clearance is not a status conferred by recognizing that an overdose was "
       "deliberate. It means the medical problem has been treated and the patient can engage. "
       "This patient has a conduction abnormality that has not been normal for long, a "
       "temperature that has been over 40, a seizure a few minutes ago and a delirium she cannot "
@@ -78,7 +78,7 @@ HANDOFF = {
     "explanation": (
       "Nothing this patient needs is unavailable here. This case is written for a hospital with "
       "toxicology, critical care and psychiatry on site. In a hospital without an intensive care "
-      "bed or without paediatric or adolescent psychiatric provision, transfer would be a "
+      "bed or without pediatric or adolescent psychiatric provision, transfer would be a "
       "reasonable answer to a different question, and the thing to be able to say is which "
       "capability is missing.")}],
 
@@ -121,7 +121,7 @@ HANDOFF = {
       "is that the patient looks better long before the channel does.\n\n"
       "The catalog entry is deliberately a mechanism rather than an agent, because that is "
       "how it is handed over and because the same sentence and the same treatment serve "
-      "tricyclic, cocaine, bupropion, flecainide and local anaesthetic poisoning.")},
+      "tricyclic, cocaine and flecainide poisoning.")},
    {"catalog_id": "dx_anticholinergic_toxidrome", "label": "Anticholinergic toxidrome",
     "explanation": (
       "True, and worth naming beside the agent because it is what the nursing staff will be "
@@ -140,9 +140,9 @@ HANDOFF = {
     "explanation": (
       "She convulsed, and the receiving team needs to know both that it happened and that "
       "it was toxic rather than epileptic, because it changes what they do if it recurs: "
-      "benzodiazepines and correction of the acidaemia, the temperature and the "
+      "benzodiazepines and correction of the acidemia, the temperature and the "
       "oxygenation, and not phenytoin. A recurrent seizure in this poisoning is also a "
-      "cardiac event, because the acidaemia it produces frees more drug to block the "
+      "cardiac event, because the acidemia it produces frees more drug to block the "
       "sodium channel.")},
    {"catalog_id": "dx_suicide_attempt", "label": "Suicide attempt",
     "explanation": (
@@ -221,7 +221,7 @@ HANDOFF = {
    {"catalog_id": "dx_bacterial_meningitis", "label": "Bacterial meningitis",
     "verdict": "incorrect",
     "explanation": (
-      "The right thing to have thought about at time zero, and this case does not penalise "
+      "The right thing to have thought about at time zero, and this case does not penalize "
       "empirical antibiotics for it. It is the wrong final answer. The neck is supple with no "
       "meningism, there is no rash, there is no headache today, and the pupils, the dry skin, "
       "the absent bowel sounds and the palpable bladder together are a toxidrome. And a "
@@ -238,7 +238,7 @@ HANDOFF = {
     "verdict": "incorrect",
     "explanation": (
       "On the differential for a hyperthermic tachycardic agitated young woman and excluded by "
-      "the examination and the TSH. No goitre, no eye signs, no preceding history, and a normal "
+      "the examination and the TSH. No goiter, no eye signs, no preceding history, and a normal "
       "TSH. It is also the wrong tempo: thyroid storm has a precipitant and a prodrome.")},
    {"catalog_id": "dx_first_time_generalized_seizure", "label": "First seizure",
     "verdict": "incorrect",
@@ -264,7 +264,7 @@ HANDOFF = {
 # ==================================================================== debrief
 DEBRIEF = {
  "clinical_domains": [
-   {"id": "recognition", "label": "Recognising the toxidrome",
+   {"id": "recognition", "label": "Recognizing the toxidrome",
     "actions": ["exam_heent", "exam_skin", "exam_abd", "exam_gu", "exam_neuro", "exam_psych",
                 "exam_neck", "exam_card", "exam_pulm", "fingerstick_blood_sugar"]},
    {"id": "conduction", "label": "Finding and treating the sodium-channel blockade",
@@ -314,17 +314,17 @@ DEBRIEF = {
    "six that make the diagnosis would score under fifty percent. These six are the ones that "
    "distinguish an anticholinergic toxidrome from its mimics: the dry skin, the pupils and dry "
    "mucosa, the silent abdomen and full bladder, the absence of clonus and focal signs, the "
-   "delirium, and the supple neck. Author judgement, unreviewed."),
+   "delirium, and the supple neck. Author judgment, unreviewed."),
 
  "intended_path": ["presentation", "stabilizing", "stabilized", "case_complete"],
  "intended_path_note": (
    "Changed on 5 September 2026, and the change is the largest single departure from the "
    "source in this pack.\n\n"
-   "It used to read presentation, seizing, post-ictal, stabilising, stabilised: the intended "
+   "It used to read presentation, seizing, post-ictal, stabilizing, stabilized: the intended "
    "path went through the convulsion, because the case author writes that a seizure occurs "
    "regardless of how well the examinee is doing, so there was no path that avoided it and a "
    "resident who reached the post-ictal phase had not failed at anything. The arrival phase "
-   "now carries an arrow that takes a patient who has received sodium bicarbonate straight to "
+   "now carries an arrow that takes a patient who has received both sodium bicarbonate and a benzodiazepine straight to "
    "the narrowing phase, so the best run no longer convulses and the intended path is the one "
    "that does not.\n\n"
    "Two consequences for reading a debrief. A resident who seized has not necessarily done "
@@ -347,8 +347,7 @@ DEBRIEF = {
    "what an agitated patient usually gets."),
 
  "cross_cutting_teaching_points": [
-   ("Treat the ECG, not the ingestion history. A wide QRS after any exposure is an indication "
-    "for sodium bicarbonate, and you do not need to know what was taken to give it. Waiting to "
+   ("Treat the ECG, not the ingestion history. A new QRS over 100 milliseconds with a terminal R in aVR in a poisoned patient is an indication for sodium bicarbonate, and you do not need to know what was taken to give it. Waiting to "
     "find out is what the arrest branch of this case is made of."),
    ("The satisfying diagnosis arrives before the dangerous one. The toxidrome is visible on "
     "examination in ninety seconds. The conduction abnormality is on a tracing nobody has "
@@ -359,7 +358,7 @@ DEBRIEF = {
     "blocked, which is why the treatment is sedation, cooling and, if necessary, paralysis."),
    ("Hot and dry versus hot and wet is the single most useful discriminator on the "
     "hyperthermic-agitated differential, and it takes one second to check."),
-   ("Acidaemia and sodium-channel blockade feed each other. A seizure produces acid, acid frees "
+   ("Acidemia and sodium-channel blockade feed each other. A seizure produces acid, acid frees "
     "more drug to block the channel, and a wider QRS makes the next seizure more likely. "
     "Terminating the seizure and ventilating the patient are cardiac interventions here."),
    ("QRS widening and QT prolongation are different electrophysiological problems, they coexist "
@@ -368,7 +367,7 @@ DEBRIEF = {
    ("A qualitative urine drug screen reports exposure, not causation, and it has known "
     "cross-reactants. Hers says tricyclic and she has not taken one. It did not change the "
     "right management, which is the most useful thing about it."),
-   ("Medical clearance is not a form and it is not conferred by recognising that an overdose was "
+   ("Medical clearance is not a form and it is not conferred by recognizing that an overdose was "
     "deliberate. A patient with an unresolved wide QRS is not medically cleared, whatever the "
     "psychiatric need."),
    ("Response-guided treatment means reassessing after each dose rather than deciding in advance "
@@ -378,7 +377,7 @@ DEBRIEF = {
     "what is available at your hospital is not during the arrest."),
  ],
  "attempt_history_note": (
-   "Blocked attempts are surfaced and not penalised. The block a resident is most likely to meet "
+   "Blocked attempts are surfaced and not penalized. The block a resident is most likely to meet "
    "in this case is an intravenous drug attempted before a line is in, which is the catalog "
    "prerequisite rather than anything this case authors, and it is the right lesson at the right "
    "moment."),
@@ -407,12 +406,9 @@ PROVENANCE = {
    "source does not name. Nothing here has been reviewed by a physician."),
  "author_only_fields_pending_signoff": [
    "The physostigmine tag rule list. The author's instruction was that physostigmine is harmful "
-   "and leads back to a seizure requiring bicarbonate. The engine's harmful tag halts the case "
-   "and cannot lead anywhere, so the instruction is split: harmful before the ECG has resulted, "
-   "discouraged with a seizure ten seconds later once it has. This is the most consequential "
-   "unsigned decision in the pack. See DIPH-SEED.md section 9.1.",
+   "and leads back to a seizure requiring bicarbonate. The engine's harmful tag halts the case and cannot lead anywhere. Until v0.18a the instruction was split: harmful before the ECG had resulted, discouraged with a seizure ten seconds later once it had. That scored reading the tracing and then ignoring it more leniently than not reading it, so the v0.18a review made it harmful in every phase in which the QRS is wide and discouraged once she has stabilized. This is the most consequential unsigned decision in the pack. See DIPH-SEED.md section 9.1.",
    "The terminal R wave in aVR, authored present at 5 mm. The author's narrative says the "
-   "examinee should recognise 'the lack of' a significant R wave in aVR; her own teaching text "
+   "examinee should recognize 'the lack of' a significant R wave in aVR; her own teaching text "
    "and her debriefing guide both say the terminal R wave is the finding. See DIPH-SEED.md "
    "section 9.2.",
    "The chemistry panel's bicarbonate, authored at 13 rather than the source's CO2 of 34, on the "
@@ -430,7 +426,7 @@ PROVENANCE = {
    "The tag on empirical antibiotics and acyclovir, which are recommended on arrival and "
    "discouraged after the toxicology screen resulted. The author endorses a sepsis bundle at "
    "time zero and her debriefing guide never mentions sepsis; the switch point is a drafting "
-   "judgement.",
+   "judgment.",
    "The additional and alternative diagnosis lists, drafted from the case's own findings.",
    "The interview, in full. The mother is the historian on the author's instruction, and every "
    "word she says is model output.",
@@ -441,11 +437,9 @@ PROVENANCE = {
    "are in DIPH-SEED.md section 9. Read that section before reading anything else in this pack."),
  "unused_source_material": (
    "The four images in the source document, the mannequin and supply lists, the confederate "
-   "staffing notes, and the Teaching Points essay as prose. The engine cannot display an image "
-   "in a result, and the provenance of the two ECG tracings, the chest radiograph and the head "
+   "staffing notes, and the Teaching Points essay as prose. Two of the images are now shown as results. The provenance of the two ECG tracings, the chest radiograph and the head "
    "CT is not established in the document, which cites an ACEP toxicology case file and "
-   "thepoisonreview.com in its reference list. No text from the source is reproduced verbatim in "
-   "this case file."),
+   "thepoisonreview.com in its reference list. At least one sentence of the source's teaching text is reproduced nearly word for word (the physostigmine note's 'Anticholinergic delirium plus a wide QRS is a bicarbonate case, not a physostigmine case', and the charcoal note). Whether those passages can be kept is part of the open provenance question."),
  "catalog_change_requests": [
    "physostigmine was added to the action catalog for this case, under Meds - Tox, marked "
    "source=author-supplied. Before this case the catalog held every other toxicology antidote a "

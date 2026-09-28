@@ -41,7 +41,7 @@ governs and the conflict is recorded in section 9 below.
 `acep.org/tox/case-files/15_Diphenhydramine Overdose.pdf` and
 `thepoisonreview.com`. It is not clear from the document how much of the Teaching Points
 essay, and which of the four images, are the author's own work and how much is reproduced
-or adapted from those sources. This matters because the platform is free and open source.
+or adapted from those sources. This matters because the platform distributes the case to learners and will charge for some features.
 **Two of the four images are now in the case pack** and are embedded in the distributed
 build, so the question is live rather than sidestepped: the arrival ECG and the chest
 radiograph are shown as pictures with no interpretation. The second ECG was tried and taken

@@ -6,7 +6,7 @@
   "authoring_requirements": "case-authoring-requirements.md (v0.7)",
   "action_catalog": "action-catalog.json (0.2-draft)",
   "diagnosis_catalog": "diagnosis-catalog.json",
-  "conformance_note": "Written against v0.7 of the authoring requirements, so it uses the five-tier tag vocabulary including discouraged, structured result payloads with author-set abnormal flags, the closed set of fourteen exam manoeuvres with the catalog routing map, the two-sentence arrival handover with no background paragraph behind it, time-guarded phase transitions, and vital effects rebased so that no phase double-counts a gain an action supplies."
+  "conformance_note": "Written against v0.7 of the authoring requirements, so it uses the five-tier tag vocabulary including discouraged, structured result payloads with author-set abnormal flags, the closed set of fourteen exam maneuvers with the catalog routing map, the two-sentence arrival handover with no background paragraph behind it, time-guarded phase transitions, and vital effects rebased so that no phase double-counts a gain an action supplies."
  },
  "provenance": {
   "status": "DRAFTED FROM AN AUTHOR SEED. Not reviewed by a physician. Not for use with learners.",
@@ -31,7 +31,7 @@
  "metadata": {
   "working_title": "68-year-old man, palpitations and breathlessness, brought in by EMS",
   "chief_complaint_patient_voice": "My heart won't stop racing and I can't get my breath.",
-  "final_diagnosis": "Atrial fibrillation with rapid ventricular response, complicated by acute decompensated heart failure with a newly recognised reduced ejection fraction and cardiogenic pulmonary edema. The arrhythmia and the ventricular dysfunction are each plausibly cause and consequence of the other, and the case does not require the learner to decide which came first.",
+  "final_diagnosis": "Atrial fibrillation with rapid ventricular response, complicated by acute decompensated heart failure with a newly recognized reduced ejection fraction and cardiogenic pulmonary edema. The arrhythmia and the ventricular dysfunction are each plausibly cause and consequence of the other, and the case does not require the learner to decide which came first.",
   "target_level": [
    "intern",
    "junior_resident",
@@ -39,17 +39,17 @@
   ],
   "estimated_runtime_seconds": 600,
   "learning_objectives": [
-   "Recognise atrial fibrillation with a rapid ventricular response on a twelve-lead ECG and separate it from the other narrow-complex tachycardias.",
+   "Recognize atrial fibrillation with a rapid ventricular response on a twelve-lead ECG and separate it from the other narrow-complex tachycardias.",
    "Identify acute decompensated heart failure and cardiogenic pulmonary edema in a patient with no prior diagnosis of either.",
    "Use cardiac and lung point-of-care ultrasound to establish reduced left ventricular systolic function at the bedside, and treat that finding as the pivot the rest of the case turns on.",
    "Select a rate-control strategy that accounts for reduced systolic function, and state why a non-dihydropyridine calcium channel blocker is the wrong agent once the ejection fraction is known.",
-   "Sequence non-invasive positive pressure ventilation and diuresis alongside rate control rather than after it, and recognise that a lower heart rate is not by itself a resuscitated patient.",
+   "Sequence non-invasive positive pressure ventilation and diuresis alongside rate control rather than after it, and recognize that a lower heart rate is not by itself a resuscitated patient.",
    "Assess thromboembolic risk in new atrial fibrillation and initiate anticoagulation, including the reason the uncertain duration of the arrhythmia matters if cardioversion is being considered.",
    "Reassess after treatment against clinical response rather than against a target number, and disposition to a setting that can continue what the department started."
   ],
   "teaching_frame": "Two problems presenting as one. The rate is what the learner sees, and the ventricle is what decides the treatment. The case is built so that the correct management of the visible problem changes once the invisible one is found, which is what the POCUS is for.",
   "care_setting": {
-   "label": "Quaternary care, Level 1 trauma centre",
+   "label": "Quaternary care, Level 1 trauma center",
    "detail": "Adult emergency department. Full laboratory, imaging and blood bank on site. Cardiology and critical care are available in house at all hours, and there are both intensive care and step-down beds. Nothing in this case is limited by resources, which matters because the disposition question is about what the receiving unit must be able to do rather than about what the hospital has.",
    "provenance": "Setting is a deployment property, not a clinical fact. A version of this case written for a hospital with no non-invasive ventilation on the wards has a different right answer to the disposition question and the same right answer to everything else."
   },
@@ -81,7 +81,7 @@
    "id": "presentation",
    "label": "Atrial fibrillation with rapid ventricular response and cardiogenic pulmonary edema",
    "short_label": "on arrival",
-   "clinical_description": "Awake, anxious, tachypnoeic and hypoxaemic with an irregularly irregular ventricular rate of 160. Congested and perfusing. The reduced ejection fraction has not yet been found.",
+   "clinical_description": "Awake, anxious, tachypneic and hypoxemic with an irregularly irregular ventricular rate of 160. Congested and perfusing. The reduced ejection fraction has not yet been found.",
    "vitals": {
     "heart_rate": 160,
     "systolic_bp": 132,
@@ -122,7 +122,7 @@
      "measured_from": "guard_true",
      "narration": "That second dose has done it. His rate's down and I can actually count it now, still all over the place.",
      "debrief_note": "The ventricular rate fell about ten seconds after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so ten seconds is a heavy compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose because the first one appeared not to work. The nurse says so out loud when the drug goes in, which is the part of this that will actually stop somebody redosing.",
-     "author_rationale": "AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgement was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
+     "author_rationale": "AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgment was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
     },
     {
      "when": "NOT flag on_niv set",
@@ -130,7 +130,7 @@
      "measured_from": "phase_entry",
      "to": "respiratory_failure",
      "narration": "He's wearing out. He's stopped talking to me and his sat has dropped since you came in.",
-     "debrief_note": "Four minutes of hypoxaemic respiratory failure at a respiratory rate of thirty, with no positive pressure and no supplemental oxygen that changes anything, and he tired. This is the commonest way this case is lost: the rate is the visible abnormality, the learner spends the first four minutes on it, and the problem that was going to kill him first was the flooded lung. In acute cardiogenic pulmonary edema, positive pressure is a treatment for the edema and not merely a support measure while you treat something else. It recruits flooded alveoli, reduces the work of breathing, and by raising intrathoracic pressure it lowers both preload and left ventricular transmural pressure. Applying it in the first minutes is what keeps most of these patients off a ventilator. Be honest with learners about the strength of the claim: meta-analyses report reductions in intubation rate, and the largest single randomised trial, 3CPO, found no difference in seven-day mortality or intubation against standard oxygen therapy. The defensible claim is faster physiological and symptomatic improvement.",
+     "debrief_note": "Four minutes of hypoxemic respiratory failure at a respiratory rate of thirty, with no positive pressure and no supplemental oxygen that changes anything, and he tired. This is the commonest way this case is lost: the rate is the visible abnormality, the learner spends the first four minutes on it, and the problem that was going to kill him first was the flooded lung. In acute cardiogenic pulmonary edema, positive pressure is a treatment for the edema and not merely a support measure while you treat something else. It recruits flooded alveoli, reduces the work of breathing, and by raising intrathoracic pressure it lowers both preload and left ventricular transmural pressure. Applying it in the first minutes is what keeps most of these patients off a ventilator. Be honest with learners about the strength of the claim: meta-analyses report reductions in intubation rate, and the largest single randomized trial, 3CPO, found no difference in seven-day mortality or intubation against standard oxygen therapy. The defensible claim is faster physiological and symptomatic improvement.",
      "author_rationale": "AUTHOR SIGNATURE REQUIRED. The claim is that a sixty-eight year old man in cardiogenic pulmonary edema at a saturation of 88 percent on room air, a respiratory rate of thirty and a ventricular rate of 160 will begin to tire inside four minutes if nothing is done for his breathing. Four minutes is compressed against real disease tempo in the same way the five-second laboratory turnaround is; the honest version of the claim is that he is on a trajectory that ends in intubation and that a case cannot spend twenty minutes demonstrating it. The deadline is a single integer in this transition and is the reviewer's to change."
     },
     {
@@ -143,7 +143,7 @@
    "id": "respiratory_failure",
    "label": "Tiring on an untreated flooded lung",
    "short_label": "in respiratory failure",
-   "clinical_description": "Hypoxaemic and hypercapnic respiratory failure from untreated cardiogenic pulmonary edema. Drowsy, tachypnoeic, and no longer able to sustain the work of breathing. Still perfusing. The authored heart rate here is the UNTREATED one. A patient who reached this phase with one dose of a nodal blocker on board reads about 22 beats lower and one with two doses about 35 lower, through two vital effects on the rate-control actions guarded on this phase.",
+   "clinical_description": "Hypoxemic and hypercapnic respiratory failure from untreated cardiogenic pulmonary edema. Drowsy, tachypneic, and no longer able to sustain the work of breathing. Still perfusing. The authored heart rate here is the UNTREATED one. A patient who reached this phase with one dose of a nodal blocker on board reads about 22 beats lower and one with two doses about 35 lower, through two vital effects on the rate-control actions guarded on this phase.",
    "vitals": {
     "heart_rate": 166,
     "systolic_bp": 118,
@@ -186,7 +186,7 @@
      "to": "case_complete"
     }
    ],
-   "schema_gap_note": "There is deliberately no rate-control exit from this phase. A learner who reaches respiratory failure and responds by giving another rate-controlling drug sees the flag set, the debrief credit the critical action, and the patient not improve, which is the whole lesson of wrong path one stated as behaviour. The flag is remembered, so applying positive pressure afterwards goes straight to the stabilised phase."
+   "schema_gap_note": "There is deliberately no rate-control exit from this phase. A learner who reaches respiratory failure and responds by giving another rate-controlling drug sees the flag set, the debrief credit the critical action, and the patient not improve, which is the whole lesson of wrong path one stated as behavior. The flag is remembered, so applying positive pressure afterwards goes straight to the stabilized phase."
   },
   {
    "id": "breathing_supported",
@@ -227,7 +227,7 @@
      "measured_from": "guard_true",
      "narration": "That second dose has done it. His rate's down and I can actually count it now, still all over the place.",
      "debrief_note": "The ventricular rate fell about ten seconds after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so ten seconds is a heavy compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose because the first one appeared not to work. The nurse says so out loud when the drug goes in, which is the part of this that will actually stop somebody redosing.",
-     "author_rationale": "AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgement was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
+     "author_rationale": "AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgment was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
     },
     {
      "when": "action handoff_submit taken",
@@ -239,7 +239,7 @@
    "id": "rate_controlled_congested",
    "label": "Ventricular rate controlled, lung still flooded",
    "short_label": "rate controlled, still congested",
-   "clinical_description": "The ventricular rate has come down and nothing has been done for the pulmonary edema. Tachypnoeic, hypoxaemic, and still working hard to breathe.",
+   "clinical_description": "The ventricular rate has come down and nothing has been done for the pulmonary edema. Tachypneic, hypoxemic, and still working hard to breathe.",
    "vitals": {
     "heart_rate": 108,
     "systolic_bp": 118,
@@ -365,28 +365,28 @@
    "short_label": "stopped",
    "clinical_description": "Terminal phase entered directly when a harmful action is taken, carrying that action's halt reason. Not reached through transition rules.",
    "vitals": {
-    "heart_rate": 38,
-    "systolic_bp": 62,
-    "diastolic_bp": 34,
-    "respiratory_rate": 6,
+    "heart_rate": 150,
+    "systolic_bp": 104,
+    "diastolic_bp": 62,
+    "respiratory_rate": 40,
     "oxygen_saturation": 76,
-    "temperature_c": 36.8
+    "temperature_c": 37.0
    },
    "appearance": {
-    "distress_level": 0,
-    "alertness_level": 3,
-    "pupil_size": "large",
-    "pupil_reactivity": "sluggish"
+    "distress_level": 3,
+    "alertness_level": 1,
+    "pupil_size": "normal",
+    "pupil_reactivity": "reactive"
    },
-   "rhythm": "regular",
+   "rhythm": "irregularly_irregular",
    "ecg": {
     "p_waves": false,
-    "qrs_ms": 180,
-    "verify": "MODEL OUTPUT, NOT IN THE SOURCE. The halted phase authors a regular rhythm at 38 with a pressure of 62/34 and says nothing about the tracing, so the monitor draws a slow, wide, P-less idioventricular rhythm, the generic peri-arrest picture. A reviewer who reads the author's 'regular' as a converted sinus bradycardia sets p_waves to true and qrs_ms to 90 here. [UNVERIFIED, confirm before release]"
+    "qrs_ms": 88,
+    "verify": "v0.18a. His own rhythm at the point of respiratory failure: atrial fibrillation with a narrow QRS."
    },
    "terminal": true,
    "transitions": [],
-   "schema_gap_note": "Generic peri-arrest numbers. This case has one halting action, so unlike CHFE there is no second physiology these numbers have to cover. The rhythm here is regular rather than irregularly irregular, and that is deliberate: these are not this patient's numbers, they are the generic peri-arrest block every halt shows, and asserting that a man who has just been killed by a fluid bolus is still in atrial fibrillation at 38 beats per minute would be a clinical claim the case has no basis for. In practice the beat is stopped the moment the case ends, so almost nobody hears it either way."
+   "schema_gap_note": "v0.18a. This case has one halting action, a crystalloid bolus, and its halt reason describes hypoxemic respiratory failure needing intubation, not an arrest. These are his numbers at that point: still in atrial fibrillation at 150, pressure holding, saturation 76 on a respiratory rate of 40. Until v0.18a this block was a generic bradycardic peri-arrest, which contradicted the halt reason."
   },
   {
    "id": "case_complete",
@@ -398,7 +398,7 @@
     "systolic_bp": 124,
     "diastolic_bp": 74,
     "respiratory_rate": 20,
-    "oxygen_saturation": 95,
+    "oxygen_saturation": 89,
     "temperature_c": 37.0
    },
    "appearance": {
@@ -454,7 +454,7 @@
     "guard": "NOT flag monitor_attached set",
     "text": "He isn't on the monitor yet, so you've got nothing but what the crew told you. Do you want me to hook him up?"
    },
-   "debrief_note": "Until an action carrying the monitor capability is taken, every cell on the monitor reads a dash and there is no heartbeat. That is a property of the simulator that mirrors the department: nobody knows the rate is 160 and irregular until somebody puts leads on him. In a case whose entire management hinges on a rate and a rhythm, attaching the monitor is not housekeeping. It is the first diagnostic act, and it is scored as one."
+   "debrief_note": "Until an action carrying the monitor capability is taken, every cell on the monitor reads a dash and there is no heartbeat. That is a property of the simulator that mirrors the department: the crew gave you numbers from the road, and only the monitor tells you what he is doing now. In a case whose entire management hinges on a rate and a rhythm, attaching the monitor is not housekeeping. It is the first diagnostic act, and it is scored as one."
   },
   {
    "catalog_id": "insert_iv",
@@ -533,10 +533,10 @@
      "key": "niv_spo2_step4",
      "onset_seconds": 60,
      "while": "NOT flag intubated set",
-     "note": "Eight points of saturation, authored as four two-point steps at zero, twenty, forty and sixty seconds rather than as one jump, because the author asked for the number to climb over about a minute of game time and the engine has no way to ramp a single effect. Each step triggers the renderer's five-second interpolation, so what the resident sees is a saturation that walks up rather than one that snaps. Every one of the four is a separate key, because effects sharing a key do not stack. All four are guarded on not being intubated: the mask comes off at intubation and the ventilated phase authors its own saturation. The size and the tempo are teaching choices. No trial supports either number, and the review packet says so rather than implying the simulator is modelling alveolar recruitment."
+     "note": "Eight points of saturation, authored as four two-point steps at zero, twenty, forty and sixty seconds rather than as one jump, because the author asked for the number to climb over about a minute of game time and the engine has no way to ramp a single effect. Each step triggers the renderer's five-second interpolation, so what the resident sees is a saturation that walks up rather than one that snaps. Every one of the four is a separate key, because effects sharing a key do not stack. All four are guarded on not being intubated: the mask comes off at intubation and the ventilated phase authors its own saturation. The size and the tempo are teaching choices. No trial supports either number, and the review packet says so rather than implying the simulator is modeling alveolar recruitment."
     }
    ],
-   "debrief_note": "Non-invasive positive pressure ventilation is the highest-value early intervention in acute cardiogenic pulmonary edema and in this case it is also the intervention a learner is most likely to defer, because the rate is louder. It recruits flooded alveoli and reduces the work of breathing, and by raising intrathoracic pressure it reduces preload and left ventricular transmural pressure, which is afterload reduction by mechanical means. Continuous and bilevel positive pressure are one button here because they are one decision: 3CPO found no difference between the modes in mortality or intubation rate, and bilevel is often preferred when the patient is tiring and hypercapnic, as this one is on his venous gas. Be honest about the evidence. Meta-analyses report reductions in intubation and mortality against standard oxygen therapy; 3CPO, the largest randomised trial, found no difference in seven-day mortality or intubation rate. The strongest defensible claim is faster symptomatic and physiological improvement, with intubation avoidance supported by meta-analytic but not by single-trial evidence. The historical concern that bilevel increased myocardial infarction has not been borne out.",
+   "debrief_note": "Non-invasive positive pressure ventilation is the highest-value early intervention in acute cardiogenic pulmonary edema and in this case it is also the intervention a learner is most likely to defer, because the rate is louder. It recruits flooded alveoli and reduces the work of breathing, and by raising intrathoracic pressure it reduces preload and left ventricular transmural pressure, which is afterload reduction by mechanical means. Continuous and bilevel positive pressure are one button here because they are one decision: 3CPO found no difference between the modes in mortality or intubation rate, and bilevel is often preferred when the patient is tiring and hypercapnic, as this one is on his venous gas. Be honest about the evidence. Meta-analyses report reductions in intubation and mortality against standard oxygen therapy; 3CPO, the largest randomized trial, found no difference in seven-day mortality or intubation rate. The strongest defensible claim is faster symptomatic and physiological improvement, with intubation avoidance supported by meta-analytic but not by single-trial evidence. The historical concern that bilevel increased myocardial infarction has not been borne out.",
    "references": [
     "Gray A, Goodacre S, Newby DE, Masson M, Sampson F, Nicholl J; 3CPO Trialists. Noninvasive ventilation in acute cardiogenic pulmonary edema. N Engl J Med. 2008;359(2):142-51. [UNVERIFIED in this pack, confirm before release]",
     "Berbenetz N, Wang Y, Brown J, et al. Non-invasive positive pressure ventilation (CPAP or bilevel NPPV) for cardiogenic pulmonary edema. Cochrane Database Syst Rev. 2019;4:CD005351. [UNVERIFIED in this pack, confirm before release]"
@@ -559,10 +559,10 @@
      "delta": 3,
      "key": "supplemental_o2_spo2",
      "while": "NOT flag on_niv set AND NOT flag intubated set",
-     "note": "Three points, and it shares a key with the non-rebreather so the two cannot be stacked into a gain neither would produce. Guarded off once positive pressure is on, because the cannula comes off when the mask goes on and the two are not additive. Deliberately not enough: a resident who reaches for oxygen and watches the number go from 88 to 91 has learned that oxygen treats hypoxaemia and not the flooded alveoli causing it."
+     "note": "Three points, and it shares a key with the non-rebreather so the two cannot be stacked into a gain neither would produce. Guarded off once positive pressure is on, because the cannula comes off when the mask goes on and the two are not additive. Deliberately not enough: a resident who reaches for oxygen and watches the number go from 88 to 91 has learned that oxygen treats hypoxemia and not the flooded alveoli causing it."
     }
    ],
-   "debrief_note": "Reasonable and insufficient. Supplemental oxygen corrects some of the hypoxaemia and does nothing about the water in the alveoli, the work of breathing, or the ventricular filling time. It is not a wrong action and it is not a substitute for positive pressure. Note also that oxygen has no benefit in a patient who is not hypoxaemic; this one is, so it is indicated here on that ground alone."
+   "debrief_note": "Reasonable and insufficient. Supplemental oxygen corrects some of the hypoxemia and does nothing about the water in the alveoli, the work of breathing, or the ventricular filling time. It is not a wrong action and it is not a substitute for positive pressure. Note also that oxygen has no benefit in a patient who is not hypoxemic; this one is, so it is indicated here on that ground alone."
   },
   {
    "catalog_id": "non_rebreather_mask",
@@ -584,7 +584,7 @@
      "note": "Same key as the nasal cannula, so the most recent of the two wins and neither stacks with positive pressure."
     }
    ],
-   "debrief_note": "Corrects more of the hypoxaemia than a cannula and still leaves the mechanism untreated. The reason to know this is that a saturation restored by a high fraction of inspired oxygen can make a tiring patient look better on the monitor than he is at the bedside. The respiratory rate and the work of breathing are the numbers to watch here, not the saturation."
+   "debrief_note": "Corrects more of the hypoxemia than a cannula and still leaves the mechanism untreated. The reason to know this is that a saturation restored by a high fraction of inspired oxygen can make a tiring patient look better on the monitor than he is at the bedside. The respiratory rate and the work of breathing are the numbers to watch here, not the saturation."
   },
   {
    "catalog_id": "intubate_rapid_sequence",
@@ -605,85 +605,109 @@
     "post_intubation_sedation",
     "post_intubation_cxr"
    ],
-   "debrief_note": "Appropriate for a patient who has already failed or cannot tolerate non-invasive support, and premature in a man who is awake, protecting his airway, and has not yet had a mask on his face. Most patients in acute cardiogenic pulmonary edema who are intubated are intubated because positive pressure was started too late. Two specific hazards worth naming before you do it in this patient: induction removes the endogenous sympathetic drive that a poorly contracting ventricle is leaning on, and positive pressure ventilation reduces venous return, so the blood pressure after the tube is frequently much lower than the blood pressure before it. This case does not model that collapse, which is a simplification and not a claim that it does not happen."
+   "debrief_note": "Appropriate for a patient who has already failed or cannot tolerate non-invasive support, and premature in a man who is awake, protecting his airway, and has not yet had a mask on his face. Some patients in acute cardiogenic pulmonary edema who end up intubated might have avoided it with earlier positive pressure. Two specific hazards worth naming before you do it in this patient: induction removes the endogenous sympathetic drive that a poorly contracting ventricle is leaning on, and positive pressure ventilation reduces venous return, so the blood pressure after the tube is frequently much lower than the blood pressure before it. This case does not model that collapse, which is a simplification and not a claim that it does not happen."
   },
   {
    "catalog_id": "etomidate_bolus",
    "tag": [
     {
-     "when": null,
+     "when": "phase is respiratory_failure",
      "value": "recommended"
+    },
+    {
+     "when": null,
+     "value": "neutral"
     }
    ],
    "flags_set": [
     "sedation_given"
    ],
-   "debrief_note": "Induction and paralysis are prerequisites of intubation in this simulator, which is the sequence teaching rather than a scoring opportunity. Agent choice matters in this patient: he has a poorly contracting ventricle and is depending on his own adrenergic tone, so an agent with less haemodynamic cost is the safer choice and a large dose of any of them is not."
+   "debrief_note": "Induction and paralysis are prerequisites of intubation in this simulator, which is the sequence teaching rather than a scoring opportunity. Agent choice matters in this patient: he has a poorly contracting ventricle and is depending on his own adrenergic tone, so an agent with less hemodynamic cost is the safer choice and a large dose of any of them is not."
   },
   {
    "catalog_id": "ketamine_bolus",
    "tag": [
     {
-     "when": null,
+     "when": "phase is respiratory_failure",
      "value": "recommended"
+    },
+    {
+     "when": null,
+     "value": "neutral"
     }
    ],
    "flags_set": [
     "sedation_given"
    ],
-   "debrief_note": "Induction and paralysis are prerequisites of intubation in this simulator, which is the sequence teaching rather than a scoring opportunity. Agent choice matters in this patient: he has a poorly contracting ventricle and is depending on his own adrenergic tone, so an agent with less haemodynamic cost is the safer choice and a large dose of any of them is not."
+   "debrief_note": "Induction and paralysis are prerequisites of intubation in this simulator, which is the sequence teaching rather than a scoring opportunity. Agent choice matters in this patient: he has a poorly contracting ventricle and is depending on his own adrenergic tone, so an agent with less hemodynamic cost is the safer choice and a large dose of any of them is not."
   },
   {
    "catalog_id": "midazolam_bolus",
    "tag": [
     {
-     "when": null,
+     "when": "phase is respiratory_failure",
      "value": "recommended"
+    },
+    {
+     "when": null,
+     "value": "neutral"
     }
    ],
    "flags_set": [
     "sedation_given"
    ],
-   "debrief_note": "Induction and paralysis are prerequisites of intubation in this simulator, which is the sequence teaching rather than a scoring opportunity. Agent choice matters in this patient: he has a poorly contracting ventricle and is depending on his own adrenergic tone, so an agent with less haemodynamic cost is the safer choice and a large dose of any of them is not."
+   "debrief_note": "Induction and paralysis are prerequisites of intubation in this simulator, which is the sequence teaching rather than a scoring opportunity. Agent choice matters in this patient: he has a poorly contracting ventricle and is depending on his own adrenergic tone, so an agent with less hemodynamic cost is the safer choice and a large dose of any of them is not."
   },
   {
    "catalog_id": "propofol_bolus",
    "tag": [
     {
-     "when": null,
+     "when": "phase is respiratory_failure",
      "value": "recommended"
+    },
+    {
+     "when": null,
+     "value": "neutral"
     }
    ],
    "flags_set": [
     "sedation_given"
    ],
-   "debrief_note": "Induction and paralysis are prerequisites of intubation in this simulator, which is the sequence teaching rather than a scoring opportunity. Agent choice matters in this patient: he has a poorly contracting ventricle and is depending on his own adrenergic tone, so an agent with less haemodynamic cost is the safer choice and a large dose of any of them is not."
+   "debrief_note": "Induction and paralysis are prerequisites of intubation in this simulator, which is the sequence teaching rather than a scoring opportunity. Agent choice matters in this patient: he has a poorly contracting ventricle and is depending on his own adrenergic tone, so an agent with less hemodynamic cost is the safer choice and a large dose of any of them is not."
   },
   {
    "catalog_id": "rocuronium_bolus",
    "tag": [
     {
-     "when": null,
+     "when": "phase is respiratory_failure",
      "value": "recommended"
+    },
+    {
+     "when": null,
+     "value": "neutral"
     }
    ],
    "flags_set": [
     "paralytic_given"
    ],
-   "debrief_note": "A paralytic is a prerequisite of intubation here. It creates an obligation rather than discharging one: a paralysed patient who is not sedated is awake, aware and unable to signal, which is why post-intubation sedation is tracked as a follow-up."
+   "debrief_note": "A paralytic is a prerequisite of intubation here. It creates an obligation rather than discharging one: a paralyzed patient who is not sedated is awake, aware and unable to signal, which is why post-intubation sedation is tracked as a follow-up."
   },
   {
    "catalog_id": "succinylcholine_bolus",
    "tag": [
     {
-     "when": null,
+     "when": "phase is respiratory_failure",
      "value": "recommended"
+    },
+    {
+     "when": null,
+     "value": "neutral"
     }
    ],
    "flags_set": [
     "paralytic_given"
    ],
-   "debrief_note": "A paralytic is a prerequisite of intubation here. It creates an obligation rather than discharging one: a paralysed patient who is not sedated is awake, aware and unable to signal, which is why post-intubation sedation is tracked as a follow-up."
+   "debrief_note": "A paralytic is a prerequisite of intubation here. It creates an obligation rather than discharging one: a paralyzed patient who is not sedated is awake, aware and unable to signal, which is why post-intubation sedation is tracked as a follow-up."
   },
   {
    "catalog_id": "propofol_infusion",
@@ -765,6 +789,10 @@
    "catalog_id": "synchronized_cardioversion",
    "tag": [
     {
+     "when": "phase is respiratory_failure",
+     "value": "neutral"
+    },
+    {
      "when": null,
      "value": "discouraged"
     }
@@ -782,9 +810,9 @@
    "follow_ups_triggered": [
     "anticoagulation_after_cardioversion"
    ],
-   "debrief_note": "Immediate synchronised cardioversion is the right answer for atrial fibrillation with a rapid ventricular response causing hypotension, ischaemic chest pain, acute heart failure attributable to the rate, or altered mental status. This patient has none of those in the form that mandates electricity: his systolic pressure is 132, he is awake and oriented, and he has no severe chest pain. The heart failure argument is the one worth arguing about, because he does have pulmonary edema and the rate is plausibly driving it, and a reviewer who wants to defend electricity here has a case to make. Two things weigh against it. The duration of the arrhythmia is unknown and longer than forty-eight hours cannot be excluded, so cardioversion without anticoagulation or a transoesophageal echocardiogram carries a thromboembolic risk that is not trivial. And cardioversion of an arrhythmia driven by an underlying decompensation tends not to hold. It is tagged discouraged rather than harmful because it is a defensible decision made on incomplete reasoning, not a lethal one.",
+   "debrief_note": "Immediate synchronized cardioversion is the right answer for atrial fibrillation with a rapid ventricular response causing hypotension, ischemic chest pain, acute heart failure attributable to the rate, or altered mental status. The AHA tachycardia algorithm lists acute heart failure alongside hypotension, altered mental status, shock and ischemic chest discomfort as reasons for synchronized cardioversion, so a resident who reaches for electricity here is following a real rule. His systolic pressure is 132, he is awake and oriented, and he has no severe chest pain, so the heart failure is the only criterion he meets, and the rate is plausibly driving it. Two things weigh against it. His palpitations began suddenly about eighteen hours ago, but a week of leg swelling before that leaves open the possibility that he was in atrial fibrillation without feeling it. With a CHA2DS2-VASc of at least four, cardioversion without anticoagulation is a real thromboembolic risk, and the 2024 ESC guideline advises against early cardioversion without anticoagulation or transoesophageal imaging once atrial fibrillation has lasted more than 24 hours. If you do shock him, sedate him, synchronize, and start at a high biphasic energy rather than escalating. And cardioversion of an arrhythmia driven by an underlying decompensation tends not to hold. It is tagged discouraged rather than harmful because it is a defensible decision made on incomplete reasoning, not a lethal one.",
    "references": [
-    "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2023;148(9):e1-e156. [UNVERIFIED in this pack, confirm before release]"
+    "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. [UNVERIFIED in this pack, confirm before release]"
    ]
   },
   {
@@ -796,7 +824,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Unsynchronised shock delivered to an organised rhythm with a palpable pulse risks inducing ventricular fibrillation by landing the shock on a T wave. If the decision is to cardiovert atrial fibrillation, the shock is synchronised. This is a button-selection error rather than a reasoning error, and it is the reason the sync button exists."
+   "debrief_note": "Unsynchronized shock delivered to an organized rhythm with a palpable pulse risks inducing ventricular fibrillation by landing the shock on a T wave. If the decision is to cardiovert atrial fibrillation, the shock is synchronized. This is a button-selection error rather than a reasoning error, and it is the reason the sync button exists."
   },
   {
    "catalog_id": "digoxin_bolus",
@@ -829,7 +857,7 @@
      "delta": -22,
      "key": "rate_control_hr_partial",
      "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
-     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilised phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
+     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
     },
     {
      "vital": "heart_rate",
@@ -849,9 +877,9 @@
    "follow_ups_triggered": [
     "second_rate_control_dose"
    ],
-   "debrief_note": "This entry stands for the act of rate control rather than for one drug: digoxin, amiodarone and metoprolol are bound together, any of the three satisfies the critical action, and all three carry this note. That is deliberate, because the defensible answer here is a strategy rather than a named agent, and it should respond to the patient in front of you.\n\nWhy not diltiazem, which is the reflex answer for atrial fibrillation with a rapid ventricular response: non-dihydropyridine calcium channel blockers are negatively inotropic, and the 2023 ACC/AHA/ACCP/HRS atrial fibrillation guideline advises against them in patients with significant left ventricular systolic dysfunction for that reason. Once the POCUS shows an ejection fraction of 30 to 35 percent, that recommendation applies to this patient.\n\nDigoxin is the most comfortable choice in decompensated heart failure with reduced ejection fraction because it slows atrioventricular conduction without negative inotropy, and it is the least satisfying because its onset is slow, its therapeutic window is narrow, and it works poorly against high sympathetic tone. Amiodarone is reasonable when nodal blockade is ineffective or contraindicated and is widely used in decompensated and critically ill patients; it is not a benign drug and it carries a real chance of chemical cardioversion, which matters in a patient who is not anticoagulated and whose arrhythmia duration is unknown. A carefully selected, low-dose beta blocker is defensible once oxygenation is supported and the haemodynamics permit it, and is the least forgiving of the three in a patient with active pulmonary edema, because beta blockade in acute decompensation removes compensation as well as rate. Aggressive beta blockade in this patient is not the goal.\n\nOn the target: guideline evidence supports a lenient resting rate of under 110 beats per minute in many patients with atrial fibrillation, derived largely from RACE II, which enrolled patients with permanent atrial fibrillation rather than acutely decompensated ones. The optimal target in acute decompensated heart failure with reduced ejection fraction is less certain, and the endpoint that matters here is clinical response rather than a number.",
+   "debrief_note": "This entry stands for the act of rate control rather than for one drug: digoxin, amiodarone and metoprolol are scored as one choice, so any of the three satisfies the critical action, and all three carry this note. That is deliberate, because the defensible answer here is a strategy rather than a named agent, and it should respond to the patient in front of you.\n\nWhy not diltiazem, which is the reflex answer for atrial fibrillation with a rapid ventricular response: non-dihydropyridine calcium channel blockers are negatively inotropic, and the 2023 ACC/AHA/ACCP/HRS atrial fibrillation guideline advises against them in patients with significant left ventricular systolic dysfunction for that reason. Once the POCUS shows an ejection fraction of 30 to 35 percent, that recommendation applies to this patient.\n\nDigoxin is the most comfortable choice in decompensated heart failure with reduced ejection fraction because it slows atrioventricular conduction without negative inotropy, and it is the least satisfying because its onset is slow, its therapeutic window is narrow, and it works poorly against high sympathetic tone. Amiodarone is reasonable when nodal blockade is ineffective or contraindicated and is widely used in decompensated and critically ill patients; it is not a benign drug and it carries a real chance of chemical cardioversion, which matters in a patient who is not anticoagulated and whose arrhythmia duration is unknown. A carefully selected, low-dose beta blocker is defensible once oxygenation is supported and the haemodynamics permit it, and is the least forgiving of the three in a patient with active pulmonary edema, because beta blockade in acute decompensation removes compensation as well as rate. Aggressive beta blockade in this patient is not the goal.\n\nOn the target: guideline evidence supports a lenient resting rate of under 110 beats per minute in many patients with atrial fibrillation, derived largely from RACE II, which enrolled patients with permanent atrial fibrillation rather than acutely decompensated ones. The optimal target in acute decompensated heart failure with reduced ejection fraction is less certain, and the endpoint that matters here is clinical response rather than a number.",
    "references": [
-    "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2023;148(9):e1-e156. [UNVERIFIED in this pack, confirm before release]",
+    "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. [UNVERIFIED in this pack, confirm before release]",
     "Van Gelder IC, Groenveld HF, Crijns HJGM, et al. Lenient versus strict rate control in patients with atrial fibrillation (RACE II). N Engl J Med. 2010;362(15):1363-73. [UNVERIFIED in this pack, confirm before release]"
    ]
   },
@@ -908,7 +936,7 @@
      "delta": -22,
      "key": "rate_control_hr_partial",
      "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
-     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilised phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
+     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
     },
     {
      "vital": "heart_rate",
@@ -918,9 +946,9 @@
      "note": "One vitals block per phase, and respiratory failure is reached by two routes. The authored 166 is the untreated patient tiring; a patient who got there with two doses of a nodal blocker on board reads 166 minus 22 minus 13, about 131, which is a rate-controlled patient with a sympathetic surge rather than an untreated one. It is a workaround for the schema rather than physiology, and the review packet says so."
     }
    ],
-   "debrief_note": "This is the decision the case is built around, and the tag is discouraged rather than harmful on purpose.\n\nGiving diltiazem on arrival, to a man in atrial fibrillation with a rapid ventricular response, a systolic pressure of 132 and no known cardiomyopathy, is a defensible first move and is what most guidelines would support for that patient as described. It is scored as a deduction rather than a failure because the ejection fraction was knowable at the bedside in under a minute and had not been looked for. The lesson is not that you should have known; it is that you could have.\n\nContinuing it after the POCUS shows an ejection fraction of 30 to 35 percent is the actual error, and it is a specific and common one: the drug produced exactly the effect that was asked of it, the rate came down, and it is still the wrong drug for the disease underneath. The 2023 ACC/AHA/ACCP/HRS guideline advises avoiding non-dihydropyridine calcium channel blockers in patients with significant left ventricular systolic dysfunction, because their negative inotropy reduces stroke volume in a ventricle that has none to spare. Watch what happened to the blood pressure on your monitor after you gave it.\n\nA drug that produces the physiological effect you wanted can still be the wrong treatment for the patient's underlying disease. That is the transferable point, and it is worth more than the drug name.",
+   "debrief_note": "This is the decision the case is built around, and the tag is discouraged rather than harmful on purpose.\n\nGiving diltiazem on arrival, to a man in atrial fibrillation with a rapid ventricular response, a systolic pressure of 132 and no known cardiomyopathy, is a common first move and a defensible one if the heart failure has not yet been recognized. It is scored as a deduction rather than a failure because the ejection fraction was knowable at the bedside in under a minute, and because the crackles, the raised venous pressure and the hypoxemia were already saying this was not uncomplicated atrial fibrillation. The lesson is not that you should have known; it is that you could have.\n\nContinuing it after the POCUS shows an ejection fraction of 30 to 35 percent is the actual error, and it is a specific and common one: the drug produced exactly the effect that was asked of it, the rate came down, and it is still the wrong drug for the disease underneath. The 2023 ACC/AHA/ACCP/HRS guideline recommends against intravenous non-dihydropyridine calcium channel blockers in patients with significant left ventricular systolic dysfunction, as a harm recommendation, because their negative inotropy reduces stroke volume in a ventricle that has none to spare. Watch what happened to the blood pressure on your monitor after you gave it.\n\nA drug that produces the physiological effect you wanted can still be the wrong treatment for the patient's underlying disease. That is the transferable point, and it is worth more than the drug name.",
    "references": [
-    "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2023;148(9):e1-e156. [UNVERIFIED in this pack, confirm before release]"
+    "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. [UNVERIFIED in this pack, confirm before release]"
    ]
   },
   {
@@ -939,7 +967,7 @@
      "source": "catalog_default_retained"
     }
    ],
-   "debrief_note": "Adenosine does not treat atrial fibrillation. It blocks the atrioventricular node for a few seconds, which terminates re-entrant tachycardias that use the node as part of the circuit and does nothing durable to an atrial rhythm that does not. Its legitimate use in an undifferentiated narrow-complex tachycardia is diagnostic, to slow conduction long enough to see the atrial activity underneath, and that question is already answered here: the rhythm is irregularly irregular with no P waves. It also causes a period of asystole that is unpleasant in a patient who is already hypoxaemic and frightened."
+   "debrief_note": "Adenosine does not treat atrial fibrillation. It blocks the atrioventricular node for a few seconds, which terminates re-entrant tachycardias that use the node as part of the circuit and does nothing durable to an atrial rhythm that does not. Its legitimate use in an undifferentiated narrow-complex tachycardia is diagnostic, to slow conduction long enough to see the atrial activity underneath, and that question is already answered here: the rhythm is irregularly irregular with no P waves. It also causes a period of asystole that is unpleasant in a patient who is already hypoxemic and frightened."
   },
   {
    "catalog_id": "propranolol_bolus",
@@ -976,7 +1004,7 @@
      "delta": -22,
      "key": "rate_control_hr_partial",
      "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
-     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilised phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
+     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
     },
     {
      "vital": "heart_rate",
@@ -986,11 +1014,15 @@
      "note": "One vitals block per phase, and respiratory failure is reached by two routes. The authored 166 is the untreated patient tiring; a patient who got there with two doses of a nodal blocker on board reads 166 minus 22 minus 13, about 131, which is a rate-controlled patient with a sympathetic surge rather than an untreated one. It is a workaround for the schema rather than physiology, and the review packet says so."
     }
    ],
-   "debrief_note": "Non-selective beta blockade with a long-acting agent is the least controllable way to slow this patient. If a beta blocker is the chosen strategy, a short-acting and titratable one is the safer route in a ventricle whose function you have only just measured. The flag is set, so the rate does come down, which is the point: it works and it is still not the choice to make."
+   "debrief_note": "Non-selective beta blockade with a long-acting agent is the least controllable way to slow this patient. If a beta blocker is chosen at all, it should be a small dose of a cardioselective agent given after the mask is on in a ventricle whose function you have only just measured. The flag is set, so the rate does come down, which is the point: it works and it is still not the choice to make."
   },
   {
    "catalog_id": "esmolol_drip",
    "tag": [
+    {
+     "when": "flag on_niv set",
+     "value": "neutral"
+    },
     {
      "when": null,
      "value": "discouraged"
@@ -1023,7 +1055,7 @@
      "delta": -22,
      "key": "rate_control_hr_partial",
      "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
-     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilised phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
+     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
     },
     {
      "vital": "heart_rate",
@@ -1033,7 +1065,7 @@
      "note": "One vitals block per phase, and respiratory failure is reached by two routes. The authored 166 is the untreated patient tiring; a patient who got there with two doses of a nodal blocker on board reads 166 minus 22 minus 13, about 131, which is a rate-controlled patient with a sympathetic surge rather than an untreated one. It is a workaround for the schema rather than physiology, and the review packet says so."
     }
    ],
-   "debrief_note": "The argument for esmolol is that it is titratable and short-acting, so if beta blockade is poorly tolerated it can be withdrawn in minutes, which is a real advantage in a patient whose ventricle you do not trust. The argument against it here is that this patient has active pulmonary edema and beta blockade in acute decompensation removes compensation along with rate. Reasonable clinicians differ. It is tagged discouraged rather than recommended because in a patient at a saturation of 88 percent with diffuse B-lines it is not the first thing to reach for, and because there are two agents on the menu with a better risk profile in this specific physiology."
+   "debrief_note": "The argument for esmolol is that it is titratable and short-acting, so if beta blockade is poorly tolerated it can be withdrawn in minutes, which is a real advantage in a patient whose ventricle you do not trust. The argument against it here is that this patient has active pulmonary edema and beta blockade in acute decompensation removes compensation along with rate. Reasonable clinicians differ. It is tagged discouraged before positive pressure, because in a patient at a saturation of 88 percent with diffuse B-lines no beta blocker is the first thing to reach for, and digoxin and amiodarone have a better risk profile in this physiology. Once he is on the mask it is neutral, and if you do choose beta blockade then, esmolol is the most reversible way to do it."
   },
   {
    "catalog_id": "procainamide_drip",
@@ -1100,7 +1132,7 @@
      "source": "catalog_default_retained"
     }
    ],
-   "debrief_note": "His magnesium is 1.6 mg/dL. Correcting it is straightforward, cheap and safe, and it is worth doing for two reasons: magnesium is a cofactor for the sodium-potassium pump so hypokalaemia and hypomagnesemia travel together and neither corrects properly while the other is low, and intravenous magnesium has been reported to improve rate control and increase conversion when added to standard atrioventricular nodal blockade in rapid atrial fibrillation. The evidence for that second claim rests on small randomised trials and a meta-analysis of them, not on a large definitive trial, so it is a reasonable adjunct rather than a core therapy.\n\nAUTHOR NOTE, and this needs your decision. Your brief bundled correcting the hypomagnesemia into critical action four alongside the loop diuretic. It is tagged recommended here rather than critical, because the set of critical actions a phase expects is computed once on entry to that phase, so a tag that only becomes critical after the magnesium level results can never appear in the missed list, and an unconditionally critical tag tells a resident who never had reason to suspect hypomagnesemia that they missed a critical action. If you want it critical, that is a one-line change and the review packet says where.",
+   "debrief_note": "His magnesium is 1.6 mg/dL. Correcting it is straightforward, cheap and safe, and it is worth doing for two reasons: magnesium is a cofactor for the sodium-potassium pump so hypokalemia and hypomagnesemia travel together and potassium does not correct properly while magnesium is low, and intravenous magnesium has been reported to improve rate control and increase conversion when added to standard atrioventricular nodal blockade in rapid atrial fibrillation. The evidence for that second claim rests on small randomized trials and a meta-analysis of them, not on a large definitive trial, so it is a reasonable adjunct rather than a core therapy.",
    "references": [
     "Bouida W, Beltaief K, Msolli MA, et al. Low-dose magnesium sulfate versus high dose in the early management of rapid atrial fibrillation (LOMAGHI). Acad Emerg Med. 2019;26(2):183-91. [UNVERIFIED in this pack, confirm before release]"
    ]
@@ -1121,7 +1153,7 @@
    "tag": [
     {
      "when": null,
-     "value": "discouraged"
+     "value": "neutral"
     }
    ],
    "flags_set": [],
@@ -1132,18 +1164,18 @@
      "source": "catalog_default_retained"
     }
    ],
-   "debrief_note": "Nitrates are the pharmacological priority in hypertensive acute cardiogenic pulmonary edema, where a systolic pressure of 180 or more means most of the edema is redistribution against afterload. That is a different patient from this one. This man's systolic pressure is 132, so there is little afterload to unload and a meaningful chance of dropping a pressure that is already only adequate, in a ventricle that is preload dependent and filling badly because of the rate. It is not absurd and it is not the treatment this presentation is asking for. Recognising which pulmonary edema phenotype is in front of you is the transferable skill."
+   "debrief_note": "Nitrates are the pharmacological priority in hypertensive acute cardiogenic pulmonary edema, where high doses unload afterload. This man is not that patient, and here nitroglycerin is an optional adjunct rather than a priority. At low to moderate doses it is mainly a venodilator, so it lowers preload and pulmonary capillary pressure in a ventricle that is overfilled, and heart failure guidelines allow it alongside the diuretic in a patient who is not hypotensive. The evidence is weak and the caution is real. His systolic pressure is 132 and rate control and positive pressure will both lower it, so if you start it, start low, titrate to the pressure, and stop it if the pressure drifts. It does not replace the mask or the diuretic."
   },
   {
    "catalog_id": "nitroglycerin_sublingual",
    "tag": [
     {
      "when": null,
-     "value": "discouraged"
+     "value": "neutral"
     }
    ],
    "flags_set": [],
-   "debrief_note": "Same reasoning as the infusion. He is not hypertensive, so there is little to unload and a pressure to lose."
+   "debrief_note": "Same reasoning as the infusion. Optional here, and an infusion is easier to titrate and to stop."
   },
   {
    "catalog_id": "dobutamine_drip",
@@ -1198,9 +1230,9 @@
     "guard": "NOT flag anticoagulated set",
     "text": "Pharmacy is asking whether you want him started on anything for stroke prevention while he's in this rhythm."
    },
-   "debrief_note": "This entry stands for the act of anticoagulating rather than for one agent: apixaban, enoxaparin and a heparin infusion are bound together and any of the three satisfies the critical action.\n\nThe risk assessment first. Counting CHA2DS2-VASc for this man: hypertension one, age 65 to 74 one, diabetes one, and vascular disease one on the basis of documented coronary artery disease, which gives four. Whether the vascular disease point applies turns on how the coronary disease is documented, and a reviewer who counts three rather than four reaches the same decision, because either score is comfortably above the threshold at which anticoagulation is recommended for a man. There is nothing in his history that contraindicates it.\n\nOn the choice of agent. A direct oral anticoagulant is preferred for non-valvular atrial fibrillation, is what he will go home on, and can be started in the department. A heparin infusion is a reasonable choice when the plan may include cardioversion or an early procedure, when renal function is uncertain, or when the admitting team wants something they can switch off; its disadvantage is that it needs monitoring and it delays the drug he will actually take. Enoxaparin is a reasonable bridge with the same caveats about renal function and less flexibility than an infusion. All three are accepted here and the choice is worth articulating rather than defaulting.\n\nThe duration of his atrial fibrillation is unknown. He noticed it yesterday afternoon, which is when he noticed it and not necessarily when it started, and that uncertainty is the reason the anticoagulation question and the cardioversion question cannot be separated.",
+   "debrief_note": "This entry stands for the act of anticoagulating rather than for one agent: apixaban, enoxaparin and a heparin infusion are scored as one choice, and any of the three satisfies the critical action.\n\nThe risk assessment first. Counting CHA2DS2-VASc for this man: congestive heart failure one, which the ultrasound has just given him, hypertension one, age 65 to 74 one, and diabetes one, which gives four. Vascular disease would make it five, and whether that point applies turns on how the coronary disease is documented, because moderate non-obstructive plaque on a CT coronary angiogram may not meet the definition. Either score is comfortably above the threshold at which anticoagulation is recommended for a man. There is nothing in his history that contraindicates it.\n\nOn the choice of agent. A direct oral anticoagulant is preferred for non-valvular atrial fibrillation, is what he will go home on, and can be started in the department once he can safely swallow. While he is on a mask and may still need a tube, a heparin infusion is often the more practical first choice. A heparin infusion is a reasonable choice when the plan may include cardioversion or an early procedure, when renal function is uncertain, or when the admitting team wants something they can switch off; its disadvantage is that it needs monitoring and it delays the drug he will actually take. Enoxaparin is a reasonable bridge with the same caveats about renal function and less flexibility than an infusion. All three are accepted here and the choice is worth articulating rather than defaulting.\n\nThe duration of his atrial fibrillation is unknown. He noticed it yesterday afternoon, which is when he noticed it and not necessarily when it started, and that uncertainty is the reason the anticoagulation question and the cardioversion question cannot be separated.",
    "references": [
-    "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2023;148(9):e1-e156. [UNVERIFIED in this pack, confirm before release]"
+    "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. [UNVERIFIED in this pack, confirm before release]"
    ]
   },
   {
@@ -1247,8 +1279,8 @@
      "source": "catalog_default_retained"
     }
    ],
-   "halt_reason": "You gave a litre of crystalloid to a man with an ejection fraction of 30 to 35 percent whose lungs were already full of fluid and who was hypoxaemic on room air. The extra preload went straight into the alveoli, his saturation fell away, and he required emergency intubation for a pulmonary edema you had made worse.",
-   "debrief_note": "The reasoning that leads here is worth naming because it is not stupid: the patient is tachycardic, tachycardia is often hypovolaemia, and a fluid challenge is the reflex. In this patient the tachycardia is an arrhythmia and the ventricle is failing, so volume has nowhere to go but the lungs. Every route to a crystalloid bolus reaches the same harm, so this tag covers the whole equivalence group: saline and Ringer's, a litre and 500 mL.\n\nThe tag is phase-dependent. Once he is on positive pressure with a controlled rate and diuresing, a small fluid challenge is wrong rather than lethal, and it is tagged discouraged there. Before that it kills him. The general point: in a hypoxaemic tachycardic patient, find out whether the lungs are wet before you fill them. The lung ultrasound takes under a minute and answers the question."
+   "halt_reason": "You gave a crystalloid bolus to a man with an ejection fraction of 30 to 35 percent whose lungs were already full of fluid and who was hypoxemic on room air. The extra preload went straight into the alveoli, his saturation fell away, and he required emergency intubation for a pulmonary edema you had made worse.",
+   "debrief_note": "The reasoning that leads here is worth naming because it is not stupid: the patient is tachycardic, tachycardia is often hypovolemia, and a fluid challenge is the reflex. In this patient the tachycardia is an arrhythmia and the ventricle is failing, so volume has nowhere to go but the lungs. Every route to a crystalloid bolus reaches the same harm, so this tag covers the whole equivalence group: saline and Ringer's, a liter and 500 mL.\n\nThe tag is phase-dependent. Once he is on positive pressure with a controlled rate and diuresing, a small fluid challenge is wrong rather than lethal, and it is tagged discouraged there. Before that it can tip him into respiratory failure and onto a ventilator. The general point: in a hypoxemic tachycardic patient, find out whether the lungs are wet before you fill them. The lung ultrasound takes under a minute and answers the question."
   },
   {
    "catalog_id": "ecg_12_lead",
@@ -1259,7 +1291,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Mandatory, and for three separate questions rather than one. What is the rhythm: irregularly irregular, no organised atrial activity, so atrial fibrillation and not sinus tachycardia, atrial flutter with variable block, or multifocal atrial tachycardia. Is the QRS narrow and is there pre-excitation, because pre-excited atrial fibrillation is a different disease with a different and nearly opposite drug list. And is there an acute coronary occlusion driving the whole presentation, which would redirect the case entirely. Here there is none: the lateral ST depression is rate-related and it should be re-examined once the rate is controlled, which is a repeat tracing worth ordering."
+   "debrief_note": "Mandatory, and for three separate questions rather than one. What is the rhythm: irregularly irregular, no organized atrial activity, so atrial fibrillation and not sinus tachycardia, atrial flutter with variable block, or multifocal atrial tachycardia. Is the QRS narrow and is there pre-excitation, because pre-excited atrial fibrillation is a different disease with a different and nearly opposite drug list. And is there an acute coronary occlusion driving the whole presentation, which would redirect the case entirely. Here there is none: the lateral ST depression is rate-related and it should be re-examined once the rate is controlled, which is a repeat tracing worth ordering."
   },
   {
    "catalog_id": "ultrasound_cardiac",
@@ -1307,7 +1339,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Worth sending, and the single value is nearly uninterpretable on its own. A modest elevation in a patient at a ventricular rate of 160 with a poorly contracting ventricle is a demand pattern: supply-demand mismatch from shortened diastole and raised wall stress, which is type 2 myocardial injury and not acute coronary occlusion. What distinguishes the two is the trajectory over one to three hours and the clinical picture, not the first number. Treat this result as a reason to repeat it on the ward rather than as a reason to activate the laboratory, unless the ECG or the story changes your mind."
+   "debrief_note": "Worth sending, and the single value is nearly uninterpretable on its own. A modest elevation in a patient at a ventricular rate of 160 with a poorly contracting ventricle is most likely supply-demand mismatch from shortened diastole and raised wall stress, which would make it myocardial injury or a type 2 infarction rather than acute coronary occlusion. What distinguishes the two is the trajectory over one to three hours and the clinical picture, not the first number. Treat this result as a reason to repeat it on the ward rather than as a reason to activate the laboratory, unless the ECG or the story changes your mind."
   },
   {
    "catalog_id": "nt_probnp",
@@ -1351,7 +1383,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Normal here. Anaemia is a genuine precipitant of both high-output symptoms and decompensation, and it is worth excluding before you decide the arrhythmia is the whole story."
+   "debrief_note": "Normal here. Anemia is a genuine precipitant of both high-output symptoms and decompensation, and it is worth excluding before you decide the arrhythmia is the whole story."
   },
   {
    "catalog_id": "tsh",
@@ -1384,7 +1416,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Mildly raised. In this patient that is the work of breathing and the tachycardia rather than sepsis or mesenteric ischaemia, and it should fall as he is treated. A lactate that does not fall is worth taking seriously."
+   "debrief_note": "Mildly raised. In this patient that is the work of breathing and the tachycardia rather than sepsis or mesenteric ischemia, and it should fall as he is treated. A lactate that does not fall is worth taking seriously."
   },
   {
    "catalog_id": "d_dimer",
@@ -1395,7 +1427,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "This is a trap and it works because the reflex is strong. His pretest probability of pulmonary embolism is low: gradual onset over more than a day, an irregularly irregular rhythm with an obvious alternative explanation for every symptom, no unilateral leg swelling, no immobilisation, surgery or malignancy, and a bedside ultrasound showing a poorly contracting left ventricle with diffuse B-lines rather than a strained right ventricle with clear lungs. A D-dimer sent in that setting is very likely to be raised, because it is raised by heart failure, atrial fibrillation and being 68 years old, and the raised result then commits you to a contrast study in a man whose kidneys and volume status you have just decided to manipulate. The cost of this test is not the test."
+   "debrief_note": "This is a trap and it works because the reflex is strong. His pretest probability of pulmonary embolism is low: palpitations of sudden onset followed by breathlessness that built over hours, an irregularly irregular rhythm with an obvious alternative explanation for every symptom, no unilateral leg swelling, no immobilization, surgery or malignancy, and a bedside ultrasound showing a poorly contracting left ventricle with diffuse B-lines rather than a strained right ventricle with clear lungs. A D-dimer sent in that setting is very likely to be raised, because it is raised by heart failure, atrial fibrillation and being 68 years old, and the raised result then commits you to a contrast study in a man whose kidneys and volume status you have just decided to manipulate. The cost of this test is not the test."
   },
   {
    "catalog_id": "ct_pulmonary_embolus",
@@ -1406,7 +1438,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "Almost always ordered downstream of the D-dimer. It is negative, it delays treatment by the time it takes to move an unstable hypoxaemic patient out of the department, and it gives a contrast load to a man in acute heart failure. If you genuinely suspect pulmonary embolism in a patient like this, the bedside ultrasound is the first study, not the last: a dilated hypokinetic right ventricle with a small underfilled left ventricle is a different picture from the one you saw."
+   "debrief_note": "Almost always ordered downstream of the D-dimer. It is negative, it delays treatment by the time it takes to move an unstable hypoxemic patient out of the department, and it gives a contrast load to a man in acute heart failure. If you genuinely suspect pulmonary embolism in a patient like this, the bedside ultrasound is the first study, not the last: a dilated hypokinetic right ventricle with a small underfilled left ventricle is a different picture from the one you saw."
   },
   {
    "catalog_id": "ultrasound_lower_extremity_venous",
@@ -1435,7 +1467,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -1452,7 +1484,7 @@
     }
    ],
    "flags_set": [],
-   "debrief_note": "The right call, and the timing matters more than the fact of it. Cardiology is not needed to start positive pressure, a diuretic or a rate-controlling drug, and calling before you have a rhythm, an ejection fraction and a plan produces a conversation nobody benefits from. Once you have those three, the questions worth asking are the rate-control agent in a newly recognised reduced ejection fraction, whether they want a rhythm-control strategy considered, and what they want done about the anticoagulation and the formal echocardiogram."
+   "debrief_note": "The right call, and the timing matters more than the fact of it. Cardiology is not needed to start positive pressure, a diuretic or a rate-controlling drug, and calling before you have a rhythm, an ejection fraction and a plan produces a conversation nobody benefits from. Once you have those three, the questions worth asking are the rate-control agent in a newly recognized reduced ejection fraction, whether they want a rhythm-control strategy considered, and what they want done about the anticoagulation and the formal echocardiogram."
   },
   {
    "catalog_id": "consult_critical_care",
@@ -1517,7 +1549,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "The jugular venous pressure is the single most useful bedside finding for separating cardiogenic from non-cardiogenic breathlessness, and it is elevated here at about 12 cm. It is also difficult to read in a tachypnoeic patient at a rate of 160, so read it with the ultrasound view of the inferior vena cava rather than instead of it.",
+   "debrief_note": "The jugular venous pressure is the single most useful bedside finding for separating cardiogenic from non-cardiogenic breathlessness, and it is elevated here at about 12 cm. It is also difficult to read in a tachypneic patient at a rate of 160, so read it with the ultrasound view of the inferior vena cava rather than instead of it.",
    "state_changing": false
   },
   {
@@ -1528,7 +1560,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "Peripheral edema is routed here by the catalog rather than to the musculoskeletal examination, which is worth knowing so you look in the right place. The auscultatory findings in fast atrial fibrillation are unreliable: an S3 is very hard to hear at 160 and a variable first heart sound is expected. The edema does not resolve during this case, and it should not: days of accumulated fluid do not leave in ten minutes.",
+   "debrief_note": "In this simulator peripheral edema is reported under the cardiac examination rather than the musculoskeletal one, so look for it here. The auscultatory findings in fast atrial fibrillation are unreliable: an S3 is very hard to hear at 160 and a variable first heart sound is expected. The edema does not resolve during this case, and it should not: days of accumulated fluid do not leave in ten minutes.",
    "state_changing": false
   },
   {
@@ -1594,7 +1626,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "Anxiety in a hypoxaemic patient is a physical sign. It is worth recording because it is one of the things that improves visibly once positive pressure goes on, and because treating it as anxiety rather than as hypoxaemia is a recognised way to lose this patient.",
+   "debrief_note": "Anxiety in a hypoxemic patient is a physical sign. It is worth recording because it is one of the things that improves visibly once positive pressure goes on, and because treating it as anxiety rather than as hypoxemia is a recognized way to lose this patient.",
    "state_changing": false
   },
   {
@@ -1666,6 +1698,10 @@
    "catalog_id": "intraosseous_line",
    "tag": [
     {
+     "when": "flag iv_access set",
+     "value": "neutral"
+    },
+    {
      "when": null,
      "value": "recommended"
     }
@@ -1685,6 +1721,160 @@
    ],
    "flags_set": [],
    "debrief_note": "Reasonable if he ends up intubated and on vasoactive support, and unnecessary otherwise. It is not a reason to delay anything."
+  },
+  {
+   "catalog_id": "morphine_bolus",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "No longer a routine treatment for acute pulmonary edema. It depresses the drive of a man who is already tiring and retaining carbon dioxide."
+  },
+  {
+   "catalog_id": "albuterol",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "The wheeze is peribronchial edema, not bronchospasm, and a beta agonist speeds conduction through the node you are trying to slow."
+  },
+  {
+   "catalog_id": "labetalol_bolus",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "Beta blockade chosen for blood pressure in a man who is not hypertensive, with none of esmolol's reversibility."
+  },
+  {
+   "catalog_id": "labetalol_drip",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "Beta blockade chosen for blood pressure in a man who is not hypertensive, with none of esmolol's reversibility."
+  },
+  {
+   "catalog_id": "nicardipine_drip",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "An arterial vasodilator for a blood pressure of 132 in a man whose pressure rate control and positive pressure are about to lower anyway."
+  },
+  {
+   "catalog_id": "nitroglycerin",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "A high-dose nitrate bolus is a treatment for hypertensive pulmonary edema. At a systolic of 132 it risks the pressure for little gain; if you want a nitrate here, a low-dose infusion is the titratable way to give one."
+  },
+  {
+   "catalog_id": "normal_saline_infusion",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "Maintenance fluid in a man whose lungs are already full. Keep the line open with a saline lock instead."
+  },
+  {
+   "catalog_id": "lactated_ringer_s_infusion",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "Maintenance fluid in a man whose lungs are already full. Keep the line open with a saline lock instead."
+  },
+  {
+   "catalog_id": "defibrillate",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "Unsynchronized shocks are for pulseless ventricular rhythms. In atrial fibrillation with a pulse, a shock that lands on the T wave can cause ventricular fibrillation."
+  },
+  {
+   "catalog_id": "dopamine_drip",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "He is not hypotensive, and dopamine's chronotropy is the opposite of what a ventricle at 160 needs."
+  },
+  {
+   "catalog_id": "epinephrine_drip",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "He is not hypotensive, and an adrenergic infusion drives the rate you are trying to slow."
+  },
+  {
+   "catalog_id": "atropine_bolus",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "Atropine speeds atrioventricular conduction. At a ventricular rate of 160 it can only make things worse."
+  },
+  {
+   "catalog_id": "arterial_blood_gas",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "Adds an oxygen tension to what the venous gas already told you, at the cost of an arterial puncture in a man who is fighting for breath and about to be anticoagulated."
+  },
+  {
+   "catalog_id": "ct_chest",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "The radiograph and the lung ultrasound have already shown pulmonary edema, and a CT changes nothing in the next hour. Lying a man who cannot lie flat in a scanner is a hazard in itself."
   }
  ],
  "follow_ups": [
@@ -1699,8 +1889,8 @@
     "fentanyl_bolus",
     "midazolam_bolus"
    ],
-   "nurse_prompt": "He's tubed and he's still paralysed from the induction. Do you want to write him up for sedation and something for pain?",
-   "debrief_note": "A paralysed patient without sedation is awake, aware and unable to signal. The obligation is created by the intubation and cannot precede it, which is why it is a follow-up rather than a prerequisite. Choose the agent with his blood pressure in mind: his cardiac output is preload and rate sensitive and a propofol infusion will drop it."
+   "nurse_prompt": "He's tubed and he's still paralyzed from the induction. Do you want to write him up for sedation and something for pain?",
+   "debrief_note": "A paralyzed patient without sedation is awake, aware and unable to signal. The obligation is created by the intubation and cannot precede it, which is why it is a follow-up rather than a prerequisite. Choose the agent with his blood pressure in mind: his cardiac output is preload and rate sensitive and a propofol infusion will drop it."
   },
   {
    "id": "post_intubation_cxr",
@@ -1725,7 +1915,7 @@
    "deadline_seconds": 55,
    "satisfied_when": "flag rate_control_adequate set",
    "nurse_prompt": "He's slower than he was but he's still running fast. Do you want me to draw up another dose?",
-   "debrief_note": "One dose is a trial, not a treatment. A single intravenous dose of any of the agents this case accepts produces a partial fall in the ventricular rate, and the correct response to a partial response is another dose of the same agent, not a different agent and not the conclusion that the drug failed. That is the specific error this obligation exists to catch: a resident who reads 160 becoming 138 as a failure will reach for something else, and what they reach for in atrial fibrillation with a reduced ejection fraction is usually the calcium channel blocker.\n\nIt is discharged by a second dose of any of the four routes, because two attempts at atrioventricular nodal blockade is two attempts whichever drugs they were. It is not discharged by time, and it is not discharged by the first dose, which is why it is authored against a condition rather than against a list of actions: the action that would satisfy it is the action that created it.\n\nKnow when to stop. If the rate is still fast after two adequate doses, that is information rather than a reason for a third: a ventricular rate that will not come down in acute decompensated heart failure is usually being driven by the decompensation, and the treatment is the pulmonary edema and the hypoxaemia rather than more nodal blockade in a ventricle that is already struggling."
+   "debrief_note": "One dose is a trial, not a treatment. A single intravenous dose of any of the agents this case accepts produces a partial fall in the ventricular rate, and the correct response to a partial response is usually another dose of the same agent on that agent's schedule, not a switch of drug class and not the conclusion that the drug failed. Digoxin is the exception to the tempo: its loading doses are spaced over hours, and a partial response in the first minutes is expected rather than a reason to redose. One combination to avoid is an intravenous beta blocker given shortly after intravenous diltiazem, which stacks two negatively inotropic nodal blockers. In a ventricle at 30 to 35 percent the safer second agent is digoxin or amiodarone. That is the specific error this obligation exists to catch: a resident who reads 160 becoming 138 as a failure will reach for something else, and what they reach for in atrial fibrillation with a reduced ejection fraction is usually the calcium channel blocker.\n\nIt is discharged by a second dose of any of the four routes, because two attempts at atrioventricular nodal blockade is two attempts whichever drugs they were. It is not discharged by time, and it is not discharged by the first dose, which is why it is authored against a condition rather than against a list of actions: the action that would satisfy it is the action that created it.\n\nKnow when to stop. If the rate is still fast after two adequate doses, that is information rather than a reason for a third: a ventricular rate that will not come down in acute decompensated heart failure is usually being driven by the decompensation, and the treatment is the pulmonary edema and the hypoxemia rather than more nodal blockade in a ventricle that is already struggling."
   },
   {
    "id": "anticoagulation_after_cardioversion",
@@ -1744,17 +1934,17 @@
   "per_phase": 4,
   "rationale": "Four slots per phase, and the ordering matters more than the number. In the arrival phase the nurse can say four new things before the 240-second deterioration: attach the monitor at 20 seconds, apply positive pressure at 80, put the probe on the heart at 130 and give the diuretic at 160. The positive-pressure escalation at 200 is the warning the deterioration's fairness guarantee rests on; since v0.9 an escalation is exempt from the cap (it repeats a warning rather than raising a new one), so it is heard whatever the ordering. Rate control at 190 and anticoagulation at 215 therefore do not fire on arrival and do fire in the later phases, where the earlier prompts have been satisfied and their guards suppress them without consuming a slot."
  },
- "prerequisite_semantics_note": "A prerequisite is a requirement that must already hold, not a condition that blocks. Two are authored here beyond the catalog defaults: positive pressure requires that the patient is not already intubated, and synchronised cardioversion requires that he has been given something for sedation, because he is awake and talking.",
+ "prerequisite_semantics_note": "A prerequisite is a requirement that must already hold, not a condition that blocks. Two are authored here beyond the catalog defaults: positive pressure requires that the patient is not already intubated, and synchronized cardioversion requires that he has been given something for sedation, because he is awake and talking.",
  "content_keys": {
   "exam": {
-   "authoring_note": "Section 11.2. Twelve of the fourteen catalog manoeuvres are authored; genitourinary and back inherit the catalog default. Peripheral edema sits on the cardiovascular examination and jugular venous pressure on the neck, per exam_finding_routing, not where a clinician would instinctively look for them.",
+   "authoring_note": "Section 11.2. Twelve of the fourteen catalog maneuvers are authored; genitourinary and back inherit the catalog default. Peripheral edema sits on the cardiovascular examination and jugular venous pressure on the neck, per exam_finding_routing, not where a clinician would instinctively look for them.",
    "exam_airway": [
     {
      "when": "phase is intubated",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Endotracheal tube in place at 23 cm at the teeth. Cuff inflated. Waveform capnography with a normal square trace."
+      "findings": "Endotracheal tube at 23 cm at the teeth, cuff inflated. Normal capnography waveform."
      }
     },
     {
@@ -1762,7 +1952,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Airway still patent but he is no longer talking. Answers in single words when pushed. No stridor and no secretions, but he is not going to protect this airway for much longer at this rate of work."
+      "findings": "Patent, but he has stopped talking. Single words when pushed. No stridor or secretions."
      }
     },
     {
@@ -1770,7 +1960,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": false,
-      "findings": "Patent and self-maintained. He can complete a short sentence before he has to stop for a breath. No stridor, no drooling, no oropharyngeal swelling. Voice normal."
+      "findings": "Patent. Speaks a short sentence before stopping to breathe. No stridor."
      }
     }
    ],
@@ -1780,7 +1970,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Ventilated. Chest rises symmetrically with each delivered breath. No spontaneous respiratory effort against the ventilator at present."
+      "findings": "Ventilated. Symmetric chest rise. No effort against the ventilator."
      }
     },
     {
@@ -1788,7 +1978,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Respiratory rate 38 and shallow. Marked accessory muscle use with sternocleidomastoid and scalene recruitment, intercostal indrawing, and paradoxical abdominal movement on inspiration. He has stopped talking. This is a fatiguing pattern."
+      "findings": "Rate 38, shallow. Marked accessory muscle use, retractions, paradoxical abdominal movement. Stopped talking."
      }
     },
     {
@@ -1796,7 +1986,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Respiratory rate down and the pattern is deeper and more regular on positive pressure. Much less accessory muscle use. He is tolerating the mask and no longer bracing against it. Chest expansion symmetrical."
+      "findings": "Rate down, deeper and more regular on the mask. Much less accessory muscle use."
      }
     },
     {
@@ -1804,7 +1994,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Respiratory rate 30 and shallow. Sitting bolt upright and will not lie back. Visible sternocleidomastoid and scalene use with mild intercostal indrawing. Speaks in short sentences, stopping to breathe. Chest expansion symmetrical, no splinting."
+      "findings": "Rate 30, shallow. Bolt upright. Neck accessory muscle use, mild retractions. Short sentences."
      }
     }
    ],
@@ -1814,7 +2004,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Peripheries warm. Capillary refill 2 seconds. Radial pulse irregularly irregular with variable volume. No pulse deficit appreciable at this rate."
+      "findings": "Warm. Capillary refill 2 seconds. Irregularly irregular radial pulse, variable volume."
      }
     },
     {
@@ -1822,7 +2012,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Radial pulse still irregularly irregular but slower and much easier to count, with far less beat-to-beat variation in volume. The radial and apical rates now agree, so the pulse deficit has closed. Peripheries warm, capillary refill 2 seconds, no mottling."
+      "findings": "Irregularly irregular but slower and countable. No pulse deficit now. Warm, capillary refill 2 seconds."
      }
     },
     {
@@ -1830,7 +2020,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Radial pulse irregularly irregular, thready and impossible to count reliably at the wrist. Marked beat-to-beat variation in volume. Auscultated apical rate is around 160 while the palpated radial rate is nearer 130: a pulse deficit of about 30, because the shortest cycles do not fill the ventricle enough to open the aortic valve usefully. Peripheries are warm and capillary refill is 2 seconds. No mottling, no cool line up the limbs."
+      "findings": "Irregularly irregular, thready radial pulse. Apical about 160, radial about 130: a pulse deficit. Warm, capillary refill 2 seconds."
      }
     }
    ],
@@ -1840,7 +2030,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Jugular venous pulsation elevated, harder to assess against positive pressure ventilation but clearly above the clavicle at 45 degrees. Trachea midline. No goitre, no thyroid nodule, no bruit."
+      "findings": "JVP elevated above the clavicle at 45 degrees. Trachea midline. No goiter."
      }
     },
     {
@@ -1848,7 +2038,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Jugular venous pulsation visible two thirds of the way up the neck with the head of the bed at 45 degrees, roughly 12 cm of water, with no discernible waveform because the rhythm is irregular and the a wave is absent. Elevated. Trachea midline. No lymphadenopathy. Thyroid not enlarged, no nodule, no bruit. Sustained pressure over the right upper quadrant raises the venous column and it does not fall back while pressure is maintained: hepatojugular reflux positive."
+      "findings": "JVP two thirds up the neck at 45 degrees, about 12 cm, no a wave. Hepatojugular reflux positive. No goiter."
      }
     }
    ],
@@ -1858,7 +2048,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Irregularly irregular, rate around 118. Heart sounds distant against the ventilator. Bilateral pitting edema to mid-shin, unchanged."
+      "findings": "Irregularly irregular, about 118. Distant heart sounds. 2+ pitting edema to mid-shins."
      }
     },
     {
@@ -1866,7 +2056,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Irregularly irregular at a rate you can now count, around 105. First heart sound still varies in intensity from beat to beat, which is expected in atrial fibrillation because the diastolic filling time varies. Apex is displaced laterally to the anterior axillary line in the sixth interspace. No murmur audible. Bilateral pitting edema to mid-shin, unchanged: days of accumulated fluid do not leave in ten minutes."
+      "findings": "Irregularly irregular, about 105. Variable S1. Displaced apex. No murmur. 2+ edema to mid-shins."
      }
     },
     {
@@ -1874,7 +2064,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Irregularly irregular, far too fast to count accurately by auscultation, around 160. The first heart sound varies in intensity beat to beat. No murmur that can be characterised at this rate. A third heart sound cannot be excluded and cannot be confirmed at 160. Apex beat displaced laterally to the anterior axillary line in the sixth interspace, diffuse rather than tapping. Bilateral pitting edema to mid-shin, symmetrical, pitting to about 2 cm."
+      "findings": "Irregularly irregular, about 160. Variable S1. Displaced, diffuse apex. 2+ pitting edema to mid-shins."
      }
     }
    ],
@@ -1884,7 +2074,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Coarse crackles throughout both lung fields on the ventilator, worse at the bases. No wheeze. No focal dullness."
+      "findings": "Coarse crackles throughout on the ventilator, worse at the bases. No wheeze."
      }
     },
     {
@@ -1892,7 +2082,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Fine inspiratory crackles now confined to both bases rather than reaching the mid-zones. Air entry good throughout. No wheeze. Percussion note dull at both bases, unchanged, consistent with small effusions."
+      "findings": "Fine crackles at the bases only. Good air entry. Dull at both bases. No wheeze."
      }
     },
     {
@@ -1900,7 +2090,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Fine inspiratory crackles in both lung fields to the mid-zones, symmetrical, worse at the bases. Scattered expiratory wheeze in both lower zones, which in this patient is peribronchial edema rather than bronchospasm. Percussion note dull at both bases. No focal consolidation, no pleural rub."
+      "findings": "Fine crackles to the mid-zones, worse at the bases. Scattered expiratory wheeze. Dull at both bases."
      }
     }
    ],
@@ -1910,7 +2100,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Soft. Mildly tender in the right upper quadrant. Liver edge palpable 3 cm below the costal margin, smooth and tender, and it is pulsatile. No ascites, no guarding, no rebound. Bowel sounds present."
+      "findings": "Tender, pulsatile liver edge 3 cm below the costal margin. Soft, no ascites or guarding."
      }
     }
    ],
@@ -1920,7 +2110,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": false,
-      "findings": "Symmetrical pitting edema of both lower limbs to mid-shin. No unilateral calf swelling, no calf tenderness, no palpable cord, no asymmetry in calf circumference. Dorsalis pedis and posterior tibial pulses present bilaterally and irregular. Full range of movement at both ankles and knees."
+      "findings": "Symmetric pitting edema to mid-shins. No calf tenderness, cord or asymmetry. Pedal pulses present."
      }
     }
    ],
@@ -1930,7 +2120,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": false,
-      "findings": "Warm and dry. Colour good. No rash, no mottling."
+      "findings": "Warm and dry. Good color. No mottling."
      }
     },
     {
@@ -1938,7 +2128,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Clammy and grey. Diaphoretic across the forehead and upper chest. Dusky discoloration of the lips and nailbeds. No rash."
+      "findings": "Clammy, gray, sweating. Dusky lips and nailbeds."
      }
     },
     {
@@ -1946,7 +2136,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Warm to the touch with a light sweat over the forehead and upper chest. Colour is reasonable centrally with no frank cyanosis. No rash, no petechiae, no wounds, no cellulitis. Skin over both shins is taut and shiny with the edema."
+      "findings": "Warm, light sweat. No cyanosis. Shins taut and shiny with edema. No rash."
      }
     }
    ],
@@ -1956,7 +2146,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Sedated and ventilated. Glasgow Coma Scale 3T on the current sedation. Pupils 3 mm and reactive bilaterally. No spontaneous movement."
+      "findings": "Sedated, GCS 3T. Pupils 3 mm, reactive. No spontaneous movement."
      }
     },
     {
@@ -1964,7 +2154,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Glasgow Coma Scale 14: eyes open to voice, confused, obeys commands. Drowsy and difficult to keep engaged, and he has stopped answering questions in the middle of them. No focal deficit, no asymmetry, plantars downgoing. This is the carbon dioxide, not a new neurological event."
+      "findings": "GCS 13 (E3 V4 M6). Drowsy, confused, obeys commands. No focal deficit."
      }
     },
     {
@@ -1972,7 +2162,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": false,
-      "findings": "Glasgow Coma Scale 15. Alert, oriented to person, place and time. Cranial nerves intact. Power 5 out of 5 and symmetrical in all four limbs. No pronator drift, no ataxia, plantars downgoing. No focal deficit."
+      "findings": "Alert and oriented, GCS 15. No focal deficit."
      }
     }
    ],
@@ -1990,7 +2180,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Anxious and frightened, and appropriately so. Cooperative with examination. Thought content coherent, no delusional material, no hallucinations. He keeps asking whether he is having a heart attack. Insight intact."
+      "findings": "Anxious and frightened, cooperative. Keeps asking if he is having a heart attack."
      }
     }
    ],
@@ -2000,7 +2190,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": false,
-      "findings": "Normocephalic, atraumatic. Conjunctivae not pale, sclerae not icteric. No lid lag, no lid retraction, no proptosis. Pupils equal and reactive. Mucous membranes moist. Oropharynx clear. No thyroid enlargement palpable from the front."
+      "findings": "No lid lag, proptosis or pallor. Moist mucous membranes. No thyroid enlargement."
      }
     }
    ]
@@ -2013,7 +2203,7 @@
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Intubated and sedated on the ventilator. Not responsive. Colour good."
+      "findings": "Intubated and sedated. Good color."
      }
     },
     {
@@ -2021,7 +2211,7 @@
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Severe respiratory distress and tiring. Drowsy, grey and sweaty, speaking in single words. GCS 14."
+      "findings": "Severe distress, tiring. Drowsy, gray, sweaty, single words. GCS 13."
      }
     },
     {
@@ -2029,7 +2219,7 @@
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Still in obvious respiratory distress, sitting bolt upright, speaking in short phrases. Heart rate visibly slower on the monitor. GCS 15."
+      "findings": "Still in obvious distress, bolt upright, short phrases. Visibly slower rate. GCS 15."
      }
     },
     {
@@ -2037,7 +2227,7 @@
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Moderate respiratory distress, improving behind the mask. Tolerating positive pressure. GCS 15."
+      "findings": "Moderate distress, improving on the mask. GCS 15."
      }
     },
     {
@@ -2045,7 +2235,7 @@
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Comfortable at rest on the mask, settled and talking between breaths. GCS 15."
+      "findings": "Comfortable at rest on the mask. GCS 15."
      }
     },
     {
@@ -2053,14 +2243,14 @@
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Awake, anxious and visibly breathless. Sitting upright, hands on his thighs, speaking in short sentences. GCS 15."
+      "findings": "Awake, anxious, visibly breathless. Upright, hands on thighs, short sentences. GCS 15."
      }
     }
    ]
   },
   "patient_visual": {
    "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drives the figure in the room (engine/patient.js). Derived from this case's own phase descriptions, alertness levels, general status lines and action flags, and adds no clinical fact of its own: eyes closed where the phase is unresponsive, sedated or arrested; work of breathing where the phase description names it; the mask and the tube where the flag the resident's own action sets is set. The respiratory rate is not authored here, the figure breathes at the monitor's rate. Verify each rule against the phase and flag it names, as for any other content key.",
-   "verify": "The mask follows flag on_niv and the tube follows flag intubated. presentation is drawn as increased rather than severe because he can still finish a sentence; rate_controlled_congested is drawn as severe from 'still working hard to breathe' at distress level 3. respiratory_failure is drowsy and is drawn eyes open. Sweating is drawn in respiratory_failure, from 'grey and sweaty'. The pads and the central line follow flags pacing_pads_placed and central_access; the line is drawn in the right internal jugular, which the case does not specify.",
+   "verify": "The mask follows flag on_niv and the tube follows flag intubated. presentation is drawn as increased rather than severe because he can still finish a sentence; rate_controlled_congested is drawn as severe from 'still working hard to breathe' at distress level 3. respiratory_failure is drowsy and is drawn eyes open. Sweating is drawn in respiratory_failure, from 'gray and sweaty'. The pads and the central line follow flags pacing_pads_placed and central_access; the line is drawn in the right internal jugular, which the case does not specify.",
    "rules": [
     {
      "when": "flag intubated set OR phase is intubated",
@@ -2257,7 +2447,7 @@
          "abnormal": true
         }
        ],
-       "comment": "Low. Worth correcting: magnesium is a cofactor for the sodium-potassium pump so a low potassium will not correct while this is low, and intravenous magnesium has been reported as a useful adjunct to nodal blockade in rapid atrial fibrillation on the evidence of small randomised trials."
+       "comment": "Low. Worth correcting: magnesium is a cofactor for the sodium-potassium pump so a low potassium will not correct while this is low, and intravenous magnesium has been reported as a useful adjunct to nodal blockade in rapid atrial fibrillation on the evidence of small randomized trials."
       }
      }
     ]
@@ -2324,14 +2514,14 @@
          "abnormal": false
         },
         {
-         "label": "Haemoglobin",
+         "label": "Hemoglobin",
          "value": "13.9",
          "unit": "g/dL",
          "reference_range": "13.5-17.5",
          "abnormal": false
         },
         {
-         "label": "Haematocrit",
+         "label": "Hematocrit",
          "value": "41",
          "unit": "%",
          "reference_range": "38-50",
@@ -2345,7 +2535,7 @@
          "abnormal": false
         }
        ],
-       "comment": "Unremarkable. Anaemia is a genuine precipitant of decompensation and is excluded here."
+       "comment": "Unremarkable. Anemia is a genuine precipitant of decompensation and is excluded here."
       }
      }
     ]
@@ -2467,6 +2657,101 @@
      }
     ]
    },
+   "arterial_blood_gas": {
+    "changes_with_state": true,
+    "rules": [
+     {
+      "when": "phase is respiratory_failure",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.26",
+         "unit": "",
+         "reference_range": "7.35-7.45",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "58",
+         "unit": "mmHg",
+         "reference_range": "35-45",
+         "abnormal": true
+        },
+        {
+         "label": "pO2",
+         "value": "48",
+         "unit": "mmHg",
+         "reference_range": "80-100",
+         "abnormal": true
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "25",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "3.1",
+         "unit": "mmol/L",
+         "reference_range": "under 2.0",
+         "abnormal": true
+        }
+       ],
+       "comment": "Worsening acute respiratory acidosis with hypoxemia. He is tiring."
+      }
+     },
+     {
+      "when": null,
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.34",
+         "unit": "",
+         "reference_range": "7.35-7.45",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "46",
+         "unit": "mmHg",
+         "reference_range": "35-45",
+         "abnormal": true
+        },
+        {
+         "label": "pO2",
+         "value": "58",
+         "unit": "mmHg",
+         "reference_range": "80-100",
+         "abnormal": true
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "24",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "2.4",
+         "unit": "mmol/L",
+         "reference_range": "under 2.0",
+         "abnormal": true
+        }
+       ],
+       "comment": "Hypoxemia with a carbon dioxide that is not low despite a respiratory rate of 30."
+      }
+     }
+    ]
+   },
    "lactate": {
     "changes_with_state": false,
     "rules": [
@@ -2484,7 +2769,7 @@
          "abnormal": true
         }
        ],
-       "comment": "Mildly raised, and in this patient attributable to the work of breathing and the tachycardia rather than to sepsis or mesenteric ischaemia. It should fall with treatment. One that does not fall deserves a different explanation."
+       "comment": "Mildly raised, and in this patient attributable to the work of breathing and the tachycardia rather than to sepsis or mesenteric ischemia. It should fall with treatment. One that does not fall deserves a different explanation."
       }
      }
     ]
@@ -2683,6 +2968,19 @@
      }
     ]
    },
+   "ct_chest": {
+    "changes_with_state": false,
+    "rules": [
+     {
+      "when": null,
+      "value": {
+       "kind": "report",
+       "abnormal": true,
+       "report": "CT chest without contrast. Cardiomegaly with enlargement of the left atrium. Bilateral perihilar ground-glass opacity with smooth interlobular septal thickening and small bilateral pleural effusions. No consolidation, no mass. Findings are consistent with pulmonary edema."
+      }
+     }
+    ]
+   },
    "xr_chest": {
     "changes_with_state": false,
     "result_shape": "structured",
@@ -2731,19 +3029,19 @@
    "consult_cardiology": [
     {
      "when": "study ultrasound_cardiac resulted AND study ecg_12_lead resulted AND flag rate_control_adequate set",
-     "value": "Cardiology fellow: good, that is a rate I can live with, and he does not have to be in sinus rhythm today. Nobody can tell me how long he has been in it, so I am not cardioverting him and neither should you. Three things before he leaves you. He needs to be anticoagulated, and his CHA2DS2-VASc is at least three so there is no argument to have about it. He needs a bed that can keep the mask on him and watch the rate, because a ventricle at thirty to thirty-five percent that has just been slowed can go the other way if the edema is not treated. And he needs a formal echocardiogram this admission, because if this cardiomyopathy turns out to be rate related it may recover once he stays in rhythm, and that changes what he goes home on."
+     "value": "Cardiology fellow: good, that is a rate I can live with, and he does not have to be in sinus rhythm today. Nobody can tell me how long he has been in it, so I am not cardioverting him and neither should you. Three things before he leaves you. He needs to be anticoagulated, and his CHA2DS2-VASc is at least four so there is no argument to have about it. He needs a bed that can keep the mask on him and watch the rate, because a ventricle at thirty to thirty-five percent that has just been slowed can go the other way if the edema is not treated. And he needs a formal echocardiogram this admission, because if this cardiomyopathy turns out to be rate related it may recover once he stays in rhythm, and that changes what he goes home on."
     },
     {
      "when": "study ultrasound_cardiac resulted AND study ecg_12_lead resulted AND flag rate_control_given set",
-     "value": "Cardiology fellow: so he has had a dose and he is still up around 140. That is a partial response, which is what one dose usually buys you, and the answer is another dose of the same thing rather than a second drug. Do not let a partial response push you toward diltiazem, because with an ejection fraction of thirty to thirty-five that is the one agent you should not use. Give it again and watch the pressure.\n\nAnd know when to stop. If he is still fast after two decent doses, that is telling you something rather than asking for a third: a rate that will not come down in acute decompensated heart failure is usually being driven by the decompensation. At that point the treatment is the edema and the hypoxaemia, not more nodal blockade in a ventricle that is already struggling. Get the positive pressure on him and diurese him, and the rate will often follow."
+     "value": "Cardiology fellow: so he has had a dose and he is still up around 140. That is a partial response, which is what one dose usually buys you, and the answer is another dose of the same thing rather than a second drug. Do not let a partial response push you toward diltiazem, because with an ejection fraction of thirty to thirty-five that is the one agent you should not use. Give it again and watch the pressure.\n\nAnd know when to stop. If he is still fast after two decent doses, that is telling you something rather than asking for a third: a rate that will not come down in acute decompensated heart failure is usually being driven by the decompensation. At that point the treatment is the edema and the hypoxemia, not more nodal blockade in a ventricle that is already struggling. Get the positive pressure on him and diurese him, and the rate will often follow."
     },
     {
      "when": "study ultrasound_cardiac resulted AND study ecg_12_lead resulted",
-     "value": "Cardiology fellow: right, so this is new atrial fibrillation with a rapid ventricular response and a left ventricle you have just found is running at thirty to thirty-five percent. Two things follow from that. Do not use diltiazem or verapamil, they are negative inotropes and the guideline is explicit about avoiding them when systolic function is significantly reduced. Digoxin or amiodarone are the sensible choices, and if you want a beta blocker use a small dose and only once his oxygenation is sorted out, because he is leaning on his sympathetic tone at the moment. Expect to give it twice: one dose will take the edge off and will not get him where you want him. Second thing: anticoagulate him. His CHA2DS2-VASc is at least three and there is nothing stopping you, and I would not cardiovert him today because nobody can tell me how long he has been in it. Get the positive pressure on, diurese him, slow him down, and we will see him upstairs. He needs a formal echocardiogram this admission."
+     "value": "Cardiology fellow: right, so this is new atrial fibrillation with a rapid ventricular response and a left ventricle you have just found is running at thirty to thirty-five percent. Two things follow from that. Do not use diltiazem or verapamil, they are negative inotropes and the guideline is explicit about avoiding them when systolic function is significantly reduced. Digoxin or amiodarone are the sensible choices, and if you want a beta blocker use a small dose and only once his oxygenation is sorted out, because he is leaning on his sympathetic tone at the moment. Expect it to take more than one dose: the first will take the edge off and will not get him where you want him, and digoxin in particular is loaded over hours. Second thing: anticoagulate him. His CHA2DS2-VASc is at least four and there is nothing stopping you, and I would not cardiovert him today because nobody can tell me how long he has been in it. Get the positive pressure on, diurese him, slow him down, and we will see him upstairs. He needs a formal echocardiogram this admission."
     },
     {
      "when": "study ultrasound_cardiac resulted",
-     "value": "Cardiology fellow: an ejection fraction of thirty to thirty-five in a man who has never had an echocardiogram is a significant finding and it changes your drug choice, so stay away from diltiazem. I have not seen a twelve-lead on him though, and I am not going to commit to anything about the rhythm or about ischaemia until somebody shows me one. Send it through."
+     "value": "Cardiology fellow: an ejection fraction of thirty to thirty-five in a man who has never had an echocardiogram is a significant finding and it changes your drug choice, so stay away from diltiazem. I have not seen a twelve-lead on him though, and I am not going to commit to anything about the rhythm or about ischemia until somebody shows me one. Send it through."
     },
     {
      "when": "study ecg_12_lead resulted",
@@ -2779,7 +3077,7 @@
    "consult_pulmonology": [
     {
      "when": null,
-     "value": "Respiratory registrar: I have listened to what you have described and I do not think this is a primary lung problem. Diffuse symmetrical B-lines, a raised jugular venous pressure and peripheral edema in a man in fast atrial fibrillation is cardiogenic pulmonary edema, and the wheeze you are hearing is edema around the airways rather than bronchospasm. Treat the heart. If you want us later for the sleep apnoea question, that is an outpatient conversation."
+     "value": "Respiratory registrar: I have listened to what you have described and I do not think this is a primary lung problem. Diffuse symmetrical B-lines, a raised jugular venous pressure and peripheral edema in a man in fast atrial fibrillation is cardiogenic pulmonary edema, and the wheeze you are hearing is edema around the airways rather than bronchospasm. Treat the heart. If you want us later for the sleep apnea question, that is an outpatient conversation."
     }
    ]
   }
@@ -2789,7 +3087,7 @@
    "alertness_gating": "Section 10.5. The condition language has no alertness predicate, so alertness is reached indirectly through the phases that carry it. Only the intubated phase in this case is at alertness 2 or above, and the global rule names it. If a phase is added later at alertness 2 or 3 the validator will catch it; do not remove that check.",
    "speech_gating": "Section 10.5 covers alertness and not speech limited by respiratory distress, which is the commoner problem. This patient is deliberately authored as able to complete a short sentence on arrival, per the seed, so the arrival phase gets the full answer. What he cannot do is talk in the respiratory failure phase, so every topic carries a second, clipped answer for that phase with the pauses marked by ellipses. That is two answers per topic rather than the three a case with a distressed arrival would need.",
    "diagnosis_disclosure": "Section 10.4. He never names a rhythm, an ejection fraction or heart failure, because he has never been told any of them and the case turns on the resident finding them. He does describe his heartbeat in lay terms, which is his own sensation and not a diagnosis, and he does describe the coronary calcification found on a CT three years ago, which is a past diagnosis he was given and is entitled to know. He offers the barbecue and the extra beers spontaneously, framed as a question, because that is how patients volunteer a precipitant, and it is not an assertion that alcohol caused this.",
-   "precipitant_note": "The case authors three plausible contributors and settles none of them: a weekend alcohol load two days before onset, undiagnosed obstructive sleep apnoea, and a cardiomyopathy that may be the cause of the arrhythmia or its consequence. A resident who takes a full history finds all three. Deciding between them is not the emergency department's task and the case does not score it.",
+   "precipitant_note": "The case authors three plausible contributors and settles none of them: a weekend alcohol load two days before onset, undiagnosed obstructive sleep apnea, and a cardiomyopathy that may be the cause of the arrhythmia or its consequence. A resident who takes a full history finds all three. Deciding between them is not the emergency department's task and the case does not score it.",
    "coverage": "Every topic in the section 10.2 minimum list is authored except pregnancy status, which does not apply to a sixty-eight year old man; a resident who asks gets the out-of-scope response. Location and radiation of pain are folded into the chest pain topic because the pain being asked about does not exist, and a denial is the whole content."
   },
   "global_answer_rules": [
@@ -2816,7 +3114,7 @@
    "Any heartburn?",
    "Any indigestion after meals?",
    "Any change in your bowel habit?",
-   "Any diarrhoea at all?",
+   "Any diarrhea at all?",
    "Any pain in your tummy?",
    "Have you had piles?",
    "Any black stools?",
@@ -3014,6 +3312,9 @@
        }
       ]
      }
+    ],
+    "adjacent": [
+     "timing_progression"
     ]
    },
    {
@@ -3070,7 +3371,11 @@
      "Before we go on, constant or does it come and go?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "whether it's getting worse"
+    "echo": "whether it's getting worse",
+    "adjacent": [
+     "exercise_tolerance_baseline"
+    ],
+    "volunteer": "'The breathing has got worse every hour since.'"
    },
    {
     "topic": "character_of_palpitations",
@@ -3163,6 +3468,10 @@
        }
       ]
      }
+    ],
+    "adjacent": [
+     "prior_afib_or_palpitations",
+     "chest_pain"
     ]
    },
    {
@@ -3199,8 +3508,8 @@
      "Describe the breathlessness.",
      "What does the breathing feel like?",
      "Is it hard to breathe in or out?",
-     "Character of the dyspnoea?",
      "Character of the dyspnea?",
+     "Character of the dyspnoea?",
      "Any wheeze with it?",
      "Is it a tightness or a smothering feeling?",
      "Do you feel you are drowning?",
@@ -3216,16 +3525,16 @@
      "Is it hard to breathe?",
      "Any breathing problems?",
      "Do you feel you cannot get your breath?",
-     "Dyspnoea?",
      "Dyspnea?",
+     "Dyspnoea?",
      "Any trouble with your breathing?",
      "Is your breathing okay?",
      "Are you getting enough air?",
      "Okay, what does the breathing feel like?",
      "Sorry to ask, but is it hard to breathe in or out?",
      "One more thing. Is it hard to breathe in or out?",
-     "Okay, character of the dyspnoea?",
-     "Just so I know, character of the dyspnoea?"
+     "Okay, character of the dyspnea?",
+     "Just so I know, character of the dyspnea?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
     "echo": "the breathing",
@@ -3269,6 +3578,9 @@
        }
       ]
      }
+    ],
+    "adjacent": [
+     "orthopnea"
     ]
    },
    {
@@ -3321,7 +3633,10 @@
      "Sorry to ask, but on a scale of one to ten?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "how bad it is"
+    "echo": "how bad it is",
+    "adjacent": [
+     "chest_pain"
+    ]
    },
    {
     "topic": "aggravating_factors",
@@ -3371,7 +3686,10 @@
      "Sorry to ask, but does anything set it off?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "what makes it worse"
+    "echo": "what makes it worse",
+    "adjacent": [
+     "relieving_factors"
+    ]
    },
    {
     "topic": "relieving_factors",
@@ -3420,7 +3738,11 @@
      "I need to know, relieving factors?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "what helps"
+    "echo": "what helps",
+    "adjacent": [
+     "paroxysmal_nocturnal_dyspnea"
+    ],
+    "volunteer": "'Sitting bolt upright is the only thing that helps.'"
    },
    {
     "topic": "chest_pain",
@@ -3515,7 +3837,11 @@
        }
       ]
      }
-    ]
+    ],
+    "adjacent": [
+     "syncope_presyncope"
+    ],
+    "volunteer": "'There's no pain with it, mind.'"
    },
    {
     "topic": "syncope_presyncope",
@@ -3566,7 +3892,8 @@
      "Before we go on, did you pass out?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "whether I've passed out"
+    "echo": "whether I've passed out",
+    "volunteer": "'I've not passed out, though.'"
    },
    {
     "topic": "dizziness_lightheadedness",
@@ -3611,7 +3938,10 @@
      "Okay, do you feel faint?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "feeling dizzy"
+    "echo": "feeling dizzy",
+    "adjacent": [
+     "syncope_presyncope"
+    ]
    },
    {
     "topic": "orthopnea",
@@ -3626,7 +3956,7 @@
      "How do you sleep at night?",
      "Do you need pillows to breathe?",
      "Can you lie down flat without getting short of breath?",
-     "Any orthopnoea?",
+     "Any orthopnea?",
      "Has your sleeping position changed?",
      "Do you sleep sitting up?",
      "How many pillows do you use now compared with before?",
@@ -3640,7 +3970,7 @@
      },
      {
       "when": null,
-      "value": "'I can't. The last two nights I've had three pillows behind me and I still ended up sat on the edge of the bed. Before this week I slept on one pillow, flat, no trouble at all.'"
+      "value": "'I can't. Last night I had three pillows behind me and I still ended up sat on the edge of the bed. Before this I slept on one pillow, flat, no trouble at all.'"
      }
     ],
     "expanded_variants": [
@@ -3663,7 +3993,11 @@
      "And how many pillows?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "lying flat"
+    "echo": "lying flat",
+    "adjacent": [
+     "paroxysmal_nocturnal_dyspnea"
+    ],
+    "volunteer": "'I can't lie flat at all.'"
    },
    {
     "topic": "paroxysmal_nocturnal_dyspnea",
@@ -3696,24 +4030,28 @@
      }
     ],
     "expanded_variants": [
-     "Paroxysmal nocturnal dyspnoea?",
      "Paroxysmal nocturnal dyspnea?",
+     "Paroxysmal nocturnal dyspnoea?",
      "Do you wake at night breathless?",
      "Woken up short of breath?",
      "Do you wake up fighting for breath?",
      "Do you have to get up at night to catch your breath?",
      "Any breathlessness waking you?",
-     "Nocturnal dyspnoea?",
+     "Nocturnal dyspnea?",
      "Night-time breathlessness?",
      "Do you sit on the edge of the bed at night to breathe?",
-     "Quick one: paroxysmal nocturnal dyspnoea?",
+     "Quick one: paroxysmal nocturnal dyspnea?",
      "And paroxysmal nocturnal dyspnea?",
      "Can I ask, paroxysmal nocturnal dyspnea?",
      "And do you wake up gasping?",
      "Can I ask, do you wake up gasping?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "waking up breathless"
+    "echo": "waking up breathless",
+    "adjacent": [
+     "orthopnea"
+    ],
+    "volunteer": "'Twice last night I woke up feeling like I was drowning.'"
    },
    {
     "topic": "leg_swelling",
@@ -3723,7 +4061,7 @@
      "Have your ankles been puffy?",
      "Is there swelling anywhere?",
      "Have your feet been swollen?",
-     "Any oedema?",
+     "Any edema?",
      "Have your socks been leaving marks?",
      "Have your legs changed?",
      "Is there swelling in your ankles?",
@@ -3747,16 +4085,16 @@
     ],
     "expanded_variants": [
      "Any ankle swelling?",
-     "Ankle oedema?",
      "Ankle edema?",
-     "Pedal oedema?",
+     "Ankle oedema?",
      "Pedal edema?",
+     "Pedal oedema?",
      "Swollen feet?",
      "Leg swelling?",
      "Do your shoes feel tight?",
      "Have your ankles puffed up?",
      "Any edema?",
-     "Peripheral oedema?",
+     "Peripheral edema?",
      "Any fluid in the legs?",
      "Have your calves swollen?",
      "I need to know, any ankle swelling?",
@@ -3766,7 +4104,12 @@
      "Before we go on, any swelling in your legs?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "my legs swelling"
+    "echo": "my legs swelling",
+    "adjacent": [
+     "calf_pain_or_asymmetry",
+     "weight_gain"
+    ],
+    "volunteer": "'My legs have been swelling this last week, both of them.'"
    },
    {
     "topic": "weight_gain",
@@ -3816,7 +4159,11 @@
      "Right. Weight change?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "my weight"
+    "echo": "my weight",
+    "adjacent": [
+     "leg_swelling"
+    ],
+    "volunteer": "'My trousers have got tight round the waist this week too.'"
    },
    {
     "topic": "exercise_tolerance_baseline",
@@ -3871,7 +4218,8 @@
      "Right. Baseline function?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "what I could do before"
+    "echo": "what I could do before",
+    "volunteer": "'A week ago I was walking the dog up the hill twice a day.'"
    },
    {
     "topic": "cough_and_sputum",
@@ -3881,7 +4229,7 @@
      "Are you coughing anything up?",
      "Do you have a productive cough?",
      "Any phlegm?",
-     "What colour is the sputum?",
+     "What color is the sputum?",
      "Have you been coughing?",
      "Is the cough dry or wet?",
      "Any sputum?",
@@ -3900,7 +4248,7 @@
      },
      {
       "when": null,
-      "value": "'A bit of a dry cough, mostly when I lie down. Nothing comes up. No blood, nothing coloured, nothing frothy. It's not really a cough so much as a tickle.'"
+      "value": "'A bit of a dry cough, mostly when I lie down. Nothing comes up. No blood, nothing colored, nothing frothy. It's not really a cough so much as a tickle.'"
      }
     ],
     "expanded_variants": [
@@ -3917,11 +4265,14 @@
      "Quick one: have you been coughing?",
      "Sorry to ask, but are you bringing anything up?",
      "One more thing. Are you bringing anything up?",
-     "Just so I know, what colour is the sputum?",
-     "I need to know, what colour is the sputum?"
+     "Just so I know, what color is the sputum?",
+     "I need to know, what color is the sputum?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "a cough"
+    "echo": "a cough",
+    "adjacent": [
+     "fever_and_chills"
+    ]
    },
    {
     "topic": "fever_and_chills",
@@ -3972,7 +4323,11 @@
      "Okay, any temperature?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "a temperature"
+    "echo": "a temperature",
+    "adjacent": [
+     "recent_illness_or_sick_contacts"
+    ],
+    "volunteer": "'I've had no fever or shivering.'"
    },
    {
     "topic": "prior_afib_or_palpitations",
@@ -4026,7 +4381,11 @@
      "Can I ask, has this happened before?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "whether it's happened before"
+    "echo": "whether it's happened before",
+    "adjacent": [
+     "prior_heart_failure"
+    ],
+    "volunteer": "'And nobody's ever said my heart was irregular.'"
    },
    {
     "topic": "prior_heart_failure",
@@ -4078,7 +4437,11 @@
      "Quick one: have you been told your heart is weak?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "heart failure"
+    "echo": "heart failure",
+    "adjacent": [
+     "prior_afib_or_palpitations"
+    ],
+    "volunteer": "'Nobody's ever said my heart was weak.'"
    },
    {
     "topic": "past_medical_history",
@@ -4172,7 +4535,12 @@
        }
       ]
      }
-    ]
+    ],
+    "adjacent": [
+     "prior_heart_failure",
+     "past_surgical_history"
+    ],
+    "volunteer": "'I've got high blood pressure and diabetes.'"
    },
    {
     "topic": "past_surgical_history",
@@ -4191,7 +4559,7 @@
      "What's your surgical history?",
      "Have you had a stent put in?",
      "Any surgery in the last few months?",
-     "Have you ever had an anaesthetic?",
+     "Have you ever had an anesthetic?",
      "Any operations I should know about?"
     ],
     "answer": [
@@ -4224,7 +4592,11 @@
      "Right. Ever had surgery?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "operations"
+    "echo": "operations",
+    "adjacent": [
+     "past_medical_history"
+    ],
+    "volunteer": "'My only operation was my gallbladder, years ago.'"
    },
    {
     "topic": "current_medications",
@@ -4336,7 +4708,11 @@
        }
       ]
      }
-    ]
+    ],
+    "adjacent": [
+     "medication_adherence"
+    ],
+    "volunteer": "'I take lisinopril, a statin and metformin.'"
    },
    {
     "topic": "anticoagulant_history_and_bleeding",
@@ -4485,7 +4861,11 @@
      "One more thing. Have you missed any doses?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "whether I take them"
+    "echo": "whether I take them",
+    "adjacent": [
+     "current_medications"
+    ],
+    "volunteer": "'I take them every morning from a pill box.'"
    },
    {
     "topic": "allergies",
@@ -4631,7 +5011,11 @@
        }
       ]
      }
-    ]
+    ],
+    "adjacent": [
+     "social_history_smoking"
+    ],
+    "volunteer": "'I have a few beers at weekends, and I had four or five at a barbecue on Saturday.'"
    },
    {
     "topic": "caffeine_and_stimulants",
@@ -4698,7 +5082,7 @@
      "Any thyroid problems?",
      "Have you been more anxious or sweaty than usual?",
      "Any change in your bowels?",
-     "Do you have a goitre?",
+     "Do you have a goiter?",
      "Any hyperthyroid symptoms?",
      "Have you been losing weight without trying?",
      "Do your hands shake?",
@@ -4724,7 +5108,7 @@
      "Are you on thyroxine?",
      "Have you lost weight without trying?",
      "Any change in your neck?",
-     "Any goitre?",
+     "Any goiter?",
      "Overactive thyroid?",
      "Any weight loss or feeling hot?",
      "Have you been told your thyroid is overactive?",
@@ -4785,7 +5169,11 @@
      "I need to know, are you a smoker?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "smoking"
+    "echo": "smoking",
+    "adjacent": [
+     "alcohol_and_binge"
+    ],
+    "volunteer": "'I gave up smoking over twenty years ago.'"
    },
    {
     "topic": "family_history",
@@ -4935,18 +5323,22 @@
      "One more thing. Any recent infection?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "whether I've been unwell"
+    "echo": "whether I've been unwell",
+    "adjacent": [
+     "fever_and_chills"
+    ],
+    "volunteer": "'I've not had a cold, and nobody at home's been ill.'"
    },
    {
     "topic": "travel_immobility_surgery",
-    "canonical": "Have you travelled recently?",
+    "canonical": "Have you traveled recently?",
     "variants": [
      "Any recent travel?",
      "Have you been on a long flight?",
      "Have you been immobile recently?",
      "Any long journeys?",
      "Have you been bedbound at all?",
-     "Any recent surgery or immobilisation?",
+     "Any recent surgery or immobilization?",
      "Have you been on a long car journey?",
      "Any risk factors for a clot?",
      "Have you been abroad?",
@@ -4987,7 +5379,11 @@
      "I need to know, have you been immobile?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "travelling"
+    "echo": "traveling",
+    "adjacent": [
+     "calf_pain_or_asymmetry"
+    ],
+    "volunteer": "'I've not traveled anywhere.'"
    },
    {
     "topic": "calf_pain_or_asymmetry",
@@ -5038,7 +5434,11 @@
      "Can I ask, any pain in your calves?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "my calves"
+    "echo": "my calves",
+    "adjacent": [
+     "travel_immobility_surgery"
+    ],
+    "volunteer": "'My legs don't hurt, and they're not red or hot.'"
    },
    {
     "topic": "urine_output",
@@ -5052,7 +5452,7 @@
      "How often are you urinating?",
      "Any problems passing urine?",
      "Have you been going less?",
-     "What colour is your urine?",
+     "What color is your urine?",
      "Any change in your waterworks?",
      "Have you noticed passing less?",
      "Are you weeing normally?",
@@ -5140,7 +5540,10 @@
      "Just so I know, have you thrown up?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "feeling sick"
+    "echo": "feeling sick",
+    "adjacent": [
+     "weight_gain"
+    ]
    },
    {
     "topic": "snoring_and_sleep_apnea",
@@ -5148,7 +5551,7 @@
     "variants": [
      "Does anyone say you snore?",
      "Do you stop breathing in your sleep?",
-     "Any sleep apnoea?",
+     "Any sleep apnea?",
      "Do you use a CPAP machine at night?",
      "Are you sleepy during the day?",
      "Has anyone told you that you stop breathing at night?",
@@ -5178,11 +5581,11 @@
      "Has anyone said you snore?",
      "Do you use a CPAP machine?",
      "Are you tired during the day?",
-     "Sleep apnoea history?",
+     "Sleep apnea history?",
      "Has your partner noticed you stop breathing at night?",
-     "Any obstructive sleep apnoea?",
-     "Right. Any sleep apnoea?",
-     "Quick one: any sleep apnoea?",
+     "Any obstructive sleep apnea?",
+     "Right. Any sleep apnea?",
+     "Quick one: any sleep apnea?",
      "Can I ask, any sleep apnea?",
      "Can I ask, do you stop breathing in your sleep?",
      "Sorry to ask, but do you stop breathing in your sleep?"
@@ -5243,6 +5646,14 @@
     "echo": "what I'd want if it got worse"
    }
   ],
+  "must_ask": [
+   "allergies",
+   "caffeine_and_stimulants",
+   "anticoagulant_history_and_bleeding",
+   "code_status_goals_of_care"
+  ],
+  "volunteers_note": "adjacent, volunteer, must_ask and volunteer_blocked_when were written by catalog/author_interview_volunteers.py (v0.18a). A first answer carries the volunteer line of each adjacent topic, and the adjacent topic counts as asked. must_ask topics are safety screens and are never volunteered. Every volunteer line restates part of that topic's own answer. Not physician-reviewed.",
+  "volunteer_blocked_when": "phase is respiratory_failure",
   "key_topics": [
    "onset",
    "prior_afib_or_palpitations",
@@ -5258,14 +5669,14 @@
    "syncope_presyncope",
    "code_status_goals_of_care"
   ],
-  "key_topics_note": "Author judgement, unreviewed. Read by the summary's History score; topics not listed are answerable but unscored."
+  "key_topics_note": "Author judgment, unreviewed. Read by the summary's History score; topics not listed are answerable but unscored."
  },
  "handoff": {
   "correct_disposition": {
    "id": "icu_or_ccu",
    "label": "Intensive care or coronary care unit",
    "level_of_care": "critical_care",
-   "explanation": "He is on non-invasive ventilation, he has a newly recognised ejection fraction of 30 to 35 percent, and he has just had a rate-controlling drug. The unit that takes him has to be able to continue positive pressure, run continuous cardiac monitoring, reassess him frequently in the next few hours, and intubate him without moving him if the mask fails. In most institutions that is an intensive care or coronary care bed. If he was intubated during the case, the answer is unambiguously intensive care.\n\nThe reasoning is what is being scored, not the name of the ward. The question to be able to answer is what the receiving unit must be able to do, and this case is written for a hospital where every option exists."
+   "explanation": "He is on non-invasive ventilation, he has a newly recognized ejection fraction of 30 to 35 percent, and he has just had a rate-controlling drug. The unit that takes him has to be able to continue positive pressure, run continuous cardiac monitoring, reassess him frequently in the next few hours, and intubate him without moving him if the mask fails. In most institutions that is an intensive care or coronary care bed. If he was intubated during the case, the answer is unambiguously intensive care.\n\nThe reasoning is what is being scored, not the name of the ward. The question to be able to answer is what the receiving unit must be able to do, and this case is written for a hospital where every option exists."
   },
   "alternative_dispositions": [
    {
@@ -5278,25 +5689,25 @@
     "id": "medical_floor_telemetry",
     "label": "General medical ward with telemetry",
     "verdict": "incorrect",
-    "explanation": "Not while he is on a mask. A general ward with telemetry can monitor the rhythm and cannot run non-invasive ventilation, and the nursing ratio does not support the frequency of reassessment the next few hours need. There is a version of this patient for whom this is the right answer, and it is the version who has been weaned off positive pressure, is comfortable on room air or a cannula, and has a stable rate: that is a reasonable twelve-hour destination and not a reasonable one from the department. The judgement error here is treating improvement as resolution. He looks much better than he did on arrival because of two things a general ward cannot continue."
+    "explanation": "Not while he is on a mask. A general ward with telemetry can monitor the rhythm and cannot run non-invasive ventilation, and the nursing ratio does not support the frequency of reassessment the next few hours need. There is a version of this patient for whom this is the right answer, and it is the version who has been weaned off positive pressure, is comfortable on room air or a cannula, and has a stable rate: that is a reasonable twelve-hour destination and not a reasonable one from the department. The judgment error here is treating improvement as resolution. He looks much better than he did on arrival because of two things a general ward cannot continue."
    },
    {
     "id": "observation_unit",
     "label": "Emergency department observation unit",
     "verdict": "incorrect",
-    "explanation": "Observation pathways exist for both atrial fibrillation and heart failure and both have narrow entry criteria that this patient fails. The atrial fibrillation pathways are for recent-onset arrhythmia in patients without heart failure, without hypoxaemia and without haemodynamic consequence, with a plan for cardioversion or rate control and discharge. The heart failure pathways are for mild congestion without ventilatory support and with a prompt response to a single diuretic dose. He required positive pressure ventilation, he has newly recognised moderate to severe systolic dysfunction, and his arrhythmia has no established onset time."
+    "explanation": "Observation pathways exist for both atrial fibrillation and heart failure and both have narrow entry criteria that this patient fails. The atrial fibrillation pathways are for recent-onset arrhythmia in patients without heart failure, without hypoxemia and without hemodynamic consequence, with a plan for cardioversion or rate control and discharge. The heart failure pathways are for mild congestion without ventilatory support and with a prompt response to a single diuretic dose. He required positive pressure ventilation, he has newly recognized moderate to severe systolic dysfunction, and his arrhythmia has no established onset time."
    },
    {
     "id": "discharge_home",
     "label": "Discharge home on rate control and anticoagulation with cardiology follow-up",
     "verdict": "incorrect",
-    "explanation": "Unsafe. There is a real population of patients with new atrial fibrillation who are discharged from the emergency department on rate control and anticoagulation, and every one of them is well, oxygenating, and has no heart failure. This man presented in hypoxaemic respiratory failure, required ventilatory support, and has an ejection fraction nobody knew about an hour ago. That he improved quickly does not undo any of it. Early mortality after a first admission for decompensated heart failure is substantial, and the newly discovered cardiomyopathy is by itself a reason for an inpatient workup."
+    "explanation": "Unsafe. There is a real population of patients with new atrial fibrillation who are discharged from the emergency department on rate control and anticoagulation, and every one of them is well, oxygenating, and has no heart failure. This man presented in hypoxemic respiratory failure, required ventilatory support, and has an ejection fraction nobody knew about an hour ago. That he improved quickly does not undo any of it. Early mortality after a first admission for decompensated heart failure is substantial, and the newly discovered cardiomyopathy is by itself a reason for an inpatient workup."
    },
    {
     "id": "cardiac_catheterization_lab",
-    "label": "Direct to the cardiac catheterisation laboratory",
+    "label": "Direct to the cardiac catheterization laboratory",
     "verdict": "incorrect",
-    "explanation": "Choosing this almost always means the troponin of 38 or the lateral ST depression was read as an acute coronary occlusion. Neither is. The ST depression is rate-related repolarisation change in a patient at 160 and it improves when the rate comes down, which is why the repeat tracing is worth taking. The troponin is a demand pattern. Acute coronary syndrome is a real precipitant of new atrial fibrillation and of decompensation and deserves inpatient consideration and a repeat troponin, but nothing here justifies emergent revascularisation, and taking a hypoxaemic patient on non-invasive ventilation to the laboratory has its own cost."
+    "explanation": "Choosing this almost always means the troponin of 38 or the lateral ST depression was read as an acute coronary occlusion. Neither is. The ST depression is rate-related repolarization change in a patient at 160 and it improves when the rate comes down, which is why the repeat tracing is worth taking. The troponin most likely reflects demand, which a repeat value will confirm or refute. Acute coronary syndrome is a real precipitant of new atrial fibrillation and of decompensation and deserves inpatient consideration and a repeat troponin, but nothing here justifies emergent revascularization, and taking a hypoxemic patient on non-invasive ventilation to the laboratory has its own cost."
    }
   ],
   "disposition_display_order": [
@@ -5307,10 +5718,10 @@
    "icu_or_ccu",
    "cardiac_catheterization_lab"
   ],
-  "disposition_display_order_note": "Least to most intensive, with the catheterisation laboratory last because it is a different axis rather than a more intensive ward.",
+  "disposition_display_order_note": "Least to most intensive, with the catheterization laboratory last because it is a different axis rather than a more intensive ward.",
   "correct_diagnosis": {
    "catalog_id": "dx_atrial_fibrillation_with_rapid_ventricular_response",
-   "label": "Atrial fibrillation with rapid ventricular response, with acute decompensated heart failure and cardiogenic pulmonary edema on a newly recognised reduced ejection fraction",
+   "label": "Atrial fibrillation with rapid ventricular response, with acute decompensated heart failure and cardiogenic pulmonary edema on a newly recognized reduced ejection fraction",
    "explanation": "New atrial fibrillation with a rapid ventricular response in a man with previously undiagnosed moderately to severely reduced left ventricular systolic function, presenting as acute decompensated heart failure with cardiogenic pulmonary edema. Whether the arrhythmia caused the cardiomyopathy or the cardiomyopathy precipitated the arrhythmia cannot be settled in the department and does not need to be: a sustained rapid ventricular response can produce a tachycardia-induced cardiomyopathy, and a dilated left atrium in an existing cardiomyopathy readily produces atrial fibrillation. The complete formulation names both halves, and the plan that follows from it treats both.",
    "label_note": "Retained for the review packet. The interface shows the diagnosis catalog's own display name, which is shorter."
   },
@@ -5319,7 +5730,7 @@
     "catalog_id": "dx_acute_decompensated_heart_failure_with_reduced_ejection_fraction",
     "label": "Acute decompensated heart failure with reduced ejection fraction",
     "verdict": "acceptable_with_qualification",
-    "explanation": "This is the other half of the same answer and it is marked defensible rather than wrong. A learner who selected it has recognised the pulmonary edema and the reduced ejection fraction, which is the harder half of the case. What it leaves out is the arrhythmia driving it, and the reason that matters is that it is the half that generates the rate-control and anticoagulation decisions. The full formulation names both, and if you can only choose one id, name the one the treatment turns on. The simulator scores a single catalog id, which is a limitation of the tool rather than a claim that this answer is wrong."
+    "explanation": "This is the other half of the same answer and it is marked defensible rather than wrong. A learner who selected it has recognized the pulmonary edema and the reduced ejection fraction, which is the harder half of the case. What it leaves out is the arrhythmia driving it, and the reason that matters is that it is the half that generates the rate-control and anticoagulation decisions. The full formulation names both, and if you can only choose one id, name the one the treatment turns on. The simulator scores a single catalog id, which is a limitation of the tool rather than a claim that this answer is wrong."
    },
    {
     "catalog_id": "dx_cardiogenic_pulmonary_edema",
@@ -5329,12 +5740,12 @@
    {
     "catalog_id": "dx_non_st_elevation_myocardial_infarction",
     "label": "Non-ST-elevation myocardial infarction",
-    "explanation": "The commonest wrong answer here, and it is reached honestly: there is a raised troponin and there is lateral ST depression. Both have a better explanation. The ST depression is rate-related and improves with rate control, and the troponin is a demand pattern in a ventricle running at 160 with an ejection fraction of 30 to 35 percent, which is type 2 myocardial injury rather than plaque rupture. Distinguishing type 1 from type 2 injury is the skill this alternative is testing, and the discriminators are the trajectory of the troponin, the presence or absence of an occlusion pattern on the tracing, and whether there is a better explanation for the demand. Here there is."
+    "explanation": "The commonest wrong answer here, and it is reached honestly: there is a raised troponin and there is lateral ST depression. Both have a better explanation. The ST depression is rate-related and improves with rate control, and the troponin is a demand pattern in a ventricle running at 160 with an ejection fraction of 30 to 35 percent, which is type 2 myocardial injury rather than plaque rupture. Distinguishing type 1 from type 2 infarction is the skill this alternative is testing, and the discriminators are the trajectory of the troponin, the presence or absence of an occlusion pattern on the tracing, and whether there is a better explanation for the demand. Here there is."
    },
    {
     "catalog_id": "dx_pulmonary_embolism",
     "label": "Acute pulmonary embolism",
-    "explanation": "Usually selected downstream of a D-dimer that should not have been sent. The pretest probability is low: gradual onset over more than a day, symmetrical bilateral leg edema with no calf tenderness or asymmetry, no immobilisation, travel, surgery or malignancy, and a complete alternative explanation for every symptom. The bedside ultrasound settles it: diffuse bilateral B-lines with a poorly contracting left ventricle and a plethoric inferior vena cava is left heart failure, and pulmonary embolism large enough to cause this degree of hypoxaemia would show a dilated hypokinetic right ventricle with clear lung fields. Atrial fibrillation does raise the D-dimer on its own."
+    "explanation": "Usually selected downstream of a D-dimer that should not have been sent. The pretest probability is low: gradual onset over more than a day, symmetrical bilateral leg edema with no calf tenderness or asymmetry, no immobilization, travel, surgery or malignancy, and a complete alternative explanation for every symptom. The bedside ultrasound settles it: diffuse bilateral B-lines with a poorly contracting left ventricle and a plethoric inferior vena cava is left heart failure, and pulmonary embolism large enough to cause this degree of hypoxemia would usually show a dilated right ventricle and would not produce diffuse bilateral B-lines. Atrial fibrillation does raise the D-dimer on its own."
    },
    {
     "catalog_id": "dx_community_acquired_pneumonia",
@@ -5344,12 +5755,12 @@
    {
     "catalog_id": "dx_supraventricular_tachycardia",
     "label": "Supraventricular tachycardia",
-    "explanation": "A rhythm error, and it is the one that leads to adenosine. The R-R intervals are irregularly irregular and there is no organised atrial activity, which is not compatible with a re-entrant supraventricular tachycardia. Atrial flutter with variable block is the harder distinction and is excluded by the absence of flutter waves and by the irregularity being random rather than patterned. Reading the rhythm strip properly is the whole of the difference."
+    "explanation": "A rhythm error, and it is the one that leads to adenosine. The R-R intervals are irregularly irregular and there is no organized atrial activity, which is not compatible with a re-entrant supraventricular tachycardia. Atrial flutter with variable block is the harder distinction and is excluded by the absence of flutter waves and by the irregularity being random rather than patterned. Reading the rhythm strip properly is the whole of the difference."
    },
    {
     "catalog_id": "dx_thyroid_storm",
     "label": "Thyroid storm",
-    "explanation": "Worth thinking of and not this. Hyperthyroidism is a genuine and treatable precipitant of new atrial fibrillation, which is exactly why the thyroid function test is worth sending, but thyroid storm is a different clinical picture: fever, agitation or delirium, gastrointestinal symptoms, and usually a known or clinically obvious thyroid problem. He is afebrile, oriented, has no goitre and no eye signs, and his TSH is normal."
+    "explanation": "Worth thinking of and not this. Hyperthyroidism is a genuine and treatable precipitant of new atrial fibrillation, which is exactly why the thyroid function test is worth sending, but thyroid storm is a different clinical picture: fever, agitation or delirium, gastrointestinal symptoms, and usually a known or clinically obvious thyroid problem. He is afebrile, oriented, has no goiter and no eye signs, and his TSH is normal."
    }
   ],
   "additional_diagnoses": [
@@ -5365,7 +5776,7 @@
    },
    {
     "catalog_id": "dx_acute_hypoxemic_respiratory_failure",
-    "label": "Acute hypoxaemic respiratory failure",
+    "label": "Acute hypoxemic respiratory failure",
     "explanation": "A saturation of 88 percent on room air with a respiratory rate of thirty and accessory muscle use is respiratory failure, and the receiving team needs to hear that he was in it on arrival and what he needed to come out of it, because it is the reason he goes to a monitored bed rather than a ward."
    },
    {
@@ -5511,16 +5922,14 @@
    "aspirin",
    "clopidogrel",
    "ultrasound_lower_extremity_venous",
-   "nitroglycerin_sublingual",
-   "nitroglycerin_drip",
    "dobutamine_drip",
    "urinalysis"
   ],
   "trap_actions_note": "Actions that look reasonable and are not. Most of them are tagged discouraged and appear in their own debrief section; the ones tagged neutral appear under things that looked reasonable. The D-dimer and the computed tomography are listed together because they are one error with two steps, and the second step is the expensive one.",
   "cross_cutting_teaching_points": [
-   "The organising question in this case is not what the rhythm is. It is what the ventricle is doing, because that is what decides the drug. Atrial fibrillation with a rapid ventricular response has a standard answer, and this patient is the exception to it, and the only thing standing between a learner and the exception is a minute with an ultrasound probe. Getting into the habit of asking what the ejection fraction is before choosing a rate-control agent is the single most transferable thing in this case.",
+   "The organizing question in this case is not what the rhythm is. It is what the ventricle is doing, because that is what decides the drug. Atrial fibrillation with a rapid ventricular response has a standard answer, and this patient is the exception to it, and the only thing standing between a learner and the exception is a minute with an ultrasound probe. Getting into the habit of asking what the ejection fraction is before choosing a rate-control agent is the single most transferable thing in this case.",
    "A lower heart rate is not a resuscitated patient. It is possible to run this case, treat the arrhythmia competently, reach a ventricular rate of 108, and hand over a man who is still at a saturation of 86 percent breathing 32 times a minute with a lung full of water. The number that was easiest to fix was not the number that was going to kill him. Ask what you have actually changed, not what you have treated.",
-   "A drug can do exactly what you asked of it and still be the wrong drug. Diltiazem lowers the ventricular rate in this patient and it is contraindicated in his ventricle, and the feedback the monitor gives you is reassuring while the treatment is wrong. This generalises well beyond atrial fibrillation and is worth naming explicitly when you teach it.",
+   "A drug can do exactly what you asked of it and still be the wrong drug. Diltiazem lowers the ventricular rate in this patient and it is contraindicated in his ventricle, and the feedback the monitor gives you is reassuring while the treatment is wrong. This generalizes well beyond atrial fibrillation and is worth naming explicitly when you teach it.",
    "New information should change the plan. Reaching for diltiazem on arrival, before the ejection fraction is known, is defensible. Continuing it after the ultrasound is the error, and it is an error of not updating rather than an error of knowledge. Most residents know the contraindication; fewer revisit a decision they have already made and watched work.",
    "Two problems presenting as one. The rate and the pump are both abnormal, each is making the other worse, and the emergency department does not have to determine which came first. It has to treat both. A formulation that names only one of them generates a plan that is missing half of the treatment."
   ],
@@ -5537,5 +5946,5 @@
   "prose_field": "Not used in this case. Every authored result is a structured payload.",
   "unverified": "Reference intervals in this pack are model output. Where the catalog carries a default for the same analyte the case uses the catalog's interval so the two agree."
  },
- "phases_note": "Read the transition lists in order, because first match wins and two of the rules in the arrival phase are timed. Intubation is checked first everywhere, so a learner who intubates from any state reaches the ventilated phase rather than an improvement phase. Positive pressure is checked before rate control in the arrival phase, so a learner who gives both in one batch of orders moves to the breathing-supported phase immediately and then to stabilised ten seconds later, rather than waiting ten seconds for either.\n\nThe respiratory failure phase deliberately has no rate-control exit. A learner who arrives there and responds by giving a rate-controlling drug has the flag recorded and the credit given and sees no improvement, because the problem in that phase is the lung. Applying positive pressure afterwards goes straight to the stabilised phase, since the rate control is already in and has had time to work."
+ "phases_note": "Read the transition lists in order, because first match wins and two of the rules in the arrival phase are timed. Intubation is checked first everywhere, so a learner who intubates from any state reaches the ventilated phase rather than an improvement phase. Positive pressure is checked before rate control in the arrival phase, so a learner who gives both in one batch of orders moves to the breathing-supported phase immediately and then to stabilized ten seconds later, rather than waiting ten seconds for either.\n\nThe respiratory failure phase deliberately has no rate-control exit. A learner who arrives there and responds by giving a rate-controlling drug has the flag recorded and the credit given and sees no improvement, because the problem in that phase is the lung. Applying positive pressure afterwards goes straight to the stabilized phase, since the rate control is already in and has had time to work."
 }

@@ -435,17 +435,17 @@
   {
    "register": "expansion",
    "q": "Are you vaccinated?",
-   "expect": "immunisations"
+   "expect": "immunizations"
   },
   {
    "register": "expansion",
    "q": "Have you been vaccinated against meningitis?",
-   "expect": "immunisations"
+   "expect": "immunizations"
   },
   {
    "register": "expansion",
    "q": "Right. Any immunisations?",
-   "expect": "immunisations"
+   "expect": "immunizations"
   },
   {
    "register": "expansion",

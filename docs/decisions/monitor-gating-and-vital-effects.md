@@ -4,7 +4,7 @@ Design v0.7. Four changes went in together because three of them are the same ch
 seen from different sides: the interface had been asserting things the resident had not
 earned, and a phase had been carrying work that belongs to an action.
 
-Kept for what was rejected. The current behaviour is in `docs/system-design-v2.md`
+Kept for what was rejected. The current behavior is in `docs/system-design-v2.md`
 sections 2.6, 3.1, 8.3, 8.4b and 13.1, and in `docs/case-authoring-requirements.md`
 sections 6.1 and 6.2. This file is not a source of truth for how the system behaves.
 
@@ -34,7 +34,7 @@ it is a catalog field, and the engine asks the catalog rather than the case. The
 test asserts that exactly one action carries it, which is the check that stops a second
 route appearing later without anyone deciding it should.
 
-### Rejected: show the vitals greyed, or behind a "not monitored" label
+### Rejected: show the vitals grayed, or behind a "not monitored" label
 
 A second visual state for "there is a number but you cannot see it" implies the number
 is being withheld from the resident by the interface, which invites reading the layout
@@ -125,7 +125,7 @@ none at all.
 who reaches for the diuretic first now watches the saturation not move while the heart
 rate, pressure and respiratory rate all improve. That is the case's second learning
 objective, sequencing positive pressure and vasodilation ahead of diuresis, expressed as
-behaviour rather than as a sentence in the debrief.
+behavior rather than as a sentence in the debrief.
 
 **It is also a clinical claim, and it is the weakest one here.** Real diuresis in a
 patient four kilograms above dry weight does improve oxygenation, over a longer horizon

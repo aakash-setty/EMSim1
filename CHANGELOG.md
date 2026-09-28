@@ -5,6 +5,265 @@ is usable with learners.
 
 ---
 
+## v0.18c: US spelling
+
+Every case, the catalog and the interface now use US spelling: hemoglobin, edema,
+hyperkalemia, dyspnea, paralyzed, oriented, color, gray, liter, maneuver, judgment, mom, and
+so on. About 600 strings changed across the four packs, the catalogs, the tests, the
+scenarios and the docs. Three ids changed with them, everywhere they appear: the MGCA phase
+`progressive_meningococcemia` and the topics `diarrhea` (MGCA) and `immunizations` (DIPH).
+
+Spelling only. Vocabulary and drug names are unchanged (paracetamol, fitting, trolley, water
+tablet, half seven), and so are citation titles. Kept British on purpose, because they are
+input rather than text anyone reads: the voice-order aliases and normalization table, the
+interview lexicon in `ui.js`, the diagnosis synonym "membrane stabilising effect", and the
+interview variants where a British and a US form sat side by side ("Orthopnoea?" next to
+"Orthopnea?"), so a question typed either way still matches. The held-out matcher questions
+are quoted data and keep their spelling. The seed documents and review packets keep the
+source's spelling except for the renamed ids. In the engine only visible strings changed ("Minimize the chart", "Repeat any
+maneuver", an ECG pattern label and a voice hint). Code identifiers and engine comments are
+unchanged.
+
+The converter is a British-to-US word list (the breame package's 1,730 spellings plus the
+medical forms it lacks, -aemia, oe and ae), applied on letter boundaries with case kept, with
+wrong mappings removed (gauge, gases, disc, analyses). Checked: the four case suites, all 125
+scenarios, the validator, the validator tests, the site check (33) and the matcher
+evaluation, whose held-out scores are identical before and after.
+
+---
+
+## v0.18b: patients volunteer, and exam findings are chart lines
+
+**Volunteered answers.** A patient answering one question now says the next thing a real
+patient would, so a learner needs fewer questions to see the picture. Asked when it started,
+the CHFE patient also says it has got worse every day, and asked about the legs he also says
+they do not hurt and he is nine pounds up. Each topic may list up to two `adjacent` topics;
+on its first answer the `volunteer` line of each is added in the same voice, and that topic
+counts as asked for the History score and for any interview action. Safety screens are
+listed in `interview.must_ask` and are never volunteered: allergies, drugs, pregnancy, sexual
+and menstrual history, self-harm and intent, anticoagulants, goals of care, and in DIPH the
+bottle and what she took. Nothing is volunteered while the patient cannot speak for
+themselves, while MGCA's patient is confused, or while AFRVR's is in respiratory failure. A
+volunteered topic asked later still gives its whole answer.
+
+- `engine.js` `volunteersFor` and `joinSpeech` in the interview composer. The timeline label
+  says what was volunteered.
+- `catalog/author_interview_volunteers.py` holds every adjacency and volunteer line for the
+  four packs (28, 30, 27 and 21 topics volunteer; 3 to 9 must-ask screens per pack) and
+  writes them into CHFE and MGCA's JSON and generated blocks in AFRVR and DIPH's
+  `case_4_interview.py`. Every line restates part of that topic's own answer.
+- The validator refuses a must-ask topic listed as adjacent or carrying a volunteer line, and
+  an adjacent topic that does not exist, and warns on a volunteer line over 25 words. Engine
+  tests cover the join, the credit, the later full answer and the repeat; MGCA and DIPH tests
+  cover the blocked phases and the screens.
+
+**Shorter exam findings.** Every authored finding in the four cases (180 rules, general
+status included) and all 14 catalog defaults are rewritten as chart lines: abnormal findings
+first, pertinent negatives only where they carry the case, no interpretation. Median length
+fell from about 20 to 32 words per case to 12, the longest is 20, and the defaults are 6 to 12
+words. US spelling in the rewritten text. The teaching the findings used to carry ("this is
+carbon dioxide, not a neurological event") stays in the debrief notes.
+
+Checked: the four case suites (548, 528, 600 and 628 checks), all 125 scenarios, the
+validator on all four packs with no errors, the validator tests (76, 76, 76 and 78), and a
+browser check of the transcript and the exam panel.
+
+---
+
+## v0.18a: whole-product review, and what it fixed
+
+The product was reviewed from four sides: an engineer's code and security review, a learner
+playing every case, an educator reading every debrief against the objectives, and a
+physician review of each case and of the action catalog. The findings, the fixes and the
+decisions left open are in the audit document. Every clinical change below is itself a
+draft that needs the same physician sign-off as the rest of each pack.
+
+Engine and interface (`ui.js`, `engine.js`, `voice.js`, `semantic.js`, `shell.html`):
+
+- One animation loop. Each Begin used to start another and none stopped, so replays slowed
+  the page.
+- Chart search matches on names and no longer garbles highlighted text.
+- A question or voice order still being matched when the case ends is dropped; a half-typed
+  question or diagnosis no longer carries into a replay; the interview model loads once.
+- Back during the reflection pause, then Cancel, no longer restarts the clock behind it.
+- Ids written into attributes are escaped and image sources are checked.
+- Stop actions say the drug's name instead of the literal text `{name_lower}`.
+- A study covered by another action returns that action's authored result, not a catalog
+  normal. CHFE's cardiac ultrasound read as a normal ventricle.
+- Debrief: a new "What happened, in order" section lists every action and every change in
+  the patient with its time, and the note on each timed change. The note written at the
+  reflection pause is printed beside the case's diagnosis. Three take-home points sit under
+  the critical actions and the rest at the end. A run that ended in an arrest or a harmful
+  action says it is not scored, with the table behind an expander. An action that ended the
+  case through an instantaneous transition (DIPH amiodarone) is named on the card and in
+  its own section, and is no longer listed among actions that "did not stop the case".
+  Reviewer markers such as "[UNVERIFIED ...]" are removed from everything the learner reads.
+- Between 1001 and 1600 pixels wide the two panels are narrower, so the patient figure is
+  about twice as wide as before.
+- Actions a case places outside the catalog are no longer drawn with a red dashed border,
+  and CHFE's six such actions sit in their natural groups instead of "Not in the catalog".
+
+Review speed (`review.js`, new, local build only): a control at the bottom right of a
+running case plays it at 1x to 16x real time, also on the `[` and `]` keys. It moves the
+clock's start time back, so the engine behaves exactly as at 1x, and a run that used it says
+so on its debrief. The build inlines it into `build/simulator.html` only and refuses to write
+a site that contains it; the site check asserts it is absent.
+
+Access and build (`access.js`, the edge function, the SQL, `build_simulator.py`):
+
+- A case row keeps its loading mark through a token refresh, a second click while a case
+  loads says so, a returning user who clicks at once is not shown the sign-in box, a token
+  refresh that fails for want of a network says so rather than treating the user as signed
+  out, and sign-out ends only this browser's session.
+- The edge function refuses anonymous accounts and accounts whose email is not confirmed.
+- Refused requests are logged at most once a minute per account. Allowed loads are always
+  logged.
+- The public stubs no longer carry the case id, which named the diagnosis.
+- The build writes UTF-8 with Unix line endings on every platform, refuses a bundle that
+  would close its script tag, and limits the security policy's `connect-src` to the
+  configured Supabase project.
+- `engine/site-check`: the mock returns a confirmed email, a new check refuses an
+  unconfirmed one, and Deno runs outside node_modules mode without writing a lock file.
+
+Validator and tests:
+
+- A loop of timed transitions is an error only if it can repeat. A loop that needs a
+  permanent flag both unset and set runs at most once and is reported as a note. Three new
+  validator tests cover both directions.
+- The engine test that every harmful tag is reachable also tries the flags a tag names.
+
+Catalog:
+
+- Hypertonic saline 25% needs a central line. The four induction agents and two paralytics
+  set the flags the intubation prerequisite asks for. Naloxone, glucagon and hydrocortisone
+  no longer require IV access.
+- Defaults: blood type O positive, an ultrasound foreign body described as echogenic, CSF
+  differential and glucose range, a numeric serum beta-hCG. Diagnosis synonyms "high-risk
+  PE" and "altitude sickness".
+
+Cases (each change is in that pack's scenarios and tests):
+
+- CHFE: every intravenous beta blocker is the same halting error; the critical sedation
+  after intubation is ketamine or fentanyl, with propofol discouraged while he is
+  hypotensive; non-invasive ventilation and intubation are both recommended once he is
+  tiring; corrected physiology wording, furosemide dosing and nitrate evidence; a PDE5
+  inhibitor history question; an IV nitroglycerin bolus and nitroprusside that act;
+  post-intubation hypotension escapable without a running nitrate; morphine, the
+  nebulizer, methylprednisolone and the CT pulmonary angiogram discouraged; halts softened
+  where the patient was no longer at risk; authored arterial gas and CT chest; gas
+  arithmetic, troponin wording, neck examination, history and references.
+- MGCA: the lumbar puncture is never critical and is discouraged in shock; fluid without
+  hydrocortisone leads to adrenal crisis after 90 seconds rather than the same second;
+  dextrose raises the glucose before it falls again; norepinephrine is critical only in the
+  meningococcemia branch; hypertonic saline is discouraged rather than halting; frank shock
+  content no longer assumes a tube; accurate arrest debrief; venous gas arithmetic;
+  ceftriaxone or cefotaxime both satisfy the antibiotic action; prompts describe what is
+  in front of the nurse; target level intern to senior resident; smaller corrections.
+- AFRVR: the D5 NS bolus is covered by the crystalloid harm like the other four boluses;
+  CHA2DS2-VASc counts the heart failure; nitrates are an optional adjunct; beta
+  blocker, diltiazem, second-dose and cardioversion teaching corrected; the crystalloid
+  halt matches its numbers; troponin wording, citation year, GCS, magnesium and potassium,
+  history and PE reasoning; the reviewer note and the splash contradiction removed.
+- DIPH: physostigmine is harmful in every phase in which the QRS is wide, whether or not
+  the ECG was read, and discouraged once she has stabilized; the ionization mechanism is
+  corrected in seven places; a seizure ends only with a benzodiazepine or propofol, and
+  bicarbonate without one narrows the complexes and returns her to the seizing phase;
+  atropine, levetiracetam and early psychiatry are neutral; procainamide is harmful until
+  she has stabilized; flumazenil is harmful only after a benzodiazepine; gas arithmetic,
+  pharmacology notes, nurse lines, urinalysis, interview and chief complaint corrected;
+  reviewer and author wording removed from learner notes; an unsynchronized cardioversion
+  is covered by the defibrillation note. Amiodarone stays discouraged with
+  the arrest reached by transition, as the author designed it.
+
+Checked: the four case suites (541, 517, 593 and 618 checks), all 125 scenarios, the
+validator on all four packs with no errors, the validator tests (73, 73, 73 and 75 checks),
+the SQL twice against PostgreSQL 16 including the new refusal throttling, the site check
+(33 checks, no page errors, no CSP violations), and 48 randomized browser runs, 12 per case,
+each opening the debrief with no page errors and no NaN or undefined on screen.
+
+---
+
+## v0.18: EMSim, freemium, and case packs behind an invite-only sign-in
+
+The product is renamed EMSim and is no longer described as open source. It is proprietary
+and freemium. `LICENSE` is a draft proprietary notice (holder Aakash Setty until the planned
+company exists, not reviewed by a lawyer) that keeps the MIT notices for avataaars and
+supabase-js. The welcome screen, README, the design doc's two open-source statements and
+DIPH's seed note are reworded to match.
+
+The build now produces two pages and a set of packs:
+
+- `build/simulator.html` is unchanged in behavior: every case, no backend. The four case
+  suites, the scenario runner and the validator all run against it as before.
+- `site/index.html` is the deployed page. Each case is a stub: its card, the patient's age
+  and sex, and the SHA-256 of its pack. No phases, results, interview or debrief. The
+  build refuses to write the site if a locked case's phases or bindings appear in it.
+- `private-packs/<PREFIX>.json`, gitignored, for upload to a private Supabase bucket. The
+  files are byte-identical from one build to the next when nothing changed.
+- `vercel.json`, regenerated each build: serve `site/` with no build step, plus security
+  headers. The Content-Security-Policy pins the page's two inline scripts by hash.
+
+`engine/access.js` (new, fenced before ui.js): invite-only sign-in with supabase-js 2.117.2,
+vendored and inlined into the site only. Opening a locked case signs in if needed, calls the
+`case-pack` edge function, checks the returned bytes against the stub's hash, and only then
+replaces the stub and opens the case. Messages for each refusal (wrong password, suspended,
+rate limited, missing, stale pack, network). Sign-out reloads the page, which drops every
+fetched pack. `ui.js`: `boot()` no longer requires a bound case, the 300 ms refold is
+skipped while nothing is bound, the case list shows a lock on locked cases while signed out,
+and list shortcuts are ignored while the sign-in dialog is open, so typing "/" in a password
+does not jump to search.
+
+`supabase/migrations/001_access.sql`: `profiles` (made by trigger for every new user, status
+active or suspended, plan free), `case_access` (every attempt, allowed or not),
+`claim_case_load` (per-user hourly and daily limits and the log, serialized per user,
+callable only with the secret key), and the private `case-packs` bucket. Row-level security
+on both tables; a signed-in user can read only their own profile and nothing else.
+`supabase/functions/case-pack/index.ts`: origin allowlist, user verified with the Auth
+server, case name validated, then the database decides, then Storage. Returns the stored
+bytes unmodified.
+
+Checked: the four case suites (591, 537, 613, 517 checks) and all 121 scenarios pass on the
+local build. The SQL was run twice against PostgreSQL 16 with Supabase-like roles: trigger,
+row-level security, privileges for anon and authenticated, both rate limits, suspension, and
+cascade on user deletion all behaved as intended; one bug found and fixed (an unknown user
+broke the log's foreign key). The edge function was run under Deno against a mock Supabase:
+wrong origin, missing or bad token, bad case name, bad JSON, wrong method, missing pack,
+rate limit and suspension all return the intended status, and a good request returns the
+pack byte for byte. `engine/site-check/run.sh` drives the site in Chromium under the real CSP
+through sign-in, loading, the hash check, every refusal message, reload and sign-out, and a
+case played to the debrief: 31 checks, no page errors, no CSP violations.
+
+Not checked: the interview model's download under the CSP (the test machine has no route to
+jsDelivr or Hugging Face); the real Supabase dashboard, gateway and Storage; Vercel.
+
+Not built yet: watermarking, saved runs and progress, password reset by email, CAPTCHA.
+
+## v0.17p: the airway device follows the button in every case
+
+Nasal cannula and NIPPV did not reliably appear on the figure. The device was drawn from
+flags each case authored for its own reasons, and the four cases disagreed: AFRVR's cannula
+and non-rebreather set `supplemental_o2`, which no visual rule read; DIPH sent cannula,
+non-rebreather and bag-valve-mask to one flag, `oxygen_applied`, also unread, and had no
+NIPPV rule; CHFE drew its cannula only from the arrival phase; MGCA's first-match list kept
+the non-rebreather on after the cannula went back on, because both flags are permanent.
+
+- `SHARED.patient.deviceActions` maps five catalog entries to airway add-ons
+  (`nasal_cannula_oxygen`, `non_rebreather_mask`, `non_invasive_positive_pressure_ventilation`,
+  `bag_valve_mask`, `intubate_rapid_sequence`). The engine resolves each through the pack's
+  bindings, so CHFE's `niv_bipap_cpap` and `intubation_rsi` are found without per-case work.
+- The fold records the order of each press (`st.takenAt`). `patientVisual` replaces any airway
+  add-on the case rules chose with the most recent device pressed. A tube, from the rules or
+  the button, replaces every other device and is not replaced by a mask pressed later. With
+  no device pressed the rules stand, so CHFE's patient still arrives on the EMS cannula.
+- A blocked press never reaches `st.takenAt` and changes nothing on the figure.
+- Picking two devices into one order and submitting draws the one picked last.
+- engine-tests: per case, each device alone draws only that device; cannula, mask, cannula
+  draws the cannula; cannula then NIPPV draws the NIPPV mask; after induction and intubation
+  the tube stays when a mask is pressed. Checked in the browser for all four cases by clicking
+  the real buttons and submitting.
+- Not changed: removing oxygen. There is no "off" action, so a device stays until another
+  replaces it.
+
 ## v0.17o: search is a control of its own, and the monitor is shown once
 
 On the author's instruction, two corrections to v0.17n.
@@ -45,13 +304,13 @@ could switch it off would be a case that could decide a resident need not stop a
 because the index was gated on `orderableTabs` and they are not orders. `SHARED.voiceTabs` is
 the wider list of what may be said; `confirm()` already logs each row exactly as the tab's own
 button does, so a spoken exam or consult takes effect on Confirm with nothing else changed.
-Around 2,200 phrasings were added: every manoeuvre with the verbs it is asked for ("examine
+Around 2,200 phrasings were added: every maneuver with the verbs it is asked for ("examine
 the abdomen", "listen to the heart", "palpate the belly", "look at the rash") and every
 consultation with the verbs and the names a resident uses ("call cards", "get the ICU
-involved", "page tox", "poison control", "nephrology"). A region two manoeuvres share is
+involved", "page tox", "poison control", "nephrology"). A region two maneuvers share is
 offered rather than guessed: "chest exam" returns the pulmonary and the cardiovascular exams
 to choose between, and "full exam" is refused with the reason, because the catalog's fourteen
-manoeuvres are separate acts. Public health, the health department, the CDC and the reporting
+maneuvers are separate acts. Public health, the health department, the CDC and the reporting
 phrasings moved off a refusal that said consults are not voice orders and onto the
 consultation.
 
@@ -70,10 +329,10 @@ the bag-valve mask. The parser takes the longest phrase it knows, so the whole p
 written out, generated over the shapes that failed: a volume or a bolus word on either side of
 a generic fluid word, plus the weight-based orders. Eight of them are asserted in
 `engine-tests.js` to be exactly one order, never two, and never a pressor. A generated phrase
-never overrides an authored one: "500 of crystalloid" normalises to "crystalloid", and writing
-it blindly would have narrowed the plain word to the two half-litre bags.
+never overrides an authored one: "500 of crystalloid" normalizes to "crystalloid", and writing
+it blindly would have narrowed the plain word to the two half-liter bags.
 
-"open" and "run" were briefly made fillers so "open the fluids" and "run in a litre" left no
+"open" and "run" were briefly made fillers so "open the fluids" and "run in a liter" left no
 stray token. That collapsed "open chest" onto "chest" and pointed a refusal about thoracotomy
 at the word every chest study contains. They are dropped as leftovers instead, in `NOISE`,
 after lookup rather than before it.
@@ -98,7 +357,7 @@ a guess belongs in an order the resident confirms. `/` opens it, Escape closes i
 
 ## v0.17m: a way back to the main menu, from the card and from the case
 
-On the author's instruction. The card's back control is now labelled **Main menu** rather than
+On the author's instruction. The card's back control is now labeled **Main menu** rather than
 "All cases", and the running case has one of its own: a button at the foot of the icon rail,
 under its own rule and with a house icon, deliberately unlike a tab because it is the only
 thing in the rail that does not switch a view. It lives beside the dock rather than inside it,
@@ -114,7 +373,7 @@ claims about a patient, so charging a resident the seconds they spent deciding w
 those claims false. It holds the clock directly rather than through `pauseSim()`, because the
 pause overlay showing behind a modal reads as two dialogs at once; a case the resident had
 already paused is left alone and stays paused when they cancel. Verified in headless Chromium:
-the fold clock and the displayed elapsed time both freeze, cancelling resumes without charging
+the fold clock and the displayed elapsed time both freeze, canceling resumes without charging
 the held seconds, OK returns to the list and clears the figure, and a fresh case starts after.
 
 ## v0.17l: a lighter case card
@@ -242,7 +501,7 @@ on the mattress and pillow, fitted-sheet folds as soft blurred bands, pillow cre
 out from under the head, a piped seam, and blurred contact shadows where the head presses the
 pillow, the pillow presses the mattress and the shoulders press the sheet.
 
-**The plastic was too clunky, twice.** The rails began as solid slabs, became a moulded frame
+**The plastic was too clunky, twice.** The rails began as solid slabs, became a molded frame
 with two openings, and on the author's note that the plastic parts were still clunky are now
 slender tube: one bent loop with two uprights, drawn as strokes and not as filled plastic, so
 the room and the sheet show through almost all of it. The headboard went from a slab wider
@@ -266,7 +525,7 @@ two cords of the neck. Every device still fits on both.
 
 **Age.** Three groups on the author's bands: young under 40, middle 40 to 59, older 60 and
 over. The bands as given overlap at 40 and 60; a patient of exactly 40 draws as middle and of
-exactly 60 as older. The hair and any facial hair grey part way at middle and fully at older,
+exactly 60 as older. The hair and any facial hair gray part way at middle and fully at older,
 the eyebrows stay dark, and lines are drawn on the face: at middle a forehead line and the
 folds from nose to mouth, faintly; at older those deeper, two more forehead lines, crow's feet
 and the lower lids. **The age group is not authored.** The interface derives it from
@@ -285,7 +544,7 @@ of thing worth a second opinion before learners see it.
 ## v0.17f: a check of the patient figure, and the two defects it found
 
 A scripted check in headless Chromium, 64 assertions across the module and the built
-simulator. What it covered: all 108 part options and every palette colour mount and draw with
+simulator. What it covered: all 108 part options and every palette color mount and draw with
 no leftover tokens; two fully loaded patients share no id; every add-on removes every node it
 added, across 300 state changes and all 78 add-on pairs; a truth table of what each state
 draws (alert, closed, drowsy, obtunded, unresponsive, seizure at each, severe breathing, rate
@@ -421,10 +680,10 @@ that edge never lifts off the window. The head does not move at normal effort.
 
 Two add-ons, registered in `engine/patient.js` exactly as its README describes and with no
 other engine change. `bipap_mask` is a clear oronasal shell with four-point headgear over the
-hair and a corrugated hose; the mouth shows through it, so a labouring patient is still seen
-to labour, and glasses come off while it is on. `intubated` is an endotracheal tube taped at
+hair and a corrugated hose; the mouth shows through it, so a laboring patient is still seen
+to labor, and glasses come off while it is on. `intubated` is an endotracheal tube taped at
 the lips with a pilot balloon, a connector and a ventilator circuit; it hides the drawn mouth,
-so no behaviour can make an intubated patient grimace or mouth-breathe. Neither decides
+so no behavior can make an intubated patient grimace or mouth-breathe. Neither decides
 whether the eyes are closed; the case does. Both drawings are the model's and want a
 clinician's eye.
 
@@ -449,14 +708,14 @@ expanded it fades. It never takes a click. It freezes while the case is paused.
 `engine/patient-art.json` by `engine/assets/avataaars/extract.js`. Every option of the
 generator is kept, plus a hospital gown and one eyebrow upstream ships and never registers.
 Nothing at run time touches the generator's site, React or npm. The MIT notice is written
-into `build/simulator.html` and `build/patient-lab.html`, because the licence requires it to
+into `build/simulator.html` and `build/patient-lab.html`, because the license requires it to
 travel with the artwork. `package.json` still says UNLICENSED for this repository's own code;
 that is a separate decision and is untouched.
 
 **One standard man and one standard woman**, on the author's instruction: short flat hair or
-long straight hair, dark brown; brown skin; a grey V-neck; default eyes, brows and mouth. They
+long straight hair, dark brown; brown skin; a gray V-neck; default eyes, brows and mouth. They
 live in `SHARED.patient.base` in `build_simulator.py` and a case draws one by `patient.sex`.
-Hair, clothes and colours never change with state. A case may later author `patient.avatar`
+Hair, clothes and colors never change with state. A case may later author `patient.avatar`
 to differ from the base key by key; none does. **The resting mouth of the base is avataaars'
 `Default`, which is a smile**, as specified. On a patient in extremis that may read oddly;
 `"mouthType": "Serious"` in the base is the one-word change.
@@ -470,7 +729,7 @@ including the five-second ramp, and a rate of zero stops it. Both blocks are opt
 case with neither draws the standard patient with open eyes.
 
 **Built for add-ons.** `patient.js` is a rig, a pose system and one feature registry. The
-built-in behaviours and every future add-on are the same kind of thing: SVG for any of eight
+built-in behaviors and every future add-on are the same kind of thing: SVG for any of eight
 named slots, a per-frame tick that writes to additive channels (figure, torso, head, eyes,
 brows, mouth) and to poses, and a list of layers to hide. Because channel contributions add,
 features compose without knowing about each other. Four add-ons ship as worked examples, one
@@ -520,8 +779,8 @@ Three interface changes on the author's instruction. The workspace panel opens a
 viewport rather than 60 percent (`--lwidth`), and the record docks at 30 percent rather than
 a fixed 360 px (`--rdock`, floored at 300 px below 1000 px wide). A click on the room behind
 the panels now closes both of them from any state, leaving the seven tab names and the
-docked record; it used to minimise an expanded record and reopen the workspace on History,
-so clicking the room to be rid of one panel produced another. The minimise button in the
+docked record; it used to minimize an expanded record and reopen the workspace on History,
+so clicking the room to be rid of one panel produced another. The minimize button in the
 record's corner, and Escape, still restore the workspace on History, because those are a
 return to work rather than a request for a clear screen. Verified in headless Chromium
 across every state transition.
@@ -555,7 +814,7 @@ between complexes is exactly flat. The vocabulary is what a single monitor lead 
 and nothing beyond it: a terminal R in aVR, lateral ST depression and anterior Q waves stay
 in the report. **The engine holds no association between any of it and a diagnosis, and
 no case models an ECG**; the amplitudes and the blend from a narrow complex to a wide one
-are stylisations, recorded as such in `SHARED.monitor.ecg.provenance`.
+are stylizations, recorded as such in `SHARED.monitor.ecg.provenance`.
 
 **All four packs were authored from their own ECG reports.** DIPH is the case this was
 built for: the QRS is the clock there, and it can now be watched at 132 ms on arrival,
@@ -681,7 +940,7 @@ stopping does not mean aiming at a 46-pixel circle behind the open panel. It is 
 has no recogniser the button is hidden rather than disabled: there is nothing to record
 and the status line already says so.
 
-**Pausing keeps the list.** Stopping a recording finalises what was heard and parses it
+**Pausing keeps the list.** Stopping a recording finalizes what was heard and parses it
 into rows; pressing Record again adds to those rows rather than replacing them, which is
 what pause and resume should mean and what the two controls now promise.
 
@@ -761,16 +1020,16 @@ recorded beside the rule: a bare "calcium" is the level, and CMP is the two pane
 
 **Doses, units, rates and reasons are stripped, not matched.** "Give one milligram of
 epinephrine IV push for the arrest" reaches the table as "epi bolus"; a number survives only
-where it discriminates (500 against a litre, 15 litres on a mask, twelve lead). A reason that
+where it discriminates (500 against a liter, 15 liters on a mask, twelve lead). A reason that
 follows an order ("troponin for the chest pain") is dropped silently; a word that matches
 nothing is shown as not understood; one misheard letter in a word of six or more is repaired
 only when exactly one phrase is that close, and the row says what was heard and what it was
 taken as. Nothing outside the three orderable tabs is ever an order: exams and consults are
 not spoken.
 
-**Two normalisers, one test.** The table is written already normalised by the Python pipeline
+**Two normalisers, one test.** The table is written already normalized by the Python pipeline
 that generated it, and `voice.js` carries the same pipeline for speech. They are the same
-pipeline only as long as someone checks, so `engine-tests.js` normalises every phrase in the
+pipeline only as long as someone checks, so `engine-tests.js` normalizes every phrase in the
 shipped table with the JS side and requires each back unchanged, and runs the author's
 examples and every display name through the parser. The pipeline runs to a fixed point,
 because a filler dropped between two words can produce a phrase a rule names ("oxygen by
@@ -811,7 +1070,7 @@ governs captions with more force, since showing the tracing is the whole point. 
 authoring requirements say so, and say the three things to settle before using an image: that
 the picture matches the phase it is assigned to, that removing the report text has not taken
 a number out of the interface the case needs a resident to read, and that a pack showing some
-studies and describing others is a decision rather than an artefact of which files existed.
+studies and describing others is a decision rather than an artifact of which files existed.
 
 **DIPH uses it for two of its four images**: the arrival twelve-lead and the chest
 radiograph, both with no words. The head CT is unused because nothing in the case orders one.
@@ -848,9 +1107,9 @@ the clock, for the reason it never did.
 **The pause screen's play button.** The glyph went from 52px to 68px inside the same 132px
 circle, just under half the diameter, which is where a play control stops reading as an icon
 inside a button and starts reading as the button. Its corners are rounded by stroking the
-path in its own colour with a round line join, so the shape stays one readable triangle
-rather than a set of arcs. And it is centred properly: a triangle's centre of area sits a
-third of the way from its base, so one centred by its bounding box looks pushed left. The old
+path in its own color with a round line join, so the shape stays one readable triangle
+rather than a set of arcs. And it is centered properly: a triangle's center of area sits a
+third of the way from its base, so one centered by its bounding box looks pushed left. The old
 fix was `margin-left:7px` on a 52px glyph, which is 13% and visibly too far to the right, and
 being a fixed pixel value it did not scale with the icon. The nudge now lives in the path
 coordinates at about 4%, so it scales with everything else.
@@ -993,7 +1252,7 @@ diagnosis is now the agent, the cardiotoxicity is first among five additional di
 the toxidrome is scored twice: credit when it is named beside the agent, and
 `acceptable_with_qualification` when it is offered as the primary instead. The cardiotoxicity
 entry is deliberately a mechanism rather than an agent, so the same entry serves tricyclic,
-cocaine, bupropion, flecainide and local anaesthetic poisoning. The catalog's
+cocaine, bupropion, flecainide and local anesthetic poisoning. The catalog's
 `open_questions` now asks whether the other toxidromes have the same shape.
 
 **Physostigmine added to the action catalog**, under Meds - Tox, marked
@@ -1026,7 +1285,7 @@ All five were verified against CHFE, MGCA and AFRVR, which pass unchanged.
 resolved to a clinically wrong value in a phase nobody had thought about: the skin still hot
 and dry after cooling, the cardiovascular examination still reporting a rate of 135 at a
 monitor showing 100, the respiratory rate still 25 in four of six phases, the perfusion
-still flushed, a bladder still full after somebody catheterised it, and a lactate of 3.1 in
+still flushed, a bladder still full after somebody catheterized it, and a lactate of 3.1 in
 a rhythm that had lost its output. Every one validated, walked every scenario and passed
 every assertion. Section 5 of `DIPH-review-packet.md` lists them.
 
@@ -1076,9 +1335,9 @@ singular, which the fold keeps in step, so every earlier log and test still read
 author `handoff.additional_diagnoses`, what is also true of the patient and appropriate to
 name beside the primary; AFRVR lists the heart failure, the pulmonary edema, the
 respiratory failure and the hypomagnesemia, CHFE the pulmonary edema, the hypercapnic
-respiratory failure, the hypertensive emergency and the hyponatraemia, MGCA septic shock,
+respiratory failure, the hypertensive emergency and the hyponatremia, MGCA septic shock,
 adrenal crisis, disseminated intravascular coagulation, acute kidney injury and
-hypoglycaemia. All three lists were written by an AI assistant from the cases' own
+hypoglycemia. All three lists were written by an AI assistant from the cases' own
 findings; the author reviewed and approved the lists on 5 September 2026, and the
 explanations under them remain unsigned. The debrief's Handoff section gives one verdict per
 diagnosis listed, prints the authored ones that were not named, and prints the case's own
@@ -1121,7 +1380,7 @@ rather than 40 and 100. Moving it later pushed its escalation past the per-phase
 cap, so an escalation is now exempt from the cap: it neither consumes a slot nor is
 silenced by one.
 
-**Two interface changes.** A click on the room to the left of the expanded record minimises
+**Two interface changes.** A click on the room to the left of the expanded record minimizes
 it, the same as the button in its corner. Submitting an order clears the search box on
 every tab, not only the one the order was sent from.
 
@@ -1144,7 +1403,7 @@ paraphrase, clinical shorthand and conversational openers. The generated phrasin
 withheld into a tuning set rather than added, and nothing that matches a held-out question
 is written anywhere. This took fallthroughs on AFRVR from five to none.
 
-**Then "nothing relevant" got a neighbourhood.** Each case now carries an out-of-scope
+**Then "nothing relevant" got a neighborhood.** Each case now carries an out-of-scope
 bank, generated from `catalog/interview_out_of_scope.py` and filtered to what the case does
 not cover, that both matchers score like a topic. The cosine ranges of in-scope and
 out-of-scope questions had overlapped so completely that no threshold could separate them;
@@ -1219,7 +1478,7 @@ instant is heard as a strike. The duration is fixed rather than derived from the
 the beat is the same sound at 60 and at 180 and only the spacing changes.
 
 A faint octave partial at ten percent of the body runs under it on a shorter 44 ms window, so
-it colours the arrival and is gone before the body ends. That is what keeps a bare sine from
+it colors the arrival and is gone before the body ends. That is what keeps a bare sine from
 sounding like a test tone. A partial running the full length would only make the beat
 brighter; one that leaves early makes it soft.
 
@@ -1280,7 +1539,7 @@ specified, and flagged rather than silently corrected.
 time-guarded transitions landed, a case could author `allow_time_to_terminal`, reach its
 terminal phase, and then simply keep running: the nurse said her line, the monitor fell to the
 phase's vitals, and nothing ended, because `halted` means a harmful action and `complete`
-means a handoff and this was neither. In the meningococcaemia case that showed as a patient
+means a handoff and this was neither. In the meningococcemia case that showed as a patient
 sitting at 44/24 with the clock still counting.
 
 The fold now derives a third ending, `failed`, from the phase table, carrying the phase, its
@@ -1298,7 +1557,7 @@ case-agnostic assertions cover it, and they run against all three packs.
 ## The case waits for you, and does not let you throw it away by accident
 
 **A window nobody is looking at pauses the case**, on either signal the browser gives:
-`visibilitychange` for a hidden tab or a minimised window, `blur` for a window still on
+`visibilitychange` for a hidden tab or a minimized window, `blur` for a window still on
 screen with the focus somewhere else. Time away is accumulated and subtracted from the case
 clock, so it freezes rather than jumping. That matters more than it sounds: the clock is
 wall-clock time and the deadlines a case authors are claims about how long a patient
@@ -1342,7 +1601,7 @@ the third: templates that lead with the name produced sentences starting in lowe
 **Ward ambience loops under everything at a very low level while a case is running.** The
 author supplied the recording; a build step cuts a 45-second loop from a steady stretch of
 it, crossfades the tail onto the head with an equal-power curve so the seam is continuous
-in level as well as in sample value, and peak-normalises it so the gain figure in the audio
+in level as well as in sample value, and peak-normalizes it so the gain figure in the audio
 module is against a known reference rather than against whatever that particular recording
 happened to be. `engine/assets/make-ambience.py` records all three decisions; the source
 recording is kept beside it so the loop can be recut.
@@ -1385,7 +1644,7 @@ response the first time and works the second. AFRVR is that case. A single dose 
 rate-controlling agent now takes twenty-two beats off the ventricular rate and changes
 nothing else; the phase turns over on the second.
 
-**The counter is the clinical judgement in it.** Left to default it counts the act, so a
+**The counter is the clinical judgment in it.** Left to default it counts the act, so a
 sibling covered through `also_covers` adds to the same tally. Named explicitly, several
 separate case actions share one tally, which is what AFRVR does: digoxin, amiodarone,
 metoprolol, esmolol, propranolol and diltiazem all count toward `rate_control_doses`,
@@ -1404,7 +1663,7 @@ say what a list cannot. One of the two is now mandatory, because a follow-up wit
 is an obligation the debrief reports as open however the resident plays.
 
 **`narration_addendum` became `nurse_alert`**, and is emitted on its own nurse kind. It is
-coloured and it goes into the running chart, because the moment such a line matters is
+colored and it goes into the running chart, because the moment such a line matters is
 half a minute after it was said, when the resident is deciding whether the drug worked and
 the nurse's banner has moved on. It is not a prompt: no slot, no trill, said on the action
 rather than on a deadline, and said again on a redose.
@@ -1434,7 +1693,7 @@ which nothing renders and which the catalog's own defaults already use for exact
 
 **AFRVR's imaging reports lost their interpretation lines and about two thirds of their
 length.** An editorial decision in the case rather than an engine change, recorded here
-because the argument generalises. A report that ends "interpretation: cardiogenic pulmonary
+because the argument generalizes. A report that ends "interpretation: cardiogenic pulmonary
 edema" has done the work the case exists to set; the reasoning belongs in the debrief note
 for that study, where a learner meets it after committing to an answer. And length in a
 report reads as importance, so a long report about a negative study actively misleads. The
@@ -1481,11 +1740,11 @@ what came before, or `irregularly_irregular`, which draws every R-R interval ind
 so there is no period for the ear to lock onto. It exists because the third case is atrial
 fibrillation: its ECG report said the rhythm was irregularly irregular, its examination
 said the first heart sound varied beat to beat, its entire management turned on
-recognising the rhythm, and the monitor beat a metronome. Sound was the more immediate of
+recognizing the rhythm, and the monitor beat a metronome. Sound was the more immediate of
 the two channels and it was saying the wrong thing.
 
 The vocabulary is closed and global. **The engine holds no association between a rhythm and
-a diagnosis**, in the same way the catalog holds no appropriateness judgement about a drug;
+a diagnosis**, in the same way the catalog holds no appropriateness judgment about a drug;
 a case chooses a name and nothing else. A boolean was rejected because regularly irregular
 rhythms are a real and audibly different third thing, and deriving the rhythm from the
 diagnosis was rejected because it would have put clinical knowledge in `engine/`.
@@ -1659,7 +1918,7 @@ handover artifact, not the monitor: static, no cosmetic variance, on a pale pane
 than in the monitor's dark, and with no caption saying they are not live, since the
 heading is past tense and the dark monitor a few seconds later says the rest.
 
-**CHFE's EMS handover now reports the saturation** ("still only holding 87% on six litres
+**CHFE's EMS handover now reports the saturation** ("still only holding 87% on six liters
 by nasal cannula"), and validator rule N was rewritten to allow it. The rule used to warn
 about any vital sign in a handover because the monitor carried the same numbers and would
 contradict them within a minute; that reason stopped being true when the monitor was gated
@@ -1764,7 +2023,7 @@ CSS mask, because a drawn patient face would assert an appearance the case did n
 author, and nothing clinical is read off the nurse. The portrait sits outside the violet
 voice rule rather than inside it, because that rule marks speech and marks the same
 thing in the chart feed where there is no portrait; the picture answers who and the rule
-answers what. `engine/nurse-avatar.txt`, 240px square quantised to 96 colours, 32 KB,
+answers what. `engine/nurse-avatar.txt`, 240px square quantised to 96 colors, 32 KB,
 with the source kept in `engine/assets/` and the crop command in `build_simulator.py`.
 
 **Stabilization opens by default.** One entry in a new `defaultExpanded` map, so the
@@ -1898,8 +2157,8 @@ degrading. Three new build-time assets.
 
 ## cases/
 
-**MGCA is new.** Meningococcaemia with septic shock, early DIC, acute kidney injury and
-adrenal crisis from bilateral adrenal haemorrhage, in a 21-year-old woman. Six clinical
+**MGCA is new.** Meningococcemia with septic shock, early DIC, acute kidney injury and
+adrenal crisis from bilateral adrenal hemorrhage, in a 21-year-old woman. Six clinical
 phases, 124 case actions, 41 interview topics with 492 variants, five time-guarded
 transitions of which one is terminal. Written directly in catalog ids, so all 123 binding
 rows are exact and none needs a clinical signature.

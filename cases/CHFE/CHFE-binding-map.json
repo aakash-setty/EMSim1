@@ -1,11 +1,11 @@
 {
  "map_version": "0.1",
  "case_id": "adhf-hfref-01",
- "status": "DRAFT. Every row whose catalog_id differs from case_id is an author judgement and needs review.",
+ "status": "DRAFT. Every row whose catalog_id differs from case_id is an author judgment and needs review.",
  "how_to_read": {
   "catalog_id null": "No catalog entry exists for this case action. A validator error and a catalog change request.",
   "note starting BLOCKING": "The case cannot run without this entry.",
-  "note otherwise": "Why the mapping is a judgement call, or what it costs.",
+  "note otherwise": "Why the mapping is a judgment call, or what it costs.",
   "unmatched_placement": "Where a case action has no catalog entry, this says which tab and group to render it in so the case stays playable and the gap stays visible. Delete it once the catalog entry exists.",
   "also_covers_group": "Applies this case action's tag, halt reason and debrief note to every entry in the named catalog equivalence group. Use it wherever the case is making a claim about the act rather than about one specific agent, because a harmful tag on one member leaves the others as an unguarded route to the same harm."
  },
@@ -17,6 +17,14 @@
   {
    "case_id": "nitroglycerin_sublingual",
    "catalog_id": "nitroglycerin_sublingual"
+  },
+  {
+   "case_id": "nitroglycerin",
+   "catalog_id": "nitroglycerin"
+  },
+  {
+   "case_id": "nitroprusside_drip",
+   "catalog_id": "nitroprusside_drip"
   },
   {
    "case_id": "exam_neuro",
@@ -89,8 +97,15 @@
   },
   {
    "case_id": "post_intubation_sedation_infusion",
-   "catalog_id": "propofol_infusion",
-   "note": "Catalog offers propofol or ketamine infusion. The case treats sedation as one action; the follow-up satisfied_by list needs both catalog ids."
+   "catalog_id": "ketamine_infusion",
+   "note": "Catalog offers propofol or ketamine infusion. The case treats sedation as one action; the follow-up satisfied_by list needs both catalog ids.",
+   "also_covers": [
+    "fentanyl_bolus"
+   ]
+  },
+  {
+   "case_id": "propofol_infusion",
+   "catalog_id": "propofol_infusion"
   },
   {
    "case_id": "oxygen_nonrebreather",
@@ -110,7 +125,13 @@
   },
   {
    "case_id": "metoprolol_iv",
-   "catalog_id": "metoprolol_bolus"
+   "catalog_id": "metoprolol_bolus",
+   "also_covers": [
+    "labetalol_bolus",
+    "labetalol_drip",
+    "esmolol_drip",
+    "propranolol_bolus"
+   ]
   },
   {
    "case_id": "diltiazem_iv",
@@ -135,7 +156,7 @@
   {
    "case_id": "albuterol_ipratropium_neb",
    "catalog_id": "albuterol",
-   "note": "The case authors a combined albuterol and ipratropium nebuliser; the catalog lists them separately. Bound to albuterol, so a learner who gives ipratropium alone reaches the same trap through an unbound action and gets no debrief note for it."
+   "note": "The case authors a combined albuterol and ipratropium nebulizer; the catalog lists them separately. Bound to albuterol, so a learner who gives ipratropium alone reaches the same trap through an unbound action and gets no debrief note for it."
   },
   {
    "case_id": "foley_catheter",
@@ -188,6 +209,10 @@
    "catalog_id": "ct_pulmonary_embolus"
   },
   {
+   "case_id": "ct_chest",
+   "catalog_id": "ct_chest"
+  },
+  {
    "case_id": "consult_nephrology",
    "catalog_id": "consult_renal"
   },
@@ -206,7 +231,7 @@
   {
    "case_id": "exam_neck",
    "catalog_id": "exam_neck",
-   "note": "Carries the jugular venous pressure and the hepatojugular reflux, which the case previously scored as two separate manoeuvres. The reflux is no longer a discrete act a learner can choose to perform."
+   "note": "Carries the jugular venous pressure and the hepatojugular reflux, which the case previously scored as two separate maneuvers. The reflux is no longer a discrete act a learner can choose to perform."
   },
   {
    "case_id": "exam_card",
@@ -232,7 +257,10 @@
   {
    "case_id": "pocus_lung_cardiac",
    "catalog_id": "ultrasound_lung",
-   "note": "The case authors a single combined lung-and-cardiac scan. The catalog has ultrasound_lung and ultrasound_cardiac as separate acts. Bound to the lung study; the cardiac findings in the authored report are therefore unreachable by a learner who orders only the cardiac scan. This should be split into two case content keys."
+   "note": "The case authors a single combined lung-and-cardiac scan. Bound to the lung study, and since v0.18a it also covers the cardiac study, so either button returns the combined report.",
+   "also_covers": [
+    "ultrasound_cardiac"
+   ]
   },
   {
    "case_id": "nitroglycerin_stop",
@@ -243,12 +271,16 @@
    "catalog_id": "venous_blood_gas"
   },
   {
+   "case_id": "labs_abg",
+   "catalog_id": "arterial_blood_gas"
+  },
+  {
    "case_id": "echo_formal",
    "catalog_id": null,
    "note": "No formal echocardiogram in the catalog.",
    "unmatched_placement": {
     "tab": "investigations",
-    "group": "Not in the catalog"
+    "group": "Imaging"
    },
    "unmatched_narration": "{name} is ordered."
   },
@@ -258,7 +290,7 @@
    "note": "No ventilator settings action.",
    "unmatched_placement": {
     "tab": "stabilization",
-    "group": "Not in the catalog"
+    "group": "Intubation"
    }
   },
   {
@@ -267,7 +299,7 @@
    "note": "No ventilator settings action.",
    "unmatched_placement": {
     "tab": "stabilization",
-    "group": "Not in the catalog"
+    "group": "Intubation"
    }
   },
   {
@@ -276,7 +308,7 @@
    "note": "No monitoring-frequency action. Catalog agrees this is unmatched.",
    "unmatched_placement": {
     "tab": "stabilization",
-    "group": "Not in the catalog"
+    "group": "Nursing"
    }
   },
   {
@@ -285,7 +317,7 @@
    "note": "No monitoring action. Catalog agrees this is unmatched.",
    "unmatched_placement": {
     "tab": "stabilization",
-    "group": "Not in the catalog"
+    "group": "Nursing"
    }
   },
   {
@@ -298,7 +330,7 @@
    "note": "Interview topics are not catalog actions. See review packet 6.5: the case scores asking about adherence as a critical action, which requires topics to be addressable in the action namespace. The catalog does not model them.",
    "unmatched_placement": {
     "tab": "history",
-    "group": "Not in the catalog"
+    "group": "Interview"
    }
   },
   {

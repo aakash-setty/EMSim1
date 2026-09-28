@@ -35,9 +35,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -45,9 +45,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -104,9 +104,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -124,10 +124,10 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| frank_septic_shock | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
+| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| frank_septic_shock | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
 | presentation | rule 0 (phase is presentation) | plausible |
-| progressive_meningococcaemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
+| progressive_meningococcemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
 | «any other phase» | rule 2 (default) | plausible |
 
 
@@ -145,10 +145,10 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is presentation OR phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| frank_septic_shock | rule 0 (phase is presentation OR phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is presentation OR phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
+| adrenal_crisis | rule 0 (phase is presentation OR phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| frank_septic_shock | rule 0 (phase is presentation OR phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| progressive_meningococcemia | rule 0 (phase is presentation OR phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -183,11 +183,6 @@ Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/ceftriaxone`
-
-Single unconditional rule; nothing to enumerate.
-
-
-### `action_tag/cefotaxime`
 
 Single unconditional rule; nothing to enumerate.
 
@@ -241,12 +236,12 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 2 (phase is adrenal_crisis) | plausible |
 | frank_septic_shock | rule 0 (phase is frank_septic_shock) | plausible |
-| improving | rule 3 (phase is improving) | plausible |
-| presentation | rule 2 (phase is presentation) | plausible |
-| progressive_meningococcaemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| «any other phase» | rule 4 (default) | plausible |
+| improving | rule 4 (phase is improving) | plausible |
+| presentation | rule 3 (phase is presentation) | plausible |
+| progressive_meningococcemia | rule 1 (phase is progressive_meningococcemia) | plausible |
+| «any other phase» | rule 5 (default) | plausible |
 
 
 ### `action_tag/epinephrine_drip`
@@ -261,9 +256,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -289,9 +284,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -448,13 +443,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock OR phase is stabilized_shock) | plausible |
-| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock OR phase is stabilized_shock) | plausible |
-| improving | rule 1 (phase is presentation OR phase is improving) | plausible |
-| presentation | rule 1 (phase is presentation OR phase is improving) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock OR phase is stabilized_shock) | plausible |
-| stabilized_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is frank_septic_shock OR phase is stabilized_shock) | plausible |
-| «any other phase» | rule 2 (default) | plausible |
+| improving | rule 0 (phase is improving) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/csf_cell_count`
@@ -508,6 +498,11 @@ Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/venous_blood_gas`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/arterial_blood_gas`
 
 Single unconditional rule; nothing to enumerate.
 
@@ -706,34 +701,40 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | intubated | resolves to | reachable? |
 |---|---|---|---|
-| frank_septic_shock | no | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Endotracheal tube in place and secured, cuff inflated. Airway protecte... | plausible |
-| frank_septic_shock | yes | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Endotracheal tube in place and secured, cuff inflated. Airway protecte... | plausible |
-| «any other phase» | no | rule 2 (default) &rarr; normal: Airway patent and self-maintained. No stridor, no drooling, no orophar... | plausible |
-| «any other phase» | yes | rule 1 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place and secured, cuff inflated. Airway protecte... | plausible |
+| frank_septic_shock | no | rule 1 (phase is frank_septic_shock) &rarr; ABNORMAL: Snoring respirations that clear with a jaw thrust. No stridor. Unrespo... | plausible |
+| frank_septic_shock | yes | rule 0 (phase is frank_septic_shock AND flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place, secured, cuff inflated. Scant clear secret... | plausible |
+| «any other phase» | no | rule 3 (default) &rarr; normal: Patent. Speaking in full sentences, slowly. No stridor. | plausible |
+| «any other phase» | yes | rule 2 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place, secured, cuff inflated. | plausible |
 
 
 ### `exam/exam_breath`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) &rarr; ABNORMAL: Respiratory rate in the high twenties to low thirties, breathing deepl... | plausible |
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Ventilated. Chest rises symmetrically with each delivered breath. No s... | plausible |
-| improving | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Respiratory rate settling into the low twenties. No accessory muscle u... | plausible |
-| progressive_meningococcaemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) &rarr; ABNORMAL: Respiratory rate in the high twenties to low thirties, breathing deepl... | plausible |
-| stabilized_shock | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Respiratory rate settling into the low twenties. No accessory muscle u... | plausible |
-| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Respiratory rate 24, breathing deeply and regularly rather than labori... | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| adrenal_crisis | no | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Rate high 20s to low 30s, deep and regular. No accessory muscle use. | plausible |
+| adrenal_crisis | yes | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Rate high 20s to low 30s, deep and regular. No accessory muscle use. | plausible |
+| frank_septic_shock | no | rule 1 (phase is frank_septic_shock) &rarr; ABNORMAL: Rate low 30s, deep and regular. No accessory muscle use. | plausible |
+| frank_septic_shock | yes | rule 0 (phase is frank_septic_shock AND flag intubated set) &rarr; ABNORMAL: Ventilated. Symmetric chest rise. Not fighting the ventilator. | plausible |
+| improving | no | rule 3 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Rate settling into the low 20s. No accessory muscle use. | plausible |
+| improving | yes | rule 3 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Rate settling into the low 20s. No accessory muscle use. | plausible |
+| progressive_meningococcemia | no | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Rate high 20s to low 30s, deep and regular. No accessory muscle use. | plausible |
+| progressive_meningococcemia | yes | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Rate high 20s to low 30s, deep and regular. No accessory muscle use. | plausible |
+| stabilized_shock | no | rule 3 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Rate settling into the low 20s. No accessory muscle use. | plausible |
+| stabilized_shock | yes | rule 3 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Rate settling into the low 20s. No accessory muscle use. | plausible |
+| «any other phase» | no | rule 4 (default) &rarr; ABNORMAL: Rate 24, deep and regular, not labored. No accessory muscle use. | plausible |
+| «any other phase» | yes | rule 4 (default) &rarr; ABNORMAL: Rate 24, deep and regular, not labored. No accessory muscle use. | plausible |
 
 
 ### `exam/exam_circ`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; ABNORMAL: Cold to the wrists and ankles. Capillary refill three to four seconds.... | plausible |
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Cold and mottled to the elbows and knees. Capillary refill more than f... | plausible |
-| improving | rule 4 (phase is improving) &rarr; normal: Warm to the fingertips. Capillary refill under two seconds. Peripheral... | plausible |
-| progressive_meningococcaemia | rule 1 (phase is progressive_meningococcaemia) &rarr; ABNORMAL: Cold to the mid-forearm and mid-calf with mottling over both knees. Ca... | plausible |
-| stabilized_shock | rule 3 (phase is stabilized_shock) &rarr; ABNORMAL: Warmer to the fingers than earlier, still cool. Capillary refill two t... | plausible |
-| «any other phase» | rule 5 (default) &rarr; ABNORMAL: Hands and feet are cold to the wrist and ankle despite a normal blood ... | plausible |
+| adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; ABNORMAL: Cold to the wrists and ankles. Capillary refill 3 to 4 seconds. Thread... | plausible |
+| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Cold, mottled to the elbows and knees. Capillary refill over 5 seconds... | plausible |
+| improving | rule 4 (phase is improving) &rarr; normal: Warm to the fingertips. Capillary refill under 2 seconds. Pulses full ... | plausible |
+| progressive_meningococcemia | rule 1 (phase is progressive_meningococcemia) &rarr; ABNORMAL: Cold to mid-forearm and mid-calf, mottled knees. Capillary refill 4 to... | plausible |
+| stabilized_shock | rule 3 (phase is stabilized_shock) &rarr; ABNORMAL: Cool but warmer than before. Capillary refill 2 to 3 seconds. Pulses e... | plausible |
+| «any other phase» | rule 5 (default) &rarr; ABNORMAL: Cold to the wrists and ankles despite a normal blood pressure. Capilla... | plausible |
 
 
 ### `exam/exam_heent`
@@ -750,16 +751,16 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Tachycardic at around 150, regular. Heart sounds soft but present, no ... | plausible |
-| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Tachycardic and regular. First and second heart sounds normal. No murm... | plausible |
+| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Regular, about 150. Soft heart sounds. No murmur or rub. | plausible |
+| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Tachycardic, regular. Normal S1 and S2. No murmur, rub or S3. No edema... | plausible |
 
 
 ### `exam/exam_pulm`
 
 | phase | intubated | resolves to | reachable? |
 |---|---|---|---|
-| «any phase» | no | rule 1 (default) &rarr; normal: Chest is clear. Vesicular breath sounds equal throughout with good air... | plausible |
-| «any phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Breath sounds equal bilaterally with the tube in place. No crackles, n... | plausible |
+| «any phase» | no | rule 1 (default) &rarr; normal: Clear. Equal breath sounds, good air entry. No crackles or wheeze. | plausible |
+| «any phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Equal breath sounds with the tube in place. No crackles or wheeze. | plausible |
 
 
 ### `exam/exam_abd`
@@ -779,59 +780,74 @@ Single unconditional rule; nothing to enumerate.
 
 ### `exam/exam_msk`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) &rarr; ABNORMAL: She flinches away when either calf or thigh is squeezed. Compartments ... | plausible |
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Not assessable for pain; she is sedated and paralysed. Compartments so... | plausible |
-| progressive_meningococcaemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) &rarr; ABNORMAL: She flinches away when either calf or thigh is squeezed. Compartments ... | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Marked symmetrical tenderness of both thighs and both calves on gentle... | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| adrenal_crisis | no | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Flinches when calves or thighs are squeezed. Compartments soft. Full r... | plausible |
+| adrenal_crisis | yes | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Flinches when calves or thighs are squeezed. Compartments soft. Full r... | plausible |
+| frank_septic_shock | no | rule 1 (phase is frank_septic_shock) &rarr; ABNORMAL: Weak withdrawal to a calf squeeze. Compartments soft. Digits cool and ... | plausible |
+| frank_septic_shock | yes | rule 0 (phase is frank_septic_shock AND flag intubated set) &rarr; ABNORMAL: Not assessable for pain, sedated and paralyzed. Compartments soft. Dig... | plausible |
+| progressive_meningococcemia | no | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Flinches when calves or thighs are squeezed. Compartments soft. Full r... | plausible |
+| progressive_meningococcemia | yes | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Flinches when calves or thighs are squeezed. Compartments soft. Full r... | plausible |
+| «any other phase» | no | rule 3 (default) &rarr; ABNORMAL: Marked symmetric tenderness of the thighs and calves. Compartments sof... | plausible |
+| «any other phase» | yes | rule 3 (default) &rarr; ABNORMAL: Marked symmetric tenderness of the thighs and calves. Compartments sof... | plausible |
 
 
 ### `exam/exam_skin`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; ABNORMAL: Petechiae on both ankles, the dorsum of each foot and now the shins, s... | plausible |
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Widespread purpura. Coalescent slate-grey plaques up to 5 cm on both l... | plausible |
-| improving | rule 3 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: The purpuric lesions are unchanged in extent and look darker rather th... | plausible |
-| progressive_meningococcaemia | rule 1 (phase is progressive_meningococcaemia) &rarr; ABNORMAL: The petechiae have coalesced. Purpuric patches 1 to 3 cm across with i... | plausible |
-| stabilized_shock | rule 3 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: The purpuric lesions are unchanged in extent and look darker rather th... | plausible |
-| «any other phase» | rule 4 (default) &rarr; ABNORMAL: Scattered petechiae, two to four millimetres, over both ankles and the... | plausible |
+| adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; ABNORMAL: Non-blanching petechiae on the ankles, feet and now shins, starting to... | plausible |
+| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Widespread non-blanching purpura, slate-gray plaques up to 5 cm on leg... | plausible |
+| improving | rule 3 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Purpura unchanged in extent and darker. No new lesions. Warmer, mottli... | plausible |
+| progressive_meningococcemia | rule 1 (phase is progressive_meningococcemia) &rarr; ABNORMAL: Coalescing non-blanching purpura, 1 to 3 cm with dusky centers, on leg... | plausible |
+| stabilized_shock | rule 3 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Purpura unchanged in extent and darker. No new lesions. Warmer, mottli... | plausible |
+| «any other phase» | rule 4 (default) &rarr; ABNORMAL: Non-blanching petechiae, 2 to 4 mm, on both ankles, feet and shins. Sw... | plausible |
 
 
 ### `exam/exam_neuro`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) &rarr; ABNORMAL: Drowsy but rousable to voice. Oriented to person and place, not to tim... | plausible |
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Obtunded. Opens eyes to painful stimulus only and does not follow comm... | plausible |
-| improving | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; normal: Alert and oriented to person, place and time. Attention improved: she ... | plausible |
-| progressive_meningococcaemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) &rarr; ABNORMAL: Drowsy but rousable to voice. Oriented to person and place, not to tim... | plausible |
-| stabilized_shock | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; normal: Alert and oriented to person, place and time. Attention improved: she ... | plausible |
-| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Alert and oriented to person, place and time, GCS 15, but noticeably s... | plausible |
+| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Drowsy, rousable to voice, GCS 14. Oriented to person and place only. ... | plausible |
+| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Obtunded, GCS 9 (E2 V2 M5). Pupils 3 mm, equal, sluggish. No focal asy... | plausible |
+| improving | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; normal: Alert and oriented, GCS 15. Attention improved. No focal deficit. | plausible |
+| progressive_meningococcemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Drowsy, rousable to voice, GCS 14. Oriented to person and place only. ... | plausible |
+| stabilized_shock | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; normal: Alert and oriented, GCS 15. Attention improved. No focal deficit. | plausible |
+| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Alert and oriented, GCS 15, but slow to answer. No neck stiffness, pho... | plausible |
 
 
 ### `exam/exam_psych`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) &rarr; ABNORMAL: Withdrawn and difficult to engage, though not agitated. Cooperative wh... | plausible |
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Not assessable. Sedated. | plausible |
-| progressive_meningococcaemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) &rarr; ABNORMAL: Withdrawn and difficult to engage, though not agitated. Cooperative wh... | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Frightened and tearful, and fully cooperative. Thought linear and goal... | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| adrenal_crisis | no | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Withdrawn but not agitated. Cooperative when roused. | plausible |
+| adrenal_crisis | yes | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Withdrawn but not agitated. Cooperative when roused. | plausible |
+| frank_septic_shock | no | rule 1 (phase is frank_septic_shock) &rarr; ABNORMAL: Obtunded. Not assessable. | plausible |
+| frank_septic_shock | yes | rule 0 (phase is frank_septic_shock AND flag intubated set) &rarr; ABNORMAL: Sedated. Not assessable. | plausible |
+| progressive_meningococcemia | no | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Withdrawn but not agitated. Cooperative when roused. | plausible |
+| progressive_meningococcemia | yes | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Withdrawn but not agitated. Cooperative when roused. | plausible |
+| «any other phase» | no | rule 3 (default) &rarr; ABNORMAL: Frightened and tearful, fully cooperative. Thought linear. No suicidal... | plausible |
+| «any other phase» | yes | rule 3 (default) &rarr; ABNORMAL: Frightened and tearful, fully cooperative. Thought linear. No suicidal... | plausible |
 
 
 ### `general_status`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; ABNORMAL: Increasingly lethargic, rousable to voice, GCS 14. Pale, sweating, per... | plausible |
-| cardiac_arrest | rule 5 (phase is cardiac_arrest) &rarr; ABNORMAL: In cardiac arrest. No spontaneous respiration, no palpable pulse. Wide... | plausible |
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Intubated and sedated. Obtunded, GCS 9 before sedation. Mottled and co... | plausible |
-| improving | rule 4 (phase is improving) &rarr; ABNORMAL: Awake, oriented and conversational, GCS 15. Looks tired and unwell but... | plausible |
-| progressive_meningococcaemia | rule 1 (phase is progressive_meningococcaemia) &rarr; ABNORMAL: Ill and drowsy but rousable, GCS 14. Purpura spreading on the legs and... | plausible |
-| stabilized_shock | rule 3 (phase is stabilized_shock) &rarr; ABNORMAL: Awake and answering, GCS 15. Still looks unwell. Peripheries warming. ... | plausible |
-| «any other phase» | rule 6 (default) &rarr; ABNORMAL: Ill-appearing young woman, curled on her side, shivering and sweating.... | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| adrenal_crisis | no | rule 3 (phase is adrenal_crisis) &rarr; ABNORMAL: Lethargic, rousable to voice, GCS 14. Pale, sweaty, cold peripheries. ... | plausible |
+| adrenal_crisis | yes | rule 3 (phase is adrenal_crisis) &rarr; ABNORMAL: Lethargic, rousable to voice, GCS 14. Pale, sweaty, cold peripheries. ... | plausible |
+| cardiac_arrest | no | rule 6 (phase is cardiac_arrest) &rarr; ABNORMAL: Cardiac arrest. No breathing, no pulse. Confluent purpura. Pupils fixe... | plausible |
+| cardiac_arrest | yes | rule 6 (phase is cardiac_arrest) &rarr; ABNORMAL: Cardiac arrest. No breathing, no pulse. Confluent purpura. Pupils fixe... | plausible |
+| frank_septic_shock | no | rule 1 (phase is frank_septic_shock) &rarr; ABNORMAL: Obtunded, GCS 9. Mottled, cold, widespread purpura. | plausible |
+| frank_septic_shock | yes | rule 0 (phase is frank_septic_shock AND flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Mottled, cold, widespread purpura. | plausible |
+| improving | no | rule 5 (phase is improving) &rarr; ABNORMAL: Awake and conversational, GCS 15. Tired but not distressed. Warm perip... | plausible |
+| improving | yes | rule 5 (phase is improving) &rarr; ABNORMAL: Awake and conversational, GCS 15. Tired but not distressed. Warm perip... | plausible |
+| progressive_meningococcemia | no | rule 2 (phase is progressive_meningococcemia) &rarr; ABNORMAL: Ill and drowsy, GCS 14. Purpura spreading on the legs and forearms. | plausible |
+| progressive_meningococcemia | yes | rule 2 (phase is progressive_meningococcemia) &rarr; ABNORMAL: Ill and drowsy, GCS 14. Purpura spreading on the legs and forearms. | plausible |
+| stabilized_shock | no | rule 4 (phase is stabilized_shock) &rarr; ABNORMAL: Awake, GCS 15. Still unwell, peripheries warming. On a vasopressor. | plausible |
+| stabilized_shock | yes | rule 4 (phase is stabilized_shock) &rarr; ABNORMAL: Awake, GCS 15. Still unwell, peripheries warming. On a vasopressor. | plausible |
+| «any other phase» | no | rule 7 (default) &rarr; ABNORMAL: Ill-appearing, curled up, shivering and sweating. GCS 15 but slow. Col... | plausible |
+| «any other phase» | yes | rule 7 (default) &rarr; ABNORMAL: Ill-appearing, curled up, shivering and sweating. GCS 15 but slow. Col... | plausible |
 
 
 ### `patient_visual`
@@ -842,70 +858,86 @@ Single unconditional rule; nothing to enumerate.
 | cardiac_arrest | no | no | yes | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
 | cardiac_arrest | no | yes | no | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
 | cardiac_arrest | no | yes | yes | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
-| cardiac_arrest | yes | no | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| cardiac_arrest | yes | no | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| cardiac_arrest | yes | yes | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| cardiac_arrest | yes | yes | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| frank_septic_shock | no | no | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| frank_septic_shock | no | no | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| frank_septic_shock | no | yes | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| frank_septic_shock | no | yes | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| frank_septic_shock | yes | no | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| frank_septic_shock | yes | no | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| frank_septic_shock | yes | yes | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| frank_septic_shock | yes | yes | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| cardiac_arrest | yes | no | no | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| cardiac_arrest | yes | no | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| cardiac_arrest | yes | yes | no | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| cardiac_arrest | yes | yes | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
 | halted | no | no | no | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
 | halted | no | no | yes | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
 | halted | no | yes | no | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
 | halted | no | yes | yes | rule 1 (phase is cardiac_arrest OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | yes | no | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | no | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | yes | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | yes | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | no | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
 | «any other phase» | no | no | no | rule 4 (default) &rarr; figure: eyes open | plausible |
 | «any other phase» | no | no | yes | rule 2 (flag oxygen_nrb set) &rarr; figure: eyes open, +nonrebreather | plausible |
 | «any other phase» | no | yes | no | rule 3 (flag oxygen_nc set) &rarr; figure: eyes open, +nasal_cannula | plausible |
 | «any other phase» | no | yes | yes | rule 2 (flag oxygen_nrb set) &rarr; figure: eyes open, +nonrebreather | plausible |
-| «any other phase» | yes | no | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| «any other phase» | yes | no | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| «any other phase» | yes | yes | no | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
-| «any other phase» | yes | yes | yes | rule 0 (flag intubated set OR phase is frank_septic_shock) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | no | no | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | no | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | yes | no | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | yes | yes | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
 
 
 ### `labs/basic_chemistry_chem_7`
 
-| phase | steroid_given | resolves to | reachable? |
-|---|---|---|---|
-| adrenal_crisis | no | rule 3 (phase is adrenal_crisis) &rarr; **Sodium 127 mEq/L**; **Potassium 5.7 mEq/L**; **Chloride 97 mEq/L**; **Bicarbonate 18 mEq/L**; **BUN 31 mg/dL**; **Creatinine 1.8 mg/dL**; **Glucose 48 mg/dL** | plausible |
-| adrenal_crisis | yes | rule 3 (phase is adrenal_crisis) &rarr; **Sodium 127 mEq/L**; **Potassium 5.7 mEq/L**; **Chloride 97 mEq/L**; **Bicarbonate 18 mEq/L**; **BUN 31 mg/dL**; **Creatinine 1.8 mg/dL**; **Glucose 48 mg/dL** | plausible |
-| frank_septic_shock | no | rule 2 (phase is frank_septic_shock) &rarr; **Sodium 126 mEq/L**; **Potassium 5.9 mEq/L**; **Chloride 96 mEq/L**; **Bicarbonate 16 mEq/L**; **BUN 34 mg/dL**; **Creatinine 2.1 mg/dL**; **Glucose 52 mg/dL** | plausible |
-| frank_septic_shock | yes | rule 1 (phase is frank_septic_shock AND flag steroid_given set) &rarr; **Sodium 126 mEq/L**; **Potassium 5.5 mEq/L**; **Chloride 96 mEq/L**; **Bicarbonate 16 mEq/L**; **BUN 34 mg/dL**; **Creatinine 2.1 mg/dL**; Glucose 84 mg/dL | plausible |
-| improving | no | rule 4 (phase is improving) &rarr; **Sodium 130 mEq/L**; Potassium 5.0 mEq/L; Chloride 100 mEq/L; **Bicarbonate 21 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.7 mg/dL**; Glucose 96 mg/dL | plausible |
-| improving | yes | rule 4 (phase is improving) &rarr; **Sodium 130 mEq/L**; Potassium 5.0 mEq/L; Chloride 100 mEq/L; **Bicarbonate 21 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.7 mg/dL**; Glucose 96 mg/dL | plausible |
-| progressive_meningococcaemia | no | rule 0 (phase is progressive_meningococcaemia) &rarr; **Sodium 127 mEq/L**; **Potassium 5.6 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 18 mEq/L**; **BUN 32 mg/dL**; **Creatinine 1.9 mg/dL**; Glucose 88 mg/dL | plausible |
-| progressive_meningococcaemia | yes | rule 0 (phase is progressive_meningococcaemia) &rarr; **Sodium 127 mEq/L**; **Potassium 5.6 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 18 mEq/L**; **BUN 32 mg/dL**; **Creatinine 1.9 mg/dL**; Glucose 88 mg/dL | plausible |
-| stabilized_shock | no | rule 5 (phase is stabilized_shock) &rarr; **Sodium 128 mEq/L**; **Potassium 5.3 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 33 mg/dL**; **Creatinine 2.0 mg/dL**; Glucose 92 mg/dL | plausible |
-| stabilized_shock | yes | rule 5 (phase is stabilized_shock) &rarr; **Sodium 128 mEq/L**; **Potassium 5.3 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 33 mg/dL**; **Creatinine 2.0 mg/dL**; Glucose 92 mg/dL | plausible |
-| «any other phase» | no | rule 6 (default) &rarr; **Sodium 128 mEq/L**; **Potassium 5.4 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.6 mg/dL**; **Glucose 53 mg/dL** | plausible |
-| «any other phase» | yes | rule 6 (default) &rarr; **Sodium 128 mEq/L**; **Potassium 5.4 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.6 mg/dL**; **Glucose 53 mg/dL** | plausible |
+| phase | dextrose_recent | steroid_given | resolves to | reachable? |
+|---|---|---|---|---|
+| adrenal_crisis | no | no | rule 4 (phase is adrenal_crisis) &rarr; **Sodium 127 mEq/L**; **Potassium 5.7 mEq/L**; **Chloride 97 mEq/L**; **Bicarbonate 18 mEq/L**; **BUN 31 mg/dL**; **Creatinine 1.8 mg/dL**; **Glucose 48 mg/dL** | plausible |
+| adrenal_crisis | no | yes | rule 4 (phase is adrenal_crisis) &rarr; **Sodium 127 mEq/L**; **Potassium 5.7 mEq/L**; **Chloride 97 mEq/L**; **Bicarbonate 18 mEq/L**; **BUN 31 mg/dL**; **Creatinine 1.8 mg/dL**; **Glucose 48 mg/dL** | plausible |
+| adrenal_crisis | yes | no | rule 3 (flag dextrose_recent set AND NOT flag steroid_given set AND phase is adrenal_crisis) &rarr; **Sodium 127 mEq/L**; **Potassium 5.7 mEq/L**; **Chloride 97 mEq/L**; **Bicarbonate 18 mEq/L**; **BUN 31 mg/dL**; **Creatinine 1.8 mg/dL**; Glucose 131 mg/dL | plausible |
+| adrenal_crisis | yes | yes | rule 4 (phase is adrenal_crisis) &rarr; **Sodium 127 mEq/L**; **Potassium 5.7 mEq/L**; **Chloride 97 mEq/L**; **Bicarbonate 18 mEq/L**; **BUN 31 mg/dL**; **Creatinine 1.8 mg/dL**; **Glucose 48 mg/dL** | plausible |
+| frank_septic_shock | no | no | rule 2 (phase is frank_septic_shock) &rarr; **Sodium 126 mEq/L**; **Potassium 5.9 mEq/L**; **Chloride 96 mEq/L**; **Bicarbonate 16 mEq/L**; **BUN 34 mg/dL**; **Creatinine 2.1 mg/dL**; **Glucose 52 mg/dL** | plausible |
+| frank_septic_shock | no | yes | rule 1 (phase is frank_septic_shock AND flag steroid_given set) &rarr; **Sodium 126 mEq/L**; **Potassium 5.5 mEq/L**; **Chloride 96 mEq/L**; **Bicarbonate 16 mEq/L**; **BUN 34 mg/dL**; **Creatinine 2.1 mg/dL**; Glucose 84 mg/dL | plausible |
+| frank_septic_shock | yes | no | rule 2 (phase is frank_septic_shock) &rarr; **Sodium 126 mEq/L**; **Potassium 5.9 mEq/L**; **Chloride 96 mEq/L**; **Bicarbonate 16 mEq/L**; **BUN 34 mg/dL**; **Creatinine 2.1 mg/dL**; **Glucose 52 mg/dL** | plausible |
+| frank_septic_shock | yes | yes | rule 1 (phase is frank_septic_shock AND flag steroid_given set) &rarr; **Sodium 126 mEq/L**; **Potassium 5.5 mEq/L**; **Chloride 96 mEq/L**; **Bicarbonate 16 mEq/L**; **BUN 34 mg/dL**; **Creatinine 2.1 mg/dL**; Glucose 84 mg/dL | plausible |
+| improving | no | no | rule 5 (phase is improving) &rarr; **Sodium 130 mEq/L**; Potassium 5.0 mEq/L; Chloride 100 mEq/L; **Bicarbonate 21 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.7 mg/dL**; Glucose 96 mg/dL | plausible |
+| improving | no | yes | rule 5 (phase is improving) &rarr; **Sodium 130 mEq/L**; Potassium 5.0 mEq/L; Chloride 100 mEq/L; **Bicarbonate 21 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.7 mg/dL**; Glucose 96 mg/dL | plausible |
+| improving | yes | no | rule 5 (phase is improving) &rarr; **Sodium 130 mEq/L**; Potassium 5.0 mEq/L; Chloride 100 mEq/L; **Bicarbonate 21 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.7 mg/dL**; Glucose 96 mg/dL | plausible |
+| improving | yes | yes | rule 5 (phase is improving) &rarr; **Sodium 130 mEq/L**; Potassium 5.0 mEq/L; Chloride 100 mEq/L; **Bicarbonate 21 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.7 mg/dL**; Glucose 96 mg/dL | plausible |
+| progressive_meningococcemia | no | no | rule 0 (phase is progressive_meningococcemia) &rarr; **Sodium 127 mEq/L**; **Potassium 5.6 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 18 mEq/L**; **BUN 32 mg/dL**; **Creatinine 1.9 mg/dL**; Glucose 88 mg/dL | plausible |
+| progressive_meningococcemia | no | yes | rule 0 (phase is progressive_meningococcemia) &rarr; **Sodium 127 mEq/L**; **Potassium 5.6 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 18 mEq/L**; **BUN 32 mg/dL**; **Creatinine 1.9 mg/dL**; Glucose 88 mg/dL | plausible |
+| progressive_meningococcemia | yes | no | rule 0 (phase is progressive_meningococcemia) &rarr; **Sodium 127 mEq/L**; **Potassium 5.6 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 18 mEq/L**; **BUN 32 mg/dL**; **Creatinine 1.9 mg/dL**; Glucose 88 mg/dL | plausible |
+| progressive_meningococcemia | yes | yes | rule 0 (phase is progressive_meningococcemia) &rarr; **Sodium 127 mEq/L**; **Potassium 5.6 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 18 mEq/L**; **BUN 32 mg/dL**; **Creatinine 1.9 mg/dL**; Glucose 88 mg/dL | plausible |
+| stabilized_shock | no | no | rule 6 (phase is stabilized_shock) &rarr; **Sodium 128 mEq/L**; **Potassium 5.3 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 33 mg/dL**; **Creatinine 2.0 mg/dL**; Glucose 92 mg/dL | plausible |
+| stabilized_shock | no | yes | rule 6 (phase is stabilized_shock) &rarr; **Sodium 128 mEq/L**; **Potassium 5.3 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 33 mg/dL**; **Creatinine 2.0 mg/dL**; Glucose 92 mg/dL | plausible |
+| stabilized_shock | yes | no | rule 6 (phase is stabilized_shock) &rarr; **Sodium 128 mEq/L**; **Potassium 5.3 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 33 mg/dL**; **Creatinine 2.0 mg/dL**; Glucose 92 mg/dL | plausible |
+| stabilized_shock | yes | yes | rule 6 (phase is stabilized_shock) &rarr; **Sodium 128 mEq/L**; **Potassium 5.3 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 33 mg/dL**; **Creatinine 2.0 mg/dL**; Glucose 92 mg/dL | plausible |
+| «any other phase» | no | no | rule 7 (default) &rarr; **Sodium 128 mEq/L**; **Potassium 5.4 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.6 mg/dL**; **Glucose 53 mg/dL** | plausible |
+| «any other phase» | no | yes | rule 7 (default) &rarr; **Sodium 128 mEq/L**; **Potassium 5.4 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.6 mg/dL**; **Glucose 53 mg/dL** | plausible |
+| «any other phase» | yes | no | rule 7 (default) &rarr; **Sodium 128 mEq/L**; **Potassium 5.4 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.6 mg/dL**; **Glucose 53 mg/dL** | plausible |
+| «any other phase» | yes | yes | rule 7 (default) &rarr; **Sodium 128 mEq/L**; **Potassium 5.4 mEq/L**; Chloride 98 mEq/L; **Bicarbonate 19 mEq/L**; **BUN 28 mg/dL**; **Creatinine 1.6 mg/dL**; **Glucose 53 mg/dL** | plausible |
 
 
 ### `labs/fingerstick_blood_sugar`
 
-| phase | steroid_given | resolves to | reachable? |
-|---|---|---|---|
-| adrenal_crisis | no | rule 3 (phase is adrenal_crisis) &rarr; **Capillary glucose 47 mg/dL** | plausible |
-| adrenal_crisis | yes | rule 3 (phase is adrenal_crisis) &rarr; **Capillary glucose 47 mg/dL** | plausible |
-| frank_septic_shock | no | rule 2 (phase is frank_septic_shock) &rarr; **Capillary glucose 51 mg/dL** | plausible |
-| frank_septic_shock | yes | rule 1 (phase is frank_septic_shock AND flag steroid_given set) &rarr; Capillary glucose 84 mg/dL | plausible |
-| improving | no | rule 4 (phase is improving) &rarr; Capillary glucose 98 mg/dL | plausible |
-| improving | yes | rule 4 (phase is improving) &rarr; Capillary glucose 98 mg/dL | plausible |
-| progressive_meningococcaemia | no | rule 0 (phase is progressive_meningococcaemia) &rarr; Capillary glucose 94 mg/dL | plausible |
-| progressive_meningococcaemia | yes | rule 0 (phase is progressive_meningococcaemia) &rarr; Capillary glucose 94 mg/dL | plausible |
-| stabilized_shock | no | rule 5 (phase is stabilized_shock) &rarr; Capillary glucose 92 mg/dL | plausible |
-| stabilized_shock | yes | rule 5 (phase is stabilized_shock) &rarr; Capillary glucose 92 mg/dL | plausible |
-| «any other phase» | no | rule 6 (default) &rarr; **Capillary glucose 53 mg/dL** | plausible |
-| «any other phase» | yes | rule 6 (default) &rarr; **Capillary glucose 53 mg/dL** | plausible |
+| phase | dextrose_recent | steroid_given | resolves to | reachable? |
+|---|---|---|---|---|
+| adrenal_crisis | no | no | rule 4 (phase is adrenal_crisis) &rarr; **Capillary glucose 47 mg/dL** | plausible |
+| adrenal_crisis | no | yes | rule 4 (phase is adrenal_crisis) &rarr; **Capillary glucose 47 mg/dL** | plausible |
+| adrenal_crisis | yes | no | rule 0 (flag dextrose_recent set AND NOT flag steroid_given set) &rarr; Capillary glucose 131 mg/dL | plausible |
+| adrenal_crisis | yes | yes | rule 4 (phase is adrenal_crisis) &rarr; **Capillary glucose 47 mg/dL** | plausible |
+| frank_septic_shock | no | no | rule 3 (phase is frank_septic_shock) &rarr; **Capillary glucose 51 mg/dL** | plausible |
+| frank_septic_shock | no | yes | rule 2 (phase is frank_septic_shock AND flag steroid_given set) &rarr; Capillary glucose 84 mg/dL | plausible |
+| frank_septic_shock | yes | no | rule 0 (flag dextrose_recent set AND NOT flag steroid_given set) &rarr; Capillary glucose 131 mg/dL | plausible |
+| frank_septic_shock | yes | yes | rule 2 (phase is frank_septic_shock AND flag steroid_given set) &rarr; Capillary glucose 84 mg/dL | plausible |
+| improving | no | no | rule 5 (phase is improving) &rarr; Capillary glucose 98 mg/dL | plausible |
+| improving | no | yes | rule 5 (phase is improving) &rarr; Capillary glucose 98 mg/dL | plausible |
+| improving | yes | no | rule 0 (flag dextrose_recent set AND NOT flag steroid_given set) &rarr; Capillary glucose 131 mg/dL | plausible |
+| improving | yes | yes | rule 5 (phase is improving) &rarr; Capillary glucose 98 mg/dL | plausible |
+| progressive_meningococcemia | no | no | rule 1 (phase is progressive_meningococcemia) &rarr; Capillary glucose 94 mg/dL | plausible |
+| progressive_meningococcemia | no | yes | rule 1 (phase is progressive_meningococcemia) &rarr; Capillary glucose 94 mg/dL | plausible |
+| progressive_meningococcemia | yes | no | rule 0 (flag dextrose_recent set AND NOT flag steroid_given set) &rarr; Capillary glucose 131 mg/dL | plausible |
+| progressive_meningococcemia | yes | yes | rule 1 (phase is progressive_meningococcemia) &rarr; Capillary glucose 94 mg/dL | plausible |
+| stabilized_shock | no | no | rule 6 (phase is stabilized_shock) &rarr; Capillary glucose 92 mg/dL | plausible |
+| stabilized_shock | no | yes | rule 6 (phase is stabilized_shock) &rarr; Capillary glucose 92 mg/dL | plausible |
+| stabilized_shock | yes | no | rule 0 (flag dextrose_recent set AND NOT flag steroid_given set) &rarr; Capillary glucose 131 mg/dL | plausible |
+| stabilized_shock | yes | yes | rule 6 (phase is stabilized_shock) &rarr; Capillary glucose 92 mg/dL | plausible |
+| «any other phase» | no | no | rule 7 (default) &rarr; **Capillary glucose 53 mg/dL** | plausible |
+| «any other phase» | no | yes | rule 7 (default) &rarr; **Capillary glucose 53 mg/dL** | plausible |
+| «any other phase» | yes | no | rule 0 (flag dextrose_recent set AND NOT flag steroid_given set) &rarr; Capillary glucose 131 mg/dL | plausible |
+| «any other phase» | yes | yes | rule 7 (default) &rarr; **Capillary glucose 53 mg/dL** | plausible |
 
 
 ### `labs/lactate`
@@ -915,7 +947,7 @@ Single unconditional rule; nothing to enumerate.
 | adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; **Lactate 3.6 mmol/L** | plausible |
 | frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; **Lactate 5.6 mmol/L** | plausible |
 | improving | rule 4 (phase is improving) &rarr; Lactate 2.0 mmol/L | plausible |
-| progressive_meningococcaemia | rule 1 (phase is progressive_meningococcaemia) &rarr; **Lactate 4.2 mmol/L** | plausible |
+| progressive_meningococcemia | rule 1 (phase is progressive_meningococcemia) &rarr; **Lactate 4.2 mmol/L** | plausible |
 | stabilized_shock | rule 3 (phase is stabilized_shock) &rarr; **Lactate 2.5 mmol/L** | plausible |
 | «any other phase» | rule 5 (default) &rarr; **Lactate 2.8 mmol/L** | plausible |
 
@@ -924,12 +956,12 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; **pH (venous) 7.27**; **pCO2 30 mmHg**; **Bicarbonate 18 mEq/L**; **Base excess -8 mEq/L**; **Lactate 3.6 mmol/L** | plausible |
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; **pH (venous) 7.19**; **pCO2 34 mmHg**; **Bicarbonate 16 mEq/L**; **Base excess -12 mEq/L**; **Lactate 5.6 mmol/L** | plausible |
-| improving | rule 4 (phase is improving) &rarr; pH (venous) 7.35; **pCO2 35 mmHg**; **Bicarbonate 21 mEq/L**; **Base excess -4 mEq/L**; Lactate 2.0 mmol/L | plausible |
-| progressive_meningococcaemia | rule 1 (phase is progressive_meningococcaemia) &rarr; **pH (venous) 7.26**; **pCO2 29 mmHg**; **Bicarbonate 18 mEq/L**; **Base excess -9 mEq/L**; **Lactate 4.2 mmol/L** | plausible |
-| stabilized_shock | rule 3 (phase is stabilized_shock) &rarr; pH (venous) 7.33; **pCO2 34 mmHg**; **Bicarbonate 20 mEq/L**; **Base excess -5 mEq/L**; **Lactate 2.5 mmol/L** | plausible |
-| «any other phase» | rule 5 (default) &rarr; **pH (venous) 7.3**; **pCO2 32 mmHg**; **Bicarbonate 19 mEq/L**; **Base excess -6 mEq/L**; **Lactate 2.8 mmol/L** | plausible |
+| adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; **pH (venous) 7.27**; **pCO2 40 mmHg**; **Bicarbonate 18 mEq/L**; **Base excess -8 mEq/L**; **Lactate 3.6 mmol/L** | plausible |
+| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; **pH (venous) 7.19**; pCO2 42 mmHg; **Bicarbonate 16 mEq/L**; **Base excess -12 mEq/L**; **Lactate 5.6 mmol/L** | plausible |
+| improving | rule 4 (phase is improving) &rarr; pH (venous) 7.36; **pCO2 38 mmHg**; **Bicarbonate 21 mEq/L**; **Base excess -4 mEq/L**; Lactate 2.0 mmol/L | plausible |
+| progressive_meningococcemia | rule 1 (phase is progressive_meningococcemia) &rarr; **pH (venous) 7.26**; pCO2 41 mmHg; **Bicarbonate 18 mEq/L**; **Base excess -9 mEq/L**; **Lactate 4.2 mmol/L** | plausible |
+| stabilized_shock | rule 3 (phase is stabilized_shock) &rarr; pH (venous) 7.33; **pCO2 38 mmHg**; **Bicarbonate 20 mEq/L**; **Base excess -5 mEq/L**; **Lactate 2.5 mmol/L** | plausible |
+| «any other phase» | rule 5 (default) &rarr; pH (venous) 7.31; **pCO2 38 mmHg**; **Bicarbonate 19 mEq/L**; **Base excess -6 mEq/L**; **Lactate 2.8 mmol/L** | plausible |
 
 
 ### `labs/complete_blood_count_cbc`
@@ -939,7 +971,7 @@ Single unconditional rule; nothing to enumerate.
 | adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; **WBC 19.5 x10^9/L**; Hemoglobin 13.2 g/dL; Hematocrit 39 %; MCV 88 fL; **Platelets 95 x10^9/L** | plausible |
 | frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; **WBC 23.0 x10^9/L**; Hemoglobin 13.2 g/dL; Hematocrit 39 %; MCV 88 fL; **Platelets 55 x10^9/L** | plausible |
 | improving | rule 4 (phase is improving) &rarr; **WBC 18.5 x10^9/L**; Hemoglobin 13.2 g/dL; Hematocrit 39 %; MCV 88 fL; **Platelets 95 x10^9/L** | plausible |
-| progressive_meningococcaemia | rule 1 (phase is progressive_meningococcaemia) &rarr; **WBC 21.0 x10^9/L**; Hemoglobin 13.2 g/dL; Hematocrit 39 %; MCV 88 fL; **Platelets 75 x10^9/L** | plausible |
+| progressive_meningococcemia | rule 1 (phase is progressive_meningococcemia) &rarr; **WBC 21.0 x10^9/L**; Hemoglobin 13.2 g/dL; Hematocrit 39 %; MCV 88 fL; **Platelets 75 x10^9/L** | plausible |
 | stabilized_shock | rule 3 (phase is stabilized_shock) &rarr; **WBC 22.0 x10^9/L**; Hemoglobin 13.2 g/dL; Hematocrit 39 %; MCV 88 fL; **Platelets 58 x10^9/L** | plausible |
 | «any other phase» | rule 5 (default) &rarr; **WBC 18.0 x10^9/L**; Hemoglobin 13.2 g/dL; Hematocrit 39 %; MCV 88 fL; **Platelets 110 x10^9/L** | plausible |
 
@@ -951,7 +983,7 @@ Single unconditional rule; nothing to enumerate.
 | adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; **PT 16.2 sec**; **INR 1.4**; **aPTT 40 sec**; Fibrinogen 290 mg/dL | plausible |
 | frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; **PT 18.8 sec**; **INR 1.8**; **aPTT 52 sec**; **Fibrinogen 130 mg/dL** | plausible |
 | improving | rule 4 (phase is improving) &rarr; **PT 16.2 sec**; **INR 1.4**; **aPTT 40 sec**; Fibrinogen 260 mg/dL | plausible |
-| progressive_meningococcaemia | rule 1 (phase is progressive_meningococcaemia) &rarr; **PT 17.5 sec**; **INR 1.6**; **aPTT 44 sec**; **Fibrinogen 175 mg/dL** | plausible |
+| progressive_meningococcemia | rule 1 (phase is progressive_meningococcemia) &rarr; **PT 17.5 sec**; **INR 1.6**; **aPTT 44 sec**; **Fibrinogen 175 mg/dL** | plausible |
 | stabilized_shock | rule 3 (phase is stabilized_shock) &rarr; **PT 18.4 sec**; **INR 1.7**; **aPTT 48 sec**; **Fibrinogen 150 mg/dL** | plausible |
 | «any other phase» | rule 5 (default) &rarr; **PT 15.8 sec**; **INR 1.3**; **aPTT 38 sec**; Fibrinogen 310 mg/dL | plausible |
 
@@ -962,7 +994,7 @@ Single unconditional rule; nothing to enumerate.
 |---|---|---|
 | frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; **D-dimer >20.0 mcg/mL FEU** | plausible |
 | improving | rule 3 (phase is improving) &rarr; **D-dimer 10.5 mcg/mL FEU** | plausible |
-| progressive_meningococcaemia | rule 1 (phase is progressive_meningococcaemia) &rarr; **D-dimer 14.2 mcg/mL FEU** | plausible |
+| progressive_meningococcemia | rule 1 (phase is progressive_meningococcemia) &rarr; **D-dimer 14.2 mcg/mL FEU** | plausible |
 | stabilized_shock | rule 2 (phase is stabilized_shock) &rarr; **D-dimer 16.0 mcg/mL FEU** | plausible |
 | «any other phase» | rule 4 (default) &rarr; **D-dimer 9.8 mcg/mL FEU** | plausible |
 
@@ -1066,14 +1098,26 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `labs/arterial_blood_gas`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| adrenal_crisis | rule 2 (phase is adrenal_crisis) &rarr; **pH (arterial) 7.31**; pCO2 35 mmHg; pO2 92 mmHg; **Bicarbonate 17 mEq/L**; **Base excess -8 mEq/L**; **Lactate 3.6 mmol/L** | plausible |
+| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; **pH (arterial) 7.23**; pCO2 37 mmHg; pO2 84 mmHg; **Bicarbonate 15 mEq/L**; **Base excess -12 mEq/L**; **Lactate 5.6 mmol/L** | plausible |
+| improving | rule 4 (phase is improving) &rarr; pH (arterial) 7.41; **pCO2 33 mmHg**; pO2 96 mmHg; **Bicarbonate 20 mEq/L**; **Base excess -4 mEq/L**; Lactate 2.0 mmol/L | plausible |
+| progressive_meningococcemia | rule 1 (phase is progressive_meningococcemia) &rarr; **pH (arterial) 7.30**; pCO2 36 mmHg; pO2 90 mmHg; **Bicarbonate 17 mEq/L**; **Base excess -9 mEq/L**; **Lactate 4.2 mmol/L** | plausible |
+| stabilized_shock | rule 3 (phase is stabilized_shock) &rarr; pH (arterial) 7.38; **pCO2 33 mmHg**; pO2 92 mmHg; **Bicarbonate 19 mEq/L**; **Base excess -5 mEq/L**; **Lactate 2.5 mmol/L** | plausible |
+| «any other phase» | rule 5 (default) &rarr; pH (arterial) 7.36; **pCO2 33 mmHg**; pO2 96 mmHg; **Bicarbonate 18 mEq/L**; **Base excess -6 mEq/L**; **Lactate 2.8 mmol/L** | plausible |
+
+
 ### `imaging/ecg_12_lead`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) &rarr; ABNORMAL: Sinus tachycardia at 136 to 140. Normal axis. QRS 84 ms, QTc 458 ms. N... | plausible |
+| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Sinus tachycardia at 136 to 140. Normal axis. QRS 84 ms, QTc 458 ms. N... | plausible |
 | frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Sinus tachycardia at 150. Normal axis. PR 128 ms, QRS 84 ms, QTc 468 m... | plausible |
 | improving | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Sinus tachycardia at 110 to 118. Normal axis. Normal intervals. No ST ... | plausible |
-| progressive_meningococcaemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) &rarr; ABNORMAL: Sinus tachycardia at 136 to 140. Normal axis. QRS 84 ms, QTc 458 ms. N... | plausible |
+| progressive_meningococcemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Sinus tachycardia at 136 to 140. Normal axis. QRS 84 ms, QTc 458 ms. N... | plausible |
 | stabilized_shock | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Sinus tachycardia at 110 to 118. Normal axis. Normal intervals. No ST ... | plausible |
 | «any other phase» | rule 3 (default) &rarr; ABNORMAL: Sinus tachycardia at 124. Normal axis. PR 132 ms, QRS 82 ms, QTc 448 m... | plausible |
 
@@ -1095,10 +1139,10 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is presentation) &rarr; ABNORMAL: Hyperdynamic left ventricle with vigorous systolic function and a smal... | plausible |
+| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is presentation) &rarr; ABNORMAL: Hyperdynamic left ventricle with vigorous systolic function and a smal... | plausible |
 | frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Hyperdynamic left ventricle with near-obliteration of the cavity in sy... | plausible |
-| presentation | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is presentation) &rarr; ABNORMAL: Hyperdynamic left ventricle with vigorous systolic function and a smal... | plausible |
-| progressive_meningococcaemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcaemia OR phase is presentation) &rarr; ABNORMAL: Hyperdynamic left ventricle with vigorous systolic function and a smal... | plausible |
+| presentation | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is presentation) &rarr; ABNORMAL: Hyperdynamic left ventricle with vigorous systolic function and a smal... | plausible |
+| progressive_meningococcemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is presentation) &rarr; ABNORMAL: Hyperdynamic left ventricle with vigorous systolic function and a smal... | plausible |
 | «any other phase» | rule 2 (default) &rarr; normal: Left ventricle vigorous with normal wall motion. No pericardial effusi... | plausible |
 
 
@@ -1111,27 +1155,27 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | abx_given | pressor_running | steroid_given | lactate | resolves to | reachable? |
 |---|---|---|---|---|---|---|
-| adrenal_crisis | no | no | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| adrenal_crisis | no | no | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| adrenal_crisis | no | no | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| adrenal_crisis | no | no | yes | not_ordered | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| adrenal_crisis | no | no | yes | pending | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| adrenal_crisis | no | no | yes | resulted | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| adrenal_crisis | no | yes | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| adrenal_crisis | no | yes | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| adrenal_crisis | no | yes | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| adrenal_crisis | no | yes | yes | not_ordered | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| adrenal_crisis | no | yes | yes | pending | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| adrenal_crisis | no | yes | yes | resulted | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| adrenal_crisis | yes | no | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| adrenal_crisis | yes | no | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| adrenal_crisis | yes | no | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | no | no | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | no | no | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | no | no | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | no | no | yes | not_ordered | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| adrenal_crisis | no | no | yes | pending | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| adrenal_crisis | no | no | yes | resulted | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| adrenal_crisis | no | yes | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | no | yes | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | no | yes | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | no | yes | yes | not_ordered | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| adrenal_crisis | no | yes | yes | pending | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| adrenal_crisis | no | yes | yes | resulted | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| adrenal_crisis | yes | no | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | yes | no | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | yes | no | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
 | adrenal_crisis | yes | no | yes | not_ordered | rule 4 (flag abx_given set AND flag steroid_given set) | plausible |
 | adrenal_crisis | yes | no | yes | pending | rule 4 (flag abx_given set AND flag steroid_given set) | plausible |
 | adrenal_crisis | yes | no | yes | resulted | rule 4 (flag abx_given set AND flag steroid_given set) | plausible |
-| adrenal_crisis | yes | yes | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| adrenal_crisis | yes | yes | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| adrenal_crisis | yes | yes | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | yes | yes | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | yes | yes | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| adrenal_crisis | yes | yes | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
 | adrenal_crisis | yes | yes | yes | not_ordered | rule 3 (flag abx_given set AND flag steroid_given set AND flag pressor_running set) | plausible |
 | adrenal_crisis | yes | yes | yes | pending | rule 3 (flag abx_given set AND flag steroid_given set AND flag pressor_running set) | plausible |
 | adrenal_crisis | yes | yes | yes | resulted | rule 3 (flag abx_given set AND flag steroid_given set AND flag pressor_running set) | plausible |
@@ -1159,30 +1203,30 @@ Single unconditional rule; nothing to enumerate.
 | frank_septic_shock | yes | yes | yes | not_ordered | rule 0 (phase is frank_septic_shock) | plausible |
 | frank_septic_shock | yes | yes | yes | pending | rule 0 (phase is frank_septic_shock) | plausible |
 | frank_septic_shock | yes | yes | yes | resulted | rule 0 (phase is frank_septic_shock) | plausible |
-| progressive_meningococcaemia | no | no | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | no | no | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | no | no | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | no | no | yes | not_ordered | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| progressive_meningococcaemia | no | no | yes | pending | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| progressive_meningococcaemia | no | no | yes | resulted | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| progressive_meningococcaemia | no | yes | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | no | yes | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | no | yes | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | no | yes | yes | not_ordered | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| progressive_meningococcaemia | no | yes | yes | pending | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| progressive_meningococcaemia | no | yes | yes | resulted | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag abx_given set) | plausible |
-| progressive_meningococcaemia | yes | no | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | yes | no | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | yes | no | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | yes | no | yes | not_ordered | rule 4 (flag abx_given set AND flag steroid_given set) | plausible |
-| progressive_meningococcaemia | yes | no | yes | pending | rule 4 (flag abx_given set AND flag steroid_given set) | plausible |
-| progressive_meningococcaemia | yes | no | yes | resulted | rule 4 (flag abx_given set AND flag steroid_given set) | plausible |
-| progressive_meningococcaemia | yes | yes | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | yes | yes | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | yes | yes | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcaemia) AND NOT flag steroid_given set) | plausible |
-| progressive_meningococcaemia | yes | yes | yes | not_ordered | rule 3 (flag abx_given set AND flag steroid_given set AND flag pressor_running set) | plausible |
-| progressive_meningococcaemia | yes | yes | yes | pending | rule 3 (flag abx_given set AND flag steroid_given set AND flag pressor_running set) | plausible |
-| progressive_meningococcaemia | yes | yes | yes | resulted | rule 3 (flag abx_given set AND flag steroid_given set AND flag pressor_running set) | plausible |
+| progressive_meningococcemia | no | no | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | no | no | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | no | no | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | no | no | yes | not_ordered | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| progressive_meningococcemia | no | no | yes | pending | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| progressive_meningococcemia | no | no | yes | resulted | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| progressive_meningococcemia | no | yes | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | no | yes | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | no | yes | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | no | yes | yes | not_ordered | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| progressive_meningococcemia | no | yes | yes | pending | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| progressive_meningococcemia | no | yes | yes | resulted | rule 2 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set) | plausible |
+| progressive_meningococcemia | yes | no | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | yes | no | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | yes | no | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | yes | no | yes | not_ordered | rule 4 (flag abx_given set AND flag steroid_given set) | plausible |
+| progressive_meningococcemia | yes | no | yes | pending | rule 4 (flag abx_given set AND flag steroid_given set) | plausible |
+| progressive_meningococcemia | yes | no | yes | resulted | rule 4 (flag abx_given set AND flag steroid_given set) | plausible |
+| progressive_meningococcemia | yes | yes | no | not_ordered | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | yes | yes | no | pending | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | yes | yes | no | resulted | rule 1 ((phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set) | plausible |
+| progressive_meningococcemia | yes | yes | yes | not_ordered | rule 3 (flag abx_given set AND flag steroid_given set AND flag pressor_running set) | plausible |
+| progressive_meningococcemia | yes | yes | yes | pending | rule 3 (flag abx_given set AND flag steroid_given set AND flag pressor_running set) | plausible |
+| progressive_meningococcemia | yes | yes | yes | resulted | rule 3 (flag abx_given set AND flag steroid_given set AND flag pressor_running set) | plausible |
 | «any other phase» | no | no | no | not_ordered | rule 7 (default) | plausible |
 | «any other phase» | no | no | no | pending | rule 6 (study lactate ordered AND NOT study lactate resulted) | plausible |
 | «any other phase» | no | no | no | resulted | rule 5 (study lactate resulted AND NOT flag abx_given set) | plausible |
@@ -1352,8 +1396,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1361,8 +1405,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1370,8 +1414,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1379,8 +1423,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1388,8 +1432,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1397,8 +1441,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1406,8 +1450,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1415,8 +1459,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1424,8 +1468,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1433,8 +1477,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1442,8 +1486,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1451,8 +1495,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1460,8 +1504,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1469,17 +1513,17 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
-### `interview_topic/diarrhoea`
+### `interview_topic/diarrhea`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1487,8 +1531,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1496,8 +1540,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1525,8 +1569,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1534,8 +1578,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1553,8 +1597,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1572,8 +1616,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1581,8 +1625,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1590,8 +1634,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1599,8 +1643,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1608,8 +1652,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1617,8 +1661,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1626,8 +1670,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1635,8 +1679,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1644,8 +1688,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1653,8 +1697,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1662,8 +1706,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1671,8 +1715,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1685,8 +1729,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
-| progressive_meningococcaemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcaemia) | plausible |
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 

@@ -1,0 +1,18 @@
+EMSim
+Copyright (c) 2026 Aakash Setty. All rights reserved.
+
+This repository and everything in it that is not listed below as a third-party
+component, including the software, the case content, the catalogs, the artwork
+and the documentation, is proprietary. No licence to use, copy, modify, publish
+or distribute any of it is granted, except by written agreement with the
+copyright holder.
+
+Draft notice. It has not been reviewed by a lawyer. The copyright holder is
+expected to change to a company that has not yet been formed.
+
+Third-party components keep their own licences, and their notices must travel
+with them:
+
+  engine/assets/avataaars/     avataaars artwork, MIT licence (LICENSE in that folder)
+  engine/vendor/supabase-js/   supabase-js, MIT licence (LICENSE in that folder)
+  @huggingface/transformers    loaded at runtime from a CDN, Apache 2.0, not stored here

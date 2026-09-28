@@ -4,7 +4,7 @@
  "note": "End-to-end paths. The last eight exercise the clock, which this case is the first to use: doing nothing at all, each deficit treated alone, a rescue inside the last window, and a rescue one action too late.",
  "scenarios": [
   {
-   "name": "Intended path: both deficits recognised before volume",
+   "name": "Intended path: both deficits recognized before volume",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -27,7 +27,7 @@
    "expect_phase": "case_complete"
   },
   {
-   "name": "Volume first, adrenal deficit missed then recognised",
+   "name": "Volume first, adrenal deficit missed then recognized",
    "steps": [
     "insert_iv",
     "basic_chemistry_chem_7",
@@ -43,9 +43,13 @@
    "name": "Dextrose alone: no fluid, no glucocorticoid",
    "steps": [
     "insert_iv",
-    "d50_bolus"
+    "d50_bolus",
+    {
+     "wait": 240
+    }
    ],
-   "expect_phase": "adrenal_crisis"
+   "expect_phase": "adrenal_crisis",
+   "note": "v0.18a: dextrose no longer moves her into the adrenal branch by itself; the untreated glucocorticoid deficit does, on its 240 second clock."
   },
   {
    "name": "Seed state 3: cortisol and volume in, organism untreated, then rescued with a pressor",
@@ -76,6 +80,7 @@
     "rocuronium_bolus",
     "intubate_rapid_sequence",
     "epinephrine_bolus",
+    "normal_saline_1l_bolus",
     "norepinephrine_drip",
     "ceftriaxone",
     "hydrocortisone_bolus",
@@ -117,18 +122,22 @@
    "expect_phase": "halted"
   },
   {
-   "name": "Harmful: hypertonic saline for a sodium of 128",
+   "name": "Discouraged: hypertonic saline for a sodium of 128",
    "steps": [
     "insert_iv",
     "hypertonic_saline_3_infusion"
    ],
-   "expect_phase": "halted"
+   "expect_phase": "presentation",
+   "note": "v0.18a: discouraged rather than halting. Osmotic demyelination is a delayed complication of overcorrecting chronic hyponatremia, not a bedside event."
   },
   {
    "name": "Blocked: lumbar puncture attempted once hypotensive",
    "steps": [
     "insert_iv",
     "normal_saline_1l_bolus",
+    {
+     "wait": 95
+    },
     "lumbar_puncture"
    ],
    "expect_phase": "adrenal_crisis"
@@ -168,7 +177,10 @@
     "insert_iv",
     "normal_saline_1l_bolus",
     "ceftriaxone",
-    "prednisone"
+    "prednisone",
+    {
+     "wait": 95
+    }
    ],
    "expect_phase": "adrenal_crisis"
   },
@@ -180,13 +192,16 @@
     "hydrocortisone_bolus",
     "vancomycin"
    ],
-   "expect_phase": "progressive_meningococcaemia"
+   "expect_phase": "progressive_meningococcemia"
   },
   {
    "name": "Crystalloid group coverage: a 500 mL bag counts as the bolus",
    "steps": [
     "insert_iv",
-    "lactated_ringer_s_500ml_bolus"
+    "lactated_ringer_s_500ml_bolus",
+    {
+     "wait": 95
+    }
    ],
    "expect_phase": "adrenal_crisis"
   },
@@ -252,6 +267,7 @@
      "wait": 215
     },
     "hydrocortisone_bolus",
+    "normal_saline_1l_bolus",
     "norepinephrine_drip"
    ],
    "expect_phase": "stabilized_shock"

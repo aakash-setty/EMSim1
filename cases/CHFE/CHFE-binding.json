@@ -4,11 +4,23 @@
  "catalog_version": "0.2-draft",
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
-  "exact": 16,
-  "mapped": 40,
+  "exact": 20,
+  "mapped": 41,
   "unmatched": 7
  },
  "group_coverage": {
+  "pocus_lung_cardiac": [
+   "ultrasound_cardiac"
+  ],
+  "post_intubation_sedation_infusion": [
+   "fentanyl_bolus"
+  ],
+  "metoprolol_iv": [
+   "esmolol_drip",
+   "labetalol_bolus",
+   "labetalol_drip",
+   "propranolol_bolus"
+  ],
   "crystalloid_bolus_1l": [
    "lactated_ringer_s_1l_bolus",
    "lactated_ringer_s_500ml_bolus",
@@ -32,6 +44,18 @@
   {
    "case_id": "nitroglycerin_sublingual",
    "catalog_id": "nitroglycerin_sublingual",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "nitroprusside_drip",
+   "catalog_id": "nitroprusside_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "nitroglycerin",
+   "catalog_id": "nitroglycerin",
    "status": "exact",
    "note": null
   },
@@ -81,7 +105,10 @@
    "case_id": "pocus_lung_cardiac",
    "catalog_id": "ultrasound_lung",
    "status": "mapped",
-   "note": "The case authors a single combined lung-and-cardiac scan. The catalog has ultrasound_lung and ultrasound_cardiac as separate acts. Bound to the lung study; the cardiac findings in the authored report are therefore unreachable by a learner who orders only the cardiac scan. This should be split into two case content keys."
+   "note": "The case authors a single combined lung-and-cardiac scan. Bound to the lung study, and since v0.18a it also covers the cardiac study, so either button returns the combined report.",
+   "also_covers": [
+    "ultrasound_cardiac"
+   ]
   },
   {
    "case_id": "interview_topic_medication_adherence",
@@ -121,9 +148,18 @@
   },
   {
    "case_id": "post_intubation_sedation_infusion",
-   "catalog_id": "propofol_infusion",
+   "catalog_id": "ketamine_infusion",
    "status": "mapped",
-   "note": "Catalog offers propofol or ketamine infusion. The case treats sedation as one action; the follow-up satisfied_by list needs both catalog ids."
+   "note": "Catalog offers propofol or ketamine infusion. The case treats sedation as one action; the follow-up satisfied_by list needs both catalog ids.",
+   "also_covers": [
+    "fentanyl_bolus"
+   ]
+  },
+  {
+   "case_id": "propofol_infusion",
+   "catalog_id": "propofol_infusion",
+   "status": "exact",
+   "note": null
   },
   {
    "case_id": "vent_settings_lung_protective",
@@ -153,7 +189,13 @@
    "case_id": "metoprolol_iv",
    "catalog_id": "metoprolol_bolus",
    "status": "mapped",
-   "note": null
+   "note": null,
+   "also_covers": [
+    "esmolol_drip",
+    "labetalol_bolus",
+    "labetalol_drip",
+    "propranolol_bolus"
+   ]
   },
   {
    "case_id": "diltiazem_iv",
@@ -188,7 +230,7 @@
    "case_id": "albuterol_ipratropium_neb",
    "catalog_id": "albuterol",
    "status": "mapped",
-   "note": "The case authors a combined albuterol and ipratropium nebuliser; the catalog lists them separately. Bound to albuterol, so a learner who gives ipratropium alone reaches the same trap through an unbound action and gets no debrief note for it."
+   "note": "The case authors a combined albuterol and ipratropium nebulizer; the catalog lists them separately. Bound to albuterol, so a learner who gives ipratropium alone reaches the same trap through an unbound action and gets no debrief note for it."
   },
   {
    "case_id": "methylprednisolone_iv",
@@ -218,6 +260,12 @@
    "case_id": "ct_pulmonary_angiogram",
    "catalog_id": "ct_pulmonary_embolus",
    "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "ct_chest",
+   "catalog_id": "ct_chest",
+   "status": "exact",
    "note": null
   },
   {
@@ -265,6 +313,12 @@
   {
    "case_id": "labs_vbg",
    "catalog_id": "venous_blood_gas",
+   "status": "mapped",
+   "note": null
+  },
+  {
+   "case_id": "labs_abg",
+   "catalog_id": "arterial_blood_gas",
    "status": "mapped",
    "note": null
   },
@@ -356,7 +410,7 @@
    "case_id": "exam_neck",
    "catalog_id": "exam_neck",
    "status": "exact",
-   "note": "Carries the jugular venous pressure and the hepatojugular reflux, which the case previously scored as two separate manoeuvres. The reflux is no longer a discrete act a learner can choose to perform."
+   "note": "Carries the jugular venous pressure and the hepatojugular reflux, which the case previously scored as two separate maneuvers. The reflux is no longer a discrete act a learner can choose to perform."
   },
   {
    "case_id": "exam_card",

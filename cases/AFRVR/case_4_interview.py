@@ -142,13 +142,12 @@ T("orthopnea", "Can you lie flat?",
   "Do you get breathless lying down?", "Can you sleep flat in bed?",
   "Do you have to prop yourself up?", "Does lying down make your breathing worse?",
   "How do you sleep at night?", "Do you need pillows to breathe?",
-  "Can you lie down flat without getting short of breath?", "Any orthopnoea?",
+  "Can you lie down flat without getting short of breath?", "Any orthopnea?",
   "Has your sleeping position changed?", "Do you sleep sitting up?",
   "How many pillows do you use now compared with before?", "Can you get flat in the bed?",
   "Do you sleep in a chair?"],
  "'Can't... lie down.'",
- "'I can't. The last two nights I've had three pillows behind me and I still ended up sat on the "
- "edge of the bed. Before this week I slept on one pillow, flat, no trouble at all.'"),
+ "'I can't. Last night I had three pillows behind me and I still ended up sat on the edge of the bed. Before this I slept on one pillow, flat, no trouble at all.'"),
 
 T("paroxysmal_nocturnal_dyspnea", "Do you wake up at night short of breath?",
  ["Do you wake up gasping?", "Have you woken up unable to breathe?",
@@ -166,7 +165,7 @@ T("paroxysmal_nocturnal_dyspnea", "Do you wake up at night short of breath?",
 T("leg_swelling", "Have your legs been swelling?",
  ["Any swelling in your legs?", "Have your ankles been puffy?",
   "Is there swelling anywhere?", "Have your feet been swollen?",
-  "Any oedema?", "Have your socks been leaving marks?",
+  "Any edema?", "Have your socks been leaving marks?",
   "Have your legs changed?", "Is there swelling in your ankles?",
   "Have your shoes been tight?", "Any puffiness in your feet?",
   "How long have your legs been swollen?", "Have you noticed swelling?",
@@ -203,13 +202,13 @@ T("exercise_tolerance_baseline", "What could you do before this started?",
 
 T("cough_and_sputum", "Have you had a cough?",
  ["Any cough?", "Are you coughing anything up?", "Do you have a productive cough?",
-  "Any phlegm?", "What colour is the sputum?", "Have you been coughing?",
+  "Any phlegm?", "What color is the sputum?", "Have you been coughing?",
   "Is the cough dry or wet?", "Any sputum?", "Are you bringing anything up?",
   "Have you coughed up any blood?", "Is there a cough with this?",
   "How long have you had the cough?", "Any frothy sputum?", "Do you cough at night?",
   "Has the cough changed?"],
  "'Dry. When I... lie down.'",
- "'A bit of a dry cough, mostly when I lie down. Nothing comes up. No blood, nothing coloured, "
+ "'A bit of a dry cough, mostly when I lie down. Nothing comes up. No blood, nothing colored, "
  "nothing frothy. It's not really a cough so much as a tickle.'"),
 
 T("fever_and_chills", "Have you had a fever?",
@@ -274,7 +273,7 @@ T("past_surgical_history", "Have you had any operations?",
   "Any operations at all?", "Have you been in hospital for surgery?",
   "Any recent procedures?", "What's your surgical history?",
   "Have you had a stent put in?", "Any surgery in the last few months?",
-  "Have you ever had an anaesthetic?", "Any operations I should know about?"],
+  "Have you ever had an anesthetic?", "Any operations I should know about?"],
  "'Gallbladder. Years... ago.'",
  "'They took my gallbladder out about fifteen years ago and that's the only time I've been under. "
  "No stents, no bypass, nothing on my heart. Nothing recent at all.'",
@@ -359,7 +358,7 @@ T("thyroid_symptoms", "Any problems with your thyroid?",
  ["Do you have thyroid trouble?", "Any heat intolerance?", "Have you lost weight?",
   "Any tremor?", "Do you feel hot all the time?", "Any thyroid problems?",
   "Have you been more anxious or sweaty than usual?", "Any change in your bowels?",
-  "Do you have a goitre?", "Any hyperthyroid symptoms?",
+  "Do you have a goiter?", "Any hyperthyroid symptoms?",
   "Have you been losing weight without trying?", "Do your hands shake?",
   "Any neck swelling?", "Have you been intolerant of the heat?",
   "Is your thyroid checked?"],
@@ -418,10 +417,10 @@ T("recent_illness_or_sick_contacts", "Have you been unwell recently?",
  "been to the doctor since my last diabetes check in the spring.'",
  pertinent_negative=True),
 
-T("travel_immobility_surgery", "Have you travelled recently?",
+T("travel_immobility_surgery", "Have you traveled recently?",
  ["Any recent travel?", "Have you been on a long flight?",
   "Have you been immobile recently?", "Any long journeys?",
-  "Have you been bedbound at all?", "Any recent surgery or immobilisation?",
+  "Have you been bedbound at all?", "Any recent surgery or immobilization?",
   "Have you been on a long car journey?", "Any risk factors for a clot?",
   "Have you been abroad?", "Have you been sitting still for long periods?",
   "Any hospital admissions recently?", "Have you had a cast or a splint?",
@@ -450,7 +449,7 @@ T("urine_output", "How much have you been passing urine?",
   "Have you been going to the toilet as usual?", "Any change in how much you're passing?",
   "Are you passing less water?", "How often are you urinating?",
   "Any problems passing urine?", "Have you been going less?",
-  "What colour is your urine?", "Any change in your waterworks?",
+  "What color is your urine?", "Any change in your waterworks?",
   "Have you noticed passing less?", "Are you weeing normally?",
   "How much urine have you passed today?", "Any difficulty passing urine?",
   "Has your urine output dropped?"],
@@ -472,7 +471,7 @@ T("nausea_and_vomiting", "Do you feel sick?",
 
 T("snoring_and_sleep_apnea", "Do you snore?",
  ["Does anyone say you snore?", "Do you stop breathing in your sleep?",
-  "Any sleep apnoea?", "Do you use a CPAP machine at night?",
+  "Any sleep apnea?", "Do you use a CPAP machine at night?",
   "Are you sleepy during the day?", "Has anyone told you that you stop breathing at night?",
   "Do you snore badly?", "Any sleep study in the past?",
   "Do you fall asleep in the day?", "Is your sleep disturbed?",
@@ -538,7 +537,7 @@ AUTHORING_NOTES = {
    "and it is not an assertion that alcohol caused this."),
  "precipitant_note": (
    "The case authors three plausible contributors and settles none of them: a weekend alcohol "
-   "load two days before onset, undiagnosed obstructive sleep apnoea, and a cardiomyopathy that "
+   "load two days before onset, undiagnosed obstructive sleep apnea, and a cardiomyopathy that "
    "may be the cause of the arrhythmia or its consequence. A resident who takes a full history "
    "finds all three. Deciding between them is not the emergency department's task and the case "
    "does not score it."),
@@ -624,8 +623,8 @@ EXPANDED = {
     'Describe the breathlessness.',
     'What does the breathing feel like?',
     'Is it hard to breathe in or out?',
-    'Character of the dyspnoea?',
     'Character of the dyspnea?',
+    'Character of the dyspnoea?',
     'Any wheeze with it?',
     'Is it a tightness or a smothering feeling?',
     'Do you feel you are drowning?',
@@ -641,16 +640,16 @@ EXPANDED = {
     'Is it hard to breathe?',
     'Any breathing problems?',
     'Do you feel you cannot get your breath?',
-    'Dyspnoea?',
     'Dyspnea?',
+    'Dyspnoea?',
     'Any trouble with your breathing?',
     'Is your breathing okay?',
     'Are you getting enough air?',
     'Okay, what does the breathing feel like?',
     'Sorry to ask, but is it hard to breathe in or out?',
     'One more thing. Is it hard to breathe in or out?',
-    'Okay, character of the dyspnoea?',
-    'Just so I know, character of the dyspnoea?',
+    'Okay, character of the dyspnea?',
+    'Just so I know, character of the dyspnea?',
   ],
   'severity': [
     'Out of ten, how bad is it?',
@@ -773,17 +772,17 @@ EXPANDED = {
     'And how many pillows?',
   ],
   'paroxysmal_nocturnal_dyspnea': [
-    'Paroxysmal nocturnal dyspnoea?',
     'Paroxysmal nocturnal dyspnea?',
+    'Paroxysmal nocturnal dyspnoea?',
     'Do you wake at night breathless?',
     'Woken up short of breath?',
     'Do you wake up fighting for breath?',
     'Do you have to get up at night to catch your breath?',
     'Any breathlessness waking you?',
-    'Nocturnal dyspnoea?',
+    'Nocturnal dyspnea?',
     'Night-time breathlessness?',
     'Do you sit on the edge of the bed at night to breathe?',
-    'Quick one: paroxysmal nocturnal dyspnoea?',
+    'Quick one: paroxysmal nocturnal dyspnea?',
     'And paroxysmal nocturnal dyspnea?',
     'Can I ask, paroxysmal nocturnal dyspnea?',
     'And do you wake up gasping?',
@@ -791,16 +790,16 @@ EXPANDED = {
   ],
   'leg_swelling': [
     'Any ankle swelling?',
-    'Ankle oedema?',
     'Ankle edema?',
-    'Pedal oedema?',
+    'Ankle oedema?',
     'Pedal edema?',
+    'Pedal oedema?',
     'Swollen feet?',
     'Leg swelling?',
     'Do your shoes feel tight?',
     'Have your ankles puffed up?',
     'Any edema?',
-    'Peripheral oedema?',
+    'Peripheral edema?',
     'Any fluid in the legs?',
     'Have your calves swollen?',
     'I need to know, any ankle swelling?',
@@ -862,8 +861,8 @@ EXPANDED = {
     'Quick one: have you been coughing?',
     'Sorry to ask, but are you bringing anything up?',
     'One more thing. Are you bringing anything up?',
-    'Just so I know, what colour is the sputum?',
-    'I need to know, what colour is the sputum?',
+    'Just so I know, what color is the sputum?',
+    'I need to know, what color is the sputum?',
   ],
   'fever_and_chills': [
     'Fever?',
@@ -1080,7 +1079,7 @@ EXPANDED = {
     'Are you on thyroxine?',
     'Have you lost weight without trying?',
     'Any change in your neck?',
-    'Any goitre?',
+    'Any goiter?',
     'Overactive thyroid?',
     'Any weight loss or feeling hot?',
     'Have you been told your thyroid is overactive?',
@@ -1233,11 +1232,11 @@ EXPANDED = {
     'Has anyone said you snore?',
     'Do you use a CPAP machine?',
     'Are you tired during the day?',
-    'Sleep apnoea history?',
+    'Sleep apnea history?',
     'Has your partner noticed you stop breathing at night?',
-    'Any obstructive sleep apnoea?',
-    'Right. Any sleep apnoea?',
-    'Quick one: any sleep apnoea?',
+    'Any obstructive sleep apnea?',
+    'Right. Any sleep apnea?',
+    'Quick one: any sleep apnea?',
     'Can I ask, any sleep apnea?',
     'Can I ask, do you stop breathing in your sleep?',
     'Sorry to ask, but do you stop breathing in your sleep?',
@@ -1269,7 +1268,7 @@ OUT_OF_SCOPE_BANK = [
   'Any heartburn?',
   'Any indigestion after meals?',
   'Any change in your bowel habit?',
-  'Any diarrhoea at all?',
+  'Any diarrhea at all?',
   'Any pain in your tummy?',
   'Have you had piles?',
   'Any black stools?',
@@ -1390,7 +1389,7 @@ ECHO = {
  "family_history": "the family",
  "last_oral_intake": "when I last ate",
  "recent_illness_or_sick_contacts": "whether I've been unwell",
- "travel_immobility_surgery": "travelling",
+ "travel_immobility_surgery": "traveling",
  "calf_pain_or_asymmetry": "my calves",
  "urine_output": "passing water",
  "nausea_and_vomiting": "feeling sick",
@@ -1773,3 +1772,130 @@ for _t in TOPICS:
     if _t['topic'] in ECHO: _t['echo'] = ECHO[_t['topic']]
     if _t['topic'] in FACTS: _t['facts'] = FACTS[_t['topic']]
 # ---- END ECHO AND FACTS ----
+
+# ---- VOLUNTEERED ANSWERS (generated, do not edit by hand) ----
+# Written by catalog/author_interview_volunteers.py (v0.18a). See that file for the rules.
+ADJACENT = {
+ "onset": [
+  "timing_progression"
+ ],
+ "timing_progression": [
+  "exercise_tolerance_baseline"
+ ],
+ "character_of_palpitations": [
+  "prior_afib_or_palpitations",
+  "chest_pain"
+ ],
+ "dyspnea_character": [
+  "orthopnea"
+ ],
+ "severity": [
+  "chest_pain"
+ ],
+ "aggravating_factors": [
+  "relieving_factors"
+ ],
+ "relieving_factors": [
+  "paroxysmal_nocturnal_dyspnea"
+ ],
+ "chest_pain": [
+  "syncope_presyncope"
+ ],
+ "dizziness_lightheadedness": [
+  "syncope_presyncope"
+ ],
+ "orthopnea": [
+  "paroxysmal_nocturnal_dyspnea"
+ ],
+ "paroxysmal_nocturnal_dyspnea": [
+  "orthopnea"
+ ],
+ "leg_swelling": [
+  "calf_pain_or_asymmetry",
+  "weight_gain"
+ ],
+ "weight_gain": [
+  "leg_swelling"
+ ],
+ "cough_and_sputum": [
+  "fever_and_chills"
+ ],
+ "fever_and_chills": [
+  "recent_illness_or_sick_contacts"
+ ],
+ "recent_illness_or_sick_contacts": [
+  "fever_and_chills"
+ ],
+ "prior_afib_or_palpitations": [
+  "prior_heart_failure"
+ ],
+ "prior_heart_failure": [
+  "prior_afib_or_palpitations"
+ ],
+ "past_medical_history": [
+  "prior_heart_failure",
+  "past_surgical_history"
+ ],
+ "past_surgical_history": [
+  "past_medical_history"
+ ],
+ "current_medications": [
+  "medication_adherence"
+ ],
+ "medication_adherence": [
+  "current_medications"
+ ],
+ "alcohol_and_binge": [
+  "social_history_smoking"
+ ],
+ "social_history_smoking": [
+  "alcohol_and_binge"
+ ],
+ "travel_immobility_surgery": [
+  "calf_pain_or_asymmetry"
+ ],
+ "calf_pain_or_asymmetry": [
+  "travel_immobility_surgery"
+ ],
+ "nausea_and_vomiting": [
+  "weight_gain"
+ ]
+}
+VOLUNTEER = {
+ "timing_progression": "'The breathing has got worse every hour since.'",
+ "exercise_tolerance_baseline": "'A week ago I was walking the dog up the hill twice a day.'",
+ "prior_afib_or_palpitations": "'And nobody's ever said my heart was irregular.'",
+ "chest_pain": "'There's no pain with it, mind.'",
+ "orthopnea": "'I can't lie flat at all.'",
+ "relieving_factors": "'Sitting bolt upright is the only thing that helps.'",
+ "paroxysmal_nocturnal_dyspnea": "'Twice last night I woke up feeling like I was drowning.'",
+ "syncope_presyncope": "'I've not passed out, though.'",
+ "calf_pain_or_asymmetry": "'My legs don't hurt, and they're not red or hot.'",
+ "weight_gain": "'My trousers have got tight round the waist this week too.'",
+ "leg_swelling": "'My legs have been swelling this last week, both of them.'",
+ "fever_and_chills": "'I've had no fever or shivering.'",
+ "recent_illness_or_sick_contacts": "'I've not had a cold, and nobody at home's been ill.'",
+ "prior_heart_failure": "'Nobody's ever said my heart was weak.'",
+ "past_surgical_history": "'My only operation was my gallbladder, years ago.'",
+ "past_medical_history": "'I've got high blood pressure and diabetes.'",
+ "medication_adherence": "'I take them every morning from a pill box.'",
+ "current_medications": "'I take lisinopril, a statin and metformin.'",
+ "social_history_smoking": "'I gave up smoking over twenty years ago.'",
+ "alcohol_and_binge": "'I have a few beers at weekends, and I had four or five at a barbecue on Saturday.'",
+ "travel_immobility_surgery": "'I've not traveled anywhere.'"
+}
+VOLUNTEER_SETTINGS = {
+ "must_ask": [
+  "allergies",
+  "caffeine_and_stimulants",
+  "anticoagulant_history_and_bleeding",
+  "code_status_goals_of_care"
+ ],
+ "volunteers_note": "adjacent, volunteer, must_ask and volunteer_blocked_when were written by catalog/author_interview_volunteers.py (v0.18a). A first answer carries the volunteer line of each adjacent topic, and the adjacent topic counts as asked. must_ask topics are safety screens and are never volunteered. Every volunteer line restates part of that topic's own answer. Not physician-reviewed.",
+ "volunteer_blocked_when": "phase is respiratory_failure"
+}
+for _t in TOPICS:
+    _t.pop('adjacent', None); _t.pop('volunteer', None)
+    if _t['topic'] in ADJACENT: _t['adjacent'] = ADJACENT[_t['topic']]
+    if _t['topic'] in VOLUNTEER: _t['volunteer'] = VOLUNTEER[_t['topic']]
+# ---- END VOLUNTEERED ANSWERS ----

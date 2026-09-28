@@ -67,7 +67,7 @@ line, which is where a resident looks for it.
 
 `mode` replaces the older free-text vocabulary (`Ambulance`, `Walk-in`,
 `Transfer`, `Police`). Cases carrying the old values still run: the reader
-normalises anything matching walk-in or triage to `triage` and everything else
+normalizes anything matching walk-in or triage to `triage` and everything else
 to `ems`. Author the new values in new cases.
 
 A walk-in or a transfer is `triage` unless paramedics hand over to you directly.
@@ -113,8 +113,8 @@ reading it?** If not, it says too much.
 
 ### Register
 
-An EMS handover is spoken, slightly breathless, and organised around what the
-crew saw at the scene. A triage note is written, terse, and organised around
+An EMS handover is spoken, slightly breathless, and organized around what the
+crew saw at the scene. A triage note is written, terse, and organized around
 what the patient said at the desk plus one thing the nurse observed.
 
 **EMS, good:**

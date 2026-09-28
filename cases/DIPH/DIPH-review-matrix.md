@@ -207,24 +207,26 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/physostigmine`
 
-| phase | ecg_12_lead | resolves to | reachable? |
-|---|---|---|---|
-| «any phase» | not_ordered | rule 0 (NOT study ecg_12_lead resulted) | plausible |
-| «any phase» | pending | rule 0 (NOT study ecg_12_lead resulted) | plausible |
-| «any phase» | resulted | rule 1 (default) | plausible |
+| phase | resolves to | reachable? |
+|---|---|---|
+| post_ictal | rule 0 (phase is presentation OR phase is seizing OR phase is post_ictal OR phase is wide_complex_tachycardia) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is seizing OR phase is post_ictal OR phase is wide_complex_tachycardia) | plausible |
+| seizing | rule 0 (phase is presentation OR phase is seizing OR phase is post_ictal OR phase is wide_complex_tachycardia) | plausible |
+| wide_complex_tachycardia | rule 0 (phase is presentation OR phase is seizing OR phase is post_ictal OR phase is wide_complex_tachycardia) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/atropine_bolus`
 
-| phase | physostigmine_given | resolves to | reachable? |
-|---|---|---|---|
-| «any phase» | no | rule 1 (default) | plausible |
-| «any phase» | yes | rule 0 (flag physostigmine_given set) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/flumazenil`
 
-Single unconditional rule; nothing to enumerate.
+| phase | benzo_given | resolves to | reachable? |
+|---|---|---|---|
+| «any phase» | no | rule 1 (default) | plausible |
+| «any phase» | yes | rule 0 (flag benzo_given set) | plausible |
 
 
 ### `action_tag/diphenhydramine`
@@ -239,10 +241,7 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/levetiracetam_bolus`
 
-| phase | benzo_given | resolves to | reachable? |
-|---|---|---|---|
-| «any phase» | no | rule 1 (default) | plausible |
-| «any phase» | yes | rule 0 (flag benzo_given set) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/propofol_infusion`
@@ -320,9 +319,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| pulseless_vt | rule 1 (phase is pulseless_vt) | plausible |
-| wide_complex_tachycardia | rule 0 (phase is wide_complex_tachycardia) | plausible |
-| «any other phase» | rule 2 (default) | plausible |
+| stabilized | rule 0 (phase is stabilized) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/amiodarone_bolus_infusion`
@@ -402,10 +400,7 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/whole_bowel_irrigation_by_ng_tube`
 
-| phase | airway_protected | resolves to | reachable? |
-|---|---|---|---|
-| «any phase» | no | rule 1 (default) | plausible |
-| «any phase» | yes | rule 0 (flag airway_protected set) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/place_orogastric_tube`
@@ -701,14 +696,44 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `action_tag/diltiazem_bolus`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/metoprolol_bolus`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/esmolol_drip`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/labetalol_bolus`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/propranolol_bolus`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/epinephrine_bolus`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `exam/exam_heent`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| seizing | rule 0 (phase is seizing) &rarr; ABNORMAL: Eyes deviated and rolling. Pupils are 7 millimetres and equal, sluggis... | plausible |
-| stabilized | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Pupils remain 7 millimetres, equal and now briskly reactive. Mucous me... | plausible |
-| stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Pupils remain 7 millimetres, equal and now briskly reactive. Mucous me... | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Pupils are equal at about 7 millimetres, large, and reactive. There ar... | plausible |
+| seizing | rule 0 (phase is seizing) &rarr; ABNORMAL: Eyes deviated and roving. Pupils 7 mm, equal, sluggish. Dry mucosa. Sa... | plausible |
+| stabilized | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Pupils 7 mm, equal, sluggish. Mucosa still dry. Roving eye movements s... | plausible |
+| stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Pupils 7 mm, equal, sluggish. Mucosa still dry. Roving eye movements s... | plausible |
+| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Pupils 7 mm, equal, reactive. Roving eye movements. Mucosa bone dry. N... | plausible |
 
 
 ### `exam/exam_neck`
@@ -720,10 +745,10 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| stabilized | rule 1 (phase is stabilized) &rarr; normal: Regular sinus rhythm at about 100. Normal first and second heart sound... | plausible |
-| stabilizing | rule 2 (phase is stabilizing) &rarr; ABNORMAL: Regular sinus tachycardia at about 115, slower than it was. Normal hea... | plausible |
-| wide_complex_tachycardia | rule 0 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Regular wide-complex tachycardia at about 180. Heart sounds are presen... | plausible |
-| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Regular sinus tachycardia at about 135. Normal first and second heart ... | plausible |
+| stabilized | rule 1 (phase is stabilized) &rarr; normal: Sinus rhythm, about 100. Normal heart sounds. Pulses full. | plausible |
+| stabilizing | rule 2 (phase is stabilizing) &rarr; ABNORMAL: Sinus tachycardia, about 115, slower than before. Normal heart sounds. | plausible |
+| wide_complex_tachycardia | rule 0 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Regular wide-complex tachycardia, about 180. Soft heart sounds. Thread... | plausible |
+| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Sinus tachycardia, about 135. Normal heart sounds, no murmur or gallop... | plausible |
 
 
 ### `exam/exam_pulm`
@@ -735,81 +760,81 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| stabilized | rule 0 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Soft and non-tender. Bowel sounds are sparse but present. The bladder ... | plausible |
-| stabilizing | rule 0 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Soft and non-tender. Bowel sounds are sparse but present. The bladder ... | plausible |
-| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Soft, non-tender, not distended. Bowel sounds are absent over four qua... | plausible |
+| stabilized | rule 0 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Soft, non-tender. Sparse bowel sounds. Bladder no longer palpable if d... | plausible |
+| stabilizing | rule 0 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Soft, non-tender. Sparse bowel sounds. Bladder no longer palpable if d... | plausible |
+| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Absent bowel sounds after a full minute. Distended bladder to below th... | plausible |
 
 
 ### `exam/exam_gu`
 
 | phase | bladder_drained | resolves to | reachable? |
 |---|---|---|---|
-| «any phase» | no | rule 1 (default) &rarr; ABNORMAL: The bladder is palpable well above the pubic symphysis and is dull to ... | plausible |
-| «any phase» | yes | rule 0 (flag bladder_drained set) &rarr; ABNORMAL: Catheterised, with about 700 mL drained on insertion and dark amber ur... | plausible |
+| «any phase» | no | rule 1 (default) &rarr; ABNORMAL: Bladder palpable well above the pubis, dull to percussion. No urine pa... | plausible |
+| «any phase» | yes | rule 0 (flag bladder_drained set) &rarr; ABNORMAL: Catheterized, 700 mL drained, dark amber urine. Bladder no longer palp... | plausible |
 
 
 ### `exam/exam_skin`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| stabilized | rule 0 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Cooler than she was and the flush has faded, though she is still warm ... | plausible |
-| stabilizing | rule 0 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Cooler than she was and the flush has faded, though she is still warm ... | plausible |
-| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Hot to the touch everywhere, and completely dry. There is no sweat in ... | plausible |
+| stabilized | rule 0 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Still warm and completely dry, no sweat anywhere. Flush fading. No ras... | plausible |
+| stabilizing | rule 0 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Still warm and completely dry, no sweat anywhere. Flush fading. No ras... | plausible |
+| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Hot, flushed and completely dry, no sweat even in the axillae. No rash... | plausible |
 
 
 ### `exam/exam_neuro`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| post_ictal | rule 1 (phase is post_ictal) &rarr; ABNORMAL: Drowsy and rousable to voice with effort. Moves all four limbs to comm... | plausible |
-| seizing | rule 0 (phase is seizing) &rarr; ABNORMAL: Generalised tonic-clonic activity, not rousable, not protecting her ai... | plausible |
-| stabilized | rule 2 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable and settling. Orientated to person, not consistent... | plausible |
-| stabilizing | rule 2 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable and settling. Orientated to person, not consistent... | plausible |
-| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Awake, agitated, disorientated in place, time and situation. Will not ... | plausible |
+| post_ictal | rule 1 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| seizing | rule 0 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| stabilized | rule 2 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilizing | rule 2 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
 
 
 ### `exam/exam_psych`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| post_ictal | rule 0 (phase is seizing OR phase is post_ictal) &rarr; ABNORMAL: Not assessable. She is not able to converse. | plausible |
-| seizing | rule 0 (phase is seizing OR phase is post_ictal) &rarr; ABNORMAL: Not assessable. She is not able to converse. | plausible |
-| stabilized | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy and settled. Not able to give a reliable account of herself, an... | plausible |
-| stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy and settled. Not able to give a reliable account of herself, an... | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Agitated and restless. Plucking repeatedly at the sheet and at the mon... | plausible |
+| post_ictal | rule 0 (phase is seizing OR phase is post_ictal) &rarr; ABNORMAL: Not assessable. Unable to converse. | plausible |
+| seizing | rule 0 (phase is seizing OR phase is post_ictal) &rarr; ABNORMAL: Not assessable. Unable to converse. | plausible |
+| stabilized | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy and settled. Cannot give a reliable account yet. | plausible |
+| stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy and settled. Cannot give a reliable account yet. | plausible |
+| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Agitated, plucking at the sheets and leads, reaching for things not th... | plausible |
 
 
 ### `exam/exam_airway`
 
 | phase | airway_protected | resolves to | reachable? |
 |---|---|---|---|
-| post_ictal | no | rule 2 (phase is post_ictal) &rarr; ABNORMAL: Patent with a jaw thrust. Gag is reduced. She is snoring intermittentl... | plausible |
-| post_ictal | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up, waveform capnography with a norma... | plausible |
-| seizing | no | rule 1 (phase is seizing) &rarr; ABNORMAL: Not protecting her airway. Secretions at the mouth, teeth clenched, an... | plausible |
-| seizing | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up, waveform capnography with a norma... | plausible |
-| «any other phase» | no | rule 3 (default) &rarr; normal: Patent and self-maintained. She is speaking, though not sensibly. No s... | plausible |
-| «any other phase» | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up, waveform capnography with a norma... | plausible |
+| post_ictal | no | rule 2 (phase is post_ictal) &rarr; ABNORMAL: Patent with a jaw thrust. Reduced gag, intermittent snoring. | plausible |
+| post_ictal | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
+| seizing | no | rule 1 (phase is seizing) &rarr; ABNORMAL: Not protecting her airway. Clenched teeth, secretions at the mouth. | plausible |
+| seizing | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
+| «any other phase» | no | rule 3 (default) &rarr; normal: Patent. Talking, though not sensibly. No stridor. Dry mucosa. | plausible |
+| «any other phase» | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
 
 
 ### `exam/exam_breath`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| post_ictal | rule 2 (phase is post_ictal) &rarr; ABNORMAL: Breathing spontaneously at a normal rate. Shallow, and she needs watch... | plausible |
-| seizing | rule 0 (phase is seizing) &rarr; ABNORMAL: Not ventilating adequately. Chest movement is irregular with the convu... | plausible |
-| stabilized | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; normal: Breathing quietly at a normal rate with no increased work. Chest expan... | plausible |
-| stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; normal: Breathing quietly at a normal rate with no increased work. Chest expan... | plausible |
-| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Tachypnoeic at about 25 with no increased work of breathing. No access... | plausible |
+| post_ictal | rule 2 (phase is post_ictal) &rarr; ABNORMAL: Spontaneous, normal rate but shallow. No increased work. | plausible |
+| seizing | rule 0 (phase is seizing) &rarr; ABNORMAL: Not ventilating adequately. Irregular chest movement with the seizure. | plausible |
+| stabilized | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; normal: Normal rate, no increased work. Equal expansion. | plausible |
+| stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; normal: Normal rate, no increased work. Equal expansion. | plausible |
+| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Rate about 25, no increased work of breathing. No accessory muscle use... | plausible |
 
 
 ### `exam/exam_circ`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| stabilized | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; normal: Warm and well perfused. Capillary refill under two seconds. Pulse regu... | plausible |
-| stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; normal: Warm and well perfused. Capillary refill under two seconds. Pulse regu... | plausible |
-| wide_complex_tachycardia | rule 0 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Cool peripheries for the first time. Capillary refill is three seconds... | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Warm and flushed to the fingertips. Capillary refill under two seconds... | plausible |
+| stabilized | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; normal: Warm, capillary refill under 2 seconds. Regular pulse, slower than bef... | plausible |
+| stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; normal: Warm, capillary refill under 2 seconds. Regular pulse, slower than bef... | plausible |
+| wide_complex_tachycardia | rule 0 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Cool peripheries. Capillary refill 3 seconds. Weak, very fast radial p... | plausible |
+| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Warm and flushed to the fingertips. Capillary refill under 2 seconds. ... | plausible |
 
 
 ### `exam/exam_msk`
@@ -819,15 +844,22 @@ Single unconditional rule; nothing to enumerate.
 
 ### `general_status`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| post_ictal | rule 2 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, still hot to touch and still fl... | plausible |
-| pulseless_vt | rule 5 (phase is pulseless_vt) &rarr; ABNORMAL: In cardiac arrest. No pulse, no respiratory effort, wide complexes on ... | plausible |
-| seizing | rule 0 (phase is seizing) &rarr; ABNORMAL: Generalised seizure in progress. Not responsive, not protecting her ai... | plausible |
-| stabilized | rule 4 (phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable and comfortable, on the monitor, cooling. Pupils a... | plausible |
-| stabilizing | rule 3 (phase is stabilizing) &rarr; ABNORMAL: Settled and drowsy. Colour better and the flush is fading. Still warm.... | plausible |
-| wide_complex_tachycardia | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded and grey. Rousable only to pain. A fast wide-complex rhythm o... | plausible |
-| «any other phase» | rule 6 (default) &rarr; ABNORMAL: Awake, agitated and disorientated, flushed, hot and dry, plucking at t... | plausible |
+| phase | airway_protected | resolves to | reachable? |
+|---|---|---|---|
+| post_ictal | no | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| pulseless_vt | no | rule 6 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| seizing | no | rule 1 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
+| seizing | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| stabilized | no | rule 5 (phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, comfortable. Pupils still large. GCS 14. | plausible |
+| stabilized | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| stabilizing | no | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Settled and drowsy, still warm, flush fading. Narrower complexes on th... | plausible |
+| stabilizing | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| wide_complex_tachycardia | no | rule 2 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded and gray, responds only to pain. Wide-complex rhythm, thready... | plausible |
+| wide_complex_tachycardia | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| «any other phase» | no | rule 7 (default) &rarr; ABNORMAL: Agitated, disoriented, flushed, hot and dry, plucking at the leads. No... | plausible |
+| «any other phase» | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
 
 
 ### `patient_visual`
@@ -854,7 +886,7 @@ Single unconditional rule; nothing to enumerate.
 | phase | bicarb_given | resolves to | reachable? |
 |---|---|---|---|
 | «any phase» | no | rule 1 (default) &rarr; Sodium 135 mEq/L; Potassium 3.8 mEq/L; **Chloride 109 mEq/L**; **Bicarbonate 13 mEq/L**; BUN 12 mg/dL; Creatinine 0.8 mg/dL; Glucose 120 mg/dL | plausible |
-| «any phase» | yes | rule 0 (flag bicarb_given set) &rarr; **Sodium 146 mEq/L**; **Potassium 3.1 mEq/L**; Chloride 104 mEq/L; Bicarbonate 27 mEq/L; BUN 12 mg/dL; Creatinine 0.8 mg/dL; Glucose 126 mg/dL | plausible |
+| «any phase» | yes | rule 0 (flag bicarb_given set) &rarr; Sodium 141 mEq/L; **Potassium 3.1 mEq/L**; Chloride 107 mEq/L; **Bicarbonate 21 mEq/L**; BUN 12 mg/dL; Creatinine 0.8 mg/dL; Glucose 126 mg/dL | plausible |
 
 
 ### `labs/complete_blood_count_cbc`
@@ -866,18 +898,18 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | bicarb_given | resolves to | reachable? |
 |---|---|---|---|
-| seizing | no | rule 0 (phase is seizing) &rarr; **pH 7.15**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 12 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
-| seizing | yes | rule 0 (phase is seizing) &rarr; **pH 7.15**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 12 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
-| «any other phase» | no | rule 2 (default) &rarr; **pH 7.28**; **pCO2 34 mmHg**; pO2 94 mmHg; **Bicarbonate 13 mEq/L**; **Lactate 3.1 mmol/L** | plausible |
-| «any other phase» | yes | rule 1 (flag bicarb_given set) &rarr; **pH 7.51**; pCO2 36 mmHg; **pO2 142 mmHg**; **Bicarbonate 28 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
+| seizing | no | rule 0 (phase is seizing) &rarr; **pH 6.99**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 12 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
+| seizing | yes | rule 0 (phase is seizing) &rarr; **pH 6.99**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 12 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
+| «any other phase» | no | rule 2 (default) &rarr; **pH 7.28**; **pCO2 28 mmHg**; pO2 94 mmHg; **Bicarbonate 13 mEq/L**; **Lactate 3.1 mmol/L** | plausible |
+| «any other phase» | yes | rule 1 (flag bicarb_given set) &rarr; **pH 7.47**; **pCO2 30 mmHg**; **pO2 142 mmHg**; **Bicarbonate 21 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
 
 
 ### `labs/venous_blood_gas`
 
 | phase | bicarb_given | resolves to | reachable? |
 |---|---|---|---|
-| «any phase» | no | rule 1 (default) &rarr; **pH 7.25**; **pCO2 38 mmHg**; **Bicarbonate 13 mEq/L** | plausible |
-| «any phase» | yes | rule 0 (flag bicarb_given set) &rarr; **pH 7.47**; pCO2 42 mmHg; **Bicarbonate 28 mEq/L** | plausible |
+| «any phase» | no | rule 1 (default) &rarr; **pH 7.25**; **pCO2 31 mmHg**; **Bicarbonate 13 mEq/L** | plausible |
+| «any phase» | yes | rule 0 (flag bicarb_given set) &rarr; pH 7.41; **pCO2 34 mmHg**; **Bicarbonate 21 mEq/L** | plausible |
 
 
 ### `labs/lactate`
@@ -940,8 +972,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | bicarb_given | resolves to | reachable? |
 |---|---|---|---|
-| «any phase» | no | rule 1 (default) &rarr; Ionised calcium 1.18 mmol/L | plausible |
-| «any phase» | yes | rule 0 (flag bicarb_given set) &rarr; **Ionised calcium 1.09 mmol/L** | plausible |
+| «any phase» | no | rule 1 (default) &rarr; Ionized calcium 1.18 mmol/L | plausible |
+| «any phase» | yes | rule 0 (flag bicarb_given set) &rarr; **Ionized calcium 1.09 mmol/L** | plausible |
 
 
 ### `labs/liver_function_tests_lfts`
@@ -966,14 +998,22 @@ Single unconditional rule; nothing to enumerate.
 
 ### `imaging/ecg_12_lead`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| pulseless_vt | rule 0 (phase is pulseless_vt) &rarr; ABNORMAL: Wide-complex tachycardia at approximately 190 per minute. No organised... | plausible |
-| seizing | rule 2 (phase is seizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 150 per minute. QRS duration 148 ms... | plausible |
-| stabilized | rule 3 (phase is stabilized) &rarr; ABNORMAL: Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms.... | plausible |
-| stabilizing | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms... | plausible |
-| wide_complex_tachycardia | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Monomorphic wide-complex tachycardia at approximately 180 per minute. ... | plausible |
-| «any other phase» | rule 5 (default) &rarr;  | plausible |
+| phase | bicarb_given | resolves to | reachable? |
+|---|---|---|---|
+| presentation | no | rule 6 (default) &rarr;  | plausible |
+| presentation | yes | rule 5 (phase is presentation AND flag bicarb_given set) &rarr; ABNORMAL: Sinus tachycardia at approximately 135 per minute. QRS duration 116 ms... | plausible |
+| pulseless_vt | no | rule 0 (phase is pulseless_vt) &rarr; ABNORMAL: Wide-complex tachycardia at approximately 190 per minute. No organized... | plausible |
+| pulseless_vt | yes | rule 0 (phase is pulseless_vt) &rarr; ABNORMAL: Wide-complex tachycardia at approximately 190 per minute. No organized... | plausible |
+| seizing | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 150 per minute. QRS duration 148 ms... | plausible |
+| seizing | yes | rule 2 (phase is seizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 150 per minute. QRS duration 148 ms... | plausible |
+| stabilized | no | rule 3 (phase is stabilized) &rarr; ABNORMAL: Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms.... | plausible |
+| stabilized | yes | rule 3 (phase is stabilized) &rarr; ABNORMAL: Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms.... | plausible |
+| stabilizing | no | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms... | plausible |
+| stabilizing | yes | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms... | plausible |
+| wide_complex_tachycardia | no | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Monomorphic wide-complex tachycardia at approximately 180 per minute. ... | plausible |
+| wide_complex_tachycardia | yes | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Monomorphic wide-complex tachycardia at approximately 180 per minute. ... | plausible |
+| «any other phase» | no | rule 6 (default) &rarr;  | plausible |
+| «any other phase» | yes | rule 6 (default) &rarr;  | plausible |
 
 
 ### `imaging/xr_chest`
@@ -993,7 +1033,7 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| wide_complex_tachycardia | rule 0 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Fast, poorly organised ventricular contraction with reduced systolic f... | plausible |
+| wide_complex_tachycardia | rule 0 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Fast, poorly organized ventricular contraction with reduced systolic f... | plausible |
 | «any other phase» | rule 1 (default) &rarr; ABNORMAL: Vigorous left ventricular systolic function at a fast rate. No pericar... | plausible |
 
 
@@ -1282,7 +1322,7 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
-### `interview_topic/immunisations`
+### `interview_topic/immunizations`
 
 Single unconditional rule; nothing to enumerate.
 
