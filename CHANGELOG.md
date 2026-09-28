@@ -5,6 +5,32 @@ is usable with learners.
 
 ---
 
+## v0.18d: the Supabase project is connected
+
+`engine/site-config.json` now holds the project URL (`https://brhtyuahzbecpnqlgxib.supabase.co`)
+and its publishable key, so `site/index.html` offers sign-in instead of saying sign-in is not
+configured. The Content-Security-Policy in `vercel.json` now allows that one project instead
+of any `*.supabase.co` host. Both values are public by design. Supabase's documentation says
+the publishable key is "Safe to expose online: web page, mobile or desktop app, GitHub
+actions, CLIs, source code" (supabase.com/docs/guides/api/api-keys). What a signed-in user may
+fetch is still decided by the edge function and the database.
+
+The build now refuses a key that must stay private: a `sb_secret_` key, a legacy JWT whose
+role is not `anon`, or anything that is neither a publishable key nor an anon key. It also
+refuses a URL that is not a `supabase.co` project address.
+
+The page carries an empty icon, so the browser no longer asks the host for `/favicon.ico`
+and logs a 404 in the console. The site check began reporting this 404 in this run after
+passing before, most likely because the test browser changed.
+
+The site check builds its own unconfigured copy of the site instead of relying on the built
+one having no settings, and checks the site exactly as built: its Supabase URL is in the
+CSP, it offers sign-in, and while signed out it makes no call to Supabase (requests to the
+real project are blocked in the check). 37 checks, all ok. The case packs are byte for byte
+the same as v0.18c, so a pack already uploaded does not need uploading again.
+
+---
+
 ## v0.18c: US spelling
 
 Every case, the catalog and the interface now use US spelling: hemoglobin, edema,

@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>EMSim</title>
+<!-- An empty icon. Without one the browser asks the host for /favicon.ico, which does not
+     exist, and logs a 404 in the console that looks like a fault. -->
+<link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap" rel="stylesheet">
@@ -1418,7 +1421,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 <!-- v0.18. Which build this is. "local": every case is in cases-data above and there is no
      backend. "site": the deployed build, where most entries in cases-data are stubs whose
      packs load from Supabase after an invited user signs in (engine/access.js). -->
-<script type="application/json" id="access-data">{"mode": "site", "product": "EMSim", "legal": "© 2026 Aakash Setty. All rights reserved.", "supabaseUrl": "", "supabaseKey": "", "edgeFunction": "case-pack"}</script>
+<script type="application/json" id="access-data">{"mode": "site", "product": "EMSim", "legal": "© 2026 Aakash Setty. All rights reserved.", "supabaseUrl": "https://brhtyuahzbecpnqlgxib.supabase.co", "supabaseKey": "sb_publishable_DgJr_idTGmiuUi7oUtwDJw_V1kJK24Q", "edgeFunction": "case-pack"}</script>
 <!-- The room. A 45-second loop of ward ambience, base64 in its own block rather than in
      shared-data so that the test harness and anything else parsing the configuration does
      not carry a third of a megabyte it has no use for. Replaced at build time from

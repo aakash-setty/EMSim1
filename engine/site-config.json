@@ -3,8 +3,8 @@
   "productName": "EMSim",
   "copyrightHolder": "Aakash Setty",
   "copyrightYear": 2026,
-  "supabaseUrl": "",
-  "supabaseKey": "",
+  "supabaseUrl": "https://brhtyuahzbecpnqlgxib.supabase.co",
+  "supabaseKey": "sb_publishable_DgJr_idTGmiuUi7oUtwDJw_V1kJK24Q",
   "edgeFunction": "case-pack",
   "freeCases": []
 }

@@ -620,6 +620,34 @@ CSP_BASE = {
 }
 
 
+def check_public_key(key, url):
+    """Refuse to build a site around a key that must stay private. Everything in
+    site-config.json is published in site/index.html, and Supabase's documentation says a
+    secret key "bypasses every Row Level Security policy" and must never go "in a browser,
+    a shipped application, or source control" (supabase.com/docs/guides/api/api-keys)."""
+    key, url = (key or "").strip(), (url or "").strip()
+    if not key and not url:
+        return
+    if key.startswith("sb_secret_"):
+        raise SystemExit("site-config.json: supabaseKey is a SECRET key. Use the publishable key "
+                         "(sb_publishable_...). Rotate the secret key in the Supabase dashboard, "
+                         "since it has been written to a file.")
+    parts = key.split(".")
+    if len(parts) == 3:  # a legacy JWT key: anon is public, service_role is not
+        try:
+            claims = json.loads(base64.urlsafe_b64decode(parts[1] + "=" * (-len(parts[1]) % 4)))
+        except Exception:
+            claims = {}
+        if claims.get("role") != "anon":
+            raise SystemExit("site-config.json: supabaseKey is a JWT whose role is not anon. "
+                             "Use the publishable key or the legacy anon key.")
+    elif not key.startswith("sb_publishable_"):
+        raise SystemExit("site-config.json: supabaseKey is not a publishable key (sb_publishable_...) "
+                         "or a legacy anon key.")
+    if not re.fullmatch(r"https://[a-z0-9-]+\.supabase\.co/?", url):
+        raise SystemExit("site-config.json: supabaseUrl should look like https://<project-ref>.supabase.co")
+
+
 def write_headers(site_html):
     hashes = []
     for m in re.finditer(r"<script(?P<attrs>[^>]*)>(?P<body>.*?)</script>", site_html, re.S):
@@ -832,6 +860,7 @@ def main():
                 "packSha256": hashlib.sha256(body).hexdigest(),
                 "packBytes": len(body),
             })
+        check_public_key(cfg.get("supabaseKey", ""), cfg.get("supabaseUrl", ""))
         access = {"mode": "site", "product": product, "legal": legal,
                   "supabaseUrl": cfg.get("supabaseUrl", ""), "supabaseKey": cfg.get("supabaseKey", ""),
                   "edgeFunction": cfg.get("edgeFunction", "case-pack")}

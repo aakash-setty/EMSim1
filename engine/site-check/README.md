@@ -9,5 +9,9 @@ against PostgreSQL 16 separately when it was written.
     python3 engine/build_simulator.py
     bash engine/site-check/run.sh
 
+It also serves the site three ways: pointed at the mock, with no Supabase settings, and
+exactly as built. The as-built copy is only loaded, never signed in, and any request to a
+real `supabase.co` host is blocked, so the check never touches the live project.
+
 Every line should start with `ok`. Console errors for blocked outside hosts (fonts, the
 interview model) are ignored when the machine has no internet access.

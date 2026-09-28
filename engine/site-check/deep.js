@@ -10,6 +10,20 @@ const {chromium}=require('playwright');
  const u=await p.evaluate(()=>({acct:document.getElementById('wl-acct').innerText, dlg:!document.getElementById('signinview').classList.contains('hidden'), picker:!document.getElementById('picker').classList.contains('hidden')}));
  ok('unconfigured site says so and stays on the list', /not configured/.test(u.acct)&&!u.dlg&&u.picker, u);
  await p.close();
+ // 1b. the site exactly as built. Signed out, loading the page must not call Supabase at all,
+ // and with a project configured it offers sign-in. Requests to Supabase are blocked here, so
+ // this never touches the real project.
+ if(process.env.SITE_CONFIGURED==='1'){
+  p=await b.newPage({viewport:{width:1440,height:860}}); hook(p);
+  const calls=[]; await p.route(/supabase\.co/,r=>{calls.push(r.request().url()); r.abort();});
+  const cspBefore=csp.length;
+  await p.goto('http://localhost:8091/'); await p.waitForTimeout(1500);
+  const a=await p.evaluate(()=>({acct:document.getElementById('wl-acct').innerText, signin:!!document.getElementById('acct-in')}));
+  ok('as-built site offers sign-in', a.signin&&!/not configured/.test(a.acct), a);
+  ok('as-built site makes no Supabase call while signed out', calls.length===0, calls);
+  ok('as-built site loads with no CSP report', csp.length===cspBefore, csp.slice(cspBefore));
+  await p.close();
+ }
  // 2. configured site, a fuller run of one case
  p=await b.newPage({viewport:{width:1440,height:860}}); hook(p);
  await p.goto('http://localhost:8080/'); await p.waitForTimeout(1500);

@@ -33,6 +33,10 @@ private. Copies already cloned stay out there.
 2. Settings, API Keys: copy the **Project URL** and the **publishable key** (or the legacy
    `anon` key). Both are public values that end up in the site. Send them to Claude or put
    them in `engine/site-config.json` as `supabaseUrl` and `supabaseKey`, then rebuild.
+   Done in v0.18d for the project `brhtyuahzbecpnqlgxib`. The build refuses a secret or
+   service_role key, so pasting the wrong one stops the build instead of publishing it.
+   The "Connect" dialog in the dashboard shows Next.js steps (`npm install`, `.env.local`).
+   They do not apply here: the site is one static page with supabase-js already inside it.
 3. Never copy the **secret** or **service_role** key anywhere outside the dashboard. The
    edge function reads it from its own environment.
 
