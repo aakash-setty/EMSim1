@@ -5,6 +5,27 @@ is usable with learners.
 
 ---
 
+## v0.19d: STEMI on the demo monitor, and the logo
+
+The welcome page demo's ECG is now the simulator's own synthesiser (`MONITOR.synth`), not a
+hand-drawn curve: PR 160 ms, QRS 90 ms, QTc 440 ms, with the QT shortening by rate. It shows
+sinus tachycardia with a tombstone ST elevation in lead V3 (anterior STEMI), taken from the
+ECG generator's ST morphology library (ECG_Generator, `src/core/st-morphology.ts` and
+`src/core/leads.ts`; read only, not modified). Five of the generator's shape factors were
+adjusted by eye because this synthesiser joins ST and T differently; the comment in
+`engine/landing.js` lists each one. The trace is drawn sample by sample, which fixes the
+uneven complexes and the small gaps of the earlier drawing. The demo's closing text now
+points at the monitor: the ST elevation is a STEMI until a 12-lead says otherwise.
+
+`engine/monitor.js` gains optional morphology fields (`amp`, `stT`, `stShape`, `tSharp`,
+`tPeakFrac`) that no case uses. Every case trace is unchanged: 612,360 samples compared
+across widths, ST levels, T levels, P waves and rates, zero differences.
+
+The logo (`engine/assets/logo.png`, trimmed and made transparent from the supplied image)
+replaces the placeholder mark and the text name in the header, with the subtitle beside it.
+
+---
+
 ## v0.19a: welcome page header
 
 The welcome page header is taller (84 px, easing to 66 px once the page scrolls, with a soft

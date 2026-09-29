@@ -28,7 +28,7 @@ const LANDING=(function(){
     tired:'(his eyes are closing)'
   };
   function reset(){
-    V=Object.assign({},START); done=new Set(); over=false; t0=performance.now(); lastTick=t0;
+    V=Object.assign({},START); done=new Set(); over=false; t0=performance.now(); lastTick=t0; tLast=null;
     const o=$('ld-over'); if(o) o.hidden=true;
     document.querySelectorAll('#ld-actions button').forEach(b=>{b.disabled=false;b.classList.remove('done');});
     say(LINES.start); paintVitals(); paintFigure();
@@ -95,10 +95,10 @@ const LANDING=(function(){
     const o=$('ld-over'); if(!o) return;
     if(kind==='better'){
       $('ld-overtitle').textContent='Better. Not fixed.';
-      $('ld-overtext').textContent='His saturation is up, but his blood pressure is still high and his lungs are still full of fluid. What you do next decides how this goes.';
+      $('ld-overtext').textContent='His saturation is up. Now look at the monitor: that ST elevation is a STEMI until a 12-lead says otherwise, and BiPAP will not open an artery. What you do next decides how this goes.';
     }else{
       $('ld-overtitle').textContent="He's tiring.";
-      $('ld-overtext').textContent='Every minute on this monitor counts, and he needs more than oxygen. Take over the whole case: history, exam, orders and treatment.';
+      $('ld-overtext').textContent='Look at the monitor: that ST elevation is a STEMI until proven otherwise, and oxygen will not fix it. Every minute counts. Take over the whole case.';
     }
     o.hidden=false;
     A.track('landing_demo_end',{outcome:kind, actions:[...done].join(','), seconds:Math.round((performance.now()-t0)/1000)});
@@ -112,29 +112,74 @@ const LANDING=(function(){
     A.track('landing_demo_action',{action:what});
   }
 
-  /* ---- the monitor traces ---- */
-  let ecgX=0, plX=0, lastDraw=0, beatPhase=0;
-  function ecgAt(ph){ // one beat, phase 0..1
-    const g=(m,w,a)=>a*Math.exp(-Math.pow((ph-m)/w,2));
-    return g(.16,.03,.12)+g(.30,.008,-.14)+g(.33,.012,1)+g(.36,.01,-.25)+g(.58,.05,.28);
+  /* ---- the monitor traces ----
+     The ECG is the simulator's own synthesiser (MONITOR.synth in monitor.js), not a
+     drawing: real PR, QRS and QTc, and the QT shortens with rate the way a heart's does.
+     The morphology is the ECG generator's tombstone ST elevation (ECG_Generator,
+     src/core/st-morphology.ts) at a J-point level of 0.8 mV on lead V3's baseline complex
+     (src/core/leads.ts), which is where an anterior STEMI is largest: a small r, almost no
+     S, and QRS, ST and T fused into one dome. The T amplitude is the generator's formula
+     (0.6 x V3's T + 1.2 x level). Four figures were adjusted from the generator's, by eye,
+     because this synthesiser joins the ST plateau and the T wave differently and the
+     generator's own figures left a visible step between them: the ST level at T onset
+     (1.28 mV, from 0.92), the ST body exponent (0.8, from 0.3), the T peak position (0.08
+     of the ST-T span, from 0.4) and the T sharpness (1.1, from 0.7), with the R at 0.31 of
+     V3's (from 0.45) and the S at 0.1 (from 0.25). All of it is stylisation, not a fit to
+     data. The trace is sampled every 0.75 px, so no complex is lost between frames. */
+  const LEVEL=0.8, V3={p:0.05, q:0, r:0.8, s:-1.2, t:0.6};
+  const SPEC={pattern:'organised', pWaves:true, prS:0.16, qrsS:0.09, qtcS:0.44,
+    stMv:LEVEL, stT:1.28, stShape:0.8, tMv:0.6*V3.t+1.2*LEVEL, tSharp:1.1, tPeakFrac:0.08,
+    amp:{p:V3.p, q:V3.q, r:0.25, s:-0.12, t:V3.t}};
+  const SWEEP=4;                       // seconds across the canvas
+  let beats=[], nextQ=0, tLast=null, cache={};
+  function complexFor(rr){
+    const k=Math.round(rr*100);
+    if(!cache[k]) cache[k]=(typeof MONITOR==='object'&&MONITOR.synth)?MONITOR.synth(SPEC,k/100):null;
+    return cache[k];
+  }
+  function schedule(t){
+    while(nextQ<t+1.2){ const rr=60/Math.max(40,V.hr)*(1+(Math.random()-.5)*0.02);
+      beats.push({q:nextQ, rr, cx:complexFor(rr)}); nextQ+=rr; }
+    beats=beats.filter(b=>b.q+1.5>t-0.2);
+  }
+  function ecgAt(t){
+    let v=0;
+    for(const b of beats){ if(!b.cx) continue; const x=t-b.q; if(x>b.cx.on&&x<b.cx.off) v+=b.cx.at(x); }
+    return v;
+  }
+  function plethAt(t){
+    let b=null; for(const x of beats){ if(x.q+0.18<=t) b=x; }
+    if(!b) return 0;
+    const ph=(t-b.q-0.18)/b.rr; if(ph<0||ph>1) return 0;
+    return Math.max(0,Math.sin(Math.PI*Math.min(1,ph*1.8)))*(1-ph*0.45)*(V.sp/100);
   }
   function drawTraces(now){
-    const dt=lastDraw?Math.min(64,now-lastDraw):16; lastDraw=now;
-    const beats=V.hr/60*dt/1000; beatPhase=(beatPhase+beats)%1;
-    [['ld-ecg','#3EE08F',()=>ecgAt(beatPhase),x=>ecgX=x,()=>ecgX],
-     ['ld-pleth','#5FC8FF',()=>{const p=(beatPhase+.85)%1; return Math.max(0,Math.sin(Math.PI*Math.min(1,p*1.6)))*(1-p*.4)*(V.sp/100);},x=>plX=x,()=>plX]]
-    .forEach(([id,col,fn,setX,getX])=>{
+    const t=(now-t0)/1000;
+    if(tLast===null||t<tLast){ tLast=t; beats=[]; nextQ=t+0.3; }
+    schedule(t);
+    [['ld-ecg','#3EE08F',ecgAt,0.64,0.34],['ld-pleth','#5FC8FF',plethAt,0.88,0.72]].forEach(([id,col,fn,base,gain])=>{
       const c=$(id); if(!c) return;
-      const w=c.clientWidth|0, h=c.height; if(!w) return;
-      if(c.width!==w){ c.width=w; setX(0); }
-      const ctx=c.getContext('2d'), speed=w/4*dt/1000;
-      let x=getX(); const nx=x+speed;
-      ctx.clearRect(x,0,speed+14,h);
-      ctx.strokeStyle=col; ctx.lineWidth=1.8; ctx.beginPath();
-      const y=h*0.72-fn()*h*0.6;
-      ctx.moveTo(x,c._y==null?y:c._y); ctx.lineTo(nx,y); ctx.stroke(); c._y=y;
-      setX(nx>=w?0:nx); if(nx>=w) c._y=null;
+      const dpr=window.devicePixelRatio||1, w=c.clientWidth, h=c.clientHeight; if(!w||!h) return;
+      if(c.width!==Math.round(w*dpr)||c.height!==Math.round(h*dpr)){ c.width=Math.round(w*dpr); c.height=Math.round(h*dpr); c._y=null; }
+      const ctx=c.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+      const xOf=tt=>((tt%SWEEP)+SWEEP)%SWEEP/SWEEP*w, yOf=v=>h*base-v*h*gain;
+      const x0=xOf(tLast), x1=xOf(t);
+      const segs= x1>=x0 ? [[x0,x1,tLast]] : [[x0,w,tLast],[0,x1,t-x1/w*SWEEP]];
+      ctx.strokeStyle=col; ctx.lineWidth=1.7; ctx.lineJoin='round';
+      for(const [a,bx,ta] of segs){
+        /* Erase only ahead of the pen, like a monitor's sweep gap, so the stroke just
+           drawn is never clipped at a frame boundary. */
+        ctx.clearRect(bx+1,0,14,h); if(bx+15>w) ctx.clearRect(0,0,bx+15-w,h);
+        ctx.beginPath();
+        if(c._y!=null&&a!==0) ctx.moveTo(c._x,c._y); else ctx.moveTo(a,yOf(fn(ta)));
+        /* Start from the last point actually drawn, and always end exactly on bx. */
+        for(let x=a;;x=Math.min(bx,x+0.75)){ const tt=ta+(x-a)/w*SWEEP, y=yOf(fn(tt));
+          ctx.lineTo(x,y); c._x=x; c._y=y; if(x>=bx) break; }
+        ctx.stroke();
+        if(bx>=w) c._y=null;
+      }
     });
+    tLast=t;
   }
 
   /* ---- the page ---- */

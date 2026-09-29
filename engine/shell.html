@@ -1167,6 +1167,15 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   background:#fff;border:1px solid var(--rule2);box-shadow:0 2px 8px rgba(21,48,66,.08);transition:width .22s ease,height .22s ease}
 .ld-top.scrolled .ld-logo{width:38px;height:38px;flex-basis:38px}
 .ld-logo img{width:100%;height:100%;object-fit:contain}
+/* With the real logo (a wide wordmark that already says EMSim) the square frame and the
+   text name give way: the logo stands on its own, with the subtitle beside it. */
+.ld-logo:has(img){width:auto;height:auto;flex:0 0 auto;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible}
+.ld-logo:has(img){display:block}
+.ld-logo img.ld-logoimg{display:block;width:auto;height:58px;transition:height .22s ease}
+.ld-top.scrolled .ld-logo img.ld-logoimg{height:46px}
+.ld-top.scrolled .ld-logo:has(img){width:auto;height:auto}
+.ld-brand:has(.ld-logo img) .ld-name{font-size:0;padding-left:14px;border-left:1px solid var(--rule)}
+.ld-brand:has(.ld-logo img) .ld-name small{margin-top:0;font-size:14px;line-height:1.3;max-width:150px}
 .ld-mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#1A7A55,#1F6FB2);position:relative}
 .ld-mark::after{content:"";position:absolute;left:5px;right:5px;top:12px;height:2px;background:#fff;
   clip-path:polygon(0 0,35% 0,45% -250%,55% 350%,65% 0,100% 0,100% 100%,0 100%)}
@@ -1213,7 +1222,10 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 .ld-v.hr .n{color:#3EE08F}.ld-v.bp .n{color:#FF8A7A}.ld-v.sp .n{color:#5FC8FF}.ld-v.rr .n{color:#FFD24D}
 .ld-v.bad .n{animation:ldBlink 1s steps(2,start) infinite}
 @keyframes ldBlink{50%{opacity:.35}}
-.ld-trace{display:block;width:100%}
+.ld-trace{display:block;width:100%;height:96px}
+.ld-trace.pleth{height:40px}
+.ld-lead{position:relative}
+.ld-lead span{position:absolute;left:0;top:2px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:#6E8797}
 .ld-alarm{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;
   color:#fff;background:var(--harm);padding:3px 8px;border-radius:4px;animation:ldBlink 1s steps(2,start) infinite}
 .ld-alarm[hidden]{display:none}
@@ -1280,6 +1292,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   .ld-top .ld-btn{padding:0 12px;height:38px;font-size:13.5px}.ld-top .ld-btn .arr{display:none}
   .ld-strip{grid-template-columns:1fr}.ld-stat b{font-size:44px}
   .ld-name small{display:none}.ld-logo{width:38px;height:38px;flex-basis:38px}
+  .ld-logo img.ld-logoimg{height:42px}.ld-top.scrolled .ld-logo img.ld-logoimg{height:38px}
   .ld-nav{display:none}.ld-cards{grid-template-columns:1fr}
   .ld-actions{grid-template-columns:1fr}.ld-auth .ghost{display:none}
 }
@@ -1340,8 +1353,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
           <div class="ld-v sp"><span class="k">SpO&#8322;</span><span class="n" id="ld-sp">85</span></div>
           <div class="ld-v rr"><span class="k">RR</span><span class="n" id="ld-rr">32</span></div>
         </div>
-        <canvas id="ld-ecg" class="ld-trace" height="70" aria-hidden="true"></canvas>
-        <canvas id="ld-pleth" class="ld-trace pleth" height="38" aria-hidden="true"></canvas>
+        <div class="ld-lead"><span>V3</span><canvas id="ld-ecg" class="ld-trace ecg" aria-hidden="true"></canvas></div>
+        <div class="ld-lead"><span>Pleth</span><canvas id="ld-pleth" class="ld-trace pleth" aria-hidden="true"></canvas></div>
       </div>
       <div class="ld-bed">
         <div class="ld-patient" id="ld-patient" aria-hidden="true"></div>

@@ -831,7 +831,7 @@ def main():
     for ext, mime in (("svg", "image/svg+xml"), ("png", "image/png")):
         lp = os.path.join(HERE, "assets", "logo." + ext)
         if os.path.exists(lp):
-            logo_html = ('<img alt="" src="data:' + mime + ';base64,' +
+            logo_html = ('<img class="ld-logoimg" alt="" src="data:' + mime + ';base64,' +
                          base64.b64encode(open(lp, "rb").read()).decode() + '">')
             break
     shell = shell.replace("__LOGO__", logo_html)

@@ -226,7 +226,14 @@ const MONITOR = (() => {
      is discordant to it. The figures in the blend are stylisations tuned to look like
      the exemplar tracings the generator was tuned against, not measurements. */
   const AMP = { p: 0.15, q: -0.05, r: 1.1, s: -0.15, t: 0.35 };
+  /* v0.19d. Optional morphology overrides, used by the welcome page's demo and absent from
+     every case spec, so a case trace is unchanged: `amp` replaces the lead II amplitudes
+     key by key (another lead's baseline), `stT` sets the ST level at T onset apart from the
+     J point, `stShape` bends the ST body (below 1 convex), and `tSharp` and `tPeakFrac`
+     shape the T wave. Together they carry the ECG generator's ST morphology library
+     (ECG_Generator/src/core/st-morphology.ts) into this synthesiser. */
   function synth(spec, rrS) {
+    const A = Object.assign({}, AMP, spec.amp || {});
     const rr = Math.max(0.25, rrS || 0.8);
     const qrs = spec.qrsS;
     /* QT by Bazett from the authored QTc, then partitioned: the ST segment's share of
@@ -240,7 +247,7 @@ const MONITOR = (() => {
     let st = 0.32 * Math.sqrt(Math.max(0.2, rr)) * jt;
     st = Math.max(0, Math.min(st, jt - 0.08));
     const tOn = qrs + st, tOff = qt;
-    const tPeakFrac = 0.5 + 0.05 * Math.max(0, Math.min(1, (rr - 0.5) / 0.5));
+    const tPeakFrac = typeof spec.tPeakFrac === 'number' ? spec.tPeakFrac : 0.5 + 0.05 * Math.max(0, Math.min(1, (rr - 0.5) / 0.5));
 
     /* The width blend. 0 at 90 ms and below, 1 at 170 ms and above. It starts at the
        upper edge of normal and saturates well before the widest QRS a case authors,
@@ -249,9 +256,9 @@ const MONITOR = (() => {
        slightly heavy normal one. Timing is still literal: only the shape steepens. */
     const w = Math.max(0, Math.min(1, (qrs - 0.09) / 0.08));
     const lerp = (a, b) => a + (b - a) * w;
-    const qAmp = AMP.q * (1 - w);
-    const rAmp = lerp(AMP.r, 0.85);
-    const sAmp = lerp(AMP.s, -0.95);
+    const qAmp = A.q * (1 - w);
+    const rAmp = lerp(A.r, 0.85);
+    const sAmp = lerp(A.s, -0.95);
     const qrsSharp = 0.8, termSharp = lerp(0.8, 1.5);
     const qPeak = 0.12 * qrs;
     const rPeak = lerp(0.40, Math.min(0.30, 0.03 / qrs)) * qrs;
@@ -259,8 +266,8 @@ const MONITOR = (() => {
     /* Secondary repolarisation, blended in with the width: J point at 0.3 of the
        terminal deflection with its sign, T at 0.8 of it with the opposite sign. */
     const stJ = spec.stMv + w * 0.3 * sAmp;
-    const stT = spec.stMv + w * 0.15 * sAmp;
-    const tAmp = spec.tMv !== null ? spec.tMv : lerp(AMP.t, -0.8 * sAmp);
+    const stT = (typeof spec.stT === 'number' ? spec.stT : spec.stMv) + w * 0.15 * sAmp;
+    const tAmp = spec.tMv !== null && spec.tMv !== undefined ? spec.tMv : lerp(A.t, -0.8 * sAmp);
 
     const parts = [];
     const lm = { pOn: null, pOff: null, qrsOn: 0, j: qrs, tOn, tOff };
@@ -272,19 +279,19 @@ const MONITOR = (() => {
       const pDur = rr < 0.5 ? 0.08 : 0.09;
       const pr = Math.min(spec.prS, Math.max(pDur + 0.02, rr - 0.03));
       lm.pOn = -pr; lm.pOff = -pr + pDur;
-      parts.push(bump(lm.pOn, lm.pOn + 0.5 * pDur, lm.pOff, AMP.p, 1.0));
+      parts.push(bump(lm.pOn, lm.pOn + 0.5 * pDur, lm.pOff, A.p, 1.0));
     }
     if (qAmp !== 0) parts.push(bump(0, qPeak, rPeak, qAmp, qrsSharp));
     parts.push(bump(qAmp !== 0 ? qPeak : 0, rPeak, sPeak, rAmp, qrsSharp));
     parts.push(bump(rPeak, sPeak, qrs, sAmp, termSharp));
     let stPart = null;
-    if (stJ !== 0 || stT !== 0) { stPart = plateau(sPeak, qrs, tOn, tOff, stJ, stT, 1); parts.push(stPart); }
+    if (stJ !== 0 || stT !== 0) { stPart = plateau(sPeak, qrs, tOn, tOff, stJ, stT, spec.stShape || 1); parts.push(stPart); }
     if (tAmp !== 0) {
       const tPeak = tOn + tPeakFrac * (tOff - tOn);
       const under = stPart ? stPart.at(tPeak) : 0;
       /* The bump is reduced by what the plateau contributes at the T peak, so the T
          measured from the baseline is the requested figure. */
-      parts.push(bump(tOn, tPeak, tOff, tAmp - under, 1.0));
+      parts.push(bump(tOn, tPeak, tOff, tAmp - under, spec.tSharp || 1.0));
     }
     const on = Math.min(...parts.map(d => d.on)), off = Math.max(...parts.map(d => d.off));
     return { on, off, landmarks: lm, parts, at(t) {
