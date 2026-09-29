@@ -1178,9 +1178,6 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 .ld-nav a:hover{color:var(--ink);background:rgba(255,255,255,.8)}
 .ld-nav a.on{color:var(--act);background:#fff;box-shadow:0 1px 4px rgba(21,48,66,.12)}
 .ld-auth{display:flex;align-items:center;gap:8px}
-.ld-free{display:inline-flex;align-items:center;gap:7px;margin-right:6px;font-size:12.5px;font-weight:500;color:var(--ok);
-  background:var(--okl);border:1px solid rgba(26,122,85,.2);padding:5px 11px;border-radius:999px;white-space:nowrap}
-.ld-free .dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
 .ld-btn.text{background:none;color:var(--ink);border-color:transparent}
 .ld-btn.text:hover{color:var(--act);background:rgba(31,111,178,.07)}
 .ld-top .ld-btn{height:42px;padding:0 18px;border-radius:10px;white-space:nowrap}
@@ -1276,7 +1273,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   .ld-row,.ld-row.flip{grid-template-columns:1fr}.ld-row.flip .ld-shot{order:0}
   .ld-strip{grid-template-columns:repeat(2,1fr)}
 }
-@media (max-width:1180px){ .ld-free{display:none} .ld-name small{display:none} }
+@media (max-width:1180px){ .ld-name small{display:none} }
 @media (max-width:960px){ .ld-top{grid-template-columns:auto 1fr} .ld-nav{display:none} .ld-auth{justify-self:end} }
 @media (max-width:600px){
   .ld-top{height:68px;gap:12px}.ld-top.scrolled{height:60px}
@@ -1311,9 +1308,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       <a href="#ld-cases" data-sec="ld-cases">Cases</a>
     </nav>
     <div class="ld-auth">
-      <span class="ld-free" aria-hidden="true"><span class="dot"></span>Free while in review</span>
       <button type="button" class="ld-btn text" data-ld="login">Log in</button>
-      <button type="button" class="ld-btn primary" data-ld="signup">Sign up free<span class="arr" aria-hidden="true">&rarr;</span></button>
+      <button type="button" class="ld-btn primary" data-ld="signup">Sign Up Free!<span class="arr" aria-hidden="true">&rarr;</span></button>
     </div>
   </header>
 
@@ -1324,7 +1320,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       <p class="ld-lede">Run emergency cases in your browser. Take the history, examine, order and treat
         while the patient changes by the minute. Then see exactly what your timing cost.</p>
       <div class="ld-ctas">
-        <button type="button" class="ld-btn primary big" data-ld="signup">Sign up free</button>
+        <button type="button" class="ld-btn primary big" data-ld="signup">Sign Up Free!</button>
         <button type="button" class="ld-btn ghost big" data-ld="login">Log in</button>
       </div>
       <p class="ld-fine">Free to use. Cases are drafts under clinical review and are not for patient care.</p>
@@ -1361,7 +1357,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
           <h3 id="ld-overtitle">Better. Not fixed.</h3>
           <p id="ld-overtext">His saturation is up, but his blood pressure is still 180 and his lungs are
             full of fluid. What you do next decides how this goes.</p>
-          <button type="button" class="ld-btn primary big" data-ld="signup">Help the patient: sign up free</button>
+          <button type="button" class="ld-btn primary big" data-ld="signup">Help the Patient: Sign Up Free!</button>
           <button type="button" class="ld-linkbtn" id="ld-again">Watch it again</button>
         </div>
       </div>
@@ -1430,7 +1426,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 
   <section class="ld-final">
     <h2>Your next patient is already short of breath.</h2>
-    <button type="button" class="ld-btn primary big" data-ld="signup">Sign up free</button>
+    <button type="button" class="ld-btn primary big" data-ld="signup">Sign Up Free!</button>
   </section>
 
   <footer class="ld-foot">
