@@ -115,21 +115,19 @@ const LANDING=(function(){
   /* ---- the monitor traces ----
      The ECG is the simulator's own synthesiser (MONITOR.synth in monitor.js), not a
      drawing: real PR, QRS and QTc, and the QT shortens with rate the way a heart's does.
-     The morphology is the ECG generator's tombstone ST elevation (ECG_Generator,
-     src/core/st-morphology.ts) at a J-point level of 0.8 mV on lead V3's baseline complex
-     (src/core/leads.ts), which is where an anterior STEMI is largest: a small r, almost no
-     S, and QRS, ST and T fused into one dome. The T amplitude is the generator's formula
-     (0.6 x V3's T + 1.2 x level). Four figures were adjusted from the generator's, by eye,
-     because this synthesiser joins the ST plateau and the T wave differently and the
-     generator's own figures left a visible step between them: the ST level at T onset
-     (1.28 mV, from 0.92), the ST body exponent (0.8, from 0.3), the T peak position (0.08
-     of the ST-T span, from 0.4) and the T sharpness (1.1, from 0.7), with the R at 0.31 of
-     V3's (from 0.45) and the S at 0.1 (from 0.25). All of it is stylisation, not a fit to
-     data. The trace is sampled every 0.75 px, so no complex is lost between frames. */
-  const LEVEL=0.8, V3={p:0.05, q:0, r:0.8, s:-1.2, t:0.6};
+     The morphology is the ECG generator's straight upsloping ST elevation (ECG_Generator,
+     src/core/st-morphology.ts) at a J-point level of 0.5 mV on lead V3's baseline complex
+     (src/core/leads.ts). 0.5 mV is the generator's own anterior STEMI preset, and V3 is
+     where the anterior territory weights it fully. The figures are the generator's exactly:
+     ST at T onset = level + 0.6 x level (0.8 mV), a linear segment (exponent 1), and
+     T = 1.1 x V3's T + 0.3 x level (0.81 mV); R and S are V3's own. All of it is the
+     generator's stylisation, not a fit to data. The trace is sampled every 0.75 px, so no
+     complex is lost between frames. */
+  const LEVEL=0.5, V3={p:0.05, q:0, r:0.8, s:-1.2, t:0.6};
+  const UP={slope:0.6, shape:1.0, tScale:1.1, tAdd:0.3};
   const SPEC={pattern:'organised', pWaves:true, prS:0.16, qrsS:0.09, qtcS:0.44,
-    stMv:LEVEL, stT:1.28, stShape:0.8, tMv:0.6*V3.t+1.2*LEVEL, tSharp:1.1, tPeakFrac:0.08,
-    amp:{p:V3.p, q:V3.q, r:0.25, s:-0.12, t:V3.t}};
+    stMv:LEVEL, stT:LEVEL+UP.slope*LEVEL, stShape:UP.shape, tMv:UP.tScale*V3.t+UP.tAdd*LEVEL,
+    amp:Object.assign({},V3)};
   const SWEEP=4;                       // seconds across the canvas
   let beats=[], nextQ=0, tLast=null, cache={};
   function complexFor(rr){
@@ -157,7 +155,7 @@ const LANDING=(function(){
     const t=(now-t0)/1000;
     if(tLast===null||t<tLast){ tLast=t; beats=[]; nextQ=t+0.3; }
     schedule(t);
-    [['ld-ecg','#3EE08F',ecgAt,0.64,0.34],['ld-pleth','#5FC8FF',plethAt,0.88,0.72]].forEach(([id,col,fn,base,gain])=>{
+    [['ld-ecg','#3EE08F',ecgAt,0.47,0.34],['ld-pleth','#5FC8FF',plethAt,0.88,0.72]].forEach(([id,col,fn,base,gain])=>{
       const c=$(id); if(!c) return;
       const dpr=window.devicePixelRatio||1, w=c.clientWidth, h=c.clientHeight; if(!w||!h) return;
       if(c.width!==Math.round(w*dpr)||c.height!==Math.round(h*dpr)){ c.width=Math.round(w*dpr); c.height=Math.round(h*dpr); c._y=null; }

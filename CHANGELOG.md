@@ -5,6 +5,15 @@ is usable with learners.
 
 ---
 
+## v0.19f: straight upsloping STEMI on the demo monitor
+
+The welcome page demo's V3 trace now shows straight upsloping ST elevation instead of a
+tombstone, on feedback. The figures are the ECG generator's own, unadjusted: J point 0.5 mV
+(its anterior STEMI preset), ST at T onset 0.8 mV on a straight segment, T 0.81 mV, and V3's
+own R and S. The trace sits a little higher on the canvas to fit V3's deep S wave.
+
+---
+
 ## v0.19d: STEMI on the demo monitor, and the logo
 
 The welcome page demo's ECG is now the simulator's own synthesiser (`MONITOR.synth`), not a
