@@ -5,6 +5,13 @@ is usable with learners.
 
 ---
 
+## v0.19i: Google logo on the Google sign-in button
+
+"Continue with Google" in the sign-in and sign-up dialogs now carries Google's four-colour
+G mark, inline SVG at 18 px, as Google's sign-in branding guidelines ask for.
+
+---
+
 ## v0.19h: emergency lights and a header ambulance on the welcome page
 
 - Lights in the distance. Two rotating beacons, red and blue, sit far behind the screen.
