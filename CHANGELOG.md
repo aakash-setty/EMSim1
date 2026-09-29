@@ -5,6 +5,44 @@ is usable with learners.
 
 ---
 
+## v0.19h: emergency lights and a header ambulance on the welcome page
+
+- Lights in the distance. Two rotating beacons, red and blue, sit far behind the screen.
+  No source or beam is visible, only the diffuse light they throw: a broad soft glow that
+  sweeps across the page and swells while each beacon faces the viewer, plus a faint
+  multiply wash of the same colour over the whole page, so white cards pick it up. Drawn on
+  a quarter-resolution canvas stretched to full screen. Nothing strobes: each beacon peaks
+  about once every two seconds, gradually, and the wash only tints white. Blue runs at 72%
+  of red's strength because it reads stronger on the pale page.
+- Header ambulance. It drives in from the right facing left, brakes to a stop beside the
+  logo (nose dips), turns round, then drives on the spot facing right while lane dashes,
+  grit and roadside posts run past beneath it. It drifts forward and back as its speed
+  varies, with wheel spin, body bob and pitch following that speed, and its light bar
+  flashes red twice then blue twice. It passes behind the nav and buttons. Hidden where the
+  gap between logo and nav is under 100 px (phones).
+- Reduced motion: one still frame of the lights, and the ambulance parked facing right.
+
+---
+
+## v0.19g: two-step welcome page demo
+
+After the first choice (sit up, non-rebreather or BiPAP), the demo waits 3 seconds and asks
+"What next?" with two options.
+
+- Get an ECG: the 12-lead result appears ("ST elevation V1 to V4. Anterior STEMI.") and the
+  overlay reads "Good call. Anterior STEMI." with "Continue the Case: Sign Up Free!".
+- Push Metoprolol IV: the button turns red, vitals walk toward BP 72/40, SpO2 79, HR 104,
+  the alarm reads BP LOW, the patient goes grey and barely rousable, and after 6 seconds
+  the overlay reads "He's crashing." with "Help the Patient: Sign Up Free!".
+
+Rationale for the metoprolol branch: the 2013 ACCF/AHA STEMI guideline lists IV
+beta-blockers as class III (harm) in STEMI with signs of heart failure or risk of
+cardiogenic shock, and COMMIT (Lancet 2005) found more cardiogenic shock with early IV
+metoprolol. The demo's rate and timing are illustrative, not modelled. Needs physician
+review with the rest of the demo.
+
+---
+
 ## v0.19f: straight upsloping STEMI on the demo monitor
 
 The welcome page demo's V3 trace now shows straight upsloping ST elevation instead of a

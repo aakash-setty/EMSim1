@@ -1162,6 +1162,25 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 .ld-top.scrolled{height:66px;background:rgba(255,255,255,.92);box-shadow:0 1px 0 var(--rule2),0 8px 24px rgba(21,48,66,.08)}
 .ld-top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;
   background:linear-gradient(90deg,transparent,rgba(31,111,178,.35),rgba(26,122,85,.35),transparent);opacity:.7}
+/* v0.19h. Lights in the distance: a canvas drawn at a quarter of the screen's resolution and
+   stretched to fill it, so the browser's upscaling does the blurring. It sits behind the page
+   (the sections are transparent over the paper colour). The wash is a pale red or blue laid
+   over everything with multiply, so white cards pick up the colour and dark text does not. */
+.ld-sirens{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;display:block}
+.ld-wash{position:fixed;inset:0;z-index:4;pointer-events:none;mix-blend-mode:multiply}
+.ld-wash i{position:absolute;inset:0;opacity:0;will-change:opacity}
+.ld-wash i.r{background:radial-gradient(120% 90% at 55% 20%,#ffd4d4,#ffe9e9 70%)}
+.ld-wash i.b{background:radial-gradient(120% 90% at 65% 20%,#d3e0ff,#e8efff 70%)}
+.landing>section,.landing>footer{position:relative;z-index:1}
+/* The header ambulance and its road run behind the logo, nav and buttons. */
+.ld-top>*:not(.ld-ambwrap){position:relative;z-index:1}
+.ld-ambwrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.ld-ambwrap.off{display:none}
+.ld-amb{position:absolute;left:0;bottom:9px;width:64px;height:32px;will-change:transform;opacity:0}
+.ld-amb svg{display:block;overflow:visible}
+.ld-road{position:absolute;bottom:4px;left:0;height:22px;width:10px;opacity:0;transition:opacity .8s ease;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+.ld-road.on{opacity:1}
 .ld-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
 .ld-logo{width:44px;height:44px;flex:0 0 44px;border-radius:12px;display:grid;place-items:center;overflow:hidden;
   background:#fff;border:1px solid var(--rule2);box-shadow:0 2px 8px rgba(21,48,66,.08);transition:width .22s ease,height .22s ease}
@@ -1236,9 +1255,16 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 .ld-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 14px 14px;background:#fff;border-top:1px solid var(--rule2)}
 .ld-actions button{font:inherit;font-size:13.5px;font-weight:600;color:var(--act);background:#fff;border:1px solid var(--actb);
   border-radius:8px;padding:11px 8px;cursor:pointer;transition:background .15s ease,transform .1s ease}
+.ld-actions.two{grid-template-columns:repeat(2,1fr)}
+.ld-ask{grid-column:1/-1;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin:-2px 0 0}
+.ld-actions button{animation:ldIn .35s ease both}
+@keyframes ldIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ld-say.result{font-style:normal;font-family:var(--mono);font-size:13px;color:var(--harm);border-color:var(--harmb)}
+.ld-over.good .ld-overcard h3{color:var(--ok)}
 .ld-actions button:hover:not(:disabled){background:var(--actl);transform:translateY(-1px)}
 .ld-actions button:disabled{opacity:.45;cursor:default}
 .ld-actions button.done{border-color:var(--ok);color:var(--ok);background:var(--okl);opacity:1}
+.ld-actions button.bad{border-color:#c0392b;color:#c0392b;background:#fdecea;opacity:1}
 .ld-over{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:16px;
   background:linear-gradient(180deg,rgba(255,255,255,0) 18%,rgba(255,255,255,.95) 60%)}
 .ld-over[hidden]{display:none}
@@ -1308,7 +1334,45 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
      out; signing in takes them to the case board below. The local build shows it only with
      ?landing in the address, for previews and screenshots. -->
 <div id="landing" class="landing hidden" aria-label="__PRODUCT__ welcome">
+  <!-- v0.19h. Emergency lights in the distance behind the page, and the faint colour they cast
+       over it (engine/landing.js, FX). Decorative only. -->
+  <canvas class="ld-sirens" id="ld-sirens" aria-hidden="true"></canvas>
+  <div class="ld-wash" aria-hidden="true"><i class="r" id="ld-wash-r"></i><i class="b" id="ld-wash-b"></i></div>
   <header class="ld-top" id="ld-top">
+    <!-- The header ambulance (engine/landing.js, AMB): it drives in from the right, stops at
+         the logo, turns round and drives on the spot over a moving road. -->
+    <div class="ld-ambwrap" id="ld-ambwrap" aria-hidden="true">
+      <canvas class="ld-road" id="ld-road"></canvas>
+      <div class="ld-amb" id="ld-amb"><svg viewBox="0 0 72 36" width="64" height="32" focusable="false">
+        <defs>
+          <radialGradient id="ab-gr"><stop offset="0" stop-color="#ff3030" stop-opacity=".85"/><stop offset="1" stop-color="#ff3030" stop-opacity="0"/></radialGradient>
+          <radialGradient id="ab-gb"><stop offset="0" stop-color="#2f6bff" stop-opacity=".85"/><stop offset="1" stop-color="#2f6bff" stop-opacity="0"/></radialGradient>
+          <linearGradient id="ab-hl" x1="0" x2="1"><stop offset="0" stop-color="#ffe9a8" stop-opacity=".55"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/></linearGradient>
+        </defs>
+        <ellipse cx="36" cy="34.3" rx="31" ry="1.7" fill="rgba(21,48,66,.2)"/>
+        <g id="ab-body">
+          <path d="M70 23.2 L86 20 L86 30 L70 26.2 Z" fill="url(#ab-hl)"/>
+          <rect x="2" y="7" width="45" height="22" rx="3" fill="#fff" stroke="#93a6b5" stroke-width="1"/>
+          <path d="M47 13 H58 L65.5 20.5 H67 Q70 21 70 24 V27.5 Q70 29 68.5 29 H47 Z" fill="#fff" stroke="#93a6b5" stroke-width="1"/>
+          <path d="M49.5 15 H57.3 L62.6 20.3 H49.5 Z" fill="#a9cbe6"/>
+          <rect x="5" y="10" width="7" height="6" rx="1" fill="#a9cbe6"/>
+          <line x1="33.5" y1="9.5" x2="33.5" y2="28" stroke="#d3dce3" stroke-width=".8"/>
+          <rect x="2.5" y="21.5" width="67" height="3" fill="#d0312d"/>
+          <rect x="20.5" y="9.5" width="5" height="10" rx=".7" fill="#1F6FB2"/>
+          <rect x="18" y="12" width="10" height="5" rx=".7" fill="#1F6FB2"/>
+          <rect x="68" y="23.3" width="2.3" height="2.1" rx=".6" fill="#f6c343"/>
+          <rect x="1.1" y="22.6" width="1.9" height="3.6" rx=".4" fill="#e04848"/>
+          <rect x="35.5" y="3.8" width="11" height="3.4" rx="1.2" fill="#2b3a45"/>
+          <circle id="ab-rg" cx="38.2" cy="5.5" r="8" fill="url(#ab-gr)"/>
+          <circle id="ab-bg" cx="43.8" cy="5.5" r="8" fill="url(#ab-gb)"/>
+          <rect id="ab-r" x="36.1" y="4.3" width="4.4" height="2.4" rx=".7" fill="#ff3b3b"/>
+          <rect id="ab-b" x="41.5" y="4.3" width="4.4" height="2.4" rx=".7" fill="#3b7bff"/>
+          <circle cx="15" cy="29" r="6.8" fill="#3d4a54"/><circle cx="56" cy="29" r="6.8" fill="#3d4a54"/>
+        </g>
+        <g id="ab-w1"><circle cx="15" cy="29" r="5.6" fill="#1e2a33"/><circle cx="15" cy="29" r="2.7" fill="#c9d2da"/><path d="M15 26.3 V31.7 M12.3 29 H17.7" stroke="#6b7c89" stroke-width="1"/></g>
+        <g id="ab-w2"><circle cx="56" cy="29" r="5.6" fill="#1e2a33"/><circle cx="56" cy="29" r="2.7" fill="#c9d2da"/><path d="M56 26.3 V31.7 M53.3 29 H58.7" stroke="#6b7c89" stroke-width="1"/></g>
+      </svg></div>
+    </div>
     <a class="ld-brand" href="#ld-hero" aria-label="__PRODUCT__, back to top">
       <!-- The logo slot. Put the logo at engine/assets/logo.svg (or .png) and the build uses it;
            until then it shows the placeholder mark. It is sized as a 44 px square. -->
@@ -1370,7 +1434,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
           <h3 id="ld-overtitle">Better. Not fixed.</h3>
           <p id="ld-overtext">His saturation is up, but his blood pressure is still 180 and his lungs are
             full of fluid. What you do next decides how this goes.</p>
-          <button type="button" class="ld-btn primary big" data-ld="signup">Help the Patient: Sign Up Free!</button>
+          <button type="button" class="ld-btn primary big" data-ld="signup" id="ld-overcta">Help the Patient: Sign Up Free!</button>
           <button type="button" class="ld-linkbtn" id="ld-again">Watch it again</button>
         </div>
       </div>

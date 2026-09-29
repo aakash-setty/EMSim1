@@ -1162,6 +1162,25 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 .ld-top.scrolled{height:66px;background:rgba(255,255,255,.92);box-shadow:0 1px 0 var(--rule2),0 8px 24px rgba(21,48,66,.08)}
 .ld-top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;
   background:linear-gradient(90deg,transparent,rgba(31,111,178,.35),rgba(26,122,85,.35),transparent);opacity:.7}
+/* v0.19h. Lights in the distance: a canvas drawn at a quarter of the screen's resolution and
+   stretched to fill it, so the browser's upscaling does the blurring. It sits behind the page
+   (the sections are transparent over the paper colour). The wash is a pale red or blue laid
+   over everything with multiply, so white cards pick up the colour and dark text does not. */
+.ld-sirens{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;display:block}
+.ld-wash{position:fixed;inset:0;z-index:4;pointer-events:none;mix-blend-mode:multiply}
+.ld-wash i{position:absolute;inset:0;opacity:0;will-change:opacity}
+.ld-wash i.r{background:radial-gradient(120% 90% at 55% 20%,#ffd4d4,#ffe9e9 70%)}
+.ld-wash i.b{background:radial-gradient(120% 90% at 65% 20%,#d3e0ff,#e8efff 70%)}
+.landing>section,.landing>footer{position:relative;z-index:1}
+/* The header ambulance and its road run behind the logo, nav and buttons. */
+.ld-top>*:not(.ld-ambwrap){position:relative;z-index:1}
+.ld-ambwrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.ld-ambwrap.off{display:none}
+.ld-amb{position:absolute;left:0;bottom:9px;width:64px;height:32px;will-change:transform;opacity:0}
+.ld-amb svg{display:block;overflow:visible}
+.ld-road{position:absolute;bottom:4px;left:0;height:22px;width:10px;opacity:0;transition:opacity .8s ease;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+.ld-road.on{opacity:1}
 .ld-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
 .ld-logo{width:44px;height:44px;flex:0 0 44px;border-radius:12px;display:grid;place-items:center;overflow:hidden;
   background:#fff;border:1px solid var(--rule2);box-shadow:0 2px 8px rgba(21,48,66,.08);transition:width .22s ease,height .22s ease}
@@ -1236,9 +1255,16 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 .ld-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 14px 14px;background:#fff;border-top:1px solid var(--rule2)}
 .ld-actions button{font:inherit;font-size:13.5px;font-weight:600;color:var(--act);background:#fff;border:1px solid var(--actb);
   border-radius:8px;padding:11px 8px;cursor:pointer;transition:background .15s ease,transform .1s ease}
+.ld-actions.two{grid-template-columns:repeat(2,1fr)}
+.ld-ask{grid-column:1/-1;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin:-2px 0 0}
+.ld-actions button{animation:ldIn .35s ease both}
+@keyframes ldIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ld-say.result{font-style:normal;font-family:var(--mono);font-size:13px;color:var(--harm);border-color:var(--harmb)}
+.ld-over.good .ld-overcard h3{color:var(--ok)}
 .ld-actions button:hover:not(:disabled){background:var(--actl);transform:translateY(-1px)}
 .ld-actions button:disabled{opacity:.45;cursor:default}
 .ld-actions button.done{border-color:var(--ok);color:var(--ok);background:var(--okl);opacity:1}
+.ld-actions button.bad{border-color:#c0392b;color:#c0392b;background:#fdecea;opacity:1}
 .ld-over{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:16px;
   background:linear-gradient(180deg,rgba(255,255,255,0) 18%,rgba(255,255,255,.95) 60%)}
 .ld-over[hidden]{display:none}
@@ -1308,7 +1334,45 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
      out; signing in takes them to the case board below. The local build shows it only with
      ?landing in the address, for previews and screenshots. -->
 <div id="landing" class="landing hidden" aria-label="EMSim welcome">
+  <!-- v0.19h. Emergency lights in the distance behind the page, and the faint colour they cast
+       over it (engine/landing.js, FX). Decorative only. -->
+  <canvas class="ld-sirens" id="ld-sirens" aria-hidden="true"></canvas>
+  <div class="ld-wash" aria-hidden="true"><i class="r" id="ld-wash-r"></i><i class="b" id="ld-wash-b"></i></div>
   <header class="ld-top" id="ld-top">
+    <!-- The header ambulance (engine/landing.js, AMB): it drives in from the right, stops at
+         the logo, turns round and drives on the spot over a moving road. -->
+    <div class="ld-ambwrap" id="ld-ambwrap" aria-hidden="true">
+      <canvas class="ld-road" id="ld-road"></canvas>
+      <div class="ld-amb" id="ld-amb"><svg viewBox="0 0 72 36" width="64" height="32" focusable="false">
+        <defs>
+          <radialGradient id="ab-gr"><stop offset="0" stop-color="#ff3030" stop-opacity=".85"/><stop offset="1" stop-color="#ff3030" stop-opacity="0"/></radialGradient>
+          <radialGradient id="ab-gb"><stop offset="0" stop-color="#2f6bff" stop-opacity=".85"/><stop offset="1" stop-color="#2f6bff" stop-opacity="0"/></radialGradient>
+          <linearGradient id="ab-hl" x1="0" x2="1"><stop offset="0" stop-color="#ffe9a8" stop-opacity=".55"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/></linearGradient>
+        </defs>
+        <ellipse cx="36" cy="34.3" rx="31" ry="1.7" fill="rgba(21,48,66,.2)"/>
+        <g id="ab-body">
+          <path d="M70 23.2 L86 20 L86 30 L70 26.2 Z" fill="url(#ab-hl)"/>
+          <rect x="2" y="7" width="45" height="22" rx="3" fill="#fff" stroke="#93a6b5" stroke-width="1"/>
+          <path d="M47 13 H58 L65.5 20.5 H67 Q70 21 70 24 V27.5 Q70 29 68.5 29 H47 Z" fill="#fff" stroke="#93a6b5" stroke-width="1"/>
+          <path d="M49.5 15 H57.3 L62.6 20.3 H49.5 Z" fill="#a9cbe6"/>
+          <rect x="5" y="10" width="7" height="6" rx="1" fill="#a9cbe6"/>
+          <line x1="33.5" y1="9.5" x2="33.5" y2="28" stroke="#d3dce3" stroke-width=".8"/>
+          <rect x="2.5" y="21.5" width="67" height="3" fill="#d0312d"/>
+          <rect x="20.5" y="9.5" width="5" height="10" rx=".7" fill="#1F6FB2"/>
+          <rect x="18" y="12" width="10" height="5" rx=".7" fill="#1F6FB2"/>
+          <rect x="68" y="23.3" width="2.3" height="2.1" rx=".6" fill="#f6c343"/>
+          <rect x="1.1" y="22.6" width="1.9" height="3.6" rx=".4" fill="#e04848"/>
+          <rect x="35.5" y="3.8" width="11" height="3.4" rx="1.2" fill="#2b3a45"/>
+          <circle id="ab-rg" cx="38.2" cy="5.5" r="8" fill="url(#ab-gr)"/>
+          <circle id="ab-bg" cx="43.8" cy="5.5" r="8" fill="url(#ab-gb)"/>
+          <rect id="ab-r" x="36.1" y="4.3" width="4.4" height="2.4" rx=".7" fill="#ff3b3b"/>
+          <rect id="ab-b" x="41.5" y="4.3" width="4.4" height="2.4" rx=".7" fill="#3b7bff"/>
+          <circle cx="15" cy="29" r="6.8" fill="#3d4a54"/><circle cx="56" cy="29" r="6.8" fill="#3d4a54"/>
+        </g>
+        <g id="ab-w1"><circle cx="15" cy="29" r="5.6" fill="#1e2a33"/><circle cx="15" cy="29" r="2.7" fill="#c9d2da"/><path d="M15 26.3 V31.7 M12.3 29 H17.7" stroke="#6b7c89" stroke-width="1"/></g>
+        <g id="ab-w2"><circle cx="56" cy="29" r="5.6" fill="#1e2a33"/><circle cx="56" cy="29" r="2.7" fill="#c9d2da"/><path d="M56 26.3 V31.7 M53.3 29 H58.7" stroke="#6b7c89" stroke-width="1"/></g>
+      </svg></div>
+    </div>
     <a class="ld-brand" href="#ld-hero" aria-label="EMSim, back to top">
       <!-- The logo slot. Put the logo at engine/assets/logo.svg (or .png) and the build uses it;
            until then it shows the placeholder mark. It is sized as a 44 px square. -->
@@ -1370,7 +1434,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
           <h3 id="ld-overtitle">Better. Not fixed.</h3>
           <p id="ld-overtext">His saturation is up, but his blood pressure is still 180 and his lungs are
             full of fluid. What you do next decides how this goes.</p>
-          <button type="button" class="ld-btn primary big" data-ld="signup">Help the Patient: Sign Up Free!</button>
+          <button type="button" class="ld-btn primary big" data-ld="signup" id="ld-overcta">Help the Patient: Sign Up Free!</button>
           <button type="button" class="ld-linkbtn" id="ld-again">Watch it again</button>
         </div>
       </div>
@@ -5877,42 +5941,65 @@ const LANDING=(function(){
   let shown=false, viewed=false, raf=0, t0=0, lastTick=0, handlers=null;
   const reduce=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---- the demo patient ---- */
+  /* ---- the demo patient ----
+     Two steps. First the visitor picks one of three airway and breathing moves. Three
+     seconds later those buttons give way to a harder choice: get an ECG, or push
+     metoprolol. The ECG finds the anterior STEMI and invites them to continue the case.
+     Metoprolol, a beta-blocker given to a man in acute heart failure, tips him into
+     cardiogenic shock: IV beta-blockers are to be avoided in STEMI with signs of heart
+     failure or a risk of shock (2013 ACCF/AHA STEMI guideline, class III: harm; the COMMIT
+     trial found more cardiogenic shock with early IV metoprolol). Untreated for 40 seconds,
+     he tires. The numbers are illustrative, not the CHFE case's physiology. */
   const START={hr:118,sbp:188,dbp:104,sp:85,rr:32};
-  let V, done, over, fig=null, lastSay='';
+  const STEP1=[['sit','Sit him upright'],['nrb','Non-rebreather mask'],['bipap','Start BiPAP']];
+  const STEP2=[['ecg','Get an ECG'],['meto','Push Metoprolol IV']];
+  let V, done, over, step, stepTimer=0, crashAt=0, fig=null, lastSay='';
   const LINES={
     start:'"I can\'t... get my breath..."',
     worse:'"Help me... please..."',
     sit:'"That\'s... a little... better."',
     nrb:'"Still... can\'t..."',
     bipap:'(nods, breathing with the mask)',
-    tired:'(his eyes are closing)'
+    tired:'(his eyes are closing)',
+    ecg:'12-lead: ST elevation V1 to V4. Anterior STEMI.',
+    meto:'"I feel... faint..."',
+    shock:'(grey, clammy, barely rousable)'
   };
+  function buttons(list, ask){
+    const box=$('ld-actions'); if(!box) return;
+    box.classList.toggle('two', list.length===2);
+    box.innerHTML=(ask?`<div class="ld-ask">${ask}</div>`:'')+list.map(([k,label])=>
+      `<button type="button" data-ldact="${k}">${label}</button>`).join('');
+  }
   function reset(){
-    V=Object.assign({},START); done=new Set(); over=false; t0=performance.now(); lastTick=t0; tLast=null;
+    V=Object.assign({},START); done=new Set(); over=false; step=1; crashAt=0;
+    clearTimeout(stepTimer); t0=performance.now(); lastTick=t0; tLast=null;
     const o=$('ld-over'); if(o) o.hidden=true;
-    document.querySelectorAll('#ld-actions button').forEach(b=>{b.disabled=false;b.classList.remove('done');});
+    buttons(STEP1,'');
     say(LINES.start); paintVitals(); paintFigure();
   }
-  function say(t){ if(t===lastSay) return; lastSay=t; const e=$('ld-say'); if(e) e.textContent=t; }
+  function say(t){ if(t===lastSay) return; lastSay=t; const e=$('ld-say'); if(e){ e.textContent=t; e.classList.toggle('result', t===LINES.ecg); } }
   function clamp(x,a,b){ return Math.max(a,Math.min(b,x)); }
   function paintVitals(){
     const set=(id,v,bad)=>{ const e=$(id); if(!e) return; e.textContent=v; e.parentElement.classList.toggle('bad',!!bad); };
-    set('ld-hr',Math.round(V.hr),V.hr>100); set('ld-bp',Math.round(V.sbp)+'/'+Math.round(V.dbp),V.sbp>=160);
+    set('ld-hr',Math.round(V.hr),V.hr>100||V.hr<50); set('ld-bp',Math.round(V.sbp)+'/'+Math.round(V.dbp),V.sbp>=160||V.sbp<90);
     set('ld-sp',Math.round(V.sp),V.sp<90); set('ld-rr',Math.round(V.rr),V.rr>24);
-    const al=$('ld-alarm'); if(al) al.hidden=!(V.sp<88);
+    const al=$('ld-alarm');
+    if(al){ const low=V.sbp<90?'BP LOW':(V.sp<88?'SpO₂ LOW':''); al.hidden=!low; if(low) al.textContent=low; }
     const s=Math.floor((performance.now()-t0)/1000);
     const c=$('ld-clock'); if(c) c.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
   }
   function figureState(){
-    const bip=done.has('bipap'), nrb=done.has('nrb')&&!bip, calm=bip;
+    const bip=done.has('bipap'), nrb=done.has('nrb')&&!bip, shock=done.has('meto');
+    const calm=bip&&!shock;
     const addons=['hospital_bed','sweating'];
-    if(!calm) addons.push('agitation');
+    if(!calm&&!shock) addons.push('agitation');
     if(bip) addons.push('bipap_mask'); else if(nrb) addons.push('nonrebreather');
-    const tired=V.sp<79&&!bip;
-    return {work_of_breathing: calm?'increased':'severe', respiratory_rate:V.rr, distress: calm?1:3, alertness: tired?1:0,
+    const tired=(V.sp<79&&!bip)||(shock&&V.sbp<85);
+    return {work_of_breathing: calm?'increased':'severe', respiratory_rate:V.rr, distress: calm?1:(shock?2:3), alertness: tired?2:0,
       eyes: tired?'closed':'open',
-      expression: calm?{eyeType:'Squint',eyebrowType:'SadConcernedNatural',mouthType:'Serious'}
+      expression: shock?{eyeType:'Squint',eyebrowType:'SadConcerned',mouthType:'Grimace'}
+                : calm?{eyeType:'Squint',eyebrowType:'SadConcernedNatural',mouthType:'Serious'}
                       :{eyeType:'Surprised',eyebrowType:'SadConcerned',mouthType:'ScreamOpen'},
       addons: addons};
   }
@@ -5927,10 +6014,12 @@ const LANDING=(function(){
       fig.setState(figureState());
     }catch(e){ fig=null; }
   }
-  /* Every second: untreated he drifts down toward exhaustion; each treatment sets a better
-     target and the numbers walk toward it, the way a monitor settles, rather than jump. */
+  /* Every second the numbers walk toward a target, the way a monitor settles, rather than
+     jump. Untreated he drifts toward exhaustion; each step-one move sets a better target;
+     metoprolol sets a shock target and walks there fast. */
   function target(){
-    if(done.has('bipap')) return {hr:108,sbp:176,dbp:98,sp:93,rr:25};
+    if(done.has('meto')) return {hr:104,sbp:72,dbp:40,sp:79,rr:38};
+    if(done.has('bipap')) return {hr:110,sbp:178,dbp:100,sp:92,rr:26};
     let t={hr:132,sbp:196,dbp:110,sp:76,rr:38};
     if(done.has('sit')) t={hr:t.hr-4,sbp:t.sbp,dbp:t.dbp,sp:t.sp+3,rr:t.rr-3};
     if(done.has('nrb')) t={hr:t.hr-6,sbp:t.sbp-2,dbp:t.dbp,sp:t.sp+8,rr:t.rr-2};
@@ -5939,38 +6028,48 @@ const LANDING=(function(){
   function tick(now){
     if(!shown) return;
     raf=requestAnimationFrame(tick);
-    drawTraces(now);
+    drawTraces(now); FX.frame(now); AMB.frame(now);
     if(now-lastTick<1000||over) return;
     lastTick=now;
-    const T=target(), k=done.has('bipap')?0.22:0.06;
+    const T=target(), k=done.has('meto')?0.35:(done.has('bipap')?0.22:0.06);
     for(const key in T) V[key]+= (T[key]-V[key])*k + (Math.random()-.5)*(key==='sp'?0.3:0.8);
     V.sp=clamp(V.sp,70,99);
     paintVitals(); paintFigure();
     if(!done.size) say(V.sp<80?LINES.tired:(V.sp<83?LINES.worse:LINES.start));
+    if(done.has('meto')&&V.sbp<90) say(LINES.shock);
     const secs=(now-t0)/1000;
-    if(done.has('bipap')&&V.sp>=91) finish('better');
-    else if(!done.has('bipap')&&secs>40&&V.sp<79) finish('tiring');
+    if(crashAt&&now>=crashAt) finish('crash');
+    else if(!done.size&&secs>40&&V.sp<79) finish('tiring');
   }
   function finish(kind){
-    over=true;
+    over=true; clearTimeout(stepTimer);
     const o=$('ld-over'); if(!o) return;
-    if(kind==='better'){
-      $('ld-overtitle').textContent='Better. Not fixed.';
-      $('ld-overtext').textContent='His saturation is up. Now look at the monitor: that ST elevation is a STEMI until a 12-lead says otherwise, and BiPAP will not open an artery. What you do next decides how this goes.';
-    }else{
-      $('ld-overtitle').textContent="He's tiring.";
-      $('ld-overtext').textContent='Look at the monitor: that ST elevation is a STEMI until proven otherwise, and oxygen will not fix it. Every minute counts. Take over the whole case.';
-    }
+    const T={
+      crash:["He's crashing.", 'A beta-blocker in acute heart failure dropped his pressure into cardiogenic shock. In the full case you would have to get him back, and find what the monitor was trying to tell you.', 'Help the Patient: Sign Up Free!'],
+      ecg:['Good call. Anterior STEMI.', 'ST elevation across V1 to V4. The clock on his heart muscle is running: the cath lab, the drugs and the handoff are all still to come. Continue the case.', 'Continue the Case: Sign Up Free!'],
+      tiring:["He's tiring.", 'Look at the monitor: that ST elevation is a STEMI until proven otherwise, and he is running out of breath. Every minute counts. Take over the whole case.', 'Help the Patient: Sign Up Free!']
+    }[kind];
+    $('ld-overtitle').textContent=T[0]; $('ld-overtext').textContent=T[1];
+    const cta=$('ld-overcta'); if(cta) cta.textContent=T[2];
+    o.classList.toggle('good', kind==='ecg');
     o.hidden=false;
     A.track('landing_demo_end',{outcome:kind, actions:[...done].join(','), seconds:Math.round((performance.now()-t0)/1000)});
   }
   function act(what){
     if(over||done.has(what)) return;
     done.add(what);
-    const b=document.querySelector('#ld-actions [data-ldact="'+what+'"]'); if(b){ b.disabled=true; b.classList.add('done'); }
-    if(what==='bipap'){ const n=document.querySelector('#ld-actions [data-ldact="nrb"]'); if(n) n.disabled=true; }
+    const b=document.querySelector('#ld-actions [data-ldact="'+what+'"]'); if(b){ b.classList.add(what==='meto'?'bad':'done'); }
+    document.querySelectorAll('#ld-actions button').forEach(x=>x.disabled=true);
     say(LINES[what]); paintFigure();
-    A.track('landing_demo_action',{action:what});
+    A.track('landing_demo_action',{action:what, step});
+    if(step===1){
+      step=2;
+      stepTimer=setTimeout(()=>{ if(!over&&shown) buttons(STEP2,'What next?'); }, 3000);
+    }else if(what==='ecg'){
+      stepTimer=setTimeout(()=>{ if(!over) finish('ecg'); }, 2200);
+    }else if(what==='meto'){
+      crashAt=performance.now()+6000;
+    }
   }
 
   /* ---- the monitor traces ----
@@ -6067,6 +6166,138 @@ const LANDING=(function(){
       if(t.dataset.ldcase!==undefined){ A.track('landing_case_clicked',{case:(CASES[+t.dataset.ldcase]||{}).prefix}); handlers.signup(+t.dataset.ldcase); }
     });
   }
+  /* ---- lights in the distance (v0.19h) ----
+     Two rotating beacons, one red and one blue, far behind the screen. No source and no beam
+     is ever visible: only the diffuse light they throw, a broad soft glow that sweeps across
+     the page as each beacon turns and swells while it faces the viewer, then fades as it turns
+     away. When it faces the viewer the whole page also takes on a faint wash of its colour.
+     Drawn at a quarter of screen resolution and stretched, which keeps it cheap and soft.
+     Photosensitivity: nothing strobes. Each beacon brightens about once every two seconds,
+     the change is gradual, and the wash moves white only to a pale tint, well short of the
+     WCAG 2.3.1 general flash threshold. With reduced motion it draws one still frame. */
+  const FX=(function(){
+    const Q=4, LIGHTS=[
+      {rgb:'232,44,52', per:2.2, ph:0.0, y:-0.15, k:1.0,  wash:'ld-wash-r'},
+      {rgb:'44,96,236', per:2.6, ph:2.4, y:-0.05, k:0.72, wash:'ld-wash-b'}];
+    let cv=null, g=null, W=0, H=0, still=false;
+    function size(){
+      if(!cv) return;
+      const w=Math.max(40,Math.ceil(innerWidth/Q)), h=Math.max(40,Math.ceil(innerHeight/Q));
+      if(w!==W||h!==H){ W=cv.width=w; H=cv.height=h; still=false; }
+    }
+    function glow(cx,cy,r,rgb,alpha){
+      const gr=g.createRadialGradient(cx,cy,0,cx,cy,r);
+      gr.addColorStop(0,'rgba('+rgb+','+alpha+')'); gr.addColorStop(0.45,'rgba('+rgb+','+(alpha*0.55)+')'); gr.addColorStop(1,'rgba('+rgb+',0)');
+      g.fillStyle=gr; g.fillRect(0,0,W,H);
+    }
+    function frame(now){
+      if(!cv){ cv=$('ld-sirens'); if(!cv||!cv.getContext) return; g=cv.getContext('2d'); addEventListener('resize',size); }
+      size(); if(reduce&&still) return;
+      const t=reduce?0.4:now/1000, M=Math.max(W,H);
+      g.clearRect(0,0,W,H);
+      for(const L of LIGHTS){
+        const a=(t/L.per)*2*Math.PI+L.ph;
+        const face=Math.max(0,Math.cos(a)), I=face*face*L.k;           // brightest while it faces us
+        const cx=W*(0.5+0.75*Math.sin(a));                          // the lit patch sweeps across
+        glow(cx, H*L.y, M*1.05, L.rgb, 0.16*I);                     // broad sweep, falling from above
+        glow(W*0.5, H*0.1, M*1.3, L.rgb, 0.06*I);                   // the general glow in the room
+        const w=$(L.wash); if(w) w.style.opacity=(reduce?0.12:I*0.6).toFixed(3);
+      }
+      still=true;
+    }
+    return {frame};
+  })();
+
+  /* ---- the header ambulance (v0.19h) ----
+     It drives in from the right edge, slows to a stop beside the logo, turns round, and then
+     drives on the spot facing right while the road runs past beneath it, as if the camera were
+     following it. It drifts forward and back a little as its speed varies. It runs behind the
+     nav and buttons, and is left out where the gap between the logo and the nav is too narrow
+     for it (phones). With reduced motion it parks facing right and nothing moves. */
+  const AMB=(function(){
+    const AW=64, WR=5.6*64/72;             // drawn width and wheel radius in px
+    let el=null, wrap=null, road=null, rg=null, body=null, w1=null, w2=null, lamps=null;
+    let T0=0, last=0, lay=null, layAt=0, home=null, x=0, dir=-1, spin=0, s=0, prevOff=0, prevV=0, posts=[], nextPost=0;
+    function layout(now){
+      const top=$('ld-top'), brand=top&&top.querySelector('.ld-brand'), nav=top&&top.querySelector('.ld-nav'), auth=top&&top.querySelector('.ld-auth');
+      if(!top||!brand||!auth) return null;
+      const r=top.getBoundingClientRect(), b=brand.getBoundingClientRect();
+      const n=(nav&&nav.offsetParent&&getComputedStyle(nav).display!=='none')?nav.getBoundingClientRect():auth.getBoundingClientRect();
+      const left=b.right-r.left+8, right=n.left-r.left-10;
+      return {W:r.width, left, right, fits:right-left>=AW+36};
+    }
+    function lights(t, face){
+      const p=(t%1+1)%1, on=(a,b)=>p>=a&&p<b;
+      const red=on(0,.08)||on(.16,.24), blue=on(.5,.58)||on(.66,.74);
+      lamps[0].setAttribute('opacity',red?1:.35); lamps[1].setAttribute('opacity',blue?1:.35);
+      lamps[2].setAttribute('opacity',red?face:0); lamps[3].setAttribute('opacity',blue?face:0);
+    }
+    function drawRoad(dt, v){
+      if(!rg) return;
+      const cw=road.width/(devicePixelRatio||1), ch=22;
+      s+=v*dt;
+      while(nextPost<s+cw+40){ posts.push(nextPost); nextPost+=140+Math.random()*170; }
+      posts=posts.filter(p=>p-s>-20);
+      rg.clearRect(0,0,cw,ch);
+      rg.fillStyle='rgba(120,138,152,.55)'; rg.fillRect(0,15.2,cw,1);            // road edge
+      rg.fillStyle='rgba(120,138,152,.45)';
+      for(let xx=-((s%22)+22); xx<cw; xx+=22) rg.fillRect(xx,18.6,11,1.4);         // lane dashes
+      rg.fillStyle='rgba(120,138,152,.35)';
+      for(let xx=-((s*1.0%57)+57); xx<cw; xx+=57) rg.fillRect(xx+30,21,2,.9);     // grit on the tarmac
+      for(const p of posts){ const px=p-s;                                          // roadside posts
+        rg.fillStyle='rgba(120,138,152,.8)'; rg.fillRect(px,7,1.6,8.4);
+        rg.fillStyle='#f0a030'; rg.fillRect(px-.2,7,2,2.2); }
+    }
+    function sizeRoad(L){
+      const d=devicePixelRatio||1, w=Math.max(10,Math.round(L.right-L.left));
+      road.style.left=L.left+'px'; road.style.width=w+'px';
+      if(road.width!==w*d){ road.width=w*d; road.height=22*d; rg=road.getContext('2d'); rg.setTransform(d,0,0,d,0,0); }
+    }
+    function frame(now){
+      if(!el){ el=$('ld-amb'); wrap=$('ld-ambwrap'); road=$('ld-road'); if(!el||!wrap||!road) return;
+        body=$('ab-body'); w1=$('ab-w1'); w2=$('ab-w2'); lamps=[$('ab-r'),$('ab-b'),$('ab-rg'),$('ab-bg')]; T0=now; last=now; }
+      if(!lay||now-layAt>400){ lay=layout(now); layAt=now; if(!lay) return;
+        wrap.classList.toggle('off',!lay.fits); if(!lay.fits) return; sizeRoad(lay); }
+      if(!lay.fits) return;
+      const dt=Math.min(0.05,(now-last)/1000); last=now;
+      const t=(now-T0)/1000, target=lay.left+10;
+      home=home===null?target:home+(target-home)*Math.min(1,dt*4);                 // follows the logo as the header shrinks
+      let v=0, off=0, lift=0, tilt=0, face=1;
+      const D=Math.max(60,lay.W+20-home), TIN=Math.max(2.4,D/340+1.2), START=0.7;
+      const tStop=START+TIN, tTurn=tStop+0.5, tGo=tTurn+0.8, tRun=tGo+0.35;
+      if(reduce){ dir=1; x=home; lights(0.1,0.8); el.style.opacity='1'; el.style.transform='translate('+x+'px,0)'; return; }
+      el.style.opacity='1';
+      if(t<tStop){                                    // driving in, facing left, easing to a stop
+        const p=Math.max(0,(t-START)/TIN), e=1-Math.pow(1-p,3);
+        x=home+D*(1-e); dir=-1; v=D*3*Math.pow(1-p,2)/TIN;
+        tilt=p>0.75?-(1-p)*6:0;                       // nose dips as it brakes
+      } else if(t<tTurn){ x=home; dir=-1; }
+      else if(t<tGo){                                 // turning round
+        const p=(t-tTurn)/0.8; dir=-Math.cos(Math.PI*p); x=home; lift=Math.sin(Math.PI*p)*2;
+      } else {
+        dir=1;
+        const ramp=Math.min(1,Math.max(0,(t-tRun)/1.6)), rs=ramp*ramp*(3-2*ramp);
+        const u=t-tRun;
+        const drift=6*Math.sin(u*0.31)+4*Math.sin(u*0.53+1.3)+2.5*Math.sin(u*1.07+0.4);
+        const surge=10*Math.sin(Math.PI*Math.min(1,Math.max(0,u/2.2)));   // pulls ahead as it sets off
+        off=3+surge+drift*rs;
+        const vRoad=95*rs, dOff=dt>0?(off-prevOff)/dt:0; prevOff=off;
+        v=vRoad+dOff; x=home+off;
+        const acc=dt>0?(v-prevV)/dt:0; prevV=v; tilt=Math.max(-2.5,Math.min(2.5,-acc*0.04));
+        if(vRoad>0.5) road.classList.add('on');
+        drawRoad(dt,vRoad);
+      }
+      spin+=v*dt/WR*57.2958;
+      const bob=v>5?(0.35*Math.sin(t*23)+0.2*Math.sin(t*37)):0;
+      w1.setAttribute('transform','rotate('+(spin%360).toFixed(1)+' 15 29)');
+      w2.setAttribute('transform','rotate('+(spin%360).toFixed(1)+' 56 29)');
+      body.setAttribute('transform','translate(0 '+(bob-lift).toFixed(2)+') rotate('+tilt.toFixed(2)+' 15 29)');
+      lights(t, 0.9);
+      el.style.transform='translate('+x.toFixed(1)+'px,0) scaleX('+(Math.abs(dir)<0.04?0.04*Math.sign(dir||1):dir).toFixed(3)+')';
+    }
+    return {frame};
+  })();
+
   /* The header shrinks once the page scrolls, and the section in view lights up in the nav. */
   function watchScroll(root){
     if(root._watch) return; root._watch=true;
