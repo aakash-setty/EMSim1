@@ -79,12 +79,24 @@ Claude. The files in git are the record of what is live.
    the live page title says "(local build)", the Root Directory is wrong.
 4. **First upload.** GitHub, Actions, "Publish case packs", Run workflow (or push any commit).
 
+## Sign-up (open since v0.19)
+
+Anyone can create an account. The welcome page's Sign up button offers Google only, because
+Google hands over a verified email. For this to work, Supabase, Authentication, Sign In /
+Providers, "Allow new users to sign up" must be ON.
+
+Email and password sign-up is built but switched off (`emailSignUp` in site-config.json).
+Turn it on only after setting up an email provider (Authentication, Emails, SMTP), because
+Supabase's built-in email sends 2 messages an hour to team members only, so new users would
+never get their confirmation link. Until they confirm, the edge function refuses them.
+
+With sign-up open, every new account can open every case. Consider CAPTCHA
+(Authentication, Attack Protection) once traffic grows.
+
 ## Google sign-in
 
 The site offers "Continue with Google" when `googleSignIn` is true in
-`engine/site-config.json`. Sign-ups stay off, so only invited email addresses get in: an
-invited user who picks Google with the same address is linked to their existing account.
-Anyone else sees "That Google account is not on the invite list".
+`engine/site-config.json`. A user who picks Google with the same email as an existing account is linked to it.
 
 One-time setup, before turning it on:
 

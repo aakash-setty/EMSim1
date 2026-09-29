@@ -651,6 +651,9 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .signingoogle[hidden],.signinor[hidden]{display:none}
 .signinor{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:12px;color:var(--ink3)}
 .signinor::before,.signinor::after{content:"";flex:1;border-top:1px solid var(--rule)}
+.signinswitch{margin:14px 0 0 !important;font-size:13px !important;color:var(--ink2) !important}
+.signinswitch .linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--act);text-decoration:underline;cursor:pointer}
+#signinform [hidden]{display:none !important}
 .signinfine{margin:14px 0 0 !important;font-size:12px !important;color:var(--ink3) !important}
 .wl-acct{display:flex;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--rule2);
   font-size:12.5px;color:var(--ink2);flex-wrap:wrap}
@@ -1141,6 +1144,137 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   .lpanel{width:calc(100vw - var(--rail))}
   .lp-scroll{padding:14px 14px 40px}
 }
+
+/* ---------- v0.19 welcome page (engine/landing.js) ----------
+   Day-time palette, the same as the case screens: pale paper, white cards, ink text, the
+   blue action colour. Only the monitor stays dark, as it does inside a case. */
+.landing{position:fixed;inset:0;z-index:150;overflow-y:auto;overflow-x:hidden;background:#F5F8FA;color:var(--ink);
+  font-family:var(--sans);scroll-behavior:smooth}
+.landing.hidden{display:none}
+.landing a{color:inherit}
+/* The header: 84 px tall at the top of the page, 66 px once the page scrolls, with a hairline
+   shadow instead of a border. The logo slot is a fixed 44 px square so a logo can drop in
+   without moving anything. */
+.ld-top{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:28px;
+  height:84px;padding:0 clamp(16px,4vw,48px);background:rgba(255,255,255,.78);
+  backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);
+  border-bottom:1px solid transparent;transition:height .22s ease,box-shadow .22s ease,background .22s ease}
+.ld-top.scrolled{height:66px;background:rgba(255,255,255,.92);box-shadow:0 1px 0 var(--rule2),0 8px 24px rgba(21,48,66,.08)}
+.ld-top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(31,111,178,.35),rgba(26,122,85,.35),transparent);opacity:.7}
+.ld-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.ld-logo{width:44px;height:44px;flex:0 0 44px;border-radius:12px;display:grid;place-items:center;overflow:hidden;
+  background:#fff;border:1px solid var(--rule2);box-shadow:0 2px 8px rgba(21,48,66,.08);transition:width .22s ease,height .22s ease}
+.ld-top.scrolled .ld-logo{width:38px;height:38px;flex-basis:38px}
+.ld-logo img{width:100%;height:100%;object-fit:contain}
+.ld-mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#1A7A55,#1F6FB2);position:relative}
+.ld-mark::after{content:"";position:absolute;left:5px;right:5px;top:12px;height:2px;background:#fff;
+  clip-path:polygon(0 0,35% 0,45% -250%,55% 350%,65% 0,100% 0,100% 100%,0 100%)}
+.ld-name{display:flex;flex-direction:column;font-weight:700;font-size:20px;letter-spacing:-.015em;line-height:1.1}
+.ld-name small{font-weight:500;font-size:11.5px;letter-spacing:.02em;color:var(--ink3);margin-top:3px}
+.ld-nav{justify-self:center;display:flex;gap:6px;padding:5px;border-radius:999px;background:rgba(21,48,66,.045);
+  border:1px solid var(--rule2);font-size:14px;font-weight:500;color:var(--ink2)}
+.ld-nav a{position:relative;text-decoration:none;white-space:nowrap;padding:8px 16px;border-radius:999px;transition:background .15s ease,color .15s ease}
+.ld-nav a:hover{color:var(--ink);background:rgba(255,255,255,.8)}
+.ld-nav a.on{color:var(--act);background:#fff;box-shadow:0 1px 4px rgba(21,48,66,.12)}
+.ld-auth{display:flex;align-items:center;gap:8px}
+.ld-free{display:inline-flex;align-items:center;gap:7px;margin-right:6px;font-size:12.5px;font-weight:500;color:var(--ok);
+  background:var(--okl);border:1px solid rgba(26,122,85,.2);padding:5px 11px;border-radius:999px;white-space:nowrap}
+.ld-free .dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.ld-btn.text{background:none;color:var(--ink);border-color:transparent}
+.ld-btn.text:hover{color:var(--act);background:rgba(31,111,178,.07)}
+.ld-top .ld-btn{height:42px;padding:0 18px;border-radius:10px}
+.ld-btn .arr{display:inline-block;margin-left:8px;transition:transform .15s ease}
+.ld-btn:hover .arr{transform:translateX(3px)}
+.ld-btn{font:inherit;font-size:14px;font-weight:600;border-radius:8px;padding:9px 16px;cursor:pointer;border:1px solid transparent;transition:transform .12s ease,background .15s ease,box-shadow .15s ease}
+.ld-btn.big{font-size:16px;padding:13px 22px}
+.ld-btn.primary{background:var(--act);color:#fff;box-shadow:0 6px 16px rgba(31,111,178,.25)}
+.ld-btn.primary:hover{background:#185E98;transform:translateY(-1px)}
+.ld-btn.ghost{background:#fff;color:var(--ink);border-color:var(--rule)}
+.ld-btn.ghost:hover{border-color:var(--act);color:var(--act)}
+.ld-btn:focus-visible,.ld-actions button:focus-visible,.ld-linkbtn:focus-visible,.ld-case:focus-visible{outline:2px solid var(--act);outline-offset:2px}
+.ld-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,560px);gap:clamp(24px,5vw,72px);align-items:center;
+  max-width:1240px;margin:0 auto;padding:clamp(28px,6vw,72px) clamp(16px,4vw,48px)}
+.ld-kicker{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--act);margin-bottom:14px}
+.ld-hero h1{font-family:"IBM Plex Serif",Georgia,serif;font-size:clamp(40px,6vw,72px);line-height:1.02;margin:0 0 20px;letter-spacing:-.02em;color:var(--ink)}
+.ld-lede{font-size:clamp(16px,1.6vw,19px);line-height:1.55;color:var(--ink2);max-width:520px;margin:0 0 26px}
+.ld-ctas{display:flex;gap:12px;flex-wrap:wrap}
+.ld-fine{font-size:12.5px;color:var(--ink3);margin:18px 0 0}
+.ld-demo{position:relative;background:#fff;border:1px solid var(--rule2);border-radius:16px;overflow:hidden;
+  box-shadow:0 24px 60px rgba(21,48,66,.16)}
+.ld-demohead{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:13px;color:var(--ink2);border-bottom:1px solid var(--rule2);background:#fff}
+.ld-live{width:8px;height:8px;border-radius:50%;background:#D93A31;box-shadow:0 0 0 0 rgba(217,58,49,.6);animation:ldPulse 1.6s infinite}
+@keyframes ldPulse{0%{box-shadow:0 0 0 0 rgba(217,58,49,.5)}70%{box-shadow:0 0 0 8px rgba(217,58,49,0)}100%{box-shadow:0 0 0 0 rgba(217,58,49,0)}}
+.ld-clock{margin-left:auto;font-family:var(--mono);color:var(--ink2)}
+.ld-alarm:not([hidden])+.ld-clock{margin-left:10px}
+.ld-mon{position:relative;background:#0B141B;padding:12px 16px 8px}
+.ld-vitals{display:grid;grid-template-columns:1fr 1.7fr 1fr 1fr;gap:10px;margin-bottom:6px}
+.landing h3{text-transform:none;letter-spacing:-.005em;color:var(--ink);font-family:var(--sans)}
+.ld-v{display:flex;flex-direction:column}
+.ld-v .k{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:#6E8797}
+.ld-v .n{font-family:var(--mono);font-weight:600;font-size:clamp(22px,2.6vw,30px);line-height:1.05;font-variant-numeric:tabular-nums;transition:color .3s ease}
+.ld-v.hr .n{color:#3EE08F}.ld-v.bp .n{color:#FF8A7A}.ld-v.sp .n{color:#5FC8FF}.ld-v.rr .n{color:#FFD24D}
+.ld-v.bad .n{animation:ldBlink 1s steps(2,start) infinite}
+@keyframes ldBlink{50%{opacity:.35}}
+.ld-trace{display:block;width:100%}
+.ld-alarm{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;
+  color:#fff;background:var(--harm);padding:3px 8px;border-radius:4px;animation:ldBlink 1s steps(2,start) infinite}
+.ld-alarm[hidden]{display:none}
+.ld-bed{position:relative;height:250px;background:radial-gradient(ellipse at 50% 30%,#FFFFFF 0%,#E3ECF2 75%);overflow:hidden}
+.ld-patient{position:absolute;left:50%;bottom:-30px;width:260px;height:276px;transform:translateX(-50%)}
+.ld-say{position:absolute;left:16px;top:14px;max-width:62%;font-size:14px;line-height:1.4;color:var(--ink);background:#fff;
+  border:1px solid var(--rule);box-shadow:0 4px 12px rgba(21,48,66,.1);padding:8px 11px;border-radius:10px 10px 10px 2px;font-style:italic;z-index:2}
+.ld-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 14px 14px;background:#fff;border-top:1px solid var(--rule2)}
+.ld-actions button{font:inherit;font-size:13.5px;font-weight:600;color:var(--act);background:#fff;border:1px solid var(--actb);
+  border-radius:8px;padding:11px 8px;cursor:pointer;transition:background .15s ease,transform .1s ease}
+.ld-actions button:hover:not(:disabled){background:var(--actl);transform:translateY(-1px)}
+.ld-actions button:disabled{opacity:.45;cursor:default}
+.ld-actions button.done{border-color:var(--ok);color:var(--ok);background:var(--okl);opacity:1}
+.ld-over{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,0) 18%,rgba(255,255,255,.95) 60%)}
+.ld-over[hidden]{display:none}
+.ld-overcard{text-align:center;max-width:420px}
+.ld-overcard h3{margin:0 0 8px;font-size:22px}
+.ld-overcard p{margin:0 0 16px;color:var(--ink2);font-size:14.5px;line-height:1.5}
+.ld-linkbtn{display:block;margin:10px auto 0;background:none;border:0;color:var(--ink2);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
+.ld-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:1240px;margin:0 auto 20px;padding:0 clamp(16px,4vw,48px)}
+.ld-strip div{background:#fff;border:1px solid var(--rule2);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:4px}
+.ld-strip b{font-family:var(--mono);font-size:28px;color:var(--ink)}
+.ld-strip span{font-size:13px;color:var(--ink2)}
+.ld-inside,.ld-why,.ld-cases{max-width:1240px;margin:0 auto;padding:clamp(40px,7vw,90px) clamp(16px,4vw,48px) 0}
+.landing h2{font-family:"IBM Plex Serif",Georgia,serif;font-size:clamp(28px,3.6vw,42px);margin:0 0 8px;letter-spacing:-.01em;color:var(--ink)}
+.ld-sub{color:var(--ink3);margin:0 0 30px;font-size:14px}
+.ld-row{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:center;margin:0 0 clamp(36px,6vw,72px)}
+.ld-row.flip .ld-shot{order:2}
+.ld-shot{margin:0;border-radius:12px;overflow:hidden;border:1px solid var(--rule2);box-shadow:0 18px 48px rgba(21,48,66,.16);background:#fff}
+.ld-shot img{display:block;width:100%;height:auto}
+.ld-rowtext h3{font-size:clamp(20px,2.2vw,26px);margin:0 0 10px}
+.ld-rowtext p{color:var(--ink2);line-height:1.6;margin:0;font-size:16px}
+.ld-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+.ld-card{background:#fff;border:1px solid var(--rule2);border-radius:12px;padding:20px}
+.ld-card h3{margin:0 0 8px;font-size:17px}
+.ld-card p{margin:0;color:var(--ink2);font-size:14px;line-height:1.55}
+.ld-caselist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:24px}
+.ld-case{background:#fff;border:1px solid var(--rule2);border-radius:12px;padding:18px;cursor:pointer;text-align:left;font:inherit;color:inherit;transition:border-color .15s ease,box-shadow .15s ease}
+.ld-case:hover{border-color:var(--act);box-shadow:0 8px 20px rgba(31,111,178,.12)}
+.ld-case .t{font-weight:600;font-size:16px;margin-bottom:6px}
+.ld-case .m{font-family:var(--mono);font-size:12.5px;color:var(--ink3)}
+.ld-final{text-align:center;padding:clamp(56px,9vw,110px) 16px}
+.ld-final h2{margin-bottom:22px}
+.ld-foot{border-top:1px solid var(--rule2);background:#fff;padding:22px clamp(16px,4vw,48px);font-size:12.5px;color:var(--ink3);display:flex;flex-direction:column;gap:4px}
+@media (max-width:980px){
+  .ld-hero{grid-template-columns:1fr}.ld-cards{grid-template-columns:repeat(2,1fr)}
+  .ld-row,.ld-row.flip{grid-template-columns:1fr}.ld-row.flip .ld-shot{order:0}
+  .ld-strip{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:1180px){ .ld-free{display:none} .ld-name small{display:none} }
+@media (max-width:960px){ .ld-top{grid-template-columns:auto 1fr} .ld-nav{display:none} .ld-auth{justify-self:end} }
+@media (max-width:600px){
+  .ld-top{height:68px;gap:12px}.ld-top.scrolled{height:60px}
+  .ld-name small{display:none}.ld-logo{width:38px;height:38px;flex-basis:38px}
+  .ld-nav{display:none}.ld-cards{grid-template-columns:1fr}
+  .ld-actions{grid-template-columns:1fr}.ld-auth .ghost{display:none}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
@@ -1148,6 +1282,147 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 
 <div class="room" aria-hidden="true"></div>
 <div class="roomtint" aria-hidden="true"></div>
+
+<!-- v0.19. The welcome page (engine/landing.js). Shown on the deployed site to anyone signed
+     out; signing in takes them to the case board below. The local build shows it only with
+     ?landing in the address, for previews and screenshots. -->
+<div id="landing" class="landing hidden" aria-label="__PRODUCT__ welcome">
+  <header class="ld-top" id="ld-top">
+    <a class="ld-brand" href="#ld-hero" aria-label="__PRODUCT__, back to top">
+      <!-- The logo slot. Put the logo at engine/assets/logo.svg (or .png) and the build uses it;
+           until then it shows the placeholder mark. It is sized as a 44 px square. -->
+      <span class="ld-logo">__LOGO__</span>
+      <span class="ld-name">__PRODUCT__<small>Emergency medicine case simulator</small></span>
+    </a>
+    <nav class="ld-nav" aria-label="Sections">
+      <a href="#ld-inside" data-sec="ld-inside">Inside a case</a>
+      <a href="#ld-why" data-sec="ld-why">How it works</a>
+      <a href="#ld-cases" data-sec="ld-cases">Cases</a>
+    </nav>
+    <div class="ld-auth">
+      <span class="ld-free" aria-hidden="true"><span class="dot"></span>Free while in review</span>
+      <button type="button" class="ld-btn text" data-ld="login">Log in</button>
+      <button type="button" class="ld-btn primary" data-ld="signup">Sign up free<span class="arr" aria-hidden="true">&rarr;</span></button>
+    </div>
+  </header>
+
+  <section class="ld-hero" id="ld-hero">
+    <div class="ld-copy">
+      <div class="ld-kicker">Emergency medicine case simulator</div>
+      <h1>He can't breathe.<br>You're up.</h1>
+      <p class="ld-lede">Run emergency cases in your browser. Take the history, examine, order and treat
+        while the patient changes by the minute. Then see exactly what your timing cost.</p>
+      <div class="ld-ctas">
+        <button type="button" class="ld-btn primary big" data-ld="signup">Sign up free</button>
+        <button type="button" class="ld-btn ghost big" data-ld="login">Log in</button>
+      </div>
+      <p class="ld-fine">Free to use. Cases are drafts under clinical review and are not for patient care.</p>
+    </div>
+
+    <div class="ld-demo" id="ld-demo" aria-label="A short demonstration you can play">
+      <div class="ld-demohead">
+        <span class="ld-live" aria-hidden="true"></span>
+        <span>Bed 4 &middot; 65 M &middot; short of breath</span>
+        <span class="ld-alarm" id="ld-alarm" hidden>SpO&#8322; LOW</span>
+        <span class="ld-clock" id="ld-clock">00:00</span>
+      </div>
+      <div class="ld-mon" id="ld-mon">
+        <div class="ld-vitals">
+          <div class="ld-v hr"><span class="k">HR</span><span class="n" id="ld-hr">118</span></div>
+          <div class="ld-v bp"><span class="k">BP</span><span class="n" id="ld-bp">188/104</span></div>
+          <div class="ld-v sp"><span class="k">SpO&#8322;</span><span class="n" id="ld-sp">85</span></div>
+          <div class="ld-v rr"><span class="k">RR</span><span class="n" id="ld-rr">32</span></div>
+        </div>
+        <canvas id="ld-ecg" class="ld-trace" height="70" aria-hidden="true"></canvas>
+        <canvas id="ld-pleth" class="ld-trace pleth" height="38" aria-hidden="true"></canvas>
+      </div>
+      <div class="ld-bed">
+        <div class="ld-patient" id="ld-patient" aria-hidden="true"></div>
+        <div class="ld-say" id="ld-say" aria-live="polite">"I can't... get my breath..."</div>
+      </div>
+      <div class="ld-actions" id="ld-actions">
+        <button type="button" data-ldact="sit">Sit him upright</button>
+        <button type="button" data-ldact="nrb">Non-rebreather mask</button>
+        <button type="button" data-ldact="bipap">Start BiPAP</button>
+      </div>
+      <div class="ld-over" id="ld-over" hidden>
+        <div class="ld-overcard">
+          <h3 id="ld-overtitle">Better. Not fixed.</h3>
+          <p id="ld-overtext">His saturation is up, but his blood pressure is still 180 and his lungs are
+            full of fluid. What you do next decides how this goes.</p>
+          <button type="button" class="ld-btn primary big" data-ld="signup">Help the patient: sign up free</button>
+          <button type="button" class="ld-linkbtn" id="ld-again">Watch it again</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ld-strip" aria-label="In numbers">
+    <div><b id="ld-ncases">4</b><span>full cases, with more in review</span></div>
+    <div><b>__N_ACTIONS__</b><span>orders and actions to choose from</span></div>
+    <div><b>__N_DIAGNOSES__</b><span>diagnoses in the catalog</span></div>
+    <div><b>~10</b><span>minutes per case</span></div>
+  </section>
+
+  <section class="ld-inside" id="ld-inside">
+    <h2>Inside a case</h2>
+    <p class="ld-sub">Case text is blurred on this page. Everything else is the real thing.</p>
+    <div class="ld-row">
+      <figure class="ld-shot"><img src="__LANDING_SHOT_CASE__" alt="A case in progress: the live monitor, the patient, the history and the running record" loading="lazy"></figure>
+      <div class="ld-rowtext">
+        <h3>The patient gets worse while you think</h3>
+        <p>Vitals move on a clock. The nurse tells you when things change. Ask the patient
+          questions in your own words, typed or spoken, and they answer the way a breathless
+          person would: in short bursts.</p>
+      </div>
+    </div>
+    <div class="ld-row flip">
+      <figure class="ld-shot"><img src="__LANDING_SHOT_DEBRIEF__" alt="The debrief: critical actions completed and missed, with the reason for each" loading="lazy"></figure>
+      <div class="ld-rowtext">
+        <h3>A debrief that shows what your timing cost</h3>
+        <p>Every critical action you did or missed, when you did it, and why it mattered.
+          Missed the diuretic until the nurse prompted you? It says so.</p>
+      </div>
+    </div>
+    <div class="ld-row">
+      <figure class="ld-shot"><img src="__LANDING_SHOT_BOARD__" alt="The case board, grouped by specialty" loading="lazy"></figure>
+      <div class="ld-rowtext">
+        <h3>Pick a patient and go</h3>
+        <p>Cases are grouped by specialty and tagged by level, from medical student to senior
+          resident. Each one takes about ten minutes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ld-why" id="ld-why">
+    <h2>How it works</h2>
+    <div class="ld-cards">
+      <div class="ld-card"><h3>Talk to the patient</h3><p>Ask anything. Related details come up
+        on their own, the way patients offer them. Safety questions you still have to ask.</p></div>
+      <div class="ld-card"><h3>Examine and order</h3><p>Search hundreds of real orders, or say them out
+        loud. Results come back when they would on shift, not instantly.</p></div>
+      <div class="ld-card"><h3>Treat under pressure</h3><p>The right drug helps. The wrong one can hurt.
+        Wait too long and the case moves on without you.</p></div>
+      <div class="ld-card"><h3>Hand over and learn</h3><p>Give your handoff and diagnosis, then read a
+        debrief built from what you actually did.</p></div>
+    </div>
+  </section>
+
+  <section class="ld-cases" id="ld-cases">
+    <h2>Cases</h2>
+    <div class="ld-caselist" id="ld-caselist"></div>
+  </section>
+
+  <section class="ld-final">
+    <h2>Your next patient is already short of breath.</h2>
+    <button type="button" class="ld-btn primary big" data-ld="signup">Sign up free</button>
+  </section>
+
+  <footer class="ld-foot">
+    <div id="ld-legal"></div>
+    <div>Cases are drafts under clinical review and are not for patient care.</div>
+  </footer>
+</div>
 
 <div id="picker" class="welcome">
   <section class="wl-hero">
@@ -1380,7 +1655,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
      aria-labelledby="signintitle">
   <form class="leavecard signincard" id="signinform" novalidate>
     <h2 id="signintitle">Sign in</h2>
-    <p id="signinlede">__PRODUCT__ is invite-only while its cases are in clinical review.</p>
+    <p id="signinlede">Welcome back.</p>
     <button id="signingoogle" class="btn ghost signingoogle" type="button" hidden>Continue with Google</button>
     <div class="signinor" id="signinor" hidden><span>or sign in with a password</span></div>
     <label class="reflectlab" for="signinemail">Email</label>
@@ -1392,8 +1667,9 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       <button id="signincancel" class="btn ghost" type="button">Cancel</button>
       <button id="signinok" class="btn" type="submit">Sign in</button>
     </div>
-    <p class="signinfine">Forgot your password? Ask the person who invited you. Password reset by
-      email is not set up yet.</p>
+    <p class="signinswitch" id="signinswitch"></p>
+    <p class="signinfine" id="signinfine">Forgot your password? Password reset by email is not set up yet.
+      An account made with Google never needs one.</p>
   </form>
 </div>
 

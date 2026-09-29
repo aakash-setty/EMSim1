@@ -6,7 +6,7 @@ const {chromium}=require('playwright');
  // 1. unconfigured site
  let p=await b.newPage({viewport:{width:1440,height:860}}); hook(p);
  await p.goto('http://localhost:8090/'); await p.waitForTimeout(1200);
- await p.click('.wl-case'); await p.waitForTimeout(300); await p.keyboard.press('Enter'); await p.waitForTimeout(300);
+ await p.click('.ld-top [data-ld="login"]'); await p.waitForTimeout(300);
  const u=await p.evaluate(()=>({acct:document.getElementById('wl-acct').innerText, dlg:!document.getElementById('signinview').classList.contains('hidden'), picker:!document.getElementById('picker').classList.contains('hidden')}));
  ok('unconfigured site says so and stays on the list', /not configured/.test(u.acct)&&!u.dlg&&u.picker, u);
  await p.close();
@@ -28,7 +28,7 @@ const {chromium}=require('playwright');
  p=await b.newPage({viewport:{width:1440,height:860}}); hook(p);
  await p.goto('http://localhost:8080/'); await p.waitForTimeout(1500);
  const signed=await p.evaluate(()=>ACCESS_UI.signedIn());
- if(!signed){ await p.click('#acct-in'); await p.fill('#signinemail','res@example.com'); await p.fill('#signinpass','right-password'); await p.keyboard.press('Enter'); await p.waitForTimeout(1500); }
+ if(!signed){ await p.click('.ld-top [data-ld="login"]'); await p.fill('#signinemail','res@example.com'); await p.fill('#signinpass','right-password'); await p.keyboard.press('Enter'); await p.waitForTimeout(1500); }
  const i=await p.evaluate(()=>CASES.findIndex(c=>c.prefix==='MGCA'));
  await p.evaluate(i=>chooseCase(i),i); await p.waitForTimeout(2500);
  ok('MGCA splash', await p.evaluate(()=>PACK.prefix==='MGCA'&&!document.getElementById('splash').classList.contains('hidden')));

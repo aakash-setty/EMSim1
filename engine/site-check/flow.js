@@ -13,7 +13,14 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
    title:document.title, CASE:typeof CASE!=='undefined'&&CASE!==null, locked:CASES.filter(c=>c.locked).length}));
  console.log(JSON.stringify(s0));
  ok('four rows, four locks, nothing bound', s0.rows===4&&s0.locks===4&&!s0.CASE&&s0.locked===4);
- ok('invite-only line and sign-in button', /Invite only/.test(s0.acct)&&/Sign in/.test(s0.acct));
+ ok('sign-in line and button on the list', /Sign in to open a case/.test(s0.acct)&&/Sign in/.test(s0.acct));
+ const L0=await p.evaluate(()=>({shown:LANDING.visible(), tiles:document.querySelectorAll('.ld-case').length,
+   top:(document.elementFromPoint(720,400)||{}).closest?!!document.elementFromPoint(720,400).closest('#landing'):false,
+   imgs:[...document.querySelectorAll('#landing .ld-shot img')].map(i=>i.naturalWidth)}));
+ ok('signed out: the welcome page covers the list', L0.shown&&L0.top&&L0.tiles===4, L0);
+ ok('welcome page screenshots load', L0.imgs.length===3&&L0.imgs.every(w=>w>0), L0.imgs);
+ await p.click('[data-ldact="sit"]'); await p.waitForTimeout(1300);
+ ok('the demo takes an action', await p.evaluate(()=>document.querySelector('[data-ldact="sit"]').classList.contains('done')));
  ok('no review tools (speed control) in the site', await p.evaluate(()=>typeof REVIEW_SPEED==='undefined'&&!document.getElementById('reviewspeed')));
  ok('legal line and product name', /2026 Aakash Setty/.test(s0.legal)&&/EMSim/.test(s0.h1)&&s0.title==='EMSim');
  // the page must sit on the list without errors (setInterval guard)
@@ -21,14 +28,16 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  ok('no errors idling on the list', errs.length===0, errs);
  // keyboard on the list with nothing bound
  await p.keyboard.press('/'); await p.keyboard.type('chest'); await p.keyboard.press('Escape'); await p.keyboard.press('ArrowDown'); await p.waitForTimeout(200);
- ok('list keys work unbound', errs.length===0, errs);
+ ok('list keys stay off under the welcome page', errs.length===0&&await p.evaluate(()=>document.activeElement.id!=='wl-q'&&document.getElementById('wl-q').value===''), errs);
  // click a locked case: dialog
  const idx=await p.evaluate(()=>CASES.findIndex(c=>c.prefix==='CHFE'));
- await p.click('.wl-case[data-case="'+idx+'"]'); await p.waitForTimeout(150);
- await p.click('.wl-case[data-case="'+idx+'"]').catch(()=>{}); await p.waitForTimeout(300);
- let dlg=await p.evaluate(()=>!document.getElementById('signinview').classList.contains('hidden'));
- if(!dlg){ await p.keyboard.press('Enter'); await p.waitForTimeout(300); dlg=await p.evaluate(()=>!document.getElementById('signinview').classList.contains('hidden')); }
- ok('opening a locked case asks to sign in', dlg);
+ await p.click('.ld-case[data-ldcase="'+idx+'"]'); await p.waitForTimeout(300);
+ const d0=await p.evaluate(()=>({open:!document.getElementById('signinview').classList.contains('hidden'), title:document.getElementById('signintitle').innerText,
+   google:!document.getElementById('signingoogle').hidden, pw:!document.getElementById('signinpass').hidden}));
+ ok('a case tile on the welcome page opens sign-up, Google only', d0.open&&/Create your free account/.test(d0.title)&&d0.google&&!d0.pw, d0);
+ await p.click('#signinswitch [data-signmode="signin"]'); await p.waitForTimeout(200);
+ const dlg=await p.evaluate(()=>!document.getElementById('signinview').classList.contains('hidden')&&/Log in/.test(document.getElementById('signintitle').innerText)&&!document.getElementById('signinpass').hidden);
+ ok('switching to log in shows the password form', dlg);
  // typing "/" and Enter inside the dialog must not reach the list
  await p.fill('#signinemail',''); await p.click('#signinemail'); await p.keyboard.type('res@example.com');
  await p.click('#signinpass'); await p.keyboard.type('wrong/pass'); 
@@ -42,6 +51,7 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
    prefix:PACK&&PACK.prefix, locked:CASES.filter(c=>c.locked).length}));
  console.log(JSON.stringify(s1));
  ok('after sign-in the pending case loads and its splash opens', !s1.dlg&&s1.splash&&s1.prefix==='CHFE'&&s1.locked===3);
+ ok('signed in: the welcome page is gone', await p.evaluate(()=>!LANDING.visible()));
  let c=await ctl({}); const fn1=c.calls.fn;
  ok('one function call for one case', fn1===FN_BEFORE+1, c.calls);
  await p.evaluate(()=>begin()); await p.waitForTimeout(2500);
@@ -88,7 +98,8 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  await p.evaluate(()=>backToPicker()); await p.waitForTimeout(300);
  await p.click('#acct-out'); await p.waitForTimeout(2000);
  const s4=await p.evaluate(()=>({acct:document.getElementById('wl-acct').innerText, locked:CASES.filter(c=>c.locked).length, ls:Object.keys(localStorage).filter(k=>/sb-|supabase/.test(k)).map(k=>k+':'+String(localStorage.getItem(k)).length)}));
- ok('sign out: reloaded, locked, session gone', /Invite only/.test(s4.acct)&&s4.locked===4, s4);
+ ok('sign out: reloaded, locked, session gone', /Sign in to open a case/.test(s4.acct)&&s4.locked===4, s4);
+ ok('signed out again: the welcome page is back', await p.evaluate(()=>LANDING.visible()));
  await p.screenshot({path:'/tmp/e2e/list.png'});
  ok('no page errors anywhere', errs.length===0, errs);
  ok('no CSP violations', csp.length===0, csp);

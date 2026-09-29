@@ -2136,7 +2136,8 @@ function wlPaint(){
   });
 }
 function wlOpen(){ if(WL_SEL>=0&&WL_ROWS[WL_SEL]) chooseCase(WL_ROWS[WL_SEL].i); }
-function wlVisible(){ return !el('picker').classList.contains('hidden'); }
+/* v0.19. The welcome page covers the list when shown, so keys meant for the list stay off. */
+function wlVisible(){ return !el('picker').classList.contains('hidden') && !(typeof LANDING==='object'&&LANDING.visible()); }
 function wlBind(){
   if(WL_BOUND) return; WL_BOUND=true;
   el('wl-q').addEventListener('input',()=>{ WL_SEL=-1; renderPicker(); });

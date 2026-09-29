@@ -802,6 +802,9 @@ def main():
               # loads, so it comes first. It does nothing unless the page is the site build
               # with a PostHog key.
               "\n" + open(os.path.join(HERE, "analytics.js"), encoding="utf-8").read() + "\n" +
+              # landing.js (v0.19) declares `const LANDING`, the welcome page, which access.js
+              # shows and hides by session. Inert in the local build unless ?landing is given.
+              "\n" + open(os.path.join(HERE, "landing.js"), encoding="utf-8").read() + "\n" +
               # access.js (v0.18) declares `const ACCESS_UI`, which ui.js calls from boot() and
               # from chooseCase, so it too comes before ui.js.
               "\n/*__ACCESS_START__*/\n" + open(os.path.join(HERE, "access.js"), encoding="utf-8").read() +
@@ -816,6 +819,23 @@ def main():
     legal = f"© {cfg['copyrightYear']} {cfg['copyrightHolder']}. All rights reserved."
     shell = shell.replace("__PRODUCT__", product.replace("<", ""))
     shell = shell.replace("__ROOM_BG__", room_bg)
+    # v0.19. The welcome page's screenshots: real screens from CHFE with the case text blurred,
+    # made by engine/assets/landing/README.md's procedure. Public by design.
+    for key in ("case", "debrief", "board"):
+        shot = os.path.join(HERE, "assets", "landing", key + ".jpg")
+        uri = ("data:image/jpeg;base64," + base64.b64encode(open(shot, "rb").read()).decode()) if os.path.exists(shot) else ""
+        shell = shell.replace("__LANDING_SHOT_" + key.upper() + "__", uri)
+    # The welcome page's logo slot: engine/assets/logo.svg or logo.png when one exists,
+    # otherwise the placeholder mark.
+    logo_html = '<span class="ld-mark" aria-hidden="true"></span>'
+    for ext, mime in (("svg", "image/svg+xml"), ("png", "image/png")):
+        lp = os.path.join(HERE, "assets", "logo." + ext)
+        if os.path.exists(lp):
+            logo_html = ('<img alt="" src="data:' + mime + ';base64,' +
+                         base64.b64encode(open(lp, "rb").read()).decode() + '">')
+            break
+    shell = shell.replace("__LOGO__", logo_html)
+    shell = shell.replace("__N_ACTIONS__", str(len(CE))).replace("__N_DIAGNOSES__", str(len(shared["diagnoses"])))
     shell = shell.replace("__HERO_BG__", "data:image/jpeg;base64," + hero_bg)
     shell = shell.replace("__AVATAR_M__", "data:image/png;base64," + avatar_m)
     shell = shell.replace("__AVATAR_F__", "data:image/png;base64," + avatar_f)
@@ -890,6 +910,7 @@ def main():
                   "supabaseUrl": cfg.get("supabaseUrl", ""), "supabaseKey": cfg.get("supabaseKey", ""),
                   "edgeFunction": cfg.get("edgeFunction", "case-pack"),
                   "googleSignIn": bool(cfg.get("googleSignIn", False)),
+                  "emailSignUp": bool(cfg.get("emailSignUp", False)),
                   "posthogKey": cfg.get("posthogKey", ""), "posthogHost": cfg.get("posthogHost", "")}
         check_posthog(access["posthogKey"], access["posthogHost"])
         lib_js = open(SUPABASE_JS, encoding="utf-8").read()

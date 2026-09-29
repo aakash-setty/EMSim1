@@ -11,7 +11,7 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  let ctx=await b.newContext({viewport:{width:1440,height:860}}); let p=await ctx.newPage(); hook(p);
  await p.goto('http://localhost:8080/'); await p.waitForTimeout(1200);
  const i=await p.evaluate(()=>CASES.findIndex(c=>c.prefix==='MGCA'));
- await p.evaluate(i=>ACCESS_UI.open(i),i); await p.waitForTimeout(400);
+ await p.click('.ld-case[data-ldcase="'+i+'"]'); await p.waitForTimeout(400);
  ok('dialog offers Google', await p.evaluate(()=>!document.getElementById('signingoogle').hidden));
  await Promise.all([p.waitForURL(/localhost:8080\/(\?|$)/,{timeout:8000}).catch(()=>{}), p.click('#signingoogle')]);
  await p.waitForTimeout(2500);
@@ -26,11 +26,11 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  await ctl({oauthDenied:true});
  ctx=await b.newContext({viewport:{width:1440,height:860}}); p=await ctx.newPage(); hook(p);
  await p.goto('http://localhost:8080/'); await p.waitForTimeout(1200);
- await p.click('#acct-in'); await p.waitForTimeout(300);
+ await p.click('.ld-top [data-ld="login"]'); await p.waitForTimeout(300);
  await Promise.all([p.waitForURL(/error=/,{timeout:8000}).catch(()=>{}), p.click('#signingoogle')]);
  await p.waitForTimeout(2000);
- const s2=await p.evaluate(()=>({url:location.href, signed:ACCESS_UI.signedIn(), acct:document.getElementById('wl-acct').innerText}));
- ok('an uninvited Google account is refused with a clear message', !s2.signed&&/not on the invite list/.test(s2.acct), s2);
+ const s2=await p.evaluate(()=>({url:location.href, signed:ACCESS_UI.signedIn(), err:document.getElementById('signinerr').innerText}));
+ ok('a refused Google sign-in explains itself in the dialog', !s2.signed&&/closed right now/.test(s2.err), s2);
  ok('the error is removed from the address bar', !/error=/.test(s2.url), s2.url);
  await ctl({oauthDenied:false});
  ok('no page errors or CSP reports in the Google flow', errs.length===0, errs);

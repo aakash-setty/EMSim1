@@ -5,6 +5,48 @@ is usable with learners.
 
 ---
 
+## v0.19a: welcome page header
+
+The welcome page header is taller (84 px, easing to 66 px once the page scrolls, with a soft
+shadow) and carries a 44 px logo slot. Put the logo at `engine/assets/logo.svg` or
+`engine/assets/logo.png` and rebuild; until then the slot shows the placeholder mark. The
+name has a subtitle, the section links sit in a pill that highlights the section in view,
+there is a "Free while in review" badge, and Sign up has an arrow that moves on hover.
+Narrower screens drop the badge and subtitle first, then the section links.
+
+---
+
+## v0.19: welcome page and open sign-up
+
+Signed-out visitors to the site now land on a welcome page in the day-time palette of the case
+screens (only the monitor screen is dark) (`engine/landing.js`, markup and
+styles in `engine/shell.html`) instead of the case board. It has log in and sign up in the
+header, a hero with a thirty-second challenge, blurred screenshots, how it works, the case
+list and a closing call to action. Signing in removes it and leaves the familiar case board.
+Signing out brings it back.
+
+The challenge: a 65-year-old man in pulmonary edema on a live monitor (drawn ECG and pleth,
+alarming SpO2) with the engine's own patient figure in full panic. Three buttons (sit him
+upright, non-rebreather, BiPAP) move the numbers toward better targets; untreated he drifts
+toward exhaustion. Either way the demo ends on "Better. Not fixed." or "He's tiring." and a
+sign-up button. Its numbers are illustrative and independent of the CHFE case pack, which
+the page never loads.
+
+Screenshots are real CHFE screens with all case text blurred before capture
+(`engine/assets/landing/`). Counts on the page come from the build (cases, catalog actions,
+diagnoses).
+
+Sign-up is open: the dialog has a sign-up mode, Google only by default. Email and password
+sign-up is built but off (`emailSignUp` in site-config.json) until an email provider can
+send confirmation mail. Invite-only wording is gone from the site. Analytics adds
+landing_viewed, landing_demo_action, landing_demo_end, signup_clicked, signup_opened and
+signup_completed.
+
+The list's keyboard shortcuts are off while the welcome page covers it. Site check: 54 ok,
+including the welcome page, the demo, sign-up mode and the return to the page on sign-out.
+
+---
+
 ## v0.18h: Google sign-in
 
 The sign-in dialog can offer "Continue with Google" above the email and password form. It is

@@ -20,6 +20,7 @@ const ACCESS_UI = (function(){
   const CFG = (typeof ACCESS==='object' && ACCESS) || {mode:'local'};
   const SITE = CFG.mode==='site';
   const $ = id => document.getElementById(id);
+  let known=false, mode='signin';
   let client=null, session=null, pending=-1, busy=false, loading=-1, lastFocus=null, msg='';
   const configured = () => SITE && !!CFG.supabaseUrl && !!CFG.supabaseKey &&
                            typeof supabase==='object' && typeof supabase.createClient==='function';
@@ -30,8 +31,21 @@ const ACCESS_UI = (function(){
     const legal=$('pk-legal');
     if(legal) legal.textContent=[CFG.legal||'', draft?'Cases are drafts under clinical review and are not for patient care.':'']
       .filter(Boolean).join(' ');
-    if(!SITE) return;
+    const L=(typeof LANDING==='object'&&LANDING)||null;
+    if(!SITE){
+      /* The local build shows the welcome page only on request, for previews and screenshots. */
+      if(L && /[?&]landing\b/.test(location.search)){ L.bind({signup:()=>L.hide(), login:()=>L.hide()}); L.show(); }
+      return;
+    }
     if(typeof ANALYTICS==='object') ANALYTICS.init();
+    if(L){
+      L.bind({signup:i=>showDialog(i,'signup'), login:i=>showDialog(i,'signin')});
+      /* Until Supabase answers, guess from storage so a returning user does not see the welcome
+         page flash up before their case board. */
+      let stored=false;
+      try{ for(let k=0;k<localStorage.length;k++){ const n=localStorage.key(k)||''; if(/^sb-.*-auth-token$/.test(n)) stored=true; } }catch(e){}
+      if(!stored && !/[?&]code=/.test(location.search)) L.show();
+    }
     $('wl-acct').hidden=false;
     bindDialog();
     if(!configured()){ msg='Sign-in is not configured for this build.'; paint(); return; }
@@ -46,8 +60,8 @@ const ACCESS_UI = (function(){
     client.auth.onAuthStateChange((_ev,s)=>{ session=s||null; A.user(session&&session.user&&session.user.id); paint(); });
     client.auth.getSession().then(({data})=>{
         session=(data&&data.session)||null; A.user(session&&session.user&&session.user.id);
-        afterOAuthReturn(oauthReturn); paint(); })
-      .catch(()=>{ session=null; afterOAuthReturn(oauthReturn); paint(); });
+        known=true; afterOAuthReturn(oauthReturn); paint(); })
+      .catch(()=>{ session=null; known=true; afterOAuthReturn(oauthReturn); paint(); });
     if(CFG.googleSignIn){ $('signingoogle').hidden=false; $('signinor').hidden=false; }
     paint();
   }
@@ -68,14 +82,15 @@ const ACCESS_UI = (function(){
     cleanUrl();
     let prefix=''; try{ prefix=sessionStorage.getItem(PENDING_KEY)||''; sessionStorage.removeItem(PENDING_KEY); }catch(e){}
     if(r.error || !session){
-      const notInvited=/signup|not allowed|access_denied/i.test(r.code+' '+r.error);
-      A.track('signin_failed',{method:'google', reason: notInvited?'not_invited':'other'});
-      say(notInvited
-        ? 'That Google account is not on the invite list. Sign in with the email address you were invited with, or ask the person who invited you.'
-        : 'Google sign-in did not finish. Try again.');
+      const closed=/signup|not allowed/i.test(r.code+' '+r.error);
+      A.track('signin_failed',{method:'google', reason: closed?'signups_closed':'other'});
+      const m= closed ? 'New accounts are closed right now. If you already have one, log in with the email it uses.'
+                      : 'Google sign-in did not finish. Try again.';
+      say(m); showDialog(-1,'signin'); $('signinerr').textContent=m;
       return;
     }
-    A.track('signin_succeeded',{method:'google'});
+    const born=Date.parse((session.user&&session.user.created_at)||'')||0;
+    A.track(Date.now()-born<10*60*1000?'signup_completed':'signin_succeeded',{method:'google'});
     const i=prefix?CASES.findIndex(c=>c.prefix===prefix):-1;
     if(i>=0) open(i);
   }
@@ -102,11 +117,13 @@ const ACCESS_UI = (function(){
      the session. */
   function paint(){
     if(!SITE) return;
+    const L=(typeof LANDING==='object'&&LANDING)||null;
+    if(L && known){ if(session) L.hide(); else L.show(); }
     const box=$('wl-acct');
     const who=session&&session.user ? (session.user.email||'Signed in') : null;
     box.innerHTML = (who
         ? `<span class="who">Signed in as ${escA(who)}</span><button type="button" id="acct-out">Sign out</button>`
-        : `<span class="who">Invite only. Sign in to open a case.</span>`+
+        : `<span class="who">Sign in to open a case.</span>`+
           (configured()?`<button type="button" id="acct-in">Sign in</button>`:''))+
       `<span class="msg" role="status">${escA(msg)}</span>`;
     const bi=$('acct-in'); if(bi) bi.onclick=()=>showDialog(-1);
@@ -123,6 +140,7 @@ const ACCESS_UI = (function(){
     $('signinform').addEventListener('submit',e=>{ e.preventDefault(); submit(); });
     $('signincancel').addEventListener('click',hideDialog);
     $('signingoogle').addEventListener('click',google);
+    $('signinswitch').addEventListener('click',e=>{ e.stopPropagation(); const b=e.target.closest('[data-signmode]'); if(b) setMode(b.dataset.signmode); });
     $('signinview').addEventListener('click',e=>{ if(e.target===$('signinview')) hideDialog(); });
     document.addEventListener('keydown',e=>{
       if(!modalOpen()) return;
@@ -130,18 +148,40 @@ const ACCESS_UI = (function(){
     });
   }
   function modalOpen(){ const v=$('signinview'); return !!v && !v.classList.contains('hidden'); }
-  function showDialog(i){
-    if(!configured()){ say('Sign-in is not configured for this build.'); return; }
+  /* v0.19. One dialog, two modes. Sign up is Google only unless emailSignUp is set: email
+     sign-up needs a real email provider for the confirmation mail (see docs/deployment.md). */
+  function setMode(m){
+    mode=m;
+    const up=m==='signup', pw=!up||!!CFG.emailSignUp, g=!!CFG.googleSignIn;
+    $('signintitle').textContent= up?'Create your free account':'Log in';
+    $('signinlede').textContent= up
+      ? (g?'Sign up with your Google account. It takes a few seconds.':'Create an account with your email and a password.')
+      : 'Welcome back.';
+    ['signinemail','signinpass'].forEach(id=>{ $(id).hidden=!pw; const l=document.querySelector('label[for="'+id+'"]'); if(l) l.hidden=!pw; });
+    $('signinok').hidden=!pw; $('signinok').textContent= up?'Create account':'Log in';
+    $('signinpass').setAttribute('autocomplete', up?'new-password':'current-password');
+    $('signingoogle').hidden=!g; $('signinor').hidden=!(g&&pw);
+    const sw=$('signinswitch'); if(sw) sw.innerHTML= up
+      ? 'Already have an account? <button type="button" class="linkbtn" data-signmode="signin">Log in</button>'
+      : 'New here? <button type="button" class="linkbtn" data-signmode="signup">Create a free account</button>';
+    $('signinfine').hidden=up;
+    $('signinerr').textContent='';
+  }
+  function showDialog(i,m){
+    if(!configured()){ say('Sign-in is not configured for this build.'); if(typeof LANDING==='object') LANDING.hide(); return; }
     pending=i; lastFocus=document.activeElement;
+    setMode(m||'signin');
     $('signinerr').textContent=''; $('signinpass').value='';
     $('signinview').classList.remove('hidden');
-    setTimeout(()=>{ const e=$('signinemail'); (e.value?$('signinpass'):e).focus(); },0);
+    A.track(mode==='signup'?'signup_opened':'login_opened');
+    setTimeout(()=>{ const e=$('signinemail'); if(e.hidden){ $('signingoogle').focus(); return; } (e.value?$('signinpass'):e).focus(); },0);
   }
   function hideDialog(){
     $('signinview').classList.add('hidden'); pending=-1;
     if(lastFocus&&lastFocus.focus) try{ lastFocus.focus(); }catch(e){}
   }
   async function submit(){
+    if(mode==='signup') return signUpEmail();
     const email=$('signinemail').value.trim(), password=$('signinpass').value;
     if(!email||!password){ $('signinerr').textContent='Enter your email and password.'; return; }
     const ok=$('signinok'); ok.disabled=true; $('signinerr').textContent='';
@@ -150,7 +190,7 @@ const ACCESS_UI = (function(){
       if(error){
         A.track('signin_failed', {method:'password', reason: /invalid/i.test(error.message||'') ? 'wrong_credentials' : 'other'});
         $('signinerr').textContent = /invalid/i.test(error.message||'')
-          ? 'That email and password do not match an invited account.'
+          ? 'That email and password do not match an account.'
           : 'Sign-in failed: '+(error.message||'unknown error')+'.';
         return;
       }
@@ -162,6 +202,19 @@ const ACCESS_UI = (function(){
       A.track('signin_failed', {reason:'network'});
       $('signinerr').textContent='Could not reach the sign-in service. Check your connection and try again.';
     }finally{ ok.disabled=false; }
+  }
+  async function signUpEmail(){
+    const email=$('signinemail').value.trim(), password=$('signinpass').value;
+    if(!email||password.length<8){ $('signinerr').textContent='Enter your email and a password of at least 8 characters.'; return; }
+    const ok=$('signinok'); ok.disabled=true;
+    try{
+      const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});
+      if(error){ A.track('signup_failed',{method:'password'}); $('signinerr').textContent='Sign-up failed: '+(error.message||'unknown error')+'.'; return; }
+      A.track('signup_completed',{method:'password'});
+      if(data&&data.session){ session=data.session; hideDialog(); paint(); }
+      else $('signinerr').textContent='Check your email for a link to confirm your address, then log in.';
+    }catch(e){ $('signinerr').textContent='Could not reach the sign-in service. Check your connection and try again.'; }
+    finally{ ok.disabled=false; }
   }
   async function signOut(){
     /* Local scope: this browser only. The default signs the account out on every device. */
