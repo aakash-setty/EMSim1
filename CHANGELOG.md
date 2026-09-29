@@ -14,6 +14,10 @@ name has a subtitle, the section links sit in a pill that highlights the section
 there is a "Free while in review" badge, and Sign up has an arrow that moves on hover.
 Narrower screens drop the badge and subtitle first, then the section links.
 
+The subtitle ("Emergency medicine case simulator") and the hero's kicker line are larger. The four
+number tiles are now cards with an icon, a colored top edge, a large number, a title and a
+line of what it means for the learner, and they lift on hover. On phones they stack one per row.
+
 ---
 
 ## v0.19: welcome page and open sign-up
