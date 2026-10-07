@@ -6,8 +6,60 @@ Atrial fibrillation with a rapid ventricular response, complicated by acute deco
 heart failure on a newly recognised reduced ejection fraction and cardiogenic pulmonary
 edema. Sixty-eight year old man, EMS to the resuscitation bay.
 
-**Nothing in this pack has been reviewed by a physician.** The clinical seed came from
-one; the case file did not.
+**A physician signed the 27 open decisions on 5 October 2026.** They are recorded in the next
+section. The eight verification checks are still open, so the case has not completed the
+section 14.3 checklist. **Sections 1 to 11 below were written before that review and before
+the v0.18a audit. Where they disagree with the next section, the next section is right.**
+
+---
+
+## Physician review, 5 October 2026
+
+Reviewer: Aakash Setty, MD, emergency medicine resident. One reviewer. Question ids are those in `cases/review/physician-review-bank.json`, bank
+2026-09-29.1. The recommendations were drafted by an AI model and the reviewer saw them
+before deciding, so agreement here is not independent validation. Applied in v0.20.
+
+Principles the reviewer set for the whole case: consequences teach more than deductions, a
+hard first run is acceptable because the case can be replayed, and the critical list should
+hold only the acts that decide his outcome.
+
+| Id | Decision | Change to the case |
+|---|---|---|
+| 01 | Keep 240 s to tire without positive pressure | None |
+| 02 | Rate control must not buy four more minutes | Second clock 240 s to 120 s |
+| 03 | Mask stays critical in respiratory failure, tube recommended | None |
+| 04 | Metoprolol counts as critical rate control only once the mask is on | Own action, discouraged before the mask, `also_satisfies` after |
+| 05 | Do not prompt an immediate second digoxin push | Redose prompt and cardiology reworded |
+| 06 | Diltiazem stays discouraged after the ultrasound | None. A non-halting error tier is wanted when the platform has one |
+| 07 | Magnesium replacement stays recommended | None. Recorded departure from the seed's critical action four |
+| 08 | A crystalloid bolus has a consequence, not a halt | Transition to respiratory failure after 10 s, or six points of saturation. No harmful tag, no halted phase |
+| 09 | Cardioversion stays discouraged | None yet. Note to be rewritten once its guideline claims are verified |
+| 10 | Step-down that can run the mask is equally sound | Feedback reworded, scoring unchanged |
+| 12 | Monitor critical, IV access recommended | Tag changed |
+| 13 | Eight points of saturation over one minute on the mask | None |
+| 16 | Keep a week of edema, fix contradictions | Three texts corrected |
+| 17 | Troponin T 38 ng/L | None |
+| 18 | D-dimer, CTPA and leg ultrasound discouraged | None |
+| 19 | Neither dose moves the monitor on the click | First-dose effect has a 10 s onset |
+| 20 | Two doses, 22 beats, redose prompt at 55 s | None |
+| 21 | One shared tally for all nodal blockers | None |
+| 22 | Rewrite the rate-control note | Rewritten |
+| 23 | A second diltiazem dose costs more pressure | Further 10/5 mmHg on the second dose |
+| 24 | Nitroglycerin neutral, high-dose bolus discouraged | None |
+| 25 | Confirm the 13 traps, add nitroprusside | Nitroprusside discouraged |
+| 26 | Keep the score, add bleeding risk | Paragraph added |
+| 27 | Reassess before a third dose | Follow-up note and cardiology reworded |
+| 31 | Reports state findings only | CT conclusion and two ECG comparisons removed |
+| 32 | Handover shows the monitor as it was | `inherit_vitals` on case_complete |
+| 33 | AF with RVR stays the single scored diagnosis | None |
+
+Text written by the model for these changes and not yet read by the reviewer in place: the
+metoprolol note, the fluid narration and note, the rewritten rate-control note, the bleeding
+risk paragraph, the nitroprusside note, the reworded cardiology answer and the reworded
+disposition feedback.
+
+Still open: the eight verification checks (AFRVR-11, 15, 28, 29, 30, 34, 35 and 36), every
+reference marked unverified, and a play-through in the interface.
 
 ---
 
@@ -473,19 +525,19 @@ is yours.
 **Clinical, and none of it is done:**
 
 - [ ] every reference interval is right for the assays you are modelling
-- [ ] the two 240-second deadlines are claims you will defend
-- [ ] the 10-second rate-control delay is a claim you will defend, and the nurse line
+- [x] (5 Oct 2026, as amended in Physician review) the two 240-second deadlines are claims you will defend
+- [x] (5 Oct 2026, as amended in Physician review) the 10-second rate-control delay is a claim you will defend, and the nurse line
       that accompanies it says what you want it to say
-- [ ] two doses is the right number, twenty-two beats is the right partial response, and
+- [x] (5 Oct 2026, as amended in Physician review) two doses is the right number, twenty-two beats is the right partial response, and
       the fifty-five second obligation asks at the right moment
-- [ ] all six routes counting toward one tally is what you meant, and metoprolol followed
+- [x] (5 Oct 2026, as amended in Physician review) all six routes counting toward one tally is what you meant, and metoprolol followed
       by amiodarone should be two doses rather than one of each
-- [ ] cardiology's advice at each of the three stages is what you would say, particularly
+- [x] (5 Oct 2026, as amended in Physician review) cardiology's advice at each of the three stages is what you would say, particularly
       the claim that a rate refractory to two doses is being driven by the decompensation
       and should not have a third
-- [ ] the eight-point saturation gain and its one-minute tempo are what you meant
-- [ ] the twenty-point systolic fall on diltiazem is what you meant
-- [ ] a crystalloid bolus in this patient is genuinely lethal, or it is not and the tag
+- [x] (5 Oct 2026, as amended in Physician review) the eight-point saturation gain and its one-minute tempo are what you meant
+- [x] (5 Oct 2026, as amended in Physician review) the twenty-point systolic fall on diltiazem is what you meant
+- [x] (5 Oct 2026, as amended in Physician review) a crystalloid bolus in this patient is genuinely lethal, or it is not and the tag
       should change
 - [ ] the beat sounds irregular enough, and not so irregular that it reads as a fault.
       **Listen to it**, at 160 in the arrival phase and at 104 in the stabilised phase.
@@ -497,9 +549,9 @@ is yours.
       they are the only sounds that never stop
 - [ ] the room is silent everywhere it should be: on the welcome screen, on the splash
       before Begin, and under the debrief, including after a harmful halt
-- [ ] the coverage groups are clinically sound, particularly binding metoprolol to the
+- [x] (5 Oct 2026, as amended in Physician review) the coverage groups are clinically sound, particularly binding metoprolol to the
       same tag as digoxin
-- [ ] magnesium replacement is correctly recommended rather than critical, or it is not
+- [x] (5 Oct 2026, as amended in Physician review) magnesium replacement is correctly recommended rather than critical, or it is not
 - [ ] every debrief note teaches something correct
 - [ ] every reference has been checked against its source
 - [ ] the review matrix contains no clinically wrong resolution

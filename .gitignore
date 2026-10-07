@@ -28,3 +28,4 @@ private-packs/
 
 # Scratch folder for files waiting to be deleted by hand. Never committed.
 _to_delete/
+cases/review/tool/out/

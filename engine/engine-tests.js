@@ -264,7 +264,7 @@ if (HARMFUL.length) {
   } else {
     chk('a harmful action with no prerequisites exists to test', true);
   }
-} else chk('a harmful action exists to test', false);
+} else chk('this case authors no harmful action, so nothing halts it', !CASE.phases.some(p => p.id === 'halted'));
 
 section('catalog action surface');
 chk('the whole catalog is rendered', Object.keys(A).length >= 200, String(Object.keys(A).length));
@@ -360,12 +360,23 @@ section('time-guarded transitions');
     /* The mechanism has to actually run, not merely be authored. */
     const longest = Math.max(...timed.map(([, , t]) => t.after_seconds));
     const idle = fold(mk([]), longest * timed.length + 60, 1);
-    chk('doing nothing eventually changes the phase',
-        idle.phase !== START_PHASE, idle.phase);
-    chk('each deterioration is recorded for the debrief',
-        idle.timeFires.length > 0 &&
-        idle.timeFires.every(f => f.after > 0 && typeof f.from === 'string'),
-        JSON.stringify(idle.timeFires.map(f => f.from + '->' + f.to)));
+    /* v0.23. A rule fires on its own only if its clock starts at phase entry, or it has
+       no guard, or its guard is a negation. A case whose every timed rule is the delayed
+       consequence of an action (DKA) has nothing that fires while the resident does
+       nothing, and for that case the property worth asserting is the opposite one. */
+    const selfFiring = timed.filter(([, , t]) =>
+      (t.measured_from || 'phase_entry') !== 'guard_true' || !t.when || /\bNOT\b/.test(t.when));
+    if (selfFiring.length) {
+      chk('doing nothing eventually changes the phase',
+          idle.phase !== START_PHASE, idle.phase);
+      chk('each deterioration is recorded for the debrief',
+          idle.timeFires.length > 0 &&
+          idle.timeFires.every(f => f.after > 0 && typeof f.from === 'string'),
+          JSON.stringify(idle.timeFires.map(f => f.from + '->' + f.to)));
+    } else {
+      chk('every timed rule is the delayed consequence of an action, so doing nothing changes nothing',
+          idle.phase === START_PHASE && idle.timeFires.length === 0, idle.phase);
+    }
     /* The one place a nurse line may describe a trajectory is a deterioration, and it
        must not arrive on the prompt channel, or the no-trajectory rule below is
        silently weakened. */
@@ -685,7 +696,12 @@ section('vital effects');
        a statement about the clock. */
     const unguarded = withFx.filter(x => !(A[x].prerequisites || []).length &&
                                          !(A[x].vital_effects[0].while));
-    const id = unguarded[0] || withFx.find(x => !(A[x].prerequisites || []).length) || withFx[0];
+    /* v0.22. When every prerequisite-free effect is guarded off in the start phase (TAKO:
+       a nitrate's extra fall applies only after arrival), prefer any unguarded effect,
+       which has a prerequisite and takes the pack-checked branch below, over a guarded one
+       that moves nothing at t=0 by design. */
+    const id = unguarded[0] || withFx.find(x => !(A[x].vital_effects[0].while)) ||
+               withFx.find(x => !(A[x].prerequisites || []).length) || withFx[0];
     const fx = A[id].vital_effects[0];
     const pre = (A[id].prerequisites || []).length;
     const readAt = 1 + (fx.onset_seconds || 0) + 1;
@@ -828,8 +844,10 @@ section('the running chart');
   {
     /* And of kind "deterioration", where the case has a timed transition that narrates.
        Emitted on its own kind so the no-trajectory assertion on prompts stays valid. */
+    /* v0.23. Only a rule that can fire with nobody acting; see the same test above. */
     const timed = CASE.phases.some(p => (p.transitions || [])
-      .some(t => t.after_seconds !== undefined && t.narration));
+      .some(t => t.after_seconds !== undefined && t.narration &&
+        ((t.measured_from || 'phase_entry') !== 'guard_true' || !t.when || /\bNOT\b/.test(t.when))));
     if (timed) {
       const long = fold(mk([]), 4000, 1);
       chk('the fold emits a nurse line of kind "deterioration"',

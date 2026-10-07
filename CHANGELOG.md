@@ -5,6 +5,184 @@ is usable with learners.
 
 ---
 
+## v0.23: a seventh case (mild ketoacidosis with a low potassium), and three catalog entries
+
+New case, `cases/DKA`: a 24-year-old woman with vomiting and diarrhea whose triage note
+does not mention her type 1 diabetes. Mild ketoacidosis with a potassium of 3.1 before any
+insulin. **Drafted by a language model and not reviewed by a physician.** `DKA-SEED.md`
+records what a person decided, which sources were opened and how, and what an independent
+check changed.
+
+What is new in how a case behaves, all with existing mechanisms:
+
+- No clock that changes the patient. Every timed rule is the delayed consequence of an
+  action. Doing nothing leaves her as she arrived.
+- Order carried by phases. Insulin on arrival leads to a falling potassium. The same
+  insulin after potassium has been replaced leads to the treated phase.
+- A restart read from `flags_set_repeat`: the second administration of insulin is the
+  restart after a hold.
+- Laboratory results keyed to flags inside one phase, so a repeat chemistry after fluid
+  or after bicarbonate shows what each did.
+
+Catalog, on author instruction: Beta-Hydroxybutyrate under Lab Work, and Insulin
+(Subcutaneous) and Potassium Chloride (oral) under Meds - Miscellaneous. Voice aliases
+follow. Oral potassium phrases moved off the existing potassium entry.
+
+Tooling:
+
+- The shared engine suite assumed any timed transition fires when nobody acts. It now
+  tests that only for rules that can: a clock from phase entry, no guard, or a negated
+  guard. A case whose timed rules are all delayed consequences is checked for the
+  opposite.
+- `catalog/expand_interview_variants.py` has a topic map for DKA.
+
+Not done: the site check, the Case Maps artifact, and any physician review.
+
+---
+
+
+### v0.23a (6 October 2026)
+
+- Catalog: Insulin Glargine (Subcutaneous) added under Meds - Miscellaneous on author instruction.
+  No vascular access needed. Voice aliases for glargine, Lantus, basal and long-acting insulin
+  now resolve to it. 305 catalog entries.
+- DKA: glargine is recommended once she is treated and unscored before that. It sets
+  basal_given, changes no phase and never lowers the potassium. The debrief quotes the 2024
+  consensus report on both sides of early basal insulin. Endocrinology acknowledges it.
+- DKA: three scenarios added (23), including one that records a known gap. Insulin ordered 11
+  to 19 seconds after potassium reaches treated. 560 engine checks.
+- Case Maps artifact: DKA panel added.
+
+## v0.22: a sixth case (takotsubo with outflow obstruction), and a validator that misread "inotrope"
+
+New case, `cases/TAKO`: a 68-year-old woman with chest pain and ST elevation at her
+husband's funeral, a new murmur, and shock that gets worse with the usual treatment.
+**Drafted by a language model and not reviewed by a physician.** `TAKO-SEED.md` records
+what a person decided and what an independent fact-check changed.
+
+What is new in how a case can behave, all with existing mechanisms:
+
+- A consultant who takes over. Ninety seconds after cardiology is called with a low
+  pressure, a timed transition steadies her and the nurse says who did it. The learner is
+  not credited with the treatment.
+- A case-only button, "Activate Catheterization Lab", on the Consults tab.
+- A fall in pressure on a clock that nothing prevents, so every learner meets the problem.
+
+Tooling:
+
+- `validate_case.py` and `deterioration_timeline.py` decided a timed guard was negated by
+  looking for the letters NOT anywhere in it. `flag inotrope_given set` contains them. It
+  is now a whole-word match. No shipped case was affected.
+- The shared engine suite picks an unguarded vital effect when every prerequisite-free
+  one is guarded off in the first phase.
+- `catalog/expand_interview_variants.py` has a topic map for TAKO.
+
+Not done: a held-out matcher set for TAKO, the site check, and any physician review.
+
+---
+
+## v0.21: a fifth case (toxic shock), a disposition that does not end the run, and a timing fault fixed in every case
+
+**The fault first, because it affects every pack.** A transition timed from the moment its
+guard became true (`measured_from: "guard_true"`) could fail to fire until the resident's
+next click. The deadline event was scheduled at start plus `after_seconds` and then tested
+with `t - start >= after_seconds`. In play the clock is a float, and 12.386 minus 7.386 is
+4.999999999999999, so the event arrived, the test failed, and nothing was scheduled again.
+It showed on roughly half of runs: AFRVR's rate control, DIPH's bicarbonate and every other
+delayed consequence sat unchanged until something else was pressed. The comparison now
+allows a millionth of a second. The tests never saw it because every one of them logs
+whole seconds. `TSS-tests.js` now logs fractional times. Found by playing TSS in a browser.
+
+New case, `cases/TSS`: menstrual toxic shock syndrome in a 22-year-old woman who thinks
+she has food poisoning. **Drafted by a language model and not reviewed by a physician.**
+`TSS-SEED.md` records the four decisions a person made and everything a model wrote.
+
+Engine (all cases):
+
+- `handoff.disposition_intercepts`, a list of `{disposition, when, action}`. When the
+  resident confirms that disposition and the condition holds, the interface logs the named
+  case action in place of `handoff_submit` and the run continues. TSS uses it so that an
+  early discharge makes her faint instead of ending the case. A case that authors none
+  hands over exactly as before. The validator checks the disposition, the action and the
+  condition.
+- `hidden: true` on a case action keeps it off every tab and out of search. It exists for
+  the action an intercept logs.
+
+Catalog:
+
+- `Remove Vaginal Foreign Body` under Procedures, with voice aliases. Author-supplied, not
+  from a screenshot. Inert in every case that does not bind it. 301 actions.
+- `catalog/expand_interview_variants.py` has a topic map for TSS.
+
+Not done: the embedding arm of the matcher evaluation for TSS, the site check, and any
+physician review.
+
+---
+
+## v0.20: AFRVR physician decisions applied, and two engine additions
+
+The first case decisions signed by a physician. Aakash Setty reviewed the 27 open AFRVR
+decisions on 5 October 2026 and these are the ones that changed the case. The decision ids
+are those in `cases/review/physician-review-bank.json`. The record is in
+`cases/AFRVR/AFRVR-review-packet.md` under "Physician review".
+
+Engine (all cases):
+
+- `also_satisfies` on a case action. Taking the action also discharges another action's
+  expectation, but only if a condition holds when it is taken. `also_covers` says two
+  entries are always the same act. This says an act is right at one point in a case and
+  wrong at another. The validator checks the target and the condition.
+- `inherit_vitals` on a terminal phase. The phase shows the monitor as it stood when the
+  run entered it, instead of one authored set of numbers. Opt-in, so CHFE, DIPH and MGCA
+  are unchanged.
+- The validator no longer warns that nothing reads a flag whose reader is a vital effect's
+  `while` guard.
+- The shared engine suite accepts a case that authors no harmful action.
+
+AFRVR:
+
+- AFRVR-02. Without positive pressure, a rate-controlled patient now tires after 120
+  seconds, not 240. Rate control no longer buys four more minutes.
+- AFRVR-04. Metoprolol is its own action. It is discouraged before positive pressure and
+  satisfies the critical rate-control action only once the mask is on.
+- AFRVR-05 and AFRVR-27. The redose prompt asks "give more, or add something". Cardiology
+  no longer says "give it again" (digoxin is loaded over hours) and says to reassess before
+  a third dose instead of forbidding one.
+- AFRVR-08. A crystalloid bolus no longer halts the case. Before positive pressure it tips
+  him into respiratory failure ten seconds later, and the mask still rescues him. On the
+  mask with the rate uncontrolled, or in respiratory failure, it costs six points of
+  saturation. Nothing in this case is tagged harmful now, so the halted phase is gone.
+- AFRVR-10. The disposition feedback says a step-down unit that can run the mask is an
+  equally sound answer. The scoring is unchanged.
+- AFRVR-12. IV access is recommended, not critical. The monitor stays critical.
+- AFRVR-16. Three contradictions with the week of leg swelling are fixed.
+- AFRVR-19. The first dose of a rate-controlling drug takes ten seconds to show, like the
+  second.
+- AFRVR-22. The rate-control debrief note no longer argues against the second dose.
+- AFRVR-23. A second dose of diltiazem takes another 10/5 mmHg off the pressure.
+- AFRVR-25. Nitroprusside is discouraged.
+- AFRVR-26. The anticoagulation note covers bleeding risk.
+- AFRVR-31. The CT chest report ends at its findings, and the repeat ECG reports no longer
+  cite an earlier tracing.
+- AFRVR-32. The handover screen shows the monitor as it was at handoff.
+
+Signed with no change: AFRVR-01, 03, 06, 07, 09, 13, 17, 18, 20, 21, 24 and 33. Held back:
+the cardioversion note (AFRVR-09) keeps its text until its guideline claims are checked
+against the sources.
+
+Known cost. Five prompts scheduled later than 120 seconds can no longer fire in the
+rate-controlled, congested phase, and the validator says so. The positive-pressure prompt
+at 80 seconds still fires there in Easy mode. In Normal mode it does not, which the
+physician accepted because the case can be replayed.
+
+Not yet done: the eight AFRVR verification checks, a play-through in the browser, and the
+site check (it needs deno, which this machine's shell does not have).
+
+Verified: AFRVR 628 checks, 33 scenarios, validator 0 errors, 76 validator tests. CHFE 548,
+DIPH 628, MGCA 528 checks, all scenarios and validator tests pass unchanged.
+
+---
+
 ## v0.19i: Google logo on the Google sign-in button
 
 "Continue with Google" in the sign-in and sign-up dialogs now carries Google's four-colour

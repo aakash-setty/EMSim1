@@ -10,12 +10,12 @@ Two questions per row. Would this patient really deteriorate in that time if tha
 
 Vitals in this phase: HR 160, BP 132/78, RR 30, SpO2 88%, T 37.0
 
-**Rule 2: at 10s (measured from guard_true) → `rate_controlled_congested`**
+**Rule 2: at 10s (measured from guard_true) → `respiratory_failure`**
 
-- guard: `flag rate_control_adequate set`
-- destination vitals: HR 108, BP 118/70, RR 32, SpO2 86%, T 37.0
-- narration: “That second dose has done it. His rate's down and I can actually count it now, still all over the place.”
-- author rationale: AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgement was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act.
+- guard: `flag fluid_given set`
+- destination vitals: HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0
+- narration: “That fluid has gone straight to his chest. He's much worse, he's getting drowsy and his sat is dropping.”
+- author rationale: PHYSICIAN DECISION, 5 October 2026 (AFRVR-08). A consequence the learner must rescue replaces the halt. Ten seconds after the bolus, the same compressed delay the rate-control drugs carry: a delayed consequence of the resident's own action, so the five-second floor applies and not the thirty-second fairness floor.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
@@ -27,7 +27,24 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 6. 200s `non_invasive_positive_pressure_ventilation` (escalation)
 7. 215s `apixaban` (first)  **suppressed by the cap**
 
-**Rule 3: at 240s (measured from phase_entry) → `respiratory_failure`**
+**Rule 3: at 10s (measured from guard_true) → `rate_controlled_congested`**
+
+- guard: `flag rate_control_adequate set`
+- destination vitals: HR 108, BP 118/70, RR 32, SpO2 86%, T 37.0
+- narration: “That second dose has done it. His rate's down and I can actually count it now, still all over the place.”
+- author rationale: AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgment was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act.
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 20s `attach_monitor` (first)
+2. 80s `non_invasive_positive_pressure_ventilation` (first)
+3. 130s `ultrasound_cardiac` (first)
+4. 160s `furosemide_40_mg_iv` (first)
+5. 190s `digoxin_bolus` (first)  **suppressed by the cap**
+6. 200s `non_invasive_positive_pressure_ventilation` (escalation)
+7. 215s `apixaban` (first)  **suppressed by the cap**
+
+**Rule 4: at 240s (measured from phase_entry) → `respiratory_failure`**
 
 - guard: `NOT flag on_niv set`
 - destination vitals: HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0
@@ -58,7 +75,7 @@ Vitals in this phase: HR 152, BP 126/76, RR 24, SpO2 88%, T 37.0
 - guard: `flag rate_control_adequate set`
 - destination vitals: HR 104, BP 124/74, RR 20, SpO2 89%, T 37.0
 - narration: “That second dose has done it. His rate's down and I can actually count it now, still all over the place.”
-- author rationale: AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgement was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act.
+- author rationale: AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgment was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
@@ -72,17 +89,12 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 Vitals in this phase: HR 108, BP 118/70, RR 32, SpO2 86%, T 37.0
 
-**Rule 2: at 240s (measured from phase_entry) → `respiratory_failure`**
+**Rule 2: at 10s (measured from guard_true) → `respiratory_failure`**
 
-- guard: `NOT flag on_niv set`
+- guard: `flag fluid_given set`
 - destination vitals: HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0
-- narration: “His rate's crept up again and he's working much harder than he was. His sat has come down.”
-- author rationale: AUTHOR SIGNATURE REQUIRED. Same claim and same four minutes as the arrival phase, applied to a patient whose rate is now 108. The rate control is a genuine improvement in diastolic filling time, so a reviewer might reasonably argue this patient tires more slowly than the one at 160 and that the deadline here should be longer. It is set the same deliberately, so that the case does not teach that treating the rate buys time it has not been shown to buy.
-
-Prompts in this phase that set on_niv, which is what the fairness rule requires:
-
-- `non_invasive_positive_pressure_ventilation` first at 80s, 160s of lead
-- `non_invasive_positive_pressure_ventilation` escalation at 200s, 40s of lead
+- narration: “That fluid has gone straight to his chest. He's much worse, he's getting drowsy and his sat is dropping.”
+- author rationale: PHYSICIAN DECISION, 5 October 2026 (AFRVR-08). A consequence the learner must rescue replaces the halt. Ten seconds after the bolus, the same compressed delay the rate-control drugs carry: a delayed consequence of the resident's own action, so the five-second floor applies and not the thirty-second fairness floor.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
@@ -94,6 +106,28 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 6. 200s `non_invasive_positive_pressure_ventilation` (escalation)
 7. 215s `apixaban` (first)  **suppressed by the cap**
 
+**Rule 3: at 120s (measured from phase_entry) → `respiratory_failure`**
+
+- guard: `NOT flag on_niv set`
+- destination vitals: HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0
+- narration: “His rate's crept up again and he's working much harder than he was. His sat has come down.”
+- author rationale: PHYSICIAN DECISION, 5 October 2026 (AFRVR-02). Two minutes, shortened from four. This clock is measured from entry to the phase, so at four minutes rate control bought up to four more minutes of unsupported breathing, which contradicted wrong path one: a lower rate does not rescue him. Two minutes is compressed tempo and a teaching choice, like the arrival clock.
+
+Prompts in this phase that set on_niv, which is what the fairness rule requires:
+
+- `non_invasive_positive_pressure_ventilation` first at 80s, 40s of lead
+- `non_invasive_positive_pressure_ventilation` escalation at 200s, -80s of lead  **UNDER THE 20s FLOOR**
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 20s `attach_monitor` (first)
+2. 80s `non_invasive_positive_pressure_ventilation` (first)
+3. 130s `ultrasound_cardiac` (first)  **AT OR AFTER THE EXIT**
+4. 160s `furosemide_40_mg_iv` (first)  **AT OR AFTER THE EXIT**
+5. 190s `digoxin_bolus` (first)  **suppressed by the cap**  **AT OR AFTER THE EXIT**
+6. 200s `non_invasive_positive_pressure_ventilation` (escalation)  **AT OR AFTER THE EXIT**
+7. 215s `apixaban` (first)  **suppressed by the cap**  **AT OR AFTER THE EXIT**
+
 ## 2. The do-nothing trajectory
 
 What a resident who performs no state-changing action at all sees, from arrival to wherever the case leaves them. This is the path an author is least likely to have imagined and the one a frozen learner will actually be looking at.
@@ -101,7 +135,7 @@ What a resident who performs no state-changing action at all sees, from arrival 
 | clock | phase | vitals | how it was reached |
 |---|---|---|---|
 | 0:00 | `presentation` | HR 160, BP 132/78, RR 30, SpO2 88%, T 37.0 | arrival |
-| 4:00 | `respiratory_failure` | HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0 | rule 3 fired at 240s |
+| 4:00 | `respiratory_failure` | HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0 | rule 4 fired at 240s |
 
 **The trajectory stops at `respiratory_failure`, which is not terminal.** The clock cannot end this case: a resident who does nothing at all reaches this phase and stays in it. Whether that is the right teaching claim for this presentation is the author's call.
 
@@ -111,10 +145,12 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 
 | from | at | to | vitals immediately after | the line |
 |---|---|---|---|---|
+| `presentation` | 10s | `respiratory_failure` | HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0 | “That fluid has gone straight to his chest. He's much worse, he's getting drowsy and his sat is dropping.” |
 | `presentation` | 10s | `rate_controlled_congested` | HR 108, BP 118/70, RR 32, SpO2 86%, T 37.0 | “That second dose has done it. His rate's down and I can actually count it now, still all over the place.” |
 | `presentation` | 240s | `respiratory_failure` | HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0 | “He's wearing out. He's stopped talking to me and his sat has dropped since you came in.” |
 | `breathing_supported` | 10s | `stabilized` | HR 104, BP 124/74, RR 20, SpO2 89%, T 37.0 | “That second dose has done it. His rate's down and I can actually count it now, still all over the place.” |
-| `rate_controlled_congested` | 240s | `respiratory_failure` | HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0 | “His rate's crept up again and he's working much harder than he was. His sat has come down.” |
+| `rate_controlled_congested` | 10s | `respiratory_failure` | HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0 | “That fluid has gone straight to his chest. He's much worse, he's getting drowsy and his sat is dropping.” |
+| `rate_controlled_congested` | 120s | `respiratory_failure` | HR 166, BP 118/70, RR 38, SpO2 82%, T 37.0 | “His rate's crept up again and he's working much harder than he was. His sat has come down.” |
 
 Compare each line with the row before it in section 2, not only with the destination: a line saying a number has fallen must be preceded by a phase in which it was higher.
 

@@ -198,7 +198,7 @@ T("exercise_tolerance_baseline", "What could you do before this started?",
   "How much can you normally do?"],
  "'Walked the... dog. Every day.'",
  "'I walked the dog twice a day, half an hour each time, up the hill and back, no bother at all. "
- "I'm still working part time. A week ago there was nothing wrong with me.'"),
+ "I'm still working part time. Up until last week I was fine.'"),
 
 T("cough_and_sputum", "Have you had a cough?",
  ["Any cough?", "Are you coughing anything up?", "Do you have a productive cough?",

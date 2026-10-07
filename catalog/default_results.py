@@ -127,6 +127,10 @@ DEFAULTS = {
            "interpretation in older patients. Units vary between FEU and DDU by "
            "a factor of two."),
 "lactate": value("Lactate", "1.2", "mmol/L", "0.5-2.0"),
+"beta_hydroxybutyrate": value("Beta-hydroxybutyrate", "0.2", "mmol/L", "< 0.6",
+    verify="Added v0.23. Reference limit is the conventional point-of-care and laboratory "
+           "cutoff; the 2024 consensus report uses 3.0 mmol/L or more to diagnose "
+           "ketoacidosis and under 0.6 for resolution. Model output, unverified."),
 "lipase": value("Lipase", "32", "U/L", "10-140"),
 "liver_function_tests_lfts": panel(
     ("AST", "22", "U/L", "10-40"),

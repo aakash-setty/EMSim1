@@ -1,0 +1,362 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "dka-hypokalemia-01",
+ "note": "End-to-end paths. Steps cost eight seconds each on the runner's clock.",
+ "scenarios": [
+  {
+   "name": "Intended path: glucose, gas and chemistry, fluid, potassium, a repeat level, insulin, the dextrose plan, handoff",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fingerstick_blood_sugar",
+    "venous_blood_gas",
+    "basic_chemistry_chem_7",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 8
+    },
+    "potassium_chloride_kcl",
+    "magnesium_sulfate",
+    {
+     "wait": 24
+    },
+    "basic_chemistry_chem_7",
+    "insulin_drip",
+    {
+     "wait": 12
+    },
+    "d5_1_2_ns_infusion",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": ""
+  },
+  {
+   "name": "Doing nothing: she stays as she arrived",
+   "steps": [
+    {
+     "wait": 300
+    },
+    {
+     "wait": 600
+    }
+   ],
+   "expect_phase": "presentation",
+   "note": "No clock changes her."
+  },
+  {
+   "name": "Fluid alone changes no phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fingerstick_blood_sugar",
+    "venous_blood_gas",
+    "basic_chemistry_chem_7",
+    "lactated_ringer_s_1l_bolus",
+    {
+     "wait": 200
+    }
+   ],
+   "expect_phase": "presentation",
+   "note": "Covered through the crystalloid group."
+  },
+  {
+   "name": "Potassium first reaches potassium_replaced",
+   "steps": [
+    "insert_iv",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    }
+   ],
+   "expect_phase": "potassium_replaced",
+   "note": ""
+  },
+  {
+   "name": "Potassium needs a line",
+   "steps": [
+    "potassium_chloride_kcl",
+    {
+     "wait": 40
+    }
+   ],
+   "expect_phase": "presentation",
+   "note": "Blocked by the case prerequisite."
+  },
+  {
+   "name": "Potassium then an infusion reaches treated",
+   "steps": [
+    "insert_iv",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    "insulin_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "treated",
+   "note": ""
+  },
+  {
+   "name": "Subcutaneous insulin after potassium also reaches treated",
+   "steps": [
+    "insert_iv",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    "insulin_subcutaneous",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "treated",
+   "note": ""
+  },
+  {
+   "name": "A bolus alone after potassium does not treat her",
+   "steps": [
+    "insert_iv",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    "insulin_bolus",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "potassium_replaced",
+   "note": ""
+  },
+  {
+   "name": "Insulin infusion first drives the potassium down",
+   "steps": [
+    "insert_iv",
+    "insulin_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "potassium_falling",
+   "note": ""
+  },
+  {
+   "name": "Subcutaneous insulin first does the same, with no line",
+   "steps": [
+    "insulin_subcutaneous",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "potassium_falling",
+   "note": ""
+  },
+  {
+   "name": "An insulin bolus first does the same",
+   "steps": [
+    "insert_iv",
+    "insulin_bolus",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "potassium_falling",
+   "note": ""
+  },
+  {
+   "name": "Insulin a few seconds after potassium is still too early",
+   "steps": [
+    "insert_iv",
+    "potassium_chloride_kcl",
+    "insulin_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "potassium_falling",
+   "note": "Insulin acts at ten seconds and the potassium needs twenty."
+  },
+  {
+   "name": "Potassium alone does not rescue her while insulin runs",
+   "steps": [
+    "insert_iv",
+    "insulin_drip",
+    {
+     "wait": 12
+    },
+    "potassium_chloride_kcl",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "potassium_falling",
+   "note": ""
+  },
+  {
+   "name": "Holding insulin alone does not rescue her",
+   "steps": [
+    "insert_iv",
+    "insulin_drip",
+    {
+     "wait": 12
+    },
+    "stop_insulin",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "potassium_falling",
+   "note": ""
+  },
+  {
+   "name": "Holding insulin and giving potassium rescues her",
+   "steps": [
+    "insert_iv",
+    "insulin_drip",
+    {
+     "wait": 12
+    },
+    "stop_insulin",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    }
+   ],
+   "expect_phase": "recovering",
+   "note": ""
+  },
+  {
+   "name": "After the rescue, restarting insulin reaches treated",
+   "steps": [
+    "insert_iv",
+    "insulin_drip",
+    {
+     "wait": 12
+    },
+    "stop_insulin",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    "insulin_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "treated",
+   "note": ""
+  },
+  {
+   "name": "After the rescue she waits for the restart",
+   "steps": [
+    "insert_iv",
+    "insulin_drip",
+    {
+     "wait": 12
+    },
+    "stop_insulin",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    {
+     "wait": 200
+    }
+   ],
+   "expect_phase": "recovering",
+   "note": ""
+  },
+  {
+   "name": "Oral potassium does not count",
+   "steps": [
+    "potassium_chloride_oral",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "presentation",
+   "note": "She vomits it."
+  },
+  {
+   "name": "Bicarbonate changes no phase",
+   "steps": [
+    "insert_iv",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "presentation",
+   "note": "It shows on a repeat chemistry."
+  },
+  {
+   "name": "Handoff from the potassium_falling phase completes the case",
+   "steps": [
+    "insert_iv",
+    "insulin_drip",
+    {
+     "wait": 12
+    },
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": ""
+  },
+  {
+   "name": "Glargine alone changes no phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "insulin_glargine_subcutaneous",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "presentation",
+   "note": ""
+  },
+  {
+   "name": "Glargine after insulin is running leaves her treated",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "basic_chemistry_chem_7",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    "insulin_drip",
+    {
+     "wait": 12
+    },
+    "insulin_glargine_subcutaneous",
+    {
+     "wait": 30
+    }
+   ],
+   "expect_phase": "treated",
+   "note": ""
+  },
+  {
+   "name": "Known gap: insulin twelve seconds after potassium slips through to treated",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "basic_chemistry_chem_7",
+    "potassium_chloride_kcl",
+    {
+     "wait": 12
+    },
+    "insulin_drip",
+    {
+     "wait": 30
+    }
+   ],
+   "expect_phase": "treated",
+   "note": "Insulin ordered more than ten seconds after potassium, with no repeat level, is not caught. Recorded so a fix shows up as a failing scenario."
+  }
+ ]
+}

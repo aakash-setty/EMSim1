@@ -32,7 +32,7 @@ add(A("attach_monitor", tag=CRIT_ALWAYS, flags=["monitor_attached"],
     "case whose entire management hinges on a rate and a rhythm, attaching the monitor is not "
     "housekeeping. It is the first diagnostic act, and it is scored as one.")))
 
-add(A("insert_iv", tag=CRIT_ALWAYS, flags=["iv_access"],
+add(A("insert_iv", tag=RECOMMENDED, flags=["iv_access"],
   debrief_note=(
     "Every intravenous drug in this case is gated behind a line, which is the sequence teaching "
     "the prerequisite exists for rather than an obstacle. Two peripheral lines in a patient who "
@@ -231,7 +231,7 @@ RATE_CONTROL_ALERT = "These agents can take a bit of time to kick in."
 # first dose moves the number and does not change the case; that is what a vital effect
 # is for. The second dose sets a flag, and the flag is what the phases read.
 RATE_CONTROL_HR_EFFECTS = [
-  {"vital": "heart_rate", "delta": -22, "key": "rate_control_hr_partial",
+  {"vital": "heart_rate", "delta": -22, "key": "rate_control_hr_partial", "onset_seconds": 10,
    "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
    "note": (
      "The partial response to a single dose. Twenty-two beats off the phase baseline, so "
@@ -240,7 +240,9 @@ RATE_CONTROL_HR_EFFECTS = [
      "response, and the answer is another dose rather than another drug. Guarded on the "
      "three phases where the rate is not already carried by the phase itself, because in "
      "the rate-controlled and stabilized phases the authored number is the controlled one "
-     "and this would subtract from it twice. Twenty-two is a teaching choice.")},
+     "and this would subtract from it twice. Twenty-two is a teaching choice. The ten-second "
+     "onset (physician decision, 5 October 2026, AFRVR-19) matches the delay on the second dose, "
+     "so neither dose moves the monitor on the click.")},
   {"vital": "heart_rate", "delta": -13, "key": "rate_control_hr_in_failure",
    "while": "phase is respiratory_failure AND flag rate_control_adequate set",
    "note": (
@@ -261,7 +263,7 @@ RATE_CONTROL_REPEAT = [{"flag": "rate_control_adequate", "after_administrations"
 
 add(A("digoxin_bolus",
   tag=CRIT_ALWAYS, flags=["rate_control_given"],
-  expectation_label="Rate control for atrial fibrillation (digoxin, amiodarone or metoprolol)",
+  expectation_label="Rate control for atrial fibrillation (digoxin, amiodarone, or metoprolol once his breathing is supported)",
   nurse_alert=RATE_CONTROL_ALERT,
   prerequisites=[PRE_IV],
   prompt={"deadline_seconds": 190,
@@ -272,7 +274,7 @@ add(A("digoxin_bolus",
   flags_set_repeat=RATE_CONTROL_REPEAT,
   follow_ups_triggered=["second_rate_control_dose"],
   debrief_note=(
-    "This entry stands for the act of rate control rather than for one drug: digoxin, amiodarone and metoprolol are scored as one choice, so any of the three satisfies the critical action, and all three carry this note. That is deliberate, because the defensible answer here is a strategy "
+    "This entry stands for the act of rate control rather than for one drug: digoxin and amiodarone are scored as one choice and carry this note, and metoprolol satisfies the same critical action when it is given after positive pressure is on. That is deliberate, because the defensible answer here is a strategy "
     "rather than a named agent, and it should respond to the patient in front of you.\n\n"
     "Why not diltiazem, which is the reflex answer for atrial fibrillation with a rapid "
     "ventricular response: non-dihydropyridine calcium channel blockers are negatively inotropic, "
@@ -309,7 +311,8 @@ add(A("diltiazem_bolus", tag=[
   flags=["rate_control_given", "ccb_given"],
   prerequisites=[PRE_IV],
   nurse_alert=RATE_CONTROL_ALERT,
-  flags_set_repeat=RATE_CONTROL_REPEAT,
+  flags_set_repeat=RATE_CONTROL_REPEAT + [
+    {"flag": "ccb_repeated", "after_administrations": 2, "counter": "ccb_doses"}],
   follow_ups_triggered=["second_rate_control_dose"],
   vital_effects=[
     {"vital": "systolic_bp", "delta": -20, "key": "ccb_systolic", "onset_seconds": 15,
@@ -320,7 +323,16 @@ add(A("diltiazem_bolus", tag=[
               "punished with a dramatic collapse, because the realistic version of this error is "
               "a patient whose numbers look acceptable while the drug is doing the wrong thing. "
               "Twenty points is a teaching choice, not a measured quantity.")},
-    {"vital": "diastolic_bp", "delta": -10, "key": "ccb_diastolic", "onset_seconds": 15}]
+    {"vital": "diastolic_bp", "delta": -10, "key": "ccb_diastolic", "onset_seconds": 15},
+    {"vital": "systolic_bp", "delta": -10, "key": "ccb_systolic_repeat",
+     "while": "flag ccb_repeated set",
+     "note": ("Physician decision, 5 October 2026 (AFRVR-23). A second dose of diltiazem takes "
+              "another ten points off the systolic pressure and five off the diastolic, so "
+              "continued use, which is the error the seed names, costs more than the first "
+              "dose did. Guarded on a flag the second administration grants. Ten is a teaching "
+              "choice.")},
+    {"vital": "diastolic_bp", "delta": -5, "key": "ccb_diastolic_repeat",
+     "while": "flag ccb_repeated set"}]
     + RATE_CONTROL_HR_EFFECTS,
   debrief_note=(
     "This is the decision the case is built around, and the tag is discouraged rather than harmful "
@@ -332,7 +344,7 @@ add(A("diltiazem_bolus", tag=[
     "error, and it is a specific and common one: the drug produced exactly the effect that was "
     "asked of it, the rate came down, and it is still the wrong drug for the disease underneath. "
     "The 2023 ACC/AHA/ACCP/HRS guideline recommends against intravenous non-dihydropyridine calcium channel blockers in patients with significant left ventricular systolic dysfunction, as a harm recommendation, because their negative inotropy reduces stroke volume in a ventricle that has none to spare. Watch what "
-    "happened to the blood pressure on your monitor after you gave it.\n\n"
+    "happened to the blood pressure on your monitor after you gave it. A second dose takes it lower still.\n\n"
     "A drug that produces the physiological effect you wanted can still be the wrong treatment for "
     "the patient's underlying disease. That is the transferable point, and it is worth more than "
     "the drug name."),
@@ -381,6 +393,24 @@ add(A("procainamide_drip", tag=DISCOURAGED, flags=[], prerequisites=[PRE_IV],
     "inotropic and proarrhythmic effects. Its usual place in the atrial fibrillation algorithm is "
     "pre-excited atrial fibrillation, which this is not: the QRS is narrow and there is no delta "
     "wave.")))
+
+add(A("metoprolol_bolus",
+  tag=[{"when": "flag on_niv set OR flag intubated set", "value": "neutral"},
+       {"when": None, "value": "discouraged"}],
+  flags=["rate_control_given"], prerequisites=[PRE_IV],
+  nurse_alert=RATE_CONTROL_ALERT,
+  flags_set_repeat=RATE_CONTROL_REPEAT,
+  follow_ups_triggered=["second_rate_control_dose"],
+  vital_effects=RATE_CONTROL_HR_EFFECTS,
+  also_satisfies=[{"id": "digoxin_bolus", "when": "flag on_niv set OR flag intubated set"}],
+  debrief_note=(
+    "A small dose of a cardioselective beta blocker is one of the three accepted ways to control "
+    "this rate, and timing decides whether it is the right one. Given once positive pressure is "
+    "on and his oxygenation is supported, it counts as the critical rate-control action. Given "
+    "before that, to a man at a saturation of 88 percent with a flooded lung, it removes the "
+    "sympathetic drive he is leaning on before anything has been done for his breathing, and it "
+    "is scored as discouraged. The rate falls either way, which is the point: the drug works and "
+    "the order was wrong. Breathing first, then the rate.")))
 
 add(A("amiodarone_bolus_infusion", tag=CRIT_ALWAYS, flags=["rate_control_given"],
   binding_note="Covered by digoxin_bolus. Present as its own case action only so the binding is "
@@ -453,7 +483,7 @@ add(A("nitroglycerin_sublingual", tag=NEUTRAL, flags=[],
 add(A("dobutamine_drip", tag=DISCOURAGED, flags=[], prerequisites=[PRE_IV],
   debrief_note=(
     "Inotropes are for cardiogenic shock: a patient who is cold, underperfused and hypotensive "
-    "despite adequate filling. This man is warm, alert, making urine and running a systolic "
+    "despite adequate filling. This man is warm, alert and running a systolic "
     "pressure of 132. Giving an inotrope to a normotensive, well-perfused patient in atrial "
     "fibrillation buys nothing and costs something specific, because beta-1 agonism increases "
     "atrioventricular nodal conduction and can accelerate the ventricular response you are trying "
@@ -484,6 +514,11 @@ add(A("apixaban", tag=CRIT_ALWAYS, flags=["anticoagulated"],
     "actually take. Enoxaparin is a reasonable bridge with the same caveats about renal function "
     "and less flexibility than an infusion. All three are accepted here and the choice is worth "
     "articulating rather than defaulting.\n\n"
+    "Bleeding risk is the other half of the decision, and it does not change the answer here. He "
+    "has never had a bleed or an ulcer, has not fallen, takes no antiplatelet drug, and his "
+    "creatinine is 1.0. Assess bleeding risk to find what you can correct, such as uncontrolled "
+    "blood pressure or an unnecessary antiplatelet drug. A raised bleeding score alone is not a "
+    "reason to withhold anticoagulation.\n\n"
     "The duration of his atrial fibrillation is unknown. He noticed it yesterday afternoon, which "
     "is when he noticed it and not necessarily when it started, and that uncertainty is the reason "
     "the anticoagulation question and the cardioversion question cannot be separated."),
@@ -509,24 +544,28 @@ add(A("clopidogrel", tag=DISCOURAGED, flags=[],
 
 # ------------------------------------------------------------------ fluids: the halting act
 add(A("normal_saline_1l_bolus", name="Crystalloid bolus",
-  tag=[{"when": "phase is stabilized OR phase is intubated", "value": "discouraged"},
-       {"when": None, "value": "harmful"}],
+  tag=DISCOURAGED,
   flags=["fluid_given"],
   prerequisites=[PRE_IV],
-  halt_reason=(
-    "You gave a crystalloid bolus to a man with an ejection fraction of 30 to 35 percent whose "
-    "lungs were already full of fluid and who was hypoxemic on room air. The extra preload went "
-    "straight into the alveoli, his saturation fell away, and he required emergency intubation for "
-    "a pulmonary edema you had made worse."),
+  vital_effects=[
+    {"vital": "oxygen_saturation", "delta": -6, "key": "fluid_spo2", "onset_seconds": 10,
+     "while": "phase is breathing_supported OR phase is respiratory_failure",
+     "note": ("Physician decision, 5 October 2026 (AFRVR-08). Six points off the saturation "
+              "while he is on the mask with an uncontrolled rate, or in respiratory failure, so "
+              "the bolus has a visible cost in the phases where it does not change the phase. "
+              "Before positive pressure the cost is the transition into respiratory failure. "
+              "Once he is stabilized or intubated it moves nothing. Six is a teaching choice.")}],
   debrief_note=(
     "The reasoning that leads here is worth naming because it is not stupid: the patient is "
     "tachycardic, tachycardia is often hypovolemia, and a fluid challenge is the reflex. In this "
     "patient the tachycardia is an arrhythmia and the ventricle is failing, so volume has nowhere "
     "to go but the lungs. Every route to a crystalloid bolus reaches the same harm, so this tag "
     "covers the whole equivalence group: saline and Ringer's, a liter and 500 mL.\n\n"
-    "The tag is phase-dependent. Once he is on positive pressure with a controlled rate and "
-    "diuresing, a small fluid challenge is wrong rather than lethal, and it is tagged discouraged "
-    "there. Before that it can tip him into respiratory failure and onto a ventilator. The general point: in a hypoxemic tachycardic patient, find "
+    "What it costs depends on when. Before positive pressure it tips him into respiratory "
+    "failure, which is what you saw if you gave it then, and he can still be rescued with the "
+    "mask. On the mask with the rate still uncontrolled it takes several points off his "
+    "saturation. Once he is rate controlled, on positive pressure and diuresing, a small fluid "
+    "challenge is wrong rather than dangerous. The general point: in a hypoxemic tachycardic patient, find "
     "out whether the lungs are wet before you fill them. The lung ultrasound takes under a minute "
     "and answers the question.")))
 
@@ -760,12 +799,12 @@ FOLLOW_UPS = [
     "Tube position is confirmed by waveform capnography and the film is for depth and for the lung "
     "underneath it, which in this patient is worth seeing.")},
  {"id": "second_rate_control_dose",
-  "triggered_by": ["digoxin_bolus", "diltiazem_bolus", "esmolol_drip", "propranolol_bolus"],
+  "triggered_by": ["digoxin_bolus", "metoprolol_bolus", "diltiazem_bolus", "esmolol_drip", "propranolol_bolus"],
   "applies_when": "flag rate_control_given set AND NOT flag rate_control_adequate set",
   "deadline_seconds": 55,
   "satisfied_when": "flag rate_control_adequate set",
-  "nurse_prompt": "He's slower than he was but he's still running fast. Do you want me to draw "
-                  "up another dose?",
+  "nurse_prompt": "He's slower than he was but he's still running fast. Do you want to give "
+                  "more, or add something?",
   "debrief_note": (
     "One dose is a trial, not a treatment. A single intravenous dose of any of the agents this "
     "case accepts produces a partial fall in the ventricular rate, and the correct response to a partial response is usually another dose of the same agent on that agent's schedule, not a switch of drug class and not the conclusion that the drug failed. Digoxin is the exception to the tempo: its loading doses are spaced over hours, and a partial response in the first minutes is expected rather than a reason to redose. One combination to avoid is an intravenous beta blocker given shortly after intravenous diltiazem, which stacks two negatively inotropic nodal blockers. In a ventricle at 30 to 35 percent the safer second agent is digoxin or amiodarone. That is the specific error this obligation exists to catch: "
@@ -777,11 +816,11 @@ FOLLOW_UPS = [
     "discharged by time, and it is not discharged by the first dose, which is why it is authored "
     "against a condition rather than against a list of actions: the action that would satisfy it "
     "is the action that created it.\n\n"
-    "Know when to stop. If the rate is still fast after two adequate doses, that is information "
-    "rather than a reason for a third: a ventricular rate that will not come down in acute "
-    "decompensated heart failure is usually being driven by the decompensation, and the "
-    "treatment is the pulmonary edema and the hypoxemia rather than more nodal blockade in a "
-    "ventricle that is already struggling.")},
+    "Know when to pause. If the rate is still fast after two adequate doses, reassess before a "
+    "third: a ventricular rate that will not come down in acute decompensated heart failure is "
+    "often being driven by the decompensation, so treat the pulmonary edema and the hypoxemia "
+    "first. If he is still fast once his breathing is supported, a further dose or amiodarone is "
+    "reasonable. No trial defines the stopping point.")},
  {"id": "anticoagulation_after_cardioversion",
   "triggered_by": "synchronized_cardioversion",
   "applies_when": "action synchronized_cardioversion taken",
@@ -842,7 +881,9 @@ for cid, note in [
   ("defibrillate", "Unsynchronized shocks are for pulseless ventricular rhythms. In atrial fibrillation with a pulse, a shock that lands on the T wave can cause ventricular fibrillation."),
   ("dopamine_drip", "He is not hypotensive, and dopamine's chronotropy is the opposite of what a ventricle at 160 needs."),
   ("epinephrine_drip", "He is not hypotensive, and an adrenergic infusion drives the rate you are trying to slow."),
-  ("atropine_bolus", "Atropine speeds atrioventricular conduction. At a ventricular rate of 160 it can only make things worse.")]:
+  ("atropine_bolus", "Atropine speeds atrioventricular conduction. At a ventricular rate of 160 it can only make things worse."),
+  # Physician decision, 5 October 2026 (AFRVR-25): the last plausible wrong vasodilator left at neutral.
+  ("nitroprusside_drip", "A potent arterial and venous vasodilator for hypertensive emergencies. At a systolic pressure of 132, with rate control and positive pressure about to lower it further, it risks hypotension in a ventricle that cannot compensate.")]:
     add(A(cid, tag=DISCOURAGED, flags=[], debrief_note=note))
 
 add(A("arterial_blood_gas", tag=NEUTRAL, flags=[],

@@ -1,0 +1,244 @@
+{
+ "map_version": "0.1",
+ "case_id": "dka-hypokalemia-01",
+ "status": "DRAFT. Every also_covers row is a model judgment that two catalog entries are the same act for this case's purposes, and needs a physician's review.",
+ "how_to_read": {
+  "catalog_id equals case_id": "exact; nothing to review",
+  "catalog_id null": "unmatched; not in the catalog",
+  "also_covers / also_covers_group": "this case action claims several catalog entries"
+ },
+ "rows": [
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor"
+  },
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv"
+  },
+  {
+   "case_id": "second_iv",
+   "catalog_id": "second_iv"
+  },
+  {
+   "case_id": "fingerstick_blood_sugar",
+   "catalog_id": "fingerstick_blood_sugar"
+  },
+  {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas"
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas"
+  },
+  {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7"
+  },
+  {
+   "case_id": "beta_hydroxybutyrate",
+   "catalog_id": "beta_hydroxybutyrate"
+  },
+  {
+   "case_id": "urinalysis",
+   "catalog_id": "urinalysis"
+  },
+  {
+   "case_id": "urine_hcg_qualitative",
+   "catalog_id": "urine_hcg_qualitative"
+  },
+  {
+   "case_id": "serum_hcg_quantitative",
+   "catalog_id": "serum_hcg_quantitative"
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead"
+  },
+  {
+   "case_id": "magnesium_level",
+   "catalog_id": "magnesium_level"
+  },
+  {
+   "case_id": "phosphate_level",
+   "catalog_id": "phosphate_level"
+  },
+  {
+   "case_id": "complete_blood_count_cbc",
+   "catalog_id": "complete_blood_count_cbc"
+  },
+  {
+   "case_id": "lipase",
+   "catalog_id": "lipase"
+  },
+  {
+   "case_id": "lactate",
+   "catalog_id": "lactate"
+  },
+  {
+   "case_id": "osmolality",
+   "catalog_id": "osmolality"
+  },
+  {
+   "case_id": "xr_chest",
+   "catalog_id": "xr_chest"
+  },
+  {
+   "case_id": "ct_abdomen",
+   "catalog_id": "ct_abdomen"
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "also_covers_group": "crystalloid_bolus",
+   "note": "Isotonic saline or a balanced crystalloid, either volume. A claim about fluid, not an agent."
+  },
+  {
+   "case_id": "normal_saline_infusion",
+   "catalog_id": "normal_saline_infusion"
+  },
+  {
+   "case_id": "lactated_ringer_s_infusion",
+   "catalog_id": "lactated_ringer_s_infusion"
+  },
+  {
+   "case_id": "potassium_chloride_kcl",
+   "catalog_id": "potassium_chloride_kcl"
+  },
+  {
+   "case_id": "potassium_chloride_oral",
+   "catalog_id": "potassium_chloride_oral"
+  },
+  {
+   "case_id": "magnesium_sulfate",
+   "catalog_id": "magnesium_sulfate",
+   "also_covers": [
+    "magnesium_sulfate_bolus"
+   ],
+   "note": "Either catalog entry is magnesium replacement."
+  },
+  {
+   "case_id": "insulin_drip",
+   "catalog_id": "insulin_drip"
+  },
+  {
+   "case_id": "insulin_subcutaneous",
+   "catalog_id": "insulin_subcutaneous"
+  },
+  {
+   "case_id": "insulin_bolus",
+   "catalog_id": "insulin_bolus"
+  },
+  {
+   "case_id": "stop_insulin",
+   "catalog_id": "stop_insulin"
+  },
+  {
+   "case_id": "insulin_glargine_subcutaneous",
+   "catalog_id": "insulin_glargine_subcutaneous"
+  },
+  {
+   "case_id": "d5_1_2_ns_infusion",
+   "catalog_id": "d5_1_2_ns_infusion"
+  },
+  {
+   "case_id": "d5_ns_bolus",
+   "catalog_id": "d5_ns_bolus"
+  },
+  {
+   "case_id": "d50_bolus",
+   "catalog_id": "d50_bolus"
+  },
+  {
+   "case_id": "na_bicarbonate_bolus",
+   "catalog_id": "na_bicarbonate_bolus",
+   "also_covers": [
+    "na_bicarbonate_infusion"
+   ],
+   "note": "Either route is bicarbonate for a pH of 7.27."
+  },
+  {
+   "case_id": "ondansetron",
+   "catalog_id": "ondansetron"
+  },
+  {
+   "case_id": "metoclopramide",
+   "catalog_id": "metoclopramide"
+  },
+  {
+   "case_id": "consult_endocrinology",
+   "catalog_id": "consult_endocrinology"
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care"
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "note": "The catalog has no handoff action; listed in its own known_gaps.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "I'll get the notes together for the unit."
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway"
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath"
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ"
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent"
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck"
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card"
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm"
+  },
+  {
+   "case_id": "exam_abd",
+   "catalog_id": "exam_abd"
+  },
+  {
+   "case_id": "exam_gu",
+   "catalog_id": "exam_gu"
+  },
+  {
+   "case_id": "exam_back",
+   "catalog_id": "exam_back"
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk"
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin"
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro"
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych"
+  }
+ ]
+}

@@ -73,7 +73,7 @@
  },
  "phase_notes": {
   "count_justification": "Six clinical phases, which is the ceiling in section 3.3, and each one is a state a learner can actually reach and a reviewer has to read. They are the two axes of this case crossed: whether the breathing is supported and whether the rate is controlled, giving arrival, breathing supported alone, rate controlled alone, and both; plus the deterioration branch for a patient whose breathing was never supported, and the ventilated phase.",
-  "deterioration_path": "Two time-guarded transitions, both at 240 seconds and both guarded on positive pressure not having been applied, one from arrival and one from the rate-controlled-but-congested phase. Both land in respiratory failure, which has exits and is not terminal. The clock cannot end this case: a learner who does nothing at all reaches respiratory failure and stays there. That was the author's explicit instruction and it is the reason no transition in this case carries allow_time_to_terminal.",
+  "deterioration_path": "Two time-guarded transitions, both guarded on positive pressure not having been applied: 240 seconds from arrival and 120 seconds from the rate-controlled-but-congested phase. Both land in respiratory failure, which has exits and is not terminal. The clock cannot end this case: a learner who does nothing at all reaches respiratory failure and stays there. That was the author's explicit instruction and it is the reason no transition in this case carries allow_time_to_terminal.",
   "rate_control_delay": "The two transitions that follow rate control carry a 10-second guard_true delay, so the ventricular rate falls about ten seconds after the drug rather than on the click. Without it the case teaches that rate control is instantaneous. The delay is paired with a nurse line said the moment the drug goes in, because a delay on its own reads as the drug having failed and invites a second dose; the line is what carries the lesson and the delay is what stops the number being a button. It was thirty seconds until v0.9; the validator's thirty-second floor is a fairness rule for deteriorations and does not apply to a delayed consequence of the resident's own action, as the transition rationale records."
  },
  "phases": [
@@ -116,12 +116,21 @@
      "author_note": "Positive pressure acts within a minute or two on alveolar recruitment and work of breathing, so this transition is instantaneous. The saturation it buys is authored as a staged vital effect rather than as this phase change, so the number climbs rather than jumping."
     },
     {
+     "when": "flag fluid_given set",
+     "to": "respiratory_failure",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "narration": "That fluid has gone straight to his chest. He's much worse, he's getting drowsy and his sat is dropping.",
+     "debrief_note": "A crystalloid bolus into a ventricle at 30 to 35 percent with a lung that was already flooded. The extra preload had nowhere to go but the alveoli, and it tipped him into respiratory failure. He can still be rescued from here with positive pressure, which is the same treatment he needed before the fluid went in.",
+     "author_rationale": "PHYSICIAN DECISION, 5 October 2026 (AFRVR-08). A consequence the learner must rescue replaces the halt. Ten seconds after the bolus, the same compressed delay the rate-control drugs carry: a delayed consequence of the resident's own action, so the five-second floor applies and not the thirty-second fairness floor."
+    },
+    {
      "when": "flag rate_control_adequate set",
      "to": "rate_controlled_congested",
      "after_seconds": 10,
      "measured_from": "guard_true",
      "narration": "That second dose has done it. His rate's down and I can actually count it now, still all over the place.",
-     "debrief_note": "The ventricular rate fell about ten seconds after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so ten seconds is a heavy compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose because the first one appeared not to work. The nurse says so out loud when the drug goes in, which is the part of this that will actually stop somebody redosing.",
+     "debrief_note": "The ventricular rate came under control about ten seconds after the second dose. The first dose gave a partial fall and the second finished the job, which is the usual course: one intravenous dose of a rate-controlling drug is a trial, and a partial response asks for more of the same strategy rather than a switch to diltiazem. The ten seconds is a heavy compression. Intravenous metoprolol takes several minutes, amiodarone longer, and digoxin longer than either, with its loading doses spaced over hours. In a real department you would wait for each drug's own onset before judging it.",
      "author_rationale": "AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgment was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
     },
     {
@@ -226,7 +235,7 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "narration": "That second dose has done it. His rate's down and I can actually count it now, still all over the place.",
-     "debrief_note": "The ventricular rate fell about ten seconds after the rate-controlling drug was given rather than the moment it was pushed. None of the three agents this case accepts works instantly: intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin considerably longer than either, so ten seconds is a heavy compression rather than a delay. The reason it is not instant is that a resident who watches the number change on the same click as the injection learns that rate control is a button, and then gives a second dose because the first one appeared not to work. The nurse says so out loud when the drug goes in, which is the part of this that will actually stop somebody redosing.",
+     "debrief_note": "The ventricular rate came under control about ten seconds after the second dose. The first dose gave a partial fall and the second finished the job, which is the usual course: one intravenous dose of a rate-controlling drug is a trial, and a partial response asks for more of the same strategy rather than a switch to diltiazem. The ten seconds is a heavy compression. Intravenous metoprolol takes several minutes, amiodarone longer, and digoxin longer than either, with its loading doses spaced over hours. In a real department you would wait for each drug's own onset before judging it.",
      "author_rationale": "AUTHOR: ten seconds of game time stands in for the several minutes an intravenous rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is a teaching choice about tempo, not a pharmacokinetic claim, and it is the same for all three agents in the group even though their real onsets differ by an order of magnitude. It was thirty seconds until v0.9 and the author shortened it: the judgment was that thirty felt like a fault rather than like a drug taking effect, and the nurse's line about the agents needing time carries what the delay was there to teach. The validator's thirty-second floor does not apply to this pattern, a delayed consequence of the resident's own action, only a five-second one does. If the reviewing physician wants the difference between agents represented, that needs three separate case actions and three separate transitions, and the cost is that the critical action can no longer be 'rate control' as a single act."
     },
     {
@@ -272,13 +281,22 @@
      "to": "stabilized"
     },
     {
+     "when": "flag fluid_given set",
+     "to": "respiratory_failure",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "narration": "That fluid has gone straight to his chest. He's much worse, he's getting drowsy and his sat is dropping.",
+     "debrief_note": "A crystalloid bolus into a ventricle at 30 to 35 percent with a lung that was already flooded. The extra preload had nowhere to go but the alveoli, and it tipped him into respiratory failure. He can still be rescued from here with positive pressure, which is the same treatment he needed before the fluid went in.",
+     "author_rationale": "PHYSICIAN DECISION, 5 October 2026 (AFRVR-08). A consequence the learner must rescue replaces the halt. Ten seconds after the bolus, the same compressed delay the rate-control drugs carry: a delayed consequence of the resident's own action, so the five-second floor applies and not the thirty-second fairness floor."
+    },
+    {
      "when": "NOT flag on_niv set",
-     "after_seconds": 240,
+     "after_seconds": 120,
      "measured_from": "phase_entry",
      "to": "respiratory_failure",
      "narration": "His rate's crept up again and he's working much harder than he was. His sat has come down.",
      "debrief_note": "The heart rate improved and the patient did not. This is wrong path one in its pure form: the arrhythmia was the visible problem, it was treated competently, and the flooded lung underneath it was never addressed. A ventricular rate of 108 in a man at a saturation of 86 percent breathing 32 times a minute is not a resuscitated patient. Rate control and treatment of the pulmonary edema are parallel tasks in this case, not sequential ones, and if anything the edema is the more urgent of the two.",
-     "author_rationale": "AUTHOR SIGNATURE REQUIRED. Same claim and same four minutes as the arrival phase, applied to a patient whose rate is now 108. The rate control is a genuine improvement in diastolic filling time, so a reviewer might reasonably argue this patient tires more slowly than the one at 160 and that the deadline here should be longer. It is set the same deliberately, so that the case does not teach that treating the rate buys time it has not been shown to buy."
+     "author_rationale": "PHYSICIAN DECISION, 5 October 2026 (AFRVR-02). Two minutes, shortened from four. This clock is measured from entry to the phase, so at four minutes rate control bought up to four more minutes of unsupported breathing, which contradicted wrong path one: a lower rate does not rescue him. Two minutes is compressed tempo and a teaching choice, like the arrival clock."
     },
     {
      "when": "action handoff_submit taken",
@@ -360,35 +378,6 @@
    "schema_gap_note": "One vitals block for a phase that is reached by two very different routes: elective intubation of a man who was talking to you, and intubation of a man who had already tired. The schema provides one block per phase. The numbers here are the post-intubation state and assume no peri-intubation collapse, which is a deliberate simplification: this case is not about the airway and adding a hypotension branch would make it about the airway."
   },
   {
-   "id": "halted",
-   "label": "Case halted after a harmful action",
-   "short_label": "stopped",
-   "clinical_description": "Terminal phase entered directly when a harmful action is taken, carrying that action's halt reason. Not reached through transition rules.",
-   "vitals": {
-    "heart_rate": 150,
-    "systolic_bp": 104,
-    "diastolic_bp": 62,
-    "respiratory_rate": 40,
-    "oxygen_saturation": 76,
-    "temperature_c": 37.0
-   },
-   "appearance": {
-    "distress_level": 3,
-    "alertness_level": 1,
-    "pupil_size": "normal",
-    "pupil_reactivity": "reactive"
-   },
-   "rhythm": "irregularly_irregular",
-   "ecg": {
-    "p_waves": false,
-    "qrs_ms": 88,
-    "verify": "v0.18a. His own rhythm at the point of respiratory failure: atrial fibrillation with a narrow QRS."
-   },
-   "terminal": true,
-   "transitions": [],
-   "schema_gap_note": "v0.18a. This case has one halting action, a crystalloid bolus, and its halt reason describes hypoxemic respiratory failure needing intubation, not an arrest. These are his numbers at that point: still in atrial fibrillation at 150, pressure holding, saturation 76 on a respiratory rate of 40. Until v0.18a this block was a generic bradycardic peri-arrest, which contradicted the halt reason."
-  },
-  {
    "id": "case_complete",
    "label": "Handoff confirmed",
    "short_label": "handed over",
@@ -416,7 +405,8 @@
    },
    "terminal": true,
    "transitions": [],
-   "schema_gap_note": "Placeholder, as in the reference case. A completion phase should inherit the vitals of the phase the resident handed off from and the schema cannot express that. The saturation of 95 assumes the intended path with positive pressure running; a resident who hands over from the rate-controlled-and-congested phase sees a number here that is better than the patient they handed over."
+   "inherit_vitals": true,
+   "schema_gap_note": "Physician decision, 5 October 2026 (AFRVR-32). inherit_vitals makes the handover screen show the monitor as it stood at the moment of handoff, so a learner who never applied the mask is not shown a better patient than the one they handed over. The numbers authored here are only a fallback for a build that does not read the field."
   }
  ],
  "tag_vocabulary": {
@@ -431,10 +421,9 @@
    "critical",
    "recommended",
    "discouraged",
-   "harmful",
    "neutral"
   ],
-  "note": "All five tiers are used. Discouraged carries the weight in this case, because the central error, continuing a calcium channel blocker in a patient with reduced systolic function, is explicitly not to halt the case: the author's instruction was that a drug producing the effect you asked for while being the wrong drug is more instructive than a collapse."
+  "note": "Four tiers are used and nothing halts this case since 5 October 2026: the crystalloid bolus now has a consequence the learner must rescue. Discouraged carries the weight in this case, because the central error, continuing a calcium channel blocker in a patient with reduced systolic function, is explicitly not to halt the case: the author's instruction was that a drug producing the effect you asked for while being the wrong drug is more instructive than a collapse."
  },
  "flag_namespace_note": "Flags are case-scoped and permanent. rate_control_given is set by any of the four rate-controlling routes this case authors, including the two it discourages, so the phase advances whether or not the choice was a good one. anticoagulated is set by any of the three anticoagulants. Nothing in this case uses an expiring flag.",
  "case_actions": [
@@ -461,7 +450,7 @@
    "tag": [
     {
      "when": null,
-     "value": "critical"
+     "value": "recommended"
     }
    ],
    "flags_set": [
@@ -837,7 +826,7 @@
    "flags_set": [
     "rate_control_given"
    ],
-   "expectation_label": "Rate control for atrial fibrillation (digoxin, amiodarone or metoprolol)",
+   "expectation_label": "Rate control for atrial fibrillation (digoxin, amiodarone, or metoprolol once his breathing is supported)",
    "nurse_alert": "These agents can take a bit of time to kick in.",
    "prerequisites": [
     {
@@ -856,8 +845,9 @@
      "vital": "heart_rate",
      "delta": -22,
      "key": "rate_control_hr_partial",
+     "onset_seconds": 10,
      "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
-     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
+     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice. The ten-second onset (physician decision, 5 October 2026, AFRVR-19) matches the delay on the second dose, so neither dose moves the monitor on the click."
     },
     {
      "vital": "heart_rate",
@@ -877,7 +867,7 @@
    "follow_ups_triggered": [
     "second_rate_control_dose"
    ],
-   "debrief_note": "This entry stands for the act of rate control rather than for one drug: digoxin, amiodarone and metoprolol are scored as one choice, so any of the three satisfies the critical action, and all three carry this note. That is deliberate, because the defensible answer here is a strategy rather than a named agent, and it should respond to the patient in front of you.\n\nWhy not diltiazem, which is the reflex answer for atrial fibrillation with a rapid ventricular response: non-dihydropyridine calcium channel blockers are negatively inotropic, and the 2023 ACC/AHA/ACCP/HRS atrial fibrillation guideline advises against them in patients with significant left ventricular systolic dysfunction for that reason. Once the POCUS shows an ejection fraction of 30 to 35 percent, that recommendation applies to this patient.\n\nDigoxin is the most comfortable choice in decompensated heart failure with reduced ejection fraction because it slows atrioventricular conduction without negative inotropy, and it is the least satisfying because its onset is slow, its therapeutic window is narrow, and it works poorly against high sympathetic tone. Amiodarone is reasonable when nodal blockade is ineffective or contraindicated and is widely used in decompensated and critically ill patients; it is not a benign drug and it carries a real chance of chemical cardioversion, which matters in a patient who is not anticoagulated and whose arrhythmia duration is unknown. A carefully selected, low-dose beta blocker is defensible once oxygenation is supported and the haemodynamics permit it, and is the least forgiving of the three in a patient with active pulmonary edema, because beta blockade in acute decompensation removes compensation as well as rate. Aggressive beta blockade in this patient is not the goal.\n\nOn the target: guideline evidence supports a lenient resting rate of under 110 beats per minute in many patients with atrial fibrillation, derived largely from RACE II, which enrolled patients with permanent atrial fibrillation rather than acutely decompensated ones. The optimal target in acute decompensated heart failure with reduced ejection fraction is less certain, and the endpoint that matters here is clinical response rather than a number.",
+   "debrief_note": "This entry stands for the act of rate control rather than for one drug: digoxin and amiodarone are scored as one choice and carry this note, and metoprolol satisfies the same critical action when it is given after positive pressure is on. That is deliberate, because the defensible answer here is a strategy rather than a named agent, and it should respond to the patient in front of you.\n\nWhy not diltiazem, which is the reflex answer for atrial fibrillation with a rapid ventricular response: non-dihydropyridine calcium channel blockers are negatively inotropic, and the 2023 ACC/AHA/ACCP/HRS atrial fibrillation guideline advises against them in patients with significant left ventricular systolic dysfunction for that reason. Once the POCUS shows an ejection fraction of 30 to 35 percent, that recommendation applies to this patient.\n\nDigoxin is the most comfortable choice in decompensated heart failure with reduced ejection fraction because it slows atrioventricular conduction without negative inotropy, and it is the least satisfying because its onset is slow, its therapeutic window is narrow, and it works poorly against high sympathetic tone. Amiodarone is reasonable when nodal blockade is ineffective or contraindicated and is widely used in decompensated and critically ill patients; it is not a benign drug and it carries a real chance of chemical cardioversion, which matters in a patient who is not anticoagulated and whose arrhythmia duration is unknown. A carefully selected, low-dose beta blocker is defensible once oxygenation is supported and the haemodynamics permit it, and is the least forgiving of the three in a patient with active pulmonary edema, because beta blockade in acute decompensation removes compensation as well as rate. Aggressive beta blockade in this patient is not the goal.\n\nOn the target: guideline evidence supports a lenient resting rate of under 110 beats per minute in many patients with atrial fibrillation, derived largely from RACE II, which enrolled patients with permanent atrial fibrillation rather than acutely decompensated ones. The optimal target in acute decompensated heart failure with reduced ejection fraction is less certain, and the endpoint that matters here is clinical response rather than a number.",
    "references": [
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. [UNVERIFIED in this pack, confirm before release]",
     "Van Gelder IC, Groenveld HF, Crijns HJGM, et al. Lenient versus strict rate control in patients with atrial fibrillation (RACE II). N Engl J Med. 2010;362(15):1363-73. [UNVERIFIED in this pack, confirm before release]"
@@ -912,6 +902,11 @@
      "flag": "rate_control_adequate",
      "after_administrations": 2,
      "counter": "rate_control_doses"
+    },
+    {
+     "flag": "ccb_repeated",
+     "after_administrations": 2,
+     "counter": "ccb_doses"
     }
    ],
    "follow_ups_triggered": [
@@ -932,11 +927,25 @@
      "onset_seconds": 15
     },
     {
+     "vital": "systolic_bp",
+     "delta": -10,
+     "key": "ccb_systolic_repeat",
+     "while": "flag ccb_repeated set",
+     "note": "Physician decision, 5 October 2026 (AFRVR-23). A second dose of diltiazem takes another ten points off the systolic pressure and five off the diastolic, so continued use, which is the error the seed names, costs more than the first dose did. Guarded on a flag the second administration grants. Ten is a teaching choice."
+    },
+    {
+     "vital": "diastolic_bp",
+     "delta": -5,
+     "key": "ccb_diastolic_repeat",
+     "while": "flag ccb_repeated set"
+    },
+    {
      "vital": "heart_rate",
      "delta": -22,
      "key": "rate_control_hr_partial",
+     "onset_seconds": 10,
      "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
-     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
+     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice. The ten-second onset (physician decision, 5 October 2026, AFRVR-19) matches the delay on the second dose, so neither dose moves the monitor on the click."
     },
     {
      "vital": "heart_rate",
@@ -946,7 +955,7 @@
      "note": "One vitals block per phase, and respiratory failure is reached by two routes. The authored 166 is the untreated patient tiring; a patient who got there with two doses of a nodal blocker on board reads 166 minus 22 minus 13, about 131, which is a rate-controlled patient with a sympathetic surge rather than an untreated one. It is a workaround for the schema rather than physiology, and the review packet says so."
     }
    ],
-   "debrief_note": "This is the decision the case is built around, and the tag is discouraged rather than harmful on purpose.\n\nGiving diltiazem on arrival, to a man in atrial fibrillation with a rapid ventricular response, a systolic pressure of 132 and no known cardiomyopathy, is a common first move and a defensible one if the heart failure has not yet been recognized. It is scored as a deduction rather than a failure because the ejection fraction was knowable at the bedside in under a minute, and because the crackles, the raised venous pressure and the hypoxemia were already saying this was not uncomplicated atrial fibrillation. The lesson is not that you should have known; it is that you could have.\n\nContinuing it after the POCUS shows an ejection fraction of 30 to 35 percent is the actual error, and it is a specific and common one: the drug produced exactly the effect that was asked of it, the rate came down, and it is still the wrong drug for the disease underneath. The 2023 ACC/AHA/ACCP/HRS guideline recommends against intravenous non-dihydropyridine calcium channel blockers in patients with significant left ventricular systolic dysfunction, as a harm recommendation, because their negative inotropy reduces stroke volume in a ventricle that has none to spare. Watch what happened to the blood pressure on your monitor after you gave it.\n\nA drug that produces the physiological effect you wanted can still be the wrong treatment for the patient's underlying disease. That is the transferable point, and it is worth more than the drug name.",
+   "debrief_note": "This is the decision the case is built around, and the tag is discouraged rather than harmful on purpose.\n\nGiving diltiazem on arrival, to a man in atrial fibrillation with a rapid ventricular response, a systolic pressure of 132 and no known cardiomyopathy, is a common first move and a defensible one if the heart failure has not yet been recognized. It is scored as a deduction rather than a failure because the ejection fraction was knowable at the bedside in under a minute, and because the crackles, the raised venous pressure and the hypoxemia were already saying this was not uncomplicated atrial fibrillation. The lesson is not that you should have known; it is that you could have.\n\nContinuing it after the POCUS shows an ejection fraction of 30 to 35 percent is the actual error, and it is a specific and common one: the drug produced exactly the effect that was asked of it, the rate came down, and it is still the wrong drug for the disease underneath. The 2023 ACC/AHA/ACCP/HRS guideline recommends against intravenous non-dihydropyridine calcium channel blockers in patients with significant left ventricular systolic dysfunction, as a harm recommendation, because their negative inotropy reduces stroke volume in a ventricle that has none to spare. Watch what happened to the blood pressure on your monitor after you gave it. A second dose takes it lower still.\n\nA drug that produces the physiological effect you wanted can still be the wrong treatment for the patient's underlying disease. That is the transferable point, and it is worth more than the drug name.",
    "references": [
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. [UNVERIFIED in this pack, confirm before release]"
    ]
@@ -1003,8 +1012,9 @@
      "vital": "heart_rate",
      "delta": -22,
      "key": "rate_control_hr_partial",
+     "onset_seconds": 10,
      "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
-     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
+     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice. The ten-second onset (physician decision, 5 October 2026, AFRVR-19) matches the delay on the second dose, so neither dose moves the monitor on the click."
     },
     {
      "vital": "heart_rate",
@@ -1054,8 +1064,9 @@
      "vital": "heart_rate",
      "delta": -22,
      "key": "rate_control_hr_partial",
+     "onset_seconds": 10,
      "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
-     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice."
+     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice. The ten-second onset (physician decision, 5 October 2026, AFRVR-19) matches the delay on the second dose, so neither dose moves the monitor on the click."
     },
     {
      "vital": "heart_rate",
@@ -1084,6 +1095,64 @@
     }
    ],
    "debrief_note": "Procainamide is a rhythm-control agent, not a rate-control agent, and it is specifically avoided in structural heart disease and reduced systolic function because of its negative inotropic and proarrhythmic effects. Its usual place in the atrial fibrillation algorithm is pre-excited atrial fibrillation, which this is not: the QRS is narrow and there is no delta wave."
+  },
+  {
+   "catalog_id": "metoprolol_bolus",
+   "tag": [
+    {
+     "when": "flag on_niv set OR flag intubated set",
+     "value": "neutral"
+    },
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [
+    "rate_control_given"
+   ],
+   "prerequisites": [
+    {
+     "when": "flag iv_access set OR flag central_access set OR flag io_access set",
+     "failure_message": "He hasn't got a line in yet. Do you want me to get IV access first?",
+     "source": "catalog_default_retained"
+    }
+   ],
+   "nurse_alert": "These agents can take a bit of time to kick in.",
+   "flags_set_repeat": [
+    {
+     "flag": "rate_control_adequate",
+     "after_administrations": 2,
+     "counter": "rate_control_doses"
+    }
+   ],
+   "follow_ups_triggered": [
+    "second_rate_control_dose"
+   ],
+   "vital_effects": [
+    {
+     "vital": "heart_rate",
+     "delta": -22,
+     "key": "rate_control_hr_partial",
+     "onset_seconds": 10,
+     "while": "phase is presentation OR phase is breathing_supported OR phase is respiratory_failure",
+     "note": "The partial response to a single dose. Twenty-two beats off the phase baseline, so a resident who gives one dose and watches sees 160 become 138 and stay there. That is the point: the drug worked, and the patient is still in a rapid ventricular response, and the answer is another dose rather than another drug. Guarded on the three phases where the rate is not already carried by the phase itself, because in the rate-controlled and stabilized phases the authored number is the controlled one and this would subtract from it twice. Twenty-two is a teaching choice. The ten-second onset (physician decision, 5 October 2026, AFRVR-19) matches the delay on the second dose, so neither dose moves the monitor on the click."
+    },
+    {
+     "vital": "heart_rate",
+     "delta": -13,
+     "key": "rate_control_hr_in_failure",
+     "while": "phase is respiratory_failure AND flag rate_control_adequate set",
+     "note": "One vitals block per phase, and respiratory failure is reached by two routes. The authored 166 is the untreated patient tiring; a patient who got there with two doses of a nodal blocker on board reads 166 minus 22 minus 13, about 131, which is a rate-controlled patient with a sympathetic surge rather than an untreated one. It is a workaround for the schema rather than physiology, and the review packet says so."
+    }
+   ],
+   "also_satisfies": [
+    {
+     "id": "digoxin_bolus",
+     "when": "flag on_niv set OR flag intubated set"
+    }
+   ],
+   "debrief_note": "A small dose of a cardioselective beta blocker is one of the three accepted ways to control this rate, and timing decides whether it is the right one. Given once positive pressure is on and his oxygenation is supported, it counts as the critical rate-control action. Given before that, to a man at a saturation of 88 percent with a flooded lung, it removes the sympathetic drive he is leaning on before anything has been done for his breathing, and it is scored as discouraged. The rate falls either way, which is the point: the drug works and the order was wrong. Breathing first, then the rate."
   },
   {
    "catalog_id": "furosemide_40_mg_iv",
@@ -1193,7 +1262,7 @@
      "source": "catalog_default_retained"
     }
    ],
-   "debrief_note": "Inotropes are for cardiogenic shock: a patient who is cold, underperfused and hypotensive despite adequate filling. This man is warm, alert, making urine and running a systolic pressure of 132. Giving an inotrope to a normotensive, well-perfused patient in atrial fibrillation buys nothing and costs something specific, because beta-1 agonism increases atrioventricular nodal conduction and can accelerate the ventricular response you are trying to slow, as well as raising myocardial oxygen demand and lowering the arrhythmia threshold. A reduced ejection fraction on ultrasound is not by itself an indication for inotropy."
+   "debrief_note": "Inotropes are for cardiogenic shock: a patient who is cold, underperfused and hypotensive despite adequate filling. This man is warm, alert and running a systolic pressure of 132. Giving an inotrope to a normotensive, well-perfused patient in atrial fibrillation buys nothing and costs something specific, because beta-1 agonism increases atrioventricular nodal conduction and can accelerate the ventricular response you are trying to slow, as well as raising myocardial oxygen demand and lowering the arrhythmia threshold. A reduced ejection fraction on ultrasound is not by itself an indication for inotropy."
   },
   {
    "catalog_id": "norepinephrine_drip",
@@ -1230,7 +1299,7 @@
     "guard": "NOT flag anticoagulated set",
     "text": "Pharmacy is asking whether you want him started on anything for stroke prevention while he's in this rhythm."
    },
-   "debrief_note": "This entry stands for the act of anticoagulating rather than for one agent: apixaban, enoxaparin and a heparin infusion are scored as one choice, and any of the three satisfies the critical action.\n\nThe risk assessment first. Counting CHA2DS2-VASc for this man: congestive heart failure one, which the ultrasound has just given him, hypertension one, age 65 to 74 one, and diabetes one, which gives four. Vascular disease would make it five, and whether that point applies turns on how the coronary disease is documented, because moderate non-obstructive plaque on a CT coronary angiogram may not meet the definition. Either score is comfortably above the threshold at which anticoagulation is recommended for a man. There is nothing in his history that contraindicates it.\n\nOn the choice of agent. A direct oral anticoagulant is preferred for non-valvular atrial fibrillation, is what he will go home on, and can be started in the department once he can safely swallow. While he is on a mask and may still need a tube, a heparin infusion is often the more practical first choice. A heparin infusion is a reasonable choice when the plan may include cardioversion or an early procedure, when renal function is uncertain, or when the admitting team wants something they can switch off; its disadvantage is that it needs monitoring and it delays the drug he will actually take. Enoxaparin is a reasonable bridge with the same caveats about renal function and less flexibility than an infusion. All three are accepted here and the choice is worth articulating rather than defaulting.\n\nThe duration of his atrial fibrillation is unknown. He noticed it yesterday afternoon, which is when he noticed it and not necessarily when it started, and that uncertainty is the reason the anticoagulation question and the cardioversion question cannot be separated.",
+   "debrief_note": "This entry stands for the act of anticoagulating rather than for one agent: apixaban, enoxaparin and a heparin infusion are scored as one choice, and any of the three satisfies the critical action.\n\nThe risk assessment first. Counting CHA2DS2-VASc for this man: congestive heart failure one, which the ultrasound has just given him, hypertension one, age 65 to 74 one, and diabetes one, which gives four. Vascular disease would make it five, and whether that point applies turns on how the coronary disease is documented, because moderate non-obstructive plaque on a CT coronary angiogram may not meet the definition. Either score is comfortably above the threshold at which anticoagulation is recommended for a man. There is nothing in his history that contraindicates it.\n\nOn the choice of agent. A direct oral anticoagulant is preferred for non-valvular atrial fibrillation, is what he will go home on, and can be started in the department once he can safely swallow. While he is on a mask and may still need a tube, a heparin infusion is often the more practical first choice. A heparin infusion is a reasonable choice when the plan may include cardioversion or an early procedure, when renal function is uncertain, or when the admitting team wants something they can switch off; its disadvantage is that it needs monitoring and it delays the drug he will actually take. Enoxaparin is a reasonable bridge with the same caveats about renal function and less flexibility than an infusion. All three are accepted here and the choice is worth articulating rather than defaulting.\n\nBleeding risk is the other half of the decision, and it does not change the answer here. He has never had a bleed or an ulcer, has not fallen, takes no antiplatelet drug, and his creatinine is 1.0. Assess bleeding risk to find what you can correct, such as uncontrolled blood pressure or an unnecessary antiplatelet drug. A raised bleeding score alone is not a reason to withhold anticoagulation.\n\nThe duration of his atrial fibrillation is unknown. He noticed it yesterday afternoon, which is when he noticed it and not necessarily when it started, and that uncertainty is the reason the anticoagulation question and the cardioversion question cannot be separated.",
    "references": [
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. [UNVERIFIED in this pack, confirm before release]"
    ]
@@ -1261,12 +1330,8 @@
    "catalog_id": "normal_saline_1l_bolus",
    "tag": [
     {
-     "when": "phase is stabilized OR phase is intubated",
-     "value": "discouraged"
-    },
-    {
      "when": null,
-     "value": "harmful"
+     "value": "discouraged"
     }
    ],
    "flags_set": [
@@ -1279,8 +1344,17 @@
      "source": "catalog_default_retained"
     }
    ],
-   "halt_reason": "You gave a crystalloid bolus to a man with an ejection fraction of 30 to 35 percent whose lungs were already full of fluid and who was hypoxemic on room air. The extra preload went straight into the alveoli, his saturation fell away, and he required emergency intubation for a pulmonary edema you had made worse.",
-   "debrief_note": "The reasoning that leads here is worth naming because it is not stupid: the patient is tachycardic, tachycardia is often hypovolemia, and a fluid challenge is the reflex. In this patient the tachycardia is an arrhythmia and the ventricle is failing, so volume has nowhere to go but the lungs. Every route to a crystalloid bolus reaches the same harm, so this tag covers the whole equivalence group: saline and Ringer's, a liter and 500 mL.\n\nThe tag is phase-dependent. Once he is on positive pressure with a controlled rate and diuresing, a small fluid challenge is wrong rather than lethal, and it is tagged discouraged there. Before that it can tip him into respiratory failure and onto a ventilator. The general point: in a hypoxemic tachycardic patient, find out whether the lungs are wet before you fill them. The lung ultrasound takes under a minute and answers the question."
+   "vital_effects": [
+    {
+     "vital": "oxygen_saturation",
+     "delta": -6,
+     "key": "fluid_spo2",
+     "onset_seconds": 10,
+     "while": "phase is breathing_supported OR phase is respiratory_failure",
+     "note": "Physician decision, 5 October 2026 (AFRVR-08). Six points off the saturation while he is on the mask with an uncontrolled rate, or in respiratory failure, so the bolus has a visible cost in the phases where it does not change the phase. Before positive pressure the cost is the transition into respiratory failure. Once he is stabilized or intubated it moves nothing. Six is a teaching choice."
+    }
+   ],
+   "debrief_note": "The reasoning that leads here is worth naming because it is not stupid: the patient is tachycardic, tachycardia is often hypovolemia, and a fluid challenge is the reflex. In this patient the tachycardia is an arrhythmia and the ventricle is failing, so volume has nowhere to go but the lungs. Every route to a crystalloid bolus reaches the same harm, so this tag covers the whole equivalence group: saline and Ringer's, a liter and 500 mL.\n\nWhat it costs depends on when. Before positive pressure it tips him into respiratory failure, which is what you saw if you gave it then, and he can still be rescued with the mask. On the mask with the rate still uncontrolled it takes several points off his saturation. Once he is rate controlled, on positive pressure and diuresing, a small fluid challenge is wrong rather than dangerous. The general point: in a hypoxemic tachycardic patient, find out whether the lungs are wet before you fill them. The lung ultrasound takes under a minute and answers the question."
   },
   {
    "catalog_id": "ecg_12_lead",
@@ -1855,6 +1929,17 @@
    "debrief_note": "Atropine speeds atrioventricular conduction. At a ventricular rate of 160 it can only make things worse."
   },
   {
+   "catalog_id": "nitroprusside_drip",
+   "tag": [
+    {
+     "when": null,
+     "value": "discouraged"
+    }
+   ],
+   "flags_set": [],
+   "debrief_note": "A potent arterial and venous vasodilator for hypertensive emergencies. At a systolic pressure of 132, with rate control and positive pressure about to lower it further, it risks hypotension in a ventricle that cannot compensate."
+  },
+  {
    "catalog_id": "arterial_blood_gas",
    "tag": [
     {
@@ -1907,6 +1992,7 @@
    "id": "second_rate_control_dose",
    "triggered_by": [
     "digoxin_bolus",
+    "metoprolol_bolus",
     "diltiazem_bolus",
     "esmolol_drip",
     "propranolol_bolus"
@@ -1914,8 +2000,8 @@
    "applies_when": "flag rate_control_given set AND NOT flag rate_control_adequate set",
    "deadline_seconds": 55,
    "satisfied_when": "flag rate_control_adequate set",
-   "nurse_prompt": "He's slower than he was but he's still running fast. Do you want me to draw up another dose?",
-   "debrief_note": "One dose is a trial, not a treatment. A single intravenous dose of any of the agents this case accepts produces a partial fall in the ventricular rate, and the correct response to a partial response is usually another dose of the same agent on that agent's schedule, not a switch of drug class and not the conclusion that the drug failed. Digoxin is the exception to the tempo: its loading doses are spaced over hours, and a partial response in the first minutes is expected rather than a reason to redose. One combination to avoid is an intravenous beta blocker given shortly after intravenous diltiazem, which stacks two negatively inotropic nodal blockers. In a ventricle at 30 to 35 percent the safer second agent is digoxin or amiodarone. That is the specific error this obligation exists to catch: a resident who reads 160 becoming 138 as a failure will reach for something else, and what they reach for in atrial fibrillation with a reduced ejection fraction is usually the calcium channel blocker.\n\nIt is discharged by a second dose of any of the four routes, because two attempts at atrioventricular nodal blockade is two attempts whichever drugs they were. It is not discharged by time, and it is not discharged by the first dose, which is why it is authored against a condition rather than against a list of actions: the action that would satisfy it is the action that created it.\n\nKnow when to stop. If the rate is still fast after two adequate doses, that is information rather than a reason for a third: a ventricular rate that will not come down in acute decompensated heart failure is usually being driven by the decompensation, and the treatment is the pulmonary edema and the hypoxemia rather than more nodal blockade in a ventricle that is already struggling."
+   "nurse_prompt": "He's slower than he was but he's still running fast. Do you want to give more, or add something?",
+   "debrief_note": "One dose is a trial, not a treatment. A single intravenous dose of any of the agents this case accepts produces a partial fall in the ventricular rate, and the correct response to a partial response is usually another dose of the same agent on that agent's schedule, not a switch of drug class and not the conclusion that the drug failed. Digoxin is the exception to the tempo: its loading doses are spaced over hours, and a partial response in the first minutes is expected rather than a reason to redose. One combination to avoid is an intravenous beta blocker given shortly after intravenous diltiazem, which stacks two negatively inotropic nodal blockers. In a ventricle at 30 to 35 percent the safer second agent is digoxin or amiodarone. That is the specific error this obligation exists to catch: a resident who reads 160 becoming 138 as a failure will reach for something else, and what they reach for in atrial fibrillation with a reduced ejection fraction is usually the calcium channel blocker.\n\nIt is discharged by a second dose of any of the four routes, because two attempts at atrioventricular nodal blockade is two attempts whichever drugs they were. It is not discharged by time, and it is not discharged by the first dose, which is why it is authored against a condition rather than against a list of actions: the action that would satisfy it is the action that created it.\n\nKnow when to pause. If the rate is still fast after two adequate doses, reassess before a third: a ventricular rate that will not come down in acute decompensated heart failure is often being driven by the decompensation, so treat the pulmonary edema and the hypoxemia first. If he is still fast once his breathing is supported, a further dose or amiodarone is reasonable. No trial defines the stopping point."
   },
   {
    "id": "anticoagulation_after_cardioversion",
@@ -2259,12 +2345,6 @@
       "addons": [
        "intubated"
       ]
-     }
-    },
-    {
-     "when": "phase is halted",
-     "value": {
-      "eyes": "closed"
      }
     },
     {
@@ -2903,7 +2983,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Atrial fibrillation, ventricular rate approximately 105. Irregularly irregular, no P waves. Narrow QRS at 92 ms. Horizontal ST depression 0.5 mm in V5 and V6, less than on the earlier tracing. No ST elevation. QTc 442 ms."
+       "report": "Atrial fibrillation, ventricular rate approximately 105. Irregularly irregular, no P waves. Narrow QRS at 92 ms. Horizontal ST depression 0.5 mm in V5 and V6. No ST elevation. QTc 442 ms."
       }
      },
      {
@@ -2911,7 +2991,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Atrial fibrillation, ventricular rate approximately 140. Irregularly irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V4 to V6, less than on the earlier tracing. No ST elevation. QTc 446 ms."
+       "report": "Atrial fibrillation, ventricular rate approximately 140. Irregularly irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V4 to V6. No ST elevation. QTc 446 ms."
       }
      },
      {
@@ -2976,7 +3056,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "CT chest without contrast. Cardiomegaly with enlargement of the left atrium. Bilateral perihilar ground-glass opacity with smooth interlobular septal thickening and small bilateral pleural effusions. No consolidation, no mass. Findings are consistent with pulmonary edema."
+       "report": "CT chest without contrast. Cardiomegaly with enlargement of the left atrium. Bilateral perihilar ground-glass opacity with smooth interlobular septal thickening and small bilateral pleural effusions. No consolidation, no mass."
       }
      }
     ]
@@ -3033,7 +3113,7 @@
     },
     {
      "when": "study ultrasound_cardiac resulted AND study ecg_12_lead resulted AND flag rate_control_given set",
-     "value": "Cardiology fellow: so he has had a dose and he is still up around 140. That is a partial response, which is what one dose usually buys you, and the answer is another dose of the same thing rather than a second drug. Do not let a partial response push you toward diltiazem, because with an ejection fraction of thirty to thirty-five that is the one agent you should not use. Give it again and watch the pressure.\n\nAnd know when to stop. If he is still fast after two decent doses, that is telling you something rather than asking for a third: a rate that will not come down in acute decompensated heart failure is usually being driven by the decompensation. At that point the treatment is the edema and the hypoxemia, not more nodal blockade in a ventricle that is already struggling. Get the positive pressure on him and diurese him, and the rate will often follow."
+     "value": "Cardiology fellow: so he has had a dose and he is still up around 140. That is a partial response, which is what one dose usually buys you. Stay with the same strategy and give more on that drug's own schedule. A beta blocker or amiodarone can be repeated now. Digoxin is loaded over hours, so if digoxin was your first dose, add amiodarone rather than pushing it again. Do not let a partial response push you toward diltiazem, because with an ejection fraction of thirty to thirty-five that is the one agent you should not use. Watch the pressure.\n\nAnd reassess before a third. If he is still fast after two decent doses, the rate is often being driven by the decompensation. Get the positive pressure on him and diurese him first, and the rate will often follow. If it does not, call me back and we will talk about more amiodarone."
     },
     {
      "when": "study ultrasound_cardiac resulted AND study ecg_12_lead resulted",
@@ -4192,7 +4272,7 @@
      },
      {
       "when": null,
-      "value": "'I walked the dog twice a day, half an hour each time, up the hill and back, no bother at all. I'm still working part time. A week ago there was nothing wrong with me.'"
+      "value": "'I walked the dog twice a day, half an hour each time, up the hill and back, no bother at all. I'm still working part time. Up until last week I was fine.'"
      }
     ],
     "expanded_variants": [
@@ -5676,14 +5756,14 @@
    "id": "icu_or_ccu",
    "label": "Intensive care or coronary care unit",
    "level_of_care": "critical_care",
-   "explanation": "He is on non-invasive ventilation, he has a newly recognized ejection fraction of 30 to 35 percent, and he has just had a rate-controlling drug. The unit that takes him has to be able to continue positive pressure, run continuous cardiac monitoring, reassess him frequently in the next few hours, and intubate him without moving him if the mask fails. In most institutions that is an intensive care or coronary care bed. If he was intubated during the case, the answer is unambiguously intensive care.\n\nThe reasoning is what is being scored, not the name of the ward. The question to be able to answer is what the receiving unit must be able to do, and this case is written for a hospital where every option exists."
+   "explanation": "He is on non-invasive ventilation, he has a newly recognized ejection fraction of 30 to 35 percent, and he has just had a rate-controlling drug. The unit that takes him has to be able to continue positive pressure, run continuous cardiac monitoring, reassess him frequently in the next few hours, and intubate him without moving him if the mask fails. In most institutions that is an intensive care or coronary care bed. If he was intubated during the case, the answer is unambiguously intensive care.\n\nThe reasoning is what is being scored, not the name of the ward. The question to be able to answer is what the receiving unit must be able to do, and this case is written for a hospital where every option exists. A step-down unit that can run non-invasive ventilation, monitor him continuously and escalate quickly is an equally sound answer for a patient on the mask. It is listed as defensible only because one answer has to be marked correct, not because it is worse."
   },
   "alternative_dispositions": [
    {
     "id": "stepdown_telemetry",
     "label": "Step-down or intermediate care unit with telemetry",
     "verdict": "acceptable_with_qualification",
-    "explanation": "Defensible, and at many hospitals this is where this patient actually goes. It turns entirely on local capability: a step-down unit that can maintain non-invasive ventilation, monitor continuously and escalate quickly is an appropriate destination, and one that cannot is not. A learner who chose this and can say what the unit needs to be able to do has answered the question. If he was intubated, this becomes wrong."
+    "explanation": "A sound answer for a patient on the mask, and at many hospitals this is where he goes. It reads as defensible here only because one answer has to be marked correct. It turns entirely on local capability: a step-down unit that can maintain non-invasive ventilation, monitor continuously and escalate quickly is an appropriate destination, and one that cannot is not. A learner who chose this and can say what the unit needs to be able to do has answered the question. If he was intubated, this becomes wrong."
    },
    {
     "id": "medical_floor_telemetry",
@@ -5745,7 +5825,7 @@
    {
     "catalog_id": "dx_pulmonary_embolism",
     "label": "Acute pulmonary embolism",
-    "explanation": "Usually selected downstream of a D-dimer that should not have been sent. The pretest probability is low: gradual onset over more than a day, symmetrical bilateral leg edema with no calf tenderness or asymmetry, no immobilization, travel, surgery or malignancy, and a complete alternative explanation for every symptom. The bedside ultrasound settles it: diffuse bilateral B-lines with a poorly contracting left ventricle and a plethoric inferior vena cava is left heart failure, and pulmonary embolism large enough to cause this degree of hypoxemia would usually show a dilated right ventricle and would not produce diffuse bilateral B-lines. Atrial fibrillation does raise the D-dimer on its own."
+    "explanation": "Usually selected downstream of a D-dimer that should not have been sent. The pretest probability is low: palpitations of sudden onset followed by breathlessness that built over hours, a week of symmetrical bilateral leg edema with no calf tenderness or asymmetry, no immobilization, travel, surgery or malignancy, and a complete alternative explanation for every symptom. The bedside ultrasound settles it: diffuse bilateral B-lines with a poorly contracting left ventricle and a plethoric inferior vena cava is left heart failure, and pulmonary embolism large enough to cause this degree of hypoxemia would usually show a dilated right ventricle and would not produce diffuse bilateral B-lines. Atrial fibrillation does raise the D-dimer on its own."
    },
    {
     "catalog_id": "dx_community_acquired_pneumonia",

@@ -1,0 +1,394 @@
+"""TSS part 1: identity, patient, phases.
+
+Menstrual toxic shock syndrome in a 22-year-old woman. Drafted by a language model from a
+one-paragraph plan and four decisions given by Aakash Setty on 6 October 2026. No physician
+has reviewed this pack. See TSS-SEED.md for what was decided by a person and what was not.
+
+The design guide this case was written against is the "EMSim case design guide". Three
+learning goals drive the structure, and every phase below exists to make the learner act on
+one of them:
+
+  1. Recognize shock in a young patient who compensates.
+  2. Find the source and remove it.
+  3. Resuscitate toxin-mediated shock: fluid, then a vasopressor when fluid is not holding,
+     and antibiotics that cover staphylococci.
+"""
+
+META = {
+ "working_title": "22-year-old woman, vomiting and diarrhea for two days, walked in with her roommate",
+ "chief_complaint_patient_voice": "I think I've got food poisoning. I can't keep anything down.",
+ "final_diagnosis": (
+   "Menstrual staphylococcal toxic shock syndrome from a tampon retained for about four days, "
+   "with septic shock, acute kidney injury, thrombocytopenia, transaminitis and early "
+   "rhabdomyolysis. Blood cultures are expected to stay negative, as they usually do in "
+   "staphylococcal toxic shock."),
+ "target_level": ["medical_student", "intern", "junior_resident"],
+ "estimated_runtime_seconds": 600,
+ "learning_objectives": [
+   "Recognize shock in a young, talking patient from the heart rate, the blood pressure, the capillary refill and the lactate, and do not let a plausible story of gastroenteritis explain them away.",
+   "In fever, rash and hypotension with no clear source, ask about menstruation and tampon use and do a pelvic examination.",
+   "Remove the source. A retained tampon is found and removed at the bedside, and nothing else in the resuscitation replaces that.",
+   "Give about 30 mL/kg of crystalloid, reassess, and start norepinephrine when the mean arterial pressure stays under 65 after fluid.",
+   "Start antibiotics early that cover staphylococci including MRSA, and know why clindamycin is added in toxin-mediated disease.",
+   "Admit to intensive care, and name the organ injuries at handover.",
+ ],
+ "teaching_frame": (
+   "She looks well enough to send home, and the easy story is one every learner has heard a "
+   "hundred times. The case is built so that the numbers contradict the patient's own "
+   "explanation from the first second, and so that the one thing that changes her course is "
+   "something nobody will mention unless the learner asks or looks."),
+ "care_setting": {
+   "label": "Urban academic emergency department",
+   "detail": (
+     "Adult emergency department with an intensive care unit, infectious disease and "
+     "gynecology on call, and a full laboratory and imaging service. Nothing in this case is "
+     "limited by resources."),
+ },
+ "arrival": {
+   "mode": "triage",
+   "location": "patient_room",
+   "line": "Walked in with her roommate. Triaged as vomiting and diarrhea and placed in a room.",
+ },
+ "complaint": "Vomiting and diarrhea",
+ "category": "Infectious disease",
+}
+
+PATIENT = {
+ "age": 22,
+ "sex": "female",
+ "weight_kg": 62,
+ "background": (
+   "Graduate student, lives with one roommate. No past medical or surgical history. Takes a "
+   "combined oral contraceptive pill and nothing else. No allergies. Does not smoke, drinks "
+   "socially, uses no drugs.\n\n"
+   "Her period started five days ago. She uses super-absorbency tampons. Four days ago she "
+   "put one in before an evening out, came home late, and did not take it out. She believes "
+   "her period has ended and has not thought about the tampon since. Two days ago she "
+   "developed fever, muscle aches, vomiting and watery diarrhea, which she puts down to a "
+   "takeout meal. Yesterday she spent an hour at the beach and blames her red skin on that. "
+   "This morning she nearly fainted in the shower and her roommate drove her in."),
+ "presenting_vitals_source": "Inherited from phase 'presentation'. Measured at triage.",
+ "presenting_appearance": (
+   "A young woman sitting up on the bed, talking in full sentences and apologizing for coming "
+   "in. She is flushed all over, her lips are dry, and she keeps a vomit bag in her lap. She "
+   "does not look as sick as her numbers."),
+ "ems_handover_text": (
+   "Twenty-two year old woman, two days of vomiting and watery diarrhea with fever and body "
+   "aches. She thinks it was a takeout meal. Near-syncope in the shower this morning, no "
+   "loss of consciousness. Heart rate 128 and pressure 94 over 58 at triage, temperature "
+   "39.4. She looks sunburned and says she was at the beach yesterday. Walking, talking, "
+   "roommate with her."),
+ "arrival_handover": (
+   "Twenty-two year old, two days of vomiting and diarrhea, says she thinks it was something "
+   "she ate. Her roommate drove her in after she nearly passed out in the shower this morning."),
+ "handover_authoring_note": (
+   "Section 3.2. Two sentences, 34 words, in a triage nurse's voice. No vital sign, no past "
+   "history, no medication, no pertinent negative. 'Something she ate' is the patient's own "
+   "wrong explanation, repeated by the nurse who heard it, and it is there on purpose: the "
+   "case opens with the misleading story already in the room. The fever, the rash and the "
+   "period are all left for the learner to find."),
+}
+
+
+def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp,
+          distress, alert, transitions, terminal=False, **kw):
+    d = {
+      "id": pid, "label": label, "short_label": short, "clinical_description": desc,
+      "vitals": {"heart_rate": hr, "systolic_bp": sbp, "diastolic_bp": dbp,
+                 "respiratory_rate": rr, "oxygen_saturation": spo2, "temperature_c": temp},
+      "appearance": {"distress_level": distress, "alertness_level": alert,
+                     "pupil_size": "normal", "pupil_reactivity": "reactive"},
+      "rhythm": "regular",
+      "ecg": {"pattern": "organised", "p_waves": True, "qrs_ms": 84, "qtc_ms": 430,
+              "author_note": "Sinus tachycardia with narrow complexes in every phase, as the "
+                             "ECG report says. Model output."},
+      "terminal": terminal, "transitions": transitions,
+    }
+    d.update(kw)
+    return d
+
+
+HANDOFF_T = {"when": "action handoff_submit taken", "to": "case_complete",
+             "author_note": "First in every list so that a handoff is never overtaken by a "
+                            "clinical rule in the same step."}
+
+FLUIDS = "flag fluids_given set"
+PRESSOR = "flag pressor_running set"
+SOURCE = "flag source_removed set"
+
+# ---------------------------------------------------------------- the discharge
+# The learner chose "discharge home" on the Handoff tab while she still looked well. The
+# interface logs the hidden action attempt_discharge instead of a handoff (see HANDOFF in
+# case_5 and handoffIntercept in the engine), which sets this flag, and five seconds later
+# she is on the floor. Decided by Aakash Setty, 6 October 2026: she faints and the case
+# continues.
+DISCHARGE_T = {
+  "when": "flag discharge_attempted set",
+  "after_seconds": 5,
+  "measured_from": "guard_true",
+  "to": "hypotensive",
+  "narration": ("She stood up to get dressed and went straight down. I've got her back on the "
+                "bed. She's gray and drowsy and her pressure is 78 over 42."),
+  "debrief_note": (
+    "She was discharged with a heart rate over 110 and a fever, and she fainted when she "
+    "stood up. She is both dry and vasodilated. A young adult in that state holds a blood "
+    "pressure with her heart rate, and standing takes that away.\n\n"
+    "The trap was the story. Vomiting and diarrhea explain a fast heart rate, and fluid "
+    "makes most people feel better. They do not explain a temperature over 39 with red "
+    "skin. A patient you are about to send home should have vital signs you would accept "
+    "at home."),
+  "author_rationale": (
+    "A delayed consequence of the learner's own action, so the five-second floor applies. "
+    "Orthostatic syncope in compensated distributive shock is plausible. That it happens "
+    "every time is a teaching choice. Model output, needs a physician's signature."),
+}
+
+PHASES = [
+ phase("presentation",
+   "Compensated shock, looks well",
+   "on arrival",
+   "Alert, talking, flushed and febrile. Tachycardic with a low-normal pressure and a narrow "
+   "margin. Capillary refill is slow and the lactate is raised. She has had nothing but sips "
+   "for two days and has a retained tampon nobody knows about.",
+   128, 94, 58, 22, 97, 39.4, 1, 0,
+   [HANDOFF_T,
+    DISCHARGE_T,
+    {"when": FLUIDS,
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "fluid_responsive",
+     "narration": ("That fluid is in. Her rate has come down to 114 and her pressure is 104 "
+                   "over 62. She says she feels a bit better."),
+     "debrief_note": (
+       "The first bolus helped, as it should. She was dry from two days of vomiting and "
+       "diarrhea, and she is leaking fluid out of her vessels.\n\n"
+       "Read the response as information, not as a result. A heart rate of 114 and a "
+       "temperature over 39 after a liter is not a patient who was only dehydrated. The "
+       "target is about 30 mL/kg, which for her is close to two liters, followed by a "
+       "reassessment."),
+     "author_rationale": (
+       "A delayed consequence of the learner's own action. Ten seconds stands for the time a "
+       "liter takes to run in, heavily compressed. The size of the response is a teaching "
+       "choice. Model output.")},
+    {"when": "NOT " + FLUIDS,
+     "after_seconds": 300,
+     "measured_from": "phase_entry",
+     "to": "hypotensive",
+     "narration": ("She's gone gray and she's getting drowsy. Her pressure is 78 over 42 and "
+                   "her rate is 138."),
+     "debrief_note": (
+       "Five minutes passed with no fluid and she stopped compensating. On arrival she was "
+       "already in shock: a heart rate of 128, a pressure of 94 over 58, a slow capillary "
+       "refill and a fever. She was holding her pressure with her heart rate.\n\n"
+       "Young patients do this well and then fail quickly. The time to treat shock is while "
+       "the patient is still talking to you."),
+     "author_rationale": (
+       "Deterioration on inaction. Untreated toxic shock progresses to hypotension over hours, "
+       "and five minutes of case clock stands for that. The number is a drafting judgment and "
+       "needs a physician's signature. The nurse asks for a line at 45 seconds and for fluid "
+       "at 80 and again at 170.")}],
+   ),
+
+ phase("fluid_responsive",
+   "Transient response to fluid",
+   "after fluid",
+   "Better after the first bolus and still tachycardic and febrile. This is the phase in "
+   "which she looks most like a patient who could go home. The response does not last.",
+   114, 104, 62, 20, 98, 39.2, 1, 0,
+   [HANDOFF_T,
+    DISCHARGE_T,
+    {"when": PRESSOR + " AND " + SOURCE,
+     "after_seconds": 150,
+     "measured_from": "phase_entry",
+     "to": "stabilizing",
+     "narration": ("The fluid on its own isn't holding her any more, but the norepinephrine "
+                   "is. She's 98 over 56 with a rate of 116."),
+     "debrief_note": (
+       "The effect of the fluid faded, which is the natural course of this illness, and she "
+       "did not drop because a vasopressor was already running and the source was out. "
+       "Starting norepinephrine before the pressure falls is a reasonable choice in septic "
+       "shock and the case accepts it."),
+     "author_rationale": (
+       "The same clock as the unguarded rule below, so that the fade happens at one moment "
+       "whatever was done. Listed first so a learner who has done everything goes straight "
+       "to the stable phase. Model output.")},
+    {"when": PRESSOR,
+     "after_seconds": 150,
+     "measured_from": "phase_entry",
+     "to": "supported",
+     "narration": ("The fluid on its own isn't holding her any more. The norepinephrine is "
+                   "keeping her at 92 over 50 and I've had to turn it up."),
+     "debrief_note": (
+       "The effect of the fluid faded and the vasopressor caught her. She is holding a "
+       "borderline pressure on a rising dose, which means something is still driving the "
+       "shock."),
+     "author_rationale": "As above. Model output."},
+    {"when": None,
+     "after_seconds": 150,
+     "measured_from": "phase_entry",
+     "to": "hypotensive",
+     "narration": ("That fluid isn't holding. Her pressure is back down to 78 over 42, her "
+                   "rate is 138 and she's getting drowsy."),
+     "debrief_note": (
+       "The response to fluid wore off. This is expected in toxic shock and is not a "
+       "mistake on your part. The toxin dilates vessels and makes them leak, so crystalloid "
+       "leaves the circulation soon after it goes in.\n\n"
+       "This is the moment the case is built around. A mean arterial pressure under 65 "
+       "that persists after fluid is an indication for norepinephrine. The usual fluid "
+       "target is about 30 mL/kg, and a vasopressor does not have to wait for all of it. "
+       "More fluid alone will buy less each time."),
+     "author_rationale": (
+       "Scheduled natural history. The rules above it catch a learner who already started a "
+       "vasopressor, so in effect this fires when none is running. Two and a half minutes "
+       "stands for the hour or so over which a transient responder declares herself. Model "
+       "output, needs a physician's signature."),
+     "unguarded_rationale": (
+       "The fade is the illness and not a consequence of anything the learner did or did not "
+       "do, and the physician directing this case asked for exactly this: the pressure stays "
+       "under a mean of 65 after about 30 mL/kg and norepinephrine is then the expected move. "
+       "The nurse says after the first bolus that 30 per kilo is nearly two liters, and the "
+       "phase this leads to is recoverable with one order.")}],
+   ),
+
+ phase("hypotensive",
+   "Hypotensive shock",
+   "hypotensive",
+   "Mean arterial pressure 54. Drowsy but rousable, gray, tachypneic. Reached when the fluid "
+   "response fades, when no fluid was given, or when she was stood up to go home. Fluid and a "
+   "vasopressor together get her out.",
+   138, 78, 42, 26, 95, 39.6, 2, 1,
+   [HANDOFF_T,
+    {"when": PRESSOR + " AND " + FLUIDS + " AND " + SOURCE,
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "stabilizing",
+     "narration": ("The norepinephrine is working. She's 98 over 56, rate 116, and she's "
+                   "more awake."),
+     "debrief_note": (
+       "Norepinephrine restored her pressure, and it is holding because the source is out. "
+       "Ten seconds is a compression of the several minutes a titration takes."),
+     "author_rationale": "A delayed consequence of the learner's own action. Model output."},
+    {"when": PRESSOR + " AND " + FLUIDS,
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "supported",
+     "narration": ("The norepinephrine has brought her up to 92 over 50 and she's more awake. "
+                   "I've had to go up on it twice to get there."),
+     "debrief_note": (
+       "Norepinephrine restored a borderline pressure. She needs a rising dose to stay "
+       "there, which is what an untreated source looks like from the infusion pump."),
+     "author_rationale": "A delayed consequence of the learner's own action. Model output."},
+    {"when": "NOT " + PRESSOR + " OR NOT " + FLUIDS,
+     "after_seconds": 240,
+     "measured_from": "phase_entry",
+     "to": "profound_shock",
+     "narration": ("I can barely rouse her. Her pressure is 66 over 32 and her rate is 148."),
+     "debrief_note": (
+       "Four minutes at a mean arterial pressure of 54 without both fluid and a vasopressor, "
+       "and she progressed to profound shock.\n\n"
+       "Hypotension that persists after fluid is not treated with more waiting or with fluid "
+       "alone. Norepinephrine can be started through a good peripheral line while central "
+       "access is arranged. A vasopressor without any fluid is also not enough in a patient "
+       "this dry."),
+     "author_rationale": (
+       "Deterioration on inaction. The nurse asks for norepinephrine at 30 seconds and again "
+       "at 120, and for fluid at 80 if none has been given. Four minutes is a drafting "
+       "judgment and needs a physician's signature.")}],
+   ),
+
+ phase("supported",
+   "On a vasopressor, source still in place",
+   "on norepinephrine",
+   "Awake again with a mean arterial pressure of 64 on norepinephrine, and the dose is "
+   "climbing. Fluid and a vasopressor are treating the consequence. The tampon is still "
+   "there and the toxin is still being made.",
+   124, 92, 50, 24, 96, 39.5, 2, 0,
+   [HANDOFF_T,
+    {"when": SOURCE,
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "stabilizing",
+     "narration": ("I've stopped having to go up on the norepinephrine since that came out. "
+                   "She's 98 over 56 on the same dose."),
+     "debrief_note": (
+       "Removing the tampon stopped the decline. It did not cure her: the toxin already "
+       "absorbed keeps acting for many hours, and she stays on a vasopressor. What changed is "
+       "that the dose stopped rising.\n\n"
+       "The case shows this within seconds. In a real patient you would see it over the "
+       "next hour or more, and you would not be able to tell it apart from the effect of "
+       "everything else you did. That is the reason source control is done on principle and "
+       "not judged by the monitor."),
+     "author_rationale": (
+       "A delayed consequence of the learner's own action. The physician directing this case "
+       "chose 'stops the decline, no dramatic rebound'. Ten seconds is a heavy compression "
+       "and the debrief note says so. The speed of real improvement after tampon removal is "
+       "unsourced. Needs a physician's signature.")},
+    {"when": "NOT " + SOURCE,
+     "after_seconds": 270,
+     "measured_from": "phase_entry",
+     "to": "profound_shock",
+     "narration": ("I've been going up and up on the norepinephrine and it isn't enough any "
+                   "more. She's 66 over 32, rate 148, and I can barely rouse her."),
+     "debrief_note": (
+       "She had fluid and a vasopressor and still got worse, because the source was never "
+       "removed. A retained tampon colonized with toxin-producing staphylococci keeps "
+       "delivering toxin for as long as it stays in.\n\n"
+       "Shock that needs a rising vasopressor dose after adequate fluid means the cause is "
+       "still active. Go back and look for it: a full examination including the pelvis, "
+       "wounds, lines and packing."),
+     "author_rationale": (
+       "Deterioration on inaction. The nurse asks whether anyone has examined her fully at "
+       "75 seconds and asks about her period at 180. Four and a half minutes is longer than "
+       "the other clocks on purpose: the directing physician asked that treated sepsis with a "
+       "missed source decline more slowly. Needs a physician's signature.")}],
+   ),
+
+ phase("profound_shock",
+   "Profound shock, obtunded",
+   "profound shock",
+   "Mean arterial pressure 43, obtunded, mottled. Reached from the hypotensive phase without "
+   "fluid and a vasopressor, or from the supported phase with the source still in. Not "
+   "terminal. Fluid, a vasopressor and source removal together get her out.",
+   148, 66, 32, 30, 92, 39.8, 3, 2,
+   [HANDOFF_T,
+    {"when": PRESSOR + " AND " + FLUIDS + " AND " + SOURCE,
+     "after_seconds": 15,
+     "measured_from": "guard_true",
+     "to": "stabilizing",
+     "narration": ("She's coming back. 98 over 56 on the norepinephrine, rate 116, and she's "
+                   "opening her eyes to my voice."),
+     "debrief_note": (
+       "She recovered a pressure once all three things were done: fluid, a vasopressor and "
+       "removal of the source. She spent time at a mean pressure in the 40s on the way, and "
+       "her kidneys and liver will show it over the next days."),
+     "author_rationale": (
+       "A delayed consequence of the learner's own action. That recovery from this phase is "
+       "always possible is a teaching choice: the case has no death, so a learner who gets "
+       "here can still find the answer. Model output.")}],
+   authoring_note=(
+     "No clock leaves this phase. A learner who does nothing further stays here until they "
+     "hand over or end the case. That is a decision: the design guide asks that failure be "
+     "recoverable, and this case has no arrest."),
+   ),
+
+ phase("stabilizing",
+   "Source removed, holding on norepinephrine",
+   "stabilizing",
+   "Awake, mean arterial pressure 70 on a steady dose of norepinephrine, still febrile and "
+   "tachycardic. This is the intended endpoint and she is not well. She needs intensive care.",
+   116, 98, 56, 22, 97, 39.1, 1, 0,
+   [HANDOFF_T],
+   ),
+
+ phase("case_complete",
+   "Handoff confirmed",
+   "handed over",
+   "Terminal phase entered when the learner confirms a handoff.",
+   116, 98, 56, 22, 97, 39.1, 0, 0, [], terminal=True,
+   inherit_vitals=True,
+   schema_note=(
+     "inherit_vitals: the monitor keeps the numbers of the phase the learner handed over "
+     "from, so a patient handed over in shock is shown in shock. The authored vitals are the "
+     "fallback and match the stabilizing phase."),
+   ),
+]

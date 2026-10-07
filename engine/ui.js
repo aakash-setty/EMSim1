@@ -1528,6 +1528,16 @@ document.addEventListener('click',e=>{
     render(); return;
   }
   if(t.id==='submitho'){
+    /* v0.21. A disposition the case intercepts is logged as the action the case names and
+       the run carries on (engine handoffIntercept). The choice is cleared so the same
+       button cannot be pressed twice by reflex, and the diagnoses are kept. */
+    const alt=handoffIntercept(ST,PENDING_HANDOFF.disposition);
+    if(alt){
+      log({actionId:alt});
+      PENDING_HANDOFF.disposition=null;
+      TAB='stabilization';
+      render(); return;
+    }
     const list=PENDING_HANDOFF.diagnoses.slice();
     log({actionId:'handoff_submit',payload:{disposition:PENDING_HANDOFF.disposition,
          diagnosis:list[0]||null,diagnoses:list}});
@@ -2479,7 +2489,7 @@ function searchHits(){
   const acts=[], lines=[];
   for(const id in ACT){
     const a=ACT[id];
-    if(!(PROTO.tabLabel||{})[a.tab]) continue;
+    if(!(PROTO.tabLabel||{})[a.tab]||a.hidden) continue;
     const groups=(a.groups||[a.group]).filter(Boolean).join(' ');
     const sc=searchScore(q,a.name,groups+' '+id.replace(/_/g,' ')+' '+(PROTO.tabLabel[a.tab]||''));
     if(sc>=0) acts.push({id,tab:a.tab,name:a.name,group:groups,score:sc});

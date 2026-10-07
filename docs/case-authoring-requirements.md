@@ -696,6 +696,50 @@ Two consequences for authoring, and the first is easy to get wrong:
 
 ---
 
+### 6.8 Credit that depends on when, and a handover that shows the truth (v0.20)
+
+Two optional fields, both added for AFRVR on a physician's decision.
+
+**`also_satisfies` on a case action.** A list of `{"id": <case action>, "when": <condition>}`.
+When the action is taken and the condition holds at that moment, the named action counts as
+satisfied: its critical expectation is met, its prompt stops and follow-ups that name it are
+discharged. The action keeps its own tag, flags and note. Use it when the same drug is right
+at one point and wrong at another and the order is the lesson. AFRVR's metoprolol is
+discouraged before positive pressure and satisfies critical rate control after it. Do not use
+it where two entries are simply the same act. That is `also_covers`. The condition is judged
+before the action's own flags are granted, so an action cannot satisfy its own condition.
+
+**`inherit_vitals: true` on a terminal phase.** The phase shows the vitals of the phase the
+run came from, with the effects acting at that moment, instead of its own authored numbers.
+Use it on `case_complete` so a learner who hands over a patient they never treated is not
+shown a better patient. The authored vitals stay as a fallback and are still validated.
+
+### 6.9 A disposition that has a consequence instead of ending the case (v0.21)
+
+Confirming a handoff ends the run. A case may say that one disposition, chosen in a state
+it names, does not:
+
+```json
+"handoff": { "disposition_intercepts": [
+  {"disposition": "discharge_home",
+   "when": "(phase is presentation OR phase is fluid_responsive) AND NOT flag discharge_attempted set",
+   "action": "attempt_discharge"} ] }
+```
+
+When the resident confirms that disposition and `when` holds, the interface logs `action`
+in place of `handoff_submit`, clears the chosen disposition and returns to the case. The
+action is an ordinary case action: give it a tag (`discouraged`), a flag, a
+`narration_override` and a debrief note, bind it with `catalog_id: null`, and mark it
+`"hidden": true` so it is not a button and not a search hit. Put the consequence on a
+transition guarded on the flag, timed from `guard_true`, so the nurse can say what
+happened. Include `NOT flag <the flag> set` in `when`, or the resident can never hand that
+disposition over at all.
+
+Use it for a discharge the patient does not survive leaving on, where ending the run would
+teach the verdict and letting it play out teaches the reason. Do not use it to block a
+disposition you simply disagree with. The payload is never visible to the condition
+language, so the review matrix is unchanged.
+
 ## 7. Actions and clinical tags
 
 ### 7.1 Actions come from the catalog and only from the catalog

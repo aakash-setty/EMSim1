@@ -171,6 +171,18 @@ function mergeAction(eff, base, caseAct, extra){
        each of two drugs are the same thing. */
     rec.flags_set_repeat=caseAct.flags_set_repeat;
     rec.flags_set_timed=caseAct.flags_set_timed;
+    /* v0.20. Conditional credit. also_covers says two entries are always the same act.
+       This says: taking this action also discharges another action's expectation, but
+       only if `when` holds at the moment it is taken. It exists for an act that is right
+       at one point in a case and wrong at another, where the order is the lesson: a
+       beta blocker that counts as rate control once the breathing is supported and not
+       before. The action keeps its own tag, flags and note, so the early administration
+       can be discouraged while the late one is credited. */
+    rec.also_satisfies=caseAct.also_satisfies;
+    /* v0.21. An action the interface never lists: no button, no search hit. It exists so
+       that something the resident does elsewhere in the interface (see handoffIntercept)
+       can be an ordinary logged action with a tag, flags and a note. */
+    rec.hidden=!!caseAct.hidden;
   }
   return rec;
 }
@@ -535,6 +547,16 @@ function fold(log, now, difficultyMultiplier){
     }
   }
   function enterPhase(to,t){
+    /* v0.20. A terminal phase may ask to show the monitor as it stood when the run got
+       there (inherit_vitals), instead of one authored set of numbers that is right for
+       one route and flattering or unfair for the others. Taken here, before the phase
+       changes, from the phase being left and the effects acting at this moment. */
+    if(PHASE[to]&&PHASE[to].inherit_vitals&&PHASE[st.phase]&&!PHASE[st.phase].terminal){
+      const keep=st.vitalEffects;
+      st.vitalEffects=activeEffects(st,t);
+      st.inheritedVitals=effectiveVitals(st);
+      st.vitalEffects=keep;
+    }
     cancelPromptsFor(st.phase);
     st.phase=to;
     st.phaseEntry[to]=t;
@@ -551,6 +573,13 @@ function fold(log, now, difficultyMultiplier){
      the moment the guard first became true. A rule without after_seconds is
      instantaneous and behaves exactly as it did in v0.5, so a case that authors none
      is bit-identical. Design 2.1a. */
+  /* v0.21. The deadline event is scheduled at start+after_seconds and then tested with
+     t-start >= after_seconds. In play the clock is a float, and 12.386-7.386 is
+     4.999999999999999, so the event arrived, the test failed by one part in 10^15, and
+     nothing was ever scheduled again: the transition then waited for the resident's next
+     action. Every delayed consequence in every pack did this on roughly half of all runs.
+     The tests never saw it because they log whole seconds. */
+  const DUE_EPS=1e-6;
   function transitionDue(tr,idx,t){
     if(tr.after_seconds===undefined) return true;
     if((tr.measured_from||'phase_entry')==='guard_true'){
@@ -561,9 +590,9 @@ function fold(log, now, difficultyMultiplier){
            the guard was false. Scheduled once, on the first check that finds it true. */
         push({t:t+tr.after_seconds,kind:'deadline',phase:st.phase});
       }
-      return t-st.guardTrue[k] >= tr.after_seconds;
+      return t-st.guardTrue[k] >= tr.after_seconds-DUE_EPS;
     }
-    return t-(st.phaseEntry[st.phase]||0) >= tr.after_seconds;
+    return t-(st.phaseEntry[st.phase]||0) >= tr.after_seconds-DUE_EPS;
   }
   function checkTransitions(t){
     const p=PHASE[st.phase];
@@ -818,6 +847,12 @@ function fold(log, now, difficultyMultiplier){
        means. It goes only into `satisfied`: putting it into `taken` as well drew the
        covering action's button as though the resident had pressed that one too. */
     if(a.covered_by) st.satisfied.add(a.covered_by);
+    /* Judged against the state as it stood when the button was pressed, before this
+       action's own flags are granted, so an action cannot satisfy its own condition. */
+    for(const s of (a.also_satisfies||[])){
+      let ok; try{ ok=(s.when===null||s.when===undefined)?true:test(s.when,st); }catch(e){ ok=false; }
+      if(ok) st.satisfied.add(s.id);
+    }
 
     /* Catalog capability, checked before the state-changing split so an act that
        reveals the vitals does so whether or not it changes the patient. */
@@ -1046,7 +1081,8 @@ function effectiveVitals(st){
   const p=PHASE[st.phase];
   const base=p?p.vitals:null;
   if(!base) return null;
-  if(p.terminal||!st.vitalEffects.length) return base;
+  if(p.terminal&&p.inherit_vitals&&st.inheritedVitals) return st.inheritedVitals;
+  if(p.terminal||!st.vitalEffects||!st.vitalEffects.length) return base;
   const out={};
   for(const k in base) out[k]=base[k];
   for(const fx of st.vitalEffects){
@@ -1119,6 +1155,29 @@ function normaliseHandoff(p){
   out.diagnoses=list;
   out.diagnosis=list[0]||null;
   return out;
+}
+
+/* ---------- a handoff that does not end the case (v0.21) ----------
+   Choosing a level of care and confirming normally ends the run. A case may say that one
+   disposition, chosen in a state it names, is not accepted as a handoff and has a
+   consequence instead: `handoff.disposition_intercepts`, a list of
+   {disposition, when, action}. When the resident confirms that disposition and `when`
+   holds, the interface logs `action` (an ordinary case action, usually hidden) in place
+   of handoff_submit, and the case carries on. The first rule that matches wins.
+
+   It exists for the discharge that a patient does not survive leaving on: ending the run
+   there teaches the verdict, and letting it play out teaches the reason and leaves the
+   resident with a patient to recover. Nothing is hard-coded: a case that authors no
+   intercepts hands over exactly as before. The payload is never read by the condition
+   language, so the review matrix is unchanged. */
+function handoffIntercept(st,disposition){
+  const rules=(CASE&&CASE.handoff&&CASE.handoff.disposition_intercepts)||[];
+  for(const r of rules){
+    if(r.disposition!==disposition||!r.action||!ACT[r.action]) continue;
+    let ok; try{ ok=(r.when===null||r.when===undefined)?true:test(r.when,st); }catch(e){ ok=false; }
+    if(ok) return r.action;
+  }
+  return null;
 }
 
 /* One verdict per diagnosis the resident listed, plus the authored ones they did not.

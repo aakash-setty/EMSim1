@@ -1,0 +1,358 @@
+{
+ "case_prefix": "TSS",
+ "status": "HELD OUT. This set is quoted, never tuned against. Nothing here may appear in a variant bank or an out-of-scope bank.",
+ "authoring_note": "Written by a language model on 6 October 2026 in the registers section 10.6 asks for: paraphrase, shorthand, typos, compound and conversational questions. The expected topic on each row is a drafting judgment and should be reviewed before any number is quoted.",
+ "management_changing": [
+  "menstrual_and_tampon",
+  "rash",
+  "sick_contacts",
+  "urine_output",
+  "dizziness_syncope",
+  "fever_and_chills",
+  "pregnancy",
+  "allergies",
+  "current_medications"
+ ],
+ "questions": [
+  {
+   "register": "paraphrase",
+   "q": "When did you first start feeling ill?",
+   "expect": "onset"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you got your period right now?",
+   "expect": "menstrual_and_tampon"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How come your skin is that color?",
+   "expect": "rash"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did your roommate get sick as well?",
+   "expect": "sick_contacts"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How much have you peed today?",
+   "expect": "urine_output"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you actually pass out in the shower?",
+   "expect": "dizziness_syncope"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What was the temperature when you checked it?",
+   "expect": "fever_and_chills"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Which medicines do you take every day?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is it possible that you are pregnant?",
+   "expect": "pregnancy"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How many times have you thrown up since this began?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What was the meal you had before you got sick?",
+   "expect": "suspect_meal"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you had any cuts that got infected?",
+   "expect": "wounds_and_skin"
+  },
+  {
+   "register": "shorthand",
+   "q": "LMP and tampon use?",
+   "expect": "menstrual_and_tampon"
+  },
+  {
+   "register": "shorthand",
+   "q": "NKDA?",
+   "expect": "allergies"
+  },
+  {
+   "register": "shorthand",
+   "q": "PMHx?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "meds?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "shorthand",
+   "q": "any n/v?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "shorthand",
+   "q": "UOP?",
+   "expect": "urine_output"
+  },
+  {
+   "register": "shorthand",
+   "q": "fevers/chills?",
+   "expect": "fever_and_chills"
+  },
+  {
+   "register": "shorthand",
+   "q": "presyncope?",
+   "expect": "dizziness_syncope"
+  },
+  {
+   "register": "shorthand",
+   "q": "PSHx?",
+   "expect": "past_surgical_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "etoh/tobacco/drugs?",
+   "expect": "social_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "sick contacts at home?",
+   "expect": "sick_contacts"
+  },
+  {
+   "register": "shorthand",
+   "q": "neck stiffness or photophobia?",
+   "expect": "neck_stiffness"
+  },
+  {
+   "register": "typo",
+   "q": "when was ur last peroid",
+   "expect": "menstrual_and_tampon"
+  },
+  {
+   "register": "typo",
+   "q": "any diarhea",
+   "expect": "diarrhea"
+  },
+  {
+   "register": "typo",
+   "q": "are you alergic to anything",
+   "expect": "allergies"
+  },
+  {
+   "register": "typo",
+   "q": "how long have you had the rahs",
+   "expect": "rash"
+  },
+  {
+   "register": "typo",
+   "q": "do you feel dizy",
+   "expect": "dizziness_syncope"
+  },
+  {
+   "register": "compound",
+   "q": "When did this start and has it been getting worse?",
+   "expect": "onset"
+  },
+  {
+   "register": "compound",
+   "q": "Do you use tampons and could one still be in there?",
+   "expect": "menstrual_and_tampon"
+  },
+  {
+   "register": "compound",
+   "q": "Any vomiting, and can you keep fluids down?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "compound",
+   "q": "Are you on any medication, and did you take anything for the fever?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "compound",
+   "q": "Did you get sunburned, and does the redness hurt?",
+   "expect": "rash"
+  },
+  {
+   "register": "conversational",
+   "q": "I need to ask something personal, when did your last period start?",
+   "expect": "menstrual_and_tampon"
+  },
+  {
+   "register": "conversational",
+   "q": "Okay, and has anybody you live with been unwell?",
+   "expect": "sick_contacts"
+  },
+  {
+   "register": "conversational",
+   "q": "Sorry to ask, but are you passing much urine?",
+   "expect": "urine_output"
+  },
+  {
+   "register": "conversational",
+   "q": "Just so I know, do you have any allergies to medicines?",
+   "expect": "allergies"
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you ever had a blood clot in your leg?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you get migraines with flashing lights?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any numbness in your face?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had a mammogram?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you snore at night?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any ringing in your ears lately?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you ever had a seizure as a child?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do your ankles swell in the evening?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any trouble swallowing solid food?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you coughed up any blood?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you wake at night gasping for air?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any change in your vision recently?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you ever had a blood transfusion?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any lumps in your breasts?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you have trouble hearing?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What are you studying in grad school?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What is your favorite restaurant?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Did you drive here yourself?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you like the beach?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What is your roommate's name?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Who won the game last night?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Is it raining outside?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What time is it?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you have a dog?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What kind of phone do you have?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Have you seen any good movies?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Where did you grow up?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What is your boyfriend's job?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Can you recommend a Thai place?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "How long have you lived in your apartment?",
+   "expect": null
+  }
+ ]
+}

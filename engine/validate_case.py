@@ -590,7 +590,9 @@ def run_checks(case):
         for at in atoms_of(node):
             if at.kind == "flag":
                 out.add(at.ident)
-        return out if "NOT" in w.upper() else set()
+        # A whole word, not a substring: "inotrope" contains NOT, and a guard on
+        # `flag inotrope_given set` was read as a negated guard (found by TAKO, v0.22).
+        return out if re.search(r"\bNOT\b", w.upper()) else set()
 
     def prompts_in_phase(phase):
         """(action id, flags it sets, first deadline) for prompts that can fire here."""
@@ -967,6 +969,16 @@ def run_checks(case):
         cond_flags.update(here)
         if _loc.startswith("action_tag/"):
             tag_flags.update(here)
+    # v0.20. A vital effect's `while` guard reads flags too: a flag whose only job is to
+    # switch an effect on is read, and warning that nothing reads it was false.
+    for _a in case["case_actions"]:
+        for _fx in (_a.get("vital_effects") or []):
+            if _fx.get("while"):
+                try:
+                    cond_flags.update(at.ident for at in atoms_of(parse_condition(_fx["while"])[0])
+                                      if at.kind == "flag")
+                except ParseError:
+                    pass
 
     for a in case["case_actions"]:
         own_perm = set(a.get("flags_set") or [])
@@ -1003,6 +1015,30 @@ def run_checks(case):
                             f"actions a phase expects is fixed on entry to that phase, so an "
                             f"action that becomes critical because this flag lapsed will not be "
                             f"listed as missed. Put the consequence on a transition instead")
+
+    # -- W1b: conditional credit (v0.20, authoring 6.8) -----------------------
+    # also_satisfies names another case action whose expectation this one discharges when
+    # a condition holds. A target that is not a case action, or is the action itself, is a
+    # credit nothing can read; an unparseable condition is silently false in the engine.
+    _case_ids = {a["catalog_id"] for a in case["case_actions"]}
+    for a in case["case_actions"]:
+        for i, s_ in enumerate(a.get("also_satisfies") or []):
+            loc = f"[also_satisfies] {a['catalog_id']}[{i}]"
+            tid = s_.get("id") if isinstance(s_, dict) else None
+            if tid not in _case_ids:
+                errors.append(f"{loc}: target {tid!r} is not a case action")
+            elif tid == a["catalog_id"]:
+                errors.append(f"{loc}: an action cannot satisfy itself")
+            w_ = s_.get("when") if isinstance(s_, dict) else None
+            if w_ is not None:
+                try:
+                    parse_condition(w_)
+                except Exception as e:
+                    errors.append(f"{loc}: condition does not parse: {e}")
+    for p in case["phases"]:
+        if p.get("inherit_vitals") and not p.get("terminal"):
+            errors.append(f"[inherit_vitals] {p['id']}: only a terminal phase may inherit the "
+                          f"vitals of the phase before it")
 
     # -- W2: flags granted on repetition (design 2.10, authoring 6.7) ---------
     # Section 15 tells authors that flags are binary and permanent and not to build cases
@@ -1408,6 +1444,29 @@ def run_checks(case):
                             f"the debrief will print the name and nothing under it")
     if ho.get("additional_diagnoses"):
         notes.append(f"additional diagnoses: {len(ho['additional_diagnoses'])}")
+
+    # -- disposition intercepts (v0.21) ------------------------------------
+    # A disposition that, chosen in a named state, logs a case action instead of ending
+    # the run (engine handoffIntercept). The engine skips a rule it cannot use, so every
+    # mistake here is silent at runtime: the discharge simply ends the case as before.
+    disp_ids = {(ho.get("correct_disposition") or {}).get("id")} | {
+        d.get("id") for d in ho.get("alternative_dispositions") or []}
+    for i, r in enumerate(ho.get("disposition_intercepts") or []):
+        where = f"[handoff] disposition_intercepts[{i}]"
+        if r.get("disposition") not in disp_ids:
+            errors.append(f"{where}: {r.get('disposition')!r} is not a disposition this case offers")
+        if r.get("action") not in act_ids:
+            errors.append(f"{where}: action {r.get('action')!r} is not a case action")
+        elif r.get("action") == "handoff_submit":
+            errors.append(f"{where}: the action cannot be handoff_submit")
+        if r.get("when") is not None:
+            try:
+                parse_condition(r["when"])
+            except Exception as e:
+                errors.append(f"{where}: condition does not parse: {e}")
+    if ho.get("disposition_intercepts"):
+        notes.append("disposition intercepts: " + ", ".join(
+            f"{r.get('disposition')} logs {r.get('action')}" for r in ho["disposition_intercepts"]))
 
     # -- volunteered answers (v0.18a) --------------------------------------
     # A topic's `adjacent` topics are volunteered with its first answer. Safety screens

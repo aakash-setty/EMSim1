@@ -14,14 +14,18 @@ HANDOFF = {
      "case, the answer is unambiguously intensive care.\n\n"
      "The reasoning is what is being scored, not the name of the ward. The question to be able to "
      "answer is what the receiving unit must be able to do, and this case is written for a hospital "
-     "where every option exists.")},
+     "where every option exists. A step-down unit that can run non-invasive ventilation, monitor "
+     "him continuously and escalate quickly is an equally sound answer for a patient on the mask. "
+     "It is listed as defensible only because one answer has to be marked correct, not because "
+     "it is worse.")},
 
  "alternative_dispositions": [
   {"id": "stepdown_telemetry",
    "label": "Step-down or intermediate care unit with telemetry",
    "verdict": "acceptable_with_qualification",
    "explanation": (
-     "Defensible, and at many hospitals this is where this patient actually goes. It turns entirely "
+     "A sound answer for a patient on the mask, and at many hospitals this is where he goes. It "
+     "reads as defensible here only because one answer has to be marked correct. It turns entirely "
      "on local capability: a step-down unit that can maintain non-invasive ventilation, monitor "
      "continuously and escalate quickly is an appropriate destination, and one that cannot is not. "
      "A learner who chose this and can say what the unit needs to be able to do has answered the "
@@ -132,7 +136,8 @@ HANDOFF = {
    "label": "Acute pulmonary embolism",
    "explanation": (
      "Usually selected downstream of a D-dimer that should not have been sent. The pretest "
-     "probability is low: gradual onset over more than a day, symmetrical bilateral leg edema "
+     "probability is low: palpitations of sudden onset followed by breathlessness that built over "
+     "hours, a week of symmetrical bilateral leg edema "
      "with no calf tenderness or asymmetry, no immobilization, travel, surgery or malignancy, and "
      "a complete alternative explanation for every symptom. The bedside ultrasound settles it: "
      "diffuse bilateral B-lines with a poorly contracting left ventricle and a plethoric inferior "

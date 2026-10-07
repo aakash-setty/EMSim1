@@ -117,14 +117,13 @@ RATE_CONTROL_NARRATION = ("That second dose has done it. His rate's down and I c
   "count it now, still all over the place.")
 RATE_CONTROL_ADDENDUM = "These agents can take a bit of time to kick in."
 RATE_CONTROL_NOTE = (
-  "The ventricular rate fell about ten seconds after the rate-controlling drug was given rather "
-  "than the moment it was pushed. None of the three agents this case accepts works instantly: "
-  "intravenous metoprolol takes several minutes, amiodarone rather longer, and digoxin "
-  "considerably longer than either, so ten seconds is a heavy compression rather than a delay. "
-  "The reason it is not instant is that a resident who watches the number change on the same "
-  "click as the injection learns that rate control is a button, and then gives a second dose "
-  "because the first one appeared not to work. The nurse says so out loud when the drug goes in, "
-  "which is the part of this that will actually stop somebody redosing.")
+  "The ventricular rate came under control about ten seconds after the second dose. The first "
+  "dose gave a partial fall and the second finished the job, which is the usual course: one "
+  "intravenous dose of a rate-controlling drug is a trial, and a partial response asks for more "
+  "of the same strategy rather than a switch to diltiazem. The ten seconds is a heavy "
+  "compression. Intravenous metoprolol takes several minutes, amiodarone longer, and digoxin "
+  "longer than either, with its loading doses spaced over hours. In a real department you would "
+  "wait for each drug's own onset before judging it.")
 RATE_CONTROL_RATIONALE = (
   "AUTHOR: ten seconds of game time stands in for the several minutes an intravenous "
   "rate-controlling agent actually takes to slow atrioventricular nodal conduction. The number is "
@@ -157,8 +156,6 @@ ECG = {
                  "author_note": "Rate-controlled tracing: QRS 92 ms, QTc 442 ms."},
   "intubated": {"p_waves": False, "qrs_ms": 92, "qtc_ms": 444,
                 "author_note": "Post-intubation tracing: QRS 92 ms, QTc 444 ms."},
-  "halted": {"p_waves": False, "qrs_ms": 88,
-             "verify": ("v0.18a. His own rhythm at the point of respiratory failure: atrial fibrillation with a narrow QRS.")},
   "case_complete": {"p_waves": False, "qrs_ms": 92, "qtc_ms": 442,
                     "author_note": "Handed over on the rate-controlled figures."},
 }
@@ -178,6 +175,20 @@ PHASES = [
                       "work of breathing, so this transition is instantaneous. The saturation it "
                       "buys is authored as a staged vital effect rather than as this phase change, "
                       "so the number climbs rather than jumping."},
+      {"when": "flag fluid_given set", "to": "respiratory_failure",
+       "after_seconds": 10, "measured_from": "guard_true",
+       "narration": "That fluid has gone straight to his chest. He's much worse, he's getting "
+                    "drowsy and his sat is dropping.",
+       "debrief_note": (
+         "A crystalloid bolus into a ventricle at 30 to 35 percent with a lung that was already "
+         "flooded. The extra preload had nowhere to go but the alveoli, and it tipped him into "
+         "respiratory failure. He can still be rescued from here with positive pressure, which "
+         "is the same treatment he needed before the fluid went in."),
+       "author_rationale": (
+         "PHYSICIAN DECISION, 5 October 2026 (AFRVR-08). A consequence the learner must rescue "
+         "replaces the halt. Ten seconds after the bolus, the same compressed delay the "
+         "rate-control drugs carry: a delayed consequence of the resident's own action, so "
+         "the five-second floor applies and not the thirty-second fairness floor.")},
       {"when": "flag rate_control_adequate set", "to": "rate_controlled_congested",
        "after_seconds": 10, "measured_from": "guard_true",
        "narration": RATE_CONTROL_NARRATION,
@@ -269,7 +280,21 @@ PHASES = [
     [
       {"when": "flag intubated set", "to": "intubated"},
       {"when": "flag on_niv set", "to": "stabilized"},
-      {"when": "NOT flag on_niv set", "after_seconds": 240, "measured_from": "phase_entry",
+      {"when": "flag fluid_given set", "to": "respiratory_failure",
+       "after_seconds": 10, "measured_from": "guard_true",
+       "narration": "That fluid has gone straight to his chest. He's much worse, he's getting "
+                    "drowsy and his sat is dropping.",
+       "debrief_note": (
+         "A crystalloid bolus into a ventricle at 30 to 35 percent with a lung that was already "
+         "flooded. The extra preload had nowhere to go but the alveoli, and it tipped him into "
+         "respiratory failure. He can still be rescued from here with positive pressure, which "
+         "is the same treatment he needed before the fluid went in."),
+       "author_rationale": (
+         "PHYSICIAN DECISION, 5 October 2026 (AFRVR-08). A consequence the learner must rescue "
+         "replaces the halt. Ten seconds after the bolus, the same compressed delay the "
+         "rate-control drugs carry: a delayed consequence of the resident's own action, so "
+         "the five-second floor applies and not the thirty-second fairness floor.")},
+      {"when": "NOT flag on_niv set", "after_seconds": 120, "measured_from": "phase_entry",
        "to": "respiratory_failure",
        "narration": "His rate's crept up again and he's working much harder than he was. His "
                     "sat has come down.",
@@ -281,12 +306,11 @@ PHASES = [
          "control and treatment of the pulmonary edema are parallel tasks in this case, not "
          "sequential ones, and if anything the edema is the more urgent of the two."),
        "author_rationale": (
-         "AUTHOR SIGNATURE REQUIRED. Same claim and same four minutes as the arrival phase, "
-         "applied to a patient whose rate is now 108. The rate control is a genuine improvement in "
-         "diastolic filling time, so a reviewer might reasonably argue this patient tires more "
-         "slowly than the one at 160 and that the deadline here should be longer. It is set the "
-         "same deliberately, so that the case does not teach that treating the rate buys time it "
-         "has not been shown to buy.")},
+         "PHYSICIAN DECISION, 5 October 2026 (AFRVR-02). Two minutes, shortened from four. This "
+         "clock is measured from entry to the phase, so at four minutes rate control bought up to "
+         "four more minutes of unsupported breathing, which contradicted wrong path one: a lower "
+         "rate does not rescue him. Two minutes is compressed tempo and a teaching choice, like "
+         "the arrival clock.")},
       HANDOFF_T,
     ]),
 
@@ -316,20 +340,13 @@ PHASES = [
       "assume no peri-intubation collapse, which is a deliberate simplification: this case is not "
       "about the airway and adding a hypotension branch would make it about the airway.")),
 
-  phase("halted", "Case halted after a harmful action", "stopped",
-    "Terminal phase entered directly when a harmful action is taken, carrying that action's halt "
-    "reason. Not reached through transition rules.",
-    150, 104, 62, 40, 76, 37.0, 3, 1, [], terminal=True,
-    schema_gap_note=(
-      "v0.18a. This case has one halting action, a crystalloid bolus, and its halt reason describes hypoxemic respiratory failure needing intubation, not an arrest. These are his numbers at that point: still in atrial fibrillation at 150, pressure holding, saturation 76 on a respiratory rate of 40. Until v0.18a this block was a generic bradycardic peri-arrest, which contradicted the halt reason.")),
-
   phase("case_complete", "Handoff confirmed", "handed over",
     "Terminal phase entered when the resident confirms a handoff. The debrief is generated from here.",
     104, 124, 74, 20, 89, 37.0, 0, 0, [], terminal=True,
+    inherit_vitals=True,
     schema_gap_note=(
-      "Placeholder, as in the reference case. A completion phase should inherit the vitals of the "
-      "phase the resident handed off from and the schema cannot express that. The saturation of 95 "
-      "assumes the intended path with positive pressure running; a resident who hands over from the "
-      "rate-controlled-and-congested phase sees a number here that is better than the patient they "
-      "handed over.")),
+      "Physician decision, 5 October 2026 (AFRVR-32). inherit_vitals makes the handover screen "
+      "show the monitor as it stood at the moment of handoff, so a learner who never applied the "
+      "mask is not shown a better patient than the one they handed over. The numbers authored "
+      "here are only a fallback for a build that does not read the field.")),
 ]

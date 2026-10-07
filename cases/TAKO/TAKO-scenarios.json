@@ -1,0 +1,448 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "takotsubo-lvoto-01",
+ "note": "End-to-end paths. Steps cost eight seconds each on the runner's clock.",
+ "scenarios": [
+  {
+   "name": "Intended path: infarct pathway, examine and echo, the pressure falls, fluid and phenylephrine, handoff",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    "exam_card",
+    "ultrasound_cardiac",
+    "consult_cardiology",
+    {
+     "wait": 140
+    },
+    "normal_saline_500ml_bolus",
+    "phenylephrine_drip",
+    {
+     "wait": 12
+    },
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": ""
+  },
+  {
+   "name": "Doing nothing: obstructed at three minutes, worsening shock four minutes later, and no further",
+   "steps": [
+    {
+     "wait": 185
+    },
+    {
+     "wait": 245
+    },
+    {
+     "wait": 600
+    }
+   ],
+   "expect_phase": "shock_untreated",
+   "note": ""
+  },
+  {
+   "name": "Doing nothing stops at the obstructed phase if the clock is stopped there",
+   "steps": [
+    {
+     "wait": 185
+    }
+   ],
+   "expect_phase": "obstructed",
+   "note": ""
+  },
+  {
+   "name": "Fluid and a vasoconstrictor steady her",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "lactated_ringer_s_500ml_bolus",
+    "vasopressin_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": "Vasopressin counts through coverage."
+  },
+  {
+   "name": "Norepinephrine is accepted as the vasoconstrictor",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "normal_saline_500ml_bolus",
+    "norepinephrine_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": ""
+  },
+  {
+   "name": "Fluid alone does not steady her",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "normal_saline_1l_bolus",
+    {
+     "wait": 100
+    }
+   ],
+   "expect_phase": "obstructed",
+   "note": ""
+  },
+  {
+   "name": "A vasoconstrictor alone does not steady her",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "phenylephrine_drip",
+    {
+     "wait": 100
+    }
+   ],
+   "expect_phase": "obstructed",
+   "note": ""
+  },
+  {
+   "name": "Treated before the pressure falls: straight to steadied",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    "normal_saline_500ml_bolus",
+    "phenylephrine_drip",
+    {
+     "wait": 150
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": ""
+  },
+  {
+   "name": "Nitroglycerin on arrival drops her pressure",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "nitroglycerin_sublingual",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "obstructed",
+   "note": "Sublingual needs no line and is covered."
+  },
+  {
+   "name": "Dobutamine on arrival makes her worse",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "dobutamine_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "shock_worse",
+   "note": ""
+  },
+  {
+   "name": "Epinephrine in the obstructed phase makes her worse",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "epinephrine_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "shock_worse",
+   "note": ""
+  },
+  {
+   "name": "Stopping the inotrope alone does not get her out",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "dobutamine_drip",
+    {
+     "wait": 12
+    },
+    "stop_dobutamine",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "shock_worse",
+   "note": ""
+  },
+  {
+   "name": "Fluid and a vasoconstrictor with the inotrope still running do not get her out",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "dobutamine_drip",
+    {
+     "wait": 12
+    },
+    "normal_saline_500ml_bolus",
+    "phenylephrine_drip",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "shock_worse",
+   "note": ""
+  },
+  {
+   "name": "Stop the inotrope, then fluid and a vasoconstrictor: steadied",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "dopamine_drip",
+    {
+     "wait": 12
+    },
+    "stop_dopamine",
+    "normal_saline_500ml_bolus",
+    "phenylephrine_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": ""
+  },
+  {
+   "name": "Cardiology called when the pressure falls takes over after ninety seconds",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "ultrasound_cardiac",
+    "consult_cardiology",
+    {
+     "wait": 95
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": ""
+  },
+  {
+   "name": "Cardiology is not yet there at sixty seconds",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "ultrasound_cardiac",
+    "consult_cardiology",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "obstructed",
+   "note": ""
+  },
+  {
+   "name": "Cardiology rescues her from an inotrope too",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "dobutamine_drip",
+    {
+     "wait": 12
+    },
+    "ultrasound_cardiac",
+    "consult_cardiology",
+    {
+     "wait": 95
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": ""
+  },
+  {
+   "name": "Cardiology called on arrival arrives ninety seconds after the pressure falls",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    "ultrasound_cardiac",
+    "consult_cardiology",
+    {
+     "wait": 120
+    },
+    {
+     "wait": 110
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": "The call was already made, so the clock starts when she enters the phase."
+  },
+  {
+   "name": "Cardiology rescues her from untreated shock",
+   "steps": [
+    {
+     "wait": 185
+    },
+    {
+     "wait": 245
+    },
+    "ecg_12_lead",
+    "ultrasound_cardiac",
+    {
+     "wait": 6
+    },
+    "consult_cardiology",
+    {
+     "wait": 95
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": ""
+  },
+  {
+   "name": "An inotrope in untreated shock moves her to the inotrope phase",
+   "steps": [
+    "insert_iv",
+    {
+     "wait": 185
+    },
+    {
+     "wait": 245
+    },
+    "dobutamine_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "shock_worse",
+   "note": ""
+  },
+  {
+   "name": "Thrombolysis does not end the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    "tenecteplase_tnk_bolus"
+   ],
+   "expect_phase": "presentation",
+   "note": ""
+  },
+  {
+   "name": "A beta blocker early changes no phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    "esmolol_drip",
+    "metoprolol_bolus"
+   ],
+   "expect_phase": "presentation",
+   "note": ""
+  },
+  {
+   "name": "Handoff from the obstructed phase ends the case",
+   "steps": [
+    {
+     "wait": 185
+    },
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": ""
+  },
+  {
+   "name": "Cardiology is busy until there is an ECG and an echo: an early call does nothing",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 180
+    },
+    "consult_cardiology",
+    {
+     "wait": 95
+    }
+   ],
+   "expect_phase": "obstructed",
+   "note": "Blocked by the prerequisite, so no flag is set and nobody comes."
+  }
+ ]
+}

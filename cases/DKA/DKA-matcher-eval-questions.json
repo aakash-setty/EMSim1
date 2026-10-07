@@ -1,0 +1,428 @@
+{
+ "case_prefix": "DKA",
+ "status": "HELD OUT. This set is quoted, never tuned against. Nothing here may appear in a variant bank or an out-of-scope bank.",
+ "authoring_note": "Written by a language model on 6 October 2026, after the variant bank, in the registers section 10.6 asks for. The same author wrote the bank, which section 10.6 warns against. The expected topic on each row is a drafting judgment.",
+ "management_changing": [
+  "past_medical_history",
+  "diabetes_history",
+  "current_medications",
+  "insulin_taken_recently",
+  "glucose_monitoring",
+  "thirst_and_urination",
+  "pregnancy",
+  "allergies",
+  "sick_contacts"
+ ],
+ "questions": [
+  {
+   "register": "paraphrase",
+   "q": "How many days have you been unwell for?",
+   "expect": "onset"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is the throwing up settling or getting worse?",
+   "expect": "timing_progression"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Roughly how often have you been throwing up?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are your stools loose?",
+   "expect": "diarrhea"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does your tummy hurt?",
+   "expect": "abdominal_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Whereabouts in your belly is the pain?",
+   "expect": "location_of_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you been drinking loads and still feeling thirsty?",
+   "expect": "thirst_and_urination"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do your muscles feel like they have no strength?",
+   "expect": "weakness"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you feel your heart thumping?",
+   "expect": "palpitations"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you feel faint when you get up?",
+   "expect": "dizziness_syncope"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you had a temperature?",
+   "expect": "fever_and_chills"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What long-term conditions do you have?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How old were you when you got diabetes?",
+   "expect": "diabetes_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Which medicines do you take every day?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you give yourself your insulin yesterday?",
+   "expect": "insulin_taken_recently"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What was your blood sugar at home?",
+   "expect": "glucose_monitoring"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has a surgeon ever operated on you?",
+   "expect": "past_surgical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are you allergic to any medicines?",
+   "expect": "allergies"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is a pregnancy possible at the moment?",
+   "expect": "pregnancy"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is anybody at home ill with the same thing?",
+   "expect": "sick_contacts"
+  },
+  {
+   "register": "paraphrase",
+   "q": "When did you last manage to eat?",
+   "expect": "last_oral_intake"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you drink alcohol or use any drugs?",
+   "expect": "social_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does it sting when you urinate?",
+   "expect": "dysuria_gu_symptoms"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is your chest hurting at all?",
+   "expect": "chest_pain"
+  },
+  {
+   "register": "shorthand",
+   "q": "PMH?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "meds?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "shorthand",
+   "q": "NKDA?",
+   "expect": "allergies"
+  },
+  {
+   "register": "shorthand",
+   "q": "n/v?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "shorthand",
+   "q": "LMP?",
+   "expect": "pregnancy"
+  },
+  {
+   "register": "shorthand",
+   "q": "T1DM?",
+   "expect": "diabetes_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "missed insulin doses?",
+   "expect": "insulin_taken_recently"
+  },
+  {
+   "register": "shorthand",
+   "q": "home BGs?",
+   "expect": "glucose_monitoring"
+  },
+  {
+   "register": "shorthand",
+   "q": "polyuria polydipsia?",
+   "expect": "thirst_and_urination"
+  },
+  {
+   "register": "shorthand",
+   "q": "sick contacts?",
+   "expect": "sick_contacts"
+  },
+  {
+   "register": "shorthand",
+   "q": "PSH?",
+   "expect": "past_surgical_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "EtOH?",
+   "expect": "social_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "CP?",
+   "expect": "chest_pain"
+  },
+  {
+   "register": "shorthand",
+   "q": "fevers?",
+   "expect": "fever_and_chills"
+  },
+  {
+   "register": "typo",
+   "q": "have you been taking your inuslin",
+   "expect": "insulin_taken_recently"
+  },
+  {
+   "register": "typo",
+   "q": "any diarhea",
+   "expect": "diarrhea"
+  },
+  {
+   "register": "typo",
+   "q": "are you alergic to anything",
+   "expect": "allergies"
+  },
+  {
+   "register": "typo",
+   "q": "when did the vomitting start",
+   "expect": "onset"
+  },
+  {
+   "register": "typo",
+   "q": "do you have diabetis",
+   "expect": "diabetes_history"
+  },
+  {
+   "register": "conversational",
+   "q": "So tell me, what's been going on with your sugars?",
+   "expect": "glucose_monitoring"
+  },
+  {
+   "register": "conversational",
+   "q": "And the insulin, have you kept that going through all this?",
+   "expect": "insulin_taken_recently"
+  },
+  {
+   "register": "conversational",
+   "q": "Okay, and has anyone you live with had this?",
+   "expect": "sick_contacts"
+  },
+  {
+   "register": "conversational",
+   "q": "Right, and how are you feeling in yourself, strength-wise?",
+   "expect": "weakness"
+  },
+  {
+   "register": "conversational",
+   "q": "Just checking, any medical problems I should know about?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "compound",
+   "q": "Any fever or cough?",
+   "expect": "fever_and_chills"
+  },
+  {
+   "register": "compound",
+   "q": "Do you smoke or drink?",
+   "expect": "social_history"
+  },
+  {
+   "register": "compound",
+   "q": "Any allergies, and what medicines are you on?",
+   "expect": "allergies"
+  },
+  {
+   "register": "compound",
+   "q": "Any chest pain or trouble breathing?",
+   "expect": "chest_pain"
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you ever had a blood transfusion?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you have a rash anywhere?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any joint pains?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you hit your head?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you get migraines?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any problems with your eyesight lately?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have your feet gone numb?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you see a kidney doctor?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any trouble swallowing?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had a tick bite?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you have asthma inhalers at home?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any blood clots in the family?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Is your neck stiff?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Does the light hurt your eyes?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you coughed up blood?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any swelling in your ankles?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you snore?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you been camping?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What's your favorite food?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you have a pet?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Which pharmacy do you use?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Did you drive here?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you wear a medical bracelet?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Have you had your wisdom teeth out?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Any ringing in your ears?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you have a tattoo?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Have you been vaccinated for hepatitis?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Any hair falling out?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you sleepwalk?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "How tall are you?",
+   "expect": null
+  }
+ ]
+}

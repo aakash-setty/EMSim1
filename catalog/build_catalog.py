@@ -169,7 +169,7 @@ BEDSIDE = ["Doppler", "ECG", "Fingerstick Blood Sugar", "Peak Expiratory Flow Me
            "Ultrasound - Lower Extremity Venous", "Ultrasound - Lung",
            "Ultrasound - Renal", "Ultrasound - RUQ", "Ultrasound - Soft Tissue"]
 LABS = ["Arterial Blood Gas", "Venous Blood Gas", "Basic Chemistry (Chem 7)",
-        "Blood Type & Screen",
+        "Beta-Hydroxybutyrate", "Blood Type & Screen",
         "Calcium (ionized)", "Calcium Level", "Coagulation Panel",
         "Complete Blood Count (CBC)", "D-Dimer", "Lactate", "Lipase",
         "Liver Function Tests (LFTs)", "Magnesium Level", "Phosphate Level",
@@ -225,6 +225,7 @@ PROCEDURES = ["Arterial Line", "C-Collar", "Central Venous Catheter (cordis)",
               "Insert Chest Tube", "Insert Foley Catheter", "Lower Head of Bed",
               "Lumbar Puncture", "Place Nasogastric Tube", "Place Orogastric Tube",
               "Place Patient on Isolation Precautions",
+              "Remove Vaginal Foreign Body",
               "Whole Bowel Irrigation by NG tube"]
 BLOOD_BANK = ["Factor IX", "Factor VIII", "Intravenous Immunoglobulin",
               "Prothrombin Complex Concentrate", "Transfuse FFP",
@@ -307,7 +308,17 @@ AUTHOR_ADDED = {"Meds - Vasoactive Agents": ["Dobutamine drip"],
                 # Miscellaneous, pre-eclampsia and eclampsia under OB/GYN. One id,
                 # four placements.
                 "Meds - Respiratory": ["Magnesium Sulfate"],
-                "Meds - Miscellaneous": ["Magnesium Sulfate"],
+                # v0.23, author instruction (Aakash Setty, 6 October 2026) for the
+                # diabetic ketoacidosis case: subcutaneous rapid-acting insulin, which the
+                # 2024 consensus report accepts for mild and moderate ketoacidosis, and
+                # oral potassium, so that the route of potassium is a choice a learner
+                # makes. Both are in NON_IV. The existing "Potassium Chloride (KCl)" entry
+                # is unchanged and a case that means the intravenous route says so.
+                # v0.23a, author instruction (6 October 2026): insulin glargine, so the
+                # basal dose the patient missed can be ordered. Subcutaneous, in NON_IV.
+                "Meds - Miscellaneous": ["Magnesium Sulfate", "Insulin (Subcutaneous)",
+                                         "Insulin Glargine (Subcutaneous)",
+                                         "Potassium Chloride (oral)"],
                 "Meds - OB/GYN": ["Magnesium Sulfate"]}
 for g, items in AUTHOR_ADDED.items():
     MEDS.setdefault(g, [])
@@ -332,7 +343,10 @@ NON_IV = {"Prednisone", "Epinephrine (Intramuscular)", "Activated Charcoal",
           "Albuterol", "Ipratropium", "Nitroglycerin sublingual",
           # Apixaban is oral and enoxaparin is subcutaneous. Neither needs a line, and
           # gating either on vascular access would teach a sequence that does not exist.
-          "Apixaban", "Enoxaparin"}
+          "Apixaban", "Enoxaparin",
+          # v0.23. Subcutaneous insulin and oral potassium need no line.
+          "Insulin (Subcutaneous)", "Potassium Chloride (oral)",
+          "Insulin Glargine (Subcutaneous)"}
 ROUTE_AMBIGUOUS = {"Acetaminophen", "Ibuprofen", "Dexamethasone", "Diphenhydramine",
                    "Ondansetron", "Metoclopramide", "Thiamine", "Oxytocin IM/IV",
                    "RhoGAM", "Haloperidol", "Olanzapine", "Ziprasidone",
@@ -358,6 +372,13 @@ for d in PROCEDURES:
     kw = dict(category="procedure", narration_template="{name} done.")
     if d == "Lumbar Puncture":
         kw["flags_set_default"] = ["lumbar_puncture_performed"]
+    if d == "Remove Vaginal Foreign Body":
+        # v0.21. Added on author instruction for the toxic shock case, not from a screenshot.
+        # Source control had no button: a retained tampon could be found on the GU exam and
+        # then not acted on. Named for the act, not for the object, so it reads the same in
+        # every case and gives nothing away in the cases where there is nothing to remove.
+        kw["narration_template"] = "Setting up a speculum and a light."
+        kw["source"] = "author-supplied, not in screenshots (v0.21)"
     add_or_place(d, "interventions", "Procedures", **kw)
 for d in BLOOD_BANK:
     add_or_place(d, "interventions", "Blood Bank", category="blood_product",
@@ -578,6 +599,15 @@ CATALOG = {
         "instruction for the atrial fibrillation case. Not transcribed from any "
         "screenshot; each carries source=author-supplied. Apixaban and enoxaparin are "
         "in NON_IV, so neither requires vascular access.",
+        "Beta-Hydroxybutyrate added under Lab Work, and Insulin (Subcutaneous) and Potassium "
+        "Chloride (oral) under Meds - Miscellaneous, on author instruction for the diabetic "
+        "ketoacidosis case (v0.23). Not from a screenshot. The two drugs carry "
+        "source=author-supplied and need no vascular access.",
+        "Insulin Glargine (Subcutaneous) added under Meds - Miscellaneous on author instruction "
+        "(v0.23a), so a missed basal dose can be ordered. Not from a screenshot. No vascular access.",
+        "Remove Vaginal Foreign Body added under Procedures on author instruction for the toxic "
+        "shock case (v0.21). Not from a screenshot; carries source=author-supplied. It is inert "
+        "in every case that does not bind it.",
         "Nursing group added under Stabilization on author instruction, not from a screenshot: "
         "droplet, contact and airborne precautions, warming measures and cooling measures. "
         "Each sets a flag of its own name and asserts nothing clinical.",

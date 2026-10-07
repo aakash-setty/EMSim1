@@ -25,7 +25,7 @@ Three sections, per 14.2c:
 Writes <PREFIX>-deterioration-timeline.md into the pack. A case with no time-guarded
 transition writes nothing and says so.
 """
-import json, os, sys
+import json, re, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from validate_case import parse_condition, evaluate, atoms_of
 from paths import resolve_pack
@@ -127,7 +127,7 @@ for pid in PH:
         # flags the guard requires unset
         need = set()
         w = t.get("when") or ""
-        if "NOT" in w.upper():
+        if re.search(r"\bNOT\b", w.upper()):
             need = {a.ident for a in atoms_of(parse_condition(w)[0]) if a.kind == "flag"}
         ps = prompts_in(pid)
         if need:

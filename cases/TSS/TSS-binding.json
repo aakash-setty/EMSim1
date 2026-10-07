@@ -1,0 +1,414 @@
+{
+ "binding_version": "0.1",
+ "case_id": "toxic-shock-tampon-01",
+ "catalog_version": "0.2-draft",
+ "status": "DRAFT. Every mapped row is an author judgement and needs review.",
+ "counts": {
+  "exact": 57,
+  "mapped": 0,
+  "unmatched": 2
+ },
+ "group_coverage": {
+  "normal_saline_1l_bolus": [
+   "lactated_ringer_s_1l_bolus",
+   "lactated_ringer_s_500ml_bolus",
+   "normal_saline_500ml_bolus"
+  ],
+  "norepinephrine_drip": [
+   "epinephrine_drip",
+   "phenylephrine_drip",
+   "vasopressin_drip"
+  ],
+  "ceftriaxone": [
+   "cefepime",
+   "meropenem",
+   "piperacillin_tazobactam"
+  ],
+  "metoprolol_bolus": [
+   "diltiazem_bolus",
+   "esmolol_drip",
+   "labetalol_bolus",
+   "labetalol_drip",
+   "propranolol_bolus"
+  ]
+ },
+ "blocking": [],
+ "rows": [
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "second_iv",
+   "catalog_id": "second_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "status": "exact",
+   "note": "The case makes a claim about volume and not about an agent, so the tag, the flags and the note cover all four crystalloid boluses.",
+   "also_covers": [
+    "lactated_ringer_s_1l_bolus",
+    "lactated_ringer_s_500ml_bolus",
+    "normal_saline_500ml_bolus"
+   ]
+  },
+  {
+   "case_id": "nasal_cannula_oxygen",
+   "catalog_id": "nasal_cannula_oxygen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "non_rebreather_mask",
+   "catalog_id": "non_rebreather_mask",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "etomidate_bolus",
+   "catalog_id": "etomidate_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_bolus",
+   "catalog_id": "ketamine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propofol_bolus",
+   "catalog_id": "propofol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "midazolam_bolus",
+   "catalog_id": "midazolam_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "rocuronium_bolus",
+   "catalog_id": "rocuronium_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "succinylcholine_bolus",
+   "catalog_id": "succinylcholine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intubate_rapid_sequence",
+   "catalog_id": "intubate_rapid_sequence",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fentanyl_bolus",
+   "catalog_id": "fentanyl_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_infusion",
+   "catalog_id": "ketamine_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propofol_infusion",
+   "catalog_id": "propofol_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "remove_vaginal_foreign_body",
+   "catalog_id": "remove_vaginal_foreign_body",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "norepinephrine_drip",
+   "catalog_id": "norepinephrine_drip",
+   "status": "exact",
+   "note": "Any of these infusions is a running vasopressor for the purpose this case scores. The note says norepinephrine is first. Dopamine is its own action because it is discouraged.",
+   "also_covers": [
+    "epinephrine_drip",
+    "phenylephrine_drip",
+    "vasopressin_drip"
+   ]
+  },
+  {
+   "case_id": "dopamine_drip",
+   "catalog_id": "dopamine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "phenylephrine_bolus",
+   "catalog_id": "phenylephrine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "stop_norepinephrine",
+   "catalog_id": "stop_norepinephrine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "vancomycin",
+   "catalog_id": "vancomycin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "clindamycin",
+   "catalog_id": "clindamycin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ceftriaxone",
+   "catalog_id": "ceftriaxone",
+   "status": "exact",
+   "note": "Broad beta-lactam cover while the source is unknown. Accepted without penalty on the directing physician's decision, and not a substitute for vancomycin.",
+   "also_covers": [
+    "cefepime",
+    "meropenem",
+    "piperacillin_tazobactam"
+   ]
+  },
+  {
+   "case_id": "cefazolin",
+   "catalog_id": "cefazolin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intravenous_immunoglobulin",
+   "catalog_id": "intravenous_immunoglobulin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "hydrocortisone_bolus",
+   "catalog_id": "hydrocortisone_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "acetaminophen",
+   "catalog_id": "acetaminophen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ondansetron",
+   "catalog_id": "ondansetron",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ibuprofen",
+   "catalog_id": "ibuprofen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "metoprolol_bolus",
+   "catalog_id": "metoprolol_bolus",
+   "status": "exact",
+   "note": "Every route to slowing a compensatory tachycardia carries the same tag, effect and note, so none is an unscored way round the lesson.",
+   "also_covers": [
+    "diltiazem_bolus",
+    "esmolol_drip",
+    "labetalol_bolus",
+    "labetalol_drip",
+    "propranolol_bolus"
+   ]
+  },
+  {
+   "case_id": "furosemide_40_mg_iv",
+   "catalog_id": "furosemide_40_mg_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lumbar_puncture",
+   "catalog_id": "lumbar_puncture",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insert_foley_catheter",
+   "catalog_id": "insert_foley_catheter",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lactate",
+   "catalog_id": "lactate",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "blood_culture_x_2",
+   "catalog_id": "blood_culture_x_2",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "complete_blood_count_cbc",
+   "catalog_id": "complete_blood_count_cbc",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urine_hcg_qualitative",
+   "catalog_id": "urine_hcg_qualitative",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ct_abdomen",
+   "catalog_id": "ct_abdomen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_infectious_disease",
+   "catalog_id": "consult_infectious_disease",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_ob_gyn",
+   "catalog_id": "consult_ob_gyn",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "attempt_discharge",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Not a catalog action and not a button. Logged by the Handoff tab when discharge is chosen in the two early phases (handoff.disposition_intercepts). Hidden from every tab and from search."
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "The catalog has no handoff action; listed in its own known_gaps."
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_abd",
+   "catalog_id": "exam_abd",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_gu",
+   "catalog_id": "exam_gu",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_back",
+   "catalog_id": "exam_back",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych",
+   "status": "exact",
+   "note": null
+  }
+ ]
+}

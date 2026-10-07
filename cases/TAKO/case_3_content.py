@@ -1,0 +1,268 @@
+"""TAKO part 3: exam findings, general status, the figure, labs, imaging, consultants.
+
+EVERY VALUE IN THIS FILE IS MODEL OUTPUT. No physician supplied a number, a finding or a
+reference interval.
+"""
+
+PRES = "phase is presentation"
+OBS = "phase is obstructed"
+WORSE_I = "phase is shock_worse"
+WORSE = "(phase is shock_worse OR phase is shock_untreated)"
+STEADY = "phase is steadied"
+LOW = OBS + " OR phase is shock_worse OR phase is shock_untreated"
+ACTIVE = "flag inotrope_given set AND NOT flag inotrope_stopped set"
+FLUID = "flag fluids_given set"
+VASO = "flag vasoconstrictor_running set"
+ECHO = "study ultrasound_cardiac resulted"
+ECG = "study ecg_12_lead resulted"
+
+VERIFY = "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+
+
+def ex(findings, abnormal=True):
+    return {"kind": "exam_findings", "abnormal": abnormal, "findings": findings}
+
+
+def gs(findings, abnormal=True):
+    return {"kind": "general_status", "abnormal": abnormal, "findings": findings}
+
+
+def comp(label, value, unit, ref, abnormal):
+    return {"label": label, "value": value, "unit": unit,
+            "reference_range": ref, "abnormal": abnormal}
+
+
+def panel(components, comment=None):
+    d = {"kind": "panel", "abnormal": any(c["abnormal"] for c in components),
+         "components": components, "verify": VERIFY}
+    if comment:
+        d["comment"] = comment
+    return d
+
+
+def val(label, value, unit, ref, abnormal, comment=None):
+    d = {"kind": "value", "abnormal": abnormal,
+         "components": [comp(label, value, unit, ref, abnormal)], "verify": VERIFY}
+    if comment:
+        d["comment"] = comment
+    return d
+
+
+def report(text, abnormal=True, comment=None):
+    d = {"kind": "report", "abnormal": abnormal, "report": text, "verify": VERIFY}
+    if comment:
+        d["comment"] = comment
+    return d
+
+
+def always(v):
+    return [{"when": None, "value": v}]
+
+
+EXAM = {
+ "authoring_note": (
+   "Section 11.2. Routing follows the catalog map: neck veins on exam_neck, the murmur on "
+   "exam_card, capillary refill on exam_circ, lung sounds on exam_pulm. The murmur's "
+   "response to posture is written into the cardiac finding because the catalog has no "
+   "maneuver for it."),
+
+ "exam_airway": always(ex("Patent. Speaking in short sentences.", abnormal=False)),
+
+ "exam_breath": [
+   {"when": WORSE, "value": ex("Fast, shallow breathing. No accessory muscle use.")},
+   {"when": None, "value": ex("Mildly tachypneic with the pain. No accessory muscle use.")}],
+
+ "exam_circ": [
+   {"when": WORSE, "value": ex("Capillary refill 5 seconds. Radial pulse weak. Hands cold and clammy.")},
+   {"when": OBS, "value": ex("Capillary refill 4 seconds. Radial pulse weak. Hands cool and clammy.")},
+   {"when": STEADY, "value": ex("Capillary refill 2 seconds. Pulse fuller. Hands warming.", abnormal=False)},
+   {"when": None, "value": ex("Capillary refill 3 seconds. Pulse fast, low volume. Hands cool and clammy.")}],
+
+ "exam_heent": always(ex("Mouth dry. Pupils equal and reactive. No facial droop.", abnormal=False)),
+
+ "exam_neck": always(ex("Neck veins flat. No carotid bruit. Trachea central.", abnormal=False)),
+
+ "exam_card": [
+   {"when": WORSE, "value": ex(
+     "Loud harsh systolic murmur, left sternal edge. Louder with Valsalva. No rub. No edema.")},
+   {"when": OBS, "value": ex(
+     "Harsh systolic murmur, left sternal edge, louder than before. Louder with Valsalva. No rub.")},
+   {"when": STEADY, "value": ex(
+     "Systolic murmur, left sternal edge, softer than before. No rub. No edema.")},
+   {"when": None, "value": ex(
+     "Harsh systolic murmur, left sternal edge. Louder with Valsalva, softer legs raised. No rub.")}],
+
+ "exam_pulm": always(ex("Clear to both bases. No crackles or wheeze.", abnormal=False)),
+
+ "exam_abd": always(ex("Soft, non-tender. No pulsatile mass.", abnormal=False)),
+
+ "exam_back": always(ex("No spinal or flank tenderness.", abnormal=False)),
+
+ "exam_msk": always(ex("No calf swelling or tenderness. Pulses equal in both arms.", abnormal=False)),
+
+ "exam_skin": [
+   {"when": STEADY, "value": ex("Pale. Sweating has settled. No rash.")},
+   {"when": None, "value": ex("Pale and sweating. No rash.")}],
+
+ "exam_neuro": [
+   {"when": WORSE, "value": ex("Drowsy and confused about the time. GCS 14. Moves all limbs.")},
+   {"when": None, "value": ex("Alert, oriented. GCS 15. No focal deficit.", abnormal=False)}],
+
+ "exam_psych": [
+   {"when": WORSE, "value": ex("Confused and frightened. Asks for her husband.")},
+   {"when": None, "value": ex("Tearful and frightened. Oriented. Says she wants this to stop.")}],
+}
+
+GENERAL_STATUS = {
+ "authoring_note": "Section 11.3. Consistent with exam_neuro and each phase's appearance values.",
+ "rules": [
+   {"when": WORSE, "value": gs("Gray, cold and confused. Barely speaking. GCS 14.")},
+   {"when": OBS, "value": gs("Gray and sweating, says she feels faint. Fist on her chest. GCS 15.")},
+   {"when": STEADY, "value": gs("Color better, sitting back, pain easing. GCS 15.")},
+   {"when": None, "value": gs("Pale and sweating, sitting upright, fist on her chest. Daughter at the bedside. GCS 15.")},
+ ],
+}
+
+PATIENT_VISUAL = {
+ "authoring_note": "MODEL-AUTHORED. Sweating is drawn until she is steadied. Nothing else is authored.",
+ "rules": [{"when": None, "value": {}}],
+ "also": [{"when": "NOT " + STEADY + " AND NOT phase is case_complete", "addons": ["sweating"]}],
+}
+
+# ============================================================== LABORATORY
+LACTATE = {"presentation": "2.6", "obstructed": "3.4", "shock_worse": "5.8", "shock_untreated": "5.8", "steadied": "3.6"}
+HR = {"presentation": 115, "obstructed": 124, "shock_worse": 138, "shock_untreated": 138, "steadied": 104}
+ORDER = ["obstructed", "shock_worse", "shock_untreated", "steadied"]
+
+
+def by_phase(make):
+    rules = [{"when": "phase is " + p, "value": make(p)} for p in ORDER]
+    rules.append({"when": None, "value": make("presentation")})
+    return rules
+
+
+LABS = {
+ "authoring_note": (
+   "Section 11.4. The pattern a reviewer should check: a raised troponin, a very high natriuretic "
+   "peptide, and mild "
+   "prerenal changes from five days of poor intake. Every value needs a signature."),
+
+ "troponin_t": {"changes_with_state": False, "rules": always(val(
+     "Troponin T, high sensitivity", "186", "ng/L", "< 14", True,
+     comment=("Raised. An early troponin does not separate takotsubo from an infarct. "
+              "The difference appears later, when the peak is lower than the wall motion "
+              "would predict.")))},
+
+ "nt_probnp": {"changes_with_state": False, "rules": always(val(
+     "NT-proBNP", "5200", "pg/mL", "< 125", True,
+     comment="Very high, out of proportion to the troponin."))},
+
+ "lactate": {"changes_with_state": True, "rules": by_phase(
+     lambda p: val("Lactate", LACTATE[p], "mmol/L", "0.5-2.0", True))},
+
+ "basic_chemistry_chem_7": {"changes_with_state": False, "rules": always(panel([
+     comp("Sodium", "141", "mEq/L", "135-145", False),
+     comp("Potassium", "3.9", "mEq/L", "3.5-5.0", False),
+     comp("Chloride", "104", "mEq/L", "98-107", False),
+     comp("Bicarbonate", "22", "mEq/L", "22-29", False),
+     comp("BUN", "29", "mg/dL", "7-20", True),
+     comp("Creatinine", "1.1", "mg/dL", "0.6-1.2", False),
+     comp("Glucose", "148", "mg/dL", "70-140 (random)", True)],
+     comment="A raised urea with a normal creatinine fits several days of poor intake."))},
+}
+
+IMAGING = {
+ "authoring_note": (
+   "Section 11.4. The chest film is left to the catalog default, which is clear lungs and a "
+   "normal heart size, and that is intended. Findings only: neither report names takotsubo "
+   "or obstruction."),
+
+ "ecg_12_lead": {"changes_with_state": True, "rules": by_phase(lambda p: report(
+     "Sinus tachycardia at %d. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST "
+     "depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, "
+     "QTc 470 ms." % HR[p],
+     comment=("Precordial ST elevation meeting activation criteria. Elevation centered on "
+              "V2 to V5 and II with little reciprocal depression is the pattern described "
+              "in takotsubo. It does not exclude an occlusion and is not acted on.")))},
+
+ "ultrasound_cardiac": {"changes_with_state": True, "rules": [
+   {"when": STEADY, "value": report(
+     "Apex and mid ventricle do not contract and bulge in systole. Base contracts "
+     "vigorously. Ejection fraction about 30 percent. Less movement of the mitral leaflet "
+     "toward the septum than before. No pericardial effusion. Right ventricle normal.")},
+   {"when": None, "value": report(
+     "Apex and mid ventricle do not contract and bulge in systole. Base contracts "
+     "vigorously. Ejection fraction about 30 percent. Anterior mitral leaflet moves toward "
+     "the septum in systole. No pericardial effusion. Right ventricle normal. Inferior "
+     "vena cava small.",
+     comment=("A ventricle that is weak at the apex and overactive at the base, with the "
+              "mitral valve drawn into the outflow tract. With the murmur this is outflow "
+              "obstruction."))}]},
+
+ "ultrasound_lung": {"changes_with_state": False, "rules": always(report(
+     "Lung sliding present on both sides. A-line pattern. No B-lines. No effusion.",
+     abnormal=False))},
+}
+
+# ============================================================== CONSULTANTS
+# Most specific first. The cardiologist never quotes a study that has not resulted. On the
+# directing physician's instruction the cardiologist gives the plan outright and, ninety
+# seconds after being called with a low pressure, arrives and carries it out (case_1).
+COMING = " I'm on my way down, and I'll sort it out myself when I get there if it isn't done."
+CONSULTANTS = {
+ "authoring_note": (
+   "Section 11.5. The cardiologist cannot be reached until the ECG and the echo have both "
+   "resulted (a prerequisite on the consult), so every rule may speak about both and no "
+   "pending tier is needed. Rules are ordered steadied, on an inotrope, then by what is "
+   "already running."),
+
+ "consult_cardiology": [
+   {"when": STEADY,
+    "value": ("Cardiologist: Good, that's holding. Keep the vasoconstrictor where it is, no "
+              "nitrates and nothing inotropic. If she fails on this, the next step is a "
+              "pump such as an Impella, not a balloon pump, which can worsen obstruction. "
+              "The lab is ready. Bring her up with the "
+              "monitor on, and I'll do the angiogram and a ventriculogram.")},
+   {"when": ACTIVE,
+    "value": ("Cardiologist: Stop that inotrope now. A new murmur with a falling pressure "
+              "on an inotrope is outflow obstruction until proven otherwise, and you're "
+              "driving it. Then give 250 to 500 of crystalloid, her chest is clear, and "
+              "start phenylephrine or vasopressin." + COMING)},
+   {"when": "(" + LOW + ") AND " + FLUID + " AND NOT " + VASO,
+    "value": ("Cardiologist: The fluid was right. Now start phenylephrine, or vasopressin "
+              "if you prefer. You want the vessels squeezed without driving the heart. No "
+              "dobutamine, no epinephrine, no nitrates." + COMING)},
+   {"when": "(" + LOW + ") AND " + VASO + " AND NOT " + FLUID,
+    "value": ("Cardiologist: Good choice of pressor. Give her 250 to 500 of crystalloid "
+              "with it. Her lungs are clear and she's dry, and a fuller ventricle obstructs "
+              "less. No inotropes and no nitrates." + COMING)},
+   {"when": LOW,
+    "value": ("Cardiologist: An apex that isn't moving, a base that's squeezing hard and "
+              "that murmur. She's obstructing her outflow tract. Do three things. No "
+              "nitrates and no inotropes. Give 250 to 500 of crystalloid, her chest is "
+              "clear. Start phenylephrine or vasopressin. She still comes to the lab." + COMING)},
+   {"when": None,
+    "value": ("Cardiologist: Sorry, I was scrubbed. ST elevation with ongoing pain is the "
+              "lab, whatever happened at the funeral. Activate and give aspirin. That echo "
+              "with that murmur worries me: a stiff apex and a hard-working base can "
+              "obstruct. Hold nitrates, and no dobutamine or epinephrine if her pressure "
+              "falls. If it does, give 250 to 500 of crystalloid and start phenylephrine, "
+              "and call me straight back.")}],
+
+ "consult_activate_cath_lab": [
+   {"when": ECG,
+    "value": ("Catheterization laboratory: Activated. The team is coming in and the "
+              "interventional cardiologist has the ECG. We will call when the table is "
+              "ready. Keep her monitored and send her with aspirin on board.")},
+   {"when": None,
+    "value": ("Catheterization laboratory: We can activate, and the cardiologist will want "
+              "to see a twelve-lead. Is there one?")}],
+
+ "consult_critical_care": [
+   {"when": STEADY,
+    "value": ("Intensivist: She goes to the catheterization laboratory first. Tell them we "
+              "have a bed for her afterwards and I'll see her there.")},
+   {"when": None,
+    "value": ("Intensivist: A low pressure with ST elevation needs cardiology at the "
+              "bedside more than it needs me. Have you called them?")}],
+}

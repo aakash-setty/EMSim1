@@ -231,19 +231,45 @@ chk('no prompt implies a trajectory',!trajInPrompt);
 chk('the deterioration narration is on its own kind, not a prompt',
     st.nurse.some(n=>n.kind==='deterioration'));
 
-section('harmful halts, and every route to them');
+/* Physician decision, 5 October 2026 (AFRVR-08). A crystalloid bolus no longer halts the
+   case. It has a consequence the learner must rescue, by every route to the same act. */
+section('a fluid bolus has a consequence instead of a halt, by every route');
 for(const bag of ['normal_saline_1l_bolus','normal_saline_500ml_bolus',
-                  'lactated_ringer_s_1l_bolus','lactated_ringer_s_500ml_bolus']){
-  const s=fold(mk([[1,'insert_iv'],[5,bag]]),20);
-  chk(bag+' halts the case',s.halted&&s.phase==='halted',s.phase);
-  chk(bag+' carries a halt reason',!!(s.halted&&s.halted.reason&&s.halted.reason.length>20));
+                  'lactated_ringer_s_1l_bolus','lactated_ringer_s_500ml_bolus','d5_ns_bolus']){
+  const s=fold(mk([[1,'insert_iv'],[5,bag]]),30);
+  chk(bag+' does not halt the case',!s.halted,s.phase);
+  chk(bag+' before the mask tips him into respiratory failure',s.phase==='respiratory_failure',s.phase);
+  chk(bag+' is scored discouraged',s.discouragedTaken.has(bag)||s.discouragedTaken.has('normal_saline_1l_bolus'));
 }
+chk('nothing in this case is tagged harmful',
+    !CASE.case_actions.some(a=>a.tag.some(r=>r.value==='harmful')));
+st=fold(mk([[1,'insert_iv'],[5,'normal_saline_1l_bolus']]),30);
+chk('the nurse says what the fluid did',
+    st.nurse.some(n=>/fluid has gone straight to his chest/i.test(n.text)));
+chk('in respiratory failure after fluid the saturation reads 76',
+    st.vitals.oxygen_saturation===76,String(st.vitals.oxygen_saturation));
+st=fold(mk([[1,'insert_iv'],[5,'normal_saline_1l_bolus'],
+            [30,'non_invasive_positive_pressure_ventilation']]),120);
+chk('and the mask still rescues him',st.phase==='breathing_supported',st.phase);
+chk('on the mask he reads 90, six under where he would have been',
+    st.vitals.oxygen_saturation===90,String(st.vitals.oxygen_saturation));
+st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+            [80,'normal_saline_1l_bolus']]),85);
+chk('a bolus on the mask does not move the saturation on the click',
+    st.vitals.oxygen_saturation===96,String(st.vitals.oxygen_saturation));
+st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+            [80,'normal_saline_1l_bolus']]),100);
+chk('ten seconds later it has cost six points',
+    st.phase==='breathing_supported'&&st.vitals.oxygen_saturation===90,
+    st.phase+' '+st.vitals.oxygen_saturation);
 st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
             [3,'digoxin_bolus'],[5,'digoxin_bolus'],[80,'normal_saline_1l_bolus']]),120);
-chk('the same bolus once stabilized is discouraged rather than lethal',
-    !st.halted&&st.phase==='stabilized',st.phase);
-st=fold(mk([[1,'insert_iv'],[400,'normal_saline_1l_bolus']]),500);
-chk('a harmful action still halts after a deadline has passed',st.phase==='halted',st.phase);
+chk('the same bolus once stabilized changes nothing on the monitor',
+    !st.halted&&st.phase==='stabilized'&&st.vitals.oxygen_saturation===97,
+    st.phase+' '+st.vitals.oxygen_saturation);
+st=fold(mk([[1,'insert_iv'],[2,'digoxin_bolus'],[4,'digoxin_bolus'],[30,'normal_saline_1l_bolus']]),45);
+chk('fluid in the rate-controlled, congested phase also tips him over',
+    st.phase==='respiratory_failure',st.phase);
 
 section('prerequisites');
 st=fold(mk([[1,'digoxin_bolus']]),10);
@@ -269,6 +295,26 @@ section('coverage groups satisfy the critical action they cover');
    been accomplished and is what the debrief scores; `taken` is which buttons were
    pressed and is what the action grid draws as used. Pressing metoprolol used to light
    digoxin up as well, which told the resident they had given a drug they had not. */
+/* Physician decision, 5 October 2026 (AFRVR-04). Metoprolol is its own action. It
+   satisfies the critical rate-control action only when it is given after positive
+   pressure is on, and it is discouraged before that. */
+{
+  const before=fold(mk([[1,'insert_iv'],[2,'metoprolol_bolus'],[4,'metoprolol_bolus']]),60);
+  chk('metoprolol before the mask still slows him',before.phase==='rate_controlled_congested',before.phase);
+  chk('metoprolol before the mask is discouraged',before.discouragedTaken.has('metoprolol_bolus'));
+  chk('metoprolol before the mask does NOT satisfy critical rate control',
+      !before.satisfied.has('digoxin_bolus'));
+  const late=fold(mk([[1,'insert_iv'],[2,'metoprolol_bolus'],
+                      [10,'non_invasive_positive_pressure_ventilation'],[20,'metoprolol_bolus']]),60);
+  chk('a dose given after the mask does satisfy it',late.satisfied.has('digoxin_bolus'));
+  const after=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+                       [3,'metoprolol_bolus'],[5,'metoprolol_bolus']]),60);
+  chk('metoprolol after the mask is not discouraged',!after.discouragedTaken.has('metoprolol_bolus'));
+  chk('metoprolol is no longer a covered sibling',!A['metoprolol_bolus'].covered_by);
+  chk('the rate-control prompt is not repeated once metoprolol has satisfied it',
+      !fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+                [3,'metoprolol_bolus']]),1200).promptFires.some(p=>p.id==='digoxin_bolus'));
+}
 for(const agent of ['amiodarone_bolus_infusion','metoprolol_bolus']){
   const s=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
                    [3,agent],[5,agent]]),60);
@@ -343,11 +389,16 @@ const cardioAfter=n=>{
   steps.push([30,'consult_cardiology']);
   return fold(mk(steps),40).readouts.filter(r=>r.key==='consult_cardiology').pop().body;
 };
-chk('after one dose it says a partial response asks for another dose of the same thing',
-    /partial response/i.test(cardioAfter(1))&&/another dose/i.test(cardioAfter(1)));
+chk('after one dose it says a partial response asks for more of the same strategy',
+    /partial response/i.test(cardioAfter(1))&&/same strategy/i.test(cardioAfter(1)));
+/* Physician decision, 5 October 2026 (AFRVR-05): nobody advises pushing digoxin twice. */
+chk('and it does not advise pushing digoxin again at once',
+    /digoxin is loaded over hours/i.test(cardioAfter(1))&&!/give it again/i.test(cardioAfter(1)));
+chk('the redose prompt no longer offers another dose of the same drug',
+    !/draw up another dose/i.test(FU['second_rate_control_dose'].nurse_prompt));
 chk('and warns against switching to the calcium channel blocker',
     /diltiazem/i.test(cardioAfter(1)));
-chk('and says when to stop giving more',/know when to stop/i.test(cardioAfter(1)));
+chk('and says to reassess before a third',/reassess before a third/i.test(cardioAfter(1)));
 chk('after two doses it moves on to disposition and anticoagulation',
     /anticoagulated/i.test(cardioAfter(2))&&/echocardiogram/i.test(cardioAfter(2)));
 chk('and it does not ask for a rate he no longer has',
@@ -372,10 +423,8 @@ chk('every non-terminal phase is irregular',
     CASE.phases.filter(p=>!p.terminal).every(p=>p.rhythm==='irregularly_irregular'),
     CASE.phases.filter(p=>!p.terminal&&p.rhythm!=='irregularly_irregular')
       .map(p=>p.id).join(', '));
-/* v0.18a: the only halting action here (a crystalloid bolus) causes respiratory failure,
-   so the halted block now carries his own rhythm and those numbers, not an arrest. */
-chk('the halted block is his own rhythm in respiratory failure',
-    RH_OF.halted==='irregularly_irregular',String(RH_OF.halted));
+/* 5 October 2026: nothing halts this case any more, so it authors no halted phase. */
+chk('there is no halted phase',RH_OF.halted===undefined,String(RH_OF.halted));
 
 /* The rates this case actually authors, against the model that will sound them. The
    floor has to clear the lub-dub gap at the fastest rate in the case, and the average
@@ -409,3 +458,59 @@ chk('the other half of the formulation is marked defensible rather than wrong',
     (PROTO.altDxDefensible||[])
       .includes('dx_acute_decompensated_heart_failure_with_reduced_ejection_fraction'),
     JSON.stringify(PROTO.altDxDefensible));
+
+/* ---- physician decisions of 5 October 2026 ---- */
+section('the first dose takes ten seconds to show (AFRVR-19)');
+{
+  const base=[[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],[20,'digoxin_bolus']];
+  chk('five seconds after the first dose the rate has not moved',
+      fold(mk(base),25).vitals.heart_rate===152,String(fold(mk(base),25).vitals.heart_rate));
+  chk('ten seconds after it, the partial fall shows',
+      fold(mk(base),31).vitals.heart_rate===130,String(fold(mk(base),31).vitals.heart_rate));
+}
+section('a second dose of diltiazem costs more pressure (AFRVR-23)');
+{
+  const one=fold(mk([[1,'insert_iv'],[2,'diltiazem_bolus']]),30);
+  chk('one dose: 132 becomes 112',one.vitals.systolic_bp===112,String(one.vitals.systolic_bp));
+  const two=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+                     [3,'diltiazem_bolus'],[20,'diltiazem_bolus']]),60);
+  chk('two doses control the rate',two.phase==='stabilized',two.phase);
+  chk('and the pressure is 94 over 59, ten and five lower than after one',
+      two.vitals.systolic_bp===94&&two.vitals.diastolic_bp===59,
+      two.vitals.systolic_bp+'/'+two.vitals.diastolic_bp);
+  const mixed=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+                       [3,'diltiazem_bolus'],[20,'digoxin_bolus']]),60);
+  chk('diltiazem then digoxin does not take the extra fall',
+      mixed.vitals.systolic_bp===104,String(mixed.vitals.systolic_bp));
+}
+section('without the mask, rate control buys two minutes, not four (AFRVR-02)');
+{
+  const s=fold(mk([[1,'insert_iv'],[2,'digoxin_bolus'],[4,'digoxin_bolus']]),200);
+  chk('he tires 120 seconds after the rate comes down',
+      JSON.stringify(s.phaseSeq.map(p=>p.id+'@'+p.t))===
+        '["presentation@0","rate_controlled_congested@14","respiratory_failure@134"]',
+      JSON.stringify(s.phaseSeq.map(p=>p.id+'@'+p.t)));
+}
+section('the handover screen shows the monitor as it was (AFRVR-32)');
+{
+  const good=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
+                      [3,'digoxin_bolus'],[5,'digoxin_bolus'],[100,'handoff_submit']]),120);
+  chk('handed over stabilized on the mask, it reads 97',
+      good.phase==='case_complete'&&good.vitals.oxygen_saturation===97,
+      good.phase+' '+good.vitals.oxygen_saturation);
+  const bad=fold(mk([[1,'insert_iv'],[2,'digoxin_bolus'],[4,'digoxin_bolus'],[60,'handoff_submit']]),80);
+  chk('handed over rate controlled with no mask, it reads 86 at a rate of 108',
+      bad.vitals.oxygen_saturation===86&&bad.vitals.heart_rate===108,
+      bad.vitals.oxygen_saturation+' '+bad.vitals.heart_rate);
+  const nothing=fold(mk([[300,'handoff_submit']]),320);
+  chk('handed over in respiratory failure, it reads 82',
+      nothing.vitals.oxygen_saturation===82,String(nothing.vitals.oxygen_saturation));
+}
+section('scoring changes');
+chk('IV access is recommended, not critical (AFRVR-12)',
+    !fold([],5).expected.has('insert_iv')&&fold([],5).recommendedExpected.has('insert_iv'));
+chk('the monitor stays critical',fold([],5).expected.has('attach_monitor'));
+chk('nitroprusside is discouraged (AFRVR-25)',
+    fold(mk([[1,'insert_iv'],[2,'nitroprusside_drip']]),10).discouragedTaken.has('nitroprusside_drip'));
+chk('the anticoagulation note covers bleeding risk (AFRVR-26)',
+    /bleeding risk/i.test(A['apixaban'].debrief_note));

@@ -1,0 +1,426 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "toxic-shock-tampon-01",
+ "note": "End-to-end paths for the toxic shock case. Steps cost eight seconds each on the runner's clock.",
+ "scenarios": [
+  {
+   "name": "Intended path: fluid, find and remove the tampon, antibiotics, norepinephrine when the fluid fades, intensive care",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "exam_circ",
+    "exam_skin",
+    "lactate",
+    "blood_culture_x_2",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    "exam_gu",
+    "remove_vaginal_foreign_body",
+    "vancomycin",
+    "clindamycin",
+    "lactated_ringer_s_1l_bolus",
+    {
+     "wait": 150
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 12
+    },
+    "consult_critical_care",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": "The path the case is built around. It passes through the hypotensive phase on purpose."
+  },
+  {
+   "name": "Intended path reaches the stabilizing phase before any handoff",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    "exam_gu",
+    "remove_vaginal_foreign_body",
+    "vancomycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 150
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "Fluid, source out, vasopressor after the fade."
+  },
+  {
+   "name": "Doing nothing at all: hypotensive at five minutes, profound shock four minutes later",
+   "steps": [
+    {
+     "wait": 310
+    },
+    {
+     "wait": 250
+    }
+   ],
+   "expect_phase": "profound_shock",
+   "note": "The do-nothing path. It does not end the case."
+  },
+  {
+   "name": "Doing nothing stops at hypotension if you stop the clock there",
+   "steps": [
+    {
+     "wait": 310
+    }
+   ],
+   "expect_phase": "hypotensive",
+   "note": "First hop of the do-nothing path."
+  },
+  {
+   "name": "Fluid alone: the response fades and more fluid does not rescue her",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    {
+     "wait": 160
+    },
+    "normal_saline_1l_bolus",
+    "lactated_ringer_s_1l_bolus",
+    {
+     "wait": 250
+    }
+   ],
+   "expect_phase": "profound_shock",
+   "note": "Each bolus buys less. Without a vasopressor she progresses."
+  },
+  {
+   "name": "One bolus moves her to the fluid-responsive phase after ten seconds",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "lactated_ringer_s_500ml_bolus",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "fluid_responsive",
+   "note": "Any crystalloid counts, through the coverage group."
+  },
+  {
+   "name": "Sepsis treated, source missed: fluid, antibiotics and a vasopressor slow her and do not stop her",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    {
+     "wait": 160
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 12
+    },
+    "vancomycin",
+    "ceftriaxone",
+    {
+     "wait": 280
+    }
+   ],
+   "expect_phase": "profound_shock",
+   "note": "The supported phase has a 270-second clock that only source removal cancels."
+  },
+  {
+   "name": "The supported phase holds while its clock runs",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    {
+     "wait": 160
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 12
+    },
+    "vancomycin"
+   ],
+   "expect_phase": "supported",
+   "note": "Fluid and a vasopressor with the tampon still in."
+  },
+  {
+   "name": "Rescue from profound shock once the source is found",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    {
+     "wait": 160
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 12
+    },
+    {
+     "wait": 280
+    },
+    "exam_gu",
+    "remove_vaginal_foreign_body",
+    {
+     "wait": 20
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "Every deterioration in this case has an exit."
+  },
+  {
+   "name": "Rescue one step short: in profound shock with the source out and no vasopressor",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    {
+     "wait": 160
+    },
+    {
+     "wait": 250
+    },
+    "exam_gu",
+    "remove_vaginal_foreign_body",
+    {
+     "wait": 30
+    }
+   ],
+   "expect_phase": "profound_shock",
+   "note": "Source removal alone does not lift her out. She still needs the vasopressor."
+  },
+  {
+   "name": "A vasopressor started while she is fluid-responsive catches the fade",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 160
+    }
+   ],
+   "expect_phase": "supported",
+   "note": "Early vasopressor is accepted. She skips the hypotensive phase."
+  },
+  {
+   "name": "Everything done early: she goes from fluid-responsive straight to stabilizing",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    "exam_gu",
+    "remove_vaginal_foreign_body",
+    "epinephrine_drip",
+    {
+     "wait": 160
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "Epinephrine counts as a running vasopressor through coverage."
+  },
+  {
+   "name": "Removing a foreign body is blocked until the pelvic examination has been done",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "remove_vaginal_foreign_body",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    {
+     "wait": 160
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 12
+    },
+    {
+     "wait": 280
+    }
+   ],
+   "expect_phase": "profound_shock",
+   "note": "The blocked attempt sets no flag, so the source clock still runs out."
+  },
+  {
+   "name": "A vasopressor without any fluid does not lift her out of hypotension",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 300
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 250
+    }
+   ],
+   "expect_phase": "profound_shock",
+   "note": "The exit needs both. The nurse asks for fluid at 80 seconds."
+  },
+  {
+   "name": "A vasopressor and then fluid in the hypotensive phase, source still in",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 300
+    },
+    "norepinephrine_drip",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "supported",
+   "note": "Order does not matter. Both flags together start the ten-second rule."
+  },
+  {
+   "name": "Attempted discharge on arrival: she faints and the case continues",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "attempt_discharge",
+    {
+     "wait": 6
+    }
+   ],
+   "expect_phase": "hypotensive",
+   "note": "attempt_discharge is the hidden action the Handoff tab logs when discharge is chosen early."
+  },
+  {
+   "name": "Attempted discharge after one liter: she faints and the case continues",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    "ondansetron",
+    "attempt_discharge",
+    {
+     "wait": 6
+    }
+   ],
+   "expect_phase": "hypotensive",
+   "note": "The phase in which she looks most like a patient who could go home."
+  },
+  {
+   "name": "After the faint she is recovered the same way as anyone else in the hypotensive phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    "attempt_discharge",
+    {
+     "wait": 6
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 12
+    },
+    "exam_gu",
+    "remove_vaginal_foreign_body",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "Failure is recoverable."
+  },
+  {
+   "name": "Dopamine is discouraged and still counts as a running vasopressor",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    {
+     "wait": 160
+    },
+    "dopamine_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "supported",
+   "note": ""
+  },
+  {
+   "name": "Rate control does not change the phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "metoprolol_bolus",
+    "diltiazem_bolus"
+   ],
+   "expect_phase": "presentation",
+   "note": "Discouraged, with a vital effect. Covered siblings resolve to the same action."
+  },
+  {
+   "name": "Antibiotics alone change nothing on the monitor",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "vancomycin",
+    "clindamycin",
+    "piperacillin_tazobactam",
+    {
+     "wait": 100
+    }
+   ],
+   "expect_phase": "presentation",
+   "note": "Deliberate. No antibiotic moves a phase."
+  },
+  {
+   "name": "Handoff from the hypotensive phase ends the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 305
+    },
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": ""
+  }
+ ]
+}

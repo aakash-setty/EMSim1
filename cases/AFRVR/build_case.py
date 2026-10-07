@@ -64,8 +64,8 @@ CASE = {
      "breathing supported alone, rate controlled alone, and both; plus the deterioration branch "
      "for a patient whose breathing was never supported, and the ventilated phase."),
    "deterioration_path": (
-     "Two time-guarded transitions, both at 240 seconds and both guarded on positive pressure not "
-     "having been applied, one from arrival and one from the rate-controlled-but-congested phase. "
+     "Two time-guarded transitions, both guarded on positive pressure not having been applied: "
+     "240 seconds from arrival and 120 seconds from the rate-controlled-but-congested phase. "
      "Both land in respiratory failure, which has exits and is not terminal. The clock cannot end "
      "this case: a learner who does nothing at all reaches respiratory failure and stays there. "
      "That was the author's explicit instruction and it is the reason no transition in this case "
@@ -83,9 +83,10 @@ CASE = {
  "phases": PHASES,
  "tag_vocabulary": {
    "values": ["critical", "recommended", "discouraged", "harmful", "neutral"],
-   "values_used_by_this_case": ["critical", "recommended", "discouraged", "harmful", "neutral"],
+   "values_used_by_this_case": ["critical", "recommended", "discouraged", "neutral"],
    "note": (
-     "All five tiers are used. Discouraged carries the weight in this case, because the central "
+     "Four tiers are used and nothing halts this case since 5 October 2026: the crystalloid "
+     "bolus now has a consequence the learner must rescue. Discouraged carries the weight in this case, because the central "
      "error, continuing a calcium channel blocker in a patient with reduced systolic function, is "
      "explicitly not to halt the case: the author's instruction was that a drug producing the "
      "effect you asked for while being the wrong drug is more instructive than a collapse."),
@@ -188,7 +189,7 @@ for a in ACTIONS:
                "unmatched_placement": {"tab": "handoff", "group": "Not in the catalog"},
                "unmatched_narration": "I'll put the notes together for the unit."}
     elif cid == "digoxin_bolus":
-        row["also_covers"] = ["amiodarone_bolus_infusion", "metoprolol_bolus"]
+        row["also_covers"] = ["amiodarone_bolus_infusion"]
         row["note"] = (
           "This case scores the act of rate control rather than one agent, because the author's "
           "brief accepts digoxin, amiodarone or an appropriately selected beta blocker and says "
@@ -199,7 +200,9 @@ for a in ACTIONS:
           "they are carried in the shared debrief note instead, and the debrief names the act "
           "rather than the drug through expectation_label. Esmolol and propranolol are "
           "deliberately NOT in this group: each is authored as its own discouraged action with "
-          "its own reasoning.")
+          "its own reasoning. Metoprolol left the group on 5 October 2026 (physician decision, "
+          "AFRVR-04). It is its own action, discouraged before positive pressure, and it "
+          "satisfies this critical action through also_satisfies only once the mask is on.")
     elif cid == "apixaban":
         row["also_covers"] = ["enoxaparin", "heparin_bolus_drip"]
         row["note"] = (
@@ -215,10 +218,11 @@ for a in ACTIONS:
         # unguarded.
         row["also_covers"] = ["d5_ns_bolus"]
         row["note"] = (
-          "Harmful here. The catalog offers four crystalloid boluses and every one of them reaches "
-          "the same harm in a patient with an ejection fraction of 30 to 35 percent and a flooded "
-          "lung, so the tag covers the whole equivalence group rather than one entry. A harmful "
-          "tag on saline alone would leave Ringer's as an unguarded route to the same death.")
+          "Discouraged with a consequence since 5 October 2026 (physician decision, AFRVR-08). "
+          "The catalog offers four crystalloid boluses and every one of them reaches the same "
+          "harm in a patient with an ejection fraction of 30 to 35 percent and a flooded lung, so "
+          "the tag, the flag and the consequence cover the whole equivalence group rather than "
+          "one entry. Covering saline alone would leave Ringer's as a free route around it.")
     elif cid == "magnesium_sulfate_bolus":
         row["also_covers"] = ["magnesium_sulfate"]
         row["note"] = ("v0.9: the catalog gained a plain Magnesium Sulfate entry placed under "

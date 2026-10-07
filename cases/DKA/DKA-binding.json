@@ -1,0 +1,362 @@
+{
+ "binding_version": "0.1",
+ "case_id": "dka-hypokalemia-01",
+ "catalog_version": "0.2-draft",
+ "status": "DRAFT. Every mapped row is an author judgement and needs review.",
+ "counts": {
+  "exact": 53,
+  "mapped": 0,
+  "unmatched": 1
+ },
+ "group_coverage": {
+  "normal_saline_1l_bolus": [
+   "lactated_ringer_s_1l_bolus",
+   "lactated_ringer_s_500ml_bolus",
+   "normal_saline_500ml_bolus"
+  ],
+  "magnesium_sulfate": [
+   "magnesium_sulfate_bolus"
+  ],
+  "na_bicarbonate_bolus": [
+   "na_bicarbonate_infusion"
+  ]
+ },
+ "blocking": [],
+ "rows": [
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "second_iv",
+   "catalog_id": "second_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fingerstick_blood_sugar",
+   "catalog_id": "fingerstick_blood_sugar",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "beta_hydroxybutyrate",
+   "catalog_id": "beta_hydroxybutyrate",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urinalysis",
+   "catalog_id": "urinalysis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urine_hcg_qualitative",
+   "catalog_id": "urine_hcg_qualitative",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "serum_hcg_quantitative",
+   "catalog_id": "serum_hcg_quantitative",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "magnesium_level",
+   "catalog_id": "magnesium_level",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "phosphate_level",
+   "catalog_id": "phosphate_level",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "complete_blood_count_cbc",
+   "catalog_id": "complete_blood_count_cbc",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lipase",
+   "catalog_id": "lipase",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lactate",
+   "catalog_id": "lactate",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "osmolality",
+   "catalog_id": "osmolality",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "xr_chest",
+   "catalog_id": "xr_chest",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ct_abdomen",
+   "catalog_id": "ct_abdomen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "status": "exact",
+   "note": "Isotonic saline or a balanced crystalloid, either volume. A claim about fluid, not an agent.",
+   "also_covers": [
+    "lactated_ringer_s_1l_bolus",
+    "lactated_ringer_s_500ml_bolus",
+    "normal_saline_500ml_bolus"
+   ]
+  },
+  {
+   "case_id": "normal_saline_infusion",
+   "catalog_id": "normal_saline_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lactated_ringer_s_infusion",
+   "catalog_id": "lactated_ringer_s_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "potassium_chloride_kcl",
+   "catalog_id": "potassium_chloride_kcl",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "potassium_chloride_oral",
+   "catalog_id": "potassium_chloride_oral",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "magnesium_sulfate",
+   "catalog_id": "magnesium_sulfate",
+   "status": "exact",
+   "note": "Either catalog entry is magnesium replacement.",
+   "also_covers": [
+    "magnesium_sulfate_bolus"
+   ]
+  },
+  {
+   "case_id": "insulin_drip",
+   "catalog_id": "insulin_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insulin_subcutaneous",
+   "catalog_id": "insulin_subcutaneous",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insulin_bolus",
+   "catalog_id": "insulin_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "stop_insulin",
+   "catalog_id": "stop_insulin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insulin_glargine_subcutaneous",
+   "catalog_id": "insulin_glargine_subcutaneous",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d5_1_2_ns_infusion",
+   "catalog_id": "d5_1_2_ns_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d5_ns_bolus",
+   "catalog_id": "d5_ns_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d50_bolus",
+   "catalog_id": "d50_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "na_bicarbonate_bolus",
+   "catalog_id": "na_bicarbonate_bolus",
+   "status": "exact",
+   "note": "Either route is bicarbonate for a pH of 7.27.",
+   "also_covers": [
+    "na_bicarbonate_infusion"
+   ]
+  },
+  {
+   "case_id": "ondansetron",
+   "catalog_id": "ondansetron",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "metoclopramide",
+   "catalog_id": "metoclopramide",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_endocrinology",
+   "catalog_id": "consult_endocrinology",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "The catalog has no handoff action; listed in its own known_gaps."
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_abd",
+   "catalog_id": "exam_abd",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_gu",
+   "catalog_id": "exam_gu",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_back",
+   "catalog_id": "exam_back",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych",
+   "status": "exact",
+   "note": null
+  }
+ ]
+}

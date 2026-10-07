@@ -347,6 +347,20 @@ Stated plainly, because each of these looks authorable until it is tried.
 
 ---
 
+### 2.11 Conditional credit, and a terminal phase that inherits its vitals (v0.20)
+
+`also_satisfies` is read in the fold at the moment an action is applied, after the
+prerequisite check and before the action's flags are granted. Each entry whose condition
+holds adds its target to `satisfied`, the same set `also_covers` writes to, so the debrief,
+prompt suppression, follow-up satisfiers and `action X taken` all see it. Nothing is added to
+`taken`. A covered sibling borrows the covering action's fields. An action with
+`also_satisfies` keeps its own.
+
+`inherit_vitals` is read in `enterPhase`. Before the phase changes, the engine computes the
+effective vitals of the phase being left with the effects active at that time and stores
+them. `effectiveVitals` returns the stored set while the run sits in a terminal phase that
+carries the field. The condition language still cannot read vitals.
+
 ## 3. Data layer
 
 ### 3.1 Global action catalog

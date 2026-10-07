@@ -71,10 +71,11 @@
      "wait": 40
     },
     {
-     "wait": 250
+     "wait": 130
     }
    ],
-   "expect_phase": "respiratory_failure"
+   "expect_phase": "respiratory_failure",
+   "note": "The second clock is 120 seconds since 5 October 2026 (AFRVR-02)."
   },
   {
    "name": "Wrong path 2: diltiazem given after the ejection fraction is known",
@@ -176,29 +177,39 @@
    "expect_phase": "intubated"
   },
   {
-   "name": "Harmful: a crystalloid bolus in florid pulmonary edema halts the case",
+   "name": "Consequence: a crystalloid bolus in florid pulmonary edema tips him into respiratory failure",
    "steps": [
     "attach_monitor",
     "insert_iv",
-    "normal_saline_1l_bolus"
+    "normal_saline_1l_bolus",
+    {
+     "wait": 15
+    }
    ],
-   "expect_phase": "halted"
+   "expect_phase": "respiratory_failure",
+   "note": "Physician decision, 5 October 2026 (AFRVR-08). The halt became a consequence the learner must rescue."
   },
   {
-   "name": "Harmful: Ringer's reaches the same halt through the equivalence group",
+   "name": "Consequence: Ringer's reaches the same harm through the equivalence group",
    "steps": [
     "insert_iv",
-    "lactated_ringer_s_1l_bolus"
+    "lactated_ringer_s_1l_bolus",
+    {
+     "wait": 15
+    }
    ],
-   "expect_phase": "halted"
+   "expect_phase": "respiratory_failure"
   },
   {
-   "name": "Harmful: the 500 mL bag is not an escape hatch either",
+   "name": "Consequence: the 500 mL bag is not an escape hatch either",
    "steps": [
     "insert_iv",
-    "normal_saline_500ml_bolus"
+    "normal_saline_500ml_bolus",
+    {
+     "wait": 15
+    }
    ],
-   "expect_phase": "halted"
+   "expect_phase": "respiratory_failure"
   },
   {
    "name": "The same bolus once he is stabilized is discouraged rather than lethal",
@@ -403,7 +414,7 @@
    "note": "The pair to the scenario above. The difference between them is one push."
   },
   {
-   "name": "Clock: a harmful action still halts after a deadline has passed",
+   "name": "Clock: a bolus after he has already tired leaves him in respiratory failure",
    "steps": [
     "insert_iv",
     {
@@ -411,7 +422,7 @@
     },
     "normal_saline_1l_bolus"
    ],
-   "expect_phase": "halted"
+   "expect_phase": "respiratory_failure"
   },
   {
    "name": "Handoff from the deterioration branch still completes the case",
@@ -423,6 +434,34 @@
     "handoff_submit"
    ],
    "expect_phase": "case_complete"
+  },
+  {
+   "name": "Consequence rescued: fluid, then the mask, then two doses",
+   "steps": [
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    "non_invasive_positive_pressure_ventilation",
+    "digoxin_bolus",
+    "amiodarone_bolus_infusion",
+    {
+     "wait": 40
+    }
+   ],
+   "expect_phase": "stabilized",
+   "note": "He can be brought back from the fluid error."
+  },
+  {
+   "name": "Order: metoprolol before the mask slows him and leaves the lung untreated",
+   "steps": [
+    "insert_iv",
+    "metoprolol_bolus",
+    "metoprolol_bolus",
+    {
+     "wait": 40
+    }
+   ],
+   "expect_phase": "rate_controlled_congested",
+   "note": "AFRVR-04. The drug works and the order was wrong. Scored discouraged and not credited as the critical rate control."
   }
  ]
 }

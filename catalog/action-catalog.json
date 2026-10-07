@@ -116,6 +116,9 @@
     "Catalog prerequisites rewritten with the mandatory trailing keyword so they parse in the section 4 grammar.",
     "Nitroglycerin sublingual added as a separate route variant on author instruction.",
     "Digoxin bolus, Apixaban and Enoxaparin added to Meds - Cardiac on author instruction for the atrial fibrillation case. Not transcribed from any screenshot; each carries source=author-supplied. Apixaban and enoxaparin are in NON_IV, so neither requires vascular access.",
+    "Beta-Hydroxybutyrate added under Lab Work, and Insulin (Subcutaneous) and Potassium Chloride (oral) under Meds - Miscellaneous, on author instruction for the diabetic ketoacidosis case (v0.23). Not from a screenshot. The two drugs carry source=author-supplied and need no vascular access.",
+    "Insulin Glargine (Subcutaneous) added under Meds - Miscellaneous on author instruction (v0.23a), so a missed basal dose can be ordered. Not from a screenshot. No vascular access.",
+    "Remove Vaginal Foreign Body added under Procedures on author instruction for the toxic shock case (v0.21). Not from a screenshot; carries source=author-supplied. It is inert in every case that does not bind it.",
     "Nursing group added under Stabilization on author instruction, not from a screenshot: droplet, contact and airborne precautions, warming measures and cooling measures. Each sets a flag of its own name and asserts nothing clinical.",
     "attach_monitor carries reveals_vitals. The interface shows no vitals and plays no heartbeat until an action carrying this flag has been taken.",
     "Physostigmine added to Meds - Tox on author instruction for the diphenhydramine case. Not transcribed from any screenshot; carries source=author-supplied. It is an intravenous push and is not in NON_IV, so it inherits the vascular-access prerequisite like every other intravenous drug."
@@ -1944,6 +1947,38 @@
           }
         ],
         "verify": "Creatinine range is sex- and muscle-mass-dependent; 0.6-1.2 is a combined range. Glucose range differs fasting vs random."
+      }
+    },
+    {
+      "id": "beta_hydroxybutyrate",
+      "display_name": "Beta-Hydroxybutyrate",
+      "placements": [
+        {
+          "tab": "investigations",
+          "group": "Lab Work"
+        }
+      ],
+      "category": "investigation",
+      "state_changing": true,
+      "dose_required": false,
+      "turnaround_class": "lab",
+      "narration_template": "Sending {name}.",
+      "default_prerequisites": [],
+      "flags_set_default": [],
+      "repeatable": true,
+      "default_result": {
+        "kind": "value",
+        "abnormal": false,
+        "components": [
+          {
+            "label": "Beta-hydroxybutyrate",
+            "value": "0.2",
+            "unit": "mmol/L",
+            "reference_range": "< 0.6",
+            "abnormal": false
+          }
+        ],
+        "verify": "Added v0.23. Reference limit is the conventional point-of-care and laboratory cutoff; the 2024 consensus report uses 3.0 mmol/L or more to diagnose ketoacidosis and under 0.6 for resolution. Model output, unverified."
       }
     },
     {
@@ -3885,6 +3920,24 @@
       "narration_template": "{name} done.",
       "default_prerequisites": [],
       "flags_set_default": []
+    },
+    {
+      "id": "remove_vaginal_foreign_body",
+      "display_name": "Remove Vaginal Foreign Body",
+      "placements": [
+        {
+          "tab": "interventions",
+          "group": "Procedures"
+        }
+      ],
+      "category": "procedure",
+      "state_changing": true,
+      "dose_required": false,
+      "turnaround_class": null,
+      "narration_template": "Setting up a speculum and a light.",
+      "default_prerequisites": [],
+      "flags_set_default": [],
+      "source": "author-supplied, not in screenshots (v0.21)"
     },
     {
       "id": "whole_bowel_irrigation_by_ng_tube",
@@ -6414,6 +6467,44 @@
       "persistent": true
     },
     {
+      "id": "insulin_subcutaneous",
+      "display_name": "Insulin (Subcutaneous)",
+      "placements": [
+        {
+          "tab": "interventions",
+          "group": "Meds - Miscellaneous"
+        }
+      ],
+      "category": "medication",
+      "state_changing": true,
+      "dose_required": true,
+      "turnaround_class": null,
+      "narration_template": "Giving {dose} of {name}.",
+      "default_prerequisites": [],
+      "flags_set_default": [],
+      "route_class": "non_iv",
+      "source": "author-supplied, not in screenshots"
+    },
+    {
+      "id": "insulin_glargine_subcutaneous",
+      "display_name": "Insulin Glargine (Subcutaneous)",
+      "placements": [
+        {
+          "tab": "interventions",
+          "group": "Meds - Miscellaneous"
+        }
+      ],
+      "category": "medication",
+      "state_changing": true,
+      "dose_required": true,
+      "turnaround_class": null,
+      "narration_template": "Giving {dose} of {name}.",
+      "default_prerequisites": [],
+      "flags_set_default": [],
+      "route_class": "non_iv",
+      "source": "author-supplied, not in screenshots"
+    },
+    {
       "id": "insulin_bolus",
       "display_name": "Insulin bolus",
       "placements": [
@@ -6551,6 +6642,25 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "route_class": "unspecified"
+    },
+    {
+      "id": "potassium_chloride_oral",
+      "display_name": "Potassium Chloride (oral)",
+      "placements": [
+        {
+          "tab": "interventions",
+          "group": "Meds - Miscellaneous"
+        }
+      ],
+      "category": "medication",
+      "state_changing": true,
+      "dose_required": true,
+      "turnaround_class": null,
+      "narration_template": "Giving {dose} of {name}.",
+      "default_prerequisites": [],
+      "flags_set_default": [],
+      "route_class": "non_iv",
+      "source": "author-supplied, not in screenshots"
     },
     {
       "id": "potassium_iodide_and_iodine",

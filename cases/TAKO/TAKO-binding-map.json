@@ -1,0 +1,229 @@
+{
+ "map_version": "0.1",
+ "case_id": "takotsubo-lvoto-01",
+ "status": "DRAFT. Every also_covers row is a model judgment that two catalog entries are the same act for this case's purposes, and needs a physician's review.",
+ "how_to_read": {
+  "catalog_id equals case_id": "exact; nothing to review",
+  "catalog_id null": "unmatched; not in the catalog",
+  "also_covers / also_covers_group": "this case action claims several catalog entries"
+ },
+ "rows": [
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor"
+  },
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv"
+  },
+  {
+   "case_id": "second_iv",
+   "catalog_id": "second_iv"
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead"
+  },
+  {
+   "case_id": "aspirin",
+   "catalog_id": "aspirin"
+  },
+  {
+   "case_id": "consult_activate_cath_lab",
+   "catalog_id": null,
+   "note": "Case-only button on the Consults tab, on the directing physician's instruction of 6 October 2026. Not in the catalog.",
+   "unmatched_placement": {
+    "tab": "consultations",
+    "group": "Consultations"
+   },
+   "unmatched_narration": "Calling the cath lab activation now."
+  },
+  {
+   "case_id": "heparin_bolus_drip",
+   "catalog_id": "heparin_bolus_drip"
+  },
+  {
+   "case_id": "clopidogrel",
+   "catalog_id": "clopidogrel"
+  },
+  {
+   "case_id": "fentanyl_bolus",
+   "catalog_id": "fentanyl_bolus"
+  },
+  {
+   "case_id": "morphine_bolus",
+   "catalog_id": "morphine_bolus"
+  },
+  {
+   "case_id": "lorazepam_bolus",
+   "catalog_id": "lorazepam_bolus"
+  },
+  {
+   "case_id": "nitroglycerin",
+   "catalog_id": "nitroglycerin",
+   "also_covers": [
+    "nitroglycerin_sublingual",
+    "nitroglycerin_drip",
+    "nitroprusside_drip"
+   ],
+   "note": "Every route to lowering preload and afterload carries the same tag and effect."
+  },
+  {
+   "case_id": "dobutamine_drip",
+   "catalog_id": "dobutamine_drip",
+   "also_covers": [
+    "epinephrine_drip",
+    "dopamine_drip"
+   ],
+   "note": "Every catecholamine inotrope is the same act here."
+  },
+  {
+   "case_id": "stop_dobutamine",
+   "catalog_id": "stop_dobutamine",
+   "also_covers": [
+    "stop_epinephrine",
+    "stop_dopamine"
+   ],
+   "note": "Stopping any of them is the same rescue."
+  },
+  {
+   "case_id": "furosemide_40_mg_iv",
+   "catalog_id": "furosemide_40_mg_iv"
+  },
+  {
+   "case_id": "tenecteplase_tnk_bolus",
+   "catalog_id": "tenecteplase_tnk_bolus",
+   "also_covers": [
+    "alteplase_tpa"
+   ],
+   "note": "Either thrombolytic is the same decision."
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "also_covers_group": "crystalloid_bolus",
+   "note": "A claim about volume, not an agent."
+  },
+  {
+   "case_id": "phenylephrine_drip",
+   "catalog_id": "phenylephrine_drip",
+   "also_covers": [
+    "vasopressin_drip"
+   ],
+   "note": "Either is a vasoconstrictor with no inotropic effect."
+  },
+  {
+   "case_id": "norepinephrine_drip",
+   "catalog_id": "norepinephrine_drip"
+  },
+  {
+   "case_id": "esmolol_drip",
+   "catalog_id": "esmolol_drip",
+   "also_covers": [
+    "metoprolol_bolus",
+    "labetalol_bolus",
+    "labetalol_drip",
+    "propranolol_bolus"
+   ],
+   "note": "Every beta blocker carries the same timing rule. Esmolol is the one to prefer because it is short-acting."
+  },
+  {
+   "case_id": "ultrasound_cardiac",
+   "catalog_id": "ultrasound_cardiac"
+  },
+  {
+   "case_id": "troponin_t",
+   "catalog_id": "troponin_t"
+  },
+  {
+   "case_id": "nt_probnp",
+   "catalog_id": "nt_probnp"
+  },
+  {
+   "case_id": "xr_chest",
+   "catalog_id": "xr_chest"
+  },
+  {
+   "case_id": "ultrasound_lung",
+   "catalog_id": "ultrasound_lung"
+  },
+  {
+   "case_id": "lactate",
+   "catalog_id": "lactate"
+  },
+  {
+   "case_id": "consult_cardiology",
+   "catalog_id": "consult_cardiology"
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care"
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "note": "The catalog has no handoff action; listed in its own known_gaps.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "I'll get the notes together for the unit."
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway"
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath"
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ"
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent"
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck"
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card"
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm"
+  },
+  {
+   "case_id": "exam_abd",
+   "catalog_id": "exam_abd"
+  },
+  {
+   "case_id": "exam_gu",
+   "catalog_id": "exam_gu"
+  },
+  {
+   "case_id": "exam_back",
+   "catalog_id": "exam_back"
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk"
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin"
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro"
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych"
+  }
+ ]
+}

@@ -132,12 +132,6 @@ PATIENT_VISUAL = {
    }
   },
   {
-   "when": "phase is halted",
-   "value": {
-    "eyes": "closed"
-   }
-  },
-  {
    "when": "flag on_niv set AND (phase is respiratory_failure OR phase is rate_controlled_congested)",
    "value": {
     "eyes": "open",
@@ -380,11 +374,11 @@ IMAGING = {
    {"when": "flag rate_control_adequate set",
     "value": rep("Atrial fibrillation, ventricular rate approximately 105. Irregularly "
       "irregular, no P waves. Narrow QRS at 92 ms. Horizontal ST depression 0.5 mm in V5 "
-      "and V6, less than on the earlier tracing. No ST elevation. QTc 442 ms.")},
+      "and V6. No ST elevation. QTc 442 ms.")},
    {"when": "flag rate_control_given set",
     "value": rep("Atrial fibrillation, ventricular rate approximately 140. Irregularly "
       "irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V4 to "
-      "V6, less than on the earlier tracing. No ST elevation. QTc 446 ms.")},
+      "V6. No ST elevation. QTc 446 ms.")},
    {"when": None,
     "value": rep("Atrial fibrillation with rapid ventricular response, ventricular rate "
       "approximately 160. Irregularly irregular, no P waves. Narrow QRS at 88 ms, no delta "
@@ -416,7 +410,7 @@ IMAGING = {
  "ct_chest": {"changes_with_state": False, "rules": [
    {"when": None, "value": rep("CT chest without contrast. Cardiomegaly with enlargement of the left atrium. "
      "Bilateral perihilar ground-glass opacity with smooth interlobular septal thickening and small "
-     "bilateral pleural effusions. No consolidation, no mass. Findings are consistent with pulmonary edema.")}]},
+     "bilateral pleural effusions. No consolidation, no mass.")}]},
 
  "xr_chest": {"changes_with_state": False, "result_shape": "structured", "rules": [
    {"when": None,
@@ -461,16 +455,16 @@ CONSULTANTS = {
      "and that changes what he goes home on."},
   {"when": DX_KNOWN + " AND " + ECG_DONE + " AND flag rate_control_given set",
    "value": "Cardiology fellow: so he has had a dose and he is still up around 140. That is a "
-     "partial response, which is what one dose usually buys you, and the answer is another dose "
-     "of the same thing rather than a second drug. Do not let a partial response push you toward "
-     "diltiazem, because with an ejection fraction of thirty to thirty-five that is the one agent "
-     "you should not use. Give it again and watch the pressure.\n\n"
-     "And know when to stop. If he is still fast after two decent doses, that is telling you "
-     "something rather than asking for a third: a rate that will not come down in acute "
-     "decompensated heart failure is usually being driven by the decompensation. At that point "
-     "the treatment is the edema and the hypoxemia, not more nodal blockade in a ventricle that "
-     "is already struggling. Get the positive pressure on him and diurese him, and the rate will "
-     "often follow."},
+     "partial response, which is what one dose usually buys you. Stay with the same strategy "
+     "and give more on that drug's own schedule. A beta blocker or amiodarone can be repeated "
+     "now. Digoxin is loaded over hours, so if digoxin was your first dose, add amiodarone "
+     "rather than pushing it again. Do not let a partial response push you toward diltiazem, "
+     "because with an ejection fraction of thirty to thirty-five that is the one agent you "
+     "should not use. Watch the pressure.\n\n"
+     "And reassess before a third. If he is still fast after two decent doses, the rate is "
+     "often being driven by the decompensation. Get the positive pressure on him and diurese "
+     "him first, and the rate will often follow. If it does not, call me back and we will talk "
+     "about more amiodarone."},
   {"when": DX_KNOWN + " AND " + ECG_DONE,
    "value": "Cardiology fellow: right, so this is new atrial fibrillation with a rapid ventricular "
      "response and a left ventricle you have just found is running at thirty to thirty-five "
