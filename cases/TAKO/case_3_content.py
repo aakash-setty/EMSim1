@@ -17,6 +17,8 @@ ECHO = "study ultrasound_cardiac resulted"
 ECG = "study ecg_12_lead resulted"
 
 VERIFY = "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+DERIVED = ("Derived by a model from this pack's other values on 7 October 2026. No new "
+           "clinical claim was intended. Not from a physician. [UNVERIFIED] ")
 
 
 def ex(findings, abnormal=True):
@@ -66,7 +68,9 @@ EXAM = {
    "response to posture is written into the cardiac finding because the catalog has no "
    "maneuver for it."),
 
- "exam_airway": always(ex("Patent. Speaking in short sentences.", abnormal=False)),
+ "exam_airway": [
+   {"when": WORSE, "value": ex("Patent. Barely speaking.")},
+   {"when": None, "value": ex("Patent. Speaking in short sentences.", abnormal=False)}],
 
  "exam_breath": [
    {"when": WORSE, "value": ex("Fast, shallow breathing. No accessory muscle use.")},
@@ -78,17 +82,17 @@ EXAM = {
    {"when": STEADY, "value": ex("Capillary refill 2 seconds. Pulse fuller. Hands warming.", abnormal=False)},
    {"when": None, "value": ex("Capillary refill 3 seconds. Pulse fast, low volume. Hands cool and clammy.")}],
 
- "exam_heent": always(ex("Mouth dry. Pupils equal and reactive. No facial droop.", abnormal=False)),
+ "exam_heent": always(ex("Mouth dry. Pupils equal and reactive. No facial droop.")),
 
  "exam_neck": always(ex("Neck veins flat. No carotid bruit. Trachea central.", abnormal=False)),
 
  "exam_card": [
    {"when": WORSE, "value": ex(
-     "Loud harsh systolic murmur, left sternal edge. Louder with Valsalva. No rub. No edema.")},
+     "Very loud harsh systolic murmur, left sternal edge. Louder with Valsalva. No rub. No edema.")},
    {"when": OBS, "value": ex(
-     "Harsh systolic murmur, left sternal edge, louder than before. Louder with Valsalva. No rub.")},
+     "Loud harsh systolic murmur, left sternal edge. Louder with Valsalva. No rub.")},
    {"when": STEADY, "value": ex(
-     "Systolic murmur, left sternal edge, softer than before. No rub. No edema.")},
+     "Soft systolic murmur, left sternal edge. No rub. No edema.")},
    {"when": None, "value": ex(
      "Harsh systolic murmur, left sternal edge. Louder with Valsalva, softer legs raised. No rub.")}],
 
@@ -131,7 +135,6 @@ PATIENT_VISUAL = {
 
 # ============================================================== LABORATORY
 LACTATE = {"presentation": "2.6", "obstructed": "3.4", "shock_worse": "5.8", "shock_untreated": "5.8", "steadied": "3.6"}
-HR = {"presentation": 115, "obstructed": 124, "shock_worse": 138, "shock_untreated": 138, "steadied": 104}
 ORDER = ["obstructed", "shock_worse", "shock_untreated", "steadied"]
 
 
@@ -141,21 +144,30 @@ def by_phase(make):
     return rules
 
 
+def gas(p):
+    """Bicarbonate from the chemistry (22 in every phase) and lactate from the lactate key."""
+    d = panel([comp("HCO3", "22", "mEq/L", "22-26", False),
+               comp("Lactate", LACTATE[p], "mmol/L", "0.5-2.0", True)])
+    d["verify"] = (DERIVED + "HCO3 equals the bicarbonate on this pack's chemistry, with the "
+                   "catalog's interval for a gas. Lactate equals this pack's lactate key in "
+                   "the same phase. pH, pCO2, pO2, base excess and oxygen saturation are "
+                   "left out on purpose and need a physician.")
+    return d
+
+
 LABS = {
  "authoring_note": (
    "Section 11.4. The pattern a reviewer should check: a raised troponin, a very high natriuretic "
    "peptide, and mild "
    "prerenal changes from five days of poor intake. Every value needs a signature."),
 
+ # No comment on either. A comment may not name the diagnosis or quote another result
+ # (authoring 11.4). The interpretation is in each study's debrief note.
  "troponin_t": {"changes_with_state": False, "rules": always(val(
-     "Troponin T, high sensitivity", "186", "ng/L", "< 14", True,
-     comment=("Raised. An early troponin does not separate takotsubo from an infarct. "
-              "The difference appears later, when the peak is lower than the wall motion "
-              "would predict.")))},
+     "Troponin T, high sensitivity", "186", "ng/L", "< 14", True))},
 
  "nt_probnp": {"changes_with_state": False, "rules": always(val(
-     "NT-proBNP", "5200", "pg/mL", "< 125", True,
-     comment="Very high, out of proportion to the troponin."))},
+     "NT-proBNP", "5200", "pg/mL", "< 125", True))},
 
  "lactate": {"changes_with_state": True, "rules": by_phase(
      lambda p: val("Lactate", LACTATE[p], "mmol/L", "0.5-2.0", True))},
@@ -168,36 +180,50 @@ LABS = {
      comp("BUN", "29", "mg/dL", "7-20", True),
      comp("Creatinine", "1.1", "mg/dL", "0.6-1.2", False),
      comp("Glucose", "148", "mg/dL", "70-140 (random)", True)],
-     comment="A raised urea with a normal creatinine fits several days of poor intake."))},
+     comment="BUN raised with a normal creatinine."))},
+
+ # ---- Derived keys (catalog audit 5.1 to 5.3). The catalog defaults showed a normal
+ # lactate of 1.2 on a gas in shock and a capillary glucose of 94 beside a chemistry
+ # glucose of 148. Each row below repeats a number this pack already authors. No pH, pCO2,
+ # pO2 or base excess is authored: a pH would be a new clinical number, and the others
+ # cannot be derived without one. They are listed for the physician in TAKO-SEED.md.
+ "venous_blood_gas": {"changes_with_state": True, "rules": by_phase(lambda p: gas(p))},
+ "arterial_blood_gas": {"changes_with_state": True, "rules": by_phase(lambda p: gas(p))},
+
+ "fingerstick_blood_sugar": {"changes_with_state": False, "rules": always(dict(
+     val("Capillary glucose", "148", "mg/dL", "70-140 (random)", True),
+     verify=DERIVED + "Equal to the glucose on this pack's chemistry."))},
 }
 
 IMAGING = {
  "authoring_note": (
-   "Section 11.4. The chest film is left to the catalog default, which is clear lungs and a "
-   "normal heart size, and that is intended. Findings only: neither report names takotsubo "
-   "or obstruction."),
+   "Section 11.4. Findings only: no report names takotsubo or obstruction. No report "
+   "carries a comment, because the interface never shows a comment on a report. The "
+   "interpretation is in each study's debrief note. The ECG report quotes no rate, because "
+   "three vital effects on the heart rate have no end (authoring 11.4)."),
 
- "ecg_12_lead": {"changes_with_state": True, "rules": by_phase(lambda p: report(
-     "Sinus tachycardia at %d. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST "
+ "ecg_12_lead": {"changes_with_state": False, "rules": always(report(
+     "Sinus tachycardia. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST "
      "depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, "
-     "QTc 470 ms." % HR[p],
-     comment=("Precordial ST elevation meeting activation criteria. Elevation centered on "
-              "V2 to V5 and II with little reciprocal depression is the pattern described "
-              "in takotsubo. It does not exclude an occlusion and is not acted on.")))},
+     "QTc 470 ms."))},
+
+ # Authored from what this pack's own notes say about the film: clear lungs, a normal
+ # mediastinum and a normal heart size. The catalog default did not mention the mediastinum.
+ "xr_chest": {"changes_with_state": False, "rules": always(dict(
+     report("Lungs clear. Mediastinum not widened. Heart size normal.", abnormal=False),
+     verify=DERIVED + "Restates the chest film debrief note and the catalog default."))},
 
  "ultrasound_cardiac": {"changes_with_state": True, "rules": [
    {"when": STEADY, "value": report(
      "Apex and mid ventricle do not contract and bulge in systole. Base contracts "
-     "vigorously. Ejection fraction about 30 percent. Less movement of the mitral leaflet "
-     "toward the septum than before. No pericardial effusion. Right ventricle normal.")},
+     "vigorously. Ejection fraction about 30 percent. Anterior mitral leaflet moves only "
+     "slightly toward the septum in systole. No pericardial effusion. Right ventricle "
+     "normal.")},
    {"when": None, "value": report(
      "Apex and mid ventricle do not contract and bulge in systole. Base contracts "
      "vigorously. Ejection fraction about 30 percent. Anterior mitral leaflet moves toward "
      "the septum in systole. No pericardial effusion. Right ventricle normal. Inferior "
-     "vena cava small.",
-     comment=("A ventricle that is weak at the apex and overactive at the base, with the "
-              "mitral valve drawn into the outflow tract. With the murmur this is outflow "
-              "obstruction."))}]},
+     "vena cava small.")}]},
 
  "ultrasound_lung": {"changes_with_state": False, "rules": always(report(
      "Lung sliding present on both sides. A-line pattern. No B-lines. No effusion.",
@@ -214,7 +240,10 @@ CONSULTANTS = {
    "Section 11.5. The cardiologist cannot be reached until the ECG and the echo have both "
    "resulted (a prerequisite on the consult), so every rule may speak about both and no "
    "pending tier is needed. Rules are ordered steadied, on an inotrope, then by what is "
-   "already running."),
+   "already running. The catheterization laboratory cannot be activated until the "
+   "twelve-lead has resulted (two prerequisites on the action, 7 October 2026), so its one "
+   "reply may speak about the ECG. Its pending tier is the second prerequisite's failure "
+   "message, which the nurse says while the tracing is still printing."),
 
  "consult_cardiology": [
    {"when": STEADY,
@@ -250,13 +279,10 @@ CONSULTANTS = {
               "and call me straight back.")}],
 
  "consult_activate_cath_lab": [
-   {"when": ECG,
+   {"when": None,
     "value": ("Catheterization laboratory: Activated. The team is coming in and the "
               "interventional cardiologist has the ECG. We will call when the table is "
-              "ready. Keep her monitored and send her with aspirin on board.")},
-   {"when": None,
-    "value": ("Catheterization laboratory: We can activate, and the cardiologist will want "
-              "to see a twelve-lead. Is there one?")}],
+              "ready. Keep her monitored and send her with aspirin on board.")}],
 
  "consult_critical_care": [
    {"when": STEADY,

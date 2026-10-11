@@ -89,7 +89,7 @@
   },
   {
    "register": "expansion",
-   "q": "Quick one: where is the pain?",
+   "q": "Before we go on, where is the pain?",
    "expect": "location_of_pain"
   },
   {
@@ -144,6 +144,26 @@
   },
   {
    "register": "expansion",
+   "q": "Are you urinating more than usual?",
+   "expect": "thirst_and_urination"
+  },
+  {
+   "register": "expansion",
+   "q": "Are you passing large amounts of urine?",
+   "expect": "thirst_and_urination"
+  },
+  {
+   "register": "expansion",
+   "q": "Are you drinking and peeing all day?",
+   "expect": "thirst_and_urination"
+  },
+  {
+   "register": "expansion",
+   "q": "Just so I know, have you been more thirsty than usual?",
+   "expect": "thirst_and_urination"
+  },
+  {
+   "register": "expansion",
    "q": "When did you last pass urine?",
    "expect": "urine_output"
   },
@@ -156,6 +176,26 @@
    "register": "expansion",
    "q": "I need to know, how much urine?",
    "expect": "urine_output"
+  },
+  {
+   "register": "expansion",
+   "q": "Generalized weakness?",
+   "expect": "weakness"
+  },
+  {
+   "register": "expansion",
+   "q": "Do your legs feel like lead?",
+   "expect": "weakness"
+  },
+  {
+   "register": "expansion",
+   "q": "Any heaviness in your limbs?",
+   "expect": "weakness"
+  },
+  {
+   "register": "expansion",
+   "q": "Before we go on, any weakness in your arms or legs?",
+   "expect": "weakness"
   },
   {
    "register": "expansion",
@@ -289,6 +329,26 @@
   },
   {
    "register": "expansion",
+   "q": "When were you diagnosed?",
+   "expect": "diabetes_history"
+  },
+  {
+   "register": "expansion",
+   "q": "How well controlled is your diabetes?",
+   "expect": "diabetes_history"
+  },
+  {
+   "register": "expansion",
+   "q": "Any eye, kidney or nerve problems from your diabetes?",
+   "expect": "diabetes_history"
+  },
+  {
+   "register": "expansion",
+   "q": "Quick one: type 1 or type 2 diabetes?",
+   "expect": "diabetes_history"
+  },
+  {
+   "register": "expansion",
    "q": "Are you on any medication?",
    "expect": "current_medications"
   },
@@ -304,18 +364,23 @@
   },
   {
    "register": "expansion",
-   "q": "Did you run out of anything?",
-   "expect": "insulin_taken_recently"
+   "q": "When did you last check your sugar?",
+   "expect": "glucose_monitoring"
   },
   {
    "register": "expansion",
-   "q": "Do you take them every day?",
-   "expect": "insulin_taken_recently"
+   "q": "CGM?",
+   "expect": "glucose_monitoring"
   },
   {
    "register": "expansion",
-   "q": "One more thing. Have you been taking your meds?",
-   "expect": "insulin_taken_recently"
+   "q": "Any low sugars?",
+   "expect": "glucose_monitoring"
+  },
+  {
+   "register": "expansion",
+   "q": "Sorry to ask, but what are your sugars running?",
+   "expect": "glucose_monitoring"
   },
   {
    "register": "expansion",
@@ -349,17 +414,7 @@
   },
   {
    "register": "expansion",
-   "q": "Any recent illness?",
-   "expect": "sick_contacts"
-  },
-  {
-   "register": "expansion",
-   "q": "Has anyone around you been ill?",
-   "expect": "sick_contacts"
-  },
-  {
-   "register": "expansion",
-   "q": "Sorry to ask, but anyone else unwell?",
+   "q": "I need to know, any sick contacts?",
    "expect": "sick_contacts"
   },
   {
@@ -474,17 +529,17 @@
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any trouble with your prostate?",
+   "q": "Have you had piles?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any numbness anywhere?",
+   "q": "Any seizures or fits?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any back pain?",
+   "q": "Any double vision?",
    "expect": null
   },
   {
@@ -504,47 +559,42 @@
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Have you been feeling low in mood?",
+   "q": "Any anxiety or panic attacks?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Have you had the covid vaccine?",
+   "q": "Have you ever received blood?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Have you got your NHS number?",
+   "q": "Do you have a pharmacy you usually use?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "What do you do for a living?",
+   "q": "Did you come in by ambulance?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Is it raining outside?",
+   "q": "How many kids do you have?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "What do you do to relax?",
+   "q": "Are you comfortable on that trolley?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "What is your date of birth?",
+   "q": "What is your address?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Would you prefer a female doctor?",
-   "expect": null
-  },
-  {
-   "register": "out_of_scope_expansion",
-   "q": "How much does it cost to park here?",
+   "q": "Is there anything you would like to ask me?",
    "expect": null
   }
  ]

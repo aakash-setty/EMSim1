@@ -203,9 +203,11 @@ for d in BEDSIDE:
         turnaround_class=tc, repeatable=True,
         narration_template="{name} is up." )
 for d in LABS:
+    # v0.23. Beta-Hydroxybutyrate was added on author instruction, not from a screenshot.
+    kw = {"source": "author-supplied, not in screenshots (v0.23)"} if d == "Beta-Hydroxybutyrate" else {}
     add(d, "investigations", "Lab Work", category="investigation",
         turnaround_class="lab", repeatable=True,
-        narration_template="Sending {name}.")
+        narration_template="Sending {name}.", **kw)
 for d in OTHER_LABS:
     kw = {}
     if d.startswith("CSF"):
@@ -325,7 +327,7 @@ for g, items in AUTHOR_ADDED.items():
     MEDS[g] = sorted(set(MEDS[g] + items))
 
 # Default failure messages carry pronoun tokens ({He's}, {him}) rather than a sex, because
-# one catalog serves every case and two of the four packs have a woman on the trolley. They
+# one catalog serves every case and most packs have a woman on the bed. They
 # are substituted at bind time from patient.sex; see PRONOUNS and pron() in engine.js. Until
 # v0.11 these said "he", and the packs that noticed worked around it by authoring a
 # prerequisite override on every intravenous action, which is why MGCA carries about forty
@@ -377,7 +379,10 @@ for d in PROCEDURES:
         # Source control had no button: a retained tampon could be found on the GU exam and
         # then not acted on. Named for the act, not for the object, so it reads the same in
         # every case and gives nothing away in the cases where there is nothing to remove.
-        kw["narration_template"] = "Setting up a speculum and a light."
+        # The default line states the outcome. A procedure has no result, so a case that
+        # does not bind this action would otherwise leave the learner waiting for one.
+        # A case with something to remove overrides the line.
+        kw["narration_template"] = "Speculum exam done. There is nothing to remove."
         kw["source"] = "author-supplied, not in screenshots (v0.21)"
     add_or_place(d, "interventions", "Procedures", **kw)
 for d in BLOOD_BANK:
@@ -411,6 +416,13 @@ for group, items in MEDS.items():
         if d in AUTHOR_ADDED.get(group, []):
             INDEX[sid(d)]["source"] = "author-supplied, not in screenshots"
 
+# The route sits in parentheses in these three display names, and the engine does not
+# lower a token in parentheses, so the standard template read "Giving insulin
+# (Subcutaneous)." Each gets a line that says the route in words.
+INDEX["insulin_subcutaneous"]["narration_template"] = "Giving {dose} of subcutaneous insulin."
+INDEX["insulin_glargine_subcutaneous"]["narration_template"] = "Giving {dose} of subcutaneous insulin glargine."
+INDEX["potassium_chloride_oral"]["narration_template"] = "Giving {dose} of oral potassium chloride."
+
 # The four-group magnesium entry carries the indications it was added for, so the
 # catalog says why a repletion drug sits under OB/GYN. Nothing clinical is scored here.
 INDEX["magnesium_sulfate"]["source"] = "author-supplied, not in screenshots (v0.9)"
@@ -427,6 +439,19 @@ INDEX["magnesium_sulfate"]["indications_note"] = (
 # Infusions are persistent: once started they run for the rest of the case. Without a
 # way to stop one, any deterioration branch whose rescue is "turn the drip off" has no
 # exit and the patient cannot be rescued. One stop action per persistent infusion.
+def soft_lower(name):
+    """The engine's softLower, restated. Only ordinary Title Case words are lowered. A word
+    with a digit, an inner capital, a slash or a parenthesis is a unit, an acronym or a name."""
+    return " ".join(w.lower() if re.fullmatch(r"[A-Z][a-z]+(-[A-Z][a-z]+)*", w) else w
+                    for w in name.split(" "))
+
+def stop_line(base):
+    """The nurse's line for a stop action. It names the drug and nothing else, so the
+    "bolus/infusion" in a combined entry's name is dropped and "Na-" keeps its capital."""
+    drug = re.sub(r" bolus/(infusion|drip)$", "", base)
+    drug = " ".join(w if w.startswith("Na-") else soft_lower(w) for w in drug.split(" "))
+    return "Stopping the " + drug + "."
+
 STOPPABLE = [e for e in ENTRIES if e.get("persistent") and e["category"] == "medication"]
 for e in STOPPABLE:
     base = e["display_name"]
@@ -441,7 +466,9 @@ for e in STOPPABLE:
         repeatable=False,
         dose_required=False,
         route_class="none",
-        narration_template="Stopping the {name}.",
+        # The drug is written into the line. "{name}" would be this entry's own name, which
+        # starts with "Stop", and the nurse said "Stopping the stop insulin."
+        narration_template=stop_line(base),
         stops=e["id"],
         source="derived: every persistent infusion needs a way to withdraw it")
 
@@ -497,7 +524,10 @@ if orphan:
     raise SystemExit("default_results with no catalog entry: " + ", ".join(sorted(orphan)))
 
 CATALOG = {
-    "catalog_version": "0.2-draft",
+    # 0.3-draft: five entries added since 0.2-draft (v0.21 to v0.23a), default narration fixed
+    # for the stop actions and the three route-named drugs. A binding file records the
+    # version it was bound against.
+    "catalog_version": "0.3-draft",
     "result_resolution_order": [
         "1. case study_results[<action_id>] for the current phase, if authored",
         "2. entry.default_result in this catalog",
@@ -538,8 +568,10 @@ CATALOG = {
         "WARN when a case overrides exam_neuro with an altered level of consciousness but does not override general_status, or the reverse, since the two will contradict on screen.",
         "WARN when a case overrides serum hCG or urine hCG but not both.",
     ],
-    "aligned_to": ["system-design-v2.md v0.3 section 3",
-                   "case-authoring-requirements.md v0.2 section 7"],
+    # No version numbers here. They went stale twice. Each case records the document
+    # versions it was authored against in its own authored_against block.
+    "aligned_to": ["system-design-v2.md section 3",
+                   "case-authoring-requirements.md section 7"],
     "status": "INCOMPLETE -- see known_gaps",
     "field_provenance": {
         "transcribed_from_screenshots": ["display_name", "placements.tab",
@@ -581,11 +613,12 @@ CATALOG = {
                                  "between them scores them differently, and a group "
                                  "would flatten that into one tag. Cases requiring only "
                                  "the act should list all three as satisfiers instead.",
+        "_insulin_and_potassium_note": "There is deliberately no insulin group and no potassium "
+                                       "group. The route is the lesson in the ketoacidosis case.",
     },
     "resolved_since_v0.1_draft": [
         "Meds - Allergy, Tox, Psych, Miscellaneous transcribed from the second screenshot batch.",
         "Consultations tab transcribed; 16 entries added.",
-        "Furosemide present as 'Furosemide bolus' under Meds - Miscellaneous.",
         "Dobutamine drip added on author instruction; marked source=author-supplied, not in screenshots.",
         "CPAP and BiPAP collapsed into the single UI entry 'Non-Invasive Positive Pressure Ventilation' on author instruction.",
         "Stop actions added: every persistent infusion now has a matching stop entry, so a drip can be withdrawn and a rescue that depends on it is reachable.",
@@ -601,8 +634,8 @@ CATALOG = {
         "in NON_IV, so neither requires vascular access.",
         "Beta-Hydroxybutyrate added under Lab Work, and Insulin (Subcutaneous) and Potassium "
         "Chloride (oral) under Meds - Miscellaneous, on author instruction for the diabetic "
-        "ketoacidosis case (v0.23). Not from a screenshot. The two drugs carry "
-        "source=author-supplied and need no vascular access.",
+        "ketoacidosis case (v0.23). Not from a screenshot. All three carry "
+        "source=author-supplied. The two drugs need no vascular access.",
         "Insulin Glargine (Subcutaneous) added under Meds - Miscellaneous on author instruction "
         "(v0.23a), so a missed basal dose can be ordered. Not from a screenshot. No vascular access.",
         "Remove Vaginal Foreign Body added under Procedures on author instruction for the toxic "
@@ -624,16 +657,21 @@ CATALOG = {
         "Lab Work may continue past Urinalysis (alphabetical, cut at the U's).",
         "Imaging list has no plain radiographs other than chest and pelvis; may be truncated.",
         "No Handoff tab / disposition options, required by design section 9.",
-        "No diagnosis catalog, required by design section 9.",
         "Default normal results were drafted by the AI from general knowledge, not from a laboratory reference. Ranges are assay- and institution-specific and are unverified. Entries carrying a 'verify' field are the ones known to vary in ways that change interpretation.",
         "Blood Type & Screen, serum hCG and urine hCG have defaults but are patient attributes rather than normal values. Defaulting to O positive and not pregnant is a silent assertion about every unauthored patient.",
-        "Culture defaults read 'no growth to date' because the 5-second lab turnaround cannot represent a 24-48 hour culture. Cases whose teaching point is a positive culture cannot be authored honestly.",
+        "Culture defaults read 'Cultures pending.' because the 5-second lab turnaround cannot represent a 24-48 hour culture. Cases whose teaching point is a positive culture cannot be authored honestly.",
         "Peak expiratory flow has no meaningful global normal, since predicted values depend on age, sex and height. Its default is a placeholder.",
         "ABG defaults assume room air. On supplemental oxygen the same numbers are abnormal, and nothing in the schema knows that.",
         "Dose behavior is not visible in the screenshots; dose_required is a guess per category and no dose values are recorded.",
         "route_class is derived, not transcribed. Entries marked 'unspecified' need author confirmation because the vascular-access prerequisite depends on it.",
         "Infusions are persistent=true. Stopping one is a separate action rather than a toggle, so a case must author the stop as its own step.",
         "Meds - Cardiac now holds both 'Nitroglycerin' (transcribed, route unspecified) and 'Nitroglycerin sublingual' (author-supplied). If the transcribed entry IS the sublingual one, these are duplicates and one must be removed.",
+        "Remove Vaginal Foreign Body is offered for every patient, including men. The catalog has no sex filter.",
+        "Meds - Miscellaneous now holds both 'Potassium Chloride (KCl)' (transcribed, route unspecified, no vascular access prerequisite) and 'Potassium Chloride (oral)' (author-supplied). The first is the intravenous one in practice. Until it is renamed and gated, a case that means the intravenous route must say so, as DKA does.",
+        "No 250 mL crystalloid bolus. TAKO teaches 250 to 500 mL and can only offer 500.",
+        "No action restarts a stopped infusion. DKA reads a second administration of insulin as the restart.",
+        "No catheterization laboratory activation. TAKO carries it as a case-only action on the Consults tab, by physician decision.",
+        "Venous Blood Gas and the five Nursing entries were added on author instruction and carry no source marker. field_provenance lists display_name as transcribed, which is not true of any author-supplied entry.",
         "Reference-case ids with still no catalog counterpart: bp_cycling_q5min, urine_output_monitoring, echo_formal, vent_settings_lung_protective, peep_reduce, handoff_submit. See reference_case_id_map.",
     ],
     "reference_case_id_map": {

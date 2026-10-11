@@ -14,14 +14,14 @@ Vitals in this phase: HR 128, BP 94/58, RR 22, SpO2 97%, T 39.4
 
 - guard: `flag discharge_attempted set`
 - destination vitals: HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6
-- narration: “She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure is 78 over 42.”
+- narration: “She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure has dropped.”
 - author rationale: A delayed consequence of the learner's own action, so the five-second floor applies. Orthostatic syncope in compensated distributive shock is plausible. That it happens every time is a teaching choice. Model output, needs a physician's signature.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 20s `attach_monitor` (first)
 2. 45s `insert_iv` (first)
-3. 80s `normal_saline_1l_bolus` (first)
+3. 60s `normal_saline_1l_bolus` (first)
 4. 110s `vancomycin` (first)  **suppressed by the cap**
 5. 170s `normal_saline_1l_bolus` (escalation)
 
@@ -29,14 +29,14 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 - guard: `flag fluids_given set`
 - destination vitals: HR 114, BP 104/62, RR 20, SpO2 98%, T 39.2
-- narration: “That fluid is in. Her rate has come down to 114 and her pressure is 104 over 62. She says she feels a bit better.”
+- narration: “That fluid is in. Her pressure is better and she says she feels a bit better.”
 - author rationale: A delayed consequence of the learner's own action. Ten seconds stands for the time a liter takes to run in, heavily compressed. The size of the response is a teaching choice. Model output.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 20s `attach_monitor` (first)
 2. 45s `insert_iv` (first)
-3. 80s `normal_saline_1l_bolus` (first)
+3. 60s `normal_saline_1l_bolus` (first)
 4. 110s `vancomycin` (first)  **suppressed by the cap**
 5. 170s `normal_saline_1l_bolus` (escalation)
 
@@ -44,19 +44,19 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 - guard: `NOT flag fluids_given set`
 - destination vitals: HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6
-- narration: “She's gone gray and she's getting drowsy. Her pressure is 78 over 42 and her rate is 138.”
-- author rationale: Deterioration on inaction. Untreated toxic shock progresses to hypotension over hours, and five minutes of case clock stands for that. The number is a drafting judgment and needs a physician's signature. The nurse asks for a line at 45 seconds and for fluid at 80 and again at 170.
+- narration: “She's gone gray and she's getting drowsy. Her pressure has dropped and her rate is up.”
+- author rationale: Deterioration on inaction. Untreated toxic shock progresses to hypotension over hours, and five minutes of case clock stands for that. The number is a drafting judgment and needs a physician's signature. The nurse asks for a line at 45 seconds and for fluid at 60 and again at 170. In the default mode those are 135, 180 and 510, so the first fluid warning comes 120 seconds before this rule and the escalation is never heard.
 
 Prompts in this phase that set fluids_given, which is what the fairness rule requires:
 
-- `normal_saline_1l_bolus` first at 80s, 220s of lead
+- `normal_saline_1l_bolus` first at 60s, 240s of lead
 - `normal_saline_1l_bolus` escalation at 170s, 130s of lead
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 20s `attach_monitor` (first)
 2. 45s `insert_iv` (first)
-3. 80s `normal_saline_1l_bolus` (first)
+3. 60s `normal_saline_1l_bolus` (first)
 4. 110s `vancomycin` (first)  **suppressed by the cap**
 5. 170s `normal_saline_1l_bolus` (escalation)
 
@@ -68,7 +68,7 @@ Vitals in this phase: HR 114, BP 104/62, RR 20, SpO2 98%, T 39.2
 
 - guard: `flag discharge_attempted set`
 - destination vitals: HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6
-- narration: “She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure is 78 over 42.”
+- narration: “She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure has dropped.”
 - author rationale: A delayed consequence of the learner's own action, so the five-second floor applies. Orthostatic syncope in compensated distributive shock is plausible. That it happens every time is a teaching choice. Model output, needs a physician's signature.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
@@ -79,7 +79,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 - guard: `flag pressor_running set AND flag source_removed set`
 - destination vitals: HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1
-- narration: “The fluid on its own isn't holding her any more, but the norepinephrine is. She's 98 over 56 with a rate of 116.”
+- narration: “The fluid on its own isn't holding her any more, but the vasopressor is, and her pressure is steady.”
 - author rationale: The same clock as the unguarded rule below, so that the fade happens at one moment whatever was done. Listed first so a learner who has done everything goes straight to the stable phase. Model output.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
@@ -90,7 +90,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 - guard: `flag pressor_running set`
 - destination vitals: HR 124, BP 92/50, RR 24, SpO2 96%, T 39.5
-- narration: “The fluid on its own isn't holding her any more. The norepinephrine is keeping her at 92 over 50 and I've had to turn it up.”
+- narration: “The fluid on its own isn't holding her any more. The vasopressor is keeping her pressure up and I've had to turn it up.”
 - author rationale: As above. Model output.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
@@ -101,8 +101,8 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 - guard: `(none: fires regardless)`
 - destination vitals: HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6
-- narration: “That fluid isn't holding. Her pressure is back down to 78 over 42, her rate is 138 and she's getting drowsy.”
-- author rationale: Scheduled natural history. The rules above it catch a learner who already started a vasopressor, so in effect this fires when none is running. Two and a half minutes stands for the hour or so over which a transient responder declares herself. Model output, needs a physician's signature.
+- narration: “That fluid isn't holding. Her pressure is back down, her rate is back up and she's getting drowsy.”
+- author rationale: Scheduled natural history. The rules above it catch a learner who already started a vasopressor, so in effect this fires when none is running. Two and a half minutes stands for the hour or so over which a transient responder declares herself. Model output, needs a physician's signature. No prompt names a vasopressor in this phase, so this fade arrives unwarned in both modes. That is deliberate and follows the directing physician's fourth decision (TSS-SEED.md section 0 and section 4a).
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
@@ -116,14 +116,14 @@ Vitals in this phase: HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6
 
 - guard: `flag pressor_running set AND flag fluids_given set AND flag source_removed set`
 - destination vitals: HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1
-- narration: “The norepinephrine is working. She's 98 over 56, rate 116, and she's more awake.”
+- narration: “The vasopressor is working. Her pressure is up and she's more awake.”
 - author rationale: A delayed consequence of the learner's own action. Model output.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 30s `norepinephrine_drip` (first)
 2. 45s `insert_iv` (first)
-3. 80s `normal_saline_1l_bolus` (first)
+3. 60s `normal_saline_1l_bolus` (first)
 4. 110s `vancomycin` (first)  **suppressed by the cap**
 5. 120s `norepinephrine_drip` (escalation)
 6. 170s `normal_saline_1l_bolus` (escalation)
@@ -132,14 +132,14 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 - guard: `flag pressor_running set AND flag fluids_given set`
 - destination vitals: HR 124, BP 92/50, RR 24, SpO2 96%, T 39.5
-- narration: “The norepinephrine has brought her up to 92 over 50 and she's more awake. I've had to go up on it twice to get there.”
+- narration: “The vasopressor has brought her pressure up and she's more awake. I've had to go up on it twice to get there.”
 - author rationale: A delayed consequence of the learner's own action. Model output.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 30s `norepinephrine_drip` (first)
 2. 45s `insert_iv` (first)
-3. 80s `normal_saline_1l_bolus` (first)
+3. 60s `normal_saline_1l_bolus` (first)
 4. 110s `vancomycin` (first)  **suppressed by the cap**
 5. 120s `norepinephrine_drip` (escalation)
 6. 170s `normal_saline_1l_bolus` (escalation)
@@ -148,13 +148,13 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 - guard: `NOT flag pressor_running set OR NOT flag fluids_given set`
 - destination vitals: HR 148, BP 66/32, RR 30, SpO2 92%, T 39.8
-- narration: “I can barely rouse her. Her pressure is 66 over 32 and her rate is 148.”
-- author rationale: Deterioration on inaction. The nurse asks for norepinephrine at 30 seconds and again at 120, and for fluid at 80 if none has been given. Four minutes is a drafting judgment and needs a physician's signature.
+- narration: “I can barely rouse her. Her pressure has dropped again and her rate is higher.”
+- author rationale: Deterioration on inaction. The nurse asks for norepinephrine at 30 seconds and again at 120, and for fluid at 60 if none has been given. In the default mode those are 90, 360 and 180, so both first warnings come at least 60 seconds before this rule and the escalation is never heard. Four minutes is a drafting judgment and needs a physician's signature.
 
 Prompts in this phase that set fluids_given, pressor_running, which is what the fairness rule requires:
 
 - `norepinephrine_drip` first at 30s, 210s of lead
-- `normal_saline_1l_bolus` first at 80s, 160s of lead
+- `normal_saline_1l_bolus` first at 60s, 180s of lead
 - `norepinephrine_drip` escalation at 120s, 120s of lead
 - `normal_saline_1l_bolus` escalation at 170s, 70s of lead
 
@@ -162,7 +162,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 1. 30s `norepinephrine_drip` (first)
 2. 45s `insert_iv` (first)
-3. 80s `normal_saline_1l_bolus` (first)
+3. 60s `normal_saline_1l_bolus` (first)
 4. 110s `vancomycin` (first)  **suppressed by the cap**
 5. 120s `norepinephrine_drip` (escalation)
 6. 170s `normal_saline_1l_bolus` (escalation)
@@ -175,12 +175,12 @@ Vitals in this phase: HR 124, BP 92/50, RR 24, SpO2 96%, T 39.5
 
 - guard: `flag source_removed set`
 - destination vitals: HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1
-- narration: “I've stopped having to go up on the norepinephrine since that came out. She's 98 over 56 on the same dose.”
+- narration: “I've stopped having to go up on the vasopressor since that came out. She's holding her pressure on the same dose.”
 - author rationale: A delayed consequence of the learner's own action. The physician directing this case chose 'stops the decline, no dramatic rebound'. Ten seconds is a heavy compression and the debrief note says so. The speed of real improvement after tampon removal is unsourced. Needs a physician's signature.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
-1. 75s `remove_vaginal_foreign_body` (first)
+1. 60s `remove_vaginal_foreign_body` (first)
 2. 110s `vancomycin` (first)
 3. 180s `remove_vaginal_foreign_body` (escalation)
 
@@ -188,17 +188,17 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 - guard: `NOT flag source_removed set`
 - destination vitals: HR 148, BP 66/32, RR 30, SpO2 92%, T 39.8
-- narration: “I've been going up and up on the norepinephrine and it isn't enough any more. She's 66 over 32, rate 148, and I can barely rouse her.”
-- author rationale: Deterioration on inaction. The nurse asks whether anyone has examined her fully at 75 seconds and asks about her period at 180. Four and a half minutes is longer than the other clocks on purpose: the directing physician asked that treated sepsis with a missed source decline more slowly. Needs a physician's signature.
+- narration: “I've been going up and up on the vasopressor and it isn't enough any more. Her pressure has dropped, her rate is up, and I can barely rouse her.”
+- author rationale: Deterioration on inaction. The nurse asks whether anyone has examined her fully at 60 seconds and asks about her period at 180. In the default mode those are 180 and 540, so the first warning comes 90 seconds before this rule and the escalation is never heard. Four and a half minutes is longer than the other clocks on purpose: the directing physician asked that treated sepsis with a missed source decline more slowly. Needs a physician's signature.
 
 Prompts in this phase that set source_removed, which is what the fairness rule requires:
 
-- `remove_vaginal_foreign_body` first at 75s, 195s of lead
+- `remove_vaginal_foreign_body` first at 60s, 210s of lead
 - `remove_vaginal_foreign_body` escalation at 180s, 90s of lead
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
-1. 75s `remove_vaginal_foreign_body` (first)
+1. 60s `remove_vaginal_foreign_body` (first)
 2. 110s `vancomycin` (first)
 3. 180s `remove_vaginal_foreign_body` (escalation)
 
@@ -210,14 +210,14 @@ Vitals in this phase: HR 148, BP 66/32, RR 30, SpO2 92%, T 39.8
 
 - guard: `flag pressor_running set AND flag fluids_given set AND flag source_removed set`
 - destination vitals: HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1
-- narration: “She's coming back. 98 over 56 on the norepinephrine, rate 116, and she's opening her eyes to my voice.”
+- narration: “She's coming back. Her pressure is up on the vasopressor, her rate is down, and she's opening her eyes to my voice.”
 - author rationale: A delayed consequence of the learner's own action. That recovery from this phase is always possible is a teaching choice: the case has no death, so a learner who gets here can still find the answer. Model output.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 30s `norepinephrine_drip` (first)
-2. 75s `remove_vaginal_foreign_body` (first)
-3. 80s `normal_saline_1l_bolus` (first)
+2. 60s `normal_saline_1l_bolus` (first)
+3. 60s `remove_vaginal_foreign_body` (first)
 4. 110s `vancomycin` (first)  **suppressed by the cap**
 5. 120s `norepinephrine_drip` (escalation)
 6. 170s `normal_saline_1l_bolus` (escalation)
@@ -241,19 +241,19 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 
 | from | at | to | vitals immediately after | the line |
 |---|---|---|---|---|
-| `presentation` | 5s | `hypotensive` | HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6 | “She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure is 78 over 42.” |
-| `presentation` | 10s | `fluid_responsive` | HR 114, BP 104/62, RR 20, SpO2 98%, T 39.2 | “That fluid is in. Her rate has come down to 114 and her pressure is 104 over 62. She says she feels a bit better.” |
-| `presentation` | 300s | `hypotensive` | HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6 | “She's gone gray and she's getting drowsy. Her pressure is 78 over 42 and her rate is 138.” |
-| `fluid_responsive` | 5s | `hypotensive` | HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6 | “She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure is 78 over 42.” |
-| `fluid_responsive` | 150s | `stabilizing` | HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1 | “The fluid on its own isn't holding her any more, but the norepinephrine is. She's 98 over 56 with a rate of 116.” |
-| `fluid_responsive` | 150s | `supported` | HR 124, BP 92/50, RR 24, SpO2 96%, T 39.5 | “The fluid on its own isn't holding her any more. The norepinephrine is keeping her at 92 over 50 and I've had to turn it up.” |
-| `fluid_responsive` | 150s | `hypotensive` | HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6 | “That fluid isn't holding. Her pressure is back down to 78 over 42, her rate is 138 and she's getting drowsy.” |
-| `hypotensive` | 10s | `stabilizing` | HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1 | “The norepinephrine is working. She's 98 over 56, rate 116, and she's more awake.” |
-| `hypotensive` | 10s | `supported` | HR 124, BP 92/50, RR 24, SpO2 96%, T 39.5 | “The norepinephrine has brought her up to 92 over 50 and she's more awake. I've had to go up on it twice to get there.” |
-| `hypotensive` | 240s | `profound_shock` | HR 148, BP 66/32, RR 30, SpO2 92%, T 39.8 | “I can barely rouse her. Her pressure is 66 over 32 and her rate is 148.” |
-| `supported` | 10s | `stabilizing` | HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1 | “I've stopped having to go up on the norepinephrine since that came out. She's 98 over 56 on the same dose.” |
-| `supported` | 270s | `profound_shock` | HR 148, BP 66/32, RR 30, SpO2 92%, T 39.8 | “I've been going up and up on the norepinephrine and it isn't enough any more. She's 66 over 32, rate 148, and I can barely rouse her.” |
-| `profound_shock` | 15s | `stabilizing` | HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1 | “She's coming back. 98 over 56 on the norepinephrine, rate 116, and she's opening her eyes to my voice.” |
+| `presentation` | 5s | `hypotensive` | HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6 | “She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure has dropped.” |
+| `presentation` | 10s | `fluid_responsive` | HR 114, BP 104/62, RR 20, SpO2 98%, T 39.2 | “That fluid is in. Her pressure is better and she says she feels a bit better.” |
+| `presentation` | 300s | `hypotensive` | HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6 | “She's gone gray and she's getting drowsy. Her pressure has dropped and her rate is up.” |
+| `fluid_responsive` | 5s | `hypotensive` | HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6 | “She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure has dropped.” |
+| `fluid_responsive` | 150s | `stabilizing` | HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1 | “The fluid on its own isn't holding her any more, but the vasopressor is, and her pressure is steady.” |
+| `fluid_responsive` | 150s | `supported` | HR 124, BP 92/50, RR 24, SpO2 96%, T 39.5 | “The fluid on its own isn't holding her any more. The vasopressor is keeping her pressure up and I've had to turn it up.” |
+| `fluid_responsive` | 150s | `hypotensive` | HR 138, BP 78/42, RR 26, SpO2 95%, T 39.6 | “That fluid isn't holding. Her pressure is back down, her rate is back up and she's getting drowsy.” |
+| `hypotensive` | 10s | `stabilizing` | HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1 | “The vasopressor is working. Her pressure is up and she's more awake.” |
+| `hypotensive` | 10s | `supported` | HR 124, BP 92/50, RR 24, SpO2 96%, T 39.5 | “The vasopressor has brought her pressure up and she's more awake. I've had to go up on it twice to get there.” |
+| `hypotensive` | 240s | `profound_shock` | HR 148, BP 66/32, RR 30, SpO2 92%, T 39.8 | “I can barely rouse her. Her pressure has dropped again and her rate is higher.” |
+| `supported` | 10s | `stabilizing` | HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1 | “I've stopped having to go up on the vasopressor since that came out. She's holding her pressure on the same dose.” |
+| `supported` | 270s | `profound_shock` | HR 148, BP 66/32, RR 30, SpO2 92%, T 39.8 | “I've been going up and up on the vasopressor and it isn't enough any more. Her pressure has dropped, her rate is up, and I can barely rouse her.” |
+| `profound_shock` | 15s | `stabilizing` | HR 116, BP 98/56, RR 22, SpO2 97%, T 39.1 | “She's coming back. Her pressure is up on the vasopressor, her rate is down, and she's opening her eyes to my voice.” |
 
 Compare each line with the row before it in section 2, not only with the destination: a line saying a number has fallen must be preceded by a phase in which it was higher.
 

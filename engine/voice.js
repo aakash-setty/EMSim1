@@ -93,7 +93,8 @@ const VOICE=(function(){
     INDEX.set(phrase,Object.assign({authored:!!authored},entry));
   }
   /* Phrases a display name gives for free: the name itself, each half of an "A - B"
-     name in both orders, the text inside and outside a parenthesis, and the id. */
+     name in both orders, the text inside and outside a parenthesis, and the id. A case
+     action's own voice_phrases are not derived. build() indexes them ahead of the table. */
   function derived(id){
     const a=ACT[id]; const out=new Set();
     const name=a.name||'';
@@ -110,6 +111,20 @@ const VOICE=(function(){
     if(!data||!data.normalisation) return;
     setTables(data.normalisation);
     const A=data.aliases||{}, E=data.expansions||{}, M=data.ambiguous||{}, U=data.unavailable||{}, H=data.hints||[];
+    /* Phrases a case gives one of its own actions (voice_phrases on the case action). They
+       go in first, so in that case they win over the global table. This is the only way to
+       give other words to a case-only action, which has no catalog id for the table to key
+       on. Two actions that claim one phrase are offered as a choice. */
+    const own=new Map();
+    for(const id in ACT){
+      if(!sayable(id)) continue;
+      for(const p of (ACT[id].voice_phrases||[])){
+        const n=normalise(p); if(!n||NOISE.has(n)) continue;
+        if(!own.has(n)) own.set(n,[]);
+        if(own.get(n).indexOf(id)<0) own.get(n).push(id);
+      }
+    }
+    for(const [n,ids] of own) put(n,{kind:ids.length>1?'ambig':'act',ids},true);
     for(const cid in A){
       const id=resolveCatalog(cid); if(!id) continue;
       for(const p of A[cid]) put(normalise(p),{kind:'act',ids:[id]},true);
@@ -126,7 +141,10 @@ const VOICE=(function(){
     for(const p in U) put(normalise(p),{kind:'unavail',ids:[],hint:typeof U[p]==='number'?(H[U[p]]||''):String(U[p]||'')},true);
     for(const id in ACT){
       if(!sayable(id)) continue;
-      for(const p of derived(id)) put(normalise(p),{kind:'act',ids:[id]},false);
+      /* A derived phrase that is only a route or a qualifier is not indexed. "Potassium
+         Chloride (oral)" gave the bare word "oral", so a route left over after any drug
+         ordered oral potassium, and "(Subcutaneous)" and "(Intramuscular)" both gave "im". */
+      for(const p of derived(id)){ const n=normalise(p); if(NOISE.has(n)) continue; put(n,{kind:'act',ids:[id]},false); }
     }
     for(const k of INDEX.keys()){
       const n=k.split(' ').length; if(n>MAXLEN) MAXLEN=n;
@@ -170,8 +188,9 @@ const VOICE=(function(){
   /* v0.17n adds the verbs that carry an order without naming one: "open the fluids", "run in
      a litre", "get critical care involved". They are dropped here, as leftovers, rather than
      as fillers: a filler is removed before lookup, and "open" removed before lookup turns
-     "open chest" into "chest". */
-  const NOISE=new Set(['open','opened','run','running','involve','involved','involving','onboard',
+     "open chest" into "chest". "repeat" and "recheck" are here for the same reason: "repeat
+     bmp" is the Chem 7, and the leftover verb is not a second thing the parser missed. */
+  const NOISE=new Set(['open','opened','run','running','involve','involved','involving','onboard','repeat','recheck',
                        'rate','drip','bolus','transfuse','im','oral','rectal','sublingual','intranasal','noncontrast','contrast',
                        'second','stop','maintenance','kvo','wideopen','liter','twoliters','halfliter','quarterliter','fifteenliters',
                        'someliters','thirtyperkilo','precautions','percent','headup','crossmatch','mri','xr','ct','cta']);

@@ -21,6 +21,18 @@
    "catalog_id": "second_iv"
   },
   {
+   "case_id": "central_venous_catheter_triple_lumen",
+   "catalog_id": "central_venous_catheter_triple_lumen"
+  },
+  {
+   "case_id": "central_venous_catheter_cordis",
+   "catalog_id": "central_venous_catheter_cordis"
+  },
+  {
+   "case_id": "intraosseous_line",
+   "catalog_id": "intraosseous_line"
+  },
+  {
    "case_id": "fingerstick_blood_sugar",
    "catalog_id": "fingerstick_blood_sugar"
   },
@@ -85,6 +97,10 @@
    "catalog_id": "xr_chest"
   },
   {
+   "case_id": "ultrasound_cardiac",
+   "catalog_id": "ultrasound_cardiac"
+  },
+  {
    "case_id": "ct_abdomen",
    "catalog_id": "ct_abdomen"
   },
@@ -131,6 +147,26 @@
    "catalog_id": "insulin_bolus"
   },
   {
+   "case_id": "early_insulin",
+   "catalog_id": null,
+   "note": "Hidden target. Credited through also_satisfies when rapid insulin is ordered in the arrival phase. Read by a transition in potassium_replaced. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
+  },
+  {
+   "case_id": "insulin_restart",
+   "catalog_id": null,
+   "note": "Hidden target. Credited through also_satisfies when an insulin infusion or a subcutaneous dose is ordered in the recovering phase. Read by the exit of that phase, and it carries the restart prompt. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
+  },
+  {
    "case_id": "stop_insulin",
    "catalog_id": "stop_insulin"
   },
@@ -173,6 +209,16 @@
   {
    "case_id": "consult_critical_care",
    "catalog_id": "consult_critical_care"
+  },
+  {
+   "case_id": "repeat_potassium_level",
+   "catalog_id": null,
+   "note": "Hidden target. Credited through also_satisfies when a chemistry is sent once the potassium has run in. Read by the repeat-level follow-up. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
   },
   {
    "case_id": "handoff_submit",

@@ -421,6 +421,152 @@
    ],
    "expect_phase": "case_complete",
    "note": ""
+  },
+  {
+   "name": "Rescue inside the last window of the 300-second clock: a bolus before it fires",
+   "steps": [
+    "insert_iv",
+    {
+     "wait": 270
+    },
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "fluid_responsive",
+   "note": "Paired with the next scenario (authoring section 16 step 8). The bolus is logged at 286 seconds on the runner's clock."
+  },
+  {
+   "name": "One action too late for the 300-second clock: the same bolus after it has fired",
+   "steps": [
+    "insert_iv",
+    {
+     "wait": 296
+    },
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "hypotensive",
+   "note": "The bolus goes in after 300 seconds. In the hypotensive phase fluid alone changes no phase."
+  },
+  {
+   "name": "Rescue inside the last window of the 240-second clock: fluid added to a running vasopressor",
+   "steps": [
+    "insert_iv",
+    {
+     "wait": 300
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 200
+    },
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "supported",
+   "note": "Hypotensive from 300 seconds, so the clock fires at 540. The bolus is logged before that."
+  },
+  {
+   "name": "One action too late for the 240-second clock: the same fluid after it has fired",
+   "steps": [
+    "insert_iv",
+    {
+     "wait": 300
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 228
+    },
+    "normal_saline_1l_bolus",
+    {
+     "wait": 20
+    }
+   ],
+   "expect_phase": "profound_shock",
+   "note": "Fluid and a vasopressor are both in, the source is not out, and from profound shock she needs all three."
+  },
+  {
+   "name": "Rescue inside the last window of the 270-second clock: the source comes out before it fires",
+   "steps": [
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 150
+    },
+    "exam_gu",
+    {
+     "wait": 230
+    },
+    "remove_vaginal_foreign_body",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "Supported from 176 seconds on the runner's clock, so its clock fires at 446. The removal is logged at 432."
+  },
+  {
+   "name": "A maintenance infusion is not a bolus: she still deteriorates at 300 seconds",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "normal_saline_infusion",
+    "lactated_ringer_s_infusion",
+    {
+     "wait": 290
+    }
+   ],
+   "expect_phase": "hypotensive",
+   "note": "v0.24 audit. Neither infusion sets the fluid flag."
+  },
+  {
+   "name": "Stopping a covered vasopressor is refused and she stays supported",
+   "steps": [
+    "insert_iv",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 12
+    },
+    "vasopressin_drip",
+    {
+     "wait": 150
+    },
+    "stop_vasopressin",
+    {
+     "wait": 20
+    }
+   ],
+   "expect_phase": "supported",
+   "note": "v0.24 audit. Stop Vasopressin was unbound. It is now covered by the stop action, which refuses."
+  },
+  {
+   "name": "Stopping a vasopressor when none is running is blocked and changes nothing",
+   "steps": [
+    "insert_iv",
+    "stop_norepinephrine",
+    "stop_dopamine"
+   ],
+   "expect_phase": "presentation",
+   "note": "v0.24 audit. The prerequisite is a running vasopressor."
+  },
+  {
+   "name": "Digoxin and amiodarone are rate control and do not change the phase",
+   "steps": [
+    "insert_iv",
+    "digoxin_bolus",
+    "amiodarone_bolus_infusion"
+   ],
+   "expect_phase": "presentation",
+   "note": "v0.24 audit. Both are covered by the rate-control action."
   }
  ]
 }

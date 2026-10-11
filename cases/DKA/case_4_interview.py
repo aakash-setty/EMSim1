@@ -5,7 +5,14 @@ handover does not mention diabetes, so her history is where the learner finds it
 never names ketoacidosis and never quotes a result she could not know. Her meter reading
 at home is hers to report.
 
-Every answer is model output restating PATIENT["background"], which is also model output.
+Every answer is model output. Most restate PATIENT["background"], which is also model
+output. Some add a fact the background does not hold: feeling hot and shivery the first
+night, a period two weeks ago and a pill that may have been vomited, her mother's thyroid
+disease, a meter reading of 290 last night, nearly fainting in the shower, and being up
+four times in the night. Two answers carry denials a model added on 7 October 2026 so
+that a question the out-of-scope bank no longer refuses gets an answer: no leg cramps,
+and no black stools. DKA-SEED.md lists the whole ground truth with the pertinent
+negatives, and marks each of these for the physician.
 """
 from case_4_variants import SHARED
 
@@ -13,27 +20,46 @@ FALLING = "phase is potassium_falling"
 TREATED = "phase is treated"
 
 TOPICS = []
-NEGATIVES = {"fever_and_chills", "cough_sore_throat", "headache", "chest_pain",
-             "radiation_of_pain", "dysuria_gu_symptoms", "travel_history", "allergies",
-             "pregnancy", "family_history"}
+# Only topics whose answer is a denial in every phase (authoring 10.3). Fever, headache
+# and family history report something, so they are not marked.
+NEGATIVES = {"cough_sore_throat", "chest_pain", "radiation_of_pain", "dysuria_gu_symptoms",
+             "travel_history", "allergies", "pregnancy"}
 
 
-def topic(tid, answer, canonical=None, variants=None, echo=None, extra=None):
+def topic(tid, answer, canonical=None, variants=None, echo=None, extra=None, more=None,
+          facts=None):
+    """`more` adds hand-written phrasings to the shared ones for a topic."""
     s = SHARED.get(tid, {})
     rules = (extra or []) + [{"when": None, "value": answer}]
     t = {"topic": tid, "canonical": canonical or s["canonical"],
-         "variants": list(variants or s["variants"]), "answer": rules,
+         "variants": list(variants or s["variants"]) + list(more or []), "answer": rules,
          "echo": echo or s["echo"]}
     if tid in NEGATIVES:
         t["pertinent_negative"] = True
+    if facts:
+        t["facts"] = facts
     TOPICS.append(t)
     return t
+
+
+def fact(fid, asks, value, restate=False):
+    """A piece of a topic's answer, for a follow-up question (authoring 10.7). It restates
+    part of the paragraph and adds nothing to it."""
+    f = {"id": fid, "asks": asks, "value": [{"when": None, "value": value}]}
+    if restate:
+        f["restate"] = True
+    return f
 
 
 # --------------------------------------------------------------- the illness
 topic("onset",
   "'Two days ago. I started throwing up on Sunday night, and the diarrhea came a few hours "
-  "after.'")
+  "after.'",
+  facts=[
+    fact("when", ["when exactly", "what day", "how long ago", "how many days"],
+         "'Sunday night. Two days ago.'", restate=True),
+    fact("first_symptom", ["what came first", "what was the first thing", "how did it start"],
+         "'The throwing up came first. The diarrhea came a few hours after.'")])
 
 topic("timing_progression",
   "'The throwing up has slowed down, there's nothing left. But since yesterday I feel "
@@ -49,8 +75,17 @@ topic("nausea_vomiting",
   extra=[{"when": TREATED, "value": "'The sick feeling is easing. I haven't thrown up since you started treating me.'"}])
 
 topic("diarrhea",
-  "'Watery, six or seven times a day since Sunday. No blood in it. It's slowing down "
-  "today.'")
+  "'Watery, six or seven times a day since Sunday. No blood in it, and it isn't black. "
+  "It's slowing down today.'",
+  more=["Is there any blood in the diarrhea?", "Any blood when you go to the bathroom?",
+        "Are your stools black?", "Any black or tarry stools?"],
+  # The short form she gives when asked again keeps the denial, so a second question
+  # about blood is not answered with the frequency alone.
+  facts=[
+    fact("what", ["how often", "how many times", "is it watery", "what is it like"],
+         "'Watery, six or seven times a day. No blood, and it isn't black.'", restate=True),
+    fact("blood", ["any blood", "blood in it", "is it black", "black stools", "tarry"],
+         "'No blood in it, and it isn't black.'")])
 
 topic("abdominal_pain",
   "'Crampy, all over my stomach. It comes in waves with the diarrhea. Not sharp, and not "
@@ -60,7 +95,8 @@ topic("location_of_pain",
   "'All over my belly, mostly the middle. Nowhere else hurts.'")
 
 topic("radiation_of_pain",
-  "'No, it doesn't go anywhere. Not to my back and not to my shoulder.'")
+  "'No, it doesn't go anywhere. Not to my back and not to my shoulder.'",
+  more=["Any back pain?", "Does your back hurt?"])
 
 topic("severity",
   "'The cramps are maybe a four out of ten. It's the weakness that scared me.'")
@@ -78,22 +114,32 @@ topic("thirst_and_urination",
             "Are you up at night to pee?", "Any polyuria or polydipsia?", "Polyuria?",
             "Have you been going to the toilet to pee a lot?", "Is your mouth dry all the time?",
             "Have you been drinking more water than normal?", "Any increase in urination?",
-            "How much are you drinking?", "Are you always thirsty?"],
+            "How much are you drinking?", "Are you always thirsty?",
+            "Do you get up at night to pass urine?", "How many times were you up in the night?"],
   echo="being thirsty and peeing")
 
 topic("urine_output",
-  "'Loads yesterday and through the night. Less this morning, and it was dark.'")
+  "'A lot yesterday and through the night. Less this morning, and it was dark.'")
 
 topic("weakness",
-  "'I feel weak all over, like I've got flu. I can walk, I just don't want to.'",
+  "'I feel weak all over, like I have the flu. No cramps. I can walk, I just don't want to.'",
   canonical="Do you feel weak?",
   variants=["Are you weak?", "Any weakness?", "Do your arms or legs feel weak?",
             "Any muscle weakness?", "Can you lift your arms?", "Do your legs feel heavy?",
             "Any trouble walking?", "Do you feel tired or weak?", "How is your strength?",
             "Any cramps in your muscles?", "Are your muscles aching?", "Can you stand up?",
-            "Is the weakness all over or in one place?", "Any fatigue?"],
+            "Is the weakness all over or in one place?", "Any fatigue?",
+            "Any cramps in your legs?", "Any leg cramps?", "Are your legs the worst of it?"],
   echo="feeling weak",
-  extra=[{"when": FALLING, "value": "'It's much worse. My arms and legs feel heavy and it's an effort to lift them.'"}])
+  extra=[{"when": FALLING, "value": "'It's much worse. My arms and legs feel heavy and it's an effort to lift them. No cramps.'"}],
+  # As for the diarrhea: the short form keeps the denial.
+  facts=[
+    {"id": "how", "asks": ["how weak", "where is it weak", "is it all over", "can you walk"],
+     "restate": True,
+     "value": [{"when": FALLING, "value": "'My arms and legs feel heavy. No cramps.'"},
+               {"when": None, "value": "'Weak all over, like I have the flu. No cramps.'"}]},
+    fact("cramps", ["any cramps", "leg cramps", "muscle cramps", "cramping in your legs"],
+         "'No cramps.'")])
 
 topic("palpitations",
   "'It's beating fast, I can feel that. It isn't jumping about.'",
@@ -124,7 +170,7 @@ topic("dysuria_gu_symptoms",
 
 # --------------------------------------------------------------- the diabetes
 topic("past_medical_history",
-  "'I've got type 1 diabetes, since I was eleven. That's all. No other problems.'")
+  "'I have type 1 diabetes, since I was eleven. That's all. No other problems.'")
 
 topic("diabetes_history",
   "'Type 1, since I was eleven. I was in the hospital for a few days when it was found, they "
@@ -141,7 +187,16 @@ topic("diabetes_history",
 
 topic("current_medications",
   "'Lantus at night, eighteen units, and Humalog with meals, I work it out from what I'm "
-  "eating. Both in pens. And the pill. Nothing else, nothing new.'")
+  "eating. Both in pens. And the pill. Nothing else, nothing new.'",
+  facts=[
+    fact("basal", ["what dose of lantus", "how much lantus", "how many units",
+                   "long-acting dose", "what dose"],
+         "'Eighteen units of Lantus at night.'", restate=True),
+    fact("mealtime", ["how much humalog", "mealtime dose", "short-acting dose", "with meals"],
+         "'Humalog with meals. I work the dose out from what I'm eating.'"),
+    fact("other", ["anything else", "any other medicines", "the pill", "anything new",
+                   "over the counter"],
+         "'The pill. Nothing else, nothing new.'")])
 
 topic("insulin_taken_recently",
   "'Not properly. I wasn't eating, so I didn't take any Humalog. I halved my Lantus on "
@@ -154,12 +209,23 @@ topic("insulin_taken_recently",
             "Have you changed your insulin doses?", "Did you reduce your insulin?",
             "When was your last dose of insulin?", "Have you stopped your insulin?",
             "Any missed doses?", "Insulin adherence?", "Have you been compliant with insulin?",
-            "What did you do with your insulin when you were sick?", "Did you take your long-acting insulin?"],
-  echo="taking my insulin")
+            "What did you do with your insulin when you were sick?", "Did you take your long-acting insulin?",
+            "Have you been taking your meds?", "Have you missed any doses?",
+            "Have you been skipping doses?", "Are you taking your insulin as prescribed?"],
+  echo="taking my insulin",
+  facts=[
+    fact("basal", ["the lantus", "long-acting", "last night", "basal"],
+         "'I halved my Lantus on Sunday night, and last night I didn't take it at all.'",
+         restate=True),
+    fact("mealtime", ["the humalog", "mealtime insulin", "short-acting", "with meals"],
+         "'I didn't take any Humalog, because I wasn't eating.'"),
+    fact("why", ["why did you stop", "why did you cut it", "why not", "what made you stop"],
+         "'I wasn't eating and I was scared of going low. I thought that was the safe "
+         "thing to do.'")])
 
 topic("glucose_monitoring",
   "'I checked this morning and it said 380. It was 290 last night. I don't have any of "
-  "the ketone strips, they ran out ages ago.'",
+  "the ketone strips, they ran out a while ago.'",
   canonical="Have you been checking your sugars?",
   variants=["What have your sugars been?", "Have you checked your blood sugar?",
             "What was your last glucose reading?", "Have you tested for ketones?",
@@ -167,7 +233,14 @@ topic("glucose_monitoring",
             "Have your sugars been low?", "Do you have a glucose monitor?",
             "Any high readings at home?", "Did you check your ketones?", "What are your numbers?",
             "Do you wear a sensor?", "Any hypos?"],
-  echo="my sugar readings")
+  echo="my sugar readings",
+  facts=[
+    fact("this_morning", ["this morning", "latest reading", "last reading", "most recent"],
+         "'380 this morning.'", restate=True),
+    fact("last_night", ["last night", "yesterday", "before that"],
+         "'290 last night.'"),
+    fact("ketones", ["ketones", "ketone strips", "urine strips"],
+         "'I don't have any ketone strips. They ran out a while ago.'")])
 
 topic("past_surgical_history",
   "'I had my appendix out when I was fifteen. Nothing else.'")
@@ -189,7 +262,9 @@ topic("last_oral_intake",
 
 topic("social_history",
   "'I'm a grad student, I share an apartment. I don't smoke. A couple of glasses of wine on the "
-  "weekend, none this week. No drugs, no weed.'")
+  "weekend, none this week. No drugs, no weed.'",
+  more=["What do you do for a living?", "What are you studying?", "Are you a student?",
+        "What do you do for work?", "Do you work or study?"])
 
 topic("family_history",
   "'My mom has a thyroid problem. Nobody else has diabetes.'")
@@ -217,28 +292,46 @@ AUTHORING_NOTES = {
    "The handover does not mention diabetes. Past medical history, medications, the "
    "diabetes topic, the sugar readings and the thirst topic all lead to it."),
  "no_global_rule": "No phase is at alertness 2 or 3, so there is no alertness rule.",
+ "near_the_10_4_line": (
+   "Two answers sit close to the limits in authoring 10.4 and are flagged for the "
+   "reviewer. The diabetes topic says 'they said my blood had gone acidic' about her "
+   "admission at age eleven. That is her own past history in lay words, and she does not "
+   "connect it to today. The sugar topic quotes her home meter, 380 and 290. Those are "
+   "numbers she read herself, not results from this visit. A reviewer may prefer either "
+   "softened."),
+ "added_denials": (
+   "Model-written on 7 October 2026, awaiting sign-off: 'No cramps' in the weakness "
+   "answer and 'it isn't black' in the diarrhea answer. Both were added so that "
+   "questions the out-of-scope bank used to refuse now get an answer."),
+ "facts": (
+   "Six topics carry facts: onset, diarrhea, weakness, current_medications, "
+   "insulin_taken_recently and glucose_monitoring. Each fact restates part of its "
+   "topic's paragraph. On diarrhea and weakness the short form given on a repeat keeps "
+   "the denial (no blood, no cramps)."),
 }
 
-KEY_TOPICS = ["past_medical_history", "current_medications", "insulin_taken_recently",
-              "glucose_monitoring", "thirst_and_urination", "sick_contacts", "pregnancy",
-              "allergies"]
+# The same list as management_changing in DKA-matcher-eval-questions.json (authoring 10.6).
+KEY_TOPICS = ["past_medical_history", "diabetes_history", "current_medications",
+              "insulin_taken_recently", "glucose_monitoring", "thirst_and_urination",
+              "sick_contacts", "pregnancy", "allergies"]
 
+# One adjacency. A volunteer line must not repeat the answer it rides on, and a key topic
+# is never volunteered (authoring 10.7). The three removed on 7 October 2026: location
+# rode on the abdominal pain answer and repeated it, and thirst and the diabetes history
+# are key topics.
 ADJACENT = {
  "onset": ["diarrhea"],
- "abdominal_pain": ["location_of_pain"],
- "past_medical_history": ["diabetes_history"],
- "urine_output": ["thirst_and_urination"],
 }
 VOLUNTEER = {
- "diarrhea": "'And diarrhea since Sunday night, watery.'",
- "location_of_pain": "'It's all over my belly, mostly the middle.'",
- "diabetes_history": "'I was in the hospital once when it was found. Not since.'",
- "thirst_and_urination": "'And I've been so thirsty since yesterday.'",
+ "diarrhea": "'It's watery, six or seven times a day.'",
 }
 VOLUNTEER_SETTINGS = {
  "must_ask": ["allergies", "pregnancy", "insulin_taken_recently", "current_medications",
-              "social_history", "glucose_monitoring"],
- "volunteers_note": "Hand-written for this pack. Her insulin doses are never volunteered.",
+              "social_history", "glucose_monitoring", "past_medical_history",
+              "diabetes_history", "thirst_and_urination"],
+ "volunteers_note": (
+   "Hand-written for this pack. Her diabetes, her insulin doses, her sugar readings and "
+   "her thirst are never volunteered."),
 }
 for _t in TOPICS:
     if _t["topic"] in ADJACENT:
@@ -246,728 +339,33 @@ for _t in TOPICS:
     if _t["topic"] in VOLUNTEER:
         _t["volunteer"] = VOLUNTEER[_t["topic"]]
 
-# ---- EXPANDED VARIANTS (generated, do not edit by hand) ----
-# Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 202
-# 6. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphr
-# ase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.
-EXPANDED = {
-  'onset': [
-    'When did this begin?',
-    'How long ago did this come on?',
-    'Onset?',
-    'Time of onset?',
-    'When did it come on?',
-    'Sudden or gradual onset?',
-    'How long have you had this?',
-    'When did you start feeling like this?',
-    'What were you doing when it started?',
-    'Where were you when it began?',
-    'How many hours or days has this been going on?',
-    'Tell me how it began.',
-    'Take me back to when this started.',
-    'Walk me through the start of this.',
-    'When did things first go wrong?',
-    'Sorry to ask, but when did this begin?',
-    'One more thing. When did this begin?',
-    'Can I ask, what time did it start?',
-    'Sorry to ask, but what time did it start?',
-    'One more thing. How long ago did this come on?',
-  ],
-  'timing_progression': [
-    'Is it getting worse or better?',
-    'How has it changed since it began?',
-    'Constant or does it come and go?',
-    'Intermittent or continuous?',
-    'Progression?',
-    'Is it worse than it was earlier?',
-    'Any change over the last few hours?',
-    'Is it easing off at all?',
-    'Getting worse?',
-    'Has it settled at any point?',
-    'Compared with when it started, how is it now?',
-    'Is this the worst it has been?',
-    'Does it fluctuate?',
-    'Has it been steadily building?',
-    'Better, worse, or the same?',
-    'Has it let up at all?',
-    'And is it getting worse or better?',
-    'Can I ask, is it getting worse or better?',
-    'Right. How has it changed since it began?',
-    'Quick one: how has it changed since it began?',
-    'Before we go on, constant or does it come and go?',
-  ],
-  'character_of_symptoms': [
-    'Describe what you are feeling.',
-    'Tell me about the symptoms.',
-    'Character of the symptoms?',
-    'What is the main thing bothering you?',
-    'What sort of feeling is it?',
-    'Can you put it into words for me?',
-    'What does it feel like in your body?',
-    'Tell me more about how you feel.',
-    'Describe the discomfort.',
-    'One more thing. What does it feel like?',
-    'Quick one: how would you describe it?',
-    'Before we go on, how would you describe it?',
-    'Can I ask, character of the symptoms?',
-    'Sorry to ask, but character of the symptoms?',
-  ],
-  'nausea_vomiting': [
-    'Nausea or vomiting?',
-    'Have you thrown up?',
-    'Do you feel sick?',
-    'Any retching?',
-    'Feeling queasy?',
-    'Any nausea or vomiting?',
-    'Do you feel nauseous?',
-    'How many times have you vomited?',
-    'Any sickness?',
-    'Before we go on, nausea or vomiting?',
-    'Just so I know, have you been sick?',
-    'I need to know, have you been sick?',
-    'Okay, have you thrown up?',
-    'Just so I know, have you thrown up?',
-  ],
-  'diarrhea': [
-    'Diarrhea?',
-    'Have your bowels been loose?',
-    'Any change in your bowels?',
-    'Been to the toilet a lot?',
-    'Any runny stools?',
-    'Have you had the runs?',
-    'Bowels okay?',
-    'Any loose bowel movements?',
-    'I need to know, any loose stools?',
-    'Right. Any loose stools?',
-    'Okay, any loose motions?',
-    'Can I ask, have your bowels been loose?',
-    'Sorry to ask, but have your bowels been loose?',
-  ],
-  'abdominal_pain': [
-    'Any tummy pain?',
-    'Does your belly hurt?',
-    'Any stomach pain?',
-    'Abdo pain?',
-    'Is your stomach sore?',
-    'Any pain in the tummy?',
-    'Does it hurt in your stomach?',
-    'Any cramping in your belly?',
-    'Any abdominal tenderness?',
-    'Just so I know, any abdominal pain?',
-    'Okay, any tummy pain?',
-    'Just so I know, any tummy pain?',
-    'Before we go on, does your belly hurt?',
-    'And does your belly hurt?',
-  ],
-  'location_of_pain': [
-    'Location of the pain?',
-    'Where exactly is it?',
-    'Is it in one place or all over?',
-    'Where do you feel it most?',
-    'Which part of you hurts?',
-    'Can you localize the pain?',
-    'Where is it worst?',
-    'Is the pain in your muscles?',
-    'Are your legs the worst of it?',
-    'Where does it hurt right now?',
-    'Before we go on, where is the pain?',
-    'Just so I know, location of the pain?',
-    'I need to know, location of the pain?',
-    'Okay, where exactly is it?',
-    'Just so I know, where exactly is it?',
-  ],
-  'radiation_of_pain': [
-    'Does the pain move anywhere?',
-    'Does it spread?',
-    'Does it go anywhere else?',
-    'Radiation?',
-    'Does the pain travel?',
-    'Does it go through to your back?',
-    'Any radiation of the pain?',
-    'Does it stay put or move around?',
-    'Does the pain shoot anywhere?',
-    'Is it spreading from where it started?',
-    'Can I ask, does the pain move anywhere?',
-    'Just so I know, does it spread?',
-    'I need to know, does it spread?',
-    'Sorry to ask, but does it go anywhere else?',
-    'One more thing. Does it go anywhere else?',
-  ],
-  'severity': [
-    'Out of ten, how bad is it?',
-    'Severity?',
-    'Is it the worst you have ever had?',
-    'Ten being the worst pain imaginable, where are you?',
-    'Mild, moderate, or severe?',
-    'Can you score it for me?',
-    'Pain score?',
-    'How bad on a scale?',
-    'Is it bearable?',
-    'How intense is it?',
-    'Before we go on, out of ten, how bad is it?',
-    'Just so I know, how severe is it?',
-    'I need to know, how severe is it?',
-    'Can I ask, on a scale of one to ten?',
-    'Sorry to ask, but on a scale of one to ten?',
-  ],
-  'aggravating_relieving': [
-    'What makes it better or worse?',
-    'Anything make it better or worse?',
-    'Aggravating or relieving factors?',
-    'Does anything help or make it worse?',
-    'What eases it and what sets it off?',
-    'Have you found anything that helps?',
-    'Is there anything that makes it flare?',
-    'Does anything you do change it?',
-    'What have you tried for it?',
-    'Anything that brings it on?',
-    'Aggravating factors?',
-    'Is it worse with movement?',
-    'Worse with exertion?',
-    'Does walking make it worse?',
-    'Does lying down make it worse?',
-    'Does anything make it flare up?',
-    'Is it worse at any particular time?',
-    'Does breathing in make it worse?',
-    'Does it get worse when you do anything?',
-    'What makes it better?',
-    'Anything ease it?',
-    'Does resting help?',
-    'Does sitting up help?',
-    'Did anything you tried make a difference?',
-    'What helps?',
-    'Is there anything that eases it off?',
-    'Any position that helps?',
-    'Does oxygen help?',
-    'Did painkillers help?',
-    'Right. What makes it better or worse?',
-    'Sorry to ask, but anything make it better or worse?',
-    'One more thing. Anything make it better or worse?',
-    'Before we go on, aggravating or relieving factors?',
-    'And aggravating or relieving factors?',
-  ],
-  'urine_output': [
-    'Are you passing urine?',
-    'Urine output?',
-    'UOP?',
-    'How much urine?',
-    'Passing water okay?',
-    'Have you peed today?',
-    'Any drop in your urine?',
-    'Are you peeing less?',
-    'How often are you going to the toilet?',
-    'Have you been passing less water?',
-    'Any reduction in urine output?',
-    'Are you making urine?',
-    'Have you passed water since this started?',
-    'Just so I know, are you passing urine?',
-    'I need to know, are you passing urine?',
-    'Right. How much urine?',
-    'I need to know, passing water okay?',
-    'Right. Passing water okay?',
-  ],
-  'palpitations': [
-    'Palpitations?',
-    'Heart racing at all?',
-    'Does your heart feel like it is skipping?',
-    'Any fluttering in the chest?',
-    'Have you felt your heart beating fast?',
-    'Is your heart thumping?',
-    'Any irregular heartbeat?',
-    'Does your heart feel odd?',
-    'Have you noticed your pulse racing?',
-    'Any pounding in your chest?',
-    'Right. Any palpitations?',
-    'Can I ask, is your heart racing?',
-    'Sorry to ask, but is your heart racing?',
-    'Sorry to ask, but heart racing at all?',
-    'One more thing. Heart racing at all?',
-  ],
-  'breathing': [
-    'Short of breath?',
-    'SOB?',
-    'Any SOB?',
-    'Any difficulty breathing?',
-    'Are you struggling to breathe?',
-    'Do you feel you cannot get your breath?',
-    'Breathless at all?',
-    'Dyspnea?',
-    'Dyspnoea?',
-    'Any trouble with your breathing?',
-    'Are you getting enough air?',
-    'I need to know, are you breathless?',
-    'Right. Are you breathless?',
-    'Right. Short of breath?',
-    'Quick one: short of breath?',
-    'Just so I know, any shortness of breath?',
-  ],
-  'dizziness_syncope': [
-    'Any dizziness or fainting?',
-    'Have you felt faint or passed out?',
-    'Dizzy or lightheaded at all?',
-    'Syncope or presyncope?',
-    'Any blackouts or dizzy spells?',
-    'Have you lost consciousness or felt close to it?',
-    'Any funny turns or fainting?',
-    'Have you felt woozy or blacked out?',
-    'Any loss of consciousness or lightheadedness?',
-    'Do you feel like you might pass out?',
-    'Did you black out?',
-    'Syncope?',
-    'Any syncope?',
-    'Any collapse?',
-    'Did you pass out?',
-    'Did you go down at any point?',
-    'LOC?',
-    'Any loss of consciousness?',
-    'Did you faint or nearly faint?',
-    'Have you keeled over?',
-    'Lightheaded?',
-    'Presyncope?',
-    'Do you feel faint?',
-    'Have you felt woozy?',
-    'Any spinning sensation?',
-    'Is the room spinning?',
-    'Do you feel unsteady?',
-    'Any near-fainting?',
-    'Sorry to ask, but any dizziness or fainting?',
-    'One more thing. Any dizziness or fainting?',
-    'Quick one: have you felt faint or passed out?',
-    'Okay, dizzy or lightheaded at all?',
-    'Just so I know, dizzy or lightheaded at all?',
-  ],
-  'chest_pain': [
-    'Chest pain?',
-    'Any cp?',
-    'Pain in the chest?',
-    'Is your chest hurting?',
-    'Any tightness in your chest?',
-    'Does your chest hurt at all?',
-    'Chest tightness?',
-    'Any pain across the chest?',
-    'Has there been any chest discomfort?',
-    'Any chest pain with this?',
-    'Any heaviness on your chest?',
-    'Any pain when you breathe in?',
-    'c/o chest pain?',
-    'Just so I know, any chest pain?',
-    'I need to know, any chest pain?',
-    'I need to know, pain in the chest?',
-    'Before we go on, is your chest hurting?',
-    'And is your chest hurting?',
-  ],
-  'fever_and_chills': [
-    'Fever?',
-    'Fevers or chills?',
-    'Fevers, chills, rigors?',
-    'Any temperature?',
-    'Any rigors?',
-    'Do you feel hot and cold?',
-    'Have you felt feverish?',
-    'Have you had the shivers?',
-    'Temp at home?',
-    'Did you measure a temperature?',
-    'Can I ask, fevers or chills?',
-    'Sorry to ask, but fevers or chills?',
-    'I need to know, fevers, chills, rigors?',
-    'Right. Fevers, chills, rigors?',
-    'Okay, any temperature?',
-  ],
-  'cough_sore_throat': [
-    'Sore throat?',
-    'Any cough?',
-    'Any cold symptoms?',
-    'Runny nose or sore throat?',
-    'Any coryzal symptoms?',
-    'Any URTI symptoms?',
-    'Have you had a cough?',
-    'Any flu-like symptoms before this?',
-    'Any sniffles or cough?',
-    'Any cold before this started?',
-    'Right. Any cough or sore throat?',
-    'Okay, any cold symptoms?',
-    'Just so I know, any cold symptoms?',
-    'Just so I know, runny nose or sore throat?',
-    'I need to know, runny nose or sore throat?',
-  ],
-  'headache': [
-    'Headache?',
-    'Any pain in your head?',
-    'Worst headache ever?',
-    'Have you had a headache with this?',
-    'Is the headache new?',
-    'Can I ask, does your head hurt?',
-    'Sorry to ask, but does your head hurt?',
-    'Okay, any head pain?',
-    'Just so I know, any head pain?',
-    'Sorry to ask, but is your head sore?',
-  ],
-  'dysuria_gu_symptoms': [
-    'Any burning when you pee?',
-    'Dysuria?',
-    'Does it sting to pass urine?',
-    'Any discharge?',
-    'Any vaginal symptoms?',
-    'Any frequency or urgency?',
-    'Any GU symptoms?',
-    'Any pain when urinating?',
-    'Any trouble with your waterworks?',
-    'Burning on urination?',
-    'Before we go on, any burning when you pee?',
-    'Okay, any urinary symptoms?',
-    'Just so I know, any urinary symptoms?',
-    'Quick one: does it sting to pass urine?',
-    'Before we go on, does it sting to pass urine?',
-  ],
-  'past_medical_history': [
-    'Past medical history?',
-    'Any medical history?',
-    'Any medical problems?',
-    'What conditions do you have?',
-    'Do you have any health problems?',
-    'What is your medical history?',
-    'Any long-term conditions?',
-    'Do you have any illnesses?',
-    'Any chronic conditions?',
-    'What are you known to have?',
-    'Are you known to the hospital for anything?',
-    'Do you see a doctor for anything regularly?',
-    'Any history of diabetes, high blood pressure, anything like that?',
-    'Medical history?',
-    'Can I ask, past medical history?',
-    'Right. Any medical history?',
-    'Quick one: any medical history?',
-    'Can I ask, any medical problems?',
-    'Sorry to ask, but any medical problems?',
-  ],
-  'current_medications': [
-    'What meds are you on?',
-    'Medications?',
-    'Current medications?',
-    'What do you take?',
-    'Any regular medications?',
-    'What prescriptions do you have?',
-    'List your medications.',
-    'What pills do you take?',
-    'Any regular meds?',
-    'Do you take anything regularly?',
-    'What are you prescribed?',
-    'Any OTC medicines?',
-    'Anything from the chemist?',
-    'What is your medication list?',
-    'Do you take any tablets?',
-    'I need to know, what meds are you on?',
-    'Just so I know, current medications?',
-    'I need to know, current medications?',
-    'Before we go on, what do you take?',
-    'And what do you take?',
-  ],
-  'insulin_taken_recently': [
-    'Have you been taking your meds?',
-    'Compliance?',
-    'Adherence?',
-    'Are you taking them as prescribed?',
-    'Have you missed any doses?',
-    'Have you stopped any medication?',
-    'Are you up to date with your tablets?',
-    'Any missed medications?',
-    'Have you been off your tablets?',
-    'When did you last take your medication?',
-    'Have you been skipping doses?',
-    'Are you compliant with your medications?',
-    'Did you stop your water tablet?',
-    'Have you been taking everything you should?',
-    'Any problems getting your prescriptions?',
-    'Okay, have you been taking your meds?',
-    'Quick one: are you taking them as prescribed?',
-    'Before we go on, are you taking them as prescribed?',
-    'Sorry to ask, but have you missed any doses?',
-    'One more thing. Have you missed any doses?',
-  ],
-  'past_surgical_history': [
-    'Past surgical history?',
-    'Any operations?',
-    'Any surgery?',
-    'Ever had surgery?',
-    'Surgical history?',
-    'Have you been under the knife?',
-    'Any previous surgeries?',
-    'Ever been operated on?',
-    'Any history of surgery?',
-    'Have you had anything done surgically?',
-    'Just so I know, past surgical history?',
-    'Sorry to ask, but any operations?',
-    'One more thing. Any operations?',
-    'I need to know, ever had surgery?',
-    'Right. Ever had surgery?',
-  ],
-  'allergies': [
-    'Allergies?',
-    'Any allergies?',
-    'Allergic to any medications?',
-    'Any allergy to antibiotics?',
-    'Allergic to penicillin?',
-    'What are you allergic to?',
-    'Any medication allergies?',
-    'Drug allergies?',
-    'Any allergies to anything?',
-    'Sorry to ask, but any allergies?',
-    'Okay, any drug allergies?',
-    'Just so I know, any drug allergies?',
-    'Right. Are you allergic to anything?',
-    'Quick one: are you allergic to anything?',
-  ],
-  'pregnancy': [
-    'Pregnancy?',
-    'Is there any chance you are pregnant?',
-    'When was your last period, could you be pregnant?',
-    'Have you done a pregnancy test?',
-    'Any chance you might be pregnant?',
-    'One more thing. Could you be pregnant?',
-    'I need to know, any chance of pregnancy?',
-    'Right. Any chance of pregnancy?',
-    'Okay, are you pregnant?',
-    'Just so I know, are you pregnant?',
-  ],
-  'sick_contacts': [
-    'Anyone else unwell?',
-    'Is anyone around you sick?',
-    'Has anyone you live with been ill?',
-    'Anyone at home with the same thing?',
-    'Any contact with someone unwell?',
-    'Has anyone else got this?',
-    'Any friends or flatmates sick?',
-    'Anybody close to you unwell recently?',
-    'Has anyone you know had similar symptoms?',
-    'Have you been unwell recently?',
-    'Any recent infection?',
-    'Recent cold or flu?',
-    'Have you had a bug recently?',
-    'Any coughs or colds lately?',
-    'Any recent chest infection?',
-    'Any viral illness recently?',
-    'Been poorly in the last few weeks?',
-    'Any recent infections?',
-    'Just so I know, any sick contacts?',
-    'I need to know, any sick contacts?',
-    'One more thing. Anyone else unwell?',
-    'Sorry to ask, but is anyone around you sick?',
-    'One more thing. Is anyone around you sick?',
-  ],
-  'last_oral_intake': [
-    'Last oral intake?',
-    'Last PO intake?',
-    'last PO',
-    'When did you last drink?',
-    'NPO since when?',
-    'Last food or drink?',
-    'Anything to eat or drink today?',
-    'When did you last have something to drink?',
-    'Are you eating and drinking?',
-    'Have you kept any fluids down?',
-    'When did you last eat anything?',
-    'Have you managed any food?',
-    'And when did you last eat?',
-    'Can I ask, when did you last eat?',
-    'And last oral intake?',
-    'One more thing. Last PO intake?',
-    'Okay, last PO intake?',
-  ],
-  'social_history': [
-    'Social history?',
-    'SHx?',
-    'Do you smoke, drink, or use drugs?',
-    'Any drugs, alcohol, smoking?',
-    'Tell me about smoking, alcohol and drugs.',
-    'Do you drink or smoke?',
-    'Do you use any drugs?',
-    'Smoking, drinking, drugs?',
-    'Tobacco, alcohol, illicit drugs?',
-    'Any drug use at all?',
-    'Smoker?',
-    'Smoking history?',
-    'Tobacco?',
-    'tob?',
-    'Any smoking?',
-    'Ever smoked?',
-    'Pack years?',
-    'Are you a smoker?',
-    'Have you ever been a smoker?',
-    'Do you vape?',
-    'When did you quit?',
-    'Any tobacco use?',
-    'Do you drink?',
-    'How much alcohol?',
-    'etoh hx',
-    'Alcohol intake?',
-    'How much do you drink a week?',
-    'Do you drink alcohol?',
-    'Units per week?',
-    'Have you been drinking heavily?',
-    'Did you have a lot to drink recently?',
-    'Big weekend?',
-    'How many drinks a day?',
-    'Any drinking over the weekend?',
-    'Are you a drinker?',
-    'Alcohol use?',
-    'Drug use?',
-    'Any illicit drugs?',
-    'Do you use cocaine?',
-    'Any street drugs?',
-    'Any stimulants or cocaine?',
-    'Substance use?',
-    'Do you take anything recreational?',
-    'Any drugs at all?',
-    'Any amphetamines or cocaine?',
-    'Any illicit substance use?',
-    'Before we go on, social history?',
-    'And social history?',
-    'And do you smoke, drink, or use drugs?',
-    'Can I ask, do you smoke, drink, or use drugs?',
-    'Sorry to ask, but any drugs, alcohol, smoking?',
-  ],
-  'family_history': [
-    'Family history?',
-    'FHx?',
-    'fhx cardiac',
-    'Any family history?',
-    'Any heart problems in the family?',
-    'Anything run in the family?',
-    'Any relatives with heart problems?',
-    'Any sudden deaths in the family?',
-    'Did your parents have heart disease?',
-    'Any family history of illness?',
-    'Is there anything that runs in your family?',
-    'Family history of cardiac disease?',
-    'Quick one: family history?',
-    'Before we go on, family history?',
-    'Quick one: any family history?',
-    'And any heart problems in the family?',
-    'Can I ask, any heart problems in the family?',
-  ],
-  'functional_baseline': [
-    'What is your normal exercise tolerance?',
-    'Exercise tolerance?',
-    'ET?',
-    'Baseline function?',
-    'How far can you normally walk?',
-    'What can you usually do?',
-    'How active are you normally?',
-    'What were you like before this?',
-    'Functional baseline?',
-    'What is your baseline?',
-    'How far could you walk last week?',
-    'What is normal for you?',
-    'Do you manage your own shopping and housework?',
-    'How were you managing before this started?',
-    'Are you usually fit and well?',
-    'SOB on exertion normally?',
-    'Just so I know, what is your normal exercise tolerance?',
-    'I need to know, what is your normal exercise tolerance?',
-    'One more thing. Exercise tolerance?',
-    'Okay, exercise tolerance?',
-    'Quick one: baseline function?',
-  ],
-  'travel_history': [
-    'Been abroad recently?',
-    'Have you traveled?',
-    'Any foreign travel?',
-    'Travel history?',
-    'Any trips recently?',
-    'Any travel in the last few months?',
-    'Any overseas travel?',
-    'Been away anywhere?',
-    'Right. Any recent travel?',
-    'Quick one: any recent travel?',
-    'I need to know, been abroad recently?',
-    'Okay, have you traveled?',
-    'Just so I know, have you traveled?',
-  ],
+# ---------------------------------------------------------------- shared phrasings
+# Topic -> the shared concepts in catalog/interview_phrasings.py it draws phrasings from.
+# build_case.py expands the bank from this at build time (catalog/interview_expand.py), so
+# the expansion is never stored here. A topic absent from the map keeps only its own
+# hand-written variants. Every concept named here counts as covered by this case.
+TOPIC_MAP = {
+ "onset": ["onset"], "timing_progression": ["timing_progression"], "character_of_symptoms": ["character_general"],
+ "location_of_pain": ["location_pain"], "radiation_of_pain": ["radiation_pain"], "severity": ["severity"],
+ "aggravating_relieving": ["aggravating_relieving", "aggravating", "relieving"],
+ "nausea_vomiting": ["nausea_vomiting"], "diarrhea": ["diarrhea"], "abdominal_pain": ["abdominal_pain"],
+ "urine_output": ["urine_output"], "palpitations": ["palpitations"], "breathing": ["breathing_sob"],
+ "dizziness_syncope": ["syncope_dizziness", "syncope", "dizziness"], "chest_pain": ["chest_pain"],
+ "fever_and_chills": ["fever_chills"], "cough_sore_throat": ["cough_sore_throat"], "headache": ["headache"],
+ "dysuria_gu_symptoms": ["dysuria_gu"], "past_medical_history": ["pmh"], "past_surgical_history": ["psh"],
+ "current_medications": ["meds"], "allergies": ["allergies"],
+ "pregnancy": ["pregnancy"], "sick_contacts": ["sick_contacts"],
+ "last_oral_intake": ["last_oral_intake"],
+ "social_history": ["social_history", "smoking", "alcohol", "substance_use"],
+ "family_history": ["family_history"], "functional_baseline": ["functional_baseline"],
+ "travel_history": ["travel"],
+ "thirst_and_urination": ["thirst_polyuria"], "weakness": ["weakness"],
+ "diabetes_history": ["diabetes_history"], "glucose_monitoring": ["glucose_monitoring"],
 }
-OUT_OF_SCOPE_BANK = [
-  'Have you ever had a colonoscopy?',
-  'Any blood when you open your bowels?',
-  'Are you constipated?',
-  'Any heartburn?',
-  'Any indigestion after meals?',
-  'Have you had piles?',
-  'Any black stools?',
-  'Any yellowing of your skin or eyes?',
-  'Do you get up at night to pass water?',
-  'Any blood in your urine?',
-  'Any kidney stones in the past?',
-  'Any incontinence?',
-  'Any seizures or fits?',
-  'Any weakness in your arms or legs?',
-  'Any pins and needles?',
-  'Any problems with your speech?',
-  'Any tremor in your hands?',
-  'Any trouble with your memory?',
-  'Any double vision?',
-  'Have you ever had a stroke?',
-  'Any pain in your hands?',
-  'Any pain in your hips?',
-  'Any arthritis?',
-  'Have you broken any bones?',
-  'Any cramps in your legs?',
-  'Any problems with your hearing?',
-  'Any ringing or buzzing in your ears?',
-  'Any earache?',
-  'Do you wear glasses or contact lenses?',
-  'Any blurred vision?',
-  'Any nosebleeds?',
-  'Any rash on your skin?',
-  'Any itching?',
-  'Any moles that have changed?',
-  'Any hair loss?',
-  'Any toothache?',
-  'Any mouth ulcers?',
-  'Any lumps or bumps anywhere?',
-  'Have you lost weight without trying?',
-  'Any anxiety or panic attacks?',
-  'How are you sleeping generally?',
-  'Any trouble sleeping?',
-  'Have you had a flu vaccine this year?',
-  'When was your last tetanus?',
-  'Have you ever received blood?',
-  'Do you have a blood donor card?',
-  'Who is your GP?',
-  'Who is your family doctor?',
-  'Do you have health insurance?',
-  'Do you have a pharmacy you usually use?',
-  'Is there anyone we should call for you?',
-  'Who is your next of kin?',
-  'Do you have any religious needs we should know about?',
-  'Do you have any pets at home?',
-  'What did you do before you retired?',
-  'Did you come in by ambulance?',
-  'Is anyone here with you?',
-  'Is your family in the waiting room?',
-  'How did you get here today?',
-  'Do you have children?',
-  'How many kids do you have?',
-  'Do you follow any sports?',
-  'Do you watch much television?',
-  'Do you have a garden?',
-  'Are you comfortable on that trolley?',
-  'Would you like a blanket?',
-  'Is the bed at the right height?',
-  'Can I get you anything?',
-  'Can you confirm your name for me?',
-  'What is your address?',
-  'Do you know why you are here?',
-  'How old are you?',
-  'Is it okay if the students watch?',
-  'Have you been waiting long?',
-  'Is there anything you would like to ask me?',
-  'What year are you in at university?',
-  'What are you studying?',
-  'Do you get on with your flatmates?',
-  'Who is the prime minister?',
-  'What is the date today?',
-]
-for _t in TOPICS:
-    if EXPANDED.get(_t['topic']):
-        _t['expanded_variants'] = list(EXPANDED[_t['topic']])
-        _t['variants_provenance'] = "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
-# ---- END EXPANDED VARIANTS ----
+
+# Concepts and cover tags this case's answers cover without drawing phrasings from them
+# (a concept in catalog/interview_phrasings.py, or a tag in BANK_ONLY_TAGS in
+# catalog/interview_out_of_scope.py). Only used to keep those questions out of the
+# out-of-scope bank. List one only when an authored answer really covers the question.
+EXTRA_COVERED = ["character_general", "cough_sputum", "menstrual_tampon", "sexual_history", "occupation",
+    "leg_cramps", "gi_bleeding", "back_pain"]

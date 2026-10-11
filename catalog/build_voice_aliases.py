@@ -276,6 +276,9 @@ CANON = [
     [r"(peak flow meter|peak expiratory flow meter|peak expiratory flow|peak flow|p e f r|pefr|pef|spirometry)", "peakflow"],
     [r"(handheld doppler|doppler pulses|doppler pulse check|pulse doppler|dopplers|doppler)", "doppler"],
     [r"(c reactive|reactive protein)", "crp"],
+    # One token each, so the bare number is not dropped and the phrase left as "b" or "level".
+    # "b" alone took the first letter of "B H B" and ordered haloperidol and lorazepam.
+    [r"(b 52|b52)", "bfiftytwo"], [r"level 1", "levelone"],
 ]
 FILLERS = set("a an the of please thank thanks get give order start send check draw obtain some me let lets i want would like need we also do can could you put place go ahead and then plus with to on in by at into onto his her him them their they it its this that these those is are be will shall should just really now stat asap urgently urgent quickly quick immediately right away okay ok yes yeah so um uh er hmm well right left patient patients pt pts him her theirs my our your yours us we from off too very".split())
 # "left" and "right" are fillers: the catalog has no sided entries. "off" is a filler
@@ -636,7 +639,7 @@ alias("xr_chest", "chest xr", "xr chest", "cxr", "portable chest", "portable che
       "chest radiograph", "portable cxr", "stat cxr", "repeat cxr", "repeat chest xr", "post intubation cxr",
       "post intubation chest xr", "post procedure cxr", "one view chest", "two view chest", "chest two view",
       "chest one view", "ap chest", "upright chest", "chest film")
-alias("xr_pelvis", "pelvis xr", "xr pelvis", "pelvic xr", "pelvis", "ap pelvis", "pelvic film", "pelvis film",
+alias("xr_pelvis", "pelvis xr", "xr pelvis", "pelvic xr", "ap pelvis", "pelvic film", "pelvis film",
       "pelvic radiograph", "hip xr", "hips xr", "pelvis and hips")
 expand("chest and pelvis", "xr_chest", "xr_pelvis")
 expand("chest pelvis", "xr_chest", "xr_pelvis")
@@ -811,7 +814,11 @@ ambiguous("ventilate", "bag_valve_mask", "intubate_rapid_sequence")
 # reach the table as "liter saline", so the table lists each shape once.
 SAL, LRS = ["saline"], ["lr"]
 LITER = ["liter", "2 liters", "30 per kilo", "wide open", "liters", "another liter", "second liter", "liter bolus"]
-HALF = ["500", "250"]
+HALF = ["500"]
+# "250" used to sit in HALF, so "250 of saline" became the 500 mL bolus without a word. The
+# voice decision record says a thing the catalog lacks is refused, not swapped. A quarter
+# liter is refused with the reason, below.
+QUARTER_HINT = "The smallest bolus in the catalog is 500 mL."
 INF = ["drip", "maintenance", "kvo", "at 100", "at 125", "at 150", "at 75", "at 200", "at 250", "running", "run", "hang", "continuous"]
 def fluid(cid, names, amounts):
     for n in names:
@@ -836,6 +843,11 @@ for p in ["fluids", "iv fluids", "ivf", "fluid bolus", "bolus", "bolus of fluids
     ambiguous(p, "normal_saline_1l_bolus", "lactated_ringer_s_1l_bolus", "normal_saline_500ml_bolus", "lactated_ringer_s_500ml_bolus")
 for p in LITER: ambiguous(p, "normal_saline_1l_bolus", "lactated_ringer_s_1l_bolus")
 for p in HALF: ambiguous(p, "normal_saline_500ml_bolus", "lactated_ringer_s_500ml_bolus")
+for n in SAL + LRS + ["crystalloid", "fluid", "fluids"]:
+    for p in [f"250 cc {n}", f"{n} 250 cc", f"250 cc {n} bolus", f"{n} 250 cc bolus", f"250 cc bolus {n}", f"bolus 250 cc {n}"]:
+        unavailable(p, QUARTER_HINT)
+for p in ["250 cc bolus", "bolus 250 cc"]:
+    unavailable(p, QUARTER_HINT)
 for p in ["liter of fluid", "liter of fluids", "liter bolus of fluid", "another bolus", "repeat the bolus", "repeat bolus", "another fluid bolus",
           "repeat fluid bolus", "one more liter", "1 more liter"]:
     ambiguous(p, "normal_saline_1l_bolus", "lactated_ringer_s_1l_bolus")
@@ -1769,6 +1781,11 @@ alias("d50_bolus", "d50", "d 50", "amp of d50", "an amp of d50", "amps of d50", 
 for p in ["half an amp", "half amp"]:
     A["d50_bolus"].remove(p)
 alias("furosemide_40_mg_iv", "furosemide", "lasix", "iv furosemide", "iv lasix", "furosemide iv", "lasix iv", "furosemide bolus", "lasix bolus", "furosemide push", "lasix push", "push lasix", "push furosemide", "loop diuretic", "a loop diuretic", "loop diuretics", "diuretic", "a diuretic", "diuretics", "diurese", "diuresis", "diurese the patient", "diurese them", "diurese him", "diurese her", "start diuresis", "iv diuretic", "iv diuretics", "iv diuresis", "frusemide", "furosemide 40", "lasix 40", "40 of furosemide", "40 of lasix", "furosemide 40 milligrams", "lasix 40 milligrams", "furosemide 40 mg", "lasix 40 mg", "40 milligrams of furosemide", "40 milligrams of lasix", "40 mg of furosemide", "40 mg of lasix", "furosemide 80", "lasix 80", "80 of furosemide", "80 of lasix", "furosemide 80 milligrams", "lasix 80 milligrams", "furosemide 80 mg", "lasix 80 mg", "80 milligrams of furosemide", "80 milligrams of lasix", "80 mg of furosemide", "80 mg of lasix", "furosemide 20", "lasix 20", "20 of furosemide", "20 of lasix", "furosemide 20 milligrams", "lasix 20 milligrams", "furosemide 20 mg", "lasix 20 mg", "20 milligrams of furosemide", "20 milligrams of lasix", "20 mg of furosemide", "20 mg of lasix", "furosemide 100", "lasix 100", "100 of furosemide", "100 of lasix", "furosemide 100 milligrams", "lasix 100 milligrams", "furosemide 100 mg", "lasix 100 mg", "100 milligrams of furosemide", "100 milligrams of lasix", "100 mg of furosemide", "100 mg of lasix", "furosemide 120", "lasix 120", "120 of furosemide", "120 of lasix", "furosemide 160", "lasix 160", "160 of furosemide", "160 of lasix", "double the home dose of furosemide", "double the home dose of lasix", "double the home dose", "double the home lasix", "double the home furosemide", "double the home diuretic", "double the home diuretic dose", "twice the home dose", "twice the home dose of lasix", "twice the home dose of furosemide", "twice the home lasix", "twice the home furosemide", "twice the home diuretic", "twice the home diuretic dose", "one to two times the home dose", "1 to 2 times the home dose", "one to two times the home dose of lasix", "1 to 2 times the home dose of lasix", "one to two times the home dose of furosemide", "1 to 2 times the home dose of furosemide", "one to two times the home lasix", "1 to 2 times the home lasix", "one to two times the home furosemide", "1 to 2 times the home furosemide", "one to two times the home diuretic", "1 to 2 times the home diuretic", "one to two times the home diuretic dose", "1 to 2 times the home diuretic dose", "one to two and a half times the home dose", "1 to 2 5 times the home dose", "one to two and a half times the home dose of lasix", "1 to 2 5 times the home dose of lasix", "one to two and a half times the home dose of furosemide", "1 to 2 5 times the home dose of furosemide", "one to two and a half times the home lasix", "1 to 2 5 times the home lasix", "one to two and a half times the home furosemide", "1 to 2 5 times the home furosemide", "one to two and a half times the home diuretic", "1 to 2 5 times the home diuretic", "one to two and a half times the home diuretic dose", "1 to 2 5 times the home diuretic dose", "furosemide drip", "lasix drip", "furosemide infusion", "lasix infusion", "furosemide gtt", "lasix gtt", "furosemide for pulmonary edema", "lasix for pulmonary edema", "furosemide for the pulmonary edema", "lasix for the pulmonary edema", "furosemide for chf", "lasix for chf", "furosemide for the chf", "lasix for the chf", "furosemide for heart failure", "lasix for heart failure", "furosemide for the heart failure", "lasix for the heart failure", "furosemide for volume overload", "lasix for volume overload", "furosemide for the volume overload", "lasix for the volume overload", "furosemide for fluid overload", "lasix for fluid overload", "furosemide for the fluid overload", "lasix for the fluid overload", "furosemide for the edema", "lasix for the edema", "furosemide for edema", "lasix for edema", "furosemide for the swelling", "lasix for the swelling", "furosemide for swelling", "lasix for swelling", "furosemide for hyperkalemia", "lasix for hyperkalemia", "furosemide for the hyperkalemia", "lasix for the hyperkalemia", "furosemide for the potassium", "lasix for the potassium", "furosemide for hypercalcemia", "lasix for hypercalcemia", "furosemide for the hypercalcemia", "lasix for the hypercalcemia", "furosemide for the calcium", "lasix for the calcium", "another dose of furosemide", "another dose of lasix", "another furosemide", "another lasix", "repeat furosemide", "repeat lasix", "repeat the furosemide", "repeat the lasix", "second dose of furosemide", "second dose of lasix", "second furosemide", "second lasix", "more furosemide", "more lasix", "furosemide again", "lasix again", "furosemide one more time", "lasix one more time", "one more furosemide", "one more lasix", "give furosemide", "give lasix", "furosemide please", "lasix please", "furosemide stat", "lasix stat", "furosemide now", "lasix now", "some furosemide", "some lasix", "a dose of furosemide", "a dose of lasix", "dose of furosemide", "dose of lasix")
+# Three of the phrases above reduce to the single word "home" once numbers, units and fillers
+# are dropped, so "home insulin" and "discharge home" ordered furosemide. They are removed.
+# "double the home dose" keeps a second word and stays.
+for p in list(A["furosemide_40_mg_iv"]):
+    if normalise(p) == "home": A["furosemide_40_mg_iv"].remove(p)
 for p in ["bumetanide", "bumex", "torsemide", "demadex", "chlorothiazide", "diuril", "metolazone", "zaroxolyn", "hydrochlorothiazide", "hctz", "spironolactone", "aldactone", "acetazolamide", "diamox", "mannitol for diuresis"]:
     unavailable(p, "Not in the catalog. The diuretic available is furosemide.")
 alias("hypertonic_saline_25_bolus", "hypertonic saline bolus", "hypertonic bolus", "23 4", "23 4 percent", "23 4 percent saline", "23 4 saline", "twenty three percent saline", "twenty three point four", "twenty three point four percent", "twenty three point four percent saline", "23 percent saline", "23 percent", "twenty three percent", "hypertonic saline 23 4", "hypertonic saline 23 4 percent", "hypertonic 23 4", "hypertonic 23 4 percent", "23 4 percent hypertonic saline", "23 4 hypertonic saline", "23 4 percent hypertonic", "23 4 hypertonic", "30 cc of 23 4", "30 ml of 23 4", "30 of 23 4", "30 cc of 23 4 percent", "30 ml of 23 4 percent", "30 of 23 4 percent", "30 cc of 23 4 percent saline", "30 ml of 23 4 percent saline", "30 of 23 4 percent saline", "30 cc of hypertonic saline", "30 ml of hypertonic saline", "30 of hypertonic saline", "30 cc of hypertonic", "30 ml of hypertonic", "30 of hypertonic", "30 cc hypertonic saline", "30 ml hypertonic saline", "30 hypertonic saline", "30 cc hypertonic", "30 ml hypertonic", "30 hypertonic", "hypertonic saline 30 cc", "hypertonic saline 30 ml", "hypertonic saline 30", "hypertonic 30 cc", "hypertonic 30 ml", "hypertonic 30", "concentrated saline", "concentrated hypertonic saline", "concentrated hypertonic", "high concentration saline", "high concentration hypertonic saline", "high concentration hypertonic", "25 percent saline", "25 percent hypertonic saline", "25 percent hypertonic", "hypertonic saline 25 percent", "hypertonic 25 percent", "hypertonic saline 25", "hypertonic 25", "25 saline", "25 hypertonic saline", "25 hypertonic", "hypertonic saline push", "hypertonic push", "push hypertonic saline", "push hypertonic", "push 23 4", "push 23 4 percent", "push 23 4 percent saline", "push 23 4 saline", "push twenty three percent", "push twenty three point four", "push twenty three point four percent", "hypertonic saline for herniation", "hypertonic for herniation", "hypertonic saline for the herniation", "hypertonic for the herniation", "hypertonic saline for impending herniation", "hypertonic for impending herniation", "hypertonic saline for the impending herniation", "hypertonic for the impending herniation", "hypertonic saline for the blown pupil", "hypertonic for the blown pupil", "hypertonic saline for blown pupil", "hypertonic for blown pupil", "hypertonic saline for the icp", "hypertonic for the icp", "hypertonic saline for icp", "hypertonic for icp", "hypertonic saline for elevated icp", "hypertonic for elevated icp", "hypertonic saline for the elevated icp", "hypertonic for the elevated icp", "hypertonic saline for raised icp", "hypertonic for raised icp", "hypertonic saline for the raised icp", "hypertonic for the raised icp", "hypertonic saline for increased icp", "hypertonic for increased icp", "hypertonic saline for the increased icp", "hypertonic for the increased icp", "hypertonic saline for intracranial pressure", "hypertonic for intracranial pressure", "hypertonic saline for the intracranial pressure", "hypertonic for the intracranial pressure", "hypertonic saline for elevated intracranial pressure", "hypertonic for elevated intracranial pressure", "hypertonic saline for the elevated intracranial pressure", "hypertonic for the elevated intracranial pressure", "hypertonic saline for raised intracranial pressure", "hypertonic for raised intracranial pressure", "hypertonic saline for the raised intracranial pressure", "hypertonic for the raised intracranial pressure", "hypertonic saline for increased intracranial pressure", "hypertonic for increased intracranial pressure", "hypertonic saline for the increased intracranial pressure", "hypertonic for the increased intracranial pressure", "hypertonic saline for cerebral edema", "hypertonic for cerebral edema", "hypertonic saline for the cerebral edema", "hypertonic for the cerebral edema", "hypertonic saline for brain swelling", "hypertonic for brain swelling", "hypertonic saline for the brain swelling", "hypertonic for the brain swelling", "hypertonic saline for the brain", "hypertonic for the brain", "hypertonic saline for the head", "hypertonic for the head", "hypertonic saline for the head bleed", "hypertonic for the head bleed", "hypertonic saline for head bleed", "hypertonic for head bleed", "hypertonic saline for the bleed", "hypertonic for the bleed", "hypertonic saline for the hemorrhage", "hypertonic for the hemorrhage", "hypertonic saline for the ich", "hypertonic for the ich", "hypertonic saline for ich", "hypertonic for ich", "hypertonic saline for the sah", "hypertonic for the sah", "hypertonic saline for sah", "hypertonic for sah", "hypertonic saline for the sdh", "hypertonic for the sdh", "hypertonic saline for sdh", "hypertonic for sdh", "hypertonic saline for the edh", "hypertonic for the edh", "hypertonic saline for edh", "hypertonic for edh", "hypertonic saline for the tbi", "hypertonic for the tbi", "hypertonic saline for tbi", "hypertonic for tbi", "hypertonic saline for the head injury", "hypertonic for the head injury", "hypertonic saline for head injury", "hypertonic for head injury", "hypertonic saline for the mass", "hypertonic for the mass", "hypertonic saline for the tumor", "hypertonic for the tumor", "hypertonic saline for the midline shift", "hypertonic for the midline shift", "hypertonic saline for midline shift", "hypertonic for midline shift", "hypertonic saline for the shift", "hypertonic for the shift", "hypertonic saline for the stroke", "hypertonic for the stroke", "hypertonic saline for stroke", "hypertonic for stroke", "hypertonic saline for the malignant stroke", "hypertonic for the malignant stroke", "hypertonic saline for malignant stroke", "hypertonic for malignant stroke", "hypertonic saline for the malignant mca", "hypertonic for the malignant mca", "hypertonic saline for malignant mca", "hypertonic for malignant mca", "hypertonic saline for the hydrocephalus", "hypertonic for the hydrocephalus", "hypertonic saline for hydrocephalus", "hypertonic for hydrocephalus", "osmotic therapy bolus", "osmotherapy bolus", "hyperosmolar therapy bolus", "hyperosmolar bolus", "osmotic bolus")
@@ -1786,10 +1803,19 @@ alias("insulin_drip", "insulin drip", "insulin infusion", "insulin gtt", "iv ins
 for p in ["high dose insulin drip", "high dose insulin infusion", "high dose insulin", "hdi", "high dose insulin euglycemia", "high dose insulin euglycemic therapy", "hie", "hiet"]:
     if p in A["insulin_drip"]: A["insulin_drip"].remove(p)
     UNAVAIL.pop(p, None); alias("insulin_drip", p)
-for p in ["insulin", "regular insulin", "iv insulin", "humulin", "novolin", "humulin r", "novolin r", "some insulin", "give insulin", "insulin please", "insulin stat", "insulin now", "regular", "insulin regular"]:
+# Bare "insulin" has three meanings since the subcutaneous entry was added. "regular insulin"
+# and the brand names reduce to the same word, so they are in this list too. Only a phrase
+# that says "iv" or "regular" on its own stays a choice of the two intravenous forms.
+for p in ["insulin", "regular insulin", "humulin", "novolin", "humulin r", "novolin r", "some insulin", "give insulin", "insulin please", "insulin stat", "insulin now", "insulin regular"]:
+    ambiguous(p, "insulin_bolus", "insulin_drip", "insulin_subcutaneous")
+for p in ["iv insulin", "regular"]:
     ambiguous(p, "insulin_bolus", "insulin_drip")
+# The patient's own insulin is one of the two subcutaneous entries. Which one is the question.
+for p in ["home insulin", "home dose of insulin", "usual insulin", "usual dose of insulin", "own insulin", "home insulin regimen"]:
+    ambiguous(p, "insulin_subcutaneous", "insulin_glargine_subcutaneous")
 # v0.23. Subcutaneous rapid-acting insulin is now a catalog entry.
 alias("insulin_subcutaneous", "subq insulin", "subcutaneous insulin", "insulin subq", "insulin subcutaneous", "rapid acting insulin", "lispro", "humalog", "aspart", "novolog", "glulisine", "apidra", "subq lispro", "subq aspart", "subcutaneous lispro", "subcutaneous aspart", "subq rapid acting insulin", "subcutaneous rapid acting insulin")
+alias("insulin_subcutaneous", "subcut insulin", "insulin subcut", "short acting insulin", "fast acting insulin", "mealtime insulin", "insulin lispro", "insulin aspart")
 # v0.23a. Insulin glargine is now a catalog entry.
 alias("insulin_glargine_subcutaneous", "glargine", "insulin glargine", "lantus", "basaglar", "semglee", "toujeo", "basal insulin", "long acting insulin", "her lantus", "her glargine", "her basal insulin", "her long acting insulin", "home lantus", "home glargine", "home basal insulin", "subq glargine", "subcutaneous glargine", "glargine subq", "lantus subq")
 for p in ["levemir", "detemir", "nph", "degludec", "tresiba", "sliding scale", "sliding scale insulin", "insulin pen", "metformin", "glucophage", "glipizide", "glyburide", "sulfonylurea", "empagliflozin", "jardiance", "dapagliflozin", "farxiga", "sglt2", "sglt2 inhibitor", "liraglutide", "victoza", "semaglutide", "ozempic", "wegovy", "glp1", "glp 1", "sitagliptin", "januvia", "pioglitazone", "actos"]:
@@ -1811,6 +1837,15 @@ for p in ["po potassium", "po kcl", "po k", "oral potassium", "oral kcl", "oral 
     A["potassium_chloride_kcl"].remove(p)
 alias("potassium_chloride_oral", "po potassium", "po kcl", "po k", "oral potassium", "oral kcl", "oral k", "oral potassium chloride", "potassium chloride oral", "potassium tablets", "potassium tablet", "potassium by mouth", "kcl by mouth", "k dur", "klor con", "potassium elixir", "liquid potassium")
 alias("beta_hydroxybutyrate", "beta hydroxybutyrate", "bhb", "beta hydroxybutyrate level", "serum ketones", "blood ketones", "ketones", "ketone level", "serum ketone level", "blood ketone level", "beta hydroxy")
+# The abbreviation spelled out letter by letter, which is how a recognizer often writes it.
+alias("beta_hydroxybutyrate", "b h b", "b o h b", "b ohb", "bohb", "beta hydroxy butyrate", "betahydroxybutyrate", "ketone", "blood ketone", "capillary ketones")
+# Ketones in the urine are part of the urinalysis. Without these rows "urine ketones" ordered
+# the urinalysis and the blood test together.
+alias("urinalysis", "urine ketones", "ketones in the urine", "urinary ketones", "urine ketone")
+# The route said after the drug. Without these rows "KCl IV" ordered potassium and an IV line.
+alias("potassium_chloride_kcl", "kcl iv", "potassium chloride iv", "intravenous potassium", "intravenous kcl", "potassium chloride intravenous")
+alias("potassium_chloride_oral", "kdur", "klorcon")
+alias("basic_chemistry_chem_7", "k level", "serum potassium", "serum k")
 for p in ["potassium", "k", "some potassium", "some k", "potassium please", "k please", "potassium stat", "k stat", "potassium now", "k now"]:
     if p in A["potassium_chloride_kcl"]: A["potassium_chloride_kcl"].remove(p)
     ambiguous(p, "potassium_chloride_kcl", "basic_chemistry_chem_7")
@@ -1890,6 +1925,7 @@ ambiguous("stomach tube", "place_nasogastric_tube", "place_orogastric_tube")
 ambiguous("tube to suction", "place_nasogastric_tube", "place_orogastric_tube")
 ambiguous("tube for decompression", "place_nasogastric_tube", "place_orogastric_tube")
 alias("remove_vaginal_foreign_body", "remove vaginal foreign body", "vaginal foreign body removal", "remove the foreign body from the vagina", "remove the tampon", "take the tampon out", "take out the tampon", "remove tampon", "tampon removal", "remove retained tampon", "retained tampon removal", "pull the tampon", "get the tampon out", "remove the retained tampon", "speculum and remove the tampon", "remove foreign body with a speculum")
+alias("remove_vaginal_foreign_body", "remove the foreign body", "foreign body removal", "removal of vaginal foreign body", "pull out the tampon", "extract the tampon")
 alias("place_patient_on_isolation_precautions", "isolation", "isolate the patient", "isolate them", "isolate him", "isolate her", "isolation precautions", "isolation room", "put the patient in isolation", "put them in isolation", "put him in isolation", "put her in isolation", "private room", "single room", "move to a private room", "move to a single room", "isolate", "isolation precaution", "on isolation", "in isolation", "isolated", "isolation for the patient", "isolation for them", "isolation for him", "isolation for her", "put on isolation", "put the patient on isolation", "put them on isolation", "put him on isolation", "put her on isolation", "place on isolation", "place the patient on isolation", "place them on isolation", "place him on isolation", "place her on isolation", "place in isolation", "place the patient in isolation", "place them in isolation", "place him in isolation", "place her in isolation", "move to isolation", "move the patient to isolation", "move them to isolation", "move him to isolation", "move her to isolation", "move to an isolation room", "move the patient to an isolation room", "move them to an isolation room", "move him to an isolation room", "move her to an isolation room", "isolation room please", "isolation room stat", "isolation room now", "get an isolation room", "get the isolation room", "find an isolation room", "find the isolation room", "need an isolation room", "need the isolation room", "we need an isolation room", "we need the isolation room", "isolation please", "isolation stat", "isolation now", "standard precautions", "universal precautions", "standard precaution", "universal precaution", "infection control", "infection control precautions", "infection prevention", "infection prevention precautions", "call infection control", "notify infection control", "page infection control", "infection control to bedside", "infection control at bedside", "infection control consult", "consult infection control", "infection control consultation", "infection prevention consult", "consult infection prevention", "infection prevention consultation", "call infection prevention", "notify infection prevention", "page infection prevention", "infection prevention to bedside", "infection prevention at bedside", "epidemiology", "hospital epidemiology", "call epidemiology", "notify epidemiology", "page epidemiology", "call hospital epidemiology", "notify hospital epidemiology", "page hospital epidemiology", "public health", "call public health", "notify public health", "page public health", "department of health", "call the department of health", "notify the department of health", "page the department of health", "health department", "call the health department", "notify the health department", "page the health department", "cdc", "call the cdc", "notify the cdc", "page the cdc", "reportable", "reportable disease", "reportable condition", "report to public health", "report to the health department", "report to the department of health", "report to the cdc", "report to epidemiology", "report to infection control", "report to infection prevention")
 # v0.17n. Every one of these phrasings was an alias of the isolation entry and comes off it
 # here, as before. What changed is where they go: public health, the health department, the
@@ -2007,6 +2043,12 @@ examact("exam_pulm", "pulmonary", "lung fields", "breath sounds", "air entry", "
 # pulmonary exam from the cardiovascular one by the word said. Both are offered, below.
 examact("exam_abd", "abdomen", "abdominal", "belly", "tummy", "abdo")
 examact("exam_gu", "genitourinary", "gu", "genitals", "perineum")
+# The pelvic examination is the genitourinary exam. "pelvic" and "pelvis" are one token to
+# the parser, and the bare word used to be the pelvis film, so "pelvic exam" ordered an
+# X-ray. The bare word is now a choice between the film and the exam.
+alias("exam_gu", "pelvic exam", "pelvic examination", "speculum exam", "speculum examination", "vaginal exam",
+      "vaginal examination", "bimanual exam", "examine the pelvis", "gyn exam", "internal exam")
+ambiguous("pelvis", "xr_pelvis", "exam_gu")
 # "back" alone is already "lay the patient back", and "respiratory" is already part of
 # preparing for intubation. Both are left to the entries that had them.
 examact("exam_back", "flank", "spine", "back and flank", "costovertebral angle", "cva tenderness")
@@ -2115,6 +2157,16 @@ if clash:
 for cid in aliases:
     aliases[cid] = [p for p in aliases[cid] if owner.get(p) == "alias:" + cid]
 
+# A phrase that reduces to one ordinary word takes that word from every sentence it appears
+# in. "home" was furosemide, "b" was haloperidol and lorazepam, "level" was a refusal about
+# blood products. The words below are never a whole phrase. Add to the list when another
+# one is found.
+BARE_WORDS = {"home", "level", "b", "h", "usual", "own", "dose", "meds", "exam", "oral", "im", "serum", "repeat"}
+bare = sorted(p for p in owner if p in BARE_WORDS) + sorted(p for p in unavail if p in BARE_WORDS)
+if bare:
+    print("phrase reduces to one ordinary word: " + ", ".join(bare))
+    raise SystemExit(1)
+
 # Hints repeat across dozens of phrases, so they are stored once and referenced by index.
 hints = []
 hint_ix = {}
@@ -2133,7 +2185,10 @@ out = {
     "unavailable": unavail,
     "hints": hints,
 }
-json.dump(out, open(OUT, "w"), indent=1, ensure_ascii=False)
+# Written beside the file and moved over it, so a crash never leaves half a table.
+with open(OUT + ".tmp", "w") as _f:
+    json.dump(out, _f, indent=1, ensure_ascii=False)
+os.replace(OUT + ".tmp", OUT)
 n = sum(len(v) for v in aliases.values())
 print(f"wrote {os.path.relpath(OUT)}: {len(aliases)} entries with {n} aliases, "
       f"{len(expansions)} expansions, {len(ambig)} ambiguous, {len(unavail)} unavailable")

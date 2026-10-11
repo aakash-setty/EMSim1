@@ -4,6 +4,10 @@ sources (design 10.7).
 
     python3 catalog/author_interview_facts.py [AFRVR|CHFE|MGCA ...]
 
+Packs written after v0.20 (TSS, TAKO, DKA) author echo, facts, adjacent, volunteer and
+must_ask directly in their own case_4_interview.py. This script holds the older packs
+only. Do not run it on a pack it does not list.
+
 `echo` is a short noun phrase in the patient's voice, used two ways: as a prefix when
 the matcher's confidence was marginal ("My tablets? Three things...") so a wrong match
 is visible in the transcript at once, and inside a clarifying question ("Sorry, do you
@@ -17,8 +21,9 @@ Facts are authored here for the topics where sub-questions matter most; the rest
 paragraph answers and gain repeat handling and echoes from the engine alone.
 
 Idempotent: re-running replaces what it wrote. For AFRVR the content lands in a
-generated block in case_4_interview.py; for the other packs it is written into the
-case JSON.
+generated block in case_4_interview.py, which build_case.py reads. CHFE and MGCA have no
+build script, so for those two it is written into the case JSON. DIPH is built by a
+script and authors its own echo and facts in its case_4_interview.py.
 
 PROVENANCE: written by an AI assistant in September 2026 from the existing answers.
 Not physician-reviewed. Where a fact's value is not a verbatim sub-string of the
@@ -30,7 +35,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 
 GASP = "phase is respiratory_failure"                                      # AFRVR
-PRES = "phase is presentation"                                             # CHFE
+# CHFE. The short form holds for all three breathless phases, as it does in the case file.
+# This said "phase is presentation" alone, and a run would have cut 19 fact guards back to it.
+PRES = "phase is presentation OR phase is niv_supported OR phase is nitrate_responding"
 SICK = "phase is adrenal_crisis OR phase is progressive_meningococcemia"  # MGCA
 
 def F(id, asks, short_when, short, full, restate=False):
@@ -301,7 +308,22 @@ def write_afrvr():
     print(f"AFRVR: {len(ECHO['AFRVR'])} echoes, {len(FACTS['AFRVR'])} topics with facts, {n} facts")
 
 if __name__ == "__main__":
-    args = sys.argv[1:] or ["AFRVR", "CHFE", "MGCA"]
+    # Frozen since 7 October 2026 (docs/restructure-plan.md). The packs this script holds
+    # were edited by hand after it last ran: on CHFE a re-run reverts 19 fact guards to
+    # "phase is presentation" with no error. It writes nothing without --force, and no
+    # longer runs on every pack by default.
+    force = "--force" in sys.argv
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if not args:
+        sys.exit("name the pack(s). This script holds " + ", ".join(sorted(ECHO)) + ".")
+    if not force:
+        sys.exit("refusing to write " + ", ".join(args) + ": the facts these packs carry were edited "
+                 "by hand after this script last ran, and a run overwrites them (docs/restructure-plan.md). "
+                 "Use --force only if you have diffed the result and will commit it.")
+    unknown = [a for a in args if a not in ECHO]
+    if unknown:
+        sys.exit("this script holds " + ", ".join(sorted(ECHO)) + " only. Not: " + ", ".join(unknown)
+                 + ". Newer packs author echo and facts in their own case_4_interview.py.")
     for prefix in args:
         if prefix == "AFRVR": write_afrvr()
         else: write_json_pack(prefix)

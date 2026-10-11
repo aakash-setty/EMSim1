@@ -406,6 +406,48 @@ CATALOG = {
 ],
 }
 
+# ---- Added 6 October 2026 after the catalog audit of the toxic shock, takotsubo and
+# ketoacidosis cases. Kept apart from the list above so a reviewer can read them in one
+# place. Each fills a search that returned nothing: a learner who typed "lvot", "retained
+# tampon", "euglycemic" or "long qt" could not find an answer the case itself describes.
+# Which entries a list holds is a clinical judgment. A model proposed these and no
+# physician has read them yet.
+ADDED_ENTRIES = {
+"cardiovascular": [
+    ("Left ventricular outflow tract obstruction", ["LVOT obstruction", "LVOTO",
+                                                    "dynamic outflow obstruction",
+                                                    "systolic anterior motion"]),
+    ("Acquired long QT", ["prolonged QT", "long QT", "QT prolongation"]),
+],
+"endocrine_metabolic": [
+    ("Euglycemic diabetic ketoacidosis", ["euglycemic DKA"]),
+    ("Starvation ketosis", ["fasting ketosis"]),
+    ("Hyperglycemia", ["high blood sugar"]),
+    ("Type 1 diabetes mellitus", ["type 1 diabetes", "T1DM"]),
+],
+"hematology_oncology": [
+    ("Thrombocytopenia", ["low platelets"]),
+],
+"obstetric_gynecologic": [
+    ("Retained vaginal foreign body", ["retained tampon", "vaginal foreign body"]),
+],
+}
+# Search words added to entries that were already in the list, keyed by display name.
+ADDED_SYNONYMS = {
+    "Takotsubo cardiomyopathy": ["stress-induced cardiomyopathy", "takotsubo syndrome",
+                                 "apical ballooning", "broken heart syndrome"],
+    "Hypertrophic cardiomyopathy": ["HOCM", "hypertrophic obstructive cardiomyopathy"],
+    "Infectious gastroenteritis": ["food poisoning", "bacterial gastroenteritis"],
+    "Viral gastroenteritis": ["stomach flu", "norovirus"],
+    "Acute kidney injury": ["acute renal failure"],
+    "Toxic shock syndrome": ["staphylococcal toxic shock", "menstrual toxic shock",
+                             "streptococcal toxic shock"],
+    "Hypokalemia": ["low potassium"],
+    "Hypomagnesemia": ["low magnesium"],
+}
+for _cat, _items in ADDED_ENTRIES.items():
+    CATALOG[_cat].extend(_items)
+
 entries, seen = [], {}
 for category, items in CATALOG.items():
     for it in items:
@@ -415,20 +457,35 @@ for category, items in CATALOG.items():
             raise SystemExit(f"duplicate id {i} ({name} vs {seen[i]})")
         seen[i] = name
         entries.append({"id": i, "display_name": name,
-                        "category": category, "synonyms": syn})
+                        "category": category, "synonyms": list(syn)})
 
 AUTHOR_SUPPLIED = {"dx_diphenhydramine_overdose",
                    "dx_sodium_channel_blocker_cardiotoxicity",
                    "dx_drug_induced_seizure"}
+# The 6 October 2026 additions carry the same marker with their date, so the two batches
+# can be told apart.
+ADDED_IDS = {sid(n) for _items in ADDED_ENTRIES.values() for n, _ in _items}
+_by_name = {e["display_name"]: e for e in entries}
 for _e in entries:
     if _e["id"] in AUTHOR_SUPPLIED:
         _e["source"] = "author-supplied, added for a case rather than drafted with the list"
+    if _e["id"] in ADDED_IDS:
+        _e["source"] = ("author-supplied, added for a case rather than drafted with the list "
+                        "(6 October 2026 audit, proposed by a model, not yet read by a physician)")
+for _name, _syns in ADDED_SYNONYMS.items():
+    if _name not in _by_name:
+        raise SystemExit(f"synonyms added for an entry that does not exist: {_name}")
+    _e = _by_name[_name]
+    _new = [s for s in _syns if s not in _e["synonyms"]]
+    _e["synonyms"].extend(_new)
+    _e["synonyms_source"] = ("author-supplied synonyms added 6 October 2026 (proposed by a model, "
+                             "not yet read by a physician): " + ", ".join(_new))
 
 OUT = {
   "catalog_version": "0.1-draft",
   "status": "DRAFT, NOT CLINICALLY REVIEWED",
-  "aligned_to": ["system-design-v2.md v0.3 sections 3 and 9",
-                 "case-authoring-requirements.md v0.2 section 12"],
+  "aligned_to": ["system-design-v2.md sections 3 and 9",
+                 "case-authoring-requirements.md section 12"],
   "scope": "US emergency department practice; diagnoses a resident could "
            "plausibly commit to at handoff, plus the near-misses that make "
            "search a real cognitive task.",
@@ -467,6 +524,13 @@ OUT = {
       "treatment, so a case teaching that the syndrome is not the whole story "
       "could not express its own correct answer. Check the other toxidromes for "
       "the same shape before the next tox case.",
+      "Eight entries and a set of synonyms were added on 6 October 2026 after an "
+      "audit of the toxic shock, takotsubo and ketoacidosis cases: left "
+      "ventricular outflow tract obstruction, acquired long QT, euglycemic "
+      "diabetic ketoacidosis, starvation ketosis, hyperglycemia, type 1 diabetes "
+      "mellitus, thrombocytopenia and retained vaginal foreign body. Each new "
+      "entry carries a source field and each widened entry carries "
+      "synonyms_source. A model proposed them. A physician should read them.",
   ],
   "counts": {k: len(v) for k, v in CATALOG.items()},
   "total": len(entries),

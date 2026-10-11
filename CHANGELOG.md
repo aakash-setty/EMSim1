@@ -5,6 +5,186 @@ is usable with learners.
 
 ---
 
+## Fix: the enhanced question matcher never loaded on the deployed site
+
+**Every page served with the `vercel.json` headers fell back to wording-only matching,
+most likely since those headers arrived in v0.18.** The changelog does not record when
+the library moved to 4.x, so the start date is not certain. Transformers 4.x, by default wherever the Cache API exists, fetches the
+onnxruntime factory (`ort-wasm-simd-threaded.asyncify.mjs`) from jsDelivr, wraps it in a
+`blob:` URL and imports that. The Content-Security-Policy in `vercel.json` allows scripts
+from `'self'` and `cdn.jsdelivr.net`, not `blob:`, so the import was refused after the
+model had already downloaded. `SEM` went to `unavailable` with "no available backend
+found", and the History tab showed "Question matching: basic". A page opened without the
+headers (a local file, a dev server) loaded normally, which is why it was not seen.
+
+`semantic.js` now sets `env.useWasmCache = false`, so the factory is imported by its
+jsDelivr URL, which the policy allows. The policy is unchanged apart from the regenerated
+script hash. Checked in headless Chromium with the `vercel.json` headers applied and the
+library, runtime and model files served locally: `unavailable` before, `ready` after.
+The model used in that check was a stand-in built from the MiniLM word embeddings, because
+neither machine could reach huggingface.co or jsDelivr, so it proves the loading path and
+not match quality. Not yet checked in Safari or Firefox, or on the live site.
+
+---
+
+## v0.25: the restructure, steps 0 to 5 (in progress)
+
+The repository is being rebuilt so that an AI building a case reads a fixed set of files
+and misses nothing, and so adding a case edits no shared file. The plan, the decisions
+and the delivery log are in `docs/restructure-plan.md`; the acceptance test and its
+baseline are in `docs/cold-start-test.md`. What has landed:
+
+- `CLAUDE.md`: the start file agent tools load first. Reading order by task, and what not
+  to open.
+- `engine/kit_check.py`: the reading kit stays under a token budget, every section pointer
+  resolves, no document states a count of cases, and the generated files are current. Runs
+  in the publish workflow.
+- `docs/generated/`, written by `engine/gen_docs.py` from the packs, the catalogs and
+  `engine/field_notes.py`: the case file field reference (every field, who reads it, what
+  the learner sees), the action and diagnosis indexes, a mechanism index with one worked
+  example per mechanism by file and line, and a case index on the design guide's six
+  variety dimensions. `engine/lookup.py` looks one thing up. A new case field needs a line
+  in `engine/field_notes.py`.
+- `metadata.library` on every case: the six variety dimensions, for the case index.
+- `catalog/expand_interview_variants.py`, `author_interview_facts.py` and
+  `author_interview_volunteers.py` refuse to write AFRVR, CHFE, DIPH or MGCA without
+  `--force`: their committed output was hand-edited after the last run and cannot be
+  regenerated.
+- `engine/site-check/flow.js` counts the cases in the build instead of asserting four.
+- Validator: a misspelt tag value, a tag or prerequisite condition that does not parse, a
+  missing vitals block and a topic with no variants are errors instead of silent passes
+  or tracebacks. A harmful tag now requires a terminal `halted` phase (the engine throws
+  without one). Follow-ups are checked on `case_actions[].follow_ups_triggered`, the field
+  the engine fires from, and `triggered_by` must agree with it. A deterioration guarded on
+  `NOT action X taken` is held to the same fairness floor and prompt-first rule as one
+  guarded on a flag, and a guard of the form `NOT (a OR b)` needs a warning for either
+  member, not both. The review matrix's "not reachable" column reads the case's own
+  `review_hints.implausible` pairs instead of two CHFE flag names (CHFE carries its two
+  pairs there now). A crash inside the checks prints one error naming the line instead of
+  a traceback. Thirteen negative tests cover the new rules.
+- `engine/test_packs.py`: builds one pack at a time into a scratch folder
+  (`EMSIM_BUILD_DIR`, read by `engine/paths.py`) and runs the engine tests, the scenarios,
+  the validator, its negative tests and the timeline. Constant time per pack, about four
+  seconds, where the old whole-build run grew with the square of the case count.
+- Engine tests: the mode-multiplier and nurse-kind checks pick a prompted critical action
+  whose prompt fires on an idle run, and the device check prefers an induction agent the
+  case does not tag harmful. Both had pushed a builder into authoring a prompt and a
+  prerequisite the seed never asked for.
+- Interview expansion at build time. A Python pack keeps its topic map in its own
+  `case_4_interview.py` (`TOPIC_MAP`, `EXTRA_COVERED`), and `build_case.py` expands the
+  bank through `catalog/interview_expand.py` on every build, writing the tuning file too.
+  The generated block is gone from TSS, TAKO and DKA, whose case files, tuning files and
+  binding maps are byte-identical to before. `catalog/expand_interview_variants.py` now
+  holds the four frozen packs only. Nothing per pack is added to any shared file for a new
+  case.
+- The physician review page merges an optional `cases/XX/XX-review-questions.json` per
+  pack at build time. The shared bank, with its signed decisions, is not edited for a
+  new case.
+- `engine/kit_check.py` check 5: no per-pack table or pack path in `engine/` or
+  `catalog/`, outside the three frozen interview scripts.
+- README: a case's history lives in its own folder (SEED decisions, review packet).
+  `CHANGELOG.md` gives a new case one line.
+
+---
+
+## v0.24: an audit of the three new cases against docs/ and catalog/, and the fixes
+
+On 6 and 7 October 2026 the three packs added in v0.21 to v0.23a (TSS, TAKO, DKA) were read
+against every file in `docs/` and `catalog/` by five independent model passes, and the
+findings were fixed. No physician reviewed any of it. Each pack's SEED lists what was fixed,
+what a model chose, and the open questions for the physician (TSS 24, TAKO 20, DKA 20).
+
+**Faults found in all three packs, now rules in the authoring requirements**
+
+- Nurse narration on a timed transition quoted numbers the monitor did not show, because a
+  vital effect was still acting. No timed narration in the three packs quotes a figure now.
+  Each pack's "what the nurse says is true of the monitor" test folds every effect-bearing
+  route and compares with the displayed vitals.
+- Prompts were spoken in phases where their text was false, cited an ECG nobody had ordered,
+  or could not fire before their own escalation. Reworded or guarded.
+- In the default mode prompt deadlines are tripled and deterioration deadlines are not. Two
+  warnings landed on the same instant as the deterioration and were never spoken (TSS fluid
+  in the hypotensive phase, TAKO vasoconstrictor). Deadlines moved. No clock moved.
+- Follow-ups were discharged by an act done before their trigger. They now use a hidden
+  target credited through `also_satisfies` (authoring 8.2).
+- Consultants quoted results that were not back. Every tier that needs a study tests for it.
+- Result comments named the diagnosis or the lesson. Moved to debrief notes.
+- The out-of-scope bank refused questions the patient can answer.
+- `[UNVERIFIED]` markers and per-reference provenance were missing.
+
+**DKA**
+
+- The order logic no longer has the three known gaps. Any rapid insulin given before the
+  potassium has run in leads to the falling potassium, whatever the gap between the orders.
+  A bolus-first learner is no longer stuck after the rescue. One insulin order after the
+  rescue treats her. This uses three hidden targets (`early_insulin`, `insulin_restart`,
+  `repeat_potassium_level`) and no repeat counters. `insulin_restart` is a critical action
+  in the recovering phase.
+- Potassium given before the fall counts toward the rescue, so holding insulin alone then
+  rescues her. The debrief says so. Open question for the physician.
+- A saline or Ringer's infusion counts as fluid. Potassium runs through a central or
+  intraosseous line. The potassium prompt comes at 110 seconds, after the chemistry can be
+  back. No ECG report or exam line quotes a rate.
+
+**TAKO**
+
+- A nitrate on arrival is counted once. Cardiology's takeover ends the inotrope's effect.
+- The catheterization laboratory button needs a resulted 12-lead, and answers to "cath lab",
+  "code STEMI" and nine other spoken phrases.
+- A wrong drug given in the last ten seconds before the scripted fall no longer skips it.
+- A held-out matcher set now exists: 37 of 56 in scope, 6 wrong topic, 18 of 30 out of scope
+  refused. The same model wrote the bank and the set.
+- Gases and the fingerstick agree with the pack's own lactate and chemistry. Push-dose
+  epinephrine is covered with the inotropes. Five answers change once she is steadied.
+
+**TSS**
+
+- The nurse says "the vasopressor" whichever infusion is running. Every vasopressor stop
+  button is covered, and is blocked when nothing is running.
+- Digoxin, amiodarone, cefotaxime, the maintenance infusions, bag-valve-mask and
+  non-invasive ventilation are bound. Thirteen authored studies gained a debrief note.
+- The FAST agrees with the CT. The intensivist no longer says "Fluid in" when none was given.
+- Five more diagnoses earn credit. Nine studies that still return a normal default in a
+  patient where that is doubtful are listed for the physician.
+
+**Catalog (0.3-draft, 305 actions, 499 diagnoses)**
+
+- Voice: a route word left after a drug name ("zofran po") ordered oral potassium. "Home
+  insulin" ordered furosemide. "B H B" ordered haloperidol and lorazepam. "Pelvic exam"
+  ordered a pelvis film. All fixed, with tests that run for every pack. The alias build now
+  fails if a phrase reduces to one ordinary word.
+- A case action may carry `voice_phrases` (new, engine).
+- Narration: stop actions said "Stopping the stop insulin." The three new route-named drugs
+  read correctly.
+- Eight diagnoses added (outflow tract obstruction, acquired long QT, euglycemic
+  ketoacidosis, starvation ketosis, hyperglycemia, type 1 diabetes, thrombocytopenia,
+  retained vaginal foreign body) and synonyms such as food poisoning and stomach flu.
+  Model-proposed.
+- Interview: eleven shared concepts and cover tags for the new packs.
+  `expand_interview_variants.py` now needs a pack name and reads Python packs from source.
+  `author_interview_facts.py` no longer regresses CHFE.
+
+**Docs**
+
+- `system-design-v2.md`: disposition intercepts (9.1), flags on repetition (2.10), the fourth
+  timed pattern, the 5 second floor, `satisfied_when`, case-only actions, `voice_phrases`.
+- `case-authoring-requirements.md`: the rules above in the sections where an author looks,
+  races between timed rules (5.4), undocumented fields, the default-mode rule (9.7), the
+  Python-pack workflow, and a longer sign-off checklist.
+- `README.md`: the interview sequence, the new-catalog-entry checklist, four more lines
+  under "Things that have gone wrong before".
+- The stale deterioration timelines of CHFE, DIPH and MGCA were regenerated.
+
+**Tests at this version**: TSS 1024 engine checks and 31 scenarios. TAKO 916 and 32. DKA 823
+and 36. AFRVR 725, CHFE 647, DIPH 727, MGCA 627. Validator 0 errors in every pack.
+
+**Not done**: physician review of anything. The semantic matcher stage. `engine/new_case.py`
+still scaffolds to the old rules. `engine/sim_runner.py` cannot follow `also_satisfies`, so
+scenarios name hidden targets as steps. A `guard_true` clock is not cleared on re-entry to a
+phase (found by a probe, not fixed).
+
+---
+
 ## v0.23: a seventh case (mild ketoacidosis with a low potassium), and three catalog entries
 
 New case, `cases/DKA`: a 24-year-old woman with vomiting and diarrhea whose triage note

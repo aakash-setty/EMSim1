@@ -91,7 +91,16 @@
    "line": "Brought in by EMS. Handover given on arrival in the resuscitation bay."
   },
   "complaint": "Fever and a rash on her ankles",
-  "category": "Infectious disease"
+  "category": "Infectious disease",
+  "library": {
+   "tempo": "minutes: antibiotics and the steroid run on a clock",
+   "uncertainty": "timing, and a second diagnosis hidden behind the shock",
+   "right_answer": "do more, fast, and ask why the fluid is not working",
+   "danger": "obvious at the door, with a second danger behind the shock",
+   "setting": "21 F, EMS to the resuscitation bay",
+   "feel": "urgent",
+   "note": "The six variety dimensions of docs/case-design-guide.md ('Choosing a case'), as this case reads. Printed in docs/generated/case-index.md so a new case can say how it differs. Descriptive, not clinical: no physician has reviewed the wording."
+  }
  },
  "patient": {
   "age": 21,

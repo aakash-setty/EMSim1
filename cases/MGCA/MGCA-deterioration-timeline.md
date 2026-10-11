@@ -10,11 +10,34 @@ Two questions per row. Would this patient really deteriorate in that time if tha
 
 Vitals in this phase: HR 124, BP 99/63, RR 24, SpO2 98%, T 39.4
 
-**Rule 5: at 240s (measured from phase_entry) → `adrenal_crisis`**
+**Rule 3: at 90s (measured from guard_true) → `adrenal_crisis`**
+
+- guard: `flag fluids_given set AND NOT flag steroid_given set`
+- destination vitals: HR 136, BP 88/54, RR 28, SpO2 97%, T 39.0
+- narration: “She's had the fluid and her pressure's come down, not up. She's still cold and she's harder to rouse.”
+- author rationale: v0.18a. Was instantaneous, which taught that the fluid itself caused the hypotension. A 90 second delay measured from when the fluid was given keeps the lesson (glucocorticoid is the missing piece) without punishing the conventional sequence of fluid first.
+
+Prompts in this phase that set fluids_given, steroid_given, which is what the fairness rule requires:
+
+- `normal_saline_1l_bolus` first at 55s, 35s of lead
+- `hydrocortisone_bolus` first at 70s, 20s of lead
+- `normal_saline_1l_bolus` escalation at 120s, -30s of lead  **UNDER THE 20s FLOOR**
+- `hydrocortisone_bolus` escalation at 140s, -50s of lead  **UNDER THE 20s FLOOR**
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
+
+1. 45s `ceftriaxone` (first)
+2. 55s `normal_saline_1l_bolus` (first)
+3. 70s `hydrocortisone_bolus` (first)
+4. 90s `ceftriaxone` (escalation)
+5. 120s `normal_saline_1l_bolus` (escalation)
+6. 140s `hydrocortisone_bolus` (escalation)
+
+**Rule 4: at 240s (measured from phase_entry) → `adrenal_crisis`**
 
 - guard: `NOT flag steroid_given set`
 - destination vitals: HR 136, BP 88/54, RR 28, SpO2 97%, T 39.0
-- narration: “She's harder to rouse than she was ten minutes ago, doctor, and she's gone a worse colour. Her pressure's come down too. I don't think she's holding.”
+- narration: “She's harder to rouse than when she came in, doctor, and she's gone a worse color. Her pressure's come down too. I don't think she's holding.”
 - author rationale: Untreated acute adrenal insufficiency progresses over minutes to hours. Ordered above the antibiotic timer so that a patient who has had neither drug enters the adrenal branch first, which matches the seed's ordering of states 2 and 3 and keeps the progressive phase's laboratory values, which assume glucocorticoid replacement, internally consistent.
 
 Prompts in this phase that set steroid_given, which is what the fairness rule requires:
@@ -31,12 +54,12 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 5. 120s `normal_saline_1l_bolus` (escalation)
 6. 140s `hydrocortisone_bolus` (escalation)
 
-**Rule 6: at 240s (measured from phase_entry) → `progressive_meningococcemia`**
+**Rule 5: at 240s (measured from phase_entry) → `progressive_meningococcemia`**
 
 - guard: `NOT flag abx_given set`
 - destination vitals: HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2
 - narration: “The spots on her ankles have joined up into patches while we've been standing here, and there are new ones on her forearms. She's oozing round the cannula site now too.”
-- author rationale: Untreated meningococcal bacteraemia progresses. Reachable only when glucocorticoid has been replaced, because the rule above it catches every patient who has not had it.
+- author rationale: Untreated meningococcal bacteremia progresses. Reachable only when glucocorticoid has been replaced, because the rule above it catches every patient who has not had it.
 
 Prompts in this phase that set abx_given, which is what the fairness rule requires:
 
@@ -71,16 +94,14 @@ Prompts in this phase that set steroid_given, which is what the fairness rule re
 All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
 
 1. 45s `ceftriaxone` (first)
-2. 45s `norepinephrine_drip` (first)
-3. 55s `normal_saline_1l_bolus` (first)
-4. 70s `hydrocortisone_bolus` (first)  **suppressed by the cap**
-5. 90s `ceftriaxone` (escalation)
-6. 90s `consult_critical_care` (first)  **suppressed by the cap**
-7. 100s `norepinephrine_drip` (escalation)
-8. 120s `normal_saline_1l_bolus` (escalation)
-9. 140s `hydrocortisone_bolus` (escalation)
+2. 55s `normal_saline_1l_bolus` (first)
+3. 70s `hydrocortisone_bolus` (first)
+4. 90s `ceftriaxone` (escalation)
+5. 90s `consult_critical_care` (first)  **suppressed by the cap**
+6. 120s `normal_saline_1l_bolus` (escalation)
+7. 140s `hydrocortisone_bolus` (escalation)
 
-### `progressive_meningococcemia`: Progressive meningococcaemia with worsening disseminated intravascular coagulation
+### `progressive_meningococcemia`: Progressive meningococcemia with worsening disseminated intravascular coagulation
 
 Vitals in this phase: HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2
 
@@ -89,7 +110,7 @@ Vitals in this phase: HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2
 - guard: `NOT flag abx_given set`
 - destination vitals: HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8
 - narration: “The purpura is spreading up both legs and onto her belly, and she's stopped answering me. Her pressure is seventy over forty.”
-- author rationale: Progression of untreated meningococcal septicaemia.
+- author rationale: Progression of untreated meningococcal septicemia.
 
 Prompts in this phase that set abx_given, which is what the fairness rule requires:
 
@@ -108,7 +129,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 8. 120s `normal_saline_1l_bolus` (escalation)
 9. 140s `hydrocortisone_bolus` (escalation)
 
-### `frank_septic_shock`: Frank septic shock after intubation
+### `frank_septic_shock`: Frank septic shock
 
 Vitals in this phase: HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8
 
@@ -118,7 +139,7 @@ Vitals in this phase: HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8
 - destination vitals: HR 26, BP 44/24, RR 4, SpO2 58%, T 38.2
 - **opted in to ending the case on the clock**
 - narration: “She's lost her output. No pulse. I'm starting compressions.”
-- author rationale: Untreated fulminant meningococcaemia with adrenal crisis has a case fatality far above the 10 to 15 percent quoted for treated invasive meningococcal disease, and death within hours of presentation is the characteristic course. Authored as a terminal time-driven transition, which requires the explicit opt-in below. This is the single decision in this case most in need of a physician's sign-off: see the review packet.
+- author rationale: Untreated fulminant meningococcemia with adrenal crisis has a case fatality far above the 10 to 15 percent quoted for treated invasive meningococcal disease, and death within hours of presentation is the characteristic course. Authored as a terminal time-driven transition, which requires the explicit opt-in below. This is the single decision in this case most in need of a physician's sign-off: see the review packet.
 
 Prompts in this phase that set abx_given, pressor_running, steroid_given, which is what the fairness rule requires:
 
@@ -148,7 +169,7 @@ What a resident who performs no state-changing action at all sees, from arrival 
 | clock | phase | vitals | how it was reached |
 |---|---|---|---|
 | 0:00 | `presentation` | HR 124, BP 99/63, RR 24, SpO2 98%, T 39.4 | arrival |
-| 4:00 | `adrenal_crisis` | HR 136, BP 88/54, RR 28, SpO2 97%, T 39.0 | rule 5 fired at 240s |
+| 4:00 | `adrenal_crisis` | HR 136, BP 88/54, RR 28, SpO2 97%, T 39.0 | rule 4 fired at 240s |
 | 7:30 | `frank_septic_shock` | HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8 | rule 3 fired at 210s |
 | 12:30 | `cardiac_arrest` | HR 26, BP 44/24, RR 4, SpO2 58%, T 38.2 | rule 1 fired at 300s |
 
@@ -160,7 +181,8 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 
 | from | at | to | vitals immediately after | the line |
 |---|---|---|---|---|
-| `presentation` | 240s | `adrenal_crisis` | HR 136, BP 88/54, RR 28, SpO2 97%, T 39.0 | “She's harder to rouse than she was ten minutes ago, doctor, and she's gone a worse colour. Her pressure's come down too. I don't think she's holding.” |
+| `presentation` | 90s | `adrenal_crisis` | HR 136, BP 88/54, RR 28, SpO2 97%, T 39.0 | “She's had the fluid and her pressure's come down, not up. She's still cold and she's harder to rouse.” |
+| `presentation` | 240s | `adrenal_crisis` | HR 136, BP 88/54, RR 28, SpO2 97%, T 39.0 | “She's harder to rouse than when she came in, doctor, and she's gone a worse color. Her pressure's come down too. I don't think she's holding.” |
 | `presentation` | 240s | `progressive_meningococcemia` | HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2 | “The spots on her ankles have joined up into patches while we've been standing here, and there are new ones on her forearms. She's oozing round the cannula site now too.” |
 | `adrenal_crisis` | 210s | `frank_septic_shock` | HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8 | “Her pressure's in the seventies now and she's not answering me properly. I can't feel a radial pulse on either side.” |
 | `progressive_meningococcemia` | 210s | `frank_septic_shock` | HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8 | “The purpura is spreading up both legs and onto her belly, and she's stopped answering me. Her pressure is seventy over forty.” |

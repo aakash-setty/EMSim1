@@ -6,6 +6,16 @@ reference interval. Reference intervals are the catalog's where it has one.
 A repeat study only changes when the phase or a flag has changed (authoring 11.4), so the
 chemistry, the gas, the glucose and the ECG are keyed to both. Phase rules come before
 flag rules in every list.
+
+Results hold findings only (authoring 11.4). The one comment left is a caption on the
+chemistry. Every interpretive sentence that used to sit in a comment is now in the
+debrief note of that study's action in case_2_actions.py.
+
+No report and no exam line quotes a heart rate (authoring 6.1, 11.2 and 11.4). The fluid
+effect takes ten off the rate and never ends, so a quoted rate would disagree with the
+monitor for the rest of the case. In the treated phase the monitor reads 104 without
+fluid and 94 with it, so that phase's report says sinus rhythm and its exam lines do not
+say fast.
 """
 
 PRES = "phase is presentation"
@@ -78,7 +88,7 @@ EXAM = {
 
  "exam_circ": [
    {"when": FALLING, "value": ex("Pulse fast with occasional dropped beats. Capillary refill 3 seconds. Hands cool.")},
-   {"when": TREATED, "value": ex("Pulse about 100, regular. Capillary refill 2 seconds. Hands warm.", abnormal=False)},
+   {"when": TREATED, "value": ex("Pulse regular, good volume. Capillary refill 2 seconds. Hands warm.", abnormal=False)},
    {"when": FLUID, "value": ex("Pulse fast, regular. Capillary refill 2 seconds. Hands warming.")},
    {"when": None, "value": ex("Pulse fast, regular, low volume. Capillary refill 3 seconds. Hands cool.")}],
 
@@ -88,6 +98,7 @@ EXAM = {
 
  "exam_card": [
    {"when": FALLING, "value": ex("Fast with occasional extra beats. No murmur. No edema.")},
+   {"when": TREATED, "value": ex("Regular. No murmur. No edema.", abnormal=False)},
    {"when": None, "value": ex("Fast and regular. No murmur. No edema.", abnormal=False)}],
 
  "exam_pulm": always(ex("Clear to both bases. No crackles or wheeze.", abnormal=False)),
@@ -105,7 +116,7 @@ EXAM = {
  "exam_skin": always(ex("Dry, reduced turgor. No rash. Injection sites on the abdomen clean. Feet intact.")),
 
  "exam_neuro": [
-   {"when": FALLING, "value": ex("Alert, oriented, GCS 15. Proximal weakness in arms and legs, 4 of 5. Reflexes reduced.")},
+   {"when": FALLING, "value": ex("Proximal weakness in arms and legs, 4 of 5. Reflexes reduced. Alert, oriented, GCS 15.")},
    {"when": None, "value": ex("Alert, oriented, GCS 15. Power 5 of 5. Reflexes normal.", abnormal=False)}],
 
  "exam_psych": always(ex("Tired and cooperative. Oriented. Mood normal.", abnormal=False)),
@@ -115,7 +126,7 @@ GENERAL_STATUS = {
  "authoring_note": "Section 11.3. Consistent with exam_neuro and each phase's appearance values.",
  "rules": [
    {"when": FALLING, "value": gs("Lying flat, says her arms and legs are heavy. Alert and frightened. GCS 15.")},
-   {"when": TREATED, "value": gs("Sitting up, color better, no longer retching. GCS 15.")},
+   {"when": TREATED, "value": gs("Sitting up, color better, no longer retching. GCS 15.", abnormal=False)},
    {"when": None, "value": gs("Tired and dry, vomit bowl in her lap, breathing deeply. Alert and talking. GCS 15.")},
  ],
 }
@@ -138,25 +149,8 @@ CHEM = {
  "falling":     (134, "2.6", 101, 17, 22, "1.1", 262),
  "recovering":  (134, "3.6", 102, 17, 22, "1.1", 285),
 }
-CHEM_COMMENT = {
- "pres": ("Anion gap 18 with a bicarbonate of 16: an anion gap acidosis. Potassium 3.1 is "
-          "low before any insulin, which is unusual in ketoacidosis and changes the order "
-          "of treatment."),
- "pres_fluid": ("After fluid the glucose and BUN are a little lower. The bicarbonate has "
-                "not moved and the anion gap has barely moved. The potassium is slightly "
-                "lower by dilution."),
- "pres_bicarb": ("After bicarbonate the bicarbonate is a little higher and the potassium "
-                 "has fallen from 3.1 to 2.9. Ketone production has not changed."),
- "pres_both": ("After fluid and bicarbonate: potassium down to 2.9, glucose a little "
-               "lower, ketone production unchanged."),
- "replaced": ("Potassium back above 3.5. The acidosis is untreated and a little worse, "
-              "which is the cost of the wait."),
- "treated": ("On insulin with potassium running: glucose falling, bicarbonate rising, "
-             "anion gap narrowing, potassium holding."),
- "falling": ("Potassium 2.6 after insulin. The glucose has fallen, which is the same "
-             "insulin effect that moved the potassium."),
- "recovering": "Potassium back above 3.5 with insulin on hold. The acidosis remains.",
-}
+# A caption, not a reading (authoring 11.4). The same words in every state.
+CHEM_CAPTION = "Anion gap calculated without potassium."
 FINGERSTICK = {"pres": 342, "pres_fluid": 314, "pres_bicarb": 342, "pres_both": 314,
                "replaced": 318, "treated": 266, "falling": 258, "recovering": 282}
 #           pH      HCO3  BE     lactate.  The pCO2 is calculated from the pH and the
@@ -205,7 +199,7 @@ def chem(s):
       comp("Creatinine", cr, "mg/dL", "0.5-1.1 (F)", float(cr) > 1.1),
       comp("Glucose", str(glu), "mg/dL", "70-140 (random)", True),
       comp("Anion gap", str(gap), "mEq/L", "8-12", gap > 12)],
-      comment=CHEM_COMMENT[s])
+      comment=CHEM_CAPTION)
 
 
 def gas(s):
@@ -215,10 +209,7 @@ def gas(s):
       comp("pCO2", str(pco2(ph, hco3)), "mmHg", "41-51", True),
       comp("HCO3", str(hco3), "mEq/L", "22-26", True),
       comp("Base excess", be, "mEq/L", "-2 to +2", True),
-      comp("Lactate", lac, "mmol/L", "0.5-2.0", False)],
-      comment=("A metabolic acidosis with a low pCO2 from deep breathing. A pH above 7.25 "
-               "with a bicarbonate of 15 to 18 in an alert patient is mild ketoacidosis."
-               if s.startswith("pres") or s == "replaced" else None))
+      comp("Lactate", lac, "mmol/L", "0.5-2.0", False)])
 
 
 def art_gas(s):
@@ -229,8 +220,7 @@ def art_gas(s):
       comp("pCO2", str(pco2(aph, hco3 - 1)), "mmHg", "35-45", True),
       comp("pO2", "98", "mmHg", "80-100", False),
       comp("HCO3", str(hco3 - 1), "mEq/L", "22-26", True),
-      comp("Base excess", be, "mEq/L", "-2 to +2", True)],
-      comment="The arterial sample says the same thing as a venous one would have.")
+      comp("Base excess", be, "mEq/L", "-2 to +2", True)])
 
 
 LABS = {
@@ -250,18 +240,14 @@ LABS = {
      lambda s: val("Capillary glucose", str(FINGERSTICK[s]), "mg/dL", "70-140 (random)", True))},
 
  "beta_hydroxybutyrate": {"changes_with_state": True, "rules": by_state(
-     lambda s: val("Beta-hydroxybutyrate", BHB[s], "mmol/L", "< 0.6", True,
-                   comment=("3.0 mmol/L or more is the ketone criterion for ketoacidosis. "
-                            "Under 0.6 is resolution.")))},
+     lambda s: val("Beta-hydroxybutyrate", BHB[s], "mmol/L", "< 0.6", True))},
 
  "magnesium_level": {"changes_with_state": True, "rules": [
      {"when": MAG, "value": val("Magnesium", "2.1", "mg/dL", "1.7-2.2", False)},
-     {"when": None, "value": val("Magnesium", "1.5", "mg/dL", "1.7-2.2", True,
-        comment="Low. It travels with a low potassium and makes it harder to correct.")}]},
+     {"when": None, "value": val("Magnesium", "1.5", "mg/dL", "1.7-2.2", True)}]},
 
  "phosphate_level": {"changes_with_state": False, "rules": always(
-     val("Phosphate", "3.4", "mg/dL", "2.5-4.5", False,
-         comment="Normal on arrival. It falls with insulin, and routine replacement is not advised."))},
+     val("Phosphate", "3.4", "mg/dL", "2.5-4.5", False))},
 
  "lactate": {"changes_with_state": False, "rules": always(
      val("Lactate", "1.8", "mmol/L", "0.5-2.0", False))},
@@ -277,9 +263,7 @@ LABS = {
      comp("Hemoglobin", "14.9", "g/dL", "13.5-17.5 (M), 12.0-16.0 (F)", False),
      comp("Hematocrit", "45", "%", "41-53 (M), 36-46 (F)", False),
      comp("Platelets", "310", "x10^9/L", "150-400", False),
-     comp("MCV", "88", "fL", "80-100", False)],
-     comment=("A mildly raised white count is common in ketoacidosis without infection. "
-              "The hemoglobin is at the top of her range from dehydration.")))},
+     comp("MCV", "88", "fL", "80-100", False)]))},
 
  "urinalysis": {"changes_with_state": False, "rules": always(panel([
      comp("Color", "Dark yellow", "", "yellow", False),
@@ -294,8 +278,7 @@ LABS = {
      comp("Nitrite", "Negative", "", "negative", False),
      comp("WBC", "0-2", "/hpf", "0-5", False),
      comp("RBC", "0-2", "/hpf", "0-2", False),
-     comp("Bacteria", "None seen", "", "none", False)],
-     comment="Glucose and ketones, and no sign of urinary infection."))},
+     comp("Bacteria", "None seen", "", "none", False)]))},
 
  "urine_hcg_qualitative": {"changes_with_state": False, "rules": always(
      report("Negative.", abnormal=False))},
@@ -305,29 +288,27 @@ LABS = {
 }
 
 # ============================================================== IMAGING AND ECG
-HR = {"pres": 112, "replaced": 112, "treated": 104, "falling": 118, "recovering": 112}
 QTC = {"pres": 460, "replaced": 450, "treated": 445, "falling": 520, "recovering": 450}
+# No rate in any report. The treated phase reads 94 on the monitor after fluid, so its
+# report says sinus rhythm. Every other phase is above 100 with or without fluid.
 ECG_TEXT = {
- "pres": ("Sinus tachycardia at %d. Subtle T wave flattening in the chest leads. Small U "
+ "pres": ("Sinus tachycardia. Subtle T wave flattening in the chest leads. Small U "
           "waves in V2 and V3. No ST elevation or depression. QRS 88 ms, QTc about %d ms."),
- "replaced": ("Sinus tachycardia at %d. T waves fuller than before. Small U waves in V2 "
+ "replaced": ("Sinus tachycardia. T waves fuller than before. Small U waves in V2 "
               "and V3. No ST change. QRS 88 ms, QTc %d ms."),
- "treated": ("Sinus tachycardia at %d. T waves normal. Small U waves in V2 and V3. No ST "
+ "treated": ("Sinus rhythm. T waves normal. Small U waves in V2 and V3. No ST "
              "change. QRS 88 ms, QTc %d ms."),
- "falling": ("Sinus tachycardia at %d with occasional ventricular ectopic beats. T waves "
+ "falling": ("Sinus tachycardia with occasional ventricular ectopic beats. T waves "
              "flat. Prominent U waves in V2 to V5, taller than the T waves. ST depression "
-             "0.5 mm in the lateral leads. QRS 90 ms, QTc about %d ms."),
- "recovering": ("Sinus tachycardia at %d. No ectopic beats. T waves fuller. Small U waves "
+             "0.5 mm in the lateral leads. QRS 88 ms, QTc about %d ms."),
+ "recovering": ("Sinus tachycardia. No ectopic beats. T waves fuller. Small U waves "
                 "in V2 and V3. QRS 88 ms, QTc %d ms."),
 }
 
 
 def ecg(s, ondansetron=False):
     q = QTC[s] + (5 if ondansetron else 0)
-    return report(ECG_TEXT[s] % (HR[s], q), abnormal=True,
-                  comment=("Flat T waves and U waves are the ECG of a low potassium. The QT "
-                           "is hard to measure when a U wave follows the T wave."
-                           if s in ("pres", "falling") else None))
+    return report(ECG_TEXT[s] % q, abnormal=True)
 
 
 ECG_RULES = []
@@ -340,48 +321,77 @@ ECG_RULES.append({"when": None, "value": ecg("pres")})
 IMAGING = {
  "authoring_note": (
    "Section 11.4. The chest film and the abdominal CT are left to the catalog defaults, "
-   "which are normal, and that is intended. The ECG report is findings only. Each phase's "
-   "monitor block in case_1_shell.py carries the same rate and QTc as its report here, "
-   "without the ondansetron increment."),
+   "which are normal, and that is intended. The ECG report is findings only and quotes "
+   "no rate. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc "
+   "as its report here, without the ondansetron increment."),
  "ecg_12_lead": {"changes_with_state": True, "rules": ECG_RULES},
+
+ # The catalog default says the vena cava is of normal caliber. This pack credits
+ # hypovolemia and authors a dry mouth, reduced turgor, flat neck veins and a fast pulse,
+ # so the default contradicted it (catalog audit 5.11). The wording is the one TSS uses
+ # for a dry patient. One value in every state, like the neck veins and the skin.
+ "ultrasound_cardiac": {"changes_with_state": False, "rules": always({
+     "kind": "report", "abnormal": True,
+     "report": ("Hyperdynamic left ventricle. No pericardial effusion. Right ventricle not "
+                "dilated. Inferior vena cava small and collapsing with each breath."),
+     "verify": ("Derived by a model on 7 October 2026 from the pack's other values (dry "
+                "mucosa, reduced turgor, flat neck veins, a fast pulse and a credited "
+                "diagnosis of hypovolemia). No new clinical claim is intended. It does not "
+                "change after fluid, which is a simplification. [UNVERIFIED]")})},
 }
 
 # ============================================================== CONSULTANTS
-# Most specific first. The endocrinologist never quotes a study that has not resulted.
+# Most specific first. No line names a value. A line that reads a result sits on a rule
+# that tests the study resulted, and says only what is true of every variant of that
+# result (authoring 11.5). `study S resulted` means a result exists, not that it was
+# sent in this phase, so the falling-phase lines read no result at all: they describe
+# what the room can see and ask for the studies.
 ENDO_PLAN = (
-  "Endocrinologist: A potassium of 3.1 before any insulin changes the order. No insulin "
-  "yet. Fluids, and intravenous potassium on a monitor, 10 an hour through a peripheral "
-  "line or whatever your protocol allows. Check a magnesium. Repeat the potassium, and start insulin when it's above "
-  "3.5. It's mild, so an infusion at 0.1 units per kilo an hour or subcutaneous "
-  "rapid-acting insulin both work. No bolus and no bicarbonate.")
+  "Endocrinologist: Her potassium is under 3.5, and that changes the order. Insulin "
+  "waits. Fluids, and intravenous potassium on a monitor, 20 to 40 an hour, which on "
+  "most units means a central line or two peripheral lines. Check a magnesium. Repeat "
+  "the potassium every hour or two, and start insulin once it's 3.5 or more. After that "
+  "keep 20 to 30 in each liter. No bolus and no bicarbonate.")
+ICU_WORKUP = "Intensivist: Call me back when you have a gas and a chemistry."
 CONSULTANTS = {
  "authoring_note": (
-   "Section 11.5. The endocrinologist's advice depends on the chemistry, so there is a "
-   "pending tier for the chemistry alone. Rules are ordered by phase, then by study state."),
+   "Section 11.5. Rules are ordered by phase, then by study state. The endocrinologist "
+   "and the intensivist each have a tier for both studies back, one for each study "
+   "alone, a pending tier and a default. In the arrival phase every variant of the "
+   "chemistry reads a potassium under 3.5 (3.1, 3.0 or 2.9), which is all the "
+   "endocrinologist says of it. Grading the ketoacidosis as mild needs the gas, so that "
+   "word sits behind the gas. The phase rules for the ready and treated phases give "
+   "advice and read no result."),
 
  "consult_endocrinology": [
    {"when": FALLING,
-    "value": ("Endocrinologist: Hold the insulin now. Her potassium was low before it "
-              "went in and insulin has pushed it lower. Give intravenous potassium on the "
-              "monitor, give magnesium, get a twelve-lead, and repeat the level. Insulin "
-              "goes back on when the potassium is above 3.5.")},
+    "value": ("Endocrinologist: Hold the insulin now. Weakness and a fluttering heart "
+              "after insulin is a falling potassium until a level says otherwise. Give "
+              "intravenous potassium on the monitor, give magnesium, get a twelve-lead "
+              "and send a chemistry. Insulin goes back on when the potassium is 3.5 or "
+              "more.")},
    {"when": TREATED + " AND flag basal_given set",
     "value": ("Endocrinologist: Good, and I'm glad the glargine is back in. Glucose every "
-              "hour, potassium again in two hours and then every four, and keep potassium "
-              "in the fluids. When the glucose is under 250 change to fluid with dextrose "
+              "hour, potassium every one to two hours at first, and 20 to 30 of potassium "
+              "in each liter. When the glucose is under 250 change to fluid with dextrose "
               "and keep the insulin going. Don't stop insulin because the sugar looks "
               "better.")},
    {"when": TREATED,
-    "value": ("Endocrinologist: Good. Glucose every hour, potassium again in two hours "
-              "and then every four, and keep potassium in the fluids. When the glucose is under "
+    "value": ("Endocrinologist: Good. Glucose every hour, potassium every one to two "
+              "hours at first, and 20 to 30 of potassium in each liter. When the glucose is under "
               "250 change to fluid with dextrose and keep the insulin going. Don't stop "
               "insulin because the sugar looks better. Give her usual long-acting "
               "insulin tonight, and well before any infusion comes off.")},
    {"when": REPL + " OR " + RECOV,
-    "value": ("Endocrinologist: If the repeat potassium is above 3.5, start insulin now. "
-              "An infusion at 0.1 units per kilo an hour, or subcutaneous rapid-acting "
-              "insulin, since it's mild. No bolus. Keep potassium going in the fluids.")},
-   {"when": CHEM_R, "value": ENDO_PLAN},
+    "value": ("Endocrinologist: If the repeat potassium is 3.5 or more, start insulin now. "
+              "An infusion at 0.1 units per kilo an hour. Subcutaneous rapid-acting "
+              "insulin is an option if the gas says this is mild. No bolus. Keep 20 to "
+              "30 of potassium in each liter.")},
+   {"when": CHEM_R + " AND " + GAS_R,
+    "value": (ENDO_PLAN + " It's mild on the gas, so an infusion at 0.1 units per kilo "
+              "an hour or subcutaneous rapid-acting insulin both work.")},
+   {"when": CHEM_R,
+    "value": ENDO_PLAN + " Get a gas so we can grade this."},
    {"when": CHEM_O,
     "value": ("Endocrinologist: The chemistry is still in the lab. Call me back with the "
               "potassium. I don't want insulin started until we know it.")},
@@ -391,9 +401,18 @@ CONSULTANTS = {
 
  "consult_critical_care": [
    {"when": FALLING,
-    "value": ("Intensivist: A potassium of 2.6 with ectopy needs a monitored bed. Hold the "
-              "insulin and replace the potassium. If she settles she can go to step-down.")},
-   {"when": None,
+    "value": ("Intensivist: She's weak with extra beats after insulin. Hold it, replace "
+              "her potassium on a monitor, and get a chemistry and a twelve-lead now. If "
+              "she settles she can go to step-down.")},
+   {"when": CHEM_R + " AND " + GAS_R,
     "value": ("Intensivist: Mild ketoacidosis in an alert patient doesn't need us. A "
-              "step-down bed with telemetry can run her potassium and her insulin.")}],
+              "step-down bed with telemetry can run her potassium and her insulin.")},
+   {"when": CHEM_R,
+    "value": "Intensivist: I can see the chemistry. I need a gas before I can say how sick she is."},
+   {"when": GAS_R,
+    "value": "Intensivist: I can see the gas. I need the chemistry before I can say where she goes."},
+   {"when": CHEM_O + " OR study venous_blood_gas ordered OR study arterial_blood_gas ordered",
+    "value": "Intensivist: Her labs aren't back. " + ICU_WORKUP[len("Intensivist: "):]},
+   {"when": None,
+    "value": ("Intensivist: I'm not sure why I'm being called. " + ICU_WORKUP[len("Intensivist: "):])}],
 }

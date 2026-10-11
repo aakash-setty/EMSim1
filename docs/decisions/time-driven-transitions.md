@@ -6,6 +6,13 @@ which are the source of truth for how the system behaves. This document is the r
 states why the static-patient invariant was broken, what else was considered, and what the mechanism
 is expected to be used for beyond the case that prompted it.
 
+**Note, 7 October 2026 (v0.24).** Two things in section 3 have moved on. A delayed consequence
+timed from `guard_true` has had a 5 second floor since v0.9, and the 30 second floor and the
+warning below sixty now apply only to a rule that can act on a resident who did nothing. And
+packs use a fourth pattern since v0.21: a positive guard timed from phase entry, placed above
+an unguarded rule with the same deadline, so that what is running at that moment decides the
+destination. System design 2.1a and 13.1 have the current rules.
+
 ---
 
 ## 1. The problem

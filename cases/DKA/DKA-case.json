@@ -2,10 +2,10 @@
  "case_id": "dka-hypokalemia-01",
  "schema_version": "0.3",
  "authored_against": {
-  "system_design": "system-design-v2.md (v0.9)",
-  "authoring_requirements": "case-authoring-requirements.md (v0.9, with 6.8 and 6.9)",
-  "action_catalog": "action-catalog.json (0.2-draft, plus three entries added for this case in v0.23)",
-  "diagnosis_catalog": "diagnosis-catalog.json",
+  "system_design": "system-design-v2.md (as of v0.24)",
+  "authoring_requirements": "case-authoring-requirements.md (v0.24)",
+  "action_catalog": "action-catalog.json (0.3-draft, 305 entries, four of them added for this case: three in v0.23 and insulin glargine in v0.23a)",
+  "diagnosis_catalog": "diagnosis-catalog.json (499 entries)",
   "design_guide": "EMSim case design guide (Claude Doc, 5 October 2026)"
  },
  "provenance": {
@@ -13,33 +13,104 @@
   "author": "Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a plan and four decisions made in the same conversation. Authoring requirements section 17 applies.",
   "warning": "A physician decided the things listed in DKA-SEED.md section 0. Everything else is model output and awaits sign-off: every vital sign, finding, laboratory value, delay, tag, debrief note, interview answer and diagnosis explanation.",
   "author_only_fields_pending_signoff": [
-   "Every vital sign in every phase, and the two delays: 10 seconds for insulin to act and 20 seconds for potassium to run in.",
+   "Every vital sign in every phase, and the three delays: 10 seconds for insulin to act, 20 seconds for potassium to run in, and 5 seconds for insulin given during the potassium infusion to act once it finishes.",
    "Every laboratory value and reference interval, above all the potassium in each state (3.1, 3.0, 2.9, 3.6, 3.7, 2.6).",
+   "Every abnormal flag on every result, finding and status line.",
+   "Every exam finding, its routing to a maneuver, and how it changes by phase.",
    "That insulin at a potassium of 3.1 produces weakness, ectopy and a potassium of 2.6.",
+   "That any rapid insulin ordered before the potassium infusion has finished produces the same fall, whatever the gap.",
+   "That potassium given before the fall counts toward the rescue once insulin is held.",
    "That bicarbonate lowers the potassium from 3.1 to 2.9.",
-   "That oral potassium is vomited and has no effect.",
+   "That oral potassium has no effect at any point in the case.",
    "That ondansetron adds 5 ms to the QTc on a repeat ECG, and that the wait for potassium raises the ketones from 4.2 to 4.6.",
    "That magnesium is recommended and is not required for the potassium to correct.",
    "That nothing is harmful, including an insulin bolus at a potassium of 3.1.",
+   "Every clinical tag, including the critical tag on restarting insulin in the recovering phase and the neutral tags on the two crystalloid infusions, the central lines and the intraosseous line.",
+   "That a crystalloid infusion earns the same credit as a bolus.",
+   "The two vital effects of fluid: heart rate down 10 and systolic pressure up 6, with no end. Teaching choices, not measurements.",
+   "Every prompt deadline (20, 25, 40, 45, 70, 75, 100, 110 and the escalation at 170 seconds) and both follow-up deadlines (50 and 60 seconds).",
+   "The one case prerequisite (a line before intravenous potassium), and that the monitor is not required first.",
+   "Both follow-ups, what triggers each and what discharges each.",
+   "Everything the endocrinologist and the intensivist say.",
+   "The three coverage rows in the binding map: the crystalloid bolus group, the two magnesium entries and the two bicarbonate entries.",
    "That step-down is the correct disposition and three others are defensible.",
    "The ECG reports and the monitor blocks.",
-   "The interview in full and both diagnosis lists."
+   "The cardiac ultrasound report, derived by a model on 7 October 2026 from the pack's other findings.",
+   "The interview in full, including the two denials added on 7 October 2026 (no leg cramps, no black stools) and the facts on four topics.",
+   "interview.key_topics, interview.must_ask and debrief_configuration.key_exams.",
+   "Both diagnosis lists, including hyponatremia and acute kidney injury as defensible alternatives since 7 October 2026, with the corrected-sodium arithmetic (1.6 to 2.4 per 100 mg/dL of glucose above 100) in the hyponatremia explanation.",
+   "The potassium rule by level and its numbers (hold insulin under 3.5, 20 to 40 mEq an hour, recheck every one to two hours, insulin once 3.5 or more, 20 to 30 mEq per liter between 3.5 and 5.5, hold potassium over 5.5), taken from the reference table the directing physician supplied on 7 October 2026 and applied by a model.",
+   "Every debrief note and every handoff explanation. Handoff explanations and follow-up notes cannot carry a marker, and several cite the 2024 consensus report."
   ],
-  "reference_status": "The 2024 consensus report was read through a summarizing tool on 6 October 2026, from a mirror of the Diabetologia version. Quotations in the notes are that tool's and have not been checked against the publisher's text. No reference has been checked by a physician.",
+  "reference_status": [
+   {
+    "reference": "Umpierrez GE, et al. Hyperglycaemic crises in adults with diabetes: a consensus report (ADA, EASD, JBDS, AACE, DTS). Diabetologia and Diabetes Care, 2024",
+    "how_read": "A mirror of the Diabetologia PDF, read through a summarizing tool by a model on 6 October 2026, and again by an independent checking pass. Figure 4 was not readable. The publisher's sites refused the request",
+    "status": "Quotations and figures in the notes are the tool's and were not checked against the publisher's text. Not checked by a physician. The verbatim quotation about basal insulin was replaced with a paraphrase on 7 October 2026. The potassium replacement rate as read from it (lower than 20 mEq an hour) was superseded on 7 October 2026 by the table the directing physician supplied"
+   },
+   {
+    "reference": "Potassium repletion table supplied by the directing physician, Aakash Setty, on 7 October 2026, as a screenshot of a reference whose own citation (marked [11]) was not visible",
+    "how_read": "Read by a model from the screenshot",
+    "status": "Sets the case's potassium rule: hold insulin under 3.5, 20 to 40 mEq KCl an hour intravenously, recheck every 1 to 2 hours, start insulin only at 3.5 or more, 20 to 30 mEq per liter of fluid between 3.5 and 5.5 with insulin concurrently, hold potassium over 5.5 and recheck in 1 to 2 hours. Its bullet also says insulin may wait only until supplementation is underway when the level is under 3.5, which is looser than its own table row. The case follows the row. Not checked beyond that"
+   },
+   {
+    "reference": "UBC RTVS simulation case, Basic Diabetic Ketoacidosis",
+    "how_read": "Opened through the same summarizing tool by a model on 6 October 2026",
+    "status": "Used for the shape of the case only. Nothing is quoted. Not checked by a physician"
+   },
+   {
+    "reference": "FDA drug safety communication on ondansetron and the QT interval",
+    "how_read": "Opened by a model in the checking pass on 6 October 2026",
+    "status": "Supplies 6 ms at 8 mg and 20 ms at 32 mg intravenously, and the advice to correct potassium and magnesium first. Not checked by a physician"
+   },
+   {
+    "reference": "Cleveland Clinic Journal of Medicine review of the 2024 consensus report",
+    "how_read": "Opened by a model in the checking pass on 6 October 2026",
+    "status": "Used to cross-check potassium, bicarbonate, phosphate and level of care. Not checked by a physician"
+   },
+   {
+    "reference": "EMCrit Internet Book of Critical Care, chapter on diabetic ketoacidosis",
+    "how_read": "A summary, read by a model in the checking pass on 6 October 2026",
+    "status": "Used only to note that US practice often differs (a 3.3 threshold, faster potassium). Not checked by a physician"
+   },
+   {
+    "reference": "Kitabchi AE, et al. Hyperglycemic crises in adult patients with diabetes. ADA consensus statement, Diabetes Care 2009",
+    "how_read": "Could not be opened. From memory",
+    "status": "The statement that the 2009 threshold was 3.3 is from a model's memory. Unverified"
+   },
+   {
+    "reference": "MedEdPORTAL simulation case (PMC5491337) and the StatPearls chapter on diabetic ketoacidosis",
+    "how_read": "Could not be opened",
+    "status": "Supplied nothing"
+   },
+   {
+    "reference": "Teaching on hypomagnesemia with hypokalemia, the ECG of a low potassium, oral potassium, urine and pregnancy testing, and sick-day rules",
+    "how_read": "From memory. No source opened",
+    "status": "Written by a model. Unverified. Each such note carries a marker where the field allows one"
+   }
+  ],
+  "reference_status_note": "Markers sit only where the interface strips them: action debrief notes, timed transition notes and the cross-cutting teaching points. Follow-up notes and handoff explanations are printed as written, so they carry none. Those that cite the consensus report rest on the first entry above.",
+  "audit_fix": "Revised by a language model on 7 October 2026 after the audit of 6 October 2026. DKA-SEED.md section 5a lists what changed and why. No physician has reviewed the revision.",
   "catalog_change_requests": [
-   "Beta-Hydroxybutyrate, Insulin (Subcutaneous) and Potassium Chloride (oral) were added to the global catalog for this case on the directing physician's instruction (v0.23).",
+   "Done in v0.23 and v0.23a, on the directing physician's instruction: Beta-Hydroxybutyrate, Insulin (Subcutaneous), Potassium Chloride (oral) and Insulin Glargine (Subcutaneous) were added to the global catalog.",
+   "Done on 7 October 2026: the diagnosis catalog gained euglycemic diabetic ketoacidosis, starvation ketosis, hyperglycemia, type 1 diabetes mellitus and acquired long QT. This case does not use them yet. Each needs a physician's verdict first (DKA-SEED.md, open questions).",
    "The existing potassium entry has no route. This case shows it as 'Potassium Chloride (KCl) IV' and adds a vascular access prerequisite. A global rename would be cleaner.",
-   "There is no action for restarting a stopped infusion. This case reads a second administration of insulin as the restart.",
-   "Insulin Glargine (Subcutaneous) was added to the global catalog on the directing physician's instruction (v0.23a), so the basal dose she missed can be ordered.",
-   "The catalog has no dose, so the rate of potassium replacement cannot be taught by doing."
+   "There is no action for restarting a stopped infusion. This case reads an insulin order placed in the recovering phase as the restart, through a hidden case action.",
+   "The catalog has no dose, so the rate of potassium replacement cannot be taught by doing.",
+   "The rhythm field has two values, regular and irregularly irregular. The falling phase describes extra beats, dropped beats and ectopy in the exam, the interview and the ECG report, over a regular beat and a regular trace. A third value for occasional ectopy would let the monitor agree (authoring 6.0a).",
+   "A spoken 'insulin' offers the bolus or the infusion and not the subcutaneous entry. The bolus is the discouraged one in this case. The fix is in catalog/build_voice_aliases.py.",
+   "The scenario runner does not implement also_satisfies. Scenarios that depend on a hidden target name it as a step. DKA-tests.js folds the real routes."
   ]
  },
  "catalog_change_requests": [
-  "Beta-Hydroxybutyrate, Insulin (Subcutaneous) and Potassium Chloride (oral) were added to the global catalog for this case on the directing physician's instruction (v0.23).",
+  "Done in v0.23 and v0.23a, on the directing physician's instruction: Beta-Hydroxybutyrate, Insulin (Subcutaneous), Potassium Chloride (oral) and Insulin Glargine (Subcutaneous) were added to the global catalog.",
+  "Done on 7 October 2026: the diagnosis catalog gained euglycemic diabetic ketoacidosis, starvation ketosis, hyperglycemia, type 1 diabetes mellitus and acquired long QT. This case does not use them yet. Each needs a physician's verdict first (DKA-SEED.md, open questions).",
   "The existing potassium entry has no route. This case shows it as 'Potassium Chloride (KCl) IV' and adds a vascular access prerequisite. A global rename would be cleaner.",
-  "There is no action for restarting a stopped infusion. This case reads a second administration of insulin as the restart.",
-  "Insulin Glargine (Subcutaneous) was added to the global catalog on the directing physician's instruction (v0.23a), so the basal dose she missed can be ordered.",
-  "The catalog has no dose, so the rate of potassium replacement cannot be taught by doing."
+  "There is no action for restarting a stopped infusion. This case reads an insulin order placed in the recovering phase as the restart, through a hidden case action.",
+  "The catalog has no dose, so the rate of potassium replacement cannot be taught by doing.",
+  "The rhythm field has two values, regular and irregularly irregular. The falling phase describes extra beats, dropped beats and ectopy in the exam, the interview and the ECG report, over a regular beat and a regular trace. A third value for occasional ectopy would let the monitor agree (authoring 6.0a).",
+  "A spoken 'insulin' offers the bolus or the infusion and not the subcutaneous entry. The bolus is the discouraged one in this case. The fix is in catalog/build_voice_aliases.py.",
+  "The scenario runner does not implement also_satisfies. Scenarios that depend on a hidden target name it as a step. DKA-tests.js folds the real routes."
  ],
  "metadata": {
   "working_title": "24-year-old woman, two days of vomiting and diarrhea, brought through from triage",
@@ -54,7 +125,7 @@
   "learning_objectives": [
    "Check a glucose, a venous gas, a chemistry and ketones in a vomiting patient with diabetes, and recognize ketoacidosis when the patient looks only mildly unwell.",
    "Grade the ketoacidosis as mild from the pH, the bicarbonate and the mental state.",
-   "Read the potassium before giving insulin. Under 3.5 mEq/L, replace potassium first and hold insulin until it is back above 3.5.",
+   "Read the potassium before giving insulin. Under 3.5 mEq/L, replace potassium first and hold insulin until a repeat level is 3.5 or more.",
    "Give fluid first, and know what fluid alone does and does not fix.",
    "Start insulin without a bolus once the potassium allows, by infusion or by subcutaneous rapid-acting insulin in mild ketoacidosis.",
    "Plan what follows insulin: dextrose in the fluids when the glucose falls under 250 mg/dL, potassium continued, and insulin not stopped because the glucose looks better."
@@ -70,7 +141,16 @@
    "line": "Walked in with her roommate and was brought through from triage to a monitored room."
   },
   "complaint": "Vomiting and weakness",
-  "category": "Endocrine and metabolic"
+  "category": "Endocrine and metabolic",
+  "library": {
+   "tempo": "no clock: nothing happens from waiting",
+   "uncertainty": "the order, potassium before insulin, and the grade of the ketoacidosis",
+   "right_answer": "wait, replace, then treat",
+   "danger": "created by the treatment: insulin into a low potassium",
+   "setting": "24 F, triage to a patient room",
+   "feel": "puzzling",
+   "note": "The six variety dimensions of docs/case-design-guide.md ('Choosing a case'), as this case reads. Printed in docs/generated/case-index.md so a new case can say how it differs. Descriptive, not clinical: no physician has reviewed the wording."
+  }
  },
  "patient": {
   "age": 24,
@@ -87,9 +167,9 @@
   }
  },
  "phase_notes": {
-  "count_justification": "Five clinical phases and one terminal. Arrival, potassium replaced, treated, and the two phases of the wrong order: potassium falling after early insulin, and recovering from it. No halted phase and no arrest.",
+  "count_justification": "Five clinical phases and one terminal. Arrival, potassium replaced, treated, and the two phases of the wrong order: potassium falling after early insulin, and recovering from it. No halted phase and no arrest. The audit fix of 7 October 2026 added no phase.",
   "no_clock": "Nothing happens to her because the learner waited. Every timed rule is the delayed consequence of an action, measured from the moment its guard became true. Approved by the directing physician on 6 October 2026.",
-  "order_is_carried_by_phases": "The condition language cannot express order. Insulin given in the arrival phase leads to potassium_falling. The same insulin given in potassium_replaced leads to treated."
+  "order_is_carried_by_phases": "The condition language cannot express order. Insulin given in the arrival phase leads to potassium_falling. The same insulin given in potassium_replaced leads to treated. Two hidden case actions close what phases alone left open. early_insulin is credited when rapid insulin is ordered in the arrival phase, so a learner whose potassium finished first still falls, five seconds after it finishes. insulin_restart is credited when an infusion or a subcutaneous dose is ordered in the recovering phase, so one order after the rescue is the restart. The race table is in DKA-SEED.md."
  },
  "phases": [
   {
@@ -133,7 +213,7 @@
      "measured_from": "guard_true",
      "to": "potassium_falling",
      "narration": "She says her arms and legs feel heavy and her heart is fluttering. Her rate has gone up.",
-     "debrief_note": "Insulin was given while her potassium was 3.1. Insulin moves potassium into cells, and hers fell to 2.6. She became weak and her ECG changed.\n\nThis is the decision the case is built around. In ketoacidosis the body is short of potassium even when the blood level looks normal, and vomiting and diarrhea had already taken hers low. The potassium result comes before the insulin. Under 3.5, replace it and hold insulin until it is back above 3.5.",
+     "debrief_note": "Insulin was given before her potassium was replaced. It was 3.1 on arrival. Insulin moves potassium into cells, and hers fell to 2.6. She became weak and her ECG changed.\n\nThis is the decision the case is built around. In ketoacidosis the body is short of potassium even when the blood level looks normal, and vomiting and diarrhea had already taken hers low. The potassium result comes before the insulin. Under 3.5, replace it and hold insulin until it is back to 3.5 or more. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]",
      "author_rationale": "A delayed consequence of the learner's own action. Insulin moves potassium into cells within minutes, and the 2024 consensus report says to delay insulin when the potassium is under 3.5 mmol/L to avoid arrhythmia and respiratory muscle weakness. The size of the fall (3.1 to 2.6) and the ten seconds are teaching choices. Ten seconds stands for about an hour. Model output."
     },
     {
@@ -142,16 +222,16 @@
      "measured_from": "guard_true",
      "to": "potassium_replaced",
      "narration": "That potassium has run through on the pump. Do you want a repeat level?",
-     "debrief_note": "Potassium was replaced before insulin. The repeat level is 3.6.\n\nTwenty seconds here stands for several hours of infusion: four to six at 10 mEq an hour, less at a faster rate through a central line. This is the slow part of the real case and insulin waits for it. The wait has a cost. With no insulin on board her ketones keep rising, which is the reason to start the potassium promptly.",
+     "debrief_note": "The potassium infusion ran in. A level sent after this point reads 3.6.\n\nTwenty seconds here stands for one to three hours of infusion at 20 to 40 mEq an hour, with a level every one to two hours. This is the slow part of the real case and insulin waits for it. The wait has a cost. With no insulin on board her ketones keep rising, which is the reason to start the potassium promptly. [UNVERIFIED: the hours are a rough rule written by a model from the rate the directing physician set, not from a source]",
      "author_rationale": "A delayed consequence of the learner's own action. A rise from 3.1 to 3.6 is taken as about 40 to 60 mEq, by a rough rule that often underestimates the need in ketoacidosis. Compressed openly, and the nurse says the infusion takes a while. Model output."
     }
    ]
   },
   {
    "id": "potassium_replaced",
-   "label": "Potassium back above 3.5, insulin not yet started",
-   "short_label": "potassium replaced",
-   "clinical_description": "Unchanged to look at. Potassium 3.6, glucose 320, pH 7.26, ketones a little higher. She is still in ketoacidosis, and now insulin is safe to start.",
+   "label": "Potassium infusion finished, level back to 3.5 or more",
+   "short_label": "after potassium",
+   "clinical_description": "Unchanged to look at. Potassium 3.6, glucose 320, pH 7.26, ketones a little higher. She is still in ketoacidosis, and now insulin is safe to start. A learner who gave insulin while the potassium was still running passes through here for five seconds on the way to potassium_falling.",
    "vitals": {
     "heart_rate": 112,
     "systolic_bp": 104,
@@ -183,12 +263,22 @@
      "author_note": "First in every list."
     },
     {
+     "when": "action early_insulin taken",
+     "after_seconds": 5,
+     "measured_from": "guard_true",
+     "to": "potassium_falling",
+     "narration": "She says her arms and legs feel heavy and her heart is fluttering. Her rate has gone up.",
+     "debrief_note": "Insulin was ordered while the potassium was still running in, before any repeat level. The infusion finished first, and then the insulin did what it does at a low potassium. It moved potassium into cells and her level fell to 2.6.\n\nPotassium that has been started is not potassium that has been replaced. Insulin waits for the infusion to finish and for a level of 3.5 or more. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]",
+     "author_rationale": "A delayed consequence of the learner's own action. Insulin moves potassium into cells within minutes, and the 2024 consensus report says to delay insulin when the potassium is under 3.5 mmol/L to avoid arrhythmia and respiratory muscle weakness. The size of the fall (3.1 to 2.6) and the ten seconds are teaching choices. Ten seconds stands for about an hour. Model output. This rule closes a race. Insulin ordered more than ten seconds after potassium used to be outrun by the potassium rule and reach the treated phase. The guard is a hidden action credited when rapid insulin is ordered in the arrival phase, so it holds on entry and this rule fires five seconds later, ahead of the ten second rule below. Five seconds is the validator's floor for a delayed consequence and is not a clinical claim.",
+     "author_note": "Above the insulin rule on purpose. See the race table in DKA-SEED.md."
+    },
+    {
      "when": "flag insulin_running set",
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "treated",
      "narration": "Her sugar is coming down on the insulin, 266 on the meter, and she says the sick feeling is easing. Her rate is settling.",
-     "debrief_note": "Insulin was started with the potassium above 3.5 and potassium still running. Her glucose is falling and the ketones are clearing.\n\nFrom here the work is watching. The consensus report asks for glucose every one to two hours, potassium two hours after insulin starts and every four hours after that, and a plan for when the glucose gets under 250.",
+     "debrief_note": "Insulin was started after the potassium had run in and the level was back to 3.5 or more. Her glucose is falling and the ketones are clearing.\n\nFrom here the work is watching. Glucose every hour, potassium every one to two hours at first with 20 to 30 mEq in each liter of fluid, and a plan for when the glucose gets under 250. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]",
      "author_rationale": "A delayed consequence of the learner's own action. Ten seconds stands for about an hour. Model output."
     }
    ]
@@ -219,7 +309,7 @@
     "qrs_ms": 88,
     "qtc_ms": 445,
     "t_mv": 0.18,
-    "author_note": "Sinus tachycardia, T waves normal, as the phase's report says. Model output."
+    "author_note": "Sinus rhythm, T waves normal, as the phase's report says. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -234,7 +324,7 @@
    "id": "potassium_falling",
    "label": "Potassium driven down by insulin",
    "short_label": "weak",
-   "clinical_description": "Weak in the arms and legs, aware of her heartbeat, still alert. Potassium 2.6. The ECG shows flat T waves, larger U waves and a longer QT. No clock leaves this phase. Holding insulin and giving intravenous potassium get her out.",
+   "clinical_description": "Weak in the arms and legs, aware of her heartbeat, still alert. Potassium 2.6. The ECG shows flat T waves, larger U waves and a longer QT. No clock leaves this phase. Holding insulin with intravenous potassium given gets her out. Potassium given before she fell counts, because an infusion that is running is still running.",
    "vitals": {
     "heart_rate": 118,
     "systolic_bp": 102,
@@ -270,17 +360,17 @@
      "after_seconds": 20,
      "measured_from": "guard_true",
      "to": "recovering",
-     "narration": "The potassium has run through and the insulin is on hold. She says her arms feel stronger. Her rate has come back down.",
-     "debrief_note": "You held the insulin and replaced the potassium, and she recovered. Seeing that a treatment is hurting the patient and withdrawing it is a skill.\n\nInsulin restarts once the potassium is above 3.5.",
-     "author_rationale": "A delayed consequence of the learner's own actions. Twenty seconds stands for several hours of infusion. Model output."
+     "narration": "The potassium has run through. She says her arms feel stronger and her rate has come back down. Do you want a repeat level?",
+     "debrief_note": "You held the insulin and replaced the potassium, and she recovered. Seeing that a treatment is hurting the patient and withdrawing it is a skill.\n\nPotassium that was already running when she became weak counted. An infusion that is running is still running, so holding the insulin was the step that was missing.\n\nInsulin restarts once a repeat potassium is 3.5 or more. In the simulator a held insulin stays off until it is ordered again.",
+     "author_rationale": "A delayed consequence of the learner's own actions. Twenty seconds stands for several hours of infusion, measured from the moment both the hold and the potassium are in. Model output."
     }
    ]
   },
   {
    "id": "recovering",
-   "label": "Potassium replaced after early insulin, insulin on hold",
+   "label": "Recovered after early insulin, potassium replaced",
    "short_label": "recovering",
-   "clinical_description": "Strength back. Potassium 3.6, glucose 285, still in ketoacidosis with insulin on hold. Restarting insulin moves her to the treated phase.",
+   "clinical_description": "Strength back. Potassium 3.6, glucose 285, still in ketoacidosis. One order of an insulin infusion or subcutaneous insulin placed in this phase moves her to the treated phase.",
    "vitals": {
     "heart_rate": 112,
     "systolic_bp": 104,
@@ -312,16 +402,16 @@
      "author_note": "First in every list."
     },
     {
-     "when": "flag insulin_restarted set",
+     "when": "action insulin_restart taken",
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "treated",
      "narration": "Insulin is back on and her sugar is coming down, 266 on the meter. Her rate is settling.",
-     "debrief_note": "Insulin was restarted with the potassium above 3.5. This is where the first dose belonged.",
-     "author_rationale": "A delayed consequence of the learner's own action. The flag is granted by the second administration of infusion or subcutaneous insulin. Model output."
+     "debrief_note": "Insulin was restarted with the potassium at 3.5 or more. This is where the first dose belonged.",
+     "author_rationale": "A delayed consequence of the learner's own action. The guard is a hidden action credited when an insulin infusion or a subcutaneous dose is ordered in this phase, so one order after the rescue is the restart whatever was ordered before it. Ten seconds stands for about an hour. Model output."
     }
    ],
-   "authoring_note": "Same numbers as potassium_replaced. Two phases because the exits differ: here the insulin flag is already set, so the exit is the second administration."
+   "authoring_note": "Same numbers as potassium_replaced. Two phases because the exits differ: here the insulin flags are already set, so the exit is an insulin order placed in this phase."
   },
   {
    "id": "case_complete",
@@ -372,7 +462,7 @@
   ],
   "note": "Harmful is not used. Nothing halts this case."
  },
- "flag_namespace_note": "Flags are permanent. insulin_given is set by any insulin, insulin_running by an infusion or a subcutaneous dose, insulin_stopped by the hold action, and insulin_restarted by the second administration of an infusion or subcutaneous dose. A learner who gave both an infusion and a subcutaneous dose before the hold has already set insulin_restarted, which is a known gap.",
+ "flag_namespace_note": "Flags are permanent. insulin_given is set by any rapid insulin, insulin_running by an infusion or a subcutaneous dose, and insulin_stopped by the hold action. No flag says when. Three hidden case actions carry that, each credited through also_satisfies on the phase at the moment of the order: early_insulin, insulin_restart and repeat_potassium_level. The repeat-granted flags of v0.23 (insulin_restarted and chem_repeated) are gone. fluids_given is set by a crystalloid bolus or infusion.",
  "case_actions": [
   {
    "catalog_id": "attach_monitor",
@@ -420,6 +510,45 @@
    "debrief_note": "Useful when potassium, insulin and fluid are all running, because potassium is not mixed into every line. Not scored."
   },
   {
+   "catalog_id": "central_venous_catheter_triple_lumen",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "flags_set": [
+    "central_access"
+   ],
+   "debrief_note": "Counts as a line for intravenous potassium and for everything else. Not scored."
+  },
+  {
+   "catalog_id": "central_venous_catheter_cordis",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "flags_set": [
+    "central_access"
+   ],
+   "debrief_note": "Counts as a line for intravenous potassium and for everything else. Not scored."
+  },
+  {
+   "catalog_id": "intraosseous_line",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "flags_set": [
+    "io_access"
+   ],
+   "debrief_note": "Counts as a line for intravenous potassium and for everything else. Not scored."
+  },
+  {
    "catalog_id": "fingerstick_blood_sugar",
    "tag": [
     {
@@ -437,7 +566,7 @@
     "guard": "phase is presentation AND NOT study fingerstick_blood_sugar ordered",
     "text": "She looks dry and she's breathing deeply. Do you want a fingerstick glucose?"
    },
-   "debrief_note": "A bedside glucose takes seconds and it is what turns a stomach bug into a different problem. The triage note did not mention diabetes. Any vomiting adult who looks dry or is breathing deeply gets one.\n\nRepeated hourly once insulin is running."
+   "debrief_note": "A bedside glucose takes seconds and it is what turns a stomach bug into a different problem. The triage note did not mention diabetes. Any vomiting adult who looks dry or is breathing deeply gets one.\n\nRepeated hourly once insulin is running. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "venous_blood_gas",
@@ -448,7 +577,7 @@
     }
    ],
    "expectation_label": "Blood gas (venous is enough)",
-   "debrief_note": "The pH is one of the three things that make the diagnosis and it sets the severity. Hers is 7.27, which with a bicarbonate of 16 and a clear head is mild ketoacidosis in the 2024 consensus report. A venous sample is enough. An arterial puncture adds pain and no information here."
+   "debrief_note": "The pH is one of the three things that make the diagnosis and it sets the severity. Hers is 7.27, which with a bicarbonate of 16 and a clear head is mild ketoacidosis in the 2024 consensus report. The gas is a metabolic acidosis with a low pCO2 from deep breathing. A venous sample is enough. An arterial puncture adds pain and no information here. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "arterial_blood_gas",
@@ -464,7 +593,7 @@
      "when": null
     }
    ],
-   "debrief_note": "Accepted in place of the venous gas. An arterial sample is not needed to diagnose or follow ketoacidosis when the saturation is normal, and it hurts."
+   "debrief_note": "Accepted in place of the venous gas, and it says the same thing a venous one would have. An arterial sample is not needed to diagnose or follow ketoacidosis when the saturation is normal, and it hurts. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "basic_chemistry_chem_7",
@@ -475,11 +604,10 @@
     }
    ],
    "expectation_label": "Chemistry, for the potassium and the anion gap",
-   "flags_set_repeat": [
+   "also_satisfies": [
     {
-     "flag": "chem_repeated",
-     "after_administrations": 2,
-     "counter": "chemistry_panels"
+     "id": "repeat_potassium_level",
+     "when": "phase is potassium_replaced OR phase is recovering OR phase is treated"
     }
    ],
    "prompt": {
@@ -487,7 +615,7 @@
     "guard": "phase is presentation AND NOT study basic_chemistry_chem_7 ordered",
     "text": "Do you want labs sent? I can send a chemistry and a gas off the line."
    },
-   "debrief_note": "Two numbers on this panel run the case. The anion gap of 18 with a bicarbonate of 16 is the acidosis. The potassium of 3.1 is the reason insulin waits.\n\nMost patients in ketoacidosis arrive with a normal or high potassium, because acidosis and lack of insulin move it out of cells. The consensus report puts a level under 3.5 on arrival at 5 to 10 percent of patients. Two days of vomiting and diarrhea is how she got there."
+   "debrief_note": "Two numbers on this panel run the case. The anion gap of 18 with a bicarbonate of 16 is the acidosis. The potassium of 3.1 is the reason insulin waits.\n\nMost patients in ketoacidosis arrive with a normal or high potassium, because acidosis and lack of insulin move it out of cells. The consensus report puts a level under 3.5 on arrival at 5 to 10 percent of patients. Two days of vomiting and diarrhea is how she got there.\n\nA repeat panel shows what each treatment did. After fluid the glucose and the BUN are a little lower, the bicarbonate has not moved, the anion gap has barely moved and the potassium is slightly lower by dilution. After bicarbonate the bicarbonate is a little higher, the potassium is lower and ketone production has not changed. After the potassium infusion the level is back to 3.5 or more and the acidosis is untreated and a little worse, which is the cost of the wait. On insulin with the potassium replaced the glucose falls, the bicarbonate rises, the anion gap narrows and the potassium holds. After insulin given too early the potassium is 2.6, and the glucose has fallen by the same insulin effect that moved the potassium. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "beta_hydroxybutyrate",
@@ -498,7 +626,7 @@
     }
    ],
    "expectation_label": "Blood ketones",
-   "debrief_note": "A blood beta-hydroxybutyrate of 3.0 mmol/L or more is the ketone criterion in the 2024 consensus report, and it is the number that says when the ketoacidosis has resolved (under 0.6). Urine ketones lag behind and can look worse as she gets better."
+   "debrief_note": "A blood beta-hydroxybutyrate of 3.0 mmol/L or more is the ketone criterion in the 2024 consensus report, and it is the number that says when the ketoacidosis has resolved (under 0.6). Urine ketones lag behind and can look worse as she gets better. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "urinalysis",
@@ -508,7 +636,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "Ketones and glucose in the urine support the diagnosis. The reason to send it is the search for a trigger: urinary infection is one of the commonest. Hers shows none."
+   "debrief_note": "Ketones and glucose in the urine support the diagnosis. The reason to send it is the search for a trigger: urinary infection is one of the commonest. Hers shows none. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "urine_hcg_qualitative",
@@ -519,7 +647,7 @@
     }
    ],
    "expectation_label": "Pregnancy test",
-   "debrief_note": "A woman of 24 who is vomiting gets a pregnancy test whatever she says about her pill. Pregnancy lowers the glucose at which ketoacidosis occurs and raises the stakes. Hers is negative."
+   "debrief_note": "A woman of 24 who is vomiting gets a pregnancy test whatever she says about her pill. Pregnancy lowers the glucose at which ketoacidosis occurs and raises the stakes. Hers is negative. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "serum_hcg_quantitative",
@@ -554,7 +682,7 @@
     "guard": "phase is potassium_falling",
     "text": "She says her heart is fluttering. Do you want a twelve-lead?"
    },
-   "debrief_note": "A potassium of 3.1 is a reason for an ECG and a monitor. At that level many tracings are normal. Hers shows subtle T wave flattening and small U waves. After insulin given too early the T waves flatten, the U waves grow and the QT lengthens.\n\nThe ECG is a rough guide to potassium. A normal tracing does not mean a normal level."
+   "debrief_note": "A potassium of 3.1 is a reason for an ECG and a monitor. At that level many tracings are normal. Hers shows subtle T wave flattening and small U waves. After insulin given too early the T waves flatten, the U waves grow and the QT lengthens.\n\nFlat T waves and U waves are the ECG of a low potassium. The QT is hard to measure when a U wave follows the T wave.\n\nThe ECG is a rough guide to potassium. A normal tracing does not mean a normal level. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "magnesium_level",
@@ -564,7 +692,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "Low at 1.5. A low magnesium often travels with a low potassium after vomiting and diarrhea, and it makes the potassium harder to correct. The consensus report does not discuss magnesium. This is general teaching on hypokalemia."
+   "debrief_note": "Low at 1.5. A low magnesium often travels with a low potassium after vomiting and diarrhea, and it makes the potassium harder to correct. The consensus report does not discuss magnesium. This is general teaching on hypokalemia. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "phosphate_level",
@@ -574,7 +702,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Normal on arrival, as it usually is, and expected to fall with insulin. The consensus report advises against routine phosphate replacement and considers it when the level is low with muscle weakness or respiratory or cardiac compromise. The report prints the cutoff as under 1.0 mmol/L. Older guidance used 1.0 mg/dL. Check your own protocol."
+   "debrief_note": "Normal on arrival, as it usually is, and expected to fall with insulin. The consensus report advises against routine phosphate replacement and considers it when the level is low with muscle weakness or respiratory or cardiac compromise. The report prints the cutoff as under 1.0 mmol/L. Older guidance used 1.0 mg/dL. Check your own protocol. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "complete_blood_count_cbc",
@@ -584,7 +712,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "A white count of 13 is common in ketoacidosis without infection. It is a stress response and does not on its own mean she needs antibiotics."
+   "debrief_note": "A white count of 13 is common in ketoacidosis without infection. It is a stress response and does not on its own mean she needs antibiotics. Her hemoglobin is at the top of her range from dehydration. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "lipase",
@@ -594,7 +722,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Normal. Lipase is often raised in ketoacidosis without pancreatitis, sometimes several times the upper limit, so a raised one would have needed interpreting with the abdomen."
+   "debrief_note": "Normal. Lipase is often raised in ketoacidosis without pancreatitis, sometimes several times the upper limit, so a raised one would have needed interpreting with the abdomen. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "lactate",
@@ -604,7 +732,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Normal. Her acidosis is ketones."
+   "debrief_note": "Normal. Her acidosis is ketones. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "osmolality",
@@ -614,7 +742,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "At the top of the normal range. A high osmolality with a very high glucose and little ketosis would be the hyperosmolar state, which she does not have."
+   "debrief_note": "At the top of the normal range. A high osmolality with a very high glucose and little ketosis would be the hyperosmolar state, which she does not have. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "xr_chest",
@@ -624,7 +752,17 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Clear. Pneumonia is a common trigger and she has no cough, so this was optional."
+   "debrief_note": "Clear. Pneumonia is a common trigger and she has no cough, so this was optional. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
+  },
+  {
+   "catalog_id": "ultrasound_cardiac",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "A vigorous ventricle and a small vena cava that collapses with each breath fit the fluid she has lost. It was not needed to make the diagnosis. Not scored. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "ct_abdomen",
@@ -634,7 +772,7 @@
      "value": "discouraged"
     }
    ],
-   "debrief_note": "Her cramps fit the gastroenteritis, her abdomen is soft with no guarding and her appendix is out. A scan adds radiation and delay for a young woman.\n\nAbdominal pain from ketoacidosis itself tracks the severity of the acidosis. In mild ketoacidosis, significant pain should not be put down to the ketoacidosis, and pain that persists as she improves is the reason to look further."
+   "debrief_note": "Her cramps fit the gastroenteritis, her abdomen is soft with no guarding and her appendix is out. A scan adds radiation and delay for a young woman.\n\nAbdominal pain from ketoacidosis itself tracks the severity of the acidosis. In mild ketoacidosis, significant pain should not be put down to the ketoacidosis, and pain that persists as she improves is the reason to look further. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "normal_saline_1l_bolus",
@@ -667,7 +805,7 @@
     "guard": "NOT flag fluids_given set",
     "text": "She's dry and her pulse is fast. Do you want fluid running?"
    },
-   "debrief_note": "Fluid comes first. The consensus report recommends isotonic saline or a balanced crystalloid at 500 to 1000 mL an hour for the first two to four hours. Either counts here.\n\nWatch what fluid did and did not do. Her rate came down and her glucose fell a little by dilution and by better kidney perfusion. Her bicarbonate and anion gap did not move. Fluid treats the dehydration. Insulin treats the ketoacidosis.\n\nFluid also dilutes the potassium slightly, which is one more reason to know the level early."
+   "debrief_note": "Fluid comes first. The consensus report recommends isotonic saline or a balanced crystalloid at 500 to 1000 mL an hour for the first two to four hours. Either counts here.\n\nWatch what fluid did and did not do. Her rate came down and her glucose fell a little by dilution and by better kidney perfusion. Her bicarbonate and anion gap did not move. Fluid treats the dehydration. Insulin treats the ketoacidosis.\n\nFluid also dilutes the potassium slightly, which is one more reason to know the level early. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "normal_saline_infusion",
@@ -677,7 +815,30 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Continuing fluid after the bolus is part of treatment. Once potassium is under 5.0 the consensus report adds 20 to 30 mEq to each liter. Not scored separately from the bolus."
+   "flags_set": [
+    "fluids_given"
+   ],
+   "vital_effects": [
+    {
+     "vital": "heart_rate",
+     "delta": -10,
+     "key": "fluid_hr",
+     "note": "Teaching choice. The same effect and the same key as the bolus."
+    },
+    {
+     "vital": "systolic_bp",
+     "delta": 6,
+     "key": "fluid_bp",
+     "note": "As above."
+    }
+   ],
+   "also_satisfies": [
+    {
+     "id": "normal_saline_1l_bolus",
+     "when": null
+    }
+   ],
+   "debrief_note": "Counted as her fluid. The consensus report gives the first fluid as a rate, 500 to 1000 mL an hour, so an infusion started at that rate is the same treatment as a bolus. Continuing fluid afterwards is part of treatment too. With the potassium between 3.5 and 5.5, 20 to 30 mEq of potassium goes into each liter. Not scored separately from the bolus. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool] [Potassium rule from the reference table supplied by the directing physician, 7 October 2026]"
   },
   {
    "catalog_id": "lactated_ringer_s_infusion",
@@ -687,7 +848,30 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Continuing fluid after the bolus is part of treatment. Once potassium is under 5.0 the consensus report adds 20 to 30 mEq to each liter. Not scored separately from the bolus."
+   "flags_set": [
+    "fluids_given"
+   ],
+   "vital_effects": [
+    {
+     "vital": "heart_rate",
+     "delta": -10,
+     "key": "fluid_hr",
+     "note": "Teaching choice. The same effect and the same key as the bolus."
+    },
+    {
+     "vital": "systolic_bp",
+     "delta": 6,
+     "key": "fluid_bp",
+     "note": "As above."
+    }
+   ],
+   "also_satisfies": [
+    {
+     "id": "normal_saline_1l_bolus",
+     "when": null
+    }
+   ],
+   "debrief_note": "Counted as her fluid. The consensus report gives the first fluid as a rate, 500 to 1000 mL an hour, so an infusion started at that rate is the same treatment as a bolus. Continuing fluid afterwards is part of treatment too. With the potassium between 3.5 and 5.5, 20 to 30 mEq of potassium goes into each liter. Not scored separately from the bolus. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool] [Potassium rule from the reference table supplied by the directing physician, 7 October 2026]"
   },
   {
    "catalog_id": "potassium_chloride_kcl",
@@ -708,24 +892,24 @@
    ],
    "prerequisites": [
     {
-     "when": "flag iv_access set",
-     "failure_message": "She hasn't got a line in yet. Do you want me to get IV access first?"
+     "when": "flag iv_access set OR flag central_access set OR flag io_access set",
+     "failure_message": "She doesn't have a line yet. Do you want me to get IV access first?"
     }
    ],
    "follow_ups_triggered": [
     "repeat_potassium_after_replacement"
    ],
-   "nurse_alert": "It's on the pump and she's on the monitor. It takes a while to run in. I'll tell you when it's through.",
+   "nurse_alert": "It's on the pump. It takes a while to run in.",
    "prompt": {
-    "deadline_seconds": 45,
+    "deadline_seconds": 110,
     "guard": "(phase is presentation AND study basic_chemistry_chem_7 resulted AND NOT flag potassium_iv_given set) OR (phase is potassium_falling AND NOT flag potassium_iv_given set)",
     "text": "I'm worried about her potassium. Do you want some running through the line?",
     "escalation": {
-     "deadline_seconds": 130,
-     "text": "Her potassium still hasn't been replaced. Do you want it running before anything else goes in?"
+     "deadline_seconds": 170,
+     "text": "Nothing has gone in for her potassium. Do you want it running before anything else goes in?"
     }
    },
-   "debrief_note": "This is the step that makes the case. Her potassium was 3.1 before any insulin. The consensus report says that when the level is under 3.5, potassium replacement begins and insulin is delayed until the level is back above 3.5, to avoid life-threatening arrhythmia and respiratory muscle weakness.\n\nThe report gives 10 mEq an hour as the starting rate. Most hospital policies allow 10 mEq an hour through a peripheral line and up to 20 with central access or a second line, with the patient on a monitor. Follow your own. Potassium is never given as a push.\n\nThe 2009 American Diabetes Association statement used 3.3 as the threshold, and many hospital protocols still do. This case uses 3.5, from the 2024 report.\n\nThe simulator compresses several hours of infusion into twenty seconds and does not model the dose."
+   "debrief_note": "This is the step that makes the case. Her potassium was 3.1 before any insulin. Insulin moves potassium into cells, and a level that is already low falls to one that can stop the heart or the breathing muscles.\n\nThe rule by level:\n\nUnder 3.5: hold insulin. Intravenous potassium chloride at 20 to 40 mEq an hour, on a monitor. Recheck the level every one to two hours. Start insulin only once it is 3.5 or more.\n\n3.5 to 5.5: 20 to 30 mEq of potassium in each liter of fluid, and insulin can start at the same time.\n\nOver 5.5: hold the potassium, start insulin, and recheck in one to two hours. Insulin and fluid bring it down fast.\n\nRates of 20 mEq an hour and above usually mean a central line or two peripheral lines, and always a monitor. Follow your own policy. Potassium is never given as a push.\n\nSources differ on the numbers. The 2024 consensus report, as read for this case, gave a lower starting rate, and the 2009 American Diabetes Association statement used 3.3 as the threshold, which many hospital protocols still do. This case uses 3.5 and 20 to 40 mEq an hour, from the reference the directing physician set on 7 October 2026.\n\nThe simulator compresses hours of infusion into twenty seconds and does not model the dose. [Potassium rule from the reference table supplied by the directing physician, 7 October 2026] [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool] [UNVERIFIED: the 2009 threshold of 3.3 and the line requirements are from memory]"
   },
   {
    "catalog_id": "potassium_chloride_oral",
@@ -738,8 +922,8 @@
    "flags_set": [
     "oral_potassium_tried"
    ],
-   "narration_override": "She's taken the potassium and brought it straight back up.",
-   "debrief_note": "Oral potassium is a good route in a patient who can keep it down, and it is often given alongside the infusion. She is vomiting, so it did not stay in. With a level of 3.1 and insulin waiting on it, the intravenous route is the one that can be relied on. Not scored."
+   "narration_override": "She's taken the potassium. I can't promise it stays down.",
+   "debrief_note": "Oral potassium is a good route in a patient who can keep it down, and it is often given alongside the infusion. She came in vomiting, so it cannot be relied on. With a level of 3.1 and insulin waiting on it, the intravenous route is the one to use. The simulator gives the oral dose no effect at any point in the case, which is a simplification once her vomiting has settled. Not scored. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "magnesium_sulfate",
@@ -753,7 +937,7 @@
    "flags_set": [
     "mag_given"
    ],
-   "debrief_note": "A low magnesium makes the kidneys waste potassium, so replacing it helps the potassium hold. It also protects against the rhythm problems of a long QT. This is standard teaching on hypokalemia and is not addressed in the consensus report."
+   "debrief_note": "A low magnesium makes the kidneys waste potassium, so replacing it helps the potassium hold. It also protects against the rhythm problems of a long QT. This is standard teaching on hypokalemia and is not addressed in the consensus report. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "insulin_drip",
@@ -771,16 +955,19 @@
      "value": "discouraged"
     }
    ],
-   "expectation_label": "Insulin, once the potassium is above 3.5",
+   "expectation_label": "Insulin, once the potassium is 3.5 or more",
    "flags_set": [
     "insulin_given",
     "insulin_running"
    ],
-   "flags_set_repeat": [
+   "also_satisfies": [
     {
-     "flag": "insulin_restarted",
-     "after_administrations": 2,
-     "counter": "insulin_starts"
+     "id": "early_insulin",
+     "when": "phase is presentation"
+    },
+    {
+     "id": "insulin_restart",
+     "when": "phase is recovering"
     }
    ],
    "follow_ups_triggered": [
@@ -789,9 +976,9 @@
    "prompt": {
     "deadline_seconds": 45,
     "guard": "phase is potassium_replaced",
-    "text": "The potassium has gone in. Do you want to start insulin now?"
+    "text": "The potassium has gone in. Do you want a repeat level, and insulin if it's 3.5 or more?"
    },
-   "debrief_note": "Insulin is the treatment for ketoacidosis and its timing is the lesson here.\n\nGiven once her potassium was above 3.5, it was right. Given while the potassium was 3.1, or before the result was back, it drove the level down to 2.6 and made her weak. The consensus report says to delay insulin until the potassium is above 3.5.\n\nThe report recommends a fixed-rate infusion of 0.1 units per kg per hour, and accepts subcutaneous rapid-acting insulin every one to two hours for uncomplicated mild or moderate ketoacidosis. Either route counts in this case."
+   "debrief_note": "Insulin is the treatment for ketoacidosis and its timing is the lesson here.\n\nGiven once a repeat level was 3.5 or more, it was right. Given while the potassium was 3.1, or before the result was back, it drove the level down to 2.6 and made her weak. Under 3.5, insulin is held and the potassium is replaced first. Insulin starts once the level is 3.5 or more, and between 3.5 and 5.5 it runs with potassium in the fluids.\n\nThe report recommends a fixed-rate infusion of 0.1 units per kg per hour, and accepts subcutaneous rapid-acting insulin every one to two hours for uncomplicated mild or moderate ketoacidosis. Either route counts in this case.\n\nPotassium that has been started is not potassium that has been replaced. In the simulator, insulin waits for a repeat level of 3.5 or more, and rapid insulin ordered at any point before the potassium infusion has finished drops her potassium. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool] [Potassium rule from the reference table supplied by the directing physician, 7 October 2026]"
   },
   {
    "catalog_id": "insulin_subcutaneous",
@@ -810,23 +997,24 @@
     "insulin_given",
     "insulin_running"
    ],
-   "flags_set_repeat": [
-    {
-     "flag": "insulin_restarted",
-     "after_administrations": 2,
-     "counter": "insulin_starts"
-    }
-   ],
    "also_satisfies": [
     {
      "id": "insulin_drip",
      "when": "phase is potassium_replaced OR phase is recovering"
+    },
+    {
+     "id": "early_insulin",
+     "when": "phase is presentation"
+    },
+    {
+     "id": "insulin_restart",
+     "when": "phase is recovering"
     }
    ],
    "follow_ups_triggered": [
     "dextrose_plan_after_insulin"
    ],
-   "debrief_note": "Insulin is the treatment for ketoacidosis and its timing is the lesson here.\n\nGiven once her potassium was above 3.5, it was right. Given while the potassium was 3.1, or before the result was back, it drove the level down to 2.6 and made her weak. The consensus report says to delay insulin until the potassium is above 3.5.\n\nThe report recommends a fixed-rate infusion of 0.1 units per kg per hour, and accepts subcutaneous rapid-acting insulin every one to two hours for uncomplicated mild or moderate ketoacidosis. Either route counts in this case.\n\nSubcutaneous insulin cannot be turned off once it is in. That is one more reason to be sure of the potassium first."
+   "debrief_note": "Insulin is the treatment for ketoacidosis and its timing is the lesson here.\n\nGiven once a repeat level was 3.5 or more, it was right. Given while the potassium was 3.1, or before the result was back, it drove the level down to 2.6 and made her weak. Under 3.5, insulin is held and the potassium is replaced first. Insulin starts once the level is 3.5 or more, and between 3.5 and 5.5 it runs with potassium in the fluids.\n\nThe report recommends a fixed-rate infusion of 0.1 units per kg per hour, and accepts subcutaneous rapid-acting insulin every one to two hours for uncomplicated mild or moderate ketoacidosis. Either route counts in this case.\n\nPotassium that has been started is not potassium that has been replaced. In the simulator, insulin waits for a repeat level of 3.5 or more, and rapid insulin ordered at any point before the potassium infusion has finished drops her potassium. [Potassium rule from the reference table supplied by the directing physician, 7 October 2026]\n\nSubcutaneous insulin cannot be turned off once it is in. That is one more reason to be sure of the potassium first. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "insulin_bolus",
@@ -839,7 +1027,47 @@
    "flags_set": [
     "insulin_given"
    ],
-   "debrief_note": "An insulin bolus is not part of routine treatment. The consensus report mentions a bolus of 0.1 units per kg, intravenous or intramuscular, only when starting the infusion is going to be delayed. Some protocols differ. A bolus moves potassium into cells as fast as an infusion does, so before the potassium was replaced it carried the same risk."
+   "also_satisfies": [
+    {
+     "id": "early_insulin",
+     "when": "phase is presentation"
+    }
+   ],
+   "debrief_note": "An insulin bolus is not part of routine treatment. The consensus report mentions a bolus of 0.1 units per kg, intravenous or intramuscular, only when starting the infusion is going to be delayed. Some protocols differ. A bolus moves potassium into cells as fast as an infusion does, so before the potassium was replaced it carried the same risk. A bolus alone does not treat her. She needs the infusion or subcutaneous doses. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
+  },
+  {
+   "catalog_id": "early_insulin",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "hidden": true,
+   "display_name": "Rapid insulin ordered before the potassium had run in",
+   "debrief_note": "Not an order. The simulator credits this when rapid insulin is ordered in the arrival phase, and the phase rules read it. A learner never sees it."
+  },
+  {
+   "catalog_id": "insulin_restart",
+   "tag": [
+    {
+     "when": "phase is recovering",
+     "value": "critical"
+    },
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "hidden": true,
+   "display_name": "Insulin restarted after the hold",
+   "expectation_label": "Insulin back on, once the potassium is 3.5 or more",
+   "prompt": {
+    "deadline_seconds": 45,
+    "guard": "phase is recovering",
+    "text": "The potassium has gone in. Do you want a repeat level, and insulin back on if it's 3.5 or more?"
+   },
+   "debrief_note": "After insulin given too early, the insulin is held, the potassium is replaced and the level is repeated. Insulin then goes back on, by infusion or by subcutaneous rapid-acting insulin, and this time it treats her. In the simulator a held insulin stays off until it is ordered again. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "stop_insulin",
@@ -862,13 +1090,13 @@
    "flags_set": [
     "insulin_stopped"
    ],
-   "narration_override": "Insulin is on hold until you say.",
+   "narration_override": "Insulin is on hold. It stays off until you order it again.",
    "prompt": {
     "deadline_seconds": 25,
     "guard": "phase is potassium_falling AND NOT flag insulin_stopped set",
-    "text": "She's got weaker since the insulin. Do you want it held?"
+    "text": "She's weaker since the insulin. Do you want it held?"
    },
-   "debrief_note": "With the potassium at 2.6 and falling, holding insulin is the first step of the rescue. It goes back on once the potassium is above 3.5.\n\nStopping insulin in a patient who is responding is the opposite mistake. A glucose that looks better is not the end point. Resolution in the consensus report is ketones under 0.6 mmol/L with a pH of 7.3 or a bicarbonate of 18 or more, and many hospitals also use a closed anion gap. Insulin continues with dextrose until then. Basal insulin is started one to two hours before an infusion is stopped."
+   "debrief_note": "After insulin given too early her potassium is 2.6, and holding insulin is the first step of the rescue. It goes back on once the potassium is 3.5 or more.\n\nStopping insulin in a patient who is responding is the opposite mistake. A glucose that looks better is not the end point. Resolution in the consensus report is ketones under 0.6 mmol/L with a pH of 7.3 or a bicarbonate of 18 or more, and many hospitals also use a closed anion gap. Insulin continues with dextrose until then. Basal insulin is started one to two hours before an infusion is stopped. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "insulin_glargine_subcutaneous",
@@ -887,7 +1115,7 @@
     "basal_given"
    ],
    "narration_override": "That's her long-acting insulin in, her usual dose.",
-   "debrief_note": "She skipped her basal insulin, and that is why she is here. Giving it back is part of the treatment. The consensus report says a regimen the patient was already on 'can be continued at the usual dose', and that basal insulin 'should be started 1-2 h before cessation of intravenous insulin'.\n\nHow early to give it is not settled. The report says giving basal insulin during the infusion 'is advocated by many clinicians but avoided by others because of the risk of hypoglycaemia or hypokalaemia', and that several studies of a low dose found a shorter time to resolution and less rebound hyperglycemia.\n\nThis case counts it once insulin is running and the potassium is above 3.5, and does not score it before then. Glargine acts over hours, so the simulator does not let it drop the potassium the way rapid insulin does. That is a simplification. It also does not replace the infusion or the rapid-acting doses. Basal insulin alone will not clear the ketones."
+   "debrief_note": "She skipped her basal insulin, and that is why she is here. Giving it back is part of the treatment. The consensus report says a regimen the patient was already on 'can be continued at the usual dose', and that basal insulin 'should be started 1-2 h before cessation of intravenous insulin'.\n\nHow early to give it is not settled. The report says many clinicians give basal insulin during the infusion and others avoid it because of the risk of a low glucose or a low potassium, and that several studies of a low dose found a shorter time to resolution and less rebound hyperglycemia.\n\nThis case counts it once insulin is running and the potassium is 3.5 or more, and does not score it before then. Glargine acts over hours, so the simulator does not let it drop the potassium the way rapid insulin does. That is a simplification. It also does not replace the infusion or the rapid-acting doses. Basal insulin alone will not clear the ketones. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "d5_1_2_ns_infusion",
@@ -906,7 +1134,7 @@
     "dextrose_planned"
    ],
    "narration_override": "I'll have the dextrose fluid ready and switch to it when her sugar is under 250.",
-   "debrief_note": "Once the glucose is under 250 mg/dL the consensus report changes the fluid to one containing 5 to 10 percent dextrose, so that insulin can continue until the ketones clear without the glucose going low. Ordering it ahead is the plan the receiving team needs.\n\nBefore insulin is running it does nothing useful."
+   "debrief_note": "Once the glucose is under 250 mg/dL the consensus report changes the fluid to one containing 5 to 10 percent dextrose, so that insulin can continue until the ketones clear without the glucose going low. Ordering it ahead is the plan the receiving team needs.\n\nBefore insulin is running it does nothing useful. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "d5_ns_bolus",
@@ -932,7 +1160,7 @@
      "value": "discouraged"
     }
    ],
-   "debrief_note": "Concentrated dextrose is for a low glucose. Hers was never under 250. It raises the glucose and the osmolality in a patient being treated for both."
+   "debrief_note": "Concentrated dextrose is for a low glucose. Hers was never under 250. It raises the glucose and the osmolality in a patient being treated for both. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "na_bicarbonate_bolus",
@@ -946,7 +1174,7 @@
    "flags_set": [
     "bicarb_given"
    ],
-   "debrief_note": "Bicarbonate is not a treatment for mild ketoacidosis. The consensus report considers it only when the pH is under 7.0. Hers is 7.27, and insulin clears the acid by stopping ketone production.\n\nIt can also lower the potassium. A repeat chemistry after it shows hers slightly lower than before."
+   "debrief_note": "Bicarbonate is not a treatment for mild ketoacidosis. The consensus report considers it only when the pH is under 7.0. Hers is 7.27, and insulin clears the acid by stopping ketone production.\n\nIt can also lower the potassium. A chemistry sent after it, before anything else has changed her, shows hers slightly lower than on arrival. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "ondansetron",
@@ -959,7 +1187,7 @@
    "flags_set": [
     "ondansetron_given"
    ],
-   "debrief_note": "Treating her vomiting is kind and reasonable. Ondansetron lengthens the QT interval by a few milliseconds at usual doses, which matters only when the QT is already long. A low potassium and a low magnesium lengthen it too, and the drug label says to correct both first. In her, look at the ECG and start the replacement. A repeat ECG after it shows the QT about 5 ms longer, which is within measurement error. Not scored."
+   "debrief_note": "Treating her vomiting is kind and reasonable. Ondansetron lengthens the QT interval by a few milliseconds at usual doses, which matters only when the QT is already long. A low potassium and a low magnesium lengthen it too, and the drug label says to correct both first. In her, look at the ECG and start the replacement. A repeat ECG after it shows the QT about 5 ms longer, which is within measurement error. Not scored. [UNVERIFIED: FDA drug safety communication on ondansetron, opened by a model, not checked by a physician]"
   },
   {
    "catalog_id": "metoclopramide",
@@ -997,7 +1225,19 @@
     "icu_called"
    ],
    "state_changing": true,
-   "debrief_note": "Mild ketoacidosis in an alert patient does not usually need intensive care. The consensus report suggests a regular or observation unit for mild ketoacidosis and step-down for moderate. Some hospitals require intensive care for any insulin infusion."
+   "debrief_note": "Mild ketoacidosis in an alert patient does not usually need intensive care. The consensus report suggests a regular or observation unit for mild ketoacidosis and step-down for moderate. Some hospitals require intensive care for any insulin infusion. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
+  },
+  {
+   "catalog_id": "repeat_potassium_level",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "hidden": true,
+   "display_name": "Repeat potassium after replacement",
+   "debrief_note": "Not an order. The simulator credits this when a chemistry is sent once the potassium has run in, and the repeat-level follow-up reads it. A learner never sees it."
   },
   {
    "catalog_id": "handoff_submit",
@@ -1022,7 +1262,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Her airway is her own throughout."
+   "debrief_note": "Her airway is her own throughout. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_breath",
@@ -1032,7 +1272,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Deep, slightly fast breathing with clear lungs is the body blowing off acid. In a vomiting patient it is easy to read as anxiety."
+   "debrief_note": "Deep, slightly fast breathing with clear lungs is the body blowing off acid. In a vomiting patient it is easy to read as anxiety. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_circ",
@@ -1042,7 +1282,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "A fast pulse and slow capillary refill are the fluid she has lost."
+   "debrief_note": "A fast pulse and slow capillary refill are the fluid she has lost. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_heent",
@@ -1052,7 +1292,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "A dry mouth and a fruity smell on the breath. Not everyone can smell ketones, so its absence means nothing."
+   "debrief_note": "A dry mouth and a fruity smell on the breath. Not everyone can smell ketones, so its absence means nothing. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_neck",
@@ -1062,7 +1302,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Flat neck veins fit dehydration. No stiffness."
+   "debrief_note": "Flat neck veins fit dehydration. No stiffness. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_card",
@@ -1072,7 +1312,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Fast and regular with no murmur. After early insulin, extra beats."
+   "debrief_note": "Fast and regular with no murmur. After early insulin, extra beats. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_pulm",
@@ -1082,7 +1322,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Clear. No pneumonia as a trigger."
+   "debrief_note": "Clear. No pneumonia as a trigger. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_abd",
@@ -1092,7 +1332,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Mild diffuse tenderness without guarding is common in ketoacidosis and improves with treatment. A rigid or localized abdomen would need its own explanation."
+   "debrief_note": "Mild diffuse tenderness without guarding is common in ketoacidosis and improves with treatment. A rigid or localized abdomen would need its own explanation. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_gu",
@@ -1102,7 +1342,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "No flank or suprapubic tenderness. One point against a urinary source."
+   "debrief_note": "No flank or suprapubic tenderness. One point against a urinary source. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_back",
@@ -1112,7 +1352,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Nothing to find."
+   "debrief_note": "Nothing to find. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_msk",
@@ -1122,7 +1362,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "No calf swelling."
+   "debrief_note": "No calf swelling. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_skin",
@@ -1132,7 +1372,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Dry with reduced turgor. Her injection sites are clean. An infected site or a foot wound is a trigger worth looking for in any patient with diabetes."
+   "debrief_note": "Dry with reduced turgor. Her injection sites are clean. An infected site or a foot wound is a trigger worth looking for in any patient with diabetes. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_neuro",
@@ -1142,7 +1382,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Fully alert, which is part of what makes this mild. After early insulin she has proximal weakness and reduced reflexes, which is the low potassium."
+   "debrief_note": "Fully alert, which is part of what makes this mild. After early insulin she has proximal weakness and reduced reflexes, which is the low potassium. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_psych",
@@ -1152,37 +1392,43 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Tired and cooperative."
+   "debrief_note": "Tired and cooperative. [UNVERIFIED: general teaching written by a model from memory, no source opened]"
   }
  ],
  "follow_ups": [
   {
    "id": "repeat_potassium_after_replacement",
-   "triggered_by": "potassium_chloride_kcl",
+   "triggered_by": [
+    "potassium_chloride_kcl"
+   ],
    "applies_when": "flag potassium_iv_given set",
    "deadline_seconds": 50,
-   "satisfied_when": "flag chem_repeated set",
+   "satisfied_by": [
+    "repeat_potassium_level"
+   ],
    "nurse_prompt": "The potassium has been through for a bit. Do you want a repeat level?",
-   "debrief_note": "Insulin waits for a number, not for a dose. The level is repeated after replacement and insulin starts when it is above 3.5. After that the consensus report checks potassium two hours after insulin starts and every four hours while it runs.\n\nA sample sent before the infusion had run in shows the old level."
+   "debrief_note": "Insulin waits for a number, not for a dose. The level is repeated after replacement and insulin starts when it is 3.5 or more. While potassium is being replaced the level is rechecked every one to two hours. Once insulin is running, potassium goes into the fluids and the level is still checked every one to two hours at first.\n\nA sample sent before the infusion had run in shows the old level."
   },
   {
    "id": "dextrose_plan_after_insulin",
-   "triggered_by": "insulin_drip",
+   "triggered_by": [
+    "insulin_drip",
+    "insulin_subcutaneous"
+   ],
    "applies_when": "phase is treated",
    "deadline_seconds": 60,
    "satisfied_by": [
-    "d5_1_2_ns_infusion",
-    "d5_ns_bolus"
+    "d5_1_2_ns_infusion"
    ],
-   "nurse_prompt": "Her sugar is coming down. What do you want in her fluids when it gets under 250?",
+   "nurse_prompt": "She's on insulin now. What do you want in her fluids when her sugar gets under 250?",
    "debrief_note": "Her glucose will reach 250 well before her ketones clear. The plan is dextrose in the fluids at that point, with insulin continued. Stopping insulin because the glucose looks normal lets the ketoacidosis return."
   }
  ],
  "prompt_cap_recommendation": {
   "per_phase": 5,
-  "rationale": "Five. On arrival: the monitor at 20 seconds, a bedside glucose at 40, bloods at 75, fluid at 100 and potassium at 130 once the chemistry is back. No deterioration depends on any of them, so the cap protects nothing here and five lets the potassium prompt be heard."
+  "rationale": "Five. On arrival: the monitor at 20 seconds, a bedside glucose at 40, bloods at 75, fluid at 100 and potassium at 110 once the chemistry is back, with its escalation at 170. In the falling phase: hold insulin at 25, a twelve-lead at 70, fluid at 100 and potassium at 110. In each ready phase: insulin at 45 and fluid at 100. No deterioration depends on any of them, so the cap protects nothing here and five lets the potassium prompt be heard."
  },
- "prerequisite_semantics_note": "One case prerequisite: intravenous potassium needs a line. The catalog's vascular access rule is kept for everything else.",
+ "prerequisite_semantics_note": "One case prerequisite: intravenous potassium needs a line, by the catalog's own three-flag condition (peripheral, central or intraosseous). The catalog's vascular access rule is kept for everything else.",
  "content_keys": {
   "exam": {
    "authoring_note": "Section 11.2. Routing follows the catalog map: capillary refill and pulse on exam_circ, work of breathing on exam_breath, lung sounds on exam_pulm, limb power and reflexes on exam_neuro, turgor and injection sites on exam_skin.",
@@ -1228,7 +1474,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": false,
-      "findings": "Pulse about 100, regular. Capillary refill 2 seconds. Hands warm."
+      "findings": "Pulse regular, good volume. Capillary refill 2 seconds. Hands warm."
      }
     },
     {
@@ -1275,6 +1521,14 @@
       "kind": "exam_findings",
       "abnormal": true,
       "findings": "Fast with occasional extra beats. No murmur. No edema."
+     }
+    },
+    {
+     "when": "phase is treated",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": false,
+      "findings": "Regular. No murmur. No edema."
      }
     },
     {
@@ -1360,7 +1614,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Alert, oriented, GCS 15. Proximal weakness in arms and legs, 4 of 5. Reflexes reduced."
+      "findings": "Proximal weakness in arms and legs, 4 of 5. Reflexes reduced. Alert, oriented, GCS 15."
      }
     },
     {
@@ -1398,7 +1652,7 @@
      "when": "phase is treated",
      "value": {
       "kind": "general_status",
-      "abnormal": true,
+      "abnormal": false,
       "findings": "Sitting up, color better, no longer retching. GCS 15."
      }
     },
@@ -1490,7 +1744,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Potassium back above 3.5. The acidosis is untreated and a little worse, which is the cost of the wait."
+       "comment": "Anion gap calculated without potassium."
       }
      },
      {
@@ -1557,7 +1811,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "On insulin with potassium running: glucose falling, bicarbonate rising, anion gap narrowing, potassium holding."
+       "comment": "Anion gap calculated without potassium."
       }
      },
      {
@@ -1624,7 +1878,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Potassium 2.6 after insulin. The glucose has fallen, which is the same insulin effect that moved the potassium."
+       "comment": "Anion gap calculated without potassium."
       }
      },
      {
@@ -1691,7 +1945,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Potassium back above 3.5 with insulin on hold. The acidosis remains."
+       "comment": "Anion gap calculated without potassium."
       }
      },
      {
@@ -1758,7 +2012,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "After fluid and bicarbonate: potassium down to 2.9, glucose a little lower, ketone production unchanged."
+       "comment": "Anion gap calculated without potassium."
       }
      },
      {
@@ -1825,7 +2079,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "After bicarbonate the bicarbonate is a little higher and the potassium has fallen from 3.1 to 2.9. Ketone production has not changed."
+       "comment": "Anion gap calculated without potassium."
       }
      },
      {
@@ -1892,7 +2146,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "After fluid the glucose and BUN are a little lower. The bicarbonate has not moved and the anion gap has barely moved. The potassium is slightly lower by dilution."
+       "comment": "Anion gap calculated without potassium."
       }
      },
      {
@@ -1959,7 +2213,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Anion gap 18 with a bicarbonate of 16: an anion gap acidosis. Potassium 3.1 is low before any insulin, which is unusual in ketoacidosis and changes the order of treatment."
+       "comment": "Anion gap calculated without potassium."
       }
      }
     ]
@@ -2009,8 +2263,7 @@
          "abnormal": false
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "A metabolic acidosis with a low pCO2 from deep breathing. A pH above 7.25 with a bicarbonate of 15 to 18 in an alert patient is mild ketoacidosis."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2190,8 +2443,7 @@
          "abnormal": false
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "A metabolic acidosis with a low pCO2 from deep breathing. A pH above 7.25 with a bicarbonate of 15 to 18 in an alert patient is mild ketoacidosis."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2236,8 +2488,7 @@
          "abnormal": false
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "A metabolic acidosis with a low pCO2 from deep breathing. A pH above 7.25 with a bicarbonate of 15 to 18 in an alert patient is mild ketoacidosis."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2282,8 +2533,7 @@
          "abnormal": false
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "A metabolic acidosis with a low pCO2 from deep breathing. A pH above 7.25 with a bicarbonate of 15 to 18 in an alert patient is mild ketoacidosis."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2328,8 +2578,7 @@
          "abnormal": false
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "A metabolic acidosis with a low pCO2 from deep breathing. A pH above 7.25 with a bicarbonate of 15 to 18 in an alert patient is mild ketoacidosis."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -2379,8 +2628,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "The arterial sample says the same thing as a venous one would have."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2425,8 +2673,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "The arterial sample says the same thing as a venous one would have."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2471,8 +2718,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "The arterial sample says the same thing as a venous one would have."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2517,8 +2763,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "The arterial sample says the same thing as a venous one would have."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2563,8 +2808,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "The arterial sample says the same thing as a venous one would have."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2609,8 +2853,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "The arterial sample says the same thing as a venous one would have."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2655,8 +2898,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "The arterial sample says the same thing as a venous one would have."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2701,8 +2943,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "The arterial sample says the same thing as a venous one would have."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -2865,8 +3106,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "3.0 mmol/L or more is the ketone criterion for ketoacidosis. Under 0.6 is resolution."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2883,8 +3123,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "3.0 mmol/L or more is the ketone criterion for ketoacidosis. Under 0.6 is resolution."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2901,8 +3140,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "3.0 mmol/L or more is the ketone criterion for ketoacidosis. Under 0.6 is resolution."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2919,8 +3157,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "3.0 mmol/L or more is the ketone criterion for ketoacidosis. Under 0.6 is resolution."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2937,8 +3174,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "3.0 mmol/L or more is the ketone criterion for ketoacidosis. Under 0.6 is resolution."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2955,8 +3191,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "3.0 mmol/L or more is the ketone criterion for ketoacidosis. Under 0.6 is resolution."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2973,8 +3208,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "3.0 mmol/L or more is the ketone criterion for ketoacidosis. Under 0.6 is resolution."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -2991,8 +3225,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "3.0 mmol/L or more is the ketone criterion for ketoacidosis. Under 0.6 is resolution."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -3031,8 +3264,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Low. It travels with a low potassium and makes it harder to correct."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -3054,8 +3286,7 @@
          "abnormal": false
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Normal on arrival. It falls with insulin, and routine replacement is not advised."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -3171,8 +3402,7 @@
          "abnormal": false
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "A mildly raised white count is common in ketoacidosis without infection. The hemoglobin is at the top of her range from dehydration."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -3278,8 +3508,7 @@
          "abnormal": false
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Glucose and ketones, and no sign of urinary infection."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -3322,7 +3551,7 @@
    }
   },
   "imaging": {
-   "authoring_note": "Section 11.4. The chest film and the abdominal CT are left to the catalog defaults, which are normal, and that is intended. The ECG report is findings only. Each phase's monitor block in case_1_shell.py carries the same rate and QTc as its report here, without the ondansetron increment.",
+   "authoring_note": "Section 11.4. The chest film and the abdominal CT are left to the catalog defaults, which are normal, and that is intended. The ECG report is findings only and quotes no rate. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc as its report here, without the ondansetron increment.",
    "ecg_12_lead": {
     "changes_with_state": true,
     "rules": [
@@ -3331,7 +3560,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 112. T waves fuller than before. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 455 ms.",
+       "report": "Sinus tachycardia. T waves fuller than before. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 455 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
@@ -3340,7 +3569,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 112. T waves fuller than before. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 450 ms.",
+       "report": "Sinus tachycardia. T waves fuller than before. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 450 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
@@ -3349,7 +3578,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 104. T waves normal. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 450 ms.",
+       "report": "Sinus rhythm. T waves normal. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 450 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
@@ -3358,7 +3587,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 104. T waves normal. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 445 ms.",
+       "report": "Sinus rhythm. T waves normal. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 445 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
@@ -3367,9 +3596,8 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 118 with occasional ventricular ectopic beats. T waves flat. Prominent U waves in V2 to V5, taller than the T waves. ST depression 0.5 mm in the lateral leads. QRS 90 ms, QTc about 525 ms.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Flat T waves and U waves are the ECG of a low potassium. The QT is hard to measure when a U wave follows the T wave."
+       "report": "Sinus tachycardia with occasional ventricular ectopic beats. T waves flat. Prominent U waves in V2 to V5, taller than the T waves. ST depression 0.5 mm in the lateral leads. QRS 88 ms, QTc about 525 ms.",
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -3377,9 +3605,8 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 118 with occasional ventricular ectopic beats. T waves flat. Prominent U waves in V2 to V5, taller than the T waves. ST depression 0.5 mm in the lateral leads. QRS 90 ms, QTc about 520 ms.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Flat T waves and U waves are the ECG of a low potassium. The QT is hard to measure when a U wave follows the T wave."
+       "report": "Sinus tachycardia with occasional ventricular ectopic beats. T waves flat. Prominent U waves in V2 to V5, taller than the T waves. ST depression 0.5 mm in the lateral leads. QRS 88 ms, QTc about 520 ms.",
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -3387,7 +3614,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 112. No ectopic beats. T waves fuller. Small U waves in V2 and V3. QRS 88 ms, QTc 455 ms.",
+       "report": "Sinus tachycardia. No ectopic beats. T waves fuller. Small U waves in V2 and V3. QRS 88 ms, QTc 455 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
@@ -3396,7 +3623,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 112. No ectopic beats. T waves fuller. Small U waves in V2 and V3. QRS 88 ms, QTc 450 ms.",
+       "report": "Sinus tachycardia. No ectopic beats. T waves fuller. Small U waves in V2 and V3. QRS 88 ms, QTc 450 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
@@ -3405,9 +3632,8 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 112. Subtle T wave flattening in the chest leads. Small U waves in V2 and V3. No ST elevation or depression. QRS 88 ms, QTc about 465 ms.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Flat T waves and U waves are the ECG of a low potassium. The QT is hard to measure when a U wave follows the T wave."
+       "report": "Sinus tachycardia. Subtle T wave flattening in the chest leads. Small U waves in V2 and V3. No ST elevation or depression. QRS 88 ms, QTc about 465 ms.",
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
@@ -3415,36 +3641,53 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 112. Subtle T wave flattening in the chest leads. Small U waves in V2 and V3. No ST elevation or depression. QRS 88 ms, QTc about 460 ms.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Flat T waves and U waves are the ECG of a low potassium. The QT is hard to measure when a U wave follows the T wave."
+       "report": "Sinus tachycardia. Subtle T wave flattening in the chest leads. Small U waves in V2 and V3. No ST elevation or depression. QRS 88 ms, QTc about 460 ms.",
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+      }
+     }
+    ]
+   },
+   "ultrasound_cardiac": {
+    "changes_with_state": false,
+    "rules": [
+     {
+      "when": null,
+      "value": {
+       "kind": "report",
+       "abnormal": true,
+       "report": "Hyperdynamic left ventricle. No pericardial effusion. Right ventricle not dilated. Inferior vena cava small and collapsing with each breath.",
+       "verify": "Derived by a model on 7 October 2026 from the pack's other values (dry mucosa, reduced turgor, flat neck veins, a fast pulse and a credited diagnosis of hypovolemia). No new clinical claim is intended. It does not change after fluid, which is a simplification. [UNVERIFIED]"
       }
      }
     ]
    }
   },
   "consultants": {
-   "authoring_note": "Section 11.5. The endocrinologist's advice depends on the chemistry, so there is a pending tier for the chemistry alone. Rules are ordered by phase, then by study state.",
+   "authoring_note": "Section 11.5. Rules are ordered by phase, then by study state. The endocrinologist and the intensivist each have a tier for both studies back, one for each study alone, a pending tier and a default. In the arrival phase every variant of the chemistry reads a potassium under 3.5 (3.1, 3.0 or 2.9), which is all the endocrinologist says of it. Grading the ketoacidosis as mild needs the gas, so that word sits behind the gas. The phase rules for the ready and treated phases give advice and read no result.",
    "consult_endocrinology": [
     {
      "when": "phase is potassium_falling",
-     "value": "Endocrinologist: Hold the insulin now. Her potassium was low before it went in and insulin has pushed it lower. Give intravenous potassium on the monitor, give magnesium, get a twelve-lead, and repeat the level. Insulin goes back on when the potassium is above 3.5."
+     "value": "Endocrinologist: Hold the insulin now. Weakness and a fluttering heart after insulin is a falling potassium until a level says otherwise. Give intravenous potassium on the monitor, give magnesium, get a twelve-lead and send a chemistry. Insulin goes back on when the potassium is 3.5 or more."
     },
     {
      "when": "phase is treated AND flag basal_given set",
-     "value": "Endocrinologist: Good, and I'm glad the glargine is back in. Glucose every hour, potassium again in two hours and then every four, and keep potassium in the fluids. When the glucose is under 250 change to fluid with dextrose and keep the insulin going. Don't stop insulin because the sugar looks better."
+     "value": "Endocrinologist: Good, and I'm glad the glargine is back in. Glucose every hour, potassium every one to two hours at first, and 20 to 30 of potassium in each liter. When the glucose is under 250 change to fluid with dextrose and keep the insulin going. Don't stop insulin because the sugar looks better."
     },
     {
      "when": "phase is treated",
-     "value": "Endocrinologist: Good. Glucose every hour, potassium again in two hours and then every four, and keep potassium in the fluids. When the glucose is under 250 change to fluid with dextrose and keep the insulin going. Don't stop insulin because the sugar looks better. Give her usual long-acting insulin tonight, and well before any infusion comes off."
+     "value": "Endocrinologist: Good. Glucose every hour, potassium every one to two hours at first, and 20 to 30 of potassium in each liter. When the glucose is under 250 change to fluid with dextrose and keep the insulin going. Don't stop insulin because the sugar looks better. Give her usual long-acting insulin tonight, and well before any infusion comes off."
     },
     {
      "when": "phase is potassium_replaced OR phase is recovering",
-     "value": "Endocrinologist: If the repeat potassium is above 3.5, start insulin now. An infusion at 0.1 units per kilo an hour, or subcutaneous rapid-acting insulin, since it's mild. No bolus. Keep potassium going in the fluids."
+     "value": "Endocrinologist: If the repeat potassium is 3.5 or more, start insulin now. An infusion at 0.1 units per kilo an hour. Subcutaneous rapid-acting insulin is an option if the gas says this is mild. No bolus. Keep 20 to 30 of potassium in each liter."
+    },
+    {
+     "when": "study basic_chemistry_chem_7 resulted AND (study venous_blood_gas resulted OR study arterial_blood_gas resulted)",
+     "value": "Endocrinologist: Her potassium is under 3.5, and that changes the order. Insulin waits. Fluids, and intravenous potassium on a monitor, 20 to 40 an hour, which on most units means a central line or two peripheral lines. Check a magnesium. Repeat the potassium every hour or two, and start insulin once it's 3.5 or more. After that keep 20 to 30 in each liter. No bolus and no bicarbonate. It's mild on the gas, so an infusion at 0.1 units per kilo an hour or subcutaneous rapid-acting insulin both work."
     },
     {
      "when": "study basic_chemistry_chem_7 resulted",
-     "value": "Endocrinologist: A potassium of 3.1 before any insulin changes the order. No insulin yet. Fluids, and intravenous potassium on a monitor, 10 an hour through a peripheral line or whatever your protocol allows. Check a magnesium. Repeat the potassium, and start insulin when it's above 3.5. It's mild, so an infusion at 0.1 units per kilo an hour or subcutaneous rapid-acting insulin both work. No bolus and no bicarbonate."
+     "value": "Endocrinologist: Her potassium is under 3.5, and that changes the order. Insulin waits. Fluids, and intravenous potassium on a monitor, 20 to 40 an hour, which on most units means a central line or two peripheral lines. Check a magnesium. Repeat the potassium every hour or two, and start insulin once it's 3.5 or more. After that keep 20 to 30 in each liter. No bolus and no bicarbonate. Get a gas so we can grade this."
     },
     {
      "when": "study basic_chemistry_chem_7 ordered",
@@ -3458,11 +3701,27 @@
    "consult_critical_care": [
     {
      "when": "phase is potassium_falling",
-     "value": "Intensivist: A potassium of 2.6 with ectopy needs a monitored bed. Hold the insulin and replace the potassium. If she settles she can go to step-down."
+     "value": "Intensivist: She's weak with extra beats after insulin. Hold it, replace her potassium on a monitor, and get a chemistry and a twelve-lead now. If she settles she can go to step-down."
+    },
+    {
+     "when": "study basic_chemistry_chem_7 resulted AND (study venous_blood_gas resulted OR study arterial_blood_gas resulted)",
+     "value": "Intensivist: Mild ketoacidosis in an alert patient doesn't need us. A step-down bed with telemetry can run her potassium and her insulin."
+    },
+    {
+     "when": "study basic_chemistry_chem_7 resulted",
+     "value": "Intensivist: I can see the chemistry. I need a gas before I can say how sick she is."
+    },
+    {
+     "when": "(study venous_blood_gas resulted OR study arterial_blood_gas resulted)",
+     "value": "Intensivist: I can see the gas. I need the chemistry before I can say where she goes."
+    },
+    {
+     "when": "study basic_chemistry_chem_7 ordered OR study venous_blood_gas ordered OR study arterial_blood_gas ordered",
+     "value": "Intensivist: Her labs aren't back. Call me back when you have a gas and a chemistry."
     },
     {
      "when": null,
-     "value": "Intensivist: Mild ketoacidosis in an alert patient doesn't need us. A step-down bed with telemetry can run her potassium and her insulin."
+     "value": "Intensivist: I'm not sure why I'm being called. Call me back when you have a gas and a chemistry."
     }
    ]
   }
@@ -3472,7 +3731,10 @@
    "voice": "A 24-year-old graduate student. Clear, a little embarrassed, worried she has done something wrong.",
    "the_insulin": "She reduced and then stopped her insulin because she was not eating. She says so only when asked about her insulin. It is in must_ask and is never volunteered.",
    "the_diabetes": "The handover does not mention diabetes. Past medical history, medications, the diabetes topic, the sugar readings and the thirst topic all lead to it.",
-   "no_global_rule": "No phase is at alertness 2 or 3, so there is no alertness rule."
+   "no_global_rule": "No phase is at alertness 2 or 3, so there is no alertness rule.",
+   "near_the_10_4_line": "Two answers sit close to the limits in authoring 10.4 and are flagged for the reviewer. The diabetes topic says 'they said my blood had gone acidic' about her admission at age eleven. That is her own past history in lay words, and she does not connect it to today. The sugar topic quotes her home meter, 380 and 290. Those are numbers she read herself, not results from this visit. A reviewer may prefer either softened.",
+   "added_denials": "Model-written on 7 October 2026, awaiting sign-off: 'No cramps' in the weakness answer and 'it isn't black' in the diarrhea answer. Both were added so that questions the out-of-scope bank used to refuse now get an answer.",
+   "facts": "Six topics carry facts: onset, diarrhea, weakness, current_medications, insulin_taken_recently and glucose_monitoring. Each fact restates part of its topic's paragraph. On diarrhea and weakness the short form given on a repeat keeps the denial (no blood, no cramps)."
   },
   "global_answer_rules": [
    {
@@ -3489,30 +3751,24 @@
   ],
   "out_of_scope_bank": [
    "Have you ever had a colonoscopy?",
-   "Any blood when you open your bowels?",
    "Are you constipated?",
    "Any heartburn?",
    "Any indigestion after meals?",
-   "Have you had piles?",
-   "Any black stools?",
    "Any yellowing of your skin or eyes?",
-   "Do you get up at night to pass water?",
    "Any blood in your urine?",
+   "Any trouble with your prostate?",
    "Any kidney stones in the past?",
    "Any incontinence?",
-   "Any seizures or fits?",
-   "Any weakness in your arms or legs?",
    "Any pins and needles?",
+   "Any numbness anywhere?",
    "Any problems with your speech?",
    "Any tremor in your hands?",
    "Any trouble with your memory?",
-   "Any double vision?",
    "Have you ever had a stroke?",
    "Any pain in your hands?",
    "Any pain in your hips?",
    "Any arthritis?",
    "Have you broken any bones?",
-   "Any cramps in your legs?",
    "Any problems with your hearing?",
    "Any ringing or buzzing in your ears?",
    "Any earache?",
@@ -3527,45 +3783,42 @@
    "Any mouth ulcers?",
    "Any lumps or bumps anywhere?",
    "Have you lost weight without trying?",
-   "Any anxiety or panic attacks?",
+   "Have you been feeling low in mood?",
    "How are you sleeping generally?",
    "Any trouble sleeping?",
    "Have you had a flu vaccine this year?",
    "When was your last tetanus?",
-   "Have you ever received blood?",
+   "Have you had the covid vaccine?",
    "Do you have a blood donor card?",
    "Who is your GP?",
    "Who is your family doctor?",
    "Do you have health insurance?",
-   "Do you have a pharmacy you usually use?",
+   "Have you got your NHS number?",
    "Is there anyone we should call for you?",
    "Who is your next of kin?",
    "Do you have any religious needs we should know about?",
    "Do you have any pets at home?",
    "What did you do before you retired?",
-   "Did you come in by ambulance?",
    "Is anyone here with you?",
    "Is your family in the waiting room?",
    "How did you get here today?",
+   "Is it raining outside?",
    "Do you have children?",
-   "How many kids do you have?",
    "Do you follow any sports?",
    "Do you watch much television?",
+   "What do you do to relax?",
    "Do you have a garden?",
-   "Are you comfortable on that trolley?",
    "Would you like a blanket?",
    "Is the bed at the right height?",
    "Can I get you anything?",
+   "What is your date of birth?",
    "Can you confirm your name for me?",
-   "What is your address?",
    "Do you know why you are here?",
    "How old are you?",
    "Is it okay if the students watch?",
+   "Would you prefer a female doctor?",
    "Have you been waiting long?",
-   "Is there anything you would like to ask me?",
-   "What year are you in at university?",
-   "What are you studying?",
-   "Do you get on with your flatmates?",
+   "How much does it cost to park here?",
    "Who is the prime minister?",
    "What is the date today?"
   ],
@@ -3594,6 +3847,38 @@
      }
     ],
     "echo": "when it started",
+    "facts": [
+     {
+      "id": "when",
+      "asks": [
+       "when exactly",
+       "what day",
+       "how long ago",
+       "how many days"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'Sunday night. Two days ago.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "first_symptom",
+      "asks": [
+       "what came first",
+       "what was the first thing",
+       "how did it start"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'The throwing up came first. The diarrhea came a few hours after.'"
+       }
+      ]
+     }
+    ],
     "adjacent": [
      "diarrhea"
     ],
@@ -3619,7 +3904,7 @@
      "Sorry to ask, but what time did it start?",
      "One more thing. How long ago did this come on?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "timing_progression",
@@ -3672,7 +3957,7 @@
      "Quick one: how has it changed since it began?",
      "Before we go on, constant or does it come and go?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "character_of_symptoms",
@@ -3714,7 +3999,7 @@
      "Can I ask, character of the symptoms?",
      "Sorry to ask, but character of the symptoms?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "nausea_vomiting",
@@ -3760,7 +4045,7 @@
      "Okay, have you thrown up?",
      "Just so I know, have you thrown up?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "diarrhea",
@@ -3777,16 +4062,54 @@
      "Have you been to the toilet?",
      "Any bowel symptoms?",
      "Any cramping and diarrhea?",
-     "Have you had diarrhea?"
+     "Have you had diarrhea?",
+     "Is there any blood in the diarrhea?",
+     "Any blood when you go to the bathroom?",
+     "Are your stools black?",
+     "Any black or tarry stools?"
     ],
     "answer": [
      {
       "when": null,
-      "value": "'Watery, six or seven times a day since Sunday. No blood in it. It's slowing down today.'"
+      "value": "'Watery, six or seven times a day since Sunday. No blood in it, and it isn't black. It's slowing down today.'"
      }
     ],
     "echo": "diarrhea",
-    "volunteer": "'And diarrhea since Sunday night, watery.'",
+    "facts": [
+     {
+      "id": "what",
+      "asks": [
+       "how often",
+       "how many times",
+       "is it watery",
+       "what is it like"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'Watery, six or seven times a day. No blood, and it isn't black.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "blood",
+      "asks": [
+       "any blood",
+       "blood in it",
+       "is it black",
+       "black stools",
+       "tarry"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'No blood in it, and it isn't black.'"
+       }
+      ]
+     }
+    ],
+    "volunteer": "'It's watery, six or seven times a day.'",
     "expanded_variants": [
      "Diarrhea?",
      "Have your bowels been loose?",
@@ -3802,7 +4125,7 @@
      "Can I ask, have your bowels been loose?",
      "Sorry to ask, but have your bowels been loose?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "abdominal_pain",
@@ -3828,9 +4151,6 @@
      }
     ],
     "echo": "my stomach",
-    "adjacent": [
-     "location_of_pain"
-    ],
     "expanded_variants": [
      "Any tummy pain?",
      "Does your belly hurt?",
@@ -3847,7 +4167,7 @@
      "Before we go on, does your belly hurt?",
      "And does your belly hurt?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "location_of_pain",
@@ -3871,7 +4191,6 @@
      }
     ],
     "echo": "where it hurts",
-    "volunteer": "'It's all over my belly, mostly the middle.'",
     "expanded_variants": [
      "Location of the pain?",
      "Where exactly is it?",
@@ -3881,15 +4200,14 @@
      "Can you localize the pain?",
      "Where is it worst?",
      "Is the pain in your muscles?",
-     "Are your legs the worst of it?",
      "Where does it hurt right now?",
-     "Before we go on, where is the pain?",
+     "Quick one: where is the pain?",
      "Just so I know, location of the pain?",
      "I need to know, location of the pain?",
      "Okay, where exactly is it?",
      "Just so I know, where exactly is it?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "radiation_of_pain",
@@ -3906,7 +4224,9 @@
      "Where does the pain travel to?",
      "Does it go into your arm?",
      "Does it go to your jaw or neck?",
-     "Does the pain go through to your back?"
+     "Does the pain go through to your back?",
+     "Any back pain?",
+     "Does your back hurt?"
     ],
     "answer": [
      {
@@ -3933,7 +4253,7 @@
      "Sorry to ask, but does it go anywhere else?",
      "One more thing. Does it go anywhere else?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "severity",
@@ -3976,7 +4296,7 @@
      "Can I ask, on a scale of one to ten?",
      "Sorry to ask, but on a scale of one to ten?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "aggravating_relieving",
@@ -4038,7 +4358,7 @@
      "Before we go on, aggravating or relieving factors?",
      "And aggravating or relieving factors?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "thirst_and_urination",
@@ -4057,7 +4377,9 @@
      "Have you been drinking more water than normal?",
      "Any increase in urination?",
      "How much are you drinking?",
-     "Are you always thirsty?"
+     "Are you always thirsty?",
+     "Do you get up at night to pass urine?",
+     "How many times were you up in the night?"
     ],
     "answer": [
      {
@@ -4066,7 +4388,31 @@
      }
     ],
     "echo": "being thirsty and peeing",
-    "volunteer": "'And I've been so thirsty since yesterday.'"
+    "expanded_variants": [
+     "Are you very thirsty?",
+     "Have you been more thirsty than usual?",
+     "Thirst?",
+     "Polydipsia?",
+     "Polyuria or polydipsia?",
+     "Have you been peeing a lot?",
+     "Are you going to the bathroom more often?",
+     "Do you get up at night to urinate?",
+     "Nocturia?",
+     "How many times did you get up to pee last night?",
+     "Can you not stop drinking?",
+     "Are you drinking more than normal?",
+     "Urinary frequency?",
+     "Have you been waking up to pee?",
+     "Is your mouth dry?",
+     "Any increased thirst or urination?",
+     "Have you been thirstier than normal?",
+     "Sorry to ask, but are you very thirsty?",
+     "One more thing. Are you very thirsty?",
+     "Okay, have you been more thirsty than usual?",
+     "Quick one: polyuria or polydipsia?",
+     "Before we go on, polyuria or polydipsia?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "urine_output",
@@ -4088,13 +4434,10 @@
     "answer": [
      {
       "when": null,
-      "value": "'Loads yesterday and through the night. Less this morning, and it was dark.'"
+      "value": "'A lot yesterday and through the night. Less this morning, and it was dark.'"
      }
     ],
     "echo": "passing urine",
-    "adjacent": [
-     "thirst_and_urination"
-    ],
     "expanded_variants": [
      "Are you passing urine?",
      "Urine output?",
@@ -4115,7 +4458,7 @@
      "I need to know, passing water okay?",
      "Right. Passing water okay?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "weakness",
@@ -4134,19 +4477,84 @@
      "Are your muscles aching?",
      "Can you stand up?",
      "Is the weakness all over or in one place?",
-     "Any fatigue?"
+     "Any fatigue?",
+     "Any cramps in your legs?",
+     "Any leg cramps?",
+     "Are your legs the worst of it?"
     ],
     "answer": [
      {
       "when": "phase is potassium_falling",
-      "value": "'It's much worse. My arms and legs feel heavy and it's an effort to lift them.'"
+      "value": "'It's much worse. My arms and legs feel heavy and it's an effort to lift them. No cramps.'"
      },
      {
       "when": null,
-      "value": "'I feel weak all over, like I've got flu. I can walk, I just don't want to.'"
+      "value": "'I feel weak all over, like I have the flu. No cramps. I can walk, I just don't want to.'"
      }
     ],
-    "echo": "feeling weak"
+    "echo": "feeling weak",
+    "facts": [
+     {
+      "id": "how",
+      "asks": [
+       "how weak",
+       "where is it weak",
+       "is it all over",
+       "can you walk"
+      ],
+      "restate": true,
+      "value": [
+       {
+        "when": "phase is potassium_falling",
+        "value": "'My arms and legs feel heavy. No cramps.'"
+       },
+       {
+        "when": null,
+        "value": "'Weak all over, like I have the flu. No cramps.'"
+       }
+      ]
+     },
+     {
+      "id": "cramps",
+      "asks": [
+       "any cramps",
+       "leg cramps",
+       "muscle cramps",
+       "cramping in your legs"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'No cramps.'"
+       }
+      ]
+     }
+    ],
+    "expanded_variants": [
+     "Do you feel weak anywhere?",
+     "Weakness?",
+     "Any weakness in your arms or legs?",
+     "Any limb weakness?",
+     "Are your muscles weak?",
+     "Do you feel weak all over?",
+     "Do your legs feel weak?",
+     "Are your arms weak?",
+     "Is it hard to lift your arms?",
+     "Can you get out of a chair on your own?",
+     "Any loss of strength?",
+     "Has your strength changed?",
+     "Are you weaker than yesterday?",
+     "Any trouble getting up?",
+     "Do you feel too weak to walk?",
+     "Has the weakness gotten worse?",
+     "Is your grip weak?",
+     "Just so I know, do you feel weak anywhere?",
+     "I need to know, do you feel weak anywhere?",
+     "Quick one: any weakness in your arms or legs?",
+     "Right. Any limb weakness?",
+     "Quick one: any limb weakness?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "palpitations",
@@ -4191,7 +4599,7 @@
      "Sorry to ask, but heart racing at all?",
      "One more thing. Heart racing at all?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "breathing",
@@ -4239,7 +4647,7 @@
      "Quick one: short of breath?",
      "Just so I know, any shortness of breath?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "dizziness_syncope",
@@ -4300,7 +4708,7 @@
      "Okay, dizzy or lightheaded at all?",
      "Just so I know, dizzy or lightheaded at all?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "chest_pain",
@@ -4312,9 +4720,7 @@
      "Any pressure in your chest?",
      "Does it hurt when you breathe in?",
      "Any pain going into your arm?",
-     "Any palpitations?",
      "Is your chest sore?",
-     "Any heart symptoms?",
      "Does your chest feel tight?",
      "Any pain behind your breastbone?",
      "Any chest discomfort at all?"
@@ -4325,7 +4731,7 @@
       "value": "'No, no chest pain.'"
      }
     ],
-    "echo": "the pain in my chest",
+    "echo": "chest pain",
     "pertinent_negative": true,
     "expanded_variants": [
      "Chest pain?",
@@ -4347,7 +4753,7 @@
      "Before we go on, is your chest hurting?",
      "And is your chest hurting?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "fever_and_chills",
@@ -4373,7 +4779,6 @@
      }
     ],
     "echo": "a temperature",
-    "pertinent_negative": true,
     "expanded_variants": [
      "Fever?",
      "Fevers or chills?",
@@ -4391,7 +4796,7 @@
      "Right. Fevers, chills, rigors?",
      "Okay, any temperature?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "cough_sore_throat",
@@ -4435,7 +4840,7 @@
      "Just so I know, runny nose or sore throat?",
      "I need to know, runny nose or sore throat?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "headache",
@@ -4461,7 +4866,6 @@
      }
     ],
     "echo": "my head",
-    "pertinent_negative": true,
     "expanded_variants": [
      "Headache?",
      "Any pain in your head?",
@@ -4474,7 +4878,7 @@
      "Just so I know, any head pain?",
      "Sorry to ask, but is your head sore?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "dysuria_gu_symptoms",
@@ -4518,7 +4922,7 @@
      "Quick one: does it sting to pass urine?",
      "Before we go on, does it sting to pass urine?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "past_medical_history",
@@ -4539,13 +4943,10 @@
     "answer": [
      {
       "when": null,
-      "value": "'I've got type 1 diabetes, since I was eleven. That's all. No other problems.'"
+      "value": "'I have type 1 diabetes, since I was eleven. That's all. No other problems.'"
      }
     ],
     "echo": "my medical history",
-    "adjacent": [
-     "diabetes_history"
-    ],
     "expanded_variants": [
      "Past medical history?",
      "Any medical history?",
@@ -4567,7 +4968,7 @@
      "Can I ask, any medical problems?",
      "Sorry to ask, but any medical problems?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "diabetes_history",
@@ -4595,7 +4996,31 @@
      }
     ],
     "echo": "my diabetes",
-    "volunteer": "'I was in the hospital once when it was found. Not since.'"
+    "expanded_variants": [
+     "Tell me about your diabetes history.",
+     "Diabetes history?",
+     "DM history?",
+     "Type 1 or type 2 diabetes?",
+     "How long have you been diabetic?",
+     "Hx of DKA?",
+     "Prior DKA?",
+     "Any previous episodes of DKA?",
+     "Have you been admitted for your diabetes before?",
+     "Any ICU stays for your diabetes?",
+     "Last A1c?",
+     "Do you know your last A1c?",
+     "Who looks after your diabetes?",
+     "Do you see an endocrinologist?",
+     "Any diabetic complications?",
+     "Has your diabetes been stable lately?",
+     "Has this happened with your diabetes before?",
+     "Just so I know, diabetes history?",
+     "I need to know, diabetes history?",
+     "Right. Type 1 or type 2 diabetes?",
+     "And how long have you been diabetic?",
+     "Can I ask, how long have you been diabetic?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "current_medications",
@@ -4620,6 +5045,56 @@
      }
     ],
     "echo": "my medication",
+    "facts": [
+     {
+      "id": "basal",
+      "asks": [
+       "what dose of lantus",
+       "how much lantus",
+       "how many units",
+       "long-acting dose",
+       "what dose"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'Eighteen units of Lantus at night.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "mealtime",
+      "asks": [
+       "how much humalog",
+       "mealtime dose",
+       "short-acting dose",
+       "with meals"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'Humalog with meals. I work the dose out from what I'm eating.'"
+       }
+      ]
+     },
+     {
+      "id": "other",
+      "asks": [
+       "anything else",
+       "any other medicines",
+       "the pill",
+       "anything new",
+       "over the counter"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'The pill. Nothing else, nothing new.'"
+       }
+      ]
+     }
+    ],
     "expanded_variants": [
      "What meds are you on?",
      "Medications?",
@@ -4642,7 +5117,7 @@
      "Before we go on, what do you take?",
      "And what do you take?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "insulin_taken_recently",
@@ -4662,7 +5137,11 @@
      "Insulin adherence?",
      "Have you been compliant with insulin?",
      "What did you do with your insulin when you were sick?",
-     "Did you take your long-acting insulin?"
+     "Did you take your long-acting insulin?",
+     "Have you been taking your meds?",
+     "Have you missed any doses?",
+     "Have you been skipping doses?",
+     "Are you taking your insulin as prescribed?"
     ],
     "answer": [
      {
@@ -4671,29 +5150,54 @@
      }
     ],
     "echo": "taking my insulin",
-    "expanded_variants": [
-     "Have you been taking your meds?",
-     "Compliance?",
-     "Adherence?",
-     "Are you taking them as prescribed?",
-     "Have you missed any doses?",
-     "Have you stopped any medication?",
-     "Are you up to date with your tablets?",
-     "Any missed medications?",
-     "Have you been off your tablets?",
-     "When did you last take your medication?",
-     "Have you been skipping doses?",
-     "Are you compliant with your medications?",
-     "Did you stop your water tablet?",
-     "Have you been taking everything you should?",
-     "Any problems getting your prescriptions?",
-     "Okay, have you been taking your meds?",
-     "Quick one: are you taking them as prescribed?",
-     "Before we go on, are you taking them as prescribed?",
-     "Sorry to ask, but have you missed any doses?",
-     "One more thing. Have you missed any doses?"
-    ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "facts": [
+     {
+      "id": "basal",
+      "asks": [
+       "the lantus",
+       "long-acting",
+       "last night",
+       "basal"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'I halved my Lantus on Sunday night, and last night I didn't take it at all.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "mealtime",
+      "asks": [
+       "the humalog",
+       "mealtime insulin",
+       "short-acting",
+       "with meals"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'I didn't take any Humalog, because I wasn't eating.'"
+       }
+      ]
+     },
+     {
+      "id": "why",
+      "asks": [
+       "why did you stop",
+       "why did you cut it",
+       "why not",
+       "what made you stop"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'I wasn't eating and I was scared of going low. I thought that was the safe thing to do.'"
+       }
+      ]
+     }
+    ]
    },
    {
     "topic": "glucose_monitoring",
@@ -4717,10 +5221,81 @@
     "answer": [
      {
       "when": null,
-      "value": "'I checked this morning and it said 380. It was 290 last night. I don't have any of the ketone strips, they ran out ages ago.'"
+      "value": "'I checked this morning and it said 380. It was 290 last night. I don't have any of the ketone strips, they ran out a while ago.'"
      }
     ],
-    "echo": "my sugar readings"
+    "echo": "my sugar readings",
+    "facts": [
+     {
+      "id": "this_morning",
+      "asks": [
+       "this morning",
+       "latest reading",
+       "last reading",
+       "most recent"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'380 this morning.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "last_night",
+      "asks": [
+       "last night",
+       "yesterday",
+       "before that"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'290 last night.'"
+       }
+      ]
+     },
+     {
+      "id": "ketones",
+      "asks": [
+       "ketones",
+       "ketone strips",
+       "urine strips"
+      ],
+      "value": [
+       {
+        "when": null,
+        "value": "'I don't have any ketone strips. They ran out a while ago.'"
+       }
+      ]
+     }
+    ],
+    "expanded_variants": [
+     "What has your blood sugar been?",
+     "What are your sugars running?",
+     "Home glucose readings?",
+     "Blood sugars at home?",
+     "Have you been testing your sugar?",
+     "What was your sugar this morning?",
+     "Fingersticks at home?",
+     "Do you check your sugars?",
+     "How often do you check your blood sugar?",
+     "Do you use a continuous glucose monitor?",
+     "What does your sensor say?",
+     "Have you checked for ketones at home?",
+     "Home ketones?",
+     "Any urine ketone strips at home?",
+     "Has your meter been reading high?",
+     "Any readings over 300?",
+     "What is the highest your sugar has been?",
+     "Can I ask, what has your blood sugar been?",
+     "Sorry to ask, but what has your blood sugar been?",
+     "Can I ask, what are your sugars running?",
+     "Okay, home glucose readings?",
+     "Just so I know, home glucose readings?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "past_surgical_history",
@@ -4763,7 +5338,7 @@
      "I need to know, ever had surgery?",
      "Right. Ever had surgery?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "allergies",
@@ -4806,7 +5381,7 @@
      "Right. Are you allergic to anything?",
      "Quick one: are you allergic to anything?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "pregnancy",
@@ -4845,7 +5420,7 @@
      "Okay, are you pregnant?",
      "Just so I know, are you pregnant?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "sick_contacts",
@@ -4881,22 +5456,13 @@
      "Any friends or flatmates sick?",
      "Anybody close to you unwell recently?",
      "Has anyone you know had similar symptoms?",
-     "Have you been unwell recently?",
-     "Any recent infection?",
-     "Recent cold or flu?",
-     "Have you had a bug recently?",
-     "Any coughs or colds lately?",
-     "Any recent chest infection?",
-     "Any viral illness recently?",
-     "Been poorly in the last few weeks?",
-     "Any recent infections?",
      "Just so I know, any sick contacts?",
-     "I need to know, any sick contacts?",
+     "Sorry to ask, but anyone else unwell?",
      "One more thing. Anyone else unwell?",
      "Sorry to ask, but is anyone around you sick?",
      "One more thing. Is anyone around you sick?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "last_oral_intake",
@@ -4941,7 +5507,7 @@
      "One more thing. Last PO intake?",
      "Okay, last PO intake?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "social_history",
@@ -4956,7 +5522,12 @@
      "Where do you live?",
      "Who do you live with?",
      "Any vaping?",
-     "Tell me about your living situation"
+     "Tell me about your living situation",
+     "What do you do for a living?",
+     "What are you studying?",
+     "Are you a student?",
+     "What do you do for work?",
+     "Do you work or study?"
     ],
     "answer": [
      {
@@ -5018,7 +5589,7 @@
      "Can I ask, do you smoke, drink, or use drugs?",
      "Sorry to ask, but any drugs, alcohol, smoking?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "family_history",
@@ -5044,7 +5615,6 @@
      }
     ],
     "echo": "the family",
-    "pertinent_negative": true,
     "expanded_variants": [
      "Family history?",
      "FHx?",
@@ -5064,7 +5634,7 @@
      "And any heart problems in the family?",
      "Can I ask, any heart problems in the family?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "functional_baseline",
@@ -5112,7 +5682,7 @@
      "Okay, exercise tolerance?",
      "Quick one: baseline function?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "travel_history",
@@ -5153,7 +5723,7 @@
      "Okay, have you traveled?",
      "Just so I know, have you traveled?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    }
   ],
   "must_ask": [
@@ -5162,11 +5732,15 @@
    "insulin_taken_recently",
    "current_medications",
    "social_history",
-   "glucose_monitoring"
+   "glucose_monitoring",
+   "past_medical_history",
+   "diabetes_history",
+   "thirst_and_urination"
   ],
-  "volunteers_note": "Hand-written for this pack. Her insulin doses are never volunteered.",
+  "volunteers_note": "Hand-written for this pack. Her diabetes, her insulin doses, her sugar readings and her thirst are never volunteered.",
   "key_topics": [
    "past_medical_history",
+   "diabetes_history",
    "current_medications",
    "insulin_taken_recently",
    "glucose_monitoring",
@@ -5233,7 +5807,7 @@
    {
     "catalog_id": "dx_hypokalemia",
     "label": "Hypokalemia",
-    "explanation": "The finding that changed the order of treatment. The receiving team needs to know it was 3.1 on arrival, because insulin will keep pushing it down and it needs checking every two to four hours."
+    "explanation": "The finding that changed the order of treatment. The receiving team needs to know it was 3.1 on arrival, because insulin will keep pushing it down and it needs checking every one to two hours while it is being replaced."
    },
    {
     "catalog_id": "dx_hypomagnesemia",
@@ -5248,7 +5822,7 @@
    {
     "catalog_id": "dx_hypovolemia",
     "label": "Hypovolemia",
-    "explanation": "She was dry from vomiting, diarrhea and the glucose in her urine. True, and treated with the first bolus."
+    "explanation": "She was dry from vomiting, diarrhea and the glucose in her urine. True, and treated with the first fluid."
    }
   ],
   "alternative_diagnoses": [
@@ -5269,6 +5843,18 @@
     "label": "Hypokalemia",
     "verdict": "acceptable_with_qualification",
     "explanation": "True, and the most dangerous number she has. It is a complication. The diagnosis that explains the admission is the ketoacidosis. Name this beside it."
+   },
+   {
+    "catalog_id": "dx_hyponatremia",
+    "label": "Hyponatremia",
+    "verdict": "acceptable_with_qualification",
+    "explanation": "Her measured sodium was 133 at a glucose of 348. Corrected for the glucose, by adding 1.6 to 2.4 for every 100 mg/dL above 100, it is about 137 to 139, which is normal. Glucose draws water into the blood and dilutes the sodium, and the number rises on its own as the glucose falls. Report the corrected value, and expect the measured one to climb."
+   },
+   {
+    "catalog_id": "dx_acute_kidney_injury",
+    "label": "Acute kidney injury",
+    "verdict": "acceptable_with_qualification",
+    "explanation": "Her creatinine was 1.2 with a BUN of 24, in a woman who was dry, and no earlier value is known. A single creatinine does not meet the definition of acute kidney injury, which needs a rise against a baseline or a fall in urine output. The likely reading is a kidney short of volume, and the handover is to repeat the creatinine after fluid."
    },
    {
     "catalog_id": "dx_anion_gap_metabolic_acidosis",
@@ -5344,7 +5930,9 @@
     "label": "Fluid",
     "actions": [
      "insert_iv",
-     "normal_saline_1l_bolus"
+     "normal_saline_1l_bolus",
+     "normal_saline_infusion",
+     "lactated_ringer_s_infusion"
     ]
    },
    {
@@ -5366,6 +5954,7 @@
      "insulin_drip",
      "insulin_subcutaneous",
      "insulin_bolus",
+     "insulin_restart",
      "insulin_glargine_subcutaneous",
      "d5_1_2_ns_infusion",
      "na_bicarbonate_bolus"
@@ -5406,7 +5995,7 @@
    "treated",
    "case_complete"
   ],
-  "intended_path_note": "Fluid, the chemistry, potassium, a repeat level, then insulin. A learner who gives insulin first passes through potassium_falling and recovering and reaches the same end.",
+  "intended_path_note": "Fluid, the chemistry, potassium, a repeat level, then insulin. A learner who gives rapid insulin at any point before the potassium has run in passes through potassium_falling and recovering and reaches the same end.",
   "trap_actions": [
    "insulin_bolus",
    "na_bicarbonate_bolus",
@@ -5414,11 +6003,11 @@
    "ct_abdomen"
   ],
   "cross_cutting_teaching_points": [
-   "Know the potassium before you give insulin. Under 3.5, replace it and hold insulin until it is back above 3.5. Insulin, bicarbonate and fluid all push potassium down.",
+   "Know the potassium before you give insulin. Under 3.5, hold insulin and replace it at 20 to 40 mEq an hour, rechecking every one to two hours, and start insulin once the level is 3.5 or more. Between 3.5 and 5.5, insulin runs with 20 to 30 mEq of potassium in each liter. Over 5.5, hold the potassium and start insulin. Insulin, bicarbonate and fluid all push potassium down. [Potassium rule from the reference table supplied by the directing physician, 7 October 2026] [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]",
    "A vomiting adult who looks dry or is breathing deeply gets a bedside glucose. Ketoacidosis often arrives looking like a stomach bug.",
-   "Fluid treats the dehydration and insulin treats the ketoacidosis. When the glucose falls under 250, add dextrose and keep the insulin going until the ketones clear.",
+   "Fluid treats the dehydration and insulin treats the ketoacidosis. When the glucose falls under 250, add dextrose and keep the insulin going until the ketones clear. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]",
    "Mild describes the pH. It does not describe the risk. The most dangerous number in this patient was not the glucose.",
-   "Patients who stop eating often stop their insulin. In type 1 diabetes basal insulin is not stopped during illness, even when not eating, and that teaching is part of the discharge.",
+   "Patients who stop eating often stop their insulin. In type 1 diabetes basal insulin is not stopped during illness, even when not eating, and that teaching is part of the discharge. [UNVERIFIED: general teaching written by a model from memory]",
    "The simulator compresses hours into seconds and does not model doses. The order of the steps is the lesson, and the timings are not."
   ],
   "attempt_history_note": "Blocked attempts are surfaced and not penalized."

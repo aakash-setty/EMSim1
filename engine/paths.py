@@ -33,7 +33,9 @@ ENGINE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(ENGINE)
 CATALOG_DIR = os.path.join(ROOT, "catalog")
 CASES_DIR = os.path.join(ROOT, "cases")
-BUILD_DIR = os.path.join(ROOT, "build")
+# EMSIM_BUILD_DIR lets a tool build into a scratch folder instead of build/, which is
+# committed. engine/test_packs.py uses it to build one pack at a time for its tests.
+BUILD_DIR = os.environ.get("EMSIM_BUILD_DIR") or os.path.join(ROOT, "build")
 DOCS_DIR = os.path.join(ROOT, "docs")
 
 

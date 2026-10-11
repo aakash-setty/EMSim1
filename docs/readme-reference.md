@@ -73,6 +73,12 @@ choice, a phrase the catalog lacks. Not a diagnosis and its workup.
 
 ## A case pack
 
+**Notice (v0.24).** This section, Adding a case and Status are out of date. Five of the seven
+packs generate their case file and binding map from Python sources (`build_case.py` and the
+`case_*.py` modules), and `catalog/expand_interview_variants.py` needs a topic map for each
+new pack. Use the chain in `README.md` and authoring requirements section 16. Count cases and
+catalog entries from the files.
+
 A folder under `cases/` whose files share a prefix. For the reference case the prefix
 is `CHFE` (congestive heart failure exacerbation):
 
@@ -549,7 +555,7 @@ requests rather than defects.
 That is a structural claim only.
 
 **Nothing here has been reviewed by a physician**: not the reference case, not the
-300-entry action catalog, and not the 488-entry diagnosis catalog, which was generated
+action catalog, and not the diagnosis catalog, which was generated
 from model memory with no source consulted. The v0.18a review was a model-assisted clinical
 read of each case and of the catalog, not a physician's, and its corrections are drafts like
 everything else. AFRVR and DIPH are the closest to exceptions

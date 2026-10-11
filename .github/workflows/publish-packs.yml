@@ -39,6 +39,11 @@ jobs:
       - name: Build every case
         run: python3 engine/build_simulator.py
 
+      # The files an AI reads to build a case must stay within budget and point at real
+      # sections (docs/restructure-plan.md). Cheap, and it is what stops the kit growing.
+      - name: Check the reading kit
+        run: python3 engine/kit_check.py
+
       # The site Vercel serves is the committed site/index.html. If it is not what this
       # commit builds, its pack hashes point at packs nobody uploads.
       - name: Check the committed site matches the build

@@ -31,7 +31,7 @@
   {
    "case_id": "consult_activate_cath_lab",
    "catalog_id": null,
-   "note": "Case-only button on the Consults tab, on the directing physician's instruction of 6 October 2026. Not in the catalog.",
+   "note": "Case-only button on the Consults tab, on the directing physician's instruction of 6 October 2026. Not in the catalog. Authoring 7.1 permits a case-only action by recorded decision. Its spoken phrases are voice_phrases on the case action.",
    "unmatched_placement": {
     "tab": "consultations",
     "group": "Consultations"
@@ -73,9 +73,10 @@
    "catalog_id": "dobutamine_drip",
    "also_covers": [
     "epinephrine_drip",
-    "dopamine_drip"
+    "dopamine_drip",
+    "epinephrine_bolus"
    ],
-   "note": "Every catecholamine inotrope is the same act here."
+   "note": "Every catecholamine inotrope is the same act here. Push-dose epinephrine was added on 7 October 2026: it was an unbound route to the act the case already tags. A push dose is modeled like the infusion and has to be stopped."
   },
   {
    "case_id": "stop_dobutamine",
@@ -88,7 +89,9 @@
   },
   {
    "case_id": "furosemide_40_mg_iv",
-   "catalog_id": "furosemide_40_mg_iv"
+   "catalog_id": "furosemide_40_mg_iv",
+   "also_covers_group": "loop_diuretic",
+   "note": "A claim about the act. The group has one member today."
   },
   {
    "case_id": "tenecteplase_tnk_bolus",
@@ -152,12 +155,38 @@
    "catalog_id": "lactate"
   },
   {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7"
+  },
+  {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas"
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas"
+  },
+  {
+   "case_id": "fingerstick_blood_sugar",
+   "catalog_id": "fingerstick_blood_sugar"
+  },
+  {
    "case_id": "consult_cardiology",
    "catalog_id": "consult_cardiology"
   },
   {
    "case_id": "consult_critical_care",
    "catalog_id": "consult_critical_care"
+  },
+  {
+   "case_id": "chest_rechecked",
+   "catalog_id": null,
+   "note": "Not a catalog action and not a button. The target of the follow-up recheck_lungs_after_fluid. A chest examination, a lung ultrasound or a chest film taken after fluid credits it through also_satisfies (authoring 8.2). Hidden from every tab and from search.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
   },
   {
    "case_id": "handoff_submit",

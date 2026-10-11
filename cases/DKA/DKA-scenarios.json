@@ -1,7 +1,7 @@
 {
  "scenarios_version": "0.1",
  "case_id": "dka-hypokalemia-01",
- "note": "End-to-end paths. Steps cost eight seconds each on the runner's clock.",
+ "note": "End-to-end paths. Steps cost eight seconds each on the runner's clock, and waits are whole seconds, so the runner cannot express a gap shorter than eight seconds. The runner does not implement also_satisfies. Where a route depends on a hidden target (early_insulin, insulin_restart), the scenario names the target as a step straight after the order that earns it in the engine, and its note says so. DKA-tests.js folds the real routes through the engine with fractional times and is the authority.",
  "scenarios": [
   {
    "name": "Intended path: glucose, gas and chemistry, fluid, potassium, a repeat level, insulin, the dextrose plan, handoff",
@@ -81,7 +81,7 @@
     }
    ],
    "expect_phase": "presentation",
-   "note": "Blocked by the case prerequisite."
+   "note": "Blocked by the case prerequisite, which is the catalog's three-flag line rule."
   },
   {
    "name": "Potassium then an infusion reaches treated",
@@ -196,7 +196,7 @@
    "note": ""
   },
   {
-   "name": "Holding insulin alone does not rescue her",
+   "name": "Holding insulin alone, with no potassium ever given, does not rescue her",
    "steps": [
     "insert_iv",
     "insulin_drip",
@@ -242,12 +242,13 @@
      "wait": 24
     },
     "insulin_drip",
+    "insulin_restart",
     {
      "wait": 12
     }
    ],
    "expect_phase": "treated",
-   "note": ""
+   "note": "One order in the recovering phase is the restart. insulin_restart is the hidden target that order earns in the engine."
   },
   {
    "name": "After the rescue she waits for the restart",
@@ -267,7 +268,7 @@
     }
    ],
    "expect_phase": "recovering",
-   "note": ""
+   "note": "No order in the recovering phase, so no restart."
   },
   {
    "name": "Oral potassium does not count",
@@ -278,7 +279,7 @@
     }
    ],
    "expect_phase": "presentation",
-   "note": "She vomits it."
+   "note": "It has no effect at any point in the case."
   },
   {
    "name": "Bicarbonate changes no phase",
@@ -341,7 +342,7 @@
    "note": ""
   },
   {
-   "name": "Known gap: insulin twelve seconds after potassium slips through to treated",
+   "name": "Insulin twelve seconds after potassium still drives the potassium down",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -351,12 +352,250 @@
      "wait": 12
     },
     "insulin_drip",
+    "early_insulin",
     {
      "wait": 30
     }
    ],
+   "expect_phase": "potassium_falling",
+   "note": "This was the known gap of v0.23, closed on 7 October 2026. The potassium finishes first, and the early rule in potassium_replaced fires five seconds later. early_insulin is the hidden target the insulin order earns in the engine, because it was placed in the arrival phase."
+  },
+  {
+   "name": "Insulin well after the potassium has finished reaches treated",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "basic_chemistry_chem_7",
+    "potassium_chloride_kcl",
+    {
+     "wait": 40
+    },
+    "insulin_drip",
+    {
+     "wait": 12
+    }
+   ],
    "expect_phase": "treated",
-   "note": "Insulin ordered more than ten seconds after potassium, with no repeat level, is not caught. Recorded so a fix shows up as a failing scenario."
+   "note": "The order is placed in potassium_replaced, so it earns no hidden target."
+  },
+  {
+   "name": "Potassium given before early insulin counts: the hold alone rescues her",
+   "steps": [
+    "insert_iv",
+    "potassium_chloride_kcl",
+    "insulin_drip",
+    "early_insulin",
+    {
+     "wait": 12
+    },
+    "stop_insulin",
+    {
+     "wait": 24
+    }
+   ],
+   "expect_phase": "recovering",
+   "note": "Intended. An infusion that is already running is still running, so the hold is the step that was missing."
+  },
+  {
+   "name": "Potassium given before early insulin, and insulin never held: she stays weak",
+   "steps": [
+    "insert_iv",
+    "potassium_chloride_kcl",
+    "insulin_drip",
+    "early_insulin",
+    {
+     "wait": 200
+    }
+   ],
+   "expect_phase": "potassium_falling",
+   "note": ""
+  },
+  {
+   "name": "Bolus first, rescue, one infusion reaches treated",
+   "steps": [
+    "insert_iv",
+    "insulin_bolus",
+    "early_insulin",
+    {
+     "wait": 12
+    },
+    "stop_insulin",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    "insulin_drip",
+    "insulin_restart",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "treated",
+   "note": "The fault of v0.23: this learner needed the infusion ordered twice. Both hidden targets are named as steps."
+  },
+  {
+   "name": "Bolus first, rescue, a second bolus alone does not treat her",
+   "steps": [
+    "insert_iv",
+    "insulin_bolus",
+    "early_insulin",
+    {
+     "wait": 12
+    },
+    "stop_insulin",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    "insulin_bolus",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "recovering",
+   "note": "A bolus earns no restart."
+  },
+  {
+   "name": "Subcutaneous first, rescue, one subcutaneous dose reaches treated",
+   "steps": [
+    "insulin_subcutaneous",
+    "early_insulin",
+    {
+     "wait": 12
+    },
+    "insert_iv",
+    "stop_insulin",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    "insulin_subcutaneous",
+    "insulin_restart",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "treated",
+   "note": ""
+  },
+  {
+   "name": "Two insulin orders before the hold are not a restart",
+   "steps": [
+    "insert_iv",
+    "insulin_drip",
+    "insulin_subcutaneous",
+    "early_insulin",
+    {
+     "wait": 12
+    },
+    "stop_insulin",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    {
+     "wait": 200
+    }
+   ],
+   "expect_phase": "recovering",
+   "note": "The gap of v0.23, closed on 7 October 2026: these two orders used to set the restart flag before the hold."
+  },
+  {
+   "name": "Known gap: insulin reordered during the rescue wait is ignored",
+   "steps": [
+    "insert_iv",
+    "insulin_drip",
+    "early_insulin",
+    {
+     "wait": 12
+    },
+    "stop_insulin",
+    "potassium_chloride_kcl",
+    "insulin_drip",
+    {
+     "wait": 24
+    },
+    {
+     "wait": 200
+    }
+   ],
+   "expect_phase": "recovering",
+   "note": "She recovers although insulin was reordered, and the reorder is not the restart. Recorded so a fix shows up as a failing scenario."
+  },
+  {
+   "name": "Known gap: a hold pressed before any insulin still counts as the hold",
+   "steps": [
+    "insert_iv",
+    "stop_insulin",
+    "potassium_chloride_kcl",
+    "insulin_drip",
+    "early_insulin",
+    {
+     "wait": 12
+    },
+    {
+     "wait": 24
+    }
+   ],
+   "expect_phase": "recovering",
+   "note": "Recorded so a fix shows up as a failing scenario."
+  },
+  {
+   "name": "An insulin infusion with no line is blocked",
+   "steps": [
+    "insulin_drip",
+    {
+     "wait": 40
+    }
+   ],
+   "expect_phase": "presentation",
+   "note": "Blocked by the catalog's vascular access rule. Nothing is given, so nothing happens."
+  },
+  {
+   "name": "Fluid by infusion alone, then the intended order, reaches treated",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "basic_chemistry_chem_7",
+    "normal_saline_infusion",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    "basic_chemistry_chem_7",
+    "insulin_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "treated",
+   "note": "A crystalloid infusion counts as her fluid. DKA-tests.js checks the credit and the monitor."
+  },
+  {
+   "name": "Potassium through a central line needs no peripheral line",
+   "steps": [
+    "central_venous_catheter_triple_lumen",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    }
+   ],
+   "expect_phase": "potassium_replaced",
+   "note": "The prerequisite is the catalog's three-flag rule."
+  },
+  {
+   "name": "Two chemistries before the potassium change no phase",
+   "steps": [
+    "insert_iv",
+    "basic_chemistry_chem_7",
+    "normal_saline_1l_bolus",
+    "basic_chemistry_chem_7",
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "presentation",
+   "note": "The follow-up side of this is in DKA-tests.js. The runner does not model follow-ups."
   }
  ]
 }

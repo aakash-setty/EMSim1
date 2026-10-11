@@ -89,7 +89,28 @@ HANDOFF = {
    {"catalog_id": "dx_rhabdomyolysis", "label": "Rhabdomyolysis",
     "explanation": (
       "Her creatine kinase is 2,140 with muscle pain and tenderness. Muscle involvement is "
-      "part of toxic shock, and with an injured kidney it needs watching.")}],
+      "part of toxic shock, and with an injured kidney it needs watching.")},
+   # v0.24 audit, finding 22 and catalog finding 4.1. The five below were added on
+   # 7 October 2026. Two of them are diagnosis entries this pack asked the catalog for. The
+   # other three were true of her chemistry and cost five points each to name. Each
+   # explanation only restates values the pack already authors. A model wrote them and a
+   # physician has not read them.
+   {"catalog_id": "dx_retained_vaginal_foreign_body", "label": "Retained vaginal foreign body",
+    "explanation": (
+      "The retained tampon found on the pelvic examination. It is the source, and the "
+      "next team needs to hear whether it is out.")},
+   {"catalog_id": "dx_thrombocytopenia", "label": "Thrombocytopenia",
+    "explanation": (
+      "Her platelet count is 98, against a lower limit of 150. It is one of the organ "
+      "systems involved.")},
+   {"catalog_id": "dx_anion_gap_metabolic_acidosis", "label": "Anion gap metabolic acidosis",
+    "explanation": (
+      "Sodium 131, chloride 97 and bicarbonate 17 give an anion gap of 17, with a lactate "
+      "of 4.6 on arrival.")},
+   {"catalog_id": "dx_hyponatremia", "label": "Hyponatremia",
+    "explanation": "Her sodium is 131, against a lower limit of 135."},
+   {"catalog_id": "dx_hypokalemia", "label": "Hypokalemia",
+    "explanation": "Her potassium is 3.3, against a lower limit of 3.5."}],
 
  "alternative_diagnoses": [
    {"catalog_id": "dx_septic_shock", "label": "Septic shock",
@@ -193,14 +214,18 @@ DEBRIEF = {
    {"id": "recognition", "label": "Recognizing shock in a patient who looks well",
     "actions": ["attach_monitor", "exam_circ", "exam_skin", "exam_heent", "exam_neuro",
                 "lactate", "basic_chemistry_chem_7", "complete_blood_count_cbc",
-                "venous_blood_gas", "arterial_blood_gas", "ecg_12_lead"]},
+                "venous_blood_gas", "arterial_blood_gas", "ecg_12_lead",
+                "liver_function_tests_lfts", "creatine_kinase_ck", "coagulation_panel",
+                "plasma_procalcitonin", "c_reactive_protein_crp", "peripheral_smear",
+                "urine_hcg_qualitative", "serum_hcg_quantitative"]},
    {"id": "source", "label": "Finding and removing the source",
-    "actions": ["exam_gu", "remove_vaginal_foreign_body", "ct_abdomen", "exam_abd",
-                "exam_back", "urinalysis", "consult_ob_gyn"]},
+    "actions": ["exam_gu", "remove_vaginal_foreign_body", "ct_abdomen", "ultrasound_fast",
+                "exam_abd", "exam_back", "urinalysis", "consult_ob_gyn"]},
    {"id": "resuscitation", "label": "Fluid and vasopressor",
     "actions": ["insert_iv", "second_iv", "normal_saline_1l_bolus", "norepinephrine_drip",
-                "dopamine_drip", "phenylephrine_bolus", "stop_norepinephrine",
-                "insert_foley_catheter", "ultrasound_cardiac", "hydrocortisone_bolus"]},
+                "normal_saline_infusion", "dopamine_drip", "phenylephrine_bolus",
+                "stop_norepinephrine", "insert_foley_catheter", "ultrasound_cardiac",
+                "hydrocortisone_bolus", "nasal_cannula_oxygen", "non_rebreather_mask"]},
    {"id": "antimicrobials", "label": "Antibiotics",
     "actions": ["vancomycin", "clindamycin", "ceftriaxone", "cefazolin",
                 "blood_culture_x_2", "intravenous_immunoglobulin",
@@ -209,7 +234,7 @@ DEBRIEF = {
     "actions": ["attempt_discharge", "metoprolol_bolus", "ibuprofen", "furosemide_40_mg_iv",
                 "lumbar_puncture", "intubate_rapid_sequence", "ondansetron", "acetaminophen"]},
    {"id": "disposition", "label": "Consultation and disposition",
-    "actions": ["consult_critical_care", "handoff_submit"]},
+    "actions": ["consult_critical_care", "consult_renal", "handoff_submit"]},
  ],
 
  "key_exams": ["exam_circ", "exam_skin", "exam_gu", "exam_heent", "exam_neck", "exam_abd"],
@@ -256,9 +281,9 @@ DEBRIEF = {
    ("A fast heart rate that is holding up a blood pressure is not treated. Find the cause."),
  ],
  "attempt_history_note": (
-   "Blocked attempts are surfaced and not penalized. The one this case authors is removing "
-   "a vaginal foreign body before the pelvic examination, where the nurse says nobody has "
-   "looked yet."),
+   "Blocked attempts are surfaced and not penalized. This case authors two. Removing a "
+   "vaginal foreign body before the pelvic examination, where the nurse says nobody has "
+   "looked yet. And stopping a vasopressor when none is running."),
 }
 
 # ==================================================================== provenance
@@ -276,9 +301,17 @@ PROVENANCE = {
    "patient, story and three learning goals in outline.\n\n"
    "Everything else is model output and awaits sign-off: every vital sign, every "
    "examination finding, every laboratory value and reference interval, every deadline, "
-   "every tag, every debrief note, the whole interview, and the diagnosis lists. The model "
-   "wrote them from general knowledge of toxic shock syndrome and sepsis care and opened no "
-   "guideline, paper or published simulation while doing so."),
+   "every tag, every debrief note, the whole interview, and the diagnosis lists. The "
+   "drafting pass wrote them from general knowledge of toxic shock syndrome and sepsis care "
+   "and opened no guideline, paper or published simulation while doing so. A second model "
+   "pass on the same day did open sources and compared the pack against them. "
+   "reference_status below lists each one and how it was read. Neither pass was a "
+   "physician's review.\n\n"
+   "On 7 October 2026 a model changed the pack to meet the v0.24 authoring rules after an "
+   "audit. It added no clinical number except values derived from numbers already in the "
+   "pack, each marked in a verify note. The new debrief notes, consultant lines and patient "
+   "answers restate what the pack already said, and TSS-SEED.md lists each one as awaiting "
+   "sign-off."),
  "author_only_fields_pending_signoff": [
    "Every vital sign in every phase.",
    "Every laboratory value, reference interval and abnormal flag.",
@@ -296,20 +329,91 @@ PROVENANCE = {
    "The antibiotic regimen named in the debrief notes, and the statements about the "
    "evidence for clindamycin, immunoglobulin, 30 mL/kg, peripheral vasopressors and dopamine.",
    "The interview in full, and the alternative and additional diagnosis lists.",
+   # ---- added 7 October 2026 after the audit (authoring section 2, row by row)
+   "Consultant advice: every reply of the intensivist, infectious disease, gynecology and "
+   "nephrology. The intensivist's tiers were rewritten and the nephrology reply was written "
+   "by a model on 7 October 2026.",
+   "Prompt deadlines and their relative urgency: monitor 20 seconds, vasopressor 30, line "
+   "45, fluid 60, source 60, vancomycin 110, and the escalations at 120 (vasopressor), 170 "
+   "(fluid) and 180 (source). Fluid and source were moved to 60 on 7 October 2026 to meet "
+   "the default-mode rule.",
+   "The two follow-ups, their deadlines and whether they apply: a second liter 60 seconds "
+   "after a bolus unless a vasopressor is running, and sedation 90 seconds after "
+   "intubation.",
+   "The two case prerequisites: a pelvic examination before removal, and a running "
+   "vasopressor before a stop.",
+   "Every coverage row in the binding map: the crystalloid bolus group, the three "
+   "vasopressor infusions under norepinephrine, the five stop entries, the maintenance "
+   "infusions, the five broad beta-lactams, the eight rate-control routes and the loop "
+   "diuretic group.",
+   "The size and duration of every vital effect: fluid plus 6 systolic and minus 6 heart "
+   "rate for 60 seconds, a vasopressor without fluid plus 8, a phenylephrine push plus 12 "
+   "for 90 seconds, rate control minus 16 heart rate and minus 12 systolic for 180 "
+   "seconds, oxygen plus 2 by cannula and plus 4 by mask, bag or non-invasive ventilation, "
+   "and acetaminophen minus 0.6 degrees after 30 seconds.",
+   "key_topics (nine interview topics) and key_exams (six examinations), which decide the "
+   "History and Physical scores.",
+   "The neutral tags given on 7 October 2026 to thirteen studies, the nephrology consult, "
+   "the maintenance infusions, the bag valve mask, non-invasive ventilation, lorazepam and "
+   "morphine. Each is a placeholder.",
+   "The five additional diagnoses added on 7 October 2026 and their explanations.",
+   "Results and findings derived by a model on 7 October 2026: the FAST report, the skin "
+   "biopsy line, the arterial saturation by phase, and the psychiatric finding in the two "
+   "vasopressor phases.",
+   "Patient answers a model wrote or edited on 7 October 2026. TSS-SEED.md lists them.",
  ],
- "reference_status": (
-   "No reference in this pack has been checked. Notes that lean on a guideline or a trial "
-   "carry an [UNVERIFIED] marker, which the interface strips from the learner's view."),
+ "reference_status": [
+   {"reference": "CDC 2011 toxic shock syndrome case definition",
+    "how_read": "Opened by a model on 6 October 2026, in the independent check after "
+                "drafting. The drafting pass opened nothing and wrote from memory",
+    "status": "Compared with the pack by that model. Not checked by a physician"},
+   {"reference": "Surviving Sepsis Campaign 2021 guideline text",
+    "how_read": "Opened by a model on 6 October 2026, in the independent check",
+    "status": "Compared with the pack by that model. A newer edition exists and was not "
+              "opened. Not checked by a physician"},
+   {"reference": "SCCM guideline page",
+    "how_read": "Opened by a model on 6 October 2026, in the independent check",
+    "status": "Compared with the pack by that model. Not checked by a physician"},
+   {"reference": "StatPearls",
+    "how_read": "Opened by a model on 6 October 2026, in the independent check",
+    "status": "A secondary source. The SEED does not record which article. Not checked by "
+              "a physician"},
+   {"reference": "Internet Book of Critical Care",
+    "how_read": "Opened by a model on 6 October 2026, in the independent check",
+    "status": "A secondary source. The SEED does not record which chapter. Not checked by "
+              "a physician"},
+   {"reference": "De Backer et al., NEJM 2010, the SOAP II trial",
+    "how_read": "Not opened. The dopamine note was written from memory",
+    "status": "Unverified. The note carries a marker. Not checked by a physician"},
+   {"reference": "Current IDSA and local guidance on the empiric regimen",
+    "how_read": "Not opened. The vancomycin and clindamycin notes were written from memory",
+    "status": "Unverified. The notes carry markers. Not checked by a physician"},
+   {"reference": "No source",
+    "how_read": "From memory",
+    "status": "Four claims have no source at all: that most menstrual toxic shock is "
+              "methicillin-susceptible, lactate over 4 as a risk marker, the CT appearance "
+              "of a tampon, and sterile pyuria in toxic shock. Each sits in a debrief note "
+              "that carries a marker. The pyuria claim is also in the urosepsis and "
+              "pyelonephritis explanations, which cannot carry a marker because the "
+              "interface prints it there. Not checked by a physician"},
+ ],
+ "reference_status_summary": (
+   "TSS-SEED.md section 4 lists what the independent check confirmed against the opened "
+   "sources. It does not record which source confirmed which claim."),
+ "reference_status_note": (
+   "Markers are [UNVERIFIED] text in square brackets. The interface strips them from an "
+   "action's debrief note, a timed transition's debrief note, references and the "
+   "cross-cutting teaching points, and prints them everywhere else, so they sit only in "
+   "those fields and in verify notes."),
  "catalog_change_requests": [
    "RESOLVED 6 October 2026. 'Remove Vaginal Foreign Body' was added to the action catalog "
    "under Procedures, marked source=author-supplied. Before it existed a retained tampon "
    "could be found on the genitourinary examination and then not acted on.",
-   "No calcium is authored. Hypocalcemia is described in toxic shock and a reviewer may "
-   "want it added.",
-   "The diagnosis catalog has no entry for thrombocytopenia that is not immune or "
-   "heparin-induced, so her platelet count of 98 cannot be named at handover.",
-   "The engine gained handoff.disposition_intercepts and hidden case actions for this case "
-   "(v0.21), so that one disposition can have a consequence instead of ending the run.",
-   "The patient figure cannot show a rash or a flush, so the erythroderma is text only.",
+   "RESOLVED 7 October 2026. The diagnosis catalog gained Thrombocytopenia and Retained "
+   "vaginal foreign body, and this case now credits both as additional diagnoses.",
+   "Linezolid is not in the action catalog. The vancomycin note names it as an alternative "
+   "some centers prefer.",
+   "The diagnosis catalog has no entry for acute liver injury or transaminitis short of "
+   "acute liver failure, so her liver involvement cannot be named at handover.",
  ],
 }

@@ -10,14 +10,14 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  const FN_BEFORE=(await ctl({})).calls.fn; await p.goto('http://localhost:8080/'); await p.waitForTimeout(1500);
  const s0=await p.evaluate(()=>({rows:document.querySelectorAll('.wl-case').length, locks:document.querySelectorAll('.wl-case .wl-lock').length,
    acct:document.getElementById('wl-acct').innerText, legal:document.getElementById('pk-legal').innerText, h1:document.querySelector('.wl-text h1').innerText,
-   title:document.title, CASE:typeof CASE!=='undefined'&&CASE!==null, locked:CASES.filter(c=>c.locked).length}));
+   title:document.title, CASE:typeof CASE!=='undefined'&&CASE!==null, locked:CASES.filter(c=>c.locked).length, n:CASES.length}));
  console.log(JSON.stringify(s0));
- ok('four rows, four locks, nothing bound', s0.rows===4&&s0.locks===4&&!s0.CASE&&s0.locked===4);
+ const N=s0.n; ok('one row and one lock per case, nothing bound', N>0&&s0.rows===N&&s0.locks===N&&!s0.CASE&&s0.locked===N, s0);
  ok('sign-in line and button on the list', /Sign in to open a case/.test(s0.acct)&&/Sign in/.test(s0.acct));
  const L0=await p.evaluate(()=>({shown:LANDING.visible(), tiles:document.querySelectorAll('.ld-case').length,
    top:(document.elementFromPoint(720,400)||{}).closest?!!document.elementFromPoint(720,400).closest('#landing'):false,
    imgs:[...document.querySelectorAll('#landing .ld-shot img')].map(i=>i.naturalWidth)}));
- ok('signed out: the welcome page covers the list', L0.shown&&L0.top&&L0.tiles===4, L0);
+ ok('signed out: the welcome page covers the list', L0.shown&&L0.top&&L0.tiles===N, L0);
  ok('welcome page screenshots load', L0.imgs.length===3&&L0.imgs.every(w=>w>0), L0.imgs);
  await p.click('[data-ldact="sit"]'); await p.waitForTimeout(1300);
  ok('the demo takes an action', await p.evaluate(()=>document.querySelector('[data-ldact="sit"]').classList.contains('done')));
@@ -50,7 +50,7 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  const s1=await p.evaluate(()=>({dlg:!document.getElementById('signinview').classList.contains('hidden'), splash:!document.getElementById('splash').classList.contains('hidden'),
    prefix:PACK&&PACK.prefix, locked:CASES.filter(c=>c.locked).length}));
  console.log(JSON.stringify(s1));
- ok('after sign-in the pending case loads and its splash opens', !s1.dlg&&s1.splash&&s1.prefix==='CHFE'&&s1.locked===3);
+ ok('after sign-in the pending case loads and its splash opens', !s1.dlg&&s1.splash&&s1.prefix==='CHFE'&&s1.locked===N-1);
  ok('signed in: the welcome page is gone', await p.evaluate(()=>!LANDING.visible()));
  let c=await ctl({}); const fn1=c.calls.fn;
  ok('one function call for one case', fn1===FN_BEFORE+1, c.calls);
@@ -92,13 +92,13 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  // session survives a reload (persisted by supabase-js)
  await p.reload(); await p.waitForTimeout(1500);
  const s3=await p.evaluate(()=>({acct:document.getElementById('wl-acct').innerText, locked:CASES.filter(c=>c.locked).length}));
- ok('reload: session kept, packs dropped', /res@example/.test(s3.acct)&&s3.locked===4, s3);
+ ok('reload: session kept, packs dropped', /res@example/.test(s3.acct)&&s3.locked===N, s3);
  await p.evaluate(i=>chooseCase(i),di); await p.waitForTimeout(3000);
  ok('a large pack with images (DIPH) loads and opens', await p.evaluate(()=>PACK&&PACK.prefix==='DIPH'&&Object.keys(PACK.media||{}).length>0&&!document.getElementById('splash').classList.contains('hidden')));
  await p.evaluate(()=>backToPicker()); await p.waitForTimeout(300);
  await p.click('#acct-out'); await p.waitForTimeout(2000);
  const s4=await p.evaluate(()=>({acct:document.getElementById('wl-acct').innerText, locked:CASES.filter(c=>c.locked).length, ls:Object.keys(localStorage).filter(k=>/sb-|supabase/.test(k)).map(k=>k+':'+String(localStorage.getItem(k)).length)}));
- ok('sign out: reloaded, locked, session gone', /Sign in to open a case/.test(s4.acct)&&s4.locked===4, s4);
+ ok('sign out: reloaded, locked, session gone', /Sign in to open a case/.test(s4.acct)&&s4.locked===N, s4);
  ok('signed out again: the welcome page is back', await p.evaluate(()=>LANDING.visible()));
  await p.screenshot({path:'/tmp/e2e/list.png'});
  ok('no page errors anywhere', errs.length===0, errs);

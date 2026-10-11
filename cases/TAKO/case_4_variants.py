@@ -1,5 +1,10 @@
 """TAKO part 4a: question phrasings shared with MGCA and TSS, copied 6 October 2026.
 Questions, not clinical facts. The answers are in case_4_interview.py.
+
+7 October 2026, after the audit: 'Any sweats?' and 'Have you been sweating?' left
+fever_and_chills, because this case has a sweating topic and she is drenched. 'Any night
+sweats?' stays, because "I've not been ill" answers it. 'Any palpitations?' and 'Any pain
+going into your arm?' left chest_pain, because the palpitations and radiation topics own them.
 """
 
 SHARED = {'onset': {'canonical': 'When did this start?',
@@ -68,7 +73,8 @@ SHARED = {'onset': {'canonical': 'When did this start?',
                                     'Where does the pain travel to?',
                                     'Does it go into your arm?',
                                     'Does it go to your jaw or neck?',
-                                    'Does the pain go through to your back?'],
+                                    'Does the pain go through to your back?',
+                                    'Any pain going into your arm?'],
                        'echo': 'whether it spreads'},
  'severity': {'canonical': 'How bad is it out of ten?',
               'variants': ['Rate the pain out of ten',
@@ -145,13 +151,11 @@ SHARED = {'onset': {'canonical': 'When did this start?',
                                    'Have you been shivering?',
                                    'Did you take your temperature?',
                                    'Have you had rigors?',
-                                   'Any sweats?',
                                    'Have you felt hot and cold?',
                                    'Have you been shaking?',
                                    'Any night sweats?',
                                    'Did you feel feverish?',
                                    'How high was your temperature?',
-                                   'Have you been sweating?',
                                    'Any shaking chills?'],
                       'echo': 'a temperature'},
  'cough_sore_throat': {'canonical': 'Any cough or sore throat?',
@@ -202,8 +206,6 @@ SHARED = {'onset': {'canonical': 'When did this start?',
                              'Any chest tightness?',
                              'Any pressure in your chest?',
                              'Does it hurt when you breathe in?',
-                             'Any pain going into your arm?',
-                             'Any palpitations?',
                              'Is your chest sore?',
                              'Any heart symptoms?',
                              'Does your chest feel tight?',

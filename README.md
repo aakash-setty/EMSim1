@@ -14,7 +14,7 @@ another file disagree, the other file is right:
 | What changed, and when | `CHANGELOG.md` |
 | How the engine behaves | `docs/system-design-v2.md` |
 | What a case must contain, and the rules for writing one | `docs/case-authoring-requirements.md` |
-| What makes a case worth building | the "EMSim case design guide" (a Claude Doc in the project, not in this repository) |
+| What makes a case worth building | `docs/case-design-guide.md` (a copy of the "EMSim case design guide" Claude Doc, which is the working copy) |
 | Why a past decision was made and what was rejected | `docs/decisions/` |
 | How the site is deployed and who can see what | `docs/deployment.md` |
 | Detail on the room, audio, monitor trace, hosting and network requests | `docs/readme-reference.md` (the previous README, kept as reference and not maintained) |
@@ -80,22 +80,67 @@ The chain, in order, for a pack `XX`:
 ```
 python3 cases/XX/build_case.py cases/XX        # only if the pack has one
 python3 engine/bind_catalog.py cases/XX
-python3 engine/validate_case.py XX             # also writes the review matrix
+python3 engine/test_packs.py XX                # one-pack build in a scratch folder, then the engine
+                                               # tests, the scenarios, the validator (which writes
+                                               # the review matrix), its negative tests, the timeline
+node    engine/matcher_eval.mjs --only XX      # add --semantic if huggingface.co is reachable
 python3 engine/build_simulator.py              # every case, into build/ and site/
-node    engine/engine-tests.js build/simulator.html cases/XX/XX-tests.js XX
-python3 engine/sim_runner.py XX
-python3 engine/validator-tests.py cases/XX
-python3 engine/deterioration_timeline.py XX
-node    engine/matcher_eval.mjs                # add --semantic if huggingface.co is reachable
+python3 engine/gen_docs.py                     # the generated indexes and the field reference
 ```
 
-After any change to `engine/` or `catalog/`, run the tests for **every** pack, not only
-the one you were working on.
+`engine/test_packs.py` with no argument tests every pack, one at a time, in constant time
+per pack. The tools it runs can also be run by hand against `build/simulator.html`:
 
-New case: `python3 engine/new_case.py XX "Title"` scaffolds a pack that fails validation
-on purpose. The error list is the to-do list. Authoring requirements section 16 is the
-full sequence. Add the pack's topic map to `catalog/expand_interview_variants.py` and run
-it to generate interview phrasings.
+```
+node    engine/engine-tests.js build/simulator.html cases/XX/XX-tests.js XX
+python3 engine/sim_runner.py XX
+python3 engine/validate_case.py XX
+python3 engine/validator-tests.py cases/XX
+python3 engine/deterioration_timeline.py XX
+```
+
+After any change to `engine/` or `catalog/`, run `python3 engine/test_packs.py` for
+**every** pack, not only the one you were working on.
+
+Before any handover, `python3 engine/kit_check.py`: the files an AI reads to build a case
+must stay within their budget and point at real sections. `CLAUDE.md` says what those
+files are, and `docs/restructure-plan.md` says why.
+
+New case: `python3 engine/new_case.py XX "Title"` scaffolds a JSON pack that fails
+validation on purpose. The error list is the to-do list. Authoring requirements section 16
+is the full sequence. To write the case as Python instead, copy `build_case.py` and the
+`case_*.py` layout from the newest pack that has them.
+
+Interview phrasings. A pack built from Python expands its topic bank at build time: each
+topic in `TOPIC_MAP` in `case_4_interview.py` names the shared concepts in
+`catalog/interview_phrasings.py` it draws phrasings from, `EXTRA_COVERED` names what the
+answers cover without drawing phrasings, and `build_case.py` calls
+`catalog/interview_expand.py`, which also writes `XX-matcher-tune-questions.json`. Write
+`cases/XX/XX-matcher-eval-questions.json` before the first build, so held-out questions
+stay out of the bank, and read `catalog/interview_out_of_scope.py` against the pack's
+answers to fill `EXTRA_COVERED`. The build prints what was added and dropped. Nothing is
+added to any shared file. A concept the library lacks is added to
+`catalog/interview_phrasings.py` (shared, so it counts as a catalog change).
+
+The four older packs (AFRVR, CHFE, DIPH, MGCA) are frozen: their expansions were edited
+by hand after they were generated, so they are committed as they are, and their maps stay
+in `catalog/expand_interview_variants.py`, which refuses to write them without `--force`.
+
+A case's history lives in its own folder: decisions in the SEED's "What a person
+decided", the state of the work in the review packet. `CHANGELOG.md` records changes to
+the engine, the catalog, the documents and the site, and gives a new case one line. Do
+not write a case's story into any shared file.
+
+The physician review page (`cases/review/`) reads the shared bank, which is frozen, plus
+one optional `cases/XX/XX-review-questions.json` per newer pack, merged at build time.
+
+New catalog entry: add it in `catalog/build_catalog.py`, marked as author-supplied if it
+did not come from the interface. A drug that needs no line also goes in `NON_IV`. An
+investigation also needs a default in `catalog/default_results.py`. Add its phrases in
+`catalog/build_voice_aliases.py` and take them off any entry or `unavailable` list that
+held them. Check that the display name does not end in a bare route or qualifier in
+parentheses, because the voice parser derives a phrase from that text. Then regenerate all
+three files below, rebind and rebuild, and run the tests for every pack.
 
 Catalogs are generated. Edit the generator and regenerate:
 
@@ -103,7 +148,13 @@ Catalogs are generated. Edit the generator and regenerate:
 python3 catalog/build_catalog.py   > catalog/action-catalog.json
 python3 catalog/build_diagnoses.py > catalog/diagnosis-catalog.json
 python3 catalog/build_voice_aliases.py
+python3 engine/gen_docs.py
 ```
+
+`docs/generated/` is generated too, by `engine/gen_docs.py`, from the packs, the catalogs
+and `engine/field_notes.py`. A new case field needs a line in `engine/field_notes.py`, or
+the kit check fails. Look things up with `python3 engine/lookup.py` (actions, diagnoses,
+fields, mechanisms, prerequisites, flags) instead of opening the catalogs.
 
 ## Things that have gone wrong before
 
@@ -117,7 +168,17 @@ python3 catalog/build_voice_aliases.py
 - **Flags are permanent and rule lists are first-match.** Put phase rules before flag rules.
 - **A prompt's text is one string used in every phase it fires in.** Do not quote a vital
   sign in it.
+- **A prompt guarded on several phases is spoken in each of them.** Its text must be true
+  in all of them, and it must not say a treatment was given or a study showed something
+  unless the guard tests that.
 - **Nurse narration on a timed transition must match the destination phase's numbers.**
+- **A vital effect that is still acting when a timed transition fires makes the nurse's
+  numbers false.** Check every narration that quotes a number against the effects that can
+  be active in the destination phase, or quote no number.
+- **A follow-up's `satisfied_by` means "ever in the run".** An act done before the trigger
+  discharges it. Use `satisfied_when`, or credit through `also_satisfies` with a condition.
+- **Prompt deadlines are multiplied in the default mode and deterioration deadlines are
+  not.** A warning the validator accepts can arrive after the deterioration it warns about.
 - **Instant transitions are re-checked only after a state-changing action or a clock
   event.** Exams and interview questions do not trigger them.
 - **Held-out matcher questions are never tuned against.**

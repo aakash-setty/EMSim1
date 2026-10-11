@@ -160,6 +160,16 @@ const SEM = (function () {
       if (lib.env) {
         lib.env.allowLocalModels = false;
         lib.env.allowRemoteModels = true;
+        /* Load the onnxruntime factory from jsDelivr by URL, not as a blob: copy.
+           With useWasmCache on (the library default wherever the Cache API exists),
+           transformers 4.x fetches ort-wasm-simd-threaded.asyncify.mjs, wraps it in
+           a blob: URL and imports that. The site's Content-Security-Policy allows
+           scripts from 'self' and cdn.jsdelivr.net, not blob:, so the import was
+           refused and every deployed load ended in "no available backend found".
+           Turning the cache off keeps the import on cdn.jsdelivr.net, which the
+           policy allows. The cost is that the library no longer keeps its own copy
+           of the wasm, so repeat visits rely on the browser's HTTP cache for it. */
+        lib.env.useWasmCache = false;
       }
     } catch (e) { /* env shape is not part of the public contract */ }
 

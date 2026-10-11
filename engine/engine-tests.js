@@ -320,7 +320,12 @@ chk('the default names a mode that exists', !!D.modes[D.default], D.default);
    draws as a box, so this pins both at once. */
 chk('a case starts in the mode that makes the nurse wait',
     D.default === 'normal' && D.modes[D.default].prompt_multiplier === 3, D.default);
-const promptAction = CRITICAL.find(id => A[id].prompt);
+/* v0.25. Pick a prompted critical action whose prompt fires on an idle run. Until now this
+   took the first one in table order, and a case whose first prompt is guarded on a study
+   (the ECG must have resulted before the nurse asks for calcium) failed here, which pushed
+   a builder into adding a prompt the seed never asked for. */
+const promptAction = CRITICAL.filter(id => A[id].prompt)
+  .find(id => fold(mk([]), A[id].prompt.deadline_seconds + 2, 1).promptFires.some(p => p.id === id));
 if (promptAction) {
   const d = A[promptAction].prompt.deadline_seconds;
   chk('a prompt that has fired in easy mode has not fired in normal mode',
@@ -341,6 +346,10 @@ if (promptAction) {
   chk('mode does not change the trajectory',
       JSON.stringify(easyEnd.phaseSeq) === JSON.stringify(hardEnd.phaseSeq),
       JSON.stringify(easyEnd.phaseSeq.map(p => p.id + '@' + p.t)));
+} else if (CRITICAL.some(id => A[id].prompt)) {
+  chk('no prompted critical action fires on an idle run (every prompt is guarded on something first), so the mode multiplier is not tested here', true);
+  const easyEnd = fold(mk([]), 300, 1), hardEnd = fold(mk([]), 300, 3);
+  chk('mode changes only the prompts, not the phase', easyEnd.phase === hardEnd.phase, easyEnd.phase + ' vs ' + hardEnd.phase);
 } else chk('a prompted critical action exists to test', false);
 
 section('time-guarded transitions');
@@ -832,8 +841,10 @@ section('the running chart');
                 new RegExp(A[acro].name.match(/\b[A-Z]{2,}\b/)[0]).test(narrationFor(acro)),
                 narrationFor(acro));
 
-  /* The kinds the fold actually emits. A prompt is the one the chart exists for. */
-  const promptAction = CRITICAL.find(id => A[id].prompt);
+  /* The kinds the fold actually emits. A prompt is the one the chart exists for.
+     v0.25: a prompted action whose prompt fires on an idle run, as in the mode test. */
+  const promptAction = CRITICAL.filter(id => A[id].prompt)
+    .find(id => fold(mk([]), A[id].prompt.deadline_seconds + 2, 1).promptFires.some(p => p.id === id));
   if (promptAction) {
     const d = A[promptAction].prompt.deadline_seconds;
     const st = fold(mk([]), d + 2, 1);
@@ -1636,6 +1647,128 @@ section('voice orders');
       chk('"' + p + '" is one fluid order', r.length === 1 && r[0].kind === 'ambiguous' &&
           r[0].ids.length >= 2 && r[0].ids.every(id => fluid.includes(id)), JSON.stringify(r));
     }
+    /* ---- The October 2026 catalog audit, findings 3.1 to 3.10. Each phrase below gave a
+       wrong order, a second order or a "not understood" row before the fix. They are in the
+       generic part so they run for every pack. Ids go through res(), so a pack that renames
+       an entry is checked against its own id. */
+    const amb = (text, cids) => {
+      const r = VOICE.parse(text), want = cids.map(res).sort().join();
+      chk('"' + text + '" is a choice of ' + cids.join(', '),
+          r.length === 1 && r[0].kind === 'ambiguous' && r[0].ids.slice().sort().join() === want, JSON.stringify(r));
+    };
+    const noOrder = text => {
+      const r = VOICE.parse(text);
+      chk('"' + text + '" orders nothing', ids(r).length === 0 && !r.some(x => x.kind === 'ambiguous'), JSON.stringify(r));
+    };
+    /* 3.1 A route word left over after a drug is not an order of its own. */
+    one('zofran po', 'ondansetron');
+    one('lovenox subq', 'enoxaparin');
+    one('glucagon IM', 'glucagon');
+    one('ct abdomen with oral contrast', 'ct_abdomen');
+    noOrder('nothing by mouth');
+    /* The stronger form of the reachability check above: the button name, said aloud, is
+       one row and nothing else. A name that ends in a route, or a pack's own renamed
+       button, must not also order a second thing. */
+    const extraRows = Object.keys(A).filter(id => PROTO.voiceTabs.includes(A[id].tab) && !A[id].hidden)
+      .filter(id => { const r = VOICE.parse(A[id].name);
+        return !(r.length === 1 && ((r[0].kind === 'ok' && r[0].id === id) ||
+                                    (r[0].kind === 'ambiguous' && r[0].ids.includes(id)))); });
+    chk('every sayable display name is heard as exactly one row', extraRows.length === 0,
+        extraRows.slice(0, 8).map(id => id + ' ("' + A[id].name + '" -> ' + JSON.stringify(VOICE.parse(A[id].name)) + ')').join(' | '));
+    /* 3.2 "home" is not a drug. */
+    amb('home insulin', ['insulin_subcutaneous', 'insulin_glargine_subcutaneous']);
+    amb('her usual insulin', ['insulin_subcutaneous', 'insulin_glargine_subcutaneous']);
+    noOrder('discharge home');
+    noOrder('home meds');
+    one('double the home dose of lasix', 'furosemide_40_mg_iv');
+    /* 3.3 Bare insulin offers the subcutaneous entry too. */
+    amb('insulin', ['insulin_bolus', 'insulin_drip', 'insulin_subcutaneous']);
+    amb('IV insulin', ['insulin_bolus', 'insulin_drip']);
+    for (const t of ['fast acting insulin', 'insulin aspart', 'subcut insulin', 'mealtime insulin']) one(t, 'insulin_subcutaneous');
+    /* 3.4 The ketone abbreviation, spelled out. And the phrase that used to own "b". */
+    for (const t of ['B H B', 'b-ohb', 'BHB', 'ketones', 'blood ketone']) one(t, 'beta_hydroxybutyrate');
+    for (const t of ['B52', 'b 52']) {
+      const r = VOICE.parse(t);
+      chk('"' + t + '" is still haloperidol and lorazepam', r.length === 2 &&
+          ids(r).includes(res('haloperidol')) && ids(r).includes(res('lorazepam_bolus')), JSON.stringify(r));
+    }
+    /* 3.5 Urine ketones are the urinalysis, and only that. */
+    for (const t of ['urine ketones', 'ketones in the urine']) one(t, 'urinalysis');
+    /* 3.6 The pelvic exam is an exam. The bare word is a choice. */
+    for (const t of ['pelvic exam', 'speculum exam', 'vaginal exam', 'bimanual exam']) one(t, 'exam_gu');
+    amb('do a pelvic', ['xr_pelvis', 'exam_gu']);
+    for (const t of ['pelvic x-ray', 'pelvis film']) one(t, 'xr_pelvis');
+    for (const t of ['remove the foreign body', 'pull out the tampon', 'remove the tampon']) one(t, 'remove_vaginal_foreign_body');
+    /* 3.7 The route said after the drug, and the level asked for by its letter. */
+    for (const t of ['KCl IV', 'potassium chloride IV', '20 meq KCl IV', 'intravenous potassium']) one(t, 'potassium_chloride_kcl');
+    for (const t of ['kdur', 'klorcon', 'K-Dur', 'oral potassium']) one(t, 'potassium_chloride_oral');
+    for (const t of ['K level', 'serum potassium']) one(t, 'basic_chemistry_chem_7');
+    /* 3.9 A quarter liter is refused, not swapped for the half liter bag. */
+    for (const t of ['250 of saline', '250 cc of LR', '250 cc normal saline bolus']) {
+      const r = VOICE.parse(t);
+      chk('"' + t + '" is refused with the reason', r.length === 1 && r[0].kind === 'unavailable' && /500 mL/.test(r[0].hint || ''),
+          JSON.stringify(r));
+    }
+    /* 3.10 A leftover "repeat" is not a second thing the parser missed. */
+    one('repeat BMP', 'basic_chemistry_chem_7');
+    one('recheck the lactate', 'lactate');
+
+    /* 3.8 voice_phrases. A case action may list other ways of saying it, for that case only.
+       The field is injected into a copy of this pack and the action table is rebuilt with the
+       engine's own buildActions, so the path from the case file to the parser is the one a
+       real pack takes. Two actions carry it: a case-only action (no catalog entry, placed by
+       the binding map) and a case action bound to a catalog entry. */
+    {
+      const bound = CASE.case_actions.find(a => A[a.catalog_id] && A[a.catalog_id].catalog_id &&
+        PROTO.voiceTabs.includes(A[a.catalog_id].tab) && !A[a.catalog_id].hidden);
+      const ONLY = 'zz_case_only_voice_test';
+      const acts = CASE.case_actions.map(a => a === bound
+        ? Object.assign({}, a, { voice_phrases: ['Zebra lighthouse', 'shared test phrase'] }) : a)
+        .concat([{ catalog_id: ONLY, display_name: 'Case Only Voice Test', tag: [{ when: null, value: 'neutral' }],
+                   voice_phrases: ['activate the quokka lab', 'quokka lab', 'troponin', 'shared test phrase'] }]);
+      const pack2 = Object.assign({}, PACK, {
+        case: Object.assign({}, CASE, { case_actions: acts }),
+        orphans: Object.assign({}, PACK.orphans, { [ONLY]: { tab: 'consultations', group: 'Test', category: 'consultant',
+                                                              narration_template: 'Calling.' } }) });
+      const built = buildActions(pack2);
+      chk('voice_phrases reaches the action table for a case-only action',
+          !!built[ONLY] && built[ONLY].orphan === true && (built[ONLY].voice_phrases || []).length === 4, JSON.stringify(built[ONLY]));
+      chk('voice_phrases reaches the action table for a catalog action',
+          !!bound && (built[bound.catalog_id].voice_phrases || []).length === 2);
+      const borrowers = Object.keys(built).filter(id => bound && built[id].covered_by === bound.catalog_id);
+      chk('a covered sibling does not borrow voice_phrases', borrowers.every(id => !built[id].voice_phrases));
+      const authoredVoice = new Set(acts.filter(a => a.voice_phrases).map(a => a.catalog_id));
+      chk('an action whose case action has no voice_phrases carries none',
+          Object.keys(built).filter(id => !authoredVoice.has(id)).every(id => !built[id].voice_phrases));
+      const keep = global.ACT;
+      global.ACT = built;
+      try {
+        VOICE.build(VD);
+        const say = (text, id) => { const r = VOICE.parse(text);
+          chk('"' + text + '" -> ' + id + ' through voice_phrases', r.length === 1 && r[0].kind === 'ok' && r[0].id === id, JSON.stringify(r)); };
+        say('activate the quokka lab', ONLY);
+        /* Phrases are matched whole. A verb the author did not write is left over and
+           reported, so a pack lists each verb form it wants ("call the ...", "activate the ..."). */
+        const verb = VOICE.parse('call the quokka lab');
+        chk('a verb the phrase list does not include is reported, and the action is still heard',
+            verb.length === 2 && verb[0].kind === 'unknown' && verb[1].kind === 'ok' && verb[1].id === ONLY, JSON.stringify(verb));
+        say('Case Only Voice Test', ONLY);
+        if (bound) say('zebra lighthouse', bound.catalog_id);
+        if (bound) say(built[bound.catalog_id].name, bound.catalog_id);
+        /* A case phrase wins over the global table in that case. */
+        say('troponin', ONLY);
+        /* The same phrase on two actions is a choice. */
+        if (bound) {
+          const r = VOICE.parse('shared test phrase');
+          chk('one phrase on two actions is offered as a choice', r.length === 1 && r[0].kind === 'ambiguous' &&
+              r[0].ids.slice().sort().join() === [ONLY, bound.catalog_id].sort().join(), JSON.stringify(r));
+        }
+      } finally {
+        global.ACT = keep;
+        VOICE.build(VD);
+      }
+      one('troponin', 'troponin_t');   // and the table has the word back once the field is gone
+    }
   }
 }
 
@@ -1749,7 +1882,10 @@ else {
       for (const p of (ACT[id].prerequisites || [])) {
         const w = p.when.replace(/NOT (flag \w+ set|action \w+ taken)/g, '');
         for (const m of (w.match(/flag \w+ set/g) || [])) {
-          const f = m.split(' ')[1], by = Object.keys(ACT).find(k => (ACT[k].flags_set || []).includes(f));
+          /* v0.25. Prefer an action the case does not tag harmful: the first catalog
+             paralytic is succinylcholine, which a hyperkalemia case halts on. */
+          const f = m.split(' ')[1], setters = Object.keys(ACT).filter(k => (ACT[k].flags_set || []).includes(f));
+          const by = setters.find(k => !(ACT[k].tag || []).some(r => r.value === 'harmful')) || setters[0];
           if (by) seen = needs(by, seen);
         }
         for (const m of (w.match(/action \w+ taken/g) || [])) seen = needs(m.split(' ')[1], seen);

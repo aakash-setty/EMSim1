@@ -2,8 +2,8 @@
   "catalog_version": "0.1-draft",
   "status": "DRAFT, NOT CLINICALLY REVIEWED",
   "aligned_to": [
-    "system-design-v2.md v0.3 sections 3 and 9",
-    "case-authoring-requirements.md v0.2 section 12"
+    "system-design-v2.md sections 3 and 9",
+    "case-authoring-requirements.md section 12"
   ],
   "scope": "US emergency department practice; diagnoses a resident could plausibly commit to at handoff, plus the near-misses that make search a real cognitive task.",
   "provenance": {
@@ -24,30 +24,31 @@
     "Many entries pair a general and a specific form (heart failure with reduced vs preserved EF; AAA ruptured vs not). Cases must decide whether the general form counts as partially correct.",
     "No pediatric-vs-adult flag. Some entries are pediatric-only and will appear in adult case searches.",
     "Peds, tox, and environmental sections are thinner than cardiovascular and GI. That reflects drafting effort, not clinical importance.",
-    "Three toxicology entries were added on author instruction rather than drafted with the rest: diphenhydramine overdose, sodium channel blocker cardiotoxicity and drug-induced seizure. They are marked source=author-supplied. The gap they filled is worth stating because it is the kind that recurs: the catalog held the syndrome (anticholinergic toxidrome) and not the agent, and not the complication that decides the treatment, so a case teaching that the syndrome is not the whole story could not express its own correct answer. Check the other toxidromes for the same shape before the next tox case."
+    "Three toxicology entries were added on author instruction rather than drafted with the rest: diphenhydramine overdose, sodium channel blocker cardiotoxicity and drug-induced seizure. They are marked source=author-supplied. The gap they filled is worth stating because it is the kind that recurs: the catalog held the syndrome (anticholinergic toxidrome) and not the agent, and not the complication that decides the treatment, so a case teaching that the syndrome is not the whole story could not express its own correct answer. Check the other toxidromes for the same shape before the next tox case.",
+    "Eight entries and a set of synonyms were added on 6 October 2026 after an audit of the toxic shock, takotsubo and ketoacidosis cases: left ventricular outflow tract obstruction, acquired long QT, euglycemic diabetic ketoacidosis, starvation ketosis, hyperglycemia, type 1 diabetes mellitus, thrombocytopenia and retained vaginal foreign body. Each new entry carries a source field and each widened entry carries synonyms_source. A model proposed them. A physician should read them."
   ],
   "counts": {
-    "cardiovascular": 49,
+    "cardiovascular": 51,
     "respiratory": 32,
     "neurologic": 38,
     "gastrointestinal": 43,
     "renal_genitourinary": 20,
     "infectious_disease": 26,
-    "endocrine_metabolic": 25,
-    "hematology_oncology": 24,
+    "endocrine_metabolic": 29,
+    "hematology_oncology": 25,
     "toxicology": 41,
     "environmental": 16,
     "trauma": 35,
     "musculoskeletal": 29,
     "dermatologic": 12,
-    "obstetric_gynecologic": 30,
+    "obstetric_gynecologic": 31,
     "ent_ophthalmology_dental": 30,
     "psychiatric": 13,
     "allergy_immunology": 4,
     "pediatric": 13,
     "undifferentiated": 11
   },
-  "total": 491,
+  "total": 499,
   "entries": [
     {
       "id": "dx_st_elevation_myocardial_infarction",
@@ -371,16 +372,24 @@
       "display_name": "Takotsubo cardiomyopathy",
       "category": "cardiovascular",
       "synonyms": [
-        "stress cardiomyopathy"
-      ]
+        "stress cardiomyopathy",
+        "stress-induced cardiomyopathy",
+        "takotsubo syndrome",
+        "apical ballooning",
+        "broken heart syndrome"
+      ],
+      "synonyms_source": "author-supplied synonyms added 6 October 2026 (proposed by a model, not yet read by a physician): stress-induced cardiomyopathy, takotsubo syndrome, apical ballooning, broken heart syndrome"
     },
     {
       "id": "dx_hypertrophic_cardiomyopathy",
       "display_name": "Hypertrophic cardiomyopathy",
       "category": "cardiovascular",
       "synonyms": [
-        "HCM"
-      ]
+        "HCM",
+        "HOCM",
+        "hypertrophic obstructive cardiomyopathy"
+      ],
+      "synonyms_source": "author-supplied synonyms added 6 October 2026 (proposed by a model, not yet read by a physician): HOCM, hypertrophic obstructive cardiomyopathy"
     },
     {
       "id": "dx_vasovagal_syncope",
@@ -393,6 +402,29 @@
       "display_name": "Orthostatic hypotension",
       "category": "cardiovascular",
       "synonyms": []
+    },
+    {
+      "id": "dx_left_ventricular_outflow_tract_obstruction",
+      "display_name": "Left ventricular outflow tract obstruction",
+      "category": "cardiovascular",
+      "synonyms": [
+        "LVOT obstruction",
+        "LVOTO",
+        "dynamic outflow obstruction",
+        "systolic anterior motion"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list (6 October 2026 audit, proposed by a model, not yet read by a physician)"
+    },
+    {
+      "id": "dx_acquired_long_qt",
+      "display_name": "Acquired long QT",
+      "category": "cardiovascular",
+      "synonyms": [
+        "prolonged QT",
+        "long QT",
+        "QT prolongation"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list (6 October 2026 audit, proposed by a model, not yet read by a physician)"
     },
     {
       "id": "dx_community_acquired_pneumonia",
@@ -1019,13 +1051,21 @@
       "id": "dx_infectious_gastroenteritis",
       "display_name": "Infectious gastroenteritis",
       "category": "gastrointestinal",
-      "synonyms": []
+      "synonyms": [
+        "food poisoning",
+        "bacterial gastroenteritis"
+      ],
+      "synonyms_source": "author-supplied synonyms added 6 October 2026 (proposed by a model, not yet read by a physician): food poisoning, bacterial gastroenteritis"
     },
     {
       "id": "dx_viral_gastroenteritis",
       "display_name": "Viral gastroenteritis",
       "category": "gastrointestinal",
-      "synonyms": []
+      "synonyms": [
+        "stomach flu",
+        "norovirus"
+      ],
+      "synonyms_source": "author-supplied synonyms added 6 October 2026 (proposed by a model, not yet read by a physician): stomach flu, norovirus"
     },
     {
       "id": "dx_esophageal_food_impaction",
@@ -1156,8 +1196,10 @@
       "display_name": "Acute kidney injury",
       "category": "renal_genitourinary",
       "synonyms": [
-        "AKI"
-      ]
+        "AKI",
+        "acute renal failure"
+      ],
+      "synonyms_source": "author-supplied synonyms added 6 October 2026 (proposed by a model, not yet read by a physician): acute renal failure"
     },
     {
       "id": "dx_chronic_kidney_disease",
@@ -1335,8 +1377,12 @@
       "display_name": "Toxic shock syndrome",
       "category": "infectious_disease",
       "synonyms": [
-        "TSS"
-      ]
+        "TSS",
+        "staphylococcal toxic shock",
+        "menstrual toxic shock",
+        "streptococcal toxic shock"
+      ],
+      "synonyms_source": "author-supplied synonyms added 6 October 2026 (proposed by a model, not yet read by a physician): staphylococcal toxic shock, menstrual toxic shock, streptococcal toxic shock"
     },
     {
       "id": "dx_malaria",
@@ -1534,7 +1580,10 @@
       "id": "dx_hypokalemia",
       "display_name": "Hypokalemia",
       "category": "endocrine_metabolic",
-      "synonyms": []
+      "synonyms": [
+        "low potassium"
+      ],
+      "synonyms_source": "author-supplied synonyms added 6 October 2026 (proposed by a model, not yet read by a physician): low potassium"
     },
     {
       "id": "dx_hyponatremia",
@@ -1570,7 +1619,10 @@
       "id": "dx_hypomagnesemia",
       "display_name": "Hypomagnesemia",
       "category": "endocrine_metabolic",
-      "synonyms": []
+      "synonyms": [
+        "low magnesium"
+      ],
+      "synonyms_source": "author-supplied synonyms added 6 October 2026 (proposed by a model, not yet read by a physician): low magnesium"
     },
     {
       "id": "dx_anion_gap_metabolic_acidosis",
@@ -1615,6 +1667,43 @@
       "synonyms": [
         "dehydration"
       ]
+    },
+    {
+      "id": "dx_euglycemic_diabetic_ketoacidosis",
+      "display_name": "Euglycemic diabetic ketoacidosis",
+      "category": "endocrine_metabolic",
+      "synonyms": [
+        "euglycemic DKA"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list (6 October 2026 audit, proposed by a model, not yet read by a physician)"
+    },
+    {
+      "id": "dx_starvation_ketosis",
+      "display_name": "Starvation ketosis",
+      "category": "endocrine_metabolic",
+      "synonyms": [
+        "fasting ketosis"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list (6 October 2026 audit, proposed by a model, not yet read by a physician)"
+    },
+    {
+      "id": "dx_hyperglycemia",
+      "display_name": "Hyperglycemia",
+      "category": "endocrine_metabolic",
+      "synonyms": [
+        "high blood sugar"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list (6 October 2026 audit, proposed by a model, not yet read by a physician)"
+    },
+    {
+      "id": "dx_type_1_diabetes_mellitus",
+      "display_name": "Type 1 diabetes mellitus",
+      "category": "endocrine_metabolic",
+      "synonyms": [
+        "type 1 diabetes",
+        "T1DM"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list (6 October 2026 audit, proposed by a model, not yet read by a physician)"
     },
     {
       "id": "dx_acute_blood_loss_anemia",
@@ -1783,6 +1872,15 @@
       "synonyms": [
         "TACO"
       ]
+    },
+    {
+      "id": "dx_thrombocytopenia",
+      "display_name": "Thrombocytopenia",
+      "category": "hematology_oncology",
+      "synonyms": [
+        "low platelets"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list (6 October 2026 audit, proposed by a model, not yet read by a physician)"
     },
     {
       "id": "dx_acetaminophen_toxicity",
@@ -2851,6 +2949,16 @@
       "display_name": "Postpartum preeclampsia",
       "category": "obstetric_gynecologic",
       "synonyms": []
+    },
+    {
+      "id": "dx_retained_vaginal_foreign_body",
+      "display_name": "Retained vaginal foreign body",
+      "category": "obstetric_gynecologic",
+      "synonyms": [
+        "retained tampon",
+        "vaginal foreign body"
+      ],
+      "source": "author-supplied, added for a case rather than drafted with the list (6 October 2026 audit, proposed by a model, not yet read by a physician)"
     },
     {
       "id": "dx_anterior_epistaxis",

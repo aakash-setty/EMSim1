@@ -1,0 +1,453 @@
+{
+ "case_prefix": "TAKO",
+ "status": "HELD OUT. This set is quoted, never tuned against. Nothing here may appear in a variant bank or an out-of-scope bank.",
+ "authoring_note": "Written by a language model on 7 October 2026, before the interview bank was expanded again that day, in the registers section 10.6 asks for: lay paraphrase, shorthand, typed with errors, conversational and compound. The same model wrote the variant bank and this held-out set, which section 10.6 warns against, so these numbers flatter the matcher. The first expansion of this pack, on 6 October 2026, ran with no held-out file. Each question was checked by script against every pack's banks, tuning sets and the shared phrasing library, and none matched. The expected topic on each row is a drafting judgment. Never tune against this file.",
+ "management_changing": [
+  "onset",
+  "radiation_of_pain",
+  "prior_heart_problems",
+  "current_medications",
+  "bleeding_risk",
+  "allergies",
+  "last_oral_intake",
+  "what_she_was_doing"
+ ],
+ "questions": [
+  {
+   "register": "paraphrase",
+   "q": "Roughly what time did the chest pain hit you?",
+   "expect": "onset"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What was happening right before the pain hit?",
+   "expect": "what_she_was_doing"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has anyone in the family passed away recently?",
+   "expect": "what_she_was_doing"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you had a big upset in the last few days?",
+   "expect": "what_she_was_doing"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is the pain letting up or building?",
+   "expect": "timing_progression"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Would you call it a squeezing or a stabbing feeling?",
+   "expect": "character_of_symptoms"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Can you put a finger on the spot that hurts?",
+   "expect": "location_of_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does the pain spread into your arm or your neck?",
+   "expect": "radiation_of_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is the pain traveling up to your jaw at all?",
+   "expect": "radiation_of_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "If ten is the worst pain ever, what number is this?",
+   "expect": "severity"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does a deep breath or a change of position alter the pain?",
+   "expect": "aggravating_relieving"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does it feel as if something is ripping inside your chest?",
+   "expect": "back_or_tearing_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you come out in a sweat when this began?",
+   "expect": "sweating"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you been queasy with this?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are you struggling to catch your breath?",
+   "expect": "breathing"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is your heart beating hard or fast in your chest right now?",
+   "expect": "palpitations"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you black out at any point today?",
+   "expect": "dizziness_syncope"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you been running a temperature this week?",
+   "expect": "fever_and_chills"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has a doctor ever said there was something wrong with your heart?",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has anyone ever heard an extra sound when listening to your heart?",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What conditions does your doctor treat you for?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you ever been under the knife?",
+   "expect": "past_surgical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Which tablets do you swallow each morning?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you take a daily aspirin?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has a doctor put you on a pill to stop clots?",
+   "expect": "bleeding_risk"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has any medicine ever given you a bad reaction?",
+   "expect": "allergies"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you live with anyone?",
+   "expect": "social_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did either of your parents have heart disease?",
+   "expect": "family_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "When did you last have a proper meal?",
+   "expect": "last_oral_intake"
+  },
+  {
+   "register": "paraphrase",
+   "q": "If your heart stopped, would you want us to try to restart it?",
+   "expect": "code_status_goals"
+  },
+  {
+   "register": "shorthand",
+   "q": "sx start when?",
+   "expect": "onset"
+  },
+  {
+   "register": "shorthand",
+   "q": "hx CAD?",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "shorthand",
+   "q": "prior MI?",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "shorthand",
+   "q": "clammy/sweaty at onset?",
+   "expect": "sweating"
+  },
+  {
+   "register": "shorthand",
+   "q": "radiation to arm/jaw?",
+   "expect": "radiation_of_pain"
+  },
+  {
+   "register": "shorthand",
+   "q": "med list?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "shorthand",
+   "q": "any DOACs?",
+   "expect": "bleeding_risk"
+  },
+  {
+   "register": "shorthand",
+   "q": "ASA allergy?",
+   "expect": "allergies"
+  },
+  {
+   "register": "shorthand",
+   "q": "PO intake past few days?",
+   "expect": "last_oral_intake"
+  },
+  {
+   "register": "shorthand",
+   "q": "dyspneic?",
+   "expect": "breathing"
+  },
+  {
+   "register": "shorthand",
+   "q": "tearing CP to back?",
+   "expect": "back_or_tearing_pain"
+  },
+  {
+   "register": "shorthand",
+   "q": "recent stressors?",
+   "expect": "what_she_was_doing"
+  },
+  {
+   "register": "shorthand",
+   "q": "LOC or presyncope?",
+   "expect": "dizziness_syncope"
+  },
+  {
+   "register": "typo",
+   "q": "does the pain go to your jaw or sholder",
+   "expect": "radiation_of_pain"
+  },
+  {
+   "register": "typo",
+   "q": "any alergies to medecines",
+   "expect": "allergies"
+  },
+  {
+   "register": "typo",
+   "q": "what medicatons do you take",
+   "expect": "current_medications"
+  },
+  {
+   "register": "typo",
+   "q": "have you ever had a hart attack",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "typo",
+   "q": "when did the chest pian start",
+   "expect": "onset"
+  },
+  {
+   "register": "conversational",
+   "q": "Okay, and before all this started, what had your day been like?",
+   "expect": "what_she_was_doing"
+  },
+  {
+   "register": "conversational",
+   "q": "Right, and have you managed to eat or drink much this week?",
+   "expect": "last_oral_intake"
+  },
+  {
+   "register": "conversational",
+   "q": "Just so I know, is there any medicine you can't take?",
+   "expect": "allergies"
+  },
+  {
+   "register": "conversational",
+   "q": "And tell me, has your heart ever given you trouble before today?",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "conversational",
+   "q": "So, the pain, does it stay in one place or does it move anywhere?",
+   "expect": "radiation_of_pain"
+  },
+  {
+   "register": "compound",
+   "q": "Any nausea or sweating with it?",
+   "expect": [
+    "nausea_vomiting",
+    "sweating"
+   ]
+  },
+  {
+   "register": "compound",
+   "q": "Any blood thinners or recent operations?",
+   "expect": "bleeding_risk"
+  },
+  {
+   "register": "compound",
+   "q": "Are you allergic to anything, and what do you take every day?",
+   "expect": [
+    "allergies",
+    "current_medications"
+   ]
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Is passing urine painful these days?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you noticed blood in your urine?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any double vision or loss of vision?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do your joints ache or swell?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had any rashes lately?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you hear a buzzing in your ears?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you been constipated?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any trouble swallowing food?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Has anyone said you stop breathing at night?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "When was your last mammogram?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do your toes ever go numb?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you ever had a fit?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any itching anywhere?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Is your hearing all right?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Does either ear hurt?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Are your tetanus boosters current?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you get cold sores?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "shingles vaccine?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What do you like to cook?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you keep a cat or a dog?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Who do you vote for?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What's the weather like outside?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Which football team do you follow?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Can you recommend a good book?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What's your phone number?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What is your shoe size?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you speak any other languages?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What's your star sign?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Did you watch television last night?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What kind of car do you drive?",
+   "expect": null
+  }
+ ]
+}

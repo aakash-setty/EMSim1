@@ -5,6 +5,16 @@ Kept for what was rejected. The current behavior is described at the top of
 `engine/voice.js` and `catalog/build_voice_aliases.py`; this file is not a source of
 truth for how the system behaves.
 
+**Note, 7 October 2026 (v0.24).** One statement under Known gaps is out of date and one gap is new. Exams and
+consultations have been spoken since v0.17n (`voiceTabs` in `engine/build_simulator.py`). They
+take effect on Confirm. The new gap: a case may now hold an action the catalog does not (TAKO's
+Activate Catheterization Lab, v0.22). A case-only action is not in the voice table. The table
+is keyed by catalog id and a case-only action has none. The parser still derives phrases from
+its button name and its id, so it can be ordered by saying the name exactly. To give it other
+phrases, list them in `voice_phrases` on the case action (v0.24). The parser indexes those
+ahead of the table for that case. On this date TAKO lists none, so its button does not answer
+to "cath lab". System design section 18 and authoring 7.1 have the current rules.
+
 ---
 
 ## 1. The recogniser is the browser's
@@ -14,7 +24,7 @@ audio to Google's service, Safari to Apple's, Firefox has no implementation. The
 opens the same dropdown with a text box wherever recognition is missing or refused.
 
 **Why.** It is zero bytes in the bundle and zero seconds to first use, and the
-transcript it returns for medical vocabulary spoken in a quiet room is good. The
+transcript it returns for medical vocabulary spoken in a room without background noise is good. The
 alternative was measured against the interview matcher's experience, below.
 
 ### Rejected: an in-browser model (Whisper through transformers.js)
@@ -73,7 +83,7 @@ CMP is the Chem 7 plus the hepatic panel.
 
 **Why.** The simulator scores whether the resident ordered the right things. A
 microphone that turns "sepsis workup" into lactate, cultures, CBC and a chemistry has
-ordered them, and the score would credit the parser. The same applies more quietly to
+ordered them, and the score would credit the parser. The same applies, less visibly, to
 substitution: a resident who says calcium gluconate and is given calcium chloride has not
 been taught that the catalog carries one and not the other, they have been corrected
 without noticing.

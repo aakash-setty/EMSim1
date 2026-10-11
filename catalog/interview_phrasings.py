@@ -4,9 +4,8 @@ Author-time content, not runtime code. `expand_interview_variants.py` reads this
 file, maps each case pack's topics onto these concepts, and writes the phrasings into
 the pack's own variant bank. Nothing here is loaded by the simulator.
 
-Why a shared library: the three packs ask about the same forty-odd things in the
-same forty-odd ways, and a resident who types "pmh?" at one patient types it at all
-of them. Writing the phrasings once, in every register, and mapping them per pack is
+Why a shared library: every pack asks about many of the same things in the same
+ways, and a resident who types "pmh?" at one patient types it at all of them. Writing the phrasings once, in every register, and mapping them per pack is
 what makes the banks consistent and what makes the next pack cheap.
 
 Registers, deliberately mixed inside each list:
@@ -506,6 +505,105 @@ CONCEPTS = {
   "Have you had any treatment already?", "Any antibiotics in the last few weeks?", "Been to a doctor for this?",
   "Have you taken any antibiotics?", "Any recent prescriptions?", "Did anyone treat you before you came in?",
   "Any recent medical care?",
+],
+
+# ------------------------------------------------------------------ added October 2026
+# Concepts for topics the toxic shock, takotsubo and ketoacidosis packs authored by hand
+# with no shared phrasings behind them. Written by an AI assistant. Not reviewed by a
+# physician. Each concept name is also a `covers` tag in interview_out_of_scope.py where
+# an out-of-scope entry asks the same thing.
+"emotional_trigger": [
+  "Have you been under any stress?", "Any stress recently?", "Has anything upsetting happened?",
+  "Any bad news lately?", "Has anyone close to you died?", "Were you upset when it started?",
+  "Any shock or fright today?", "Has something stressful happened today?", "Emotional stress?",
+  "Any recent stressors?", "Have you had a shock?",
+  "Was there an argument or a fright before this?", "Have you had a hard few days?",
+  "Any big life events lately?", "Has there been a death in the family?", "Stressors?",
+  "What set this off, do you think?", "Did anything trigger this?", "Any trigger you can think of?",
+  "Has anything happened at home?",
+],
+"back_pain": [
+  "Any back pain?", "Back pain?", "Does your back hurt?", "Is the pain in your back at all?",
+  "Any pain between the shoulder blades?", "Any pain going down your back?",
+  "Interscapular pain?", "Is there pain in your upper back?", "Does it bore through to the back?",
+  "Any pain in the middle of your back?", "Did the pain start in your back?",
+  "Any lower back pain?", "Is your back sore?", "Do you feel it in your back as well?",
+  "Any pain in your back with this?",
+],
+"tearing_pain": [
+  "Any tearing pain?", "Tearing or ripping pain?", "Does it feel like something is tearing?",
+  "Any ripping sensation in your chest or back?", "Is it a ripping pain?",
+  "Would you call the pain tearing?", "Tearing chest pain?", "Did it feel like a tear inside?",
+  "Was the pain at its worst right at the start?", "Did it hit full strength straight away?",
+  "Was it maximal at onset?", "Sudden and tearing?",
+],
+"sweating": [
+  "Are you sweating?", "Have you been sweaty?", "Sweating?", "Diaphoresis?", "Diaphoretic?",
+  "Did you break into a sweat?", "Were you sweating when the pain came on?", "Do you feel clammy?",
+  "Cold and clammy?", "Did you have a cold sweat?", "Have you been sweating a lot?",
+  "Any sweating with this?", "Did you get sweaty with the pain?", "Are your clothes wet with sweat?",
+  "Did you come out in a sweat?", "Have you felt clammy?", "Were you sweaty and pale?",
+],
+"prior_cardiac": [
+  "Any heart problems in the past?", "Cardiac history?", "Hx of CAD?", "Any previous MI?",
+  "Have you ever had a heart attack?", "Any history of angina?", "Known coronary disease?",
+  "Do you have a heart murmur?", "Has anyone ever heard a murmur?", "Any stents?",
+  "Have you had bypass surgery?", "Do you see a heart doctor?", "Any heart tests before?",
+  "Have you ever had a cardiac catheterization?", "Any history of heart disease?",
+  "Have you had this kind of pain before?", "Any valve disease?", "Prior cardiac workup?",
+  "Has your heart ever been checked?", "Any trouble with your heart before today?",
+],
+"thirst_polyuria": [
+  "Are you very thirsty?", "Have you been more thirsty than usual?", "Thirst?", "Polydipsia?",
+  "Polyuria or polydipsia?", "Are you urinating more than usual?", "Have you been peeing a lot?",
+  "Are you going to the bathroom more often?", "Do you get up at night to urinate?", "Nocturia?",
+  "How many times did you get up to pee last night?", "Are you passing large amounts of urine?",
+  "Can you not stop drinking?", "Are you drinking more than normal?", "Urinary frequency?",
+  "Have you been waking up to pee?", "Is your mouth dry?", "Are you drinking and peeing all day?",
+  "Any increased thirst or urination?", "Have you been thirstier than normal?",
+],
+"weakness": [
+  "Do you feel weak anywhere?", "Weakness?", "Any weakness in your arms or legs?",
+  "Any limb weakness?", "Are your muscles weak?", "Generalized weakness?", "Do you feel weak all over?",
+  "Do your legs feel weak?", "Are your arms weak?", "Is it hard to lift your arms?",
+  "Can you get out of a chair on your own?", "Do your legs feel like lead?", "Any loss of strength?",
+  "Has your strength changed?", "Are you weaker than yesterday?", "Any trouble getting up?",
+  "Do you feel too weak to walk?", "Any heaviness in your limbs?", "Has the weakness gotten worse?",
+  "Is your grip weak?",
+],
+"diabetes_history": [
+  "Tell me about your diabetes history.", "Diabetes history?", "DM history?", "Type 1 or type 2 diabetes?",
+  "How long have you been diabetic?", "When were you diagnosed?", "Hx of DKA?", "Prior DKA?",
+  "Any previous episodes of DKA?", "Have you been admitted for your diabetes before?",
+  "Any ICU stays for your diabetes?", "How well controlled is your diabetes?", "Last A1c?",
+  "Do you know your last A1c?", "Who looks after your diabetes?", "Do you see an endocrinologist?",
+  "Any diabetic complications?", "Any eye, kidney or nerve problems from your diabetes?",
+  "Has your diabetes been stable lately?", "Has this happened with your diabetes before?",
+],
+"glucose_monitoring": [
+  "What has your blood sugar been?", "What are your sugars running?", "Home glucose readings?",
+  "Blood sugars at home?", "Have you been testing your sugar?", "When did you last check your sugar?",
+  "What was your sugar this morning?", "Fingersticks at home?", "Do you check your sugars?",
+  "How often do you check your blood sugar?", "Do you use a continuous glucose monitor?",
+  "CGM?", "What does your sensor say?", "Have you checked for ketones at home?", "Home ketones?",
+  "Any urine ketone strips at home?", "Has your meter been reading high?", "Any low sugars?",
+  "Any readings over 300?", "What is the highest your sugar has been?",
+],
+"suspect_meal": [
+  "What did you last eat before you got sick?", "Did you eat anything that could have caused this?",
+  "Any suspicious food?", "Do you think it was something you ate?", "Any bad food?",
+  "Did you eat anything out of the ordinary?", "Any takeout or restaurant food?",
+  "Did you eat at a restaurant?", "Any undercooked meat or eggs?", "Any shellfish?",
+  "Any leftovers?", "Did anyone else eat the same food?", "Did anyone who ate with you get sick?",
+  "What did you have for dinner that night?", "Food history?", "Any dietary exposure?",
+  "Any raw or unusual foods?", "What makes you think it is food poisoning?",
+],
+"wounds_skin": [
+  "Any cuts or scrapes?", "Any wounds?", "Wounds?", "Any breaks in the skin?", "Any skin infection?",
+  "Any abscesses?", "Any boils?", "Any burns recently?", "Any infected bites?", "Any recent tattoos or piercings?",
+  "Any recent surgery or stitches?", "Any wound that looks infected?", "Any sores on your skin?",
+  "Any injuries lately?", "Any open wounds?", "Any skin lesions?", "Any cellulitis?",
+  "Any red, hot or swollen areas of skin?", "Any recent cuts from shaving?", "Any blisters?",
 ],
 }
 

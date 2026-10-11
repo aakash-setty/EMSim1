@@ -1,6 +1,6 @@
 # EM Case Simulator: System Design
 
-**Version 0.8 | Supersedes v0.7**
+**Describes the engine as of v0.24.** Section 0 covers changes through v0.8. Later changes carry their version where they appear.
 
 ---
 
@@ -120,7 +120,7 @@ Harmful actions still halt the case. The consequence is the lesson, and softenin
 
 The clock governs three things:
 
-1. **Result availability.** Turnaround is set per class in the catalog: labs 5 seconds, imaging 10, ECG 10, bedside 0. These are configuration values and are expected to change with tuning.
+1. **Result availability.** Turnaround is set per class in the catalog: laboratory studies, plain films and the twelve-lead 5 seconds, CT and MRI 10, bedside 0. The table is in 2.3. These are configuration values and are expected to change with tuning.
 2. **Nurse prompting.** Critical actions carry deadlines measured from phase entry.
 3. **Timing feedback** in the debrief.
 
@@ -155,24 +155,40 @@ against v0.5 runs unchanged.
 ```
 
 **Reference moment.** `measured_from` is `phase_entry` by default, matching prompt deadlines.
-The alternative is `guard_true`, meaning the clock starts when the guard first became true, which
-is what a delayed consequence of an action needs.
+The alternative is `guard_true`, which is what a delayed consequence of an action needs. That
+clock belongs to one rule in one phase. It starts at the first transition check in that phase
+that finds the guard true. If the guard already holds when the phase is entered, it starts at
+entry. It does not carry over from an earlier phase, and a rule with the same guard in the next
+phase starts again from zero. A consultant called 200 seconds into a phase that has a 90 second
+rule and a 240 second exit arrives 90 seconds after that exit, not 90 seconds after the call
+(TAKO, v0.22).
+
+Two details of that clock that an author can trip on. A transition check happens after a
+state-changing action, on a deadline and when a flag lapses. A result coming back is not a
+check, so a guard on `study S resulted` starts its clock at the next check after the result,
+not at the result. And the start time is kept for the whole run under the phase and the rule's
+position in the list. If the run enters the same phase a second time, a rule whose clock started
+on the first visit keeps that start, so it can be due the moment its guard holds again.
 
 **Evaluation.** The transition checker runs after every state-changing action, and additionally on
 a tick while the current phase has at least one time-guarded rule. Phases with no time-guarded
 rules are never ticked, so a v0.5 case is bit-identical. Both evaluations run the full ordered list
 with first-match-wins, so an instantaneous rule always outranks a time-guarded rule beneath it.
 
-**Three patterns this supports**, and authors should be able to name which one they are using:
+**Four patterns this supports**, and authors should be able to name which one they are using:
 
 | Pattern | Guard | `measured_from` | Example |
 |---|---|---|---|
 | Deterioration on inaction | negative, `NOT flag F set` | `phase_entry` | Untreated sepsis progresses |
 | Delayed consequence of an action | positive, `flag F set` | `guard_true` | Peri-intubation collapse forty-five seconds after induction rather than instantly |
 | Scheduled natural history | `null` | `phase_entry` | A simple febrile seizure self-terminating; a thrombolysis window closing |
+| Outcome chosen at a scheduled time (v0.21) | positive, `flag F set` | `phase_entry` | The response to fluid fades at 150 seconds whatever is done. What is running by then decides which phase she lands in |
 
 The third requires an `unguarded_rationale`, because a transition that fires regardless of what the
 resident does is a scripted trajectory and should be a deliberate choice rather than an oversight.
+
+The fourth sits above an unguarded rule with the same `after_seconds`, and first match decides.
+The validator gives it the 30 second floor and asks for no prompt. TSS and TAKO use it.
 
 **A negative guard can only be falsified, never re-satisfied**, because flags are permanent. So once
 the resident gives the drug, that deterioration is canceled for the remainder of the case, not
@@ -185,8 +201,6 @@ system can make. It requires `allow_time_to_terminal: true` and a rationale on t
 validator errors without both. It must not be the shared `halted` phase, which carries a harmful
 action's halt reason; a case that ends this way authors its own terminal phase with its own
 `timeout_reason`.
-
-### 2.2 The coherence trap this creates
 
 ### 2.2 The coherence trap this creates
 
@@ -205,6 +219,13 @@ monitor is about to show it. The constraint on that line is the mirror of the co
 must be true of the numbers displayed immediately after it, not of numbers that have not moved. A
 narration saying the pressure has fallen, on a transition whose destination has the same systolic
 pressure, is the same contradiction pointing the other way.
+
+**The numbers displayed are the destination phase's vitals plus every vital effect acting in
+it** (2.6). An effect whose guard holds in the destination phase moves the monitor off the
+authored number, so a narration that quotes the authored number is false on that route. All
+three packs added in v0.21 to v0.23 had this fault. The deterioration timeline and the pack
+tests compare a narration with the authored vitals only, so neither sees it. Authoring 9.5 has
+the rule.
 
 **A prompt in a phase with a time-guarded exit may name the consequence.** "If we don't get an
 antibiotic into her she is going to get worse" is now a true statement in such a phase, where before
@@ -311,7 +332,7 @@ Three rules govern grants, and all three exist because a flag is shared state th
 
 ### 2.8 Choosing among the five
 
-Four mechanisms now touch time or move a number, and the failure mode is not that one of them is broken, it is that an author reaches for the wrong one. The question that separates them is **what else in the case has to know**.
+Five mechanisms now touch time, move a number or count, and the failure mode is not that one of them is broken, it is that an author reaches for the wrong one. The question that separates them is **what else in the case has to know**.
 
 | Reach for | When | What can read it |
 |---|---|---|
@@ -319,7 +340,7 @@ Four mechanisms now touch time or move a number, and the failure mode is not tha
 | **`after_seconds`** on a transition | The lesson is that something had to happen sooner | It changes the phase, so everything |
 | **`flags_set_timed`** | Something is true for a while and then is not, and the case must react | Everything in the condition language |
 | **`vital_effects`** | A number on the monitor moves and nothing else does | Nothing. Display and audio only |
-| **`flags_set_repeat`** | The act has to be performed more than once before it works | Everything in the condition language |
+| **`flags_set_repeat`** (2.10) | The act has to be performed more than once before it works | Everything in the condition language |
 
 Read down that last column and the choice usually makes itself. Two consequences worth stating outright:
 
@@ -347,6 +368,34 @@ Stated plainly, because each of these looks authorable until it is tried.
 
 ---
 
+### 2.10 Flags granted on repetition
+
+A case action may grant a flag on its Nth administration:
+
+```json
+"flags_set_repeat": [{"flag": "insulin_restarted", "after_administrations": 2,
+                      "counter": "insulin_starts"}]
+```
+
+The fold keeps one tally per counter. Each administration that passes its prerequisites adds
+one. A blocked attempt adds nothing. When the tally reaches `after_administrations` the flag is
+granted for good. The tally never resets and no condition can read it. A case sees it only
+through the flag.
+
+The counter defaults to the action, or to the covering action for a sibling bound through
+`also_covers`. Name it when several case actions should share one tally. In DKA the insulin
+infusion and subcutaneous insulin share `insulin_starts`.
+
+Three uses exist. A dose that has to be given twice before it works (AFRVR, DIPH). A restart
+read as the second administration (DKA, v0.23). A repeat study (DKA's `chem_repeated`, v0.23).
+The flag is granted before the study's order-time snapshot is taken, so the Nth order's own
+result can resolve against it.
+
+It counts administrations and knows nothing about what came between them. Two insulin orders
+with no hold between them count as a restart. An insulin given through an action outside the
+counter does not count. A repeat study sent before an intervention counts the same as one sent
+after it. So the flag can say "twice". It cannot say "again after".
+
 ### 2.11 Conditional credit, and a terminal phase that inherits its vitals (v0.20)
 
 `also_satisfies` is read in the fold at the moment an action is applied, after the
@@ -355,6 +404,15 @@ holds adds its target to `satisfied`, the same set `also_covers` writes to, so t
 prompt suppression, follow-up satisfiers and `action X taken` all see it. Nothing is added to
 `taken`. A covered sibling borrows the covering action's fields. An action with
 `also_satisfies` keeps its own.
+
+A `when` of null always holds (v0.22). TAKO and DKA use that form for an act that discharges
+another action's expectation and still needs its own tag, result or vital effect:
+norepinephrine for the vasoconstrictor, an arterial gas for the venous gas. `also_covers` would
+lend it the other action's fields instead.
+
+The target only has to be a case action. It is added to `satisfied` whether or not it has a
+button, so a follow-up can list a target that nothing but `also_satisfies` ever credits. That
+is the one way to make a follow-up ask for an act done in a named state. Authoring 8.2.
 
 `inherit_vitals` is read in `enterPhase`. Before the phase changes, the engine computes the
 effective vitals of the phase being left with the effects active at that time and stores
@@ -384,7 +442,7 @@ Every drug, exam maneuver, lab, imaging study, ECG, consultant, stabilization ta
 
 No clinical judgment lives here, because appropriateness is case-dependent. Every value that is not transcribed from the interface should record its provenance, because a field derived by convention and a field taken from a real menu need different levels of scrutiny.
 
-**The catalog is the action surface.** A case does not add buttons. The resident sees the catalog, filtered by tab, whether or not this case has anything to say about a given entry. This is not a convenience: a menu that shows only the actions relevant to this case tells the resident the answer before they start.
+**The catalog is the action surface.** A case does not add buttons, with the one exception in section 18. The resident sees the catalog, filtered by tab, whether or not this case has anything to say about a given entry. This is not a convenience: a menu that shows only the actions relevant to this case tells the resident the answer before they start.
 
 **Consequence:** if a case needs an action the catalog does not have, that is a catalog change request, not something to author around. The alternative is content no learner can reach.
 
@@ -439,7 +497,7 @@ image is the only signal the interface has about the study, since there is no te
 
 Payload-level `abnormal` must equal the OR of its components. The interface renders abnormal components distinctly, currently in red.
 
-**`comment` is not shown while the case runs (v0.9).** It is the case's reading of the panel, and a reading handed over with the numbers is the simulator interpreting the result for the resident. A panel shows its components and nothing else during play; every comment is printed once in the debrief, under "Your results, read", with the numbers it belongs to. `verify` is a note to the reviewing physician and is not shown to the learner at all; it lives in the case file and the review packet. Before v0.9 both printed under the result in the Investigations panel.
+**`comment` is not shown while the case runs (v0.9).** It is the case's reading of the panel, and a reading handed over with the numbers is the simulator interpreting the result for the resident. A panel shows its components and nothing else during play. The comment on every `panel`, `value` or `image` result the resident ordered is printed once per order in the debrief, under "Your results, read", with the numbers it belongs to. A `comment` on a `report` payload is shown nowhere, during play or in the debrief, because that section skips reports. A comment on an exam finding or on the general status line is shown nowhere either. `verify` is a note to the reviewing physician and is not shown to the learner at all. It lives in the case file and the review packet. Before v0.9 both printed under the result in the Investigations panel.
 
 **Do not parse prose.** The tempting shortcut is to look for "(high)" in an authored string at render time. It is the exact recomputation this section forbids, it fails silently the first time an author writes "raised" or gives a bare number, and the failure mode is a genuinely abnormal value displayed as normal.
 
@@ -487,7 +545,7 @@ Either the case references catalog ids directly, or a **binding file** sits betw
 
 - `exact` the case id is already a catalog id
 - `mapped` a different id for the same action; the mapping is an author judgment and carries a note
-- `unmatched` the catalog has no entry; this is a validator error and a catalog change request
+- `unmatched` the catalog has no entry. The validator warns, and errors when the row's note starts with BLOCKING. It is a catalog change request first. Section 18 has the exception
 
 **One case action may bind to several catalog entries**, and for harmful actions it usually must. If the case tags a one liter crystalloid bolus as harmful and binds it only to normal saline, a resident who reaches for lactated Ringer's causes the same harm and the case does not halt. A harmful tag has to cover every route to the harm.
 
@@ -604,6 +662,8 @@ A prompt for critical action A in phase P with deadline D is due at (phase P ent
 
 This is fully derivable from the log, so nothing extra is stored and no read writes to state. The debrief determines prompted versus unprompted by comparing timestamps.
 
+**A prompt is one event, and its guard is read once.** A prompt is scheduled on entry to a phase for an action that resolves to `critical` at that moment. When the deadline arrives the engine tests three things: the action is not yet satisfied, the guard holds now, and the per-phase cap has room. If any fails, that prompt is gone for that visit to the phase. It is not retried when the guard later becomes true. An escalation is a second event with its own deadline and the same guard test, so it can be the first thing the nurse says. The text is one string for every phase the action is critical in. Authoring 9.5 has the rules that follow from this.
+
 Deadlines are measured from phase entry. On a phase change, whether caused by an action or by the
 clock, outstanding prompts for the previous phase are canceled and new deadlines begin.
 
@@ -667,15 +727,20 @@ An action may declare follow-up requirements, each with a condition determining 
 
 Post-intubation analgesia and sedation are the canonical example. **They cannot be prerequisites of intubation, because they come after it.** A requirement that must be satisfied before an action is a prerequisite; one triggered by an action is a follow-up, enforced by prompting and surfaced as an omission. Conflating the two makes post-intubation medication unreachable.
 
-**`satisfied_by` must list every catalog entry that discharges the obligation.** If sedation can be propofol or ketamine and the list names only propofol, a resident who chose ketamine is told they failed to sedate a paralyzed patient.
+**`satisfied_by` must list every case action that discharges the obligation.** If sedation can be propofol or ketamine and the list names only propofol, a resident who chose ketamine is told they failed to sedate a paralyzed patient. An entry covered through `also_covers` satisfies its covering action, so the list names the covering action once.
+
+**`satisfied_when` is the other way to discharge one.** It is a condition. A follow-up needs `satisfied_by`, `satisfied_when` or both, and either is enough. Use it where the obligation is to do something again. `satisfied_by` asks whether a listed action has ever been satisfied in the run, so an act done before the trigger discharges the follow-up before it starts. TAKO's chest recheck after fluid is discharged by a chest exam done on arrival (v0.22).
+
+**All three tests run when the deadline fires, not when the action is taken.** `applies_when`, `satisfied_by` and `satisfied_when` are read against the state at that moment. A follow-up can therefore apply to a phase the action leads to. DKA's dextrose follow-up is triggered by insulin and applies only in the treated phase that insulin produces ten seconds later (v0.23). Each administration of the triggering action schedules its own check. The engine schedules from the action's `follow_ups_triggered` list. The follow-up's `triggered_by` field is checked for unknown ids and is not read at run time, so keep the two in step by hand. The deadline is multiplied by the difficulty mode, as a prompt deadline is (17.1).
 
 ### 6.4 Validator obligations
 
 - Every prerequisite flag is settable by some reachable action
 - No circular prerequisite chains
 - Every prerequisite has a failure message
-- Every follow-up has a deadline, a prompt, and a debrief note
-- Every `satisfied_by` id exists in the catalog
+- Every follow-up has an `applies_when` condition, a deadline, a prompt, and a debrief note
+- Every follow-up has `satisfied_by` or `satisfied_when`
+- Every `satisfied_by` id and every `triggered_by` id is a case action
 
 ---
 
@@ -713,7 +778,7 @@ A cap on prompts per phase avoids nagging and should be configurable. Since v0.9
 
 ## 8. Results, monitor rendering and audio
 
-**8.1 Turnaround** is set by class in the catalog: labs 5 seconds, imaging 10, ECG 10, bedside 0. Per-study overrides should exist but stay unused by default. All values are expected to change with tuning. See 2.3 on the bedside class.
+**8.1 Turnaround** is set by class in the catalog: laboratory studies, plain films and the twelve-lead 5 seconds, CT and MRI 10, bedside 0 (the table in 2.3). Per-study overrides should exist but stay unused by default. All values are expected to change with tuning. See 2.3 on the bedside class.
 
 **8.2 Pending display.** Ordered studies appear in Investigations as pending with a visible countdown. Pending is a real state and consultant rules may reference it.
 
@@ -881,7 +946,7 @@ An uneven rhythm additionally varies the loudness of each beat with the length o
 
 ## 9. Completion and handoff
 
-The case completes when the resident submits a handoff and confirms.
+The case completes when the resident submits a handoff and confirms. One exception exists since v0.21, in 9.1.
 
 The handoff requires:
 - **Level of care and disposition** from a case-supplied list including plausible alternatives
@@ -897,6 +962,18 @@ The handoff requires:
 **A case cannot pre-explain every wrong answer.** With several hundred diagnoses in the catalog most selections will land outside the authored alternatives and receive a generic note. That is acceptable for the long tail and is not acceptable for the common misdiagnoses of the presentation, which is why the validator checks that each authored alternative resolves to a real catalog id.
 
 **Abandonment.** A resident who cannot proceed needs an exit. Provide an end-case option that terminates the run and generates a debrief marked incomplete. Without it, sessions with no handoff never resolve.
+
+### 9.1 A disposition that does not end the run (v0.21)
+
+A case may author `handoff.disposition_intercepts`, a list of `{disposition, when, action}`. When the resident confirms that disposition and `when` holds, the interface logs `action` in place of `handoff_submit`, clears the chosen disposition and returns to the Stabilization tab. The diagnoses already listed are kept. The first matching rule wins. A `when` of null always holds. A rule whose action is not in the bound action table is skipped with no error, and the handoff then ends the run as usual.
+
+The logged action is an ordinary case action with a tag, flags, a narration and a debrief note. Put the consequence on a transition guarded on its flag. The payload never reaches the condition language, so the review matrix is unchanged.
+
+The action has no catalog entry. Its binding-map row has `catalog_id: null` and an `unmatched_placement`. Without the placement the build does not create the action, and the rule is then skipped. Place it on the `handoff` tab, which draws no action buttons and is not read by voice orders. `hidden: true` removes it from search. `hidden` alone does not remove a button from an action tab, and it does not stop the microphone on a tab that voice orders read.
+
+The validator checks that the disposition is one the case offers, that the action is a case action other than `handoff_submit`, and that the condition parses. It does not check the placement.
+
+TSS is the only pack that uses it. Discharge chosen in its first two phases logs `attempt_discharge`, and five seconds later a timed transition moves her to the hypotensive phase. Authoring 6.9 has the authoring rules.
 
 ---
 
@@ -952,7 +1029,7 @@ ending, which is the same separation `halted` and `complete` already keep.
 is the pause between entering the terminal phase and the debrief appearing. The nurse's line and
 the monitor falling are the moment the case is teaching, and cutting to a debrief on the same frame
 throws that away. It is presentation, not fairness, and it deliberately sits below the validator's
-30-second floor on `after_seconds`: that floor governs how long a resident has to act, and by this
+30-second floor for a deterioration on `after_seconds`: that floor governs how long a resident has to act, and by this
 point the phase has no exits and there is nothing left to act on. A harmful action still ends the
 case immediately, because its halt card is the teaching rather than the monitor.
 
@@ -1104,8 +1181,25 @@ Case-agnostic. No clinical knowledge, no case names, no drug behavior. An `if` s
 
 **Structure.** Every content key ends in an unconditional default. Every referenced action, flag, study, and phase exists. Every phase is reachable and every non-terminal phase has a satisfiable transition. Reachability traverses time-guarded edges as well as action-driven ones, since a phase reachable only by the clock is still reachable. Every critical action is reachable. Every action whose tag can evaluate to harmful has a halt reason. Every prerequisite is satisfiable and non-circular, with a failure message. Every follow-up has a deadline, prompt, and note. Every critical action with a deadline has prompt text. No condition uses an unpermitted predicate.
 
-**Time-guarded transitions.** `after_seconds` is an integer at or above the floor, currently 30,
-with a warning below 60. `measured_from` is `phase_entry` or `guard_true`, and `guard_true` requires
+**Time-guarded transitions.** `after_seconds` is an integer. The floor depends on the pattern.
+A rule that can act on a resident who did nothing has a floor of 30 seconds and warns below 60.
+That is a rule with no guard, or a rule whose guard contains the word NOT and names at least one
+flag. A rule timed from `guard_true` that is not one of those is a delayed consequence of
+something the resident did. Its floor is 5 seconds and it never warns (v0.9). Any other rule,
+which means a positive guard timed from phase entry, has the 30 second floor and no warning.
+
+The test for a negated guard is the whole word NOT anywhere in the guard. It has been a
+whole-word match since v0.22, because `flag inotrope_given set` contains the letters. When the
+word is present, every flag in the guard is treated as one the guard needs unset, including a
+flag the guard needs set. Each of those flags must be settable and must have a prompt in that
+phase at least 20 seconds before the deadline. `engine/deterioration_timeline.py` and the
+shared engine suite use the same whole-word test. Check by hand any guard that mixes a positive
+flag and a negated one.
+
+A case whose timed rules are all delayed consequences has no deterioration on inaction. The
+shared suite asserts that doing nothing leaves such a case in its first phase (v0.23).
+
+`measured_from` is `phase_entry` or `guard_true`, and `guard_true` requires
 a guard. An unguarded time transition requires an `unguarded_rationale`. Every time-guarded rule
 carries a narration, a debrief note and an author rationale. Every flag named in a guard is settable
 by some reachable action. A terminal destination requires `allow_time_to_terminal` and a rationale.
@@ -1117,7 +1211,15 @@ must prompt in that phase, at a deadline at least 20 seconds before the transiti
 deterioration the resident was never warned about is a trap rather than a lesson, and this is the
 one check that enforces section 1's framing mechanically rather than leaving it to review. The
 converse is also checked: a prompt or escalation whose deadline lands at or after the phase's
-earliest time-guarded exit can never fire, and warns.
+earliest exit timed from phase entry can never fire, and warns.
+
+**Both checks use the authored deadlines, which is easy mode.** A run starts in normal mode,
+where every prompt deadline is multiplied by three and no transition deadline is (17.1). The
+validator does not repeat either check at that multiplier, and the deterioration timeline prints
+authored deadlines only. A prompt authored at 80 seconds in a phase with a 240 second exit
+passes both checks and is never heard in the default mode, because at an equal time the
+deadline is processed before the prompt. TSS and TAKO each have one (v0.21, v0.22). Authoring
+9.7 has the rule an author follows.
 
 **Payloads.** Every authored result is a structured payload, not a prose string. Every payload carries `abnormal` at both levels, and the payload level equals the OR of its components. Every component carries a label, value and reference range.
 
@@ -1125,13 +1227,15 @@ earliest time-guarded exit can never fire, and warns.
 
 **Abnormal flag cross-check.** Parse each reference interval and compare it against the value. The renderer must not recompute, but the validator can, and a mis-set flag is invisible everywhere else. Warn rather than error, since not every range is parseable.
 
-**Catalog binding.** Every case action has a binding row. Unmatched rows error. Mapped targets exist in the catalog. A catalog entry bound by more than one case action warns. A harmful action whose catalog entry has unbound siblings in the same group warns.
+**Catalog binding.** Every case action has a binding row. An unmatched row warns. An unmatched row whose note starts with BLOCKING errors. Mapped targets exist in the catalog. A catalog entry bound by more than one case action warns. A harmful action whose catalog entry has unbound siblings in the same group warns.
 
 **Catalog integrity.** Every catalog condition parses in the section 4 grammar. Every investigation and every exam carries a default result. The case authors no exam maneuver outside the closed set. The general status key exists.
 
 **Silent normals.** A study named in a condition or tagged critical but with no authored result warns, naming the catalog default that will be served in its place.
 
-**Handoff.** The correct diagnosis and every authored alternative resolve to a real diagnosis catalog id.
+**Handoff.** The correct diagnosis and every authored alternative resolve to a real diagnosis catalog id. Every disposition intercept names a disposition the case offers and a case action other than `handoff_submit`, and its condition parses (v0.21).
+
+**Voice phrases (v0.24).** `voice_phrases` on a case action is a list of non-empty strings, each with at least one letter or digit. The same phrase on two actions warns, because the learner will be asked which one was meant. Section 18.
 
 **Flag namespace.** Catalog-owned flags are shared and reserved; case-owned flags are prefixed and checked for collisions. A blanket rule forbidding all cross-case flag collisions is incompatible with catalog prerequisites, which must reference the same flag names everywhere.
 
@@ -1217,7 +1321,7 @@ Two categories, both belonging on the human checklist:
    same clock as one who is stuck, and a deterioration that fires while they are reading is unfair in
    a way a prompt firing is not. Shipped behavior is that the clock does not pause, on the grounds
    that one clock with one set of semantics is worth more than the fairness it costs, and that the
-   30-second floor and the mandatory preceding prompt are the mitigations. Revisit with a real
+   30-second floor for a deterioration and the mandatory preceding prompt are the mitigations. Revisit with a real
    learner.
 10. **A global `time_pressure_multiplier`.** Time-guarded deadlines are authored in seconds and are
     subject to the same expectation of global recalibration as prompt deadlines. A single multiplier
@@ -1228,7 +1332,7 @@ Two categories, both belonging on the human checklist:
 
 ## 15. Limitations carried forward
 
-- **Flags are binary and permanent.** A single dose fixes something for the rest of the case. Cases cannot depend on redosing or titration, and partial response cannot be represented. Stopping an infusion sets its own flag rather than clearing the running flag, so a case can tell that a drip was started and then stopped, but not that it is currently running.
+- **Flags are binary, and permanent unless a case grants one for a time (2.7).** A single dose fixes something for the rest of the case. Cases cannot depend on titration, and can depend on a repeat only through `flags_set_repeat` (2.10). Partial response cannot be represented. Stopping an infusion sets its own flag rather than clearing the running flag, so a case can tell that a drip was started and then stopped, but not that it is currently running.
 - **Permanent flags can shadow phase-correct content.** A patient who received non-invasive ventilation, then deteriorated, still carries the `on_niv` flag. A key keyed on that flag returns the improved value in the deteriorated phase. **Phase rules must precede flag rules in any list where both appear.** This is the most easily missed consequence of flag permanence and has already produced a wrong result in review.
 - **Vitals are static within a phase.** The monitor holds one authored set per phase. Cosmetic variance and the five-second boundary ramp (8.4a) disguise this but do not fix it: between boundaries nothing moves, and the ramp is a rendering effect with no state behind it. A case cannot author a trajectory, only a sequence of plateaus. Time-guarded transitions let those plateaus be chained on a clock, which is a staircase rather than a slope; a case that needs a genuine gradient still needs more phases, and the section 3.3 ceiling of six clinical phases binds sooner than it used to.
 - **The patient deteriorates only where a case authored it, and only in steps.** v0.6 removed the
@@ -1243,9 +1347,9 @@ Two categories, both belonging on the human checklist:
   the deadline minus one second has the same effect as one given at the start. Partial credit for
   partial delay is not representable, and neither is a dose-response between how late you were and
   how sick she becomes. Authors wanting graded lateness need graded phases.
-- **Order cannot be expressed in conditions,** beyond what prerequisites enforce.
-- **Serial testing cannot be represented.** A repeat study in an unchanged state returns an identical value, so a rising troponin cannot be taught without gating on an unrelated flag, which would be dishonest. A predicate such as `study S ordered at least N times` would fix this and would stay enumerable in the review matrix.
-- **Stopping an infusion is a separate action, not a toggle.** Every persistent infusion has a matching stop entry, so a rescue that depends on withdrawing a drip is now authorable, but the case must author the stop as its own step and gate the transition on the flag it sets. Restarting the same infusion afterwards is not represented.
+- **Order cannot be expressed in conditions.** Three mechanisms carry it instead. A prerequisite blocks an act until another is done. `also_satisfies` credits an act only in a named state (2.11). And a phase can stand for what has already happened (v0.23): in DKA, insulin given in the arrival phase leads to a falling potassium, and the same insulin given once potassium is replaced leads to the treated phase. The third leaves gaps wherever two timed rules race. DKA records one in its SEED.
+- **Serial testing has one narrow route.** A repeat study in an unchanged state returns an identical value, so a rising troponin cannot be taught without gating on an unrelated flag, which would be dishonest. A study can grant a flag on its second order through `flags_set_repeat` (2.10), and that order's result can resolve against the flag. No pack authors a result that way yet. DKA uses the flag only to discharge a follow-up (v0.23). The flag says the study was ordered twice. It does not say when. A predicate such as `study S ordered at least N times` would stay enumerable in the review matrix and is not built.
+- **Stopping an infusion is a separate action, not a toggle.** Every persistent infusion has a matching stop entry, so a rescue that depends on withdrawing a drip is now authorable, but the case must author the stop as its own step and gate the transition on the flag it sets. A restart has no mechanism of its own. A case can read it as the second administration through `flags_set_repeat`, as DKA does (v0.23). That counts starts and does not know whether a stop came between them.
 - **One vitals block per terminal phase.** Every halt displays the same numbers regardless of the mechanism. Making vitals optional per halt reason would fix it.
 - **Turnaround times are compressed** and teach a false tempo unless a simulated clock is displayed.
 - **Interview matching is bounded by what the case anticipated.** The shipped matcher is an IDF-weighted lexical matcher, extended in v0.5 with a clinical abbreviation lexicon, single-edit typo repair against the case's own vocabulary, and compound-question splitting. An optional embedding model (all-MiniLM-L6-v2, roughly 23 MB, loaded from a CDN and cached in IndexedDB) fuses with it when it loads and is skipped entirely when it does not, so the case is playable either way. None of this creates an answer the author did not write: an unanticipated question still falls through. See `case-authoring-requirements.md` section 10.6 for measured accuracy and for what the measurements do and do not cover.
@@ -1302,21 +1406,16 @@ the interface must survive null vitals rather than white-screening.
 
 ### 16.2 A case pack
 
-A folder under `cases/` whose files share a prefix. Authored: the seed, the case file,
-the binding map, the scenario list, the case assertions, the review packet. Generated:
-the resolved binding and the review matrix.
+A folder under `cases/` whose files share a prefix. In a pack with a `build_case.py`, the
+authored files are the seed, the `case_*.py` modules, the scenario list, the case assertions,
+the held-out matcher questions and the review packet. The case file and the binding map are
+generated from the Python. In a pack without one, the case file and the binding map are
+authored directly. Generated in every pack: the resolved binding, the review matrix, the
+deterioration timeline and the matcher tuning questions.
 
-Every tool takes a case pack as its argument and defaults to the only one present. None
-of them needs editing to accept a new case:
-
-```
-python3 engine/new_case.py       PE "Acute pulmonary embolism"
-python3 engine/bind_catalog.py   cases/PE
-python3 engine/validate_case.py  cases/PE
-python3 engine/build_simulator.py
-python3 engine/sim_runner.py     cases/PE
-node    engine/engine-tests.js   build/simulator.html cases/PE/PE-tests.js PE
-```
+The engine tools take a pack as their argument and need no edit for a new case. One catalog
+tool does: `catalog/expand_interview_variants.py` needs a topic map for the pack, and it
+writes its output back into the pack's sources. The order to run everything is in `README.md`.
 
 ### 16.3 The scaffold fails on purpose
 
@@ -1432,7 +1531,7 @@ patient's physiology is identical in both, and the only difference is how much h
 The consequence is real and should be understood before a case leans on it heavily: in normal mode a
 resident may deteriorate a patient before the prompt that would have warned them has fired. That is
 the honest version of the question normal mode exists to ask, and it is also the strongest argument
-for the 30-second floor and the mandatory preceding prompt in 13.1. If deterioration pacing needs
+for the 30-second floor for a deterioration and the mandatory preceding prompt in 13.1. If deterioration pacing needs
 tuning it should move through the global multiplier in open decision 10, not through difficulty.
 
 Normal mode is the honest test of whether a resident would have acted unaided, which is
@@ -1483,14 +1582,21 @@ collapsing it, so an order set can be assembled across several groups before sub
 Typing a filter opens every group that still has hits, because a filter the resident cannot
 see the results of is worse than no filter.
 
-**Exams and Consults stay flat.** Both are a single group of fourteen and seventeen entries,
-where an accordion would add a click and hide nothing. Collapsing is worth it when the tab has
+**Exams and Consults stay flat.** Both are a single group, fourteen exams and seventeen
+consultants in the catalog, where an accordion would add a click and hide nothing. A case-only
+consult adds one (TAKO, v0.22). Collapsing is worth it when the tab has
 several groups and a long list; it is a cost when it has one.
 
 This is presentation only. It changes nothing about what is orderable, what any action does,
 or what the engine sees. Which tabs collapse is configuration.
 
-**Case actions with no catalog entry** should not exist. Where they do, during migration, render them in a separately labeled group so the case remains playable while the gap stays visible, and error in the validator.
+**Case actions with no catalog entry (v0.22).** The catalog is still the action surface, and a missing action is still a catalog change request first. A case may carry an action of its own when the directing physician decides the act belongs to that case alone. Its binding-map row has `catalog_id: null` and an `unmatched_placement` naming a tab and a group, and may carry an `unmatched_narration`, which is the nurse line used when the case action has no `narration_override`. The build turns the row into an action that exists only in that case. If the placement names no group, or names `Not in the catalog`, the tab shows it under that heading with a note. If the group is an existing group, it is drawn there as an ordinary button. The validator warns for every such action and does not error. A row with no `unmatched_placement` is not built, and the build notes list the action as unreachable.
+
+Three exist today. `handoff_submit` in every pack. The hidden `attempt_discharge` in TSS (9.1). And `consult_activate_cath_lab` in TAKO, a button named Activate Catheterization Lab in the Consultations group. The category of a case-only action comes from the start of its id: `consult_` is a consultant, `exam_` is an exam, `labs_`, `echo_`, `cxr`, `ct_` and `pocus` are investigations, `interview_topic_` is an interview topic, and anything else is treated as stabilization. The category decides behavior. A consultant returns content, an exam is a read, and an id that matches none of them is an order with no result.
+
+**What a case-only button costs.** A button that appears in one case tells the learner that it matters there, which is the leak 3.1 exists to prevent. And it has no row in `catalog/voice-aliases.json`, because that table is keyed by catalog id. The microphone derives phrases from its display name and its id and knows nothing else.
+
+**`voice_phrases` (v0.24).** A case action may carry `voice_phrases`, a list of spoken phrases for that action in that case. The voice parser indexes them when the case is bound, ahead of the global table, so in that case they win over a table row with the same words. It is the only way to give other words to a case-only action. Any case action may carry the field, and the action must sit on a tab the microphone reads. A covered sibling does not borrow it. A phrase claimed by two actions is offered as a choice. A phrase that normalizes to nothing, or to a bare qualifier such as a route word, is dropped without an error. Authoring 7.1 has the contract.
 
 ---
 
@@ -1643,8 +1749,9 @@ holds verbatim, and only when the alternative scores within 80 percent of the be
 went to whichever topic held it; it is now a lexicon entry.
 
 **The variant banks were expanded from a shared library**, `catalog/interview_phrasings.py`,
-by `catalog/expand_interview_variants.py`, from 340 to 570 phrasings per pack to 970 to
-1200. The library is keyed by concept and mixes lay paraphrase, clinical shorthand and
+by `catalog/expand_interview_variants.py`. The first three packs went from 340 to 570
+phrasings each to 970 to 1200. Later packs land near that range. Count them from the case
+files instead of trusting a figure here. The library is keyed by concept and mixes lay paraphrase, clinical shorthand and
 conversational openers; each pack maps its topics onto concepts. The generated phrasings
 land in `expanded_variants` on each topic, kept apart from the author's `variants` for
 provenance and merged at build time. Every sixth new phrasing is withheld into the pack's
@@ -1700,9 +1807,11 @@ turn a question is; the fold decides what the patient says.
 phrasings (`asks`) and a phase-conditional `value`. A follow-up that matches a fact is
 answered by that fact rather than by the paragraph. The paragraph is still the answer to the
 topic's own question, and every fact it contains is marked told when it is given. Facts are
-authored for eight topics per pack by `catalog/author_interview_facts.py`; a fact's value
-restates part of the paragraph and adds nothing to it, which is the rule that keeps the two
-consistent. The rest of the topics gain everything else in this section without facts.
+optional. `catalog/author_interview_facts.py` writes them for AFRVR, CHFE and MGCA, eight
+topics each. DIPH and TSS author three topics each in their own sources. TAKO and DKA author
+none (v0.22, v0.23). A fact's value restates part of the paragraph and adds nothing to it,
+which is the rule that keeps the two consistent. A topic with no facts still gains everything
+else in this section: repeats, echoes, clarification and volunteering.
 
 **Context.** The last topic the patient spoke about is the context for a short question. A
 question of six words or fewer that matches nothing well, or that lands on that same topic,

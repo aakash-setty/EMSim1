@@ -2,10 +2,10 @@
  "case_id": "takotsubo-lvoto-01",
  "schema_version": "0.3",
  "authored_against": {
-  "system_design": "system-design-v2.md (v0.9)",
-  "authoring_requirements": "case-authoring-requirements.md (v0.9, with 6.8 and the v0.21 note)",
-  "action_catalog": "action-catalog.json (0.2-draft, plus no entries added for this case)",
-  "diagnosis_catalog": "diagnosis-catalog.json",
+  "system_design": "system-design-v2.md (v0.24)",
+  "authoring_requirements": "case-authoring-requirements.md (v0.24)",
+  "action_catalog": "action-catalog.json (0.3-draft, 305 entries, none added for this case)",
+  "diagnosis_catalog": "diagnosis-catalog.json (499 entries)",
   "design_guide": "EMSim case design guide (Claude Doc, 5 October 2026)"
  },
  "provenance": {
@@ -14,29 +14,65 @@
   "warning": "A physician decided the things listed in TAKO-SEED.md section 0. Everything else is model output and awaits sign-off: every vital sign, finding, laboratory value, deadline, tag, debrief note, interview answer and diagnosis explanation.",
   "author_only_fields_pending_signoff": [
    "Every vital sign in every phase (shock_worse and shock_untreated share one set), and the four clocks: 180, 240, 90 and 10 seconds.",
+   "Every prompt deadline (15, 40, 90, 130, 20, 25, 45 and 60 seconds) and the follow-up deadline of 60 seconds. The fluid and vasoconstrictor prompts moved from 60 and 80 to 45 and 60 on 7 October 2026 so that the default mode warns before the 240-second deterioration.",
+   "Every tag, including the four studies bound as neutral on 7 October 2026 (chemistry, both gases, capillary glucose).",
+   "Every coverage row in the binding map: crystalloid as a group, vasopressin under phenylephrine, the nitrates and nitroprusside, the catecholamine inotropes with push-dose epinephrine, the three stop actions, the beta blockers, the two thrombolytics and the loop diuretic group.",
+   "The size, duration and guard of every vital effect. Each is a teaching choice, not a measured quantity.",
    "Every laboratory value and reference interval, above all the troponin of 186 ng/L.",
-   "The ECG and echo reports.",
-   "The murmur's response to posture, which is taught for hypertrophic obstruction and assumed to carry over.",
+   "Every abnormal flag. Two were changed on 7 October 2026: a dry mouth is now flagged abnormal, and the airway finding in worsening shock is flagged abnormal.",
+   "The ECG and echo reports, and the chest film report authored on 7 October 2026 from this pack's own notes.",
+   "The gas and capillary glucose rows derived on 7 October 2026 from the lactate key and the chemistry. No pH, pCO2, pO2 or base excess is authored.",
+   "The murmur's response to posture, which is taught for hypertrophic obstruction and assumed to carry over. Its loudness is graded soft, harsh, loud and very loud by phase.",
    "That fluid plus a pure vasoconstrictor relieves the obstruction in ten seconds.",
    "That norepinephrine is accepted as the vasoconstrictor and tagged neutral.",
    "That a beta blocker is discouraged before a vasoconstrictor and neutral after.",
    "That nothing is harmful, including thrombolysis.",
    "That the cardiologist takes over ninety seconds after being called.",
-   "The interview in full and both diagnosis lists."
+   "Everything the cardiologist, the catheterization laboratory and the intensivist say.",
+   "That the catheterization laboratory cannot be activated until a twelve-lead has resulted. A model choice of 7 October 2026 for the owner to confirm.",
+   "The interview in full, key_topics and key_exams, and both diagnosis lists.",
+   "Five patient answers written by a model on 7 October 2026 for the steadied phase: timing_progression, chest_pain, severity, aggravating_relieving and sweating. They restate the status line and the skin examination.",
+   "Left ventricular outflow tract obstruction as a credited additional diagnosis, added on 7 October 2026 from this pack's own change request."
   ],
-  "reference_status": "No reference has been checked by a physician. Notes carry [UNVERIFIED] markers.",
+  "reference_status": [
+   {
+    "reference": "Ghadri JR, et al. International Expert Consensus Document on Takotsubo Syndrome (Part II): Diagnostic Workup, Outcome, and Management. Eur Heart J 2018",
+    "how_read": "Through a summarizing tool, by a model, on 6 October 2026. Not opened in full.",
+    "status": "Its management figure was not read. Quotations not checked against the publisher's text. Not checked by a physician."
+   },
+   {
+    "reference": "A 2026 review of cardiogenic shock in takotsubo. Authors, title and journal were not recorded.",
+    "how_read": "Opened by a model on 6 October 2026.",
+    "status": "Cannot be checked until the citation is recovered. It is the source for preferring phenylephrine. Not checked by a physician."
+   },
+   {
+    "reference": "A 2021 case report of takotsubo with outflow obstruction. Authors, title and journal were not recorded.",
+    "how_read": "Opened by a model on 6 October 2026.",
+    "status": "Cannot be checked until the citation is recovered. Not checked by a physician."
+   },
+   {
+    "reference": "One emergency medicine summary. Site and title were not recorded.",
+    "how_read": "Opened by a model on 6 October 2026.",
+    "status": "Cannot be checked until the citation is recovered. Not checked by a physician."
+   },
+   {
+    "reference": "STEMI guidelines (no edition recorded)",
+    "how_read": "From memory, by a model. Not opened.",
+    "status": "Four figures rest on it and each note carries a marker: a twelve-lead within ten minutes, the artery open within 90 minutes, nitrates held under a systolic of 90, and thrombolysis for a delay over about two hours. Two handoff explanations and the cardiologist's lines rest on the same sources and cannot carry a marker, because the interface prints those fields as written."
+   }
+  ],
   "catalog_change_requests": [
-   "'Activate Catheterization Lab' is a case-only action, not in the catalog, placed on the Consults tab on the directing physician's instruction. A global entry would give nothing away and would serve any future infarct case.",
+   "'Activate Catheterization Lab' stays a case-only action on the Consults tab, on the directing physician's decision of 6 October 2026. Authoring 7.1 permits that by a recorded decision since v0.24. A global entry would give nothing away and would serve any future infarct case.",
    "The catalog offers crystalloid only as 500 mL and one liter. The dose this case teaches is 250 to 500 mL.",
    "The catalog's troponin T and NT-proBNP defaults are qualitative. This case authors numbers.",
-   "There is no diagnosis entry for left ventricular outflow tract obstruction."
+   "The catalog has push-dose phenylephrine and vasopressin. This case does not bind them, pending a physician's decision (TAKO-SEED.md, open questions)."
   ]
  },
  "catalog_change_requests": [
-  "'Activate Catheterization Lab' is a case-only action, not in the catalog, placed on the Consults tab on the directing physician's instruction. A global entry would give nothing away and would serve any future infarct case.",
+  "'Activate Catheterization Lab' stays a case-only action on the Consults tab, on the directing physician's decision of 6 October 2026. Authoring 7.1 permits that by a recorded decision since v0.24. A global entry would give nothing away and would serve any future infarct case.",
   "The catalog offers crystalloid only as 500 mL and one liter. The dose this case teaches is 250 to 500 mL.",
   "The catalog's troponin T and NT-proBNP defaults are qualitative. This case authors numbers.",
-  "There is no diagnosis entry for left ventricular outflow tract obstruction."
+  "The catalog has push-dose phenylephrine and vasopressin. This case does not bind them, pending a physician's decision (TAKO-SEED.md, open questions)."
  ],
  "metadata": {
   "working_title": "68-year-old woman, chest pain at her husband's funeral, brought in by EMS",
@@ -67,23 +103,33 @@
    "line": "Brought in by EMS from a funeral reception. Her daughter came in the ambulance."
   },
   "complaint": "Chest pain",
-  "category": "Cardiovascular"
+  "category": "Cardiovascular",
+  "library": {
+   "tempo": "minutes: obstruction and shock run on a clock",
+   "uncertainty": "the diagnosis, occlusion against stress cardiomyopathy, and which treatment makes the shock worse",
+   "right_answer": "treat it as an occlusion, call cardiology, avoid the drugs that look right",
+   "danger": "created by the treatment",
+   "setting": "68 F, EMS to the resuscitation bay, a funeral in the story",
+   "feel": "tender",
+   "note": "The six variety dimensions of docs/case-design-guide.md ('Choosing a case'), as this case reads. Printed in docs/generated/case-index.md so a new case can say how it differs. Descriptive, not clinical: no physician has reviewed the wording."
+  }
  },
  "patient": {
   "age": 68,
   "sex": "female",
   "weight_kg": 64,
-  "background": "Retired schoolteacher. Treated high blood pressure and high cholesterol, on amlodipine and atorvastatin. No known heart disease and no murmur ever mentioned. Never smoked. Father had a heart attack at 70. No allergies.\n\nHer husband of 41 years died five days ago. She has barely eaten or drunk since. At the reception after his funeral, about an hour ago, she developed crushing central chest pain going into her left arm and jaw, with sweating, nausea and breathlessness. Her daughter thinks it is grief and exhaustion and says so to everyone.",
+  "background": "Retired schoolteacher. Treated high blood pressure and high cholesterol, on amlodipine and atorvastatin. No known heart disease and no murmur ever mentioned. Never smoked. Father had a heart attack at 70. No allergies. Gallbladder removed twenty years ago. Three children. Walks two miles a day and had a routine checkup in the spring.\n\nHer husband of 41 years died five days ago. She has barely eaten or drunk since. At the reception after his funeral, about an hour ago, she developed crushing central chest pain going into her left arm and jaw, with sweating, nausea and breathlessness. Her daughter thinks it is grief and exhaustion and says so to everyone.",
   "presenting_vitals_source": "Inherited from phase 'presentation'.",
-  "presenting_appearance": "A woman in a black dress, sitting upright on the trolley, pale and sweating, one fist against her breastbone. She answers in short sentences. Her daughter is beside her holding her other hand.",
-  "ems_handover_text": "Sixty-eight year old woman, crushing central chest pain for about an hour, came on at her husband's funeral reception. Radiates to the left arm and jaw, with sweating and nausea. Hypertension and high cholesterol. Rate 115, pressure 96 over 60 with us. We gave nothing, she hadn't got a line when we left. Daughter thinks it's stress.",
+  "presenting_appearance": "A woman in a black dress, sitting upright on the stretcher, pale and sweating, one fist against her breastbone. She answers in short sentences. Her daughter is beside her holding her other hand.",
+  "ems_handover_text": "Sixty-eight year old woman, crushing central chest pain for about an hour, came on at her husband's funeral reception. Radiates to the left arm and jaw, with sweating and nausea. Hypertension and high cholesterol. Rate 115, pressure 96 over 60 with us. We gave nothing, she didn't have a line when we left. Daughter thinks it's stress.",
   "arrival_handover": "Sixty-eight year old lady, chest pain for about an hour, came on at her husband's funeral. Her daughter's with her and says she's been in a state all week.",
-  "handover_authoring_note": "Section 3.2. Two sentences, 32 words. No vital sign, no past history, no medication, no pertinent negative. It carries the misleading frame on purpose: the crew repeats the daughter's explanation, as crews do."
+  "handover_authoring_note": "Section 3.2. Two sentences, 29 words. No vital sign, no past history, no medication, no pertinent negative. It carries the misleading frame on purpose: the crew repeats the daughter's explanation, as crews do."
  },
  "phase_notes": {
   "count_justification": "Four clinical phases and one terminal: arrival, the obstruction declaring itself, worse on the wrong treatment or none, and steadied. No halted phase and no arrest.",
   "the_scripted_drop": "The arrival phase ends at 180 seconds whatever is done, so every learner meets outflow obstruction. A learner with fluid and a vasoconstrictor already running goes straight to steadied.",
-  "the_cardiologist": "On the directing physician's instruction the nurse recommends cardiology twenty seconds after the pressure falls, the cardiologist gives the plan outright, and ninety seconds after being called takes over and steadies her."
+  "the_cardiologist": "On the directing physician's instruction the nurse recommends cardiology twenty seconds after the pressure falls (sixty in the default mode), the cardiologist gives the plan outright, and ninety seconds after being called takes over and steadies her.",
+  "no_halted_phase": "On the directing physician's decision she cannot die and nothing halts the case. No action is tagged harmful, so there is no halted phase and no arrest."
  },
  "phases": [
   {
@@ -112,7 +158,7 @@
     "qrs_ms": 92,
     "qtc_ms": 470,
     "st_mv": 0.1,
-    "author_note": "Sinus tachycardia, narrow complexes. Lead II shows no ST elevation of 1 mm in the report, so the monitor lead is drawn with 0.1 mV. Model output."
+    "author_note": "Sinus tachycardia, narrow complexes. The report gives 1 mm of ST elevation in lead II, so the monitor lead is drawn with 0.1 mV. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -126,7 +172,7 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "shock_worse",
-     "narration": "She's worse since that infusion went up. Her rate is 138, her pressure is 70 over 42 and she's confused.",
+     "narration": "She's worse since that inotrope went in. Her rate is up, her pressure is down and she's confused.",
      "debrief_note": "An inotrope made her worse within seconds. Her ventricle is weak at the apex and overactive at the base. Driving it harder narrowed the outflow tract further, and the faster rate left it less time to fill.\n\nThis is the reflex the case exists to interrupt. A low pressure with a poor ejection fraction usually gets an inotrope. Here the murmur was the warning that the usual answer was wrong.",
      "author_rationale": "A delayed consequence of the learner's own action. Catecholamine inotropes worsen dynamic outflow obstruction by physiological reasoning and consensus. The size and speed are teaching choices. Model output."
     },
@@ -135,16 +181,25 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "obstructed",
-     "narration": "Her pressure has dropped since the nitro. 82 over 50, rate 124, and she says she feels faint.",
+     "narration": "Her pressure has dropped since that vasodilator and her rate is up. She says she feels faint.",
      "debrief_note": "A nitrate dropped her pressure. Nitrates lower the filling of the heart and the resistance it pumps against. In outflow obstruction a smaller, emptier ventricle obstructs more.\n\nThe warning was there before the drug: a pressure of 96 over 60 and a new murmur. A borderline pressure is a reason to hold a nitrate in any chest pain patient.",
      "author_rationale": "A delayed consequence of the learner's own action. She would have reached this phase anyway at 180 seconds. The nitrate brings it forward and gives it a cause. Model output."
+    },
+    {
+     "when": "flag inotrope_given set OR flag nitrate_given set",
+     "after_seconds": 180,
+     "measured_from": "phase_entry",
+     "to": "obstructed",
+     "narration": "Her pressure has fallen and her rate is up. She's gone gray and I can hear that murmur from here.",
+     "debrief_note": "Her pressure fell at the moment this illness makes it fall. A nitrate or an inotrope had been given seconds before, and what that drug does to an obstructed outflow tract is described under the drug.",
+     "author_rationale": "Added on 7 October 2026 to close a race between timed rules (authoring 5.4). A nitrate or an inotrope given less than ten seconds before the scripted fall, with fluid and a vasoconstrictor already running, used to send her straight to steadied with the wrong drug's effect on the monitor and a nurse line that said her pressure was holding. Now the fall happens first and the wrong drug acts from the obstructed phase, as it does at every other time. Same clock as the two rules below, so the owner's 180 seconds is unchanged. A positive guard, so it asks for no prompt. Model output."
     },
     {
      "when": "flag fluids_given set AND flag vasoconstrictor_running set",
      "after_seconds": 180,
      "measured_from": "phase_entry",
      "to": "steadied",
-     "narration": "Her pressure dipped for a minute and the vasoconstrictor has held it. She's 100 over 62 with a rate of 104.",
+     "narration": "Her pressure is holding on the vasoconstrictor and her rate has come down.",
      "debrief_note": "The fall in pressure that this illness produces arrived and was already treated, because fluid and a vasoconstrictor were running. Acting on the murmur and the echo before the pressure fell is the best version of this case.",
      "author_rationale": "Same clock as the unguarded rule below, so the obstruction declares itself at one moment whatever was done. Model output."
     },
@@ -153,10 +208,10 @@
      "after_seconds": 180,
      "measured_from": "phase_entry",
      "to": "obstructed",
-     "narration": "Her pressure is falling. 82 over 50, rate 124. She's gone gray and I can hear that murmur from here.",
+     "narration": "Her pressure has fallen and her rate is up. She's gone gray and I can hear that murmur from here.",
      "debrief_note": "Her pressure fell without anything being given. This is the outflow obstruction declaring itself, and it is not a mistake on your part.\n\nIt is the decision point of the case. She has a weak ventricle, ST elevation and a low pressure, which looks like cardiogenic shock from a large infarct. The murmur and the echo say something more specific, and the treatment is different.",
      "author_rationale": "Scheduled natural history, so that every learner meets the obstruction. Three minutes of case clock. Outflow obstruction is the minority course in takotsubo and this case makes it happen every time. A teaching choice, approved in outline by the directing physician. Model output for the number.",
-     "unguarded_rationale": "Without this rule a careful learner who never gives a nitrate or an inotrope never meets the third learning goal. The phase it leads to is recoverable, the nurse recommends cardiology within twenty seconds of it, and the cardiologist gives the plan and will take over."
+     "unguarded_rationale": "Without this rule a careful learner who never gives a nitrate or an inotrope never meets the third learning goal. The phase it leads to is recoverable, the nurse recommends cardiology twenty seconds after it in easy mode and sixty seconds after it in the default mode, and the cardiologist gives the plan and will take over."
     }
    ]
   },
@@ -186,7 +241,7 @@
     "qrs_ms": 92,
     "qtc_ms": 470,
     "st_mv": 0.1,
-    "author_note": "Sinus tachycardia, narrow complexes. Lead II shows no ST elevation of 1 mm in the report, so the monitor lead is drawn with 0.1 mV. Model output."
+    "author_note": "Sinus tachycardia, narrow complexes. The report gives 1 mm of ST elevation in lead II, so the monitor lead is drawn with 0.1 mV. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -200,7 +255,7 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "shock_worse",
-     "narration": "She's worse since that infusion went up. Rate 138, pressure 70 over 42, and she's confused.",
+     "narration": "She's worse since that inotrope went in. Her rate is up, her pressure is down and she's confused.",
      "debrief_note": "An inotrope made her worse. The base of her heart was already squeezing hard into a narrow outflow tract. More contractility and a faster rate narrowed it further.\n\nStop the drug. Then give a small fluid bolus and a vasoconstrictor with no inotropic effect.",
      "author_rationale": "As for the same rule on arrival. Model output."
     },
@@ -209,7 +264,7 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "steadied",
-     "narration": "That's working. She's 100 over 62, her rate is down to 104 and the murmur is softer.",
+     "narration": "That's working. Her pressure is up, her rate is down and the murmur is softer.",
      "debrief_note": "Fluid and a vasoconstrictor opened the outflow tract. A fuller ventricle and a higher resistance to pump against hold the obstruction apart, and the slower rate gives the heart time to fill.\n\nThis is the reverse of the usual plan for a weak heart. It applies to obstruction specifically, and it rests on physiology and expert consensus, not trials. She also had clear lungs. With pulmonary edema the fluid would be wrong.",
      "author_rationale": "A delayed consequence of the learner's own action. Ten seconds compresses a titration of several minutes. Model output."
     },
@@ -218,18 +273,18 @@
      "after_seconds": 90,
      "measured_from": "guard_true",
      "to": "steadied",
-     "narration": "Cardiology is at the bedside and has taken over. They've given 250 of fluid and started phenylephrine. She's 100 over 62, rate 104.",
+     "narration": "Cardiology is at the bedside and has taken over. They've given a small fluid bolus and have a vasoconstrictor running. Her pressure is up and her rate is down.",
      "debrief_note": "Cardiology came to the bedside and took over. They stopped anything with inotropic effect, gave a small fluid bolus because her lungs were clear, and started a pure vasoconstrictor.\n\nCalling for help was the right move and it is what you would do. The reasoning to take from it: the base of her heart is squeezing hard into a narrowed outflow tract. Anything that makes the heart squeeze harder or faster, or empties it, tightens the obstruction. Filling it and raising the resistance it pumps against opens it.",
-     "author_rationale": "Added on Aakash Setty's instruction of 6 October 2026: the cardiologist can take over and help, because this is a hard case. Ninety seconds after a call that is made, or was already made, when the pressure is low. A delayed consequence of the learner's own action, so the five-second floor applies. Ninety seconds leaves a learner who wants to act on the cardiologist's advice time to do it first. Model output for the number."
+     "author_rationale": "Added on Aakash Setty's instruction of 6 October 2026: the cardiologist can take over and help, because this is a hard case. Ninety seconds after a call that is made, or was already made, when the pressure is low. A delayed consequence of the learner's own action, so the five-second floor applies. Ninety seconds leaves a learner who wants to act on the cardiologist's advice time to do it first. The clock belongs to one phase: a call made on arrival starts counting again when the pressure falls. Model output for the number."
     },
     {
      "when": "NOT flag fluids_given set OR NOT flag vasoconstrictor_running set",
      "after_seconds": 240,
      "measured_from": "phase_entry",
      "to": "shock_untreated",
-     "narration": "She's getting worse. Rate 138, pressure 70 over 42, and she's not making sense.",
-     "debrief_note": "Four minutes at a mean pressure of 61 with the obstruction untreated, and she progressed.\n\nIf you were unsure what to do, that is reasonable. This is a hard presentation. The move that was always available was to call cardiology, which the nurse suggested.",
-     "author_rationale": "Deterioration on inaction. The nurse recommends cardiology at 20 seconds, fluid at 60 and a vasoconstrictor at 80. Four minutes is a drafting judgment."
+     "narration": "She's getting worse. Her rate is up, her pressure is down and she's not making sense.",
+     "debrief_note": "Her outflow tract stayed obstructed and her output kept falling. The base of her heart was squeezing hard into a narrowed outflow tract, and a ventricle that cannot empty past the obstruction supplies less blood to the brain and to the heart itself. The fast rate left it less time to fill, and an emptier ventricle obstructs more.\n\nA small fluid bolus and a vasoconstrictor with no inotropic effect, given together, would have opened it. Either one alone was not enough.\n\nIf you were unsure what to do, that is reasonable. This is a hard presentation. Calling cardiology was always available, and the nurse suggested it.",
+     "author_rationale": "Deterioration on inaction. The nurse recommends cardiology at 20 seconds, fluid at 45 and a vasoconstrictor at 60. In the default mode those are 60, 135 and 180 seconds, so all three are spoken before this rule fires at 240 (authoring 9.7). Four minutes is a drafting judgment."
     }
    ]
   },
@@ -259,7 +314,7 @@
     "qrs_ms": 92,
     "qtc_ms": 470,
     "st_mv": 0.1,
-    "author_note": "Sinus tachycardia, narrow complexes. Lead II shows no ST elevation of 1 mm in the report, so the monitor lead is drawn with 0.1 mV. Model output."
+    "author_note": "Sinus tachycardia, narrow complexes. The report gives 1 mm of ST elevation in lead II, so the monitor lead is drawn with 0.1 mV. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -273,7 +328,7 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "shock_worse",
-     "narration": "That infusion hasn't helped. She's still 70 over 42 with a rate of 138, and the murmur is louder than ever.",
+     "narration": "That inotrope hasn't helped. She's still in shock and the murmur is louder than ever.",
      "debrief_note": "An inotrope was started in a patient already in shock from outflow obstruction. It could not help, and it has to come off before anything else will work.",
      "author_rationale": "A delayed consequence of the learner's own action. Model output."
     },
@@ -282,8 +337,8 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "steadied",
-     "narration": "She's coming back. 100 over 62, rate 104, and she knows where she is.",
-     "debrief_note": "Fluid and a vasoconstrictor recovered her from a mean pressure in the low 50s.",
+     "narration": "She's coming back. Her pressure is up, her rate is down and she knows where she is.",
+     "debrief_note": "Fluid and a vasoconstrictor opened the outflow tract, even this late. A fuller ventricle and a higher resistance to pump against hold the obstruction apart, and the slower rate gives the heart time to fill.\n\nThe same pair given in the first four minutes after her pressure fell would have kept her out of worsening shock. One of the two alone does not do it.",
      "author_rationale": "A delayed consequence of the learner's own action. Model output."
     },
     {
@@ -291,9 +346,9 @@
      "after_seconds": 90,
      "measured_from": "guard_true",
      "to": "steadied",
-     "narration": "Cardiology is at the bedside and has taken over. They've given 250 of fluid and started phenylephrine. She's 100 over 62, rate 104.",
+     "narration": "Cardiology is at the bedside and has taken over. They've given a small fluid bolus and have a vasoconstrictor running. Her pressure is up and her rate is down.",
      "debrief_note": "Cardiology came to the bedside and took over. They stopped anything with inotropic effect, gave a small fluid bolus because her lungs were clear, and started a pure vasoconstrictor.\n\nCalling for help was the right move and it is what you would do. The reasoning to take from it: the base of her heart is squeezing hard into a narrowed outflow tract. Anything that makes the heart squeeze harder or faster, or empties it, tightens the obstruction. Filling it and raising the resistance it pumps against opens it.",
-     "author_rationale": "Added on Aakash Setty's instruction of 6 October 2026: the cardiologist can take over and help, because this is a hard case. Ninety seconds after a call that is made, or was already made, when the pressure is low. A delayed consequence of the learner's own action, so the five-second floor applies. Ninety seconds leaves a learner who wants to act on the cardiologist's advice time to do it first. Model output for the number."
+     "author_rationale": "Added on Aakash Setty's instruction of 6 October 2026: the cardiologist can take over and help, because this is a hard case. Ninety seconds after a call that is made, or was already made, when the pressure is low. A delayed consequence of the learner's own action, so the five-second floor applies. Ninety seconds leaves a learner who wants to act on the cardiologist's advice time to do it first. The clock belongs to one phase: a call made on arrival starts counting again when the pressure falls. Model output for the number."
     }
    ],
    "authoring_note": "Same numbers as shock_worse. Two phases because the exits differ."
@@ -324,7 +379,7 @@
     "qrs_ms": 92,
     "qtc_ms": 470,
     "st_mv": 0.1,
-    "author_note": "Sinus tachycardia, narrow complexes. Lead II shows no ST elevation of 1 mm in the report, so the monitor lead is drawn with 0.1 mV. Model output."
+    "author_note": "Sinus tachycardia, narrow complexes. The report gives 1 mm of ST elevation in lead II, so the monitor lead is drawn with 0.1 mV. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -338,7 +393,7 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "steadied",
-     "narration": "She's coming back now that infusion is off. 100 over 62, rate 104, and she knows where she is.",
+     "narration": "She's coming back now that inotrope is off. Her pressure is up, her rate is down and she knows where she is.",
      "debrief_note": "You stopped the drug that was making her worse and replaced it with fluid and a vasoconstrictor. Recognizing that a treatment is hurting the patient and withdrawing it is a skill, and you used it.",
      "author_rationale": "A delayed consequence of the learner's own action. Model output."
     },
@@ -347,9 +402,9 @@
      "after_seconds": 90,
      "measured_from": "guard_true",
      "to": "steadied",
-     "narration": "Cardiology is at the bedside and has taken over. They've stopped the inotrope, given 250 of fluid and started phenylephrine. She's 100 over 62, rate 104.",
+     "narration": "Cardiology is at the bedside and has taken over. The inotrope is off, they've given a small fluid bolus and a vasoconstrictor is running. Her pressure is up and her rate is down.",
      "debrief_note": "Cardiology came to the bedside and took over. They stopped anything with inotropic effect, gave a small fluid bolus because her lungs were clear, and started a pure vasoconstrictor.\n\nCalling for help was the right move and it is what you would do. The reasoning to take from it: the base of her heart is squeezing hard into a narrowed outflow tract. Anything that makes the heart squeeze harder or faster, or empties it, tightens the obstruction. Filling it and raising the resistance it pumps against opens it.",
-     "author_rationale": "Added on Aakash Setty's instruction of 6 October 2026: the cardiologist can take over and help, because this is a hard case. Ninety seconds after a call that is made, or was already made, when the pressure is low. A delayed consequence of the learner's own action, so the five-second floor applies. Ninety seconds leaves a learner who wants to act on the cardiologist's advice time to do it first. Model output for the number."
+     "author_rationale": "Added on Aakash Setty's instruction of 6 October 2026: the cardiologist can take over and help, because this is a hard case. Ninety seconds after a call that is made, or was already made, when the pressure is low. A delayed consequence of the learner's own action, so the five-second floor applies. Ninety seconds leaves a learner who wants to act on the cardiologist's advice time to do it first. The clock belongs to one phase: a call made on arrival starts counting again when the pressure falls. Model output for the number."
     }
    ],
    "authoring_note": "No clock leaves this phase and the case has no arrest. Stopping the inotrope alone shows as eight points of pressure through a vital effect and does not change the phase. She leaves once it is stopped and fluid and a vasoconstrictor are running."
@@ -380,7 +435,7 @@
     "qrs_ms": 92,
     "qtc_ms": 470,
     "st_mv": 0.1,
-    "author_note": "Sinus tachycardia, narrow complexes. Lead II shows no ST elevation of 1 mm in the report, so the monitor lead is drawn with 0.1 mV. Model output."
+    "author_note": "Sinus tachycardia, narrow complexes. The report gives 1 mm of ST elevation in lead II, so the monitor lead is drawn with 0.1 mV. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -417,7 +472,7 @@
     "qrs_ms": 92,
     "qtc_ms": 470,
     "st_mv": 0.1,
-    "author_note": "Sinus tachycardia, narrow complexes. Lead II shows no ST elevation of 1 mm in the report, so the monitor lead is drawn with 0.1 mV. Model output."
+    "author_note": "Sinus tachycardia, narrow complexes. The report gives 1 mm of ST elevation in lead II, so the monitor lead is drawn with 0.1 mV. Model output."
    },
    "terminal": true,
    "transitions": [],
@@ -501,7 +556,7 @@
     "guard": "phase is presentation",
     "text": "Chest pain for an hour and no ECG yet. Do you want a twelve-lead?"
    },
-   "debrief_note": "A twelve-lead within ten minutes of arrival is the standard for chest pain. Hers shows anterior ST elevation, and that decides the pathway whatever the story is.\n\nTakotsubo can produce exactly this tracing. No feature of the ECG separates it reliably from an occluded artery, so the tracing is acted on as an infarct."
+   "debrief_note": "A twelve-lead within ten minutes of arrival is the standard for chest pain. Hers shows anterior ST elevation, and that decides the pathway whatever the story is.\n\nTakotsubo can produce exactly this tracing. Elevation centered on V2 to V5 and II with little reciprocal depression is the pattern described in takotsubo. No feature of the ECG separates it reliably from an occluded artery, so the tracing is acted on as an infarct. [UNVERIFIED: the ten-minute standard was written from memory of the STEMI guidelines. The ECG pattern is from Ghadri et al. 2018, read through a summarizing tool]"
   },
   {
    "catalog_id": "aspirin",
@@ -513,8 +568,8 @@
    ],
    "prompt": {
     "deadline_seconds": 90,
-    "guard": "phase is presentation OR phase is steadied",
-    "text": "She's got ST elevation and she hasn't had aspirin. Do you want it given?"
+    "guard": "(phase is presentation OR phase is steadied) AND study ecg_12_lead resulted",
+    "text": "She has ST elevation and she hasn't had aspirin. Do you want it given?"
    },
    "debrief_note": "Aspirin is given for a suspected coronary occlusion as soon as the ECG shows one. It is cheap, safe here, and the diagnosis that would make it unnecessary is not available until after the angiogram."
   },
@@ -533,11 +588,35 @@
    ],
    "state_changing": true,
    "narration_override": "Calling the cath lab activation now.",
+   "prerequisites": [
+    {
+     "when": "study ecg_12_lead ordered",
+     "failure_message": "The cath lab will want a twelve-lead before they call the team in. Do you want one now?"
+    },
+    {
+     "when": "study ecg_12_lead resulted",
+     "failure_message": "The twelve-lead is still printing. The cath lab will want to see it before they call the team in."
+    }
+   ],
+   "voice_phrases": [
+    "activate the cath lab",
+    "activate cath lab",
+    "cath lab",
+    "cath lab activation",
+    "call the cath lab",
+    "code stemi",
+    "stemi alert",
+    "stemi activation",
+    "catheterization lab",
+    "cardiac cath",
+    "primary pci"
+   ],
    "prompt": {
     "deadline_seconds": 130,
+    "guard": "study ecg_12_lead resulted",
     "text": "That ECG has ST elevation across the front. Do you want me to activate the cath lab?"
    },
-   "debrief_note": "ST elevation with ongoing chest pain is a catheterization laboratory activation, and the usual target is the artery open within 90 minutes of first medical contact. Her daughter's explanation, the funeral and her grief do not change that.\n\nThe angiogram is also the only test that makes the diagnosis here. It showed arteries without obstruction and a ventricle ballooning at the apex, which is takotsubo cardiomyopathy. Activating was right, and it was right for a patient who turned out not to have an infarct."
+   "debrief_note": "ST elevation with ongoing chest pain is a catheterization laboratory activation, and the usual target is the artery open within 90 minutes of first medical contact. Her daughter's explanation, the funeral and her grief do not change that. The laboratory takes the call once there is a twelve-lead to show them.\n\nThe angiogram is also the only test that makes the diagnosis here. It showed arteries without obstruction and a ventricle ballooning at the apex, which is takotsubo cardiomyopathy. Activating was right, and it was right for a patient who turned out not to have an infarct. [UNVERIFIED: the 90-minute target was written from memory of the STEMI guidelines]"
   },
   {
    "catalog_id": "heparin_bolus_drip",
@@ -616,11 +695,11 @@
      "delta": -12,
      "key": "nitrate_bp",
      "duration_seconds": 120,
-     "while": "NOT phase is presentation",
-     "note": "Teaching choice. On arrival the nitrate moves her to the obstructed phase, which carries the fall. In any later phase it costs twelve points for two minutes."
+     "while": "NOT phase is presentation AND NOT phase is obstructed",
+     "note": "Teaching choice. On arrival the nitrate moves her to the obstructed phase, and that phase's own numbers are the fall. The effect is guarded off there by name so the fall is counted once (authoring 6.1). A guard is read against the state now and cannot see where the drug was given, so a nitrate given in the obstructed phase also shows no further fall while she stays there. In worsening shock or once steadied it costs twelve points for what is left of two minutes."
     }
    ],
-   "debrief_note": "Nitrates are a reflex for cardiac chest pain. They lower the filling of the heart and the resistance it pumps against. In outflow obstruction both make the obstruction worse, and her pressure was only 96 over 60 before it was given.\n\nGuidelines say to hold nitrates with a systolic pressure under 90, or well below the patient's usual pressure, or with a fast heart rate. She is a treated hypertensive at 96 with a rate of 115. And a new murmur should be explained before preload is lowered."
+   "debrief_note": "Nitrates are a reflex for cardiac chest pain. They lower the filling of the heart and the resistance it pumps against. In outflow obstruction both make the obstruction worse, and her pressure was only 96 over 60 before it was given.\n\nGuidelines say to hold nitrates with a systolic pressure under 90, or well below the patient's usual pressure, or with a fast heart rate. She is a treated hypertensive at 96 with a rate of 115. And a new murmur should be explained before preload is lowered. [UNVERIFIED: the nitrate thresholds were written from memory of the STEMI guidelines]"
   },
   {
    "catalog_id": "dobutamine_drip",
@@ -639,14 +718,14 @@
      "vital": "systolic_bp",
      "delta": -14,
      "key": "inotrope_bp",
-     "while": "phase is steadied AND NOT flag inotrope_stopped set",
-     "note": "Teaching choice. Once she is steadied an inotrope still costs her pressure."
+     "while": "phase is steadied AND NOT flag inotrope_stopped set AND NOT flag cardiology_called set",
+     "note": "Teaching choice. Once she is steadied an inotrope still costs her pressure. Guarded off once cardiology has been called, because a takeover stops the inotrope and a timed transition can set no flag. The cost: an inotrope started after a cardiology call shows nothing in the steadied phase."
     },
     {
      "vital": "heart_rate",
      "delta": 16,
      "key": "inotrope_hr",
-     "while": "phase is steadied AND NOT flag inotrope_stopped set",
+     "while": "phase is steadied AND NOT flag inotrope_stopped set AND NOT flag cardiology_called set",
      "note": "As above."
     }
    ],
@@ -672,7 +751,7 @@
    "flags_set": [
     "inotrope_stopped"
    ],
-   "narration_override": "That infusion is off.",
+   "narration_override": "The inotrope is stopped.",
    "vital_effects": [
     {
      "vital": "systolic_bp",
@@ -685,9 +764,9 @@
    "prompt": {
     "deadline_seconds": 25,
     "guard": "phase is shock_worse AND NOT flag inotrope_stopped set",
-    "text": "She's got worse since that infusion started. Do you want it off?"
+    "text": "That inotrope is not helping her. Do you want it stopped?"
    },
-   "debrief_note": "Stopping a drug that is making the patient worse is the first step of the rescue. It takes her back to where she was before it, and she then still needs fluid and a vasoconstrictor."
+   "debrief_note": "Stopping a drug that is making the patient worse is the first step of the rescue. It gives back part of the pressure she lost, and she then still needs fluid and a vasoconstrictor."
   },
   {
    "catalog_id": "furosemide_40_mg_iv",
@@ -721,7 +800,7 @@
    "flags_set": [
     "thrombolysed"
    ],
-   "debrief_note": "Thrombolysis is for ST elevation when angioplasty cannot be delivered in time, usually taken as a delay of more than about two hours. This hospital has a laboratory. She was given the bleeding risk of a thrombolytic for a condition that turned out to have no clot in it.\n\nThe lesson is not that you should have known it was takotsubo. You could not have. It is that angiography is preferred whenever it is available, and one reason is that some patients with ST elevation have no occlusion."
+   "debrief_note": "Thrombolysis is for ST elevation when angioplasty cannot be delivered in time, usually taken as a delay of more than about two hours. This hospital has a laboratory. She was given the bleeding risk of a thrombolytic for a condition that turned out to have no clot in it.\n\nThe lesson is not that you should have known it was takotsubo. You could not have. It is that angiography is preferred whenever it is available, and one reason is that some patients with ST elevation have no occlusion. [UNVERIFIED: the two-hour figure was written from memory of the STEMI guidelines]"
   },
   {
    "catalog_id": "normal_saline_1l_bolus",
@@ -753,7 +832,7 @@
     }
    ],
    "prompt": {
-    "deadline_seconds": 60,
+    "deadline_seconds": 45,
     "guard": "phase is obstructed OR phase is shock_worse OR phase is shock_untreated",
     "text": "Her chest is clear and she's hardly had a drink in five days. Do you want a small fluid bolus?"
    },
@@ -785,11 +864,11 @@
     }
    ],
    "prompt": {
-    "deadline_seconds": 80,
+    "deadline_seconds": 60,
     "guard": "phase is obstructed OR phase is shock_worse OR phase is shock_untreated",
     "text": "Her pressure is still low. Do you want a pressor that squeezes the vessels without driving the heart, like phenylephrine?"
    },
-   "debrief_note": "Phenylephrine raises the resistance the heart pumps against and has no direct effect on contractility. It tends to slow the heart by reflex. In outflow obstruction all three of those help. Vasopressin does the same job without acting on catecholamine receptors and counts as the same act here.\n\nThis choice is borrowed from hypertrophic obstructive cardiomyopathy, where it is standard teaching. For takotsubo it is physiological reasoning and expert opinion. The 2018 consensus document recommends fluid and avoiding inotropes, nitrates and diuretics, and does not name a vasoconstrictor. Reviews that do name one prefer phenylephrine. Vasopressin is an extrapolation. If drugs fail, the next step is mechanical support with a pump such as an Impella. A balloon pump lowers afterload and can worsen the obstruction. It adds load to a ventricle that is already weak, so it is right only while obstruction is the main problem. In takotsubo with shock and no obstruction the advice differs and mechanical support is often preferred. [UNVERIFIED]"
+   "debrief_note": "Phenylephrine raises the resistance the heart pumps against and has no direct effect on contractility. It tends to slow the heart by reflex. In outflow obstruction all three of those help. Vasopressin does the same job without acting on catecholamine receptors and counts as the same act here.\n\nThis choice is borrowed from hypertrophic obstructive cardiomyopathy, where it is standard teaching. For takotsubo it is physiological reasoning and expert opinion. The 2018 consensus document recommends fluid and avoiding inotropes, nitrates and diuretics, and does not name a vasoconstrictor. Reviews that do name one prefer phenylephrine. Vasopressin is an extrapolation.\n\nPhenylephrine adds load to a ventricle that is already weak, so it is right only while obstruction is the main problem. In takotsubo with shock and no obstruction the advice differs and mechanical support is often preferred. If drugs fail, the next step is mechanical support with a pump such as an Impella. A balloon pump lowers afterload and can worsen the obstruction. [UNVERIFIED: Ghadri et al. 2018 read through a summarizing tool. The reviews that name a vasoconstrictor are listed in TAKO-SEED.md without full citations]"
   },
   {
    "catalog_id": "norepinephrine_drip",
@@ -859,7 +938,7 @@
      "note": "Teaching choice: once steadied the rate comes down and the pressure holds."
     }
    ],
-   "debrief_note": "A short-acting beta blocker slows the heart and reduces the force of the overactive base, which may relieve outflow obstruction. The consensus document says so, and it also says beta blockers are contraindicated in acute severe heart failure with a low ejection fraction and in hypotension.\n\nShe has both. The case treats a beta blocker as discouraged while her pressure is unsupported, and as neither right nor wrong once a vasoconstrictor is holding it. That later decision belongs to the cardiologist. [UNVERIFIED]"
+   "debrief_note": "A short-acting beta blocker slows the heart and reduces the force of the overactive base, which may relieve outflow obstruction. The consensus document says so, and it also says beta blockers are contraindicated in acute severe heart failure with a low ejection fraction and in hypotension.\n\nShe has both. The case treats a beta blocker as discouraged while her pressure is unsupported, and as neither right nor wrong once a vasoconstrictor is holding it. That later decision belongs to the cardiologist. [UNVERIFIED: Ghadri et al. 2018, read through a summarizing tool]"
   },
   {
    "catalog_id": "ultrasound_cardiac",
@@ -900,6 +979,12 @@
      "value": "recommended"
     }
    ],
+   "also_satisfies": [
+    {
+     "id": "chest_rechecked",
+     "when": "flag fluids_given set"
+    }
+   ],
    "debrief_note": "Clear lungs and a normal mediastinum. The clear lungs are what make a fluid bolus safe, and a normal mediastinum is one small point against aortic dissection."
   },
   {
@@ -908,6 +993,12 @@
     {
      "when": null,
      "value": "neutral"
+    }
+   ],
+   "also_satisfies": [
+    {
+     "id": "chest_rechecked",
+     "when": "flag fluids_given set"
     }
    ],
    "debrief_note": "No B-lines. Dry lungs on ultrasound are the bedside evidence that a fluid bolus is safe."
@@ -921,6 +1012,46 @@
     }
    ],
    "debrief_note": "Rises with the shock. Worth repeating once she is supported."
+  },
+  {
+   "catalog_id": "basic_chemistry_chem_7",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "A raised BUN with a normal creatinine fits several days of poor intake. She is dry, which is part of why a small fluid bolus is right for her."
+  },
+  {
+   "catalog_id": "venous_blood_gas",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "The lactate on the gas rises with the shock, as the laboratory lactate does. The simulator reports only the bicarbonate and the lactate on her gas."
+  },
+  {
+   "catalog_id": "arterial_blood_gas",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "The lactate on the gas rises with the shock, as the laboratory lactate does. The simulator reports only the bicarbonate and the lactate on her gas."
+  },
+  {
+   "catalog_id": "fingerstick_blood_sugar",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "Mildly raised, as on the chemistry. Not a result to act on here."
   },
   {
    "catalog_id": "consult_cardiology",
@@ -947,9 +1078,9 @@
    "prompt": {
     "deadline_seconds": 20,
     "guard": "phase is obstructed OR phase is shock_worse OR phase is shock_untreated",
-    "text": "Her pressure has dropped and I'm not sure why. I'd get cardiology on the phone. They will want a twelve-lead and an echo first. Do you want me to call?"
+    "text": "Her pressure is low and I'm not sure why. I'd get cardiology on the phone. They will want a twelve-lead and an echo first. Do you want me to call?"
    },
-   "debrief_note": "Calling cardiology when the pressure falls is the right move in any patient on the way to the catheterization laboratory, and in this one it is the fastest route to the right plan. The cardiologist tells you what to stop and what to start, and comes to the bedside.\n\nIn this case the cardiologist is in a procedure and takes the call only once there is an ECG and a bedside echo to describe. That is how a useful call goes anyway: have the findings before you ring.\n\nAsking for help early in a patient you do not fully understand is a skill, not a failure."
+   "debrief_note": "Calling cardiology when the pressure falls is the right move in any patient on the way to the catheterization laboratory, and in this one it is the fastest route to the right plan. The cardiologist tells you what to stop and what to start, and comes to the bedside.\n\nIn this case the cardiologist is in a procedure and takes the call only once there is an ECG and a bedside echo to describe. That is how a useful call goes anyway: have the findings before you call.\n\nAsking for help early in a patient you do not fully understand is a skill, not a failure."
   },
   {
    "catalog_id": "consult_critical_care",
@@ -964,6 +1095,18 @@
    ],
    "state_changing": true,
    "debrief_note": "Reasonable once she is supported. She goes to the laboratory first."
+  },
+  {
+   "catalog_id": "chest_rechecked",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "display_name": "Chest rechecked after fluid",
+   "hidden": true,
+   "debrief_note": "Not a button. It records that the chest was examined, scanned or filmed after a fluid bolus."
   },
   {
    "catalog_id": "handoff_submit",
@@ -1038,7 +1181,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "The examination that changes the plan. A new harsh systolic murmur at the left sternal edge that is louder with a Valsalva strain and softer with her legs raised behaves like outflow obstruction: it gets louder when the ventricle is emptier. That bedside pattern is taught for hypertrophic cardiomyopathy and is assumed here to carry over. No source was found for it in takotsubo, where the murmur can also be mitral regurgitation. [UNVERIFIED]"
+   "debrief_note": "The examination that changes the plan. A new harsh systolic murmur at the left sternal edge that is louder with a Valsalva strain and softer with her legs raised behaves like outflow obstruction: it gets louder when the ventricle is emptier. That bedside pattern is taught for hypertrophic cardiomyopathy and is assumed here to carry over. No source was found for it in takotsubo, where the murmur can also be mitral regurgitation. [UNVERIFIED: no source was found for the murmur's response to maneuvers in takotsubo]"
   },
   {
    "catalog_id": "exam_pulm",
@@ -1048,7 +1191,13 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Clear. This is what separates her from the takotsubo patient in pulmonary edema, for whom fluid would be wrong."
+   "debrief_note": "Clear. This is what separates her from the takotsubo patient in pulmonary edema, for whom fluid would be wrong.",
+   "also_satisfies": [
+    {
+     "id": "chest_rechecked",
+     "when": "flag fluids_given set"
+    }
+   ]
   },
   {
    "catalog_id": "exam_abd",
@@ -1128,23 +1277,29 @@
    "applies_when": "flag fluids_given set",
    "deadline_seconds": 60,
    "satisfied_by": [
-    "exam_pulm",
-    "ultrasound_lung",
-    "xr_chest"
+    "chest_rechecked"
    ],
-   "nurse_prompt": "That bolus is in. Do you want to listen to her chest again before she gets any more?",
-   "debrief_note": "Fluid in a patient with an ejection fraction of 30 percent is given in small amounts with a reassessment after each one. Her lungs were clear before and stay clear. In a patient whose lungs fill, the fluid stops and the plan changes."
+   "nurse_prompt": "That bolus is in. Do you want to listen to her chest before she gets any more?",
+   "debrief_note": "Fluid in a patient with an ejection fraction of 30 percent is given in small amounts with a reassessment after each one. Listening to her chest, a lung ultrasound or a chest film after the bolus all count. An examination from before the bolus does not. Her lungs were clear before and stay clear. In a patient whose lungs fill, the fluid stops and the plan changes."
   }
  ],
  "prompt_cap_recommendation": {
   "per_phase": 4,
-  "rationale": "Four. On arrival: the monitor at 15 seconds, the ECG at 40, aspirin at 90 and the catheterization laboratory at 130. With a low pressure: cardiology at 20, fluid at 60 and a vasoconstrictor at 80, which are the three the 240-second deterioration rests on and are the earliest."
+  "rationale": "Four. On arrival: the monitor at 15 seconds, the ECG at 40, aspirin at 90 and the catheterization laboratory at 130. The last two fire only once the twelve-lead has resulted. With a low pressure: cardiology at 20, fluid at 45 and a vasoconstrictor at 60, which are the three the 240-second deterioration rests on and are the earliest. On an inotrope the stop prompt at 25 is the second of four, and the catheterization laboratory prompt at 130 is the one the cap drops. In the default mode every figure is tripled: 60, 135 and 180 seconds with a low pressure, all before 240. On arrival in the default mode only the monitor (45) and the ECG (120) prompts fire before the scripted fall at 180."
  },
- "prerequisite_semantics_note": "No case prerequisites. The catalog's vascular access rule is kept.",
+ "prerequisite_semantics_note": "Three case prerequisites, all on consults. Cardiology needs a resulted twelve-lead and a resulted bedside echo (owner's decision). The catheterization laboratory needs a twelve-lead ordered, and then resulted (model choice, 7 October 2026). The catalog's vascular access rule is kept.",
  "content_keys": {
   "exam": {
    "authoring_note": "Section 11.2. Routing follows the catalog map: neck veins on exam_neck, the murmur on exam_card, capillary refill on exam_circ, lung sounds on exam_pulm. The murmur's response to posture is written into the cardiac finding because the catalog has no maneuver for it.",
    "exam_airway": [
+    {
+     "when": "(phase is shock_worse OR phase is shock_untreated)",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Patent. Barely speaking."
+     }
+    },
     {
      "when": null,
      "value": {
@@ -1211,7 +1366,7 @@
      "when": null,
      "value": {
       "kind": "exam_findings",
-      "abnormal": false,
+      "abnormal": true,
       "findings": "Mouth dry. Pupils equal and reactive. No facial droop."
      }
     }
@@ -1232,7 +1387,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Loud harsh systolic murmur, left sternal edge. Louder with Valsalva. No rub. No edema."
+      "findings": "Very loud harsh systolic murmur, left sternal edge. Louder with Valsalva. No rub. No edema."
      }
     },
     {
@@ -1240,7 +1395,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Harsh systolic murmur, left sternal edge, louder than before. Louder with Valsalva. No rub."
+      "findings": "Loud harsh systolic murmur, left sternal edge. Louder with Valsalva. No rub."
      }
     },
     {
@@ -1248,7 +1403,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Systolic murmur, left sternal edge, softer than before. No rub. No edema."
+      "findings": "Soft systolic murmur, left sternal edge. No rub. No edema."
      }
     },
     {
@@ -1428,8 +1583,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Raised. An early troponin does not separate takotsubo from an infarct. The difference appears later, when the peak is lower than the wall motion would predict."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -1451,8 +1605,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Very high, out of proportion to the troponin."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -1607,65 +1760,310 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "A raised urea with a normal creatinine fits several days of poor intake."
+       "comment": "BUN raised with a normal creatinine."
+      }
+     }
+    ]
+   },
+   "venous_blood_gas": {
+    "changes_with_state": true,
+    "rules": [
+     {
+      "when": "phase is obstructed",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "HCO3",
+         "value": "22",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "3.4",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] HCO3 equals the bicarbonate on this pack's chemistry, with the catalog's interval for a gas. Lactate equals this pack's lactate key in the same phase. pH, pCO2, pO2, base excess and oxygen saturation are left out on purpose and need a physician."
+      }
+     },
+     {
+      "when": "phase is shock_worse",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "HCO3",
+         "value": "22",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "5.8",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] HCO3 equals the bicarbonate on this pack's chemistry, with the catalog's interval for a gas. Lactate equals this pack's lactate key in the same phase. pH, pCO2, pO2, base excess and oxygen saturation are left out on purpose and need a physician."
+      }
+     },
+     {
+      "when": "phase is shock_untreated",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "HCO3",
+         "value": "22",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "5.8",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] HCO3 equals the bicarbonate on this pack's chemistry, with the catalog's interval for a gas. Lactate equals this pack's lactate key in the same phase. pH, pCO2, pO2, base excess and oxygen saturation are left out on purpose and need a physician."
+      }
+     },
+     {
+      "when": "phase is steadied",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "HCO3",
+         "value": "22",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "3.6",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] HCO3 equals the bicarbonate on this pack's chemistry, with the catalog's interval for a gas. Lactate equals this pack's lactate key in the same phase. pH, pCO2, pO2, base excess and oxygen saturation are left out on purpose and need a physician."
+      }
+     },
+     {
+      "when": null,
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "HCO3",
+         "value": "22",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "2.6",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] HCO3 equals the bicarbonate on this pack's chemistry, with the catalog's interval for a gas. Lactate equals this pack's lactate key in the same phase. pH, pCO2, pO2, base excess and oxygen saturation are left out on purpose and need a physician."
+      }
+     }
+    ]
+   },
+   "arterial_blood_gas": {
+    "changes_with_state": true,
+    "rules": [
+     {
+      "when": "phase is obstructed",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "HCO3",
+         "value": "22",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "3.4",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] HCO3 equals the bicarbonate on this pack's chemistry, with the catalog's interval for a gas. Lactate equals this pack's lactate key in the same phase. pH, pCO2, pO2, base excess and oxygen saturation are left out on purpose and need a physician."
+      }
+     },
+     {
+      "when": "phase is shock_worse",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "HCO3",
+         "value": "22",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "5.8",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] HCO3 equals the bicarbonate on this pack's chemistry, with the catalog's interval for a gas. Lactate equals this pack's lactate key in the same phase. pH, pCO2, pO2, base excess and oxygen saturation are left out on purpose and need a physician."
+      }
+     },
+     {
+      "when": "phase is shock_untreated",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "HCO3",
+         "value": "22",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "5.8",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] HCO3 equals the bicarbonate on this pack's chemistry, with the catalog's interval for a gas. Lactate equals this pack's lactate key in the same phase. pH, pCO2, pO2, base excess and oxygen saturation are left out on purpose and need a physician."
+      }
+     },
+     {
+      "when": "phase is steadied",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "HCO3",
+         "value": "22",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "3.6",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] HCO3 equals the bicarbonate on this pack's chemistry, with the catalog's interval for a gas. Lactate equals this pack's lactate key in the same phase. pH, pCO2, pO2, base excess and oxygen saturation are left out on purpose and need a physician."
+      }
+     },
+     {
+      "when": null,
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "HCO3",
+         "value": "22",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "2.6",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] HCO3 equals the bicarbonate on this pack's chemistry, with the catalog's interval for a gas. Lactate equals this pack's lactate key in the same phase. pH, pCO2, pO2, base excess and oxygen saturation are left out on purpose and need a physician."
+      }
+     }
+    ]
+   },
+   "fingerstick_blood_sugar": {
+    "changes_with_state": false,
+    "rules": [
+     {
+      "when": null,
+      "value": {
+       "kind": "value",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "Capillary glucose",
+         "value": "148",
+         "unit": "mg/dL",
+         "reference_range": "70-140 (random)",
+         "abnormal": true
+        }
+       ],
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] Equal to the glucose on this pack's chemistry."
       }
      }
     ]
    }
   },
   "imaging": {
-   "authoring_note": "Section 11.4. The chest film is left to the catalog default, which is clear lungs and a normal heart size, and that is intended. Findings only: neither report names takotsubo or obstruction.",
+   "authoring_note": "Section 11.4. Findings only: no report names takotsubo or obstruction. No report carries a comment, because the interface never shows a comment on a report. The interpretation is in each study's debrief note. The ECG report quotes no rate, because three vital effects on the heart rate have no end (authoring 11.4).",
    "ecg_12_lead": {
-    "changes_with_state": true,
+    "changes_with_state": false,
     "rules": [
-     {
-      "when": "phase is obstructed",
-      "value": {
-       "kind": "report",
-       "abnormal": true,
-       "report": "Sinus tachycardia at 124. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Precordial ST elevation meeting activation criteria. Elevation centered on V2 to V5 and II with little reciprocal depression is the pattern described in takotsubo. It does not exclude an occlusion and is not acted on."
-      }
-     },
-     {
-      "when": "phase is shock_worse",
-      "value": {
-       "kind": "report",
-       "abnormal": true,
-       "report": "Sinus tachycardia at 138. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Precordial ST elevation meeting activation criteria. Elevation centered on V2 to V5 and II with little reciprocal depression is the pattern described in takotsubo. It does not exclude an occlusion and is not acted on."
-      }
-     },
-     {
-      "when": "phase is shock_untreated",
-      "value": {
-       "kind": "report",
-       "abnormal": true,
-       "report": "Sinus tachycardia at 138. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Precordial ST elevation meeting activation criteria. Elevation centered on V2 to V5 and II with little reciprocal depression is the pattern described in takotsubo. It does not exclude an occlusion and is not acted on."
-      }
-     },
-     {
-      "when": "phase is steadied",
-      "value": {
-       "kind": "report",
-       "abnormal": true,
-       "report": "Sinus tachycardia at 104. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Precordial ST elevation meeting activation criteria. Elevation centered on V2 to V5 and II with little reciprocal depression is the pattern described in takotsubo. It does not exclude an occlusion and is not acted on."
-      }
-     },
      {
       "when": null,
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Sinus tachycardia at 115. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Precordial ST elevation meeting activation criteria. Elevation centered on V2 to V5 and II with little reciprocal depression is the pattern described in takotsubo. It does not exclude an occlusion and is not acted on."
+       "report": "Sinus tachycardia. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+      }
+     }
+    ]
+   },
+   "xr_chest": {
+    "changes_with_state": false,
+    "rules": [
+     {
+      "when": null,
+      "value": {
+       "kind": "report",
+       "abnormal": false,
+       "report": "Lungs clear. Mediastinum not widened. Heart size normal.",
+       "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] Restates the chest film debrief note and the catalog default."
       }
      }
     ]
@@ -1678,7 +2076,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Apex and mid ventricle do not contract and bulge in systole. Base contracts vigorously. Ejection fraction about 30 percent. Less movement of the mitral leaflet toward the septum than before. No pericardial effusion. Right ventricle normal.",
+       "report": "Apex and mid ventricle do not contract and bulge in systole. Base contracts vigorously. Ejection fraction about 30 percent. Anterior mitral leaflet moves only slightly toward the septum in systole. No pericardial effusion. Right ventricle normal.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
@@ -1688,8 +2086,7 @@
        "kind": "report",
        "abnormal": true,
        "report": "Apex and mid ventricle do not contract and bulge in systole. Base contracts vigorously. Ejection fraction about 30 percent. Anterior mitral leaflet moves toward the septum in systole. No pericardial effusion. Right ventricle normal. Inferior vena cava small.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "A ventricle that is weak at the apex and overactive at the base, with the mitral valve drawn into the outflow tract. With the murmur this is outflow obstruction."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -1710,7 +2107,7 @@
    }
   },
   "consultants": {
-   "authoring_note": "Section 11.5. The cardiologist cannot be reached until the ECG and the echo have both resulted (a prerequisite on the consult), so every rule may speak about both and no pending tier is needed. Rules are ordered steadied, on an inotrope, then by what is already running.",
+   "authoring_note": "Section 11.5. The cardiologist cannot be reached until the ECG and the echo have both resulted (a prerequisite on the consult), so every rule may speak about both and no pending tier is needed. Rules are ordered steadied, on an inotrope, then by what is already running. The catheterization laboratory cannot be activated until the twelve-lead has resulted (two prerequisites on the action, 7 October 2026), so its one reply may speak about the ECG. Its pending tier is the second prerequisite's failure message, which the nurse says while the tracing is still printing.",
    "consult_cardiology": [
     {
      "when": "phase is steadied",
@@ -1739,12 +2136,8 @@
    ],
    "consult_activate_cath_lab": [
     {
-     "when": "study ecg_12_lead resulted",
-     "value": "Catheterization laboratory: Activated. The team is coming in and the interventional cardiologist has the ECG. We will call when the table is ready. Keep her monitored and send her with aspirin on board."
-    },
-    {
      "when": null,
-     "value": "Catheterization laboratory: We can activate, and the cardiologist will want to see a twelve-lead. Is there one?"
+     "value": "Catheterization laboratory: Activated. The team is coming in and the interventional cardiologist has the ECG. We will call when the table is ready. Keep her monitored and send her with aspirin on board."
     }
    ],
    "consult_critical_care": [
@@ -1763,7 +2156,7 @@
   "authoring_notes": {
    "voice": "A 68-year-old retired teacher. Plain, precise, frightened. She does not minimize the pain.",
    "the_daughter": "Quoted in two answers. She says it is nerves. That is a relative's opinion and the case does not endorse it.",
-   "no_global_rule": "No phase is at alertness 2 or 3 and nothing in this case intubates her, so there is no global rule. If a phase is added at alertness 2, add one."
+   "no_global_rule": "No phase is at alertness 2 or 3 and nothing in this case intubates her. The one global rule speaks for her after the handoff, because the list may not be empty. If a phase is added at alertness 2, add it to that rule."
   },
   "global_answer_rules": [
    {
@@ -1784,88 +2177,84 @@
   ],
   "out_of_scope_bank": [
    "Have you ever had a colonoscopy?",
-   "Any blood when you open your bowels?",
    "Are you constipated?",
    "Any heartburn?",
    "Any indigestion after meals?",
-   "Any change in your bowel habit?",
+   "Any trouble swallowing?",
    "Any diarrhea at all?",
    "Have you had piles?",
    "Any yellowing of your skin or eyes?",
+   "Do you get up at night to pass water?",
    "Any blood in your urine?",
-   "Any trouble with your prostate?",
    "Any burning when you pass urine?",
    "Any kidney stones in the past?",
    "Any incontinence?",
+   "When was your last smear test?",
    "Any seizures or fits?",
-   "Any weakness in your arms or legs?",
    "Any pins and needles?",
    "Any numbness anywhere?",
    "Any problems with your speech?",
+   "Any tremor in your hands?",
    "Any trouble with your memory?",
-   "Any double vision?",
-   "Have you ever had a stroke?",
-   "Any back pain?",
    "Any pain in your hands?",
+   "Any pain in your hips?",
    "Any arthritis?",
    "Have you broken any bones?",
    "Any neck pain?",
-   "Any problems with your hearing?",
    "Any ringing or buzzing in your ears?",
+   "Any earache?",
    "Do you wear glasses or contact lenses?",
    "Any blurred vision?",
    "When did you last have your eyes tested?",
-   "Any nosebleeds?",
    "Any rash on your skin?",
+   "Any itching?",
    "Any moles that have changed?",
    "Any hair loss?",
    "When did you last see the dentist?",
-   "Any toothache?",
    "Any mouth ulcers?",
+   "Any lumps or bumps anywhere?",
    "Have you lost weight without trying?",
    "Any excessive thirst?",
    "Have you been feeling low in mood?",
-   "Any anxiety or panic attacks?",
    "How are you sleeping generally?",
+   "Any trouble sleeping?",
    "Have you had a flu vaccine this year?",
    "When was your last tetanus?",
    "Have you had the covid vaccine?",
-   "Have you ever received blood?",
    "Do you have a blood donor card?",
+   "Who is your GP?",
    "Who is your family doctor?",
    "Do you have health insurance?",
    "Have you got your NHS number?",
-   "Do you have a pharmacy you usually use?",
    "Is there anyone we should call for you?",
+   "Who is your next of kin?",
    "Do you have any religious needs we should know about?",
    "Do you have any pets at home?",
    "What do you do for a living?",
-   "What did you do before you retired?",
    "Did you come in by ambulance?",
+   "Is anyone here with you?",
    "Is your family in the waiting room?",
    "How did you get here today?",
    "Is it raining outside?",
-   "Do you have children?",
    "How many kids do you have?",
    "Do you follow any sports?",
    "Do you watch much television?",
    "What do you do to relax?",
-   "Do you have a garden?",
    "Are you comfortable on that trolley?",
+   "Would you like a blanket?",
    "Is the bed at the right height?",
    "Can I get you anything?",
    "What is your date of birth?",
-   "Can you confirm your name for me?",
    "What is your address?",
+   "Do you know why you are here?",
    "How old are you?",
    "Is it okay if the students watch?",
    "Would you prefer a female doctor?",
-   "Have you been waiting long?",
    "Is there anything you would like to ask me?",
+   "What year are you in at university?",
    "What are you studying?",
    "Do you get on with your flatmates?",
    "How much does it cost to park here?",
-   "Who is the prime minister?",
    "What is the date today?"
   ],
   "topics": [
@@ -1922,7 +2311,7 @@
      "One more thing. How long ago did this come on?",
      "Okay, how long ago did this come on?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "what_she_was_doing",
@@ -1954,7 +2343,31 @@
      }
     ],
     "echo": "what I was doing",
-    "volunteer": "'We buried my husband this morning.'"
+    "volunteer": "'We buried my husband this morning.'",
+    "expanded_variants": [
+     "Have you been under any stress?",
+     "Any stress recently?",
+     "Has anything upsetting happened?",
+     "Any bad news lately?",
+     "Has anyone close to you died?",
+     "Has something stressful happened today?",
+     "Emotional stress?",
+     "Any recent stressors?",
+     "Have you had a shock?",
+     "Was there an argument or a fright before this?",
+     "Any big life events lately?",
+     "Has there been a death in the family?",
+     "Stressors?",
+     "What set this off, do you think?",
+     "Did anything trigger this?",
+     "Has anything happened at home?",
+     "One more thing. Have you been under any stress?",
+     "Okay, have you been under any stress?",
+     "Okay, any stress recently?",
+     "Just so I know, any stress recently?",
+     "Before we go on, has anything upsetting happened?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "timing_progression",
@@ -1977,6 +2390,10 @@
      {
       "when": "phase is obstructed OR phase is shock_worse OR phase is shock_untreated",
       "value": "'Worse. I feel faint now.'"
+     },
+     {
+      "when": "phase is steadied",
+      "value": "'It's easing. Not gone, but better than it was.'"
      },
      {
       "when": null,
@@ -2007,7 +2424,7 @@
      "Quick one: how has it changed since it began?",
      "Before we go on, constant or does it come and go?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "character_of_symptoms",
@@ -2060,7 +2477,7 @@
      "Can I ask, character of the symptoms?",
      "Sorry to ask, but character of the symptoms?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "location_of_pain",
@@ -2108,7 +2525,7 @@
      "Okay, where exactly is it?",
      "Just so I know, where exactly is it?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "chest_pain",
@@ -2119,8 +2536,6 @@
      "Any chest tightness?",
      "Any pressure in your chest?",
      "Does it hurt when you breathe in?",
-     "Any pain going into your arm?",
-     "Any palpitations?",
      "Is your chest sore?",
      "Any heart symptoms?",
      "Does your chest feel tight?",
@@ -2131,6 +2546,10 @@
      {
       "when": "phase is obstructed OR phase is shock_worse OR phase is shock_untreated",
       "value": "'Yes. My chest.'"
+     },
+     {
+      "when": "phase is steadied",
+      "value": "'Yes, in the middle of my chest. It's still there, but it's easing.'"
      },
      {
       "when": null,
@@ -2159,7 +2578,7 @@
      "Before we go on, is your chest hurting?",
      "And is your chest hurting?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "radiation_of_pain",
@@ -2176,7 +2595,8 @@
      "Where does the pain travel to?",
      "Does it go into your arm?",
      "Does it go to your jaw or neck?",
-     "Does the pain go through to your back?"
+     "Does the pain go through to your back?",
+     "Any pain going into your arm?"
     ],
     "answer": [
      {
@@ -2207,7 +2627,7 @@
      "Sorry to ask, but does it go anywhere else?",
      "One more thing. Does it go anywhere else?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "severity",
@@ -2230,6 +2650,10 @@
      {
       "when": "phase is obstructed OR phase is shock_worse OR phase is shock_untreated",
       "value": "'Eight.'"
+     },
+     {
+      "when": "phase is steadied",
+      "value": "'Less than it was. It's easing.'"
      },
      {
       "when": "flag analgesia_given set",
@@ -2258,7 +2682,7 @@
      "Can I ask, on a scale of one to ten?",
      "Sorry to ask, but on a scale of one to ten?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "aggravating_relieving",
@@ -2281,6 +2705,10 @@
      {
       "when": "phase is obstructed OR phase is shock_worse OR phase is shock_untreated",
       "value": "'Nothing helps.'"
+     },
+     {
+      "when": "phase is steadied",
+      "value": "'It's easing now. Sitting up or lying back makes no difference, and breathing in doesn't change it.'"
      },
      {
       "when": null,
@@ -2324,7 +2752,7 @@
      "Before we go on, aggravating or relieving factors?",
      "And aggravating or relieving factors?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "back_or_tearing_pain",
@@ -2352,7 +2780,38 @@
      }
     ],
     "echo": "whether it's tearing",
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any back pain?",
+     "Back pain?",
+     "Does your back hurt?",
+     "Is the pain in your back at all?",
+     "Any pain between the shoulder blades?",
+     "Interscapular pain?",
+     "Is there pain in your upper back?",
+     "Does it bore through to the back?",
+     "Any pain in the middle of your back?",
+     "Did the pain start in your back?",
+     "Is your back sore?",
+     "Do you feel it in your back as well?",
+     "Any pain in your back with this?",
+     "Any tearing pain?",
+     "Tearing or ripping pain?",
+     "Any ripping sensation in your chest or back?",
+     "Is it a ripping pain?",
+     "Would you call the pain tearing?",
+     "Tearing chest pain?",
+     "Did it feel like a tear inside?",
+     "Did it hit full strength straight away?",
+     "Was it maximal at onset?",
+     "Sudden and tearing?",
+     "Right. Any back pain?",
+     "Quick one: any back pain?",
+     "Just so I know, does your back hurt?",
+     "I need to know, is the pain in your back at all?",
+     "Right. Is the pain in your back at all?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "sweating",
@@ -2367,7 +2826,8 @@
      "Are you hot or cold?",
      "Did you come over sweaty?",
      "Have you been perspiring?",
-     "Any cold sweats?"
+     "Any cold sweats?",
+     "Any sweats?"
     ],
     "answer": [
      {
@@ -2375,12 +2835,39 @@
       "value": "'Yes. Cold and clammy.'"
      },
      {
+      "when": "phase is steadied",
+      "value": "'I was drenched. It's settled now.'"
+     },
+     {
       "when": null,
       "value": "'I'm drenched. I came over cold and clammy when it started.'"
      }
     ],
     "echo": "sweating",
-    "volunteer": "'And I came over cold and clammy.'"
+    "volunteer": "'And I came over cold and clammy.'",
+    "expanded_variants": [
+     "Are you sweating?",
+     "Have you been sweaty?",
+     "Sweating?",
+     "Diaphoresis?",
+     "Diaphoretic?",
+     "Were you sweating when the pain came on?",
+     "Do you feel clammy?",
+     "Cold and clammy?",
+     "Did you have a cold sweat?",
+     "Have you been sweating a lot?",
+     "Did you get sweaty with the pain?",
+     "Are your clothes wet with sweat?",
+     "Did you come out in a sweat?",
+     "Have you felt clammy?",
+     "Were you sweaty and pale?",
+     "I need to know, are you sweating?",
+     "I need to know, have you been sweaty?",
+     "Right. Have you been sweaty?",
+     "Okay, did you break into a sweat?",
+     "Just so I know, did you break into a sweat?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "nausea_vomiting",
@@ -2427,7 +2914,7 @@
      "Okay, have you thrown up?",
      "Just so I know, have you thrown up?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "breathing",
@@ -2478,7 +2965,7 @@
      "Quick one: short of breath?",
      "Just so I know, any shortness of breath?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "palpitations",
@@ -2523,7 +3010,7 @@
      "Sorry to ask, but heart racing at all?",
      "One more thing. Heart racing at all?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "dizziness_syncope",
@@ -2588,7 +3075,7 @@
      "Okay, dizzy or lightheaded at all?",
      "Just so I know, dizzy or lightheaded at all?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "leg_swelling_and_lying_flat",
@@ -2677,7 +3164,7 @@
      "Before we go on, are your legs swollen?",
      "Quick one: any swelling in your legs?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "fever_and_chills",
@@ -2687,13 +3174,11 @@
      "Have you been shivering?",
      "Did you take your temperature?",
      "Have you had rigors?",
-     "Any sweats?",
      "Have you felt hot and cold?",
      "Have you been shaking?",
      "Any night sweats?",
      "Did you feel feverish?",
      "How high was your temperature?",
-     "Have you been sweating?",
      "Any shaking chills?"
     ],
     "answer": [
@@ -2726,7 +3211,7 @@
      "Right. Fevers, chills, rigors?",
      "Just so I know, any temperature?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "cough_sore_throat",
@@ -2774,7 +3259,7 @@
      "Just so I know, runny nose or sore throat?",
      "I need to know, runny nose or sore throat?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "abdominal_pain",
@@ -2821,7 +3306,7 @@
      "Before we go on, does your belly hurt?",
      "And does your belly hurt?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "headache",
@@ -2864,7 +3349,7 @@
      "Just so I know, any head pain?",
      "Sorry to ask, but is your head sore?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "prior_heart_problems",
@@ -2895,7 +3380,44 @@
     ],
     "echo": "my heart before this",
     "pertinent_negative": true,
-    "volunteer": "'I've never had heart trouble.'"
+    "volunteer": "'I've never had heart trouble.'",
+    "expanded_variants": [
+     "Any heart problems in the past?",
+     "Cardiac history?",
+     "Hx of CAD?",
+     "Any previous MI?",
+     "Have you ever had a heart attack?",
+     "Known coronary disease?",
+     "Do you have a heart murmur?",
+     "Has anyone ever heard a murmur?",
+     "Any stents?",
+     "Have you had bypass surgery?",
+     "Any heart tests before?",
+     "Have you ever had a cardiac catheterization?",
+     "Any history of heart disease?",
+     "Have you had this kind of pain before?",
+     "Any valve disease?",
+     "Has your heart ever been checked?",
+     "Any trouble with your heart before today?",
+     "Hx of CHF?",
+     "Known heart failure?",
+     "Have you been told your heart is weak?",
+     "Has anyone said you have a weak heart?",
+     "Do you have a heart condition?",
+     "Have you ever had fluid on the lungs?",
+     "Any previous heart problems?",
+     "History of cardiac failure?",
+     "Any known cardiomyopathy?",
+     "Have you had an echo before?",
+     "Any history of a weak heart muscle?",
+     "Do you have heart failure?",
+     "I need to know, any heart problems in the past?",
+     "Can I ask, cardiac history?",
+     "Sorry to ask, but cardiac history?",
+     "One more thing. Any previous MI?",
+     "Okay, any previous MI?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "past_medical_history",
@@ -2949,7 +3471,7 @@
      "Can I ask, any medical problems?",
      "Sorry to ask, but any medical problems?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "past_surgical_history",
@@ -2979,7 +3501,6 @@
      }
     ],
     "echo": "operations",
-    "pertinent_negative": true,
     "expanded_variants": [
      "PSH?",
      "Past surgical history?",
@@ -2997,7 +3518,7 @@
      "One more thing. Any operations?",
      "I need to know, ever had surgery?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "current_medications",
@@ -3048,7 +3569,7 @@
      "I need to know, current medications?",
      "Before we go on, what do you take?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "bleeding_risk",
@@ -3057,6 +3578,8 @@
      "Are you on any blood thinners?",
      "Do you take warfarin?",
      "Any history of stroke?",
+     "Have you ever had a stroke?",
+     "Any blood when you open your bowels?",
      "Have you ever had bleeding in your brain?",
      "Any stomach ulcers or bleeding?",
      "Any recent surgery?",
@@ -3102,7 +3625,7 @@
      "Quick one: anticoagulated?",
      "Okay, on anticoagulation?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "allergies",
@@ -3150,7 +3673,7 @@
      "Right. Are you allergic to anything?",
      "Quick one: are you allergic to anything?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "social_history",
@@ -3232,7 +3755,7 @@
      "Can I ask, any drugs, alcohol, smoking?",
      "Sorry to ask, but any drugs, alcohol, smoking?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "family_history",
@@ -3281,7 +3804,7 @@
      "And any heart problems in the family?",
      "Can I ask, any heart problems in the family?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "last_oral_intake",
@@ -3330,7 +3853,7 @@
      "One more thing. Last PO intake?",
      "Okay, last PO intake?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "functional_baseline",
@@ -3382,7 +3905,7 @@
      "Okay, exercise tolerance?",
      "Quick one: baseline function?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "travel_history",
@@ -3438,7 +3961,7 @@
      "Okay, have you traveled?",
      "Just so I know, have you traveled?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "code_status_goals",
@@ -3488,7 +4011,7 @@
      "And what would you want if things got worse?",
      "Can I ask, what would you want if things got worse?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    }
   ],
   "must_ask": [
@@ -3570,18 +4093,24 @@
   "correct_diagnosis": {
    "catalog_id": "dx_st_elevation_myocardial_infarction",
    "label": "ST-elevation myocardial infarction",
-   "explanation": "This is the right working diagnosis to hand over, and it is not what she had. Chest pain with anterior ST elevation is treated as an occluded coronary artery until an angiogram shows otherwise.\n\nHer angiogram showed no obstruction and an apex that ballooned in systole: takotsubo cardiomyopathy, brought on by the death of her husband. Nothing available to you could have told the two apart. The emotional trigger, the very high natriuretic peptide and wall motion that crossed arterial territories all point toward takotsubo, and none of them is reliable enough to keep a patient out of the laboratory.\n\nThis case scores the working diagnosis you should have acted on. Naming takotsubo first is scored as defensible, because it turned out to be true and could only have been a guess. Decided by the directing physician."
+   "explanation": "This is the right working diagnosis to hand over, and it is not what she had. Chest pain with anterior ST elevation is treated as an occluded coronary artery until an angiogram shows otherwise.\n\nHer angiogram showed no obstruction and an apex that ballooned in systole: takotsubo cardiomyopathy, brought on by the death of her husband. Nothing available to you could have told the two apart. The emotional trigger, the very high natriuretic peptide and wall motion that crossed arterial territories all point toward takotsubo, and none of them is reliable enough to keep a patient out of the laboratory.\n\nThis case scores the working diagnosis you should have acted on. Naming takotsubo first is scored as defensible, because it turned out to be true and could only have been a guess.",
+   "_note": "The scoring of the two diagnoses was decided by the directing physician, 6 October 2026."
   },
   "additional_diagnoses": [
    {
     "catalog_id": "dx_cardiogenic_shock",
     "label": "Cardiogenic shock",
-    "explanation": "Her pressure fell with cold hands, a rising lactate and an ejection fraction of 30 percent. Saying so tells the laboratory to expect an unstable patient. Say with it that the shock was from outflow obstruction and got worse with inotropes, because that changes what they reach for."
+    "explanation": "Her pressure fell with cold hands, a rising lactate and an ejection fraction of 30 percent. Saying so tells the laboratory to expect an unstable patient. Say with it that the shock was from outflow obstruction, which inotropes make worse, because that changes what they reach for."
    },
    {
     "catalog_id": "dx_takotsubo_cardiomyopathy",
     "label": "Takotsubo cardiomyopathy",
     "explanation": "Worth naming as a possibility beside the infarct. The trigger, the echo and the murmur all suggest it, and a team that has it in mind will do a ventriculogram and will not be surprised by clean arteries."
+   },
+   {
+    "catalog_id": "dx_left_ventricular_outflow_tract_obstruction",
+    "label": "Left ventricular outflow tract obstruction",
+    "explanation": "Her low pressure came from the base of the ventricle squeezing the outflow tract shut. Naming it tells the next team why fluid and a vasoconstrictor helped, and why a nitrate or an inotrope would make her worse."
    }
   ],
   "alternative_diagnoses": [
@@ -3685,7 +4214,12 @@
      "ultrasound_cardiac",
      "ultrasound_lung",
      "xr_chest",
-     "nt_probnp"
+     "nt_probnp",
+     "lactate",
+     "basic_chemistry_chem_7",
+     "venous_blood_gas",
+     "arterial_blood_gas",
+     "fingerstick_blood_sugar"
     ]
    },
    {
@@ -3735,9 +4269,8 @@
    "case_complete"
   ],
   "intended_path_note": "The intended path passes through the obstructed phase, which arrives on a clock for every learner. A learner who has fluid and a vasoconstrictor running before it arrives goes straight to steadied.",
-  "trap_actions": [
-   "lorazepam_bolus"
-  ],
+  "trap_actions": [],
+  "trap_actions_note": "Empty on purpose. Lorazepam was listed, and the debrief then printed it under things that looked reasonable and were not, while its own note says a small dose is not wrong.",
   "cross_cutting_teaching_points": [
    "Chest pain with ST elevation is an occluded artery until an angiogram says otherwise. A funeral, a panic and a family's explanation do not change the pathway.",
    "Before treating a low pressure in a weak heart, listen to it and look at it. A new systolic murmur can mean the usual treatment will make the patient worse.",

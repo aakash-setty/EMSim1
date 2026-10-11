@@ -14,22 +14,29 @@ from case_2_actions import ACTIONS, FOLLOW_UPS
 from case_3_content import EXAM, GENERAL_STATUS, PATIENT_VISUAL, LABS, IMAGING, CONSULTANTS
 from case_4_interview import (TOPICS, GLOBAL_RULES, OUT_OF_SCOPE, AUTHORING_NOTES, KEY_TOPICS,
                               VOLUNTEER_SETTINGS)
-try:
-    from case_4_interview import OUT_OF_SCOPE_BANK
-except ImportError:          # before catalog/expand_interview_variants.py has run
-    OUT_OF_SCOPE_BANK = []
+from case_4_interview import TOPIC_MAP, EXTRA_COVERED
 from case_5_handoff import HANDOFF, DEBRIEF, PROVENANCE
 
 PACK = sys.argv[1] if len(sys.argv) > 1 else HERE
+
+# The interview bank, expanded from the shared phrasing library at build time. The
+# withheld slice becomes the tuning file. Nothing is stored between builds.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(HERE)), "catalog"))
+from interview_expand import expand_topics, apply_expansion, tune_file, report   # noqa: E402
+EXPANSION = expand_topics("TSS", TOPICS, TOPIC_MAP, EXTRA_COVERED, HERE)   # the held-out file is a source, read beside the sources
+apply_expansion(TOPICS, EXPANSION)
+OUT_OF_SCOPE_BANK = EXPANSION["oos_bank"]
 
 CASE = {
  "case_id": "toxic-shock-tampon-01",
  "schema_version": "0.3",
  "authored_against": {
-   "system_design": "system-design-v2.md (v0.9)",
-   "authoring_requirements": "case-authoring-requirements.md (v0.9, with 6.8 and the v0.21 note)",
-   "action_catalog": "action-catalog.json (0.2-draft, plus Remove Vaginal Foreign Body added for this case)",
-   "diagnosis_catalog": "diagnosis-catalog.json",
+   "system_design": "system-design-v2.md (as of v0.24)",
+   "authoring_requirements": (
+     "case-authoring-requirements.md (v0.24). Drafted on 6 October 2026 against the v0.21 "
+     "text and brought to the v0.24 rules on 7 October 2026 after the audit."),
+   "action_catalog": "action-catalog.json (0.3-draft, 305 entries)",
+   "diagnosis_catalog": "diagnosis-catalog.json (499 entries)",
    "design_guide": "EMSim case design guide (Claude Doc, 5 October 2026)",
  },
  "provenance": PROVENANCE,
@@ -64,22 +71,28 @@ CASE = {
  "flag_namespace_note": (
    "Flags are permanent. fluids_given is set by any crystalloid bolus and fluids_30mlkg by "
    "the second one. pressor_running is set by norepinephrine, the three infusions it covers, "
-   "and dopamine. source_removed is set only by removing the tampon. discharge_attempted is "
-   "set by the hidden action the Handoff tab logs when discharge is chosen early."),
+   "and dopamine. No action clears it: the stop action is refused. source_removed is set only "
+   "by removing the tampon. discharge_attempted is set by the hidden action the Handoff tab "
+   "logs when discharge is chosen early. A maintenance infusion sets no flag."),
  "case_actions": ACTIONS,
  "follow_ups": FOLLOW_UPS,
  "prompt_cap_recommendation": {
    "per_phase": 3,
    "rationale": (
      "Three. In the arrival phase a learner who does nothing hears the monitor at 20 "
-     "seconds, the line at 45 and fluid at 80, and the fluid escalation at 170 is exempt "
-     "from the cap. In the hypotensive phase the vasopressor prompt at 30 is the one the "
-     "240-second deterioration rests on and it is the earliest. In the supported phase the "
-     "source prompt at 75 is the one the 270-second deterioration rests on."),
+     "seconds, the line at 45 and fluid at 60, and the fluid escalation at 170 is exempt "
+     "from the cap. In the hypotensive phase the vasopressor prompt at 30 and the fluid "
+     "prompt at 60 are the two the 240-second deterioration rests on, and with the line at "
+     "45 they are the first three. In the supported phase the source prompt at 60 is the "
+     "one the 270-second deterioration rests on and it is the earliest. In the default mode "
+     "every one of those is multiplied by three and still lands before its exit: 180 of "
+     "300, 90 and 180 of 240, 180 of 270. The vancomycin prompt at 110 is the fourth in the "
+     "two shock phases on the do-nothing path and the cap silences it there."),
  },
  "prerequisite_semantics_note": (
-   "One case prerequisite: the pelvic examination before removing a vaginal foreign body. "
-   "The catalog's vascular access and intubation prerequisites are kept."),
+   "Two case prerequisites: the pelvic examination before removing a vaginal foreign body, "
+   "and a running vasopressor before one can be stopped. The catalog's vascular access and "
+   "intubation prerequisites are kept."),
  "content_keys": {
    "exam": EXAM,
    "general_status": GENERAL_STATUS,
@@ -98,7 +111,7 @@ CASE = {
    "key_topics": KEY_TOPICS,
    "key_topics_note": (
      "Model judgment, unreviewed. Nine of forty-three: the topics whose answers change what "
-     "the learner should do."),
+     "the learner should do. Awaiting a physician's signature."),
  },
  "handoff": HANDOFF,
  "debrief_configuration": DEBRIEF,
@@ -117,17 +130,55 @@ COVERAGE = {
             "scores. The note says norepinephrine is first. Dopamine is its own action "
             "because it is discouraged."),
  },
+ "stop_norepinephrine": {
+   "also_covers": ["stop_epinephrine", "stop_vasopressin", "stop_phenylephrine",
+                   "stop_dopamine"],
+   "note": ("v0.24 audit. The stop entry of every infusion that sets pressor_running. One "
+            "case action refuses all five, so no stop button is an unscored way round the "
+            "lesson (authoring 3.4)."),
+ },
+ "normal_saline_infusion": {
+   "also_covers": ["lactated_ringer_s_infusion"],
+   "note": ("v0.24 audit. A maintenance infusion of either crystalloid is the same act "
+            "here: not a bolus, no flag, no credit. D5 NS bolus and D5 1/2 NS infusion are "
+            "left unbound and are an open question for the physician."),
+ },
  "ceftriaxone": {
-   "also_covers": ["cefepime", "piperacillin_tazobactam", "meropenem"],
+   "also_covers": ["cefepime", "piperacillin_tazobactam", "meropenem", "cefotaxime"],
    "note": ("Broad beta-lactam cover while the source is unknown. Accepted without penalty "
-            "on the directing physician's decision, and not a substitute for vancomycin."),
+            "on the directing physician's decision, and not a substitute for vancomycin. "
+            "Cefotaxime added on 7 October 2026 after the audit, as in MGCA."),
  },
  "metoprolol_bolus": {
    "also_covers": ["esmolol_drip", "labetalol_bolus", "labetalol_drip", "propranolol_bolus",
-                   "diltiazem_bolus"],
+                   "diltiazem_bolus", "digoxin_bolus", "amiodarone_bolus_infusion"],
    "note": ("Every route to slowing a compensatory tachycardia carries the same tag, effect "
-            "and note, so none is an unscored way round the lesson."),
+            "and note, so none is an unscored way round the lesson. Digoxin and amiodarone "
+            "added on 7 October 2026 after the audit, under the directing physician's "
+            "decision that rate control is discouraged. Adenosine is left unbound and is an "
+            "open question for the physician."),
  },
+ "furosemide_40_mg_iv": {
+   "also_covers_group": "loop_diuretic",
+   "note": ("v0.24 audit. Bound through the catalog's loop diuretic group, so the tag "
+            "follows the group as the catalog grows (authoring 3.4)."),
+ },
+}
+
+# Case actions that are not catalog entries and are not buttons. Each needs a row with a
+# placement on the handoff tab or the build does not create it (authoring 6.9 and 8.2).
+HIDDEN_ROWS = {
+ "attempt_discharge": {
+   "note": ("Not a catalog action and not a button. Logged by the Handoff tab when "
+            "discharge is chosen in the two early phases (handoff."
+            "disposition_intercepts). Hidden from every tab and from search."),
+   "unmatched_narration": "I'll get her up and dressed."},
+ "sedation_after_tube": {
+   "note": ("Not a catalog action and not a button. Nothing presses it. A sedative or "
+            "analgesic bolus given with the tube in credits it through also_satisfies, and "
+            "the post-intubation sedation follow-up is discharged by it (authoring 8.2). "
+            "Hidden from every tab and from search."),
+   "unmatched_narration": "Sedation is running."},
 }
 
 BINDING_ROWS = []
@@ -140,14 +191,12 @@ for a in ACTIONS:
           "unmatched_placement": {"tab": "handoff", "group": "Not in the catalog"},
           "unmatched_narration": "I'll get the notes together for the unit."})
         continue
-    if cid == "attempt_discharge":
+    if cid in HIDDEN_ROWS:
         BINDING_ROWS.append({
           "case_id": cid, "catalog_id": None,
-          "note": ("Not a catalog action and not a button. Logged by the Handoff tab when "
-                   "discharge is chosen in the two early phases (handoff."
-                   "disposition_intercepts). Hidden from every tab and from search."),
+          "note": HIDDEN_ROWS[cid]["note"],
           "unmatched_placement": {"tab": "handoff", "group": "Not in the catalog"},
-          "unmatched_narration": "I'll get her up and dressed."})
+          "unmatched_narration": HIDDEN_ROWS[cid]["unmatched_narration"]})
         continue
     row = {"case_id": cid, "catalog_id": cid}
     row.update(COVERAGE.get(cid, {}))
@@ -175,5 +224,10 @@ if __name__ == "__main__":
     with open(bpath, "w") as f:
         json.dump(BINDING, f, indent=1, ensure_ascii=False)
         f.write("\n")
+    tpath = os.path.join(PACK, "TSS-matcher-tune-questions.json")
+    with open(tpath, "w") as f:
+        json.dump(tune_file("TSS", EXPANSION), f, indent=1, ensure_ascii=False)
+        f.write("\n")
+    print(report(EXPANSION, verbose=False))
     print("wrote", cpath, os.path.getsize(cpath), "bytes")
     print("wrote", bpath, len(BINDING_ROWS), "rows")

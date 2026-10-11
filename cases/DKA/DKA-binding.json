@@ -1,12 +1,12 @@
 {
  "binding_version": "0.1",
  "case_id": "dka-hypokalemia-01",
- "catalog_version": "0.2-draft",
+ "catalog_version": "0.3-draft",
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
-  "exact": 53,
+  "exact": 57,
   "mapped": 0,
-  "unmatched": 1
+  "unmatched": 4
  },
  "group_coverage": {
   "normal_saline_1l_bolus": [
@@ -38,6 +38,24 @@
   {
    "case_id": "second_iv",
    "catalog_id": "second_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "central_venous_catheter_triple_lumen",
+   "catalog_id": "central_venous_catheter_triple_lumen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "central_venous_catheter_cordis",
+   "catalog_id": "central_venous_catheter_cordis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intraosseous_line",
+   "catalog_id": "intraosseous_line",
    "status": "exact",
    "note": null
   },
@@ -138,6 +156,12 @@
    "note": null
   },
   {
+   "case_id": "ultrasound_cardiac",
+   "catalog_id": "ultrasound_cardiac",
+   "status": "exact",
+   "note": null
+  },
+  {
    "case_id": "ct_abdomen",
    "catalog_id": "ct_abdomen",
    "status": "exact",
@@ -206,6 +230,18 @@
    "note": null
   },
   {
+   "case_id": "early_insulin",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited through also_satisfies when rapid insulin is ordered in the arrival phase. Read by a transition in potassium_replaced. Not a button."
+  },
+  {
+   "case_id": "insulin_restart",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited through also_satisfies when an insulin infusion or a subcutaneous dose is ordered in the recovering phase. Read by the exit of that phase, and it carries the restart prompt. Not a button."
+  },
+  {
    "case_id": "stop_insulin",
    "catalog_id": "stop_insulin",
    "status": "exact",
@@ -267,6 +303,12 @@
    "catalog_id": "consult_critical_care",
    "status": "exact",
    "note": null
+  },
+  {
+   "case_id": "repeat_potassium_level",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited through also_satisfies when a chemistry is sent once the potassium has run in. Read by the repeat-level follow-up. Not a button."
   },
   {
    "case_id": "handoff_submit",

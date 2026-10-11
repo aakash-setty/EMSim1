@@ -519,6 +519,26 @@
   },
   {
    "register": "expansion",
+   "q": "Did you eat anything out of the ordinary?",
+   "expect": "suspect_meal"
+  },
+  {
+   "register": "expansion",
+   "q": "Did anyone else eat the same food?",
+   "expect": "suspect_meal"
+  },
+  {
+   "register": "expansion",
+   "q": "What makes you think it is food poisoning?",
+   "expect": "suspect_meal"
+  },
+  {
+   "register": "expansion",
+   "q": "Quick one: any suspicious food?",
+   "expect": "suspect_meal"
+  },
+  {
+   "register": "expansion",
    "q": "Where have you been recently?",
    "expect": "travel_history"
   },
@@ -551,6 +571,21 @@
    "register": "expansion",
    "q": "Quick one: any recent hospital visits?",
    "expect": "recent_antibiotics_healthcare"
+  },
+  {
+   "register": "expansion",
+   "q": "Any abscesses?",
+   "expect": "wounds_and_skin"
+  },
+  {
+   "register": "expansion",
+   "q": "Any sores on your skin?",
+   "expect": "wounds_and_skin"
+  },
+  {
+   "register": "expansion",
+   "q": "Can I ask, any cuts or scrapes?",
+   "expect": "wounds_and_skin"
   },
   {
    "register": "expansion",
@@ -604,47 +639,47 @@
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Have you broken any bones?",
+   "q": "Any problems with your hearing?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "When did you last have your eyes tested?",
+   "q": "Any hair loss?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any mouth ulcers?",
+   "q": "Any excessive thirst?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "How are you sleeping generally?",
+   "q": "Do you have a blood donor card?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Do you have health insurance?",
+   "q": "Is there anyone we should call for you?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "What do you do for a living?",
+   "q": "Is anyone here with you?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "What do you do to relax?",
+   "q": "Is the bed at the right height?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Can you confirm your name for me?",
+   "q": "How old are you?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Have you been waiting long?",
+   "q": "What are you studying?",
    "expect": null
   }
  ]

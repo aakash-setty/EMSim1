@@ -57,6 +57,15 @@ META = {
  },
  "complaint": "Confusion and fever",
  "category": "Toxicology",
+ "library": {
+   "tempo": "minutes: the seizure and the arrest run on a clock",
+   "uncertainty": "the diagnosis, anticholinergic delirium against sodium channel blockade, and whether to give the antidote",
+   "right_answer": "do less: no physostigmine, treat the QRS",
+   "danger": "behind the fever and the confusion, on the ECG",
+   "setting": "18 F, EMS to the resuscitation bay, her mother answers for her, tracings shown as pictures",
+   "feel": "tense",
+   "note": "The six variety dimensions of docs/case-design-guide.md ('Choosing a case'), as this case reads. Printed in docs/generated/case-index.md so a new case can say how it differs. Descriptive, not clinical: no physician has reviewed the wording."
+ },
 }
 
 PATIENT = {

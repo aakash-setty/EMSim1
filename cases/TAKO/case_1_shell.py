@@ -50,6 +50,15 @@ META = {
  },
  "complaint": "Chest pain",
  "category": "Cardiovascular",
+ "library": {
+   "tempo": "minutes: obstruction and shock run on a clock",
+   "uncertainty": "the diagnosis, occlusion against stress cardiomyopathy, and which treatment makes the shock worse",
+   "right_answer": "treat it as an occlusion, call cardiology, avoid the drugs that look right",
+   "danger": "created by the treatment",
+   "setting": "68 F, EMS to the resuscitation bay, a funeral in the story",
+   "feel": "tender",
+   "note": "The six variety dimensions of docs/case-design-guide.md ('Choosing a case'), as this case reads. Printed in docs/generated/case-index.md so a new case can say how it differs. Descriptive, not clinical: no physician has reviewed the wording."
+ },
 }
 
 PATIENT = {
@@ -59,33 +68,34 @@ PATIENT = {
  "background": (
    "Retired schoolteacher. Treated high blood pressure and high cholesterol, on amlodipine "
    "and atorvastatin. No known heart disease and no murmur ever mentioned. Never smoked. "
-   "Father had a heart attack at 70. No allergies.\n\n"
+   "Father had a heart attack at 70. No allergies. Gallbladder removed twenty years ago. "
+   "Three children. Walks two miles a day and had a routine checkup in the spring.\n\n"
    "Her husband of 41 years died five days ago. She has barely eaten or drunk since. At "
    "the reception after his funeral, about an hour ago, she developed crushing central "
    "chest pain going into her left arm and jaw, with sweating, nausea and breathlessness. "
    "Her daughter thinks it is grief and exhaustion and says so to everyone."),
  "presenting_vitals_source": "Inherited from phase 'presentation'.",
  "presenting_appearance": (
-   "A woman in a black dress, sitting upright on the trolley, pale and sweating, one fist "
+   "A woman in a black dress, sitting upright on the stretcher, pale and sweating, one fist "
    "against her breastbone. She answers in short sentences. Her daughter is beside her "
    "holding her other hand."),
  "ems_handover_text": (
    "Sixty-eight year old woman, crushing central chest pain for about an hour, came on at "
    "her husband's funeral reception. Radiates to the left arm and jaw, with sweating and "
    "nausea. Hypertension and high cholesterol. Rate 115, pressure 96 over 60 with us. We "
-   "gave nothing, she hadn't got a line when we left. Daughter thinks it's stress."),
+   "gave nothing, she didn't have a line when we left. Daughter thinks it's stress."),
  "arrival_handover": (
    "Sixty-eight year old lady, chest pain for about an hour, came on at her husband's "
    "funeral. Her daughter's with her and says she's been in a state all week."),
  "handover_authoring_note": (
-   "Section 3.2. Two sentences, 32 words. No vital sign, no past history, no medication, "
+   "Section 3.2. Two sentences, 29 words. No vital sign, no past history, no medication, "
    "no pertinent negative. It carries the misleading frame on purpose: the crew repeats "
    "the daughter's explanation, as crews do."),
 }
 
 
 def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp, distress, alert,
-          transitions, terminal=False, st_mv=0.3, **kw):
+          transitions, terminal=False, **kw):
     d = {
       "id": pid, "label": label, "short_label": short, "clinical_description": desc,
       "vitals": {"heart_rate": hr, "systolic_bp": sbp, "diastolic_bp": dbp,
@@ -94,13 +104,12 @@ def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp, distress, alert
                      "pupil_size": "normal", "pupil_reactivity": "reactive"},
       "rhythm": "regular",
       "ecg": {"pattern": "organised", "p_waves": True, "qrs_ms": 92, "qtc_ms": 470,
-              "st_mv": st_mv,
-              "author_note": ("Sinus tachycardia, narrow complexes. Lead II shows no ST "
-                              "elevation of 1 mm in the report, so the monitor lead is drawn "
-                              "with 0.1 mV. Model output.")},
+              "st_mv": 0.1,
+              "author_note": ("Sinus tachycardia, narrow complexes. The report gives 1 mm of "
+                              "ST elevation in lead II, so the monitor lead is drawn with "
+                              "0.1 mV. Model output.")},
       "terminal": terminal, "transitions": transitions,
     }
-    d["ecg"]["st_mv"] = 0.1
     d.update(kw)
     return d
 
@@ -114,8 +123,10 @@ TREATED = FLUID + " AND " + VASO
 # An inotrope that has been started and not stopped. Flags are permanent, so "stopped" is
 # its own flag and "active" is the pair.
 # Positive guard only: the validator reads a negated flag in a timed guard as a
-# deterioration on inaction. An inotrope moves her to shock_worse, which she leaves only
-# once it has been stopped, so she is never back in a phase that tests this flag.
+# deterioration on inaction. So this guard cannot see a stop. Known limits, pinned by
+# tests and listed in TAKO-SEED.md section 7: an inotrope stopped inside the ten-second
+# window still sends her to shock_worse, and an inotrope started less than ten seconds
+# before a transition to steadied does not prevent it.
 ACTIVE = "flag inotrope_given set"
 CARDS = "flag cardiology_called set"
 
@@ -132,7 +143,9 @@ TAKEOVER_RATIONALE = (
   "and help, because this is a hard case. Ninety seconds after a call that is made, or was "
   "already made, when the pressure is low. A delayed consequence of the learner's own "
   "action, so the five-second floor applies. Ninety seconds leaves a learner who wants to "
-  "act on the cardiologist's advice time to do it first. Model output for the number.")
+  "act on the cardiologist's advice time to do it first. The clock belongs to one phase: a "
+  "call made on arrival starts counting again when the pressure falls. Model output for "
+  "the number.")
 
 PHASES = [
  phase("presentation",
@@ -145,8 +158,8 @@ PHASES = [
    [HANDOFF_T,
     {"when": ACTIVE,
      "after_seconds": 10, "measured_from": "guard_true", "to": "shock_worse",
-     "narration": ("She's worse since that infusion went up. Her rate is 138, her pressure "
-                   "is 70 over 42 and she's confused."),
+     "narration": ("She's worse since that inotrope went in. Her rate is up, her pressure "
+                   "is down and she's confused."),
      "debrief_note": (
        "An inotrope made her worse within seconds. Her ventricle is weak at the apex and "
        "overactive at the base. Driving it harder narrowed the outflow tract further, and "
@@ -160,8 +173,8 @@ PHASES = [
        "speed are teaching choices. Model output.")},
     {"when": "flag nitrate_given set",
      "after_seconds": 10, "measured_from": "guard_true", "to": "obstructed",
-     "narration": ("Her pressure has dropped since the nitro. 82 over 50, rate 124, and "
-                   "she says she feels faint."),
+     "narration": ("Her pressure has dropped since that vasodilator and her rate is up. "
+                   "She says she feels faint."),
      "debrief_note": (
        "A nitrate dropped her pressure. Nitrates lower the filling of the heart and the "
        "resistance it pumps against. In outflow obstruction a smaller, emptier ventricle "
@@ -172,10 +185,27 @@ PHASES = [
        "A delayed consequence of the learner's own action. She would have reached this "
        "phase anyway at 180 seconds. The nitrate brings it forward and gives it a cause. "
        "Model output.")},
+    {"when": ACTIVE + " OR flag nitrate_given set",
+     "after_seconds": 180, "measured_from": "phase_entry", "to": "obstructed",
+     "narration": ("Her pressure has fallen and her rate is up. She's gone gray and I can "
+                   "hear that murmur from here."),
+     "debrief_note": (
+       "Her pressure fell at the moment this illness makes it fall. A nitrate or an "
+       "inotrope had been given seconds before, and what that drug does to an obstructed "
+       "outflow tract is described under the drug."),
+     "author_rationale": (
+       "Added on 7 October 2026 to close a race between timed rules (authoring 5.4). A "
+       "nitrate or an inotrope given less than ten seconds before the scripted fall, with "
+       "fluid and a vasoconstrictor already running, used to send her straight to steadied "
+       "with the wrong drug's effect on the monitor and a nurse line that said her pressure "
+       "was holding. Now the fall happens first and the wrong drug acts from the "
+       "obstructed phase, as it does at every other time. Same clock as the two rules "
+       "below, so the owner's 180 seconds is unchanged. A positive guard, so it asks for "
+       "no prompt. Model output.")},
     {"when": TREATED,
      "after_seconds": 180, "measured_from": "phase_entry", "to": "steadied",
-     "narration": ("Her pressure dipped for a minute and the vasoconstrictor has held it. "
-                   "She's 100 over 62 with a rate of 104."),
+     "narration": ("Her pressure is holding on the vasoconstrictor and her rate has come "
+                   "down."),
      "debrief_note": (
        "The fall in pressure that this illness produces arrived and was already treated, "
        "because fluid and a vasoconstrictor were running. Acting on the murmur and the "
@@ -185,8 +215,8 @@ PHASES = [
        "moment whatever was done. Model output.")},
     {"when": None,
      "after_seconds": 180, "measured_from": "phase_entry", "to": "obstructed",
-     "narration": ("Her pressure is falling. 82 over 50, rate 124. She's gone gray and I "
-                   "can hear that murmur from here."),
+     "narration": ("Her pressure has fallen and her rate is up. She's gone gray and I can "
+                   "hear that murmur from here."),
      "debrief_note": (
        "Her pressure fell without anything being given. This is the outflow obstruction "
        "declaring itself, and it is not a mistake on your part.\n\n"
@@ -201,8 +231,8 @@ PHASES = [
      "unguarded_rationale": (
        "Without this rule a careful learner who never gives a nitrate or an inotrope never "
        "meets the third learning goal. The phase it leads to is recoverable, the nurse "
-       "recommends cardiology within twenty seconds of it, and the cardiologist gives the "
-       "plan and will take over.")}],
+       "recommends cardiology twenty seconds after it in easy mode and sixty seconds after "
+       "it in the default mode, and the cardiologist gives the plan and will take over.")}],
    ),
 
  phase("obstructed",
@@ -214,8 +244,8 @@ PHASES = [
    [HANDOFF_T,
     {"when": ACTIVE,
      "after_seconds": 10, "measured_from": "guard_true", "to": "shock_worse",
-     "narration": ("She's worse since that infusion went up. Rate 138, pressure 70 over 42, "
-                   "and she's confused."),
+     "narration": ("She's worse since that inotrope went in. Her rate is up, her pressure "
+                   "is down and she's confused."),
      "debrief_note": (
        "An inotrope made her worse. The base of her heart was already squeezing hard into "
        "a narrow outflow tract. More contractility and a faster rate narrowed it further.\n\n"
@@ -224,8 +254,8 @@ PHASES = [
      "author_rationale": "As for the same rule on arrival. Model output."},
     {"when": TREATED,
      "after_seconds": 10, "measured_from": "guard_true", "to": "steadied",
-     "narration": ("That's working. She's 100 over 62, her rate is down to 104 and the "
-                   "murmur is softer."),
+     "narration": ("That's working. Her pressure is up, her rate is down and the murmur "
+                   "is softer."),
      "debrief_note": (
        "Fluid and a vasoconstrictor opened the outflow tract. A fuller ventricle and a "
        "higher resistance to pump against hold the obstruction apart, and the slower rate "
@@ -238,23 +268,30 @@ PHASES = [
        "titration of several minutes. Model output.")},
     {"when": CARDS,
      "after_seconds": 90, "measured_from": "guard_true", "to": "steadied",
-     "narration": ("Cardiology is at the bedside and has taken over. They've given 250 of "
-                   "fluid and started phenylephrine. She's 100 over 62, rate 104."),
+     "narration": ("Cardiology is at the bedside and has taken over. They've given a small "
+                   "fluid bolus and have a vasoconstrictor running. Her pressure is up and "
+                   "her rate is down."),
      "debrief_note": TAKEOVER_NOTE,
      "author_rationale": TAKEOVER_RATIONALE},
     {"when": "NOT " + FLUID + " OR NOT " + VASO,
      "after_seconds": 240, "measured_from": "phase_entry", "to": "shock_untreated",
-     "narration": ("She's getting worse. Rate 138, pressure 70 over 42, and she's not "
-                   "making sense."),
+     "narration": ("She's getting worse. Her rate is up, her pressure is down and she's "
+                   "not making sense."),
      "debrief_note": (
-       "Four minutes at a mean pressure of 61 with the obstruction untreated, and she "
-       "progressed.\n\n"
+       "Her outflow tract stayed obstructed and her output kept falling. The base of her "
+       "heart was squeezing hard into a narrowed outflow tract, and a ventricle that "
+       "cannot empty past the obstruction supplies less blood to the brain and to the "
+       "heart itself. The fast rate left it less time to fill, and an emptier ventricle "
+       "obstructs more.\n\n"
+       "A small fluid bolus and a vasoconstrictor with no inotropic effect, given "
+       "together, would have opened it. Either one alone was not enough.\n\n"
        "If you were unsure what to do, that is reasonable. This is a hard presentation. "
-       "The move that was always available was to call cardiology, which the nurse "
-       "suggested."),
+       "Calling cardiology was always available, and the nurse suggested it."),
      "author_rationale": (
        "Deterioration on inaction. The nurse recommends cardiology at 20 seconds, fluid at "
-       "60 and a vasoconstrictor at 80. Four minutes is a drafting judgment.")}],
+       "45 and a vasoconstrictor at 60. In the default mode those are 60, 135 and 180 "
+       "seconds, so all three are spoken before this rule fires at 240 (authoring 9.7). "
+       "Four minutes is a drafting judgment.")}],
    ),
 
  phase("shock_untreated",
@@ -266,22 +303,28 @@ PHASES = [
    [HANDOFF_T,
     {"when": ACTIVE,
      "after_seconds": 10, "measured_from": "guard_true", "to": "shock_worse",
-     "narration": ("That infusion hasn't helped. She's still 70 over 42 with a rate of 138, "
-                   "and the murmur is louder than ever."),
+     "narration": ("That inotrope hasn't helped. She's still in shock and the murmur is "
+                   "louder than ever."),
      "debrief_note": (
        "An inotrope was started in a patient already in shock from outflow obstruction. "
        "It could not help, and it has to come off before anything else will work."),
      "author_rationale": "A delayed consequence of the learner's own action. Model output."},
     {"when": TREATED,
      "after_seconds": 10, "measured_from": "guard_true", "to": "steadied",
-     "narration": ("She's coming back. 100 over 62, rate 104, and she knows where she is."),
+     "narration": ("She's coming back. Her pressure is up, her rate is down and she knows "
+                   "where she is."),
      "debrief_note": (
-       "Fluid and a vasoconstrictor recovered her from a mean pressure in the low 50s."),
+       "Fluid and a vasoconstrictor opened the outflow tract, even this late. A fuller "
+       "ventricle and a higher resistance to pump against hold the obstruction apart, and "
+       "the slower rate gives the heart time to fill.\n\n"
+       "The same pair given in the first four minutes after her pressure fell would have "
+       "kept her out of worsening shock. One of the two alone does not do it."),
      "author_rationale": "A delayed consequence of the learner's own action. Model output."},
     {"when": CARDS,
      "after_seconds": 90, "measured_from": "guard_true", "to": "steadied",
-     "narration": ("Cardiology is at the bedside and has taken over. They've given 250 of "
-                   "fluid and started phenylephrine. She's 100 over 62, rate 104."),
+     "narration": ("Cardiology is at the bedside and has taken over. They've given a small "
+                   "fluid bolus and have a vasoconstrictor running. Her pressure is up and "
+                   "her rate is down."),
      "debrief_note": TAKEOVER_NOTE,
      "author_rationale": TAKEOVER_RATIONALE}],
    authoring_note="Same numbers as shock_worse. Two phases because the exits differ.",
@@ -297,8 +340,8 @@ PHASES = [
    [HANDOFF_T,
     {"when": "flag inotrope_stopped set AND " + TREATED,
      "after_seconds": 10, "measured_from": "guard_true", "to": "steadied",
-     "narration": ("She's coming back now that infusion is off. 100 over 62, rate 104, and "
-                   "she knows where she is."),
+     "narration": ("She's coming back now that inotrope is off. Her pressure is up, her "
+                   "rate is down and she knows where she is."),
      "debrief_note": (
        "You stopped the drug that was making her worse and replaced it with fluid and a "
        "vasoconstrictor. Recognizing that a treatment is hurting the patient and "
@@ -306,9 +349,9 @@ PHASES = [
      "author_rationale": "A delayed consequence of the learner's own action. Model output."},
     {"when": CARDS,
      "after_seconds": 90, "measured_from": "guard_true", "to": "steadied",
-     "narration": ("Cardiology is at the bedside and has taken over. They've stopped the "
-                   "inotrope, given 250 of fluid and started phenylephrine. She's 100 over "
-                   "62, rate 104."),
+     "narration": ("Cardiology is at the bedside and has taken over. The inotrope is off, "
+                   "they've given a small fluid bolus and a vasoconstrictor is running. Her "
+                   "pressure is up and her rate is down."),
      "debrief_note": TAKEOVER_NOTE,
      "author_rationale": TAKEOVER_RATIONALE}],
    authoring_note=(

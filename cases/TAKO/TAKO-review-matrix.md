@@ -162,6 +162,26 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `action_tag/basic_chemistry_chem_7`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/venous_blood_gas`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/arterial_blood_gas`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/fingerstick_blood_sugar`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `action_tag/consult_cardiology`
 
 | phase | resolves to | reachable? |
@@ -173,6 +193,11 @@ Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/consult_critical_care`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/chest_rechecked`
 
 Single unconditional rule; nothing to enumerate.
 
@@ -254,7 +279,11 @@ Single unconditional rule; nothing to enumerate.
 
 ### `exam/exam_airway`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| shock_untreated | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Patent. Barely speaking. | plausible |
+| shock_worse | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Patent. Barely speaking. | plausible |
+| «any other phase» | rule 1 (default) &rarr; normal: Patent. Speaking in short sentences. | plausible |
 
 
 ### `exam/exam_breath`
@@ -291,10 +320,10 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| obstructed | rule 1 (phase is obstructed) &rarr; ABNORMAL: Harsh systolic murmur, left sternal edge, louder than before. Louder w... | plausible |
-| shock_untreated | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Loud harsh systolic murmur, left sternal edge. Louder with Valsalva. N... | plausible |
-| shock_worse | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Loud harsh systolic murmur, left sternal edge. Louder with Valsalva. N... | plausible |
-| steadied | rule 2 (phase is steadied) &rarr; ABNORMAL: Systolic murmur, left sternal edge, softer than before. No rub. No ede... | plausible |
+| obstructed | rule 1 (phase is obstructed) &rarr; ABNORMAL: Loud harsh systolic murmur, left sternal edge. Louder with Valsalva. N... | plausible |
+| shock_untreated | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Very loud harsh systolic murmur, left sternal edge. Louder with Valsal... | plausible |
+| shock_worse | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Very loud harsh systolic murmur, left sternal edge. Louder with Valsal... | plausible |
+| steadied | rule 2 (phase is steadied) &rarr; ABNORMAL: Soft systolic murmur, left sternal edge. No rub. No edema. | plausible |
 | «any other phase» | rule 3 (default) &rarr; ABNORMAL: Harsh systolic murmur, left sternal edge. Louder with Valsalva, softer... | plausible |
 
 
@@ -386,15 +415,41 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
-### `imaging/ecg_12_lead`
+### `labs/venous_blood_gas`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| obstructed | rule 0 (phase is obstructed) &rarr; ABNORMAL: Sinus tachycardia at 124. ST elevation 2 to 3 mm in V2 to V5 and 1 mm ... | plausible |
-| shock_untreated | rule 2 (phase is shock_untreated) &rarr; ABNORMAL: Sinus tachycardia at 138. ST elevation 2 to 3 mm in V2 to V5 and 1 mm ... | plausible |
-| shock_worse | rule 1 (phase is shock_worse) &rarr; ABNORMAL: Sinus tachycardia at 138. ST elevation 2 to 3 mm in V2 to V5 and 1 mm ... | plausible |
-| steadied | rule 3 (phase is steadied) &rarr; ABNORMAL: Sinus tachycardia at 104. ST elevation 2 to 3 mm in V2 to V5 and 1 mm ... | plausible |
-| «any other phase» | rule 4 (default) &rarr; ABNORMAL: Sinus tachycardia at 115. ST elevation 2 to 3 mm in V2 to V5 and 1 mm ... | plausible |
+| obstructed | rule 0 (phase is obstructed) &rarr; HCO3 22 mEq/L; **Lactate 3.4 mmol/L** | plausible |
+| shock_untreated | rule 2 (phase is shock_untreated) &rarr; HCO3 22 mEq/L; **Lactate 5.8 mmol/L** | plausible |
+| shock_worse | rule 1 (phase is shock_worse) &rarr; HCO3 22 mEq/L; **Lactate 5.8 mmol/L** | plausible |
+| steadied | rule 3 (phase is steadied) &rarr; HCO3 22 mEq/L; **Lactate 3.6 mmol/L** | plausible |
+| «any other phase» | rule 4 (default) &rarr; HCO3 22 mEq/L; **Lactate 2.6 mmol/L** | plausible |
+
+
+### `labs/arterial_blood_gas`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| obstructed | rule 0 (phase is obstructed) &rarr; HCO3 22 mEq/L; **Lactate 3.4 mmol/L** | plausible |
+| shock_untreated | rule 2 (phase is shock_untreated) &rarr; HCO3 22 mEq/L; **Lactate 5.8 mmol/L** | plausible |
+| shock_worse | rule 1 (phase is shock_worse) &rarr; HCO3 22 mEq/L; **Lactate 5.8 mmol/L** | plausible |
+| steadied | rule 3 (phase is steadied) &rarr; HCO3 22 mEq/L; **Lactate 3.6 mmol/L** | plausible |
+| «any other phase» | rule 4 (default) &rarr; HCO3 22 mEq/L; **Lactate 2.6 mmol/L** | plausible |
+
+
+### `labs/fingerstick_blood_sugar`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `imaging/ecg_12_lead`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `imaging/xr_chest`
+
+Single unconditional rule; nothing to enumerate.
 
 
 ### `imaging/ultrasound_cardiac`
@@ -498,11 +553,7 @@ Single unconditional rule; nothing to enumerate.
 
 ### `consultant/consult_activate_cath_lab`
 
-| phase | ecg_12_lead | resolves to | reachable? |
-|---|---|---|---|
-| «any phase» | not_ordered | rule 1 (default) | plausible |
-| «any phase» | pending | rule 1 (default) | plausible |
-| «any phase» | resulted | rule 0 (study ecg_12_lead resulted) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `consultant/consult_critical_care`
@@ -550,7 +601,8 @@ Single unconditional rule; nothing to enumerate.
 | obstructed | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_untreated | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_worse | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+| steadied | rule 1 (phase is steadied) | plausible |
+| «any other phase» | rule 2 (default) | plausible |
 
 
 ### `interview_topic/character_of_symptoms`
@@ -584,7 +636,8 @@ Single unconditional rule; nothing to enumerate.
 | obstructed | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_untreated | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_worse | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+| steadied | rule 1 (phase is steadied) | plausible |
+| «any other phase» | rule 2 (default) | plausible |
 
 
 ### `interview_topic/radiation_of_pain`
@@ -607,8 +660,10 @@ Single unconditional rule; nothing to enumerate.
 | shock_untreated | yes | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_worse | no | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_worse | yes | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
-| «any other phase» | no | rule 2 (default) | plausible |
-| «any other phase» | yes | rule 1 (flag analgesia_given set) | plausible |
+| steadied | no | rule 1 (phase is steadied) | plausible |
+| steadied | yes | rule 1 (phase is steadied) | plausible |
+| «any other phase» | no | rule 3 (default) | plausible |
+| «any other phase» | yes | rule 2 (flag analgesia_given set) | plausible |
 
 
 ### `interview_topic/aggravating_relieving`
@@ -618,7 +673,8 @@ Single unconditional rule; nothing to enumerate.
 | obstructed | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_untreated | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_worse | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+| steadied | rule 1 (phase is steadied) | plausible |
+| «any other phase» | rule 2 (default) | plausible |
 
 
 ### `interview_topic/back_or_tearing_pain`
@@ -638,7 +694,8 @@ Single unconditional rule; nothing to enumerate.
 | obstructed | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_untreated | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_worse | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+| steadied | rule 1 (phase is steadied) | plausible |
+| «any other phase» | rule 2 (default) | plausible |
 
 
 ### `interview_topic/nausea_vomiting`

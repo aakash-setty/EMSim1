@@ -38,11 +38,23 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 5, so o
 3. 75s `basic_chemistry_chem_7` (first)
 4. 100s `normal_saline_1l_bolus` (first)
 
-### `potassium_replaced`: Potassium back above 3.5, insulin not yet started
+### `potassium_replaced`: Potassium infusion finished, level back to 3.5 or more
 
 Vitals in this phase: HR 112, BP 104/64, RR 22, SpO2 99%, T 37.3
 
-**Rule 1: at 10s (measured from guard_true) → `treated`**
+**Rule 1: at 5s (measured from guard_true) → `potassium_falling`**
+
+- guard: `action early_insulin taken`
+- destination vitals: HR 118, BP 102/62, RR 22, SpO2 99%, T 37.3
+- narration: “She says her arms and legs feel heavy and her heart is fluttering. Her rate has gone up.”
+- author rationale: A delayed consequence of the learner's own action. Insulin moves potassium into cells within minutes, and the 2024 consensus report says to delay insulin when the potassium is under 3.5 mmol/L to avoid arrhythmia and respiratory muscle weakness. The size of the fall (3.1 to 2.6) and the ten seconds are teaching choices. Ten seconds stands for about an hour. Model output. This rule closes a race. Insulin ordered more than ten seconds after potassium used to be outrun by the potassium rule and reach the treated phase. The guard is a hidden action credited when rapid insulin is ordered in the arrival phase, so it holds on entry and this rule fires five seconds later, ahead of the ten second rule below. Five seconds is the validator's floor for a delayed consequence and is not a clinical claim.
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 5, so only the first 5 first warnings are heard; escalations are exempt):
+
+1. 45s `insulin_drip` (first)
+2. 100s `normal_saline_1l_bolus` (first)
+
+**Rule 2: at 10s (measured from guard_true) → `treated`**
 
 - guard: `flag insulin_running set`
 - destination vitals: HR 104, BP 106/66, RR 20, SpO2 99%, T 37.2
@@ -62,31 +74,32 @@ Vitals in this phase: HR 118, BP 102/62, RR 22, SpO2 99%, T 37.3
 
 - guard: `flag potassium_iv_given set AND flag insulin_stopped set`
 - destination vitals: HR 112, BP 104/64, RR 22, SpO2 99%, T 37.3
-- narration: “The potassium has run through and the insulin is on hold. She says her arms feel stronger. Her rate has come back down.”
-- author rationale: A delayed consequence of the learner's own actions. Twenty seconds stands for several hours of infusion. Model output.
+- narration: “The potassium has run through. She says her arms feel stronger and her rate has come back down. Do you want a repeat level?”
+- author rationale: A delayed consequence of the learner's own actions. Twenty seconds stands for several hours of infusion, measured from the moment both the hold and the potassium are in. Model output.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 5, so only the first 5 first warnings are heard; escalations are exempt):
 
 1. 25s `stop_insulin` (first)
-2. 45s `potassium_chloride_kcl` (first)
-3. 70s `ecg_12_lead` (first)
-4. 100s `normal_saline_1l_bolus` (first)
-5. 130s `potassium_chloride_kcl` (escalation)
+2. 70s `ecg_12_lead` (first)
+3. 100s `normal_saline_1l_bolus` (first)
+4. 110s `potassium_chloride_kcl` (first)
+5. 170s `potassium_chloride_kcl` (escalation)
 
-### `recovering`: Potassium replaced after early insulin, insulin on hold
+### `recovering`: Recovered after early insulin, potassium replaced
 
 Vitals in this phase: HR 112, BP 104/64, RR 22, SpO2 99%, T 37.3
 
 **Rule 1: at 10s (measured from guard_true) → `treated`**
 
-- guard: `flag insulin_restarted set`
+- guard: `action insulin_restart taken`
 - destination vitals: HR 104, BP 106/66, RR 20, SpO2 99%, T 37.2
 - narration: “Insulin is back on and her sugar is coming down, 266 on the meter. Her rate is settling.”
-- author rationale: A delayed consequence of the learner's own action. The flag is granted by the second administration of infusion or subcutaneous insulin. Model output.
+- author rationale: A delayed consequence of the learner's own action. The guard is a hidden action credited when an insulin infusion or a subcutaneous dose is ordered in this phase, so one order after the rescue is the restart whatever was ordered before it. Ten seconds stands for about an hour. Model output.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 5, so only the first 5 first warnings are heard; escalations are exempt):
 
-1. 100s `normal_saline_1l_bolus` (first)
+1. 45s `insulin_restart` (first)
+2. 100s `normal_saline_1l_bolus` (first)
 
 ## 2. The do-nothing trajectory
 
@@ -106,8 +119,9 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 |---|---|---|---|---|
 | `presentation` | 10s | `potassium_falling` | HR 118, BP 102/62, RR 22, SpO2 99%, T 37.3 | “She says her arms and legs feel heavy and her heart is fluttering. Her rate has gone up.” |
 | `presentation` | 20s | `potassium_replaced` | HR 112, BP 104/64, RR 22, SpO2 99%, T 37.3 | “That potassium has run through on the pump. Do you want a repeat level?” |
+| `potassium_replaced` | 5s | `potassium_falling` | HR 118, BP 102/62, RR 22, SpO2 99%, T 37.3 | “She says her arms and legs feel heavy and her heart is fluttering. Her rate has gone up.” |
 | `potassium_replaced` | 10s | `treated` | HR 104, BP 106/66, RR 20, SpO2 99%, T 37.2 | “Her sugar is coming down on the insulin, 266 on the meter, and she says the sick feeling is easing. Her rate is settling.” |
-| `potassium_falling` | 20s | `recovering` | HR 112, BP 104/64, RR 22, SpO2 99%, T 37.3 | “The potassium has run through and the insulin is on hold. She says her arms feel stronger. Her rate has come back down.” |
+| `potassium_falling` | 20s | `recovering` | HR 112, BP 104/64, RR 22, SpO2 99%, T 37.3 | “The potassium has run through. She says her arms feel stronger and her rate has come back down. Do you want a repeat level?” |
 | `recovering` | 10s | `treated` | HR 104, BP 106/66, RR 20, SpO2 99%, T 37.2 | “Insulin is back on and her sugar is coming down, 266 on the meter. Her rate is settling.” |
 
 Compare each line with the row before it in section 2, not only with the destination: a line saying a number has fallen must be preceded by a phase in which it was higher.

@@ -76,7 +76,16 @@
    "line": "Brought in by EMS. Handover given on arrival in the resuscitation bay."
   },
   "complaint": "Worsening breathlessness",
-  "category": "Cardiovascular"
+  "category": "Cardiovascular",
+  "library": {
+   "tempo": "minutes: a clock runs on the mask and the nitrate",
+   "uncertainty": "which treatment does what: positive pressure, vasodilation, diuresis",
+   "right_answer": "do more, in order, and never a nitrate into a low pressure",
+   "danger": "obvious at the door, then created by the treatment",
+   "setting": "65 M, EMS to the resuscitation bay",
+   "feel": "urgent",
+   "note": "The six variety dimensions of docs/case-design-guide.md ('Choosing a case'), as this case reads. Printed in docs/generated/case-index.md so a new case can say how it differs. Descriptive, not clinical: no physician has reviewed the wording."
+  }
  },
  "patient": {
   "age": 65,
@@ -6345,5 +6354,20 @@
   "rewrite_findings_and_speech",
   "fix_saturation_references"
  ],
- "phases_note": "label is the full clinical description used in the debrief; short_label is what fits on the monitor beside the vitals. Keep short_label to a few words. oxygen_saturation is authored as the UNSUPPORTED baseline in every non-terminal phase: what the monitor reads is that baseline plus whatever vital_effects are acting, and the only thing in this case that acts on the saturation is positive pressure, worth four points while the mask is on. The baselines are 85 on arrival, 85 on the mask, 88 on a nitrate with no mask, 90 with both, 90 after diuresis and 80 when he has tired. Read that column twice: the mask moves the number by four and moves the baseline by nothing, and the nitrate moves the baseline by three with no mask on the patient at all. That is the difference between making a number look better and making a patient better, and it is the case's first learning objective expressed as arithmetic. Diuresis moves heart rate, blood pressure and respiratory rate and moves the saturation by nothing, which is the second. The terminal phases are exempt from effects and read exactly as authored. case_complete is one authored snapshot regardless of the path taken to it: it reads 94, the number a patient on the mask with a nitrate running has been showing, so handing off does not jump the monitor on the way to the debrief."
+ "phases_note": "label is the full clinical description used in the debrief; short_label is what fits on the monitor beside the vitals. Keep short_label to a few words. oxygen_saturation is authored as the UNSUPPORTED baseline in every non-terminal phase: what the monitor reads is that baseline plus whatever vital_effects are acting, and the only thing in this case that acts on the saturation is positive pressure, worth four points while the mask is on. The baselines are 85 on arrival, 85 on the mask, 88 on a nitrate with no mask, 90 with both, 90 after diuresis and 80 when he has tired. Read that column twice: the mask moves the number by four and moves the baseline by nothing, and the nitrate moves the baseline by three with no mask on the patient at all. That is the difference between making a number look better and making a patient better, and it is the case's first learning objective expressed as arithmetic. Diuresis moves heart rate, blood pressure and respiratory rate and moves the saturation by nothing, which is the second. The terminal phases are exempt from effects and read exactly as authored. case_complete is one authored snapshot regardless of the path taken to it: it reads 94, the number a patient on the mask with a nitrate running has been showing, so handing off does not jump the monitor on the way to the debrief.",
+ "review_hints": {
+  "implausible": [
+   {
+    "flag": "nitro_stopped",
+    "requires": "nitro_infusion_running",
+    "why": "nitro_stopped without an infusion running"
+   },
+   {
+    "flag": "post_intubation_sedation",
+    "requires": "intubated",
+    "why": "post-intubation sedation without intubation"
+   }
+  ],
+  "note": "Flag combinations that cannot occur in a run. The review matrix labels rows that have the flag without the one it requires as not reachable, instead of trusting them. Read by engine/validate_case.py only."
+ }
 }

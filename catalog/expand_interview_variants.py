@@ -1,52 +1,39 @@
 #!/usr/bin/env python3
-"""Expand every case pack's interview variant bank from the shared phrasing library,
-write an out-of-scope bank into each case, and withhold a tuning set from both.
+"""Report or rewrite the interview expansion of one of the FROZEN packs (AFRVR, CHFE, DIPH,
+MGCA). Every other pack expands at build time: its topic map lives in its own
+`case_4_interview.py` (TOPIC_MAP and EXTRA_COVERED) and `cases/<PREFIX>/build_case.py`
+calls `catalog/interview_expand.py`. Nothing per pack is added to this file any more.
 
-    python3 catalog/expand_interview_variants.py            all packs
-    python3 catalog/expand_interview_variants.py AFRVR      one pack
-    python3 catalog/expand_interview_variants.py --dry-run  report, write nothing
+    python3 catalog/expand_interview_variants.py AFRVR --dry-run   report, write nothing
+    python3 catalog/expand_interview_variants.py AFRVR --force     rewrite a frozen pack
 
-What it writes, per pack:
+The four packs here were edited by hand after they were last expanded, so a run today
+changes their sources and their tuning sets (found by the October 2026 audit; decision of
+7 October 2026 to freeze them). The command refuses to write without --force.
 
-  cases/CHFE/CHFE-case.json            topics[].expanded_variants written (never the
-  cases/MGCA/MGCA-case.json            hand-written `variants`), a `variants_provenance`
+What --force writes, per pack:
+
+  cases/<PREFIX>/case_4_interview.py   for AFRVR and DIPH: an EXPANDED block and an
+                                       OUT_OF_SCOPE_BANK list between marker comments.
+  cases/<PREFIX>/<PREFIX>-case.json    for CHFE and MGCA: topics[].expanded_variants (never
+                                       the hand-written `variants`), a `variants_provenance`
                                        note on each topic, and `interview.out_of_scope_bank`.
-                                       build_simulator.py merges expanded_variants into
-                                       variants at build time, so nothing at runtime changes.
-  cases/<PREFIX>/case_4_interview.py   an EXPANDED block and an OUT_OF_SCOPE_BANK list,
-                                       for any pack whose case file is built by a script
-                                       between marker comments (the case JSON is generated
-                                       from these sources by build_case.py)
   cases/<P>/<P>-matcher-tune-questions.json
-                                       the withheld slice: every Nth new phrasing per
-                                       topic, and every Nth out-of-scope entry, kept out
-                                       of the banks so thresholds can be tuned on them
+                                       the withheld slice (see interview_expand.py).
 
-Idempotent: re-running replaces what it wrote and adds nothing twice.
-
-Three rules it enforces rather than trusts:
-  1. Nothing written into a bank may match a held-out evaluation question, normalised.
-     Such a phrasing is dropped and reported. The evaluation harness checks again.
-  2. A phrasing lives in exactly one topic per pack. If it already sits in another
-     topic's bank it is not added to this one.
-  3. The tuning slice is chosen by position, not by hand, so nobody picks the easy ones.
+The algorithm is `catalog/interview_expand.py`, shared with the build-time route.
 """
-import json, os, re, sys
+import json, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-from interview_phrasings import CONCEPTS, OPENERS          # noqa: E402
-from interview_out_of_scope import OUT_OF_SCOPE            # noqa: E402
-
-HOLD_EVERY = 6            # every 6th new phrasing per topic goes to the tuning set
-OPENER_CORES = 3          # phrasings per topic that also get conversational openers
-OPENERS_PER_CORE = 2      # openers applied to each of those, rotating through OPENERS
+from interview_expand import expand_topics, report, tune_file, PROVENANCE, OOS_BANK_NOTE   # noqa: E402
 
 # ---------------------------------------------------------------- topic -> concepts
-# One entry per pack. A topic may draw on several concepts. Topics absent from the
+# One entry per FROZEN pack. A topic may draw on several concepts. Topics absent from the
 # map are left alone, which is how a pack-specific topic with no shared phrasings
-# stays hand-authored.
+# stays hand-authored. Do not add a pack here: put TOPIC_MAP in its case_4_interview.py.
 MAP = {
  "AFRVR": {
   "onset": ["onset"], "timing_progression": ["timing_progression"],
@@ -119,82 +106,23 @@ MAP = {
   "recent_antibiotics_healthcare": ["recent_antibiotics_healthcare"], "functional_baseline": ["functional_baseline"],
   "code_status_goals": ["code_status"],
  },
- "TSS": {
-  "onset": ["onset"], "timing_progression": ["timing_progression"], "character_of_symptoms": ["character_general"],
-  "location_of_pain": ["location_pain"], "radiation_of_pain": ["radiation_pain"], "severity": ["severity"],
-  "aggravating_relieving": ["aggravating_relieving", "aggravating", "relieving"], "rash": ["rash"],
-  "fever_and_chills": ["fever_chills"], "headache": ["headache"], "neck_stiffness": ["neck_stiffness"],
-  "photophobia": ["photophobia"], "nausea_vomiting": ["nausea_vomiting"], "diarrhea": ["diarrhea"],
-  "abdominal_pain": ["abdominal_pain"], "chest_pain": ["chest_pain"], "breathing": ["breathing_sob"],
-  "cough_sore_throat": ["cough_sore_throat"], "urine_output": ["urine_output"],
-  "dizziness_syncope": ["syncope_dizziness", "syncope", "dizziness"], "confusion": ["confusion"],
-  "cold_extremities": ["cold_extremities"], "joint_pain": ["joint_pain"], "dysuria_gu_symptoms": ["dysuria_gu"],
-  "menstrual_and_tampon": ["menstrual_tampon"], "pregnancy": ["pregnancy"], "sexual_history": ["sexual_history"],
-  "past_medical_history": ["pmh"], "past_surgical_history": ["psh"], "current_medications": ["meds"],
-  "allergies": ["allergies"], "social_history": ["social_history", "smoking", "alcohol", "substance_use"],
-  "family_history": ["family_history"], "last_oral_intake": ["last_oral_intake"], "vaccinations": ["vaccinations"],
-  "sick_contacts": ["sick_contacts"], "travel_history": ["travel"], "tick_and_outdoor_exposure": ["tick_outdoor"],
-  "recent_antibiotics_healthcare": ["recent_antibiotics_healthcare"], "functional_baseline": ["functional_baseline"],
-  "code_status_goals": ["code_status"],
- },
- "DKA": {
-  "onset": ["onset"], "timing_progression": ["timing_progression"], "character_of_symptoms": ["character_general"],
-  "location_of_pain": ["location_pain"], "radiation_of_pain": ["radiation_pain"], "severity": ["severity"],
-  "aggravating_relieving": ["aggravating_relieving", "aggravating", "relieving"],
-  "nausea_vomiting": ["nausea_vomiting"], "diarrhea": ["diarrhea"], "abdominal_pain": ["abdominal_pain"],
-  "urine_output": ["urine_output"], "palpitations": ["palpitations"], "breathing": ["breathing_sob"],
-  "dizziness_syncope": ["syncope_dizziness", "syncope", "dizziness"], "chest_pain": ["chest_pain"],
-  "fever_and_chills": ["fever_chills"], "cough_sore_throat": ["cough_sore_throat"], "headache": ["headache"],
-  "dysuria_gu_symptoms": ["dysuria_gu"], "past_medical_history": ["pmh"], "past_surgical_history": ["psh"],
-  "current_medications": ["meds"], "insulin_taken_recently": ["adherence"], "allergies": ["allergies"],
-  "pregnancy": ["pregnancy"], "sick_contacts": ["sick_contacts", "recent_illness_sick_contacts"],
-  "last_oral_intake": ["last_oral_intake"],
-  "social_history": ["social_history", "smoking", "alcohol", "substance_use"],
-  "family_history": ["family_history"], "functional_baseline": ["functional_baseline"],
-  "travel_history": ["travel"],
- },
- "TAKO": {
-  "onset": ["onset"], "timing_progression": ["timing_progression"], "character_of_symptoms": ["character_general"],
-  "location_of_pain": ["location_pain"], "radiation_of_pain": ["radiation_pain"], "severity": ["severity"],
-  "aggravating_relieving": ["aggravating_relieving", "aggravating", "relieving"],
-  "chest_pain": ["chest_pain"], "nausea_vomiting": ["nausea_vomiting"], "breathing": ["breathing_sob"],
-  "palpitations": ["palpitations"], "dizziness_syncope": ["syncope_dizziness", "syncope", "dizziness"],
-  "leg_swelling_and_lying_flat": ["leg_swelling", "orthopnea", "pnd", "calf_pain"],
-  "fever_and_chills": ["fever_chills"], "cough_sore_throat": ["cough_sore_throat"],
-  "abdominal_pain": ["abdominal_pain"], "headache": ["headache"],
-  "past_medical_history": ["pmh"], "past_surgical_history": ["psh"], "current_medications": ["meds"],
-  "bleeding_risk": ["anticoag"], "allergies": ["allergies"],
-  "social_history": ["social_history", "smoking", "alcohol", "substance_use"],
-  "family_history": ["family_history"], "last_oral_intake": ["last_oral_intake"],
-  "functional_baseline": ["functional_baseline"], "travel_history": ["travel", "travel_immobility_surgery"],
-  "code_status_goals": ["code_status"],
- },
 }
 
 # Concepts a pack's topics cover, used to filter the out-of-scope bank. Derived from
 # MAP, plus concepts a topic covers without drawing phrasings from (e.g. AFRVR's chest
 # pain topic answers location and radiation because the pain does not exist).
+# A name here is a concept in interview_phrasings.py or a tag in BANK_ONLY_TAGS in
+# interview_out_of_scope.py. Frozen packs only.
 EXTRA_COVERED = {
   "AFRVR": ["location_pain", "radiation_pain", "palpitations", "breathing_sob", "smoking_alcohol", "social_history"],
   "CHFE": ["orthopnea", "palpitations", "smoking", "alcohol"],
   "MGCA": ["character_general"],
-  "TSS": ["character_general"],
-  "TAKO": ["character_general", "cough_sputum", "prior_hf"],
-  "DKA": ["character_general", "cough_sputum", "menstrual_tampon", "sexual_history"],
   "DIPH": ["character_general", "severity", "aggravating", "relieving", "aggravating_relieving",
            "location_pain", "radiation_pain", "smoking_alcohol", "social_history",
            "syncope", "dizziness", "syncope_dizziness", "adherence", "smoking_alcohol"],
 }
 
-PROVENANCE = ("Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py "
-              "in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, "
-              "and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new "
-              "phrasing was withheld into the pack's tuning set rather than added here.")
-
 # ---------------------------------------------------------------- helpers
-def norm(s):
-    return re.sub(r"[^a-z0-9]+", " ", str(s).lower()).strip()
-
 def load_json(p):
     with open(p) as f: return json.load(f)
 
@@ -202,108 +130,44 @@ def save_json(p, o):
     with open(p, "w") as f:
         json.dump(o, f, indent=1, ensure_ascii=False); f.write("\n")
 
-def held_out_questions(prefix):
-    p = os.path.join(ROOT, "cases", prefix, f"{prefix}-matcher-eval-questions.json")
-    if not os.path.exists(p): return set()
-    return {norm(q["q"]) for q in load_json(p)["questions"]}
-
-def with_openers(q):
-    """Conversational forms of a full question. Only applied to real questions, never
-    to shorthand, and the opener rotation is deterministic in the phrasing text."""
-    if len(q) < 14 or not q.endswith("?") or q.lower() == q: return []
-    body = q[0].lower() + q[1:]
-    start = sum(map(ord, q)) % len(OPENERS)
-    out = []
-    for k in range(OPENERS_PER_CORE):
-        t = OPENERS[(start + k * 3) % len(OPENERS)]
-        out.append(t.replace("{q}", body).replace("{Q}", q))
-    return out
-
 def topics_of(prefix):
-    """Load the pack's topics from its source of truth."""
-    if prefix == "AFRVR":
-        sys.path.insert(0, os.path.join(ROOT, "cases", "AFRVR"))
-        import importlib
-        m = importlib.import_module("case_4_interview")
-        importlib.reload(m)
+    """Load the pack's topics from its source of truth. For a pack built by a script that
+    is its case_4_interview.py, which is also the file the expansion is written back to.
+    Reading the generated JSON instead would expand against topics as they were at the last
+    build. The module is loaded by file path under a name of its own, and the pack's other
+    case_* modules are dropped from the import cache first, so two packs in one run never
+    see each other's files."""
+    folder = os.path.join(ROOT, "cases", prefix)
+    src = os.path.join(folder, "case_4_interview.py")
+    if os.path.exists(src):
+        import importlib.util
+        for name in [n for n in sys.modules if n.startswith("case_")]:
+            del sys.modules[name]
+        sys.path.insert(0, folder)
+        try:
+            spec = importlib.util.spec_from_file_location(f"_{prefix}_case_4_interview", src)
+            m = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(m)
+        finally:
+            sys.path.remove(folder)
         return m.TOPICS
-    return load_json(os.path.join(ROOT, "cases", prefix, f"{prefix}-case.json"))["interview"]["topics"]
+    return load_json(os.path.join(folder, f"{prefix}-case.json"))["interview"]["topics"]
 
 # ---------------------------------------------------------------- expansion
 def expand(prefix, dry):
-    topics = topics_of(prefix)
-    held = held_out_questions(prefix)
-    tmap = MAP[prefix]
-    covered = set(EXTRA_COVERED.get(prefix, []))
-    for cs in tmap.values(): covered.update(cs)
-
-    # Everything already in a bank, so a phrasing lands in exactly one topic. A topic's
-    # own previously expanded list is NOT counted: it is recomputed and replaced, which is
-    # what makes a re-run idempotent rather than cumulative.
-    owner = {}
-    for t in topics:
-        for f in [t["canonical"]] + list(t.get("variants", [])):
-            owner.setdefault(norm(f), t["topic"])
-    prior = {t["topic"]: {norm(f) for f in t.get("expanded_variants", [])} for t in topics}
-
-    added, tune, dropped = {}, [], []
-    for t in topics:
-        tid = t["topic"]
-        if tid not in tmap: continue
-        pool = []
-        for c in tmap[tid]:
-            for q in CONCEPTS[c]:
-                pool.append(q)
-        # conversational openers on the first few real questions
-        cores = [q for q in pool if len(q) >= 14 and q.endswith("?")][:OPENER_CORES]
-        for q in cores: pool.extend(with_openers(q))
-        fresh, seen = [], set()
-        for q in pool:
-            n = norm(q)
-            if not n or n in seen: continue
-            seen.add(n)
-            if n in held: dropped.append((tid, q, "held-out eval question")); continue
-            if n in owner and owner[n] != tid: dropped.append((tid, q, f"already in {owner[n]}")); continue
-            if n in owner and owner[n] == tid: continue   # already hand-authored on this topic
-            if any(n in prior[o] for o in prior if o != tid): dropped.append((tid, q, "expanded on another topic")); continue
-            fresh.append(q)
-        bank, held_slice = [], []
-        for i, q in enumerate(fresh):
-            (held_slice if (i + 1) % HOLD_EVERY == 0 else bank).append(q)
-        for q in bank: owner[norm(q)] = tid
-        added[tid] = bank
-        tune.extend({"register": "expansion", "q": q, "expect": tid} for q in held_slice)
-
-    # out-of-scope bank, filtered to what this case does not author
-    oos_all = [q for q, covers in OUT_OF_SCOPE if not (set(covers) & covered)]
-    oos_bank, oos_tune = [], []
-    for i, q in enumerate(oos_all):
-        n = norm(q)
-        if n in held: dropped.append(("out_of_scope", q, "held-out eval question")); continue
-        if n in owner: dropped.append(("out_of_scope", q, f"already in {owner[n]}")); continue
-        ((oos_tune if (i + 1) % HOLD_EVERY == 0 else oos_bank)).append(q)
-    tune.extend({"register": "out_of_scope_expansion", "q": q, "expect": None} for q in oos_tune)
-
-    n_new = sum(len(v) for v in added.values())
-    print(f"{prefix}: {len(added)} topics expanded, +{n_new} variants, "
-          f"{len(oos_bank)} out-of-scope bank entries, {len(tune)} tuning questions, {len(dropped)} dropped")
-    for tid, q, why in dropped: print(f"   dropped [{tid}] {q!r}: {why}")
+    pack_dir = os.path.join(ROOT, "cases", prefix)
+    r = expand_topics(prefix, topics_of(prefix), MAP[prefix], EXTRA_COVERED.get(prefix, []), pack_dir)
+    print(report(r))
     if dry: return
-
+    added, oos_bank = r["added"], r["oos_bank"]
     # A pack whose case file is generated by a build script must receive the expansion in
     # the source module, or the next run of that script silently discards it. The test is
     # whether the pack has a case_4_interview.py, not which pack it is.
-    if os.path.exists(os.path.join(ROOT, "cases", prefix, "case_4_interview.py")):
+    if os.path.exists(os.path.join(pack_dir, "case_4_interview.py")):
         write_py_pack(prefix, added, oos_bank)
     else:
         write_json_pack(prefix, added, oos_bank)
-    save_json(os.path.join(ROOT, "cases", prefix, f"{prefix}-matcher-tune-questions.json"), {
-        "case_prefix": prefix,
-        "status": ("TUNING SET. Generated by catalog/expand_interview_variants.py: every sixth new phrasing "
-                   "per topic and every sixth out-of-scope entry, withheld from the banks. Sweep thresholds "
-                   "against this file and quote the held-out file, never the other way round."),
-        "questions": tune,
-    })
+    save_json(os.path.join(pack_dir, f"{prefix}-matcher-tune-questions.json"), tune_file(prefix, r))
 
 def write_json_pack(prefix, added, oos_bank):
     p = os.path.join(ROOT, "cases", prefix, f"{prefix}-case.json")
@@ -314,11 +178,7 @@ def write_json_pack(prefix, added, oos_bank):
             t["expanded_variants"] = added[t["topic"]]
             t["variants_provenance"] = PROVENANCE
     case["interview"]["out_of_scope_bank"] = oos_bank
-    case["interview"]["out_of_scope_bank_note"] = (
-        "Questions this case has no authored answer to, from catalog/interview_out_of_scope.py filtered "
-        "to the concepts this case does not cover. The matcher embeds them beside the topic bank; a "
-        "question closer to one of these than to any topic gets the out-of-scope fallback rather than "
-        "the nearest topic's answer.")
+    case["interview"]["out_of_scope_bank_note"] = OOS_BANK_NOTE
     save_json(p, case)
 
 def write_py_pack(prefix, added, oos_bank):
@@ -349,8 +209,29 @@ def write_py_pack(prefix, added, oos_bank):
         src = src.rstrip("\n") + "\n\n" + block
     open(p, "w").write(src)
 
+# Packs whose committed expansion is frozen (decision of 7 October 2026). Their banks were
+# edited by hand after the last expansion, so a run cannot reproduce what is committed:
+# it changes the case file and, for DIPH, gives a different bank on every run. This script
+# will not write to them without --force. --dry-run still reports.
+FROZEN = {"AFRVR", "CHFE", "DIPH", "MGCA"}
+assert set(MAP) == FROZEN, "this command holds the frozen packs only; new packs expand at build time"
+
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     dry = "--dry-run" in sys.argv
-    for prefix in (args or ["AFRVR", "CHFE", "MGCA"]):
+    force = "--force" in sys.argv
+    unknown = [a for a in args if a not in MAP]
+    if not args or unknown:
+        if unknown:
+            print("not a frozen pack: " + ", ".join(unknown) + ". A pack that is not frozen expands at build "
+                  "time: put TOPIC_MAP and EXTRA_COVERED in its case_4_interview.py and run its "
+                  "build_case.py (the reference pack named in CLAUDE.md shows the layout).", file=sys.stderr)
+        print("usage: python3 catalog/expand_interview_variants.py PACK [PACK ...] --dry-run | --force\n"
+              "       frozen packs: " + " ".join(sorted(MAP)), file=sys.stderr)
+        sys.exit(2)
+    if not dry and not force:
+        sys.exit("refusing to write " + ", ".join(args) + ": these packs' expansions are frozen "
+                 "(see docs/restructure-plan.md). Use --dry-run to read the report, or --force "
+                 "if you have decided to regenerate them and will commit the changed case files.")
+    for prefix in args:
         expand(prefix, dry)

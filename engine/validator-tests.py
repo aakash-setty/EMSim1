@@ -494,5 +494,54 @@ expect("a must_ask safety screen with a volunteer line is rejected",
 expect("an adjacent topic that does not exist is rejected",
        lambda c: _must(c, "missing"), "does not exist")
 
+# v0.25. Five holes the restructure audit found by mutation. Each used to pass or crash.
+expect("a misspelt tag value is rejected",
+       lambda c: act(c)["tag"].insert(0, {"when": None, "value": "critcal"}), "unknown tag value")
+expect("a tag that is not a rule list is rejected, not a crash",
+       lambda c: act(c).__setitem__("tag", "critical"), "tag must be a rule list")
+expect("a tag condition that does not parse is rejected, not a crash",
+       lambda c: act(c)["tag"].insert(0, {"when": "flag x", "value": "critical"}), "does not parse")
+expect("a prerequisite that does not parse is rejected, since the engine lets it pass",
+       lambda c: act(c).setdefault("prerequisites", []).append({"when": "study x", "failure_message": "m"}),
+       "does not parse")
+expect("a phase with no vitals block is an error, not a crash",
+       lambda c: c["phases"][0].pop("vitals"), "no vitals block")
+expect("a topic with no variants is an error, not a crash",
+       lambda c: c["interview"]["topics"][0].pop("variants"), "no variants list")
+
+def _harm_no_halted(c):
+    a = act(c)
+    a["tag"] = [{"when": None, "value": "harmful"}]
+    a["halt_reason"] = "probe"
+    c["phases"] = [p for p in c["phases"] if p["id"] != "halted"]
+expect("a harmful tag with no halted phase is rejected (the engine throws there)",
+       _harm_no_halted, "no phase with id 'halted'")
+
+def _fu(c, how):
+    a = act(c)
+    c["follow_ups"].append({"id": "probe_fu", "triggered_by": [a["catalog_id"]], "applies_when": "phase is " + FIRST_PHASE,
+                            "deadline_seconds": 60, "nurse_prompt": "p", "debrief_note": "n",
+                            "satisfied_by": [a["catalog_id"]]})
+    if how == "fired":
+        a.setdefault("follow_ups_triggered", []).append("probe_fu")
+    elif how == "other":
+        b = [x for x in c["case_actions"] if x is not a and x.get("state_changing") is not False][0]
+        b.setdefault("follow_ups_triggered", []).append("probe_fu")
+    elif how == "unknown":
+        a.setdefault("follow_ups_triggered", []).append("no_such_fu")
+expect("a follow-up no action fires is rejected (triggered_by is not what fires it)",
+       lambda c: _fu(c, "none"), "never schedules it")
+expect("a follow-up whose triggered_by disagrees with follow_ups_triggered is rejected",
+       lambda c: _fu(c, "other"), "disagrees with the actions")
+expect("follow_ups_triggered naming an unknown follow-up is rejected",
+       lambda c: _fu(c, "unknown"), "is not in follow_ups")
+expect_clean("a follow-up fired from the action that triggered_by names passes",
+             lambda c: _fu(c, "fired"), "never schedules it")
+
+expect("a ten-second deterioration guarded on NOT action X taken is rejected like a flag",
+       lambda c: c["phases"][0]["transitions"].insert(0,
+           {"when": "NOT action " + act(c)["catalog_id"] + " taken", "to": c["phases"][1]["id"], "after_seconds": 10}),
+       "below the 30s floor")
+
 print(f"\n  {COUNT} checks, " + (f"{len(FAILS)} FAILURES" if FAILS else "all passed"))
 sys.exit(1 if FAILS else 0)

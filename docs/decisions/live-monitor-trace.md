@@ -6,6 +6,11 @@ Kept for what was rejected. The current behavior is in `docs/system-design-v2.md
 sections 8.4c and 8.5 and in `docs/case-authoring-requirements.md` section 6.0b. This file
 is not a source of truth for how the system behaves.
 
+**Note, 7 October 2026 (v0.24).** Section 4 says none of the four packs needs ectopy drawn.
+There are seven packs now. DKA's falling-potassium phase (v0.23) has an ECG report that
+describes occasional ventricular ectopic beats and U waves, and the monitor draws neither.
+Its phase note says so. The field is still closed.
+
 ---
 
 ## 1. The problem

@@ -463,6 +463,55 @@ def run_checks(case):
 
     phase_ids = {p["id"] for p in case["phases"]}
     action_ids = {a["catalog_id"] for a in case["case_actions"]}
+
+    # -- S: shape. Checked first, so a half-authored file gets a message, not a
+    #      traceback. Each of these used to crash the validator (v0.25).
+    TAG_VALUES = ("critical", "recommended", "neutral", "discouraged", "harmful")
+    for p in case["phases"]:
+        if not isinstance(p.get("vitals"), dict):
+            errors.append(f"[shape] phase {p.get('id')!r}: no vitals block")
+            p["vitals"] = {}
+        if not isinstance(p.get("transitions"), list):
+            p["transitions"] = [] if p.get("transitions") is None else p["transitions"]
+    for a in case["case_actions"]:
+        if not isinstance(a.get("tag"), list):
+            errors.append(f"[shape] {a.get('catalog_id')!r}: tag must be a rule list of "
+                          f"{{when, value}}, not {type(a.get('tag')).__name__}")
+            a["tag"] = []
+        for r in a["tag"]:
+            if not isinstance(r, dict):
+                errors.append(f"[shape] {a['catalog_id']}: tag rule {r!r} is not an object")
+                continue
+            if r.get("value") not in TAG_VALUES:
+                errors.append(f"[tag] {a['catalog_id']}: unknown tag value {r.get('value')!r}. "
+                              f"One of {', '.join(TAG_VALUES)}. The engine treats anything else "
+                              f"as neutral with no error")
+            w = r.get("when")
+            if w is not None:
+                try:
+                    parse_condition(w)
+                except ParseError as e:
+                    errors.append(f"[tag] {a['catalog_id']}: tag condition {w!r} does not parse: {e}")
+                    r["when"] = "phase is __unparseable__"
+        for pr in a.get("prerequisites") or []:
+            try:
+                parse_condition(pr.get("when") or "")
+            except ParseError as e:
+                errors.append(f"[prereq] {a['catalog_id']}: prerequisite {pr.get('when')!r} does "
+                              f"not parse: {e}. The engine lets an unparseable prerequisite PASS")
+                pr["when"] = "phase is __unparseable__"
+    for t in (case.get("interview") or {}).get("topics") or []:
+        if not isinstance(t, dict) or not t.get("topic"):
+            errors.append(f"[shape] interview topic without an id: {str(t)[:60]!r}")
+            continue
+        if not isinstance(t.get("variants"), list):
+            errors.append(f"[shape] topic {t['topic']}: no variants list")
+            t["variants"] = []
+        if not isinstance(t.get("answer"), list):
+            errors.append(f"[shape] topic {t['topic']}: answer must be a rule list")
+            t["answer"] = [{"when": None, "value": ""}]
+    case["interview"]["topics"] = [t for t in case["interview"].get("topics") or []
+                                   if isinstance(t, dict) and t.get("topic")]
     settable_flags = set()
     timed_flags = {}          # flag -> [(action id, duration)], grants that lapse
     repeat_flags = {}         # flag -> [(action id, N, counter)], grants on the Nth dose
@@ -484,6 +533,28 @@ def run_checks(case):
                 perm_flags.add(f)
                 repeat_flags.setdefault(f, []).append(
                     (a["catalog_id"], fr.get("after_administrations"), fr.get("counter")))
+
+    # -- voice_phrases: other ways of saying a case action aloud, in this case only ------
+    # Optional. A list of non-empty strings. The voice parser indexes them ahead of the
+    # global table, so a phrase that the table already gives to another order is taken
+    # over in this case. The same phrase on two actions is offered as a choice.
+    voice_owner = {}
+    for a in case["case_actions"]:
+        if "voice_phrases" not in a:
+            continue
+        vp = a["voice_phrases"]
+        if not isinstance(vp, list) or not all(isinstance(p, str) and p.strip() for p in vp):
+            errors.append(f"[voice] {a['catalog_id']}: voice_phrases must be a list of non-empty strings")
+            continue
+        for p in vp:
+            key = re.sub(r"[^a-z0-9]+", " ", p.lower()).strip()
+            if not key:
+                errors.append(f"[voice] {a['catalog_id']}: voice phrase {p!r} has no letters or digits")
+            elif key in voice_owner and voice_owner[key] != a["catalog_id"]:
+                warnings.append(f"[voice] {p!r} is a voice phrase of both {voice_owner[key]} and "
+                                f"{a['catalog_id']}; the learner will be asked which one")
+            else:
+                voice_owner[key] = a["catalog_id"]
 
     ck = case["content_keys"]
     study_ids = set()
@@ -545,6 +616,13 @@ def run_checks(case):
     )
     if harm_capable:
         reach.add("halted")   # entered outside the transition graph, per section 5
+        halted = next((p for p in case["phases"] if p["id"] == "halted"), None)
+        if halted is None:
+            errors.append("[halt] an action can evaluate to harmful but the case has no phase "
+                          "with id 'halted'. The engine enters that phase on a harmful action "
+                          "and throws when it is missing (engine.js enterPhase)")
+        elif not halted.get("terminal"):
+            errors.append("[halt] the 'halted' phase must be terminal")
 
     for p in case["phases"]:
         if p["id"] not in reach:
@@ -579,20 +657,48 @@ def run_checks(case):
     # rather than a trap. Below five seconds it is a button again, so that stays an error.
     FLOOR_CONSEQUENCE = 5
 
+    def negated_groups(node, neg=False, acc=None):
+        """The things a guard requires to be ABSENT, as groups. `NOT flag a set AND NOT flag
+        b set` is two groups of one: both are obligations. `NOT (flag a set OR action b
+        taken)` is one group of two: doing either prevents the deterioration, so a warning
+        for either is a fair warning. Atoms under an odd number of NOTs count."""
+        if acc is None:
+            acc = []
+        if isinstance(node, Not):
+            inner = []
+            negated_groups(node.x, not neg, inner)
+            if not neg:
+                flat = [a for g in inner for a in g]
+                if isinstance(node.x, BinOp) and node.x.op == "AND":
+                    acc.extend(inner)      # NOT (a AND b): each is its own obligation
+                elif flat:
+                    acc.append(flat)       # NOT (a OR b): either one is enough
+            else:
+                acc.extend(inner)
+        elif isinstance(node, BinOp):
+            negated_groups(node.l, neg, acc); negated_groups(node.r, neg, acc)
+        elif neg:
+            acc.append([node])
+        return acc
+
     def guard_flags(tr):
-        """Flags the guard requires to be UNSET for this transition to fire."""
-        out = set()
+        """What the guard requires to be UNSET for this transition to fire, as groups of
+        names: flag names, plus `action:<id>` for an action written as `NOT action X
+        taken`, which names its own prompt. A deterioration guarded on any of these is a
+        deterioration on inaction. Until v0.25 only flags counted, so a 10 s deterioration
+        guarded on `NOT action X taken` passed every fairness check."""
         w = tr.get("when") or ""
         try:
             node, _ = parse_condition(w)
         except ParseError:
-            return out
-        for at in atoms_of(node):
-            if at.kind == "flag":
-                out.add(at.ident)
-        # A whole word, not a substring: "inotrope" contains NOT, and a guard on
-        # `flag inotrope_given set` was read as a negated guard (found by TAKO, v0.22).
-        return out if re.search(r"\bNOT\b", w.upper()) else set()
+            return []
+        out = []
+        for g in negated_groups(node):
+            names = [("action:" + at.ident) if at.kind == "action" else at.ident
+                     for at in g if at.kind in ("flag", "action")]
+            if names:
+                out.append(names)
+        return out
 
     def prompts_in_phase(phase):
         """(action id, flags it sets, first deadline) for prompts that can fire here."""
@@ -681,21 +787,34 @@ def run_checks(case):
             elif not dest.get("transitions"):
                 errors.append(f"[time] {loc}: destination {tr['to']!r} has no exit")
 
-            gf = guard_flags(tr)
-            for f in gf:
-                if f not in settable_flags:
-                    errors.append(f"[time] {loc}: guard names flag {f!r}, which no action sets")
+            for group in guard_flags(tr):
+                helpers, any_p, names = [], [], []
+                for f in group:
+                    if f.startswith("action:"):
+                        aid = f[len("action:"):]
+                        if aid not in action_ids:
+                            errors.append(f"[time] {loc}: guard names action {aid!r}, which the case does not bind")
+                            continue
+                        helpers += [x for x in prompts_in_phase(ph["id"]) if x[0] == aid and x[2] <= n - PROMPT_LEAD]
+                        any_p += [x for x in prompts_in_phase(ph["id"]) if x[0] == aid]
+                        names.append("action " + aid)
+                    else:
+                        if f not in settable_flags:
+                            errors.append(f"[time] {loc}: guard names flag {f!r}, which no action sets")
+                            continue
+                        helpers += [x for x in prompts_in_phase(ph["id"]) if f in x[1] and x[2] <= n - PROMPT_LEAD]
+                        any_p += [x for x in prompts_in_phase(ph["id"]) if f in x[1]]
+                        names.append(f)
+                if not names:
                     continue
-                helpers = [x for x in prompts_in_phase(ph["id"])
-                           if f in x[1] and x[2] <= n - PROMPT_LEAD]
+                f = " or ".join(names)
                 if not helpers:
-                    any_p = [x for x in prompts_in_phase(ph["id"]) if f in x[1]]
                     if any_p:
-                        errors.append(f"[time] {loc}: fires at {n}s on flag {f!r}, but the only "
+                        errors.append(f"[time] {loc}: fires at {n}s on {f!r}, but the only "
                                       f"prompt that sets it is at {min(x[2] for x in any_p)}s, "
                                       f"less than {PROMPT_LEAD}s of lead")
                     else:
-                        errors.append(f"[time] {loc}: fires at {n}s on flag {f!r} and no action "
+                        errors.append(f"[time] {loc}: fires at {n}s on {f!r} and no action "
                                       f"prompting in this phase sets it. A deterioration nobody "
                                       f"was warned about is a trap rather than a lesson")
             try:
@@ -804,11 +923,30 @@ def run_checks(case):
             visit(n, [n])
 
     # -- H: follow-ups complete --------------------------------------------
+    # The engine schedules a follow-up from case_actions[].follow_ups_triggered, not from
+    # follow_ups[].triggered_by (engine.js applyAction). Both are authored; they must agree.
+    fu_ids = {f["id"] for f in case["follow_ups"]}
+    fired_by = {}
+    for a in case["case_actions"]:
+        for fid in a.get("follow_ups_triggered") or []:
+            if fid not in fu_ids:
+                errors.append(f"[followup] {a['catalog_id']}: follow_ups_triggered names "
+                              f"{fid!r}, which is not in follow_ups. The engine ignores it")
+            fired_by.setdefault(fid, set()).add(a["catalog_id"])
+    for f in case["follow_ups"]:
+        trig = f.get("triggered_by")
+        trig = set([trig] if isinstance(trig, str) else (trig or []))
+        if not fired_by.get(f["id"]):
+            errors.append(f"[followup] {f['id']}: no case action lists it in follow_ups_triggered, "
+                          f"so the engine never schedules it (triggered_by is not what fires it)")
+        elif trig and trig != fired_by[f["id"]]:
+            errors.append(f"[followup] {f['id']}: triggered_by {sorted(trig)} disagrees with the "
+                          f"actions whose follow_ups_triggered name it {sorted(fired_by[f['id']])}")
     for f in case["follow_ups"]:
         for field in ("applies_when", "deadline_seconds", "nurse_prompt", "debrief_note"):
             if not f.get(field):
                 errors.append(f"[followup] {f['id']}: missing {field}")
-        trig = f["triggered_by"]
+        trig = f.get("triggered_by") or []
         for t in ([trig] if isinstance(trig, str) else trig):
             if t not in action_ids:
                 errors.append(f"[followup] {f['id']}: triggered_by unknown action {t!r}")
@@ -1590,12 +1728,18 @@ def run_checks(case):
 # --------------------------------------------------------------------------
 
 # Declared mutually exclusive / impossible combinations, labelled not trusted.
+IMPLAUSIBLE = []   # filled from the case by build_matrix: [(flag, requires_flag, why)]
+
+
 def implausible(assign_desc):
+    """Label a flag combination the case says cannot occur. The pairs come from the case's
+    own `review_hints.implausible` list (a flag that cannot be set unless another is), so
+    the column means the same thing in every pack. Until v0.25 two CHFE flag names were
+    hard-coded here and the column was meaningless for every other pack."""
     flags = assign_desc["flags"]
-    if flags.get("nitro_stopped") and not flags.get("nitro_infusion_running"):
-        return "nitro_stopped without an infusion running"
-    if flags.get("post_intubation_sedation") and not flags.get("intubated"):
-        return "post-intubation sedation without intubation"
+    for flag, requires, why in IMPLAUSIBLE:
+        if flags.get(flag) and not flags.get(requires):
+            return why or f"{flag} without {requires}"
     return None
 
 
@@ -1632,6 +1776,9 @@ def payload_summary(v):
 
 
 def build_matrix(case):
+    IMPLAUSIBLE[:] = [(h.get("flag"), h.get("requires"), h.get("why"))
+                      for h in (case.get("review_hints") or {}).get("implausible", [])
+                      if h.get("flag") and h.get("requires")]
     lines = []
     for path, rules, needs_default in collect_rule_lists(case):
         atoms = []
@@ -1714,7 +1861,17 @@ def build_matrix(case):
 
 def main():
     case = build_case()
-    errors, warnings, notes = run_checks(case)
+    try:
+        errors, warnings, notes = run_checks(case)
+    except Exception as e:                       # noqa: BLE001
+        import traceback
+        tb = traceback.extract_tb(e.__traceback__)[-1]
+        print("=" * 70)
+        print(f"  ERROR:   [crash] the validator stopped at {os.path.basename(tb.filename)}:{tb.lineno} "
+              f"with {type(e).__name__}: {e}. The case file is missing or misshaping something "
+              f"the checks expect; fix the shape, then run again for the full list")
+        print("\n  1 errors (the validator did not finish)")
+        return 1
 
     print("=" * 70)
     print("VALIDATOR (section 14.1 / system design section 13)")

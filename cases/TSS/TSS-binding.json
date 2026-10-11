@@ -1,12 +1,12 @@
 {
  "binding_version": "0.1",
  "case_id": "toxic-shock-tampon-01",
- "catalog_version": "0.2-draft",
+ "catalog_version": "0.3-draft",
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
-  "exact": 57,
+  "exact": 76,
   "mapped": 0,
-  "unmatched": 2
+  "unmatched": 3
  },
  "group_coverage": {
   "normal_saline_1l_bolus": [
@@ -14,17 +14,29 @@
    "lactated_ringer_s_500ml_bolus",
    "normal_saline_500ml_bolus"
   ],
+  "normal_saline_infusion": [
+   "lactated_ringer_s_infusion"
+  ],
   "norepinephrine_drip": [
    "epinephrine_drip",
    "phenylephrine_drip",
    "vasopressin_drip"
   ],
+  "stop_norepinephrine": [
+   "stop_dopamine",
+   "stop_epinephrine",
+   "stop_phenylephrine",
+   "stop_vasopressin"
+  ],
   "ceftriaxone": [
    "cefepime",
+   "cefotaxime",
    "meropenem",
    "piperacillin_tazobactam"
   ],
   "metoprolol_bolus": [
+   "amiodarone_bolus_infusion",
+   "digoxin_bolus",
    "diltiazem_bolus",
    "esmolol_drip",
    "labetalol_bolus",
@@ -64,6 +76,15 @@
    ]
   },
   {
+   "case_id": "normal_saline_infusion",
+   "catalog_id": "normal_saline_infusion",
+   "status": "exact",
+   "note": "v0.24 audit. A maintenance infusion of either crystalloid is the same act here: not a bolus, no flag, no credit. D5 NS bolus and D5 1/2 NS infusion are left unbound and are an open question for the physician.",
+   "also_covers": [
+    "lactated_ringer_s_infusion"
+   ]
+  },
+  {
    "case_id": "nasal_cannula_oxygen",
    "catalog_id": "nasal_cannula_oxygen",
    "status": "exact",
@@ -72,6 +93,18 @@
   {
    "case_id": "non_rebreather_mask",
    "catalog_id": "non_rebreather_mask",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "bag_valve_mask",
+   "catalog_id": "bag_valve_mask",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "non_invasive_positive_pressure_ventilation",
+   "catalog_id": "non_invasive_positive_pressure_ventilation",
    "status": "exact",
    "note": null
   },
@@ -124,6 +157,18 @@
    "note": null
   },
   {
+   "case_id": "lorazepam_bolus",
+   "catalog_id": "lorazepam_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "morphine_bolus",
+   "catalog_id": "morphine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
    "case_id": "ketamine_infusion",
    "catalog_id": "ketamine_infusion",
    "status": "exact",
@@ -134,6 +179,12 @@
    "catalog_id": "propofol_infusion",
    "status": "exact",
    "note": null
+  },
+  {
+   "case_id": "sedation_after_tube",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Not a catalog action and not a button. Nothing presses it. A sedative or analgesic bolus given with the tube in credits it through also_satisfies, and the post-intubation sedation follow-up is discharged by it (authoring 8.2). Hidden from every tab and from search."
   },
   {
    "case_id": "remove_vaginal_foreign_body",
@@ -168,7 +219,13 @@
    "case_id": "stop_norepinephrine",
    "catalog_id": "stop_norepinephrine",
    "status": "exact",
-   "note": null
+   "note": "v0.24 audit. The stop entry of every infusion that sets pressor_running. One case action refuses all five, so no stop button is an unscored way round the lesson (authoring 3.4).",
+   "also_covers": [
+    "stop_dopamine",
+    "stop_epinephrine",
+    "stop_phenylephrine",
+    "stop_vasopressin"
+   ]
   },
   {
    "case_id": "vancomycin",
@@ -186,9 +243,10 @@
    "case_id": "ceftriaxone",
    "catalog_id": "ceftriaxone",
    "status": "exact",
-   "note": "Broad beta-lactam cover while the source is unknown. Accepted without penalty on the directing physician's decision, and not a substitute for vancomycin.",
+   "note": "Broad beta-lactam cover while the source is unknown. Accepted without penalty on the directing physician's decision, and not a substitute for vancomycin. Cefotaxime added on 7 October 2026 after the audit, as in MGCA.",
    "also_covers": [
     "cefepime",
+    "cefotaxime",
     "meropenem",
     "piperacillin_tazobactam"
    ]
@@ -233,8 +291,10 @@
    "case_id": "metoprolol_bolus",
    "catalog_id": "metoprolol_bolus",
    "status": "exact",
-   "note": "Every route to slowing a compensatory tachycardia carries the same tag, effect and note, so none is an unscored way round the lesson.",
+   "note": "Every route to slowing a compensatory tachycardia carries the same tag, effect and note, so none is an unscored way round the lesson. Digoxin and amiodarone added on 7 October 2026 after the audit, under the directing physician's decision that rate control is discouraged. Adenosine is left unbound and is an open question for the physician.",
    "also_covers": [
+    "amiodarone_bolus_infusion",
+    "digoxin_bolus",
     "diltiazem_bolus",
     "esmolol_drip",
     "labetalol_bolus",
@@ -246,7 +306,7 @@
    "case_id": "furosemide_40_mg_iv",
    "catalog_id": "furosemide_40_mg_iv",
    "status": "exact",
-   "note": null
+   "note": "v0.24 audit. Bound through the catalog's loop diuretic group, so the tag follows the group as the catalog grows (authoring 3.4)."
   },
   {
    "case_id": "lumbar_puncture",
@@ -297,6 +357,84 @@
    "note": null
   },
   {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "liver_function_tests_lfts",
+   "catalog_id": "liver_function_tests_lfts",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "creatine_kinase_ck",
+   "catalog_id": "creatine_kinase_ck",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "coagulation_panel",
+   "catalog_id": "coagulation_panel",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "plasma_procalcitonin",
+   "catalog_id": "plasma_procalcitonin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "c_reactive_protein_crp",
+   "catalog_id": "c_reactive_protein_crp",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "urinalysis",
+   "catalog_id": "urinalysis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "serum_hcg_quantitative",
+   "catalog_id": "serum_hcg_quantitative",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "peripheral_smear",
+   "catalog_id": "peripheral_smear",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ultrasound_cardiac",
+   "catalog_id": "ultrasound_cardiac",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ultrasound_fast",
+   "catalog_id": "ultrasound_fast",
+   "status": "exact",
+   "note": null
+  },
+  {
    "case_id": "consult_critical_care",
    "catalog_id": "consult_critical_care",
    "status": "exact",
@@ -311,6 +449,12 @@
   {
    "case_id": "consult_ob_gyn",
    "catalog_id": "consult_ob_gyn",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_renal",
+   "catalog_id": "consult_renal",
    "status": "exact",
    "note": null
   },

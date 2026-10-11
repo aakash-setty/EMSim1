@@ -1,6 +1,6 @@
 # Physician review
 
-The open clinical decisions for all four cases, as one question bank, and the page physicians use to answer them.
+The open clinical decisions of the older cases, as one question bank, plus one file per newer pack, and the page physicians use to answer them.
 
 Page: [EMSim Physician Review](https://claude.ai/artifact/DarnShPm7RCY5X8urhY7q9) (private claude.ai artifact, owner Aakash Setty).
 
@@ -8,7 +8,7 @@ Page: [EMSim Physician Review](https://claude.ai/artifact/DarnShPm7RCY5X8urhY7q9
 
 | File | What it is |
 |---|---|
-| `physician-review-bank.json` | The question bank. 209 questions: AFRVR 35, CHFE 44, DIPH 46, MGCA 45, cross-case 39. Each has a `short` block (2 to 3 bullet situation, one line on the case now, one line per option, a short reason) that the page shows by default, plus the full context, what the case does now, verbatim quotes, three options with the exact file change each implies, a recommendation and its reasoning, and a content hash. |
+| `physician-review-bank.json` | The shared question bank, written 29 September 2026 for AFRVR, CHFE, DIPH, MGCA and cross-case questions. It holds signed physician decisions and is not edited for a new case. A newer pack keeps its questions in `cases/<PREFIX>/<PREFIX>-review-questions.json` (`{"case": {...}, "questions": [...]}`, the same shapes as here), and `tool/build.py` merges those in at build time. Each question Each has a `short` block (2 to 3 bullet situation, one line on the case now, one line per option, a short reason) that the page shows by default, plus the full context, what the case does now, verbatim quotes, three options with the exact file change each implies, a recommendation and its reasoning, and a content hash. |
 | `tool/page.html`, `tool/app.js` | The page source. The bank is inlined at build time. |
 | `tool/build.py` | Builds `tool/out/emsim-physician-review.html` (what gets published) and `tool/out/test.html` (for local tests). |
 | `tool/test.mjs` | Headless browser test of every interaction: blind reveal, change after reveal, own answer, abstain, flags, undo and redo, filters, persistence, export round trip, consensus import, the shared store with a fake runtime, owner-only consensus, phone width and dark theme. Run with `PW=$(npm root -g)/playwright node cases/review/tool/test.mjs` after building. |

@@ -39,6 +39,15 @@ META = {
  },
  "complaint": "Palpitations and breathlessness",
  "category": "Cardiovascular",
+ "library": {
+   "tempo": "minutes: a clock runs until positive pressure is on",
+   "uncertainty": "the order of two treatments, rate against breathing, and whether a second dose is needed",
+   "right_answer": "do more, in the right order",
+   "danger": "obvious at the door",
+   "setting": "68 M, EMS to the resuscitation bay, full department",
+   "feel": "urgent",
+   "note": "The six variety dimensions of docs/case-design-guide.md ('Choosing a case'), as this case reads. Printed in docs/generated/case-index.md so a new case can say how it differs. Descriptive, not clinical: no physician has reviewed the wording."
+ },
 }
 
 PATIENT = {

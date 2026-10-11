@@ -66,20 +66,27 @@ HANDOFF = {
      "the laboratory.\n\n"
      "This case scores the working diagnosis you should have acted on. Naming takotsubo "
      "first is scored as defensible, because it turned out to be true and could only have "
-     "been a guess. Decided by the directing physician.")},
+     "been a guess."),
+   "_note": "The scoring of the two diagnoses was decided by the directing physician, 6 October 2026."},
 
  "additional_diagnoses": [
    {"catalog_id": "dx_cardiogenic_shock", "label": "Cardiogenic shock",
     "explanation": (
       "Her pressure fell with cold hands, a rising lactate and an ejection fraction of 30 "
       "percent. Saying so tells the laboratory to expect an unstable patient. Say with it "
-      "that the shock was from outflow obstruction and got worse with inotropes, because "
+      "that the shock was from outflow obstruction, which inotropes make worse, because "
       "that changes what they reach for.")},
    {"catalog_id": "dx_takotsubo_cardiomyopathy", "label": "Takotsubo cardiomyopathy",
     "explanation": (
       "Worth naming as a possibility beside the infarct. The trigger, the echo and the "
       "murmur all suggest it, and a team that has it in mind will do a ventriculogram and "
-      "will not be surprised by clean arteries.")}],
+      "will not be surprised by clean arteries.")},
+   {"catalog_id": "dx_left_ventricular_outflow_tract_obstruction",
+    "label": "Left ventricular outflow tract obstruction",
+    "explanation": (
+      "Her low pressure came from the base of the ventricle squeezing the outflow tract "
+      "shut. Naming it tells the next team why fluid and a vasoconstrictor helped, and "
+      "why a nitrate or an inotrope would make her worse.")}],
 
  "alternative_diagnoses": [
    {"catalog_id": "dx_takotsubo_cardiomyopathy", "label": "Takotsubo cardiomyopathy",
@@ -150,7 +157,9 @@ DEBRIEF = {
                 "troponin_t", "tenecteplase_tnk_bolus"]},
    {"id": "look_at_the_heart", "label": "Looking at the heart before treating shock",
     "actions": ["exam_card", "exam_neck", "exam_pulm", "ultrasound_cardiac",
-                "ultrasound_lung", "xr_chest", "nt_probnp"]},
+                "ultrasound_lung", "xr_chest", "nt_probnp", "lactate",
+                "basic_chemistry_chem_7", "venous_blood_gas", "arterial_blood_gas",
+                "fingerstick_blood_sugar"]},
    {"id": "obstruction", "label": "Treating outflow obstruction",
     "actions": ["normal_saline_1l_bolus", "phenylephrine_drip", "norepinephrine_drip",
                 "esmolol_drip", "nitroglycerin", "dobutamine_drip", "stop_dobutamine",
@@ -169,7 +178,10 @@ DEBRIEF = {
    "The intended path passes through the obstructed phase, which arrives on a clock for "
    "every learner. A learner who has fluid and a vasoconstrictor running before it arrives "
    "goes straight to steadied."),
- "trap_actions": ["lorazepam_bolus"],
+ "trap_actions": [],
+ "trap_actions_note": (
+   "Empty on purpose. Lorazepam was listed, and the debrief then printed it under things "
+   "that looked reasonable and were not, while its own note says a small dose is not wrong."),
  "cross_cutting_teaching_points": [
    ("Chest pain with ST elevation is an occluded artery until an angiogram says otherwise. "
     "A funeral, a panic and a family's explanation do not change the pathway."),
@@ -205,26 +217,61 @@ PROVENANCE = {
    "deadline, tag, debrief note, interview answer and diagnosis explanation."),
  "author_only_fields_pending_signoff": [
    "Every vital sign in every phase (shock_worse and shock_untreated share one set), and the four clocks: 180, 240, 90 and 10 seconds.",
+   "Every prompt deadline (15, 40, 90, 130, 20, 25, 45 and 60 seconds) and the follow-up deadline of 60 seconds. The fluid and vasoconstrictor prompts moved from 60 and 80 to 45 and 60 on 7 October 2026 so that the default mode warns before the 240-second deterioration.",
+   "Every tag, including the four studies bound as neutral on 7 October 2026 (chemistry, both gases, capillary glucose).",
+   "Every coverage row in the binding map: crystalloid as a group, vasopressin under phenylephrine, the nitrates and nitroprusside, the catecholamine inotropes with push-dose epinephrine, the three stop actions, the beta blockers, the two thrombolytics and the loop diuretic group.",
+   "The size, duration and guard of every vital effect. Each is a teaching choice, not a measured quantity.",
    "Every laboratory value and reference interval, above all the troponin of 186 ng/L.",
-   "The ECG and echo reports.",
+   "Every abnormal flag. Two were changed on 7 October 2026: a dry mouth is now flagged abnormal, and the airway finding in worsening shock is flagged abnormal.",
+   "The ECG and echo reports, and the chest film report authored on 7 October 2026 from this pack's own notes.",
+   "The gas and capillary glucose rows derived on 7 October 2026 from the lactate key and the chemistry. No pH, pCO2, pO2 or base excess is authored.",
    "The murmur's response to posture, which is taught for hypertrophic obstruction and "
-   "assumed to carry over.",
+   "assumed to carry over. Its loudness is graded soft, harsh, loud and very loud by phase.",
    "That fluid plus a pure vasoconstrictor relieves the obstruction in ten seconds.",
    "That norepinephrine is accepted as the vasoconstrictor and tagged neutral.",
    "That a beta blocker is discouraged before a vasoconstrictor and neutral after.",
    "That nothing is harmful, including thrombolysis.",
    "That the cardiologist takes over ninety seconds after being called.",
-   "The interview in full and both diagnosis lists.",
+   "Everything the cardiologist, the catheterization laboratory and the intensivist say.",
+   "That the catheterization laboratory cannot be activated until a twelve-lead has resulted. A model choice of 7 October 2026 for the owner to confirm.",
+   "The interview in full, key_topics and key_exams, and both diagnosis lists.",
+   "Five patient answers written by a model on 7 October 2026 for the steadied phase: timing_progression, chest_pain, severity, aggravating_relieving and sweating. They restate the status line and the skin examination.",
+   "Left ventricular outflow tract obstruction as a credited additional diagnosis, added on 7 October 2026 from this pack's own change request.",
  ],
- "reference_status": "No reference has been checked by a physician. Notes carry [UNVERIFIED] markers.",
+ "reference_status": [
+   {"reference": ("Ghadri JR, et al. International Expert Consensus Document on Takotsubo "
+                  "Syndrome (Part II): Diagnostic Workup, Outcome, and Management. Eur Heart J 2018"),
+    "how_read": "Through a summarizing tool, by a model, on 6 October 2026. Not opened in full.",
+    "status": ("Its management figure was not read. Quotations not checked against the "
+               "publisher's text. Not checked by a physician.")},
+   {"reference": "A 2026 review of cardiogenic shock in takotsubo. Authors, title and journal were not recorded.",
+    "how_read": "Opened by a model on 6 October 2026.",
+    "status": ("Cannot be checked until the citation is recovered. It is the source for "
+               "preferring phenylephrine. Not checked by a physician.")},
+   {"reference": "A 2021 case report of takotsubo with outflow obstruction. Authors, title and journal were not recorded.",
+    "how_read": "Opened by a model on 6 October 2026.",
+    "status": "Cannot be checked until the citation is recovered. Not checked by a physician."},
+   {"reference": "One emergency medicine summary. Site and title were not recorded.",
+    "how_read": "Opened by a model on 6 October 2026.",
+    "status": "Cannot be checked until the citation is recovered. Not checked by a physician."},
+   {"reference": "STEMI guidelines (no edition recorded)",
+    "how_read": "From memory, by a model. Not opened.",
+    "status": ("Four figures rest on it and each note carries a marker: a twelve-lead "
+               "within ten minutes, the artery open within 90 minutes, nitrates held under "
+               "a systolic of 90, and thrombolysis for a delay over about two hours. Two "
+               "handoff explanations and the cardiologist's lines rest on the same sources "
+               "and cannot carry a marker, because the interface prints those fields as written.")},
+ ],
  "catalog_change_requests": [
-   "'Activate Catheterization Lab' is a case-only action, not in the catalog, placed on the "
-   "Consults tab on the directing physician's instruction. A global entry would give "
-   "nothing away and would serve any future infarct case.",
+   "'Activate Catheterization Lab' stays a case-only action on the Consults tab, on the "
+   "directing physician's decision of 6 October 2026. Authoring 7.1 permits that by a "
+   "recorded decision since v0.24. A global entry would give nothing away and would serve "
+   "any future infarct case.",
    "The catalog offers crystalloid only as 500 mL and one liter. The dose this case teaches "
    "is 250 to 500 mL.",
    "The catalog's troponin T and NT-proBNP defaults are qualitative. This case authors "
    "numbers.",
-   "There is no diagnosis entry for left ventricular outflow tract obstruction.",
+   "The catalog has push-dose phenylephrine and vasopressin. This case does not bind them, "
+   "pending a physician's decision (TAKO-SEED.md, open questions).",
  ],
 }

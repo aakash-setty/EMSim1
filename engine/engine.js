@@ -153,6 +153,12 @@ function mergeAction(eff, base, caseAct, extra){
        told they completed 'Digoxin bolus'. The button keeps the catalog's own name;
        only the critical-action list uses this. */
     rec.expectation_label=caseAct.expectation_label;
+    /* Optional. Other ways of saying this action aloud, in this case only. The voice
+       parser indexes them ahead of the global table (voice.js build). It is the only way
+       to give spoken phrases to a case-only action, which has no catalog id for the table
+       to key on. Not borrowed by a covered sibling: the phrases name the action that
+       authors them, and a sibling keeps its own catalog name and table rows. */
+    rec.voice_phrases=(extra&&extra.coveredBy)?null:(caseAct.voice_phrases||null);
     /* Authoring 9.1 has always said a case may override the catalog's narration where
        the standard line would be wrong or confusing. Nothing read it, so the promise was
        not kept. Both this and nurse_alert below are borrowed by a covered sibling, so a

@@ -1,12 +1,12 @@
 {
  "binding_version": "0.1",
  "case_id": "takotsubo-lvoto-01",
- "catalog_version": "0.2-draft",
+ "catalog_version": "0.3-draft",
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
-  "exact": 41,
+  "exact": 45,
   "mapped": 0,
-  "unmatched": 2
+  "unmatched": 3
  },
  "group_coverage": {
   "nitroglycerin": [
@@ -16,6 +16,7 @@
   ],
   "dobutamine_drip": [
    "dopamine_drip",
+   "epinephrine_bolus",
    "epinephrine_drip"
   ],
   "stop_dobutamine": [
@@ -76,7 +77,7 @@
    "case_id": "consult_activate_cath_lab",
    "catalog_id": null,
    "status": "unmatched",
-   "note": "Case-only button on the Consults tab, on the directing physician's instruction of 6 October 2026. Not in the catalog."
+   "note": "Case-only button on the Consults tab, on the directing physician's instruction of 6 October 2026. Not in the catalog. Authoring 7.1 permits a case-only action by recorded decision. Its spoken phrases are voice_phrases on the case action."
   },
   {
    "case_id": "heparin_bolus_drip",
@@ -123,9 +124,10 @@
    "case_id": "dobutamine_drip",
    "catalog_id": "dobutamine_drip",
    "status": "exact",
-   "note": "Every catecholamine inotrope is the same act here.",
+   "note": "Every catecholamine inotrope is the same act here. Push-dose epinephrine was added on 7 October 2026: it was an unbound route to the act the case already tags. A push dose is modeled like the infusion and has to be stopped.",
    "also_covers": [
     "dopamine_drip",
+    "epinephrine_bolus",
     "epinephrine_drip"
    ]
   },
@@ -143,7 +145,7 @@
    "case_id": "furosemide_40_mg_iv",
    "catalog_id": "furosemide_40_mg_iv",
    "status": "exact",
-   "note": null
+   "note": "A claim about the act. The group has one member today."
   },
   {
    "case_id": "tenecteplase_tnk_bolus",
@@ -229,6 +231,30 @@
    "note": null
   },
   {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fingerstick_blood_sugar",
+   "catalog_id": "fingerstick_blood_sugar",
+   "status": "exact",
+   "note": null
+  },
+  {
    "case_id": "consult_cardiology",
    "catalog_id": "consult_cardiology",
    "status": "exact",
@@ -239,6 +265,12 @@
    "catalog_id": "consult_critical_care",
    "status": "exact",
    "note": null
+  },
+  {
+   "case_id": "chest_rechecked",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Not a catalog action and not a button. The target of the follow-up recheck_lungs_after_fluid. A chest examination, a lung ultrasound or a chest film taken after fluid credits it through also_satisfies (authoring 8.2). Hidden from every tab and from search."
   },
   {
    "case_id": "handoff_submit",

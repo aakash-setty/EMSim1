@@ -17,6 +17,8 @@ TUBED = "flag intubated set"
 OUT = "flag source_removed set"
 
 VERIFY = "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+DERIVED = ("Derived by a model from the pack's other values on 7 October 2026. No new "
+           "clinical claim was intended. Not from a physician. [UNVERIFIED]")
 
 
 def ex(findings, abnormal=True):
@@ -48,8 +50,8 @@ def val(label, value, unit, ref, abnormal, comment=None):
     return d
 
 
-def report(text, abnormal=True, comment=None):
-    d = {"kind": "report", "abnormal": abnormal, "report": text, "verify": VERIFY}
+def report(text, abnormal=True, comment=None, verify=None):
+    d = {"kind": "report", "abnormal": abnormal, "report": text, "verify": verify or VERIFY}
     if comment:
         d["comment"] = comment
     return d
@@ -137,6 +139,8 @@ EXAM = {
  "exam_psych": [
    {"when": PROF, "value": ex("Cannot be assessed. Not answering questions.")},
    {"when": HYPO, "value": ex("Drowsy and slow to answer. No longer asking to go home.")},
+   {"when": SUPP + " OR " + STAB, "value": ex(
+     "Awake, cooperative, tired. No longer asking to go home.", abnormal=False)},
    {"when": None, "value": ex("Calm, cooperative, apologetic. Asks when she can go home.", abnormal=False)}],
 }
 
@@ -149,8 +153,8 @@ GENERAL_STATUS = {
    {"when": TUBED, "value": gs("Intubated and sedated. Flushed.")},
    {"when": PROF, "value": gs("Obtunded, gray and mottled, responds only to pain. GCS 10.")},
    {"when": HYPO, "value": gs("Gray and drowsy, rouses to voice. Flushed skin. GCS 14.")},
-   {"when": SUPP, "value": gs("Awake, washed out, flushed. Norepinephrine running. GCS 15.")},
-   {"when": STAB, "value": gs("Awake, tired, flushed. Norepinephrine running. GCS 15.")},
+   {"when": SUPP, "value": gs("Awake, washed out, flushed. Vasopressor running. GCS 15.")},
+   {"when": STAB, "value": gs("Awake, tired, flushed. Vasopressor running. GCS 15.")},
    {"when": RESP, "value": gs("Sitting up, flushed, says she feels a bit better. GCS 15.")},
    {"when": None, "value": gs("Sitting up, talking, flushed all over, dry lips, vomit bag in her lap. GCS 15.")},
  ],
@@ -213,7 +217,13 @@ def abg(p):
     hco3 = str(int(hco3) - 2)   # keeps pH, pCO2 and HCO3 consistent with each other
     aph = "%.2f" % (float(ph) + 0.03)
     apco2 = str(int(pco2) - 5)
-    sat = {"hypotensive": "95", "profound_shock": "92"}.get(p, "97")
+    # v0.24 audit. The saturation was 97 in every phase but two, against a monitor reading
+    # 98 after fluid and 96 on a vasopressor. It is now the phase's own authored
+    # saturation. Derived by a model from the phase vitals on 7 October 2026. The pO2 is
+    # unchanged. The gas never sees a vital effect (authoring 6.6), so oxygen running in
+    # the two low phases still shows a higher number on the monitor than on the gas.
+    sat = {"presentation": "97", "fluid_responsive": "98", "hypotensive": "95",
+           "supported": "96", "profound_shock": "92", "stabilizing": "97"}[p]
     po2 = {"hypotensive": "78", "profound_shock": "64"}.get(p, "92")
     return panel([
       comp("pH", aph, "", "7.35-7.45", True),
@@ -243,8 +253,7 @@ LABS = {
      comp("BUN", "41", "mg/dL", "7-20", True),
      comp("Creatinine", "2.6", "mg/dL", "0.6-1.2", True),
      comp("Glucose", "104", "mg/dL", "70-140 (random)", False)],
-     comment=("Acute kidney injury in a 22-year-old, with a low bicarbonate. Two days of "
-              "vomiting does not do this without shock.")))},
+     comment="Anion gap 17, calculated without potassium."))},
 
  "complete_blood_count_cbc": {"changes_with_state": False, "rules": always(panel([
      comp("WBC", "17.4", "x10^9/L", "4.0-11.0", True),
@@ -252,8 +261,7 @@ LABS = {
      comp("Hematocrit", "45", "%", "36-46 (F)", False),
      comp("Platelets", "98", "x10^9/L", "150-400", True),
      comp("MCV", "88", "fL", "80-100", False)],
-     comment=("A high white count and low platelets. The hemoglobin is at the top of the "
-              "range in a patient on day five of her period, which fits a dry patient.")))},
+     comment="A high white count and low platelets."))},
 
  "liver_function_tests_lfts": {"changes_with_state": False, "rules": always(panel([
      comp("AST", "148", "U/L", "10-40", True),
@@ -263,17 +271,16 @@ LABS = {
      comp("Direct bilirubin", "1.4", "mg/dL", "0.0-0.3", True),
      comp("Albumin", "2.9", "g/dL", "3.5-5.0", True),
      comp("Total protein", "5.8", "g/dL", "6.0-8.3", True)],
-     comment="Liver involvement: raised transaminases and bilirubin, low albumin."))},
+     comment="Raised transaminases and bilirubin. Low albumin and total protein."))},
 
  "creatine_kinase_ck": {"changes_with_state": False, "rules": always(val(
-     "Creatine kinase", "2140", "U/L", "30-200", True,
-     comment="Muscle involvement, which matches her muscle pain and tenderness."))},
+     "Creatine kinase", "2140", "U/L", "30-200", True))},
 
  "coagulation_panel": {"changes_with_state": False, "rules": always(panel([
      comp("PT", "15.4", "sec", "11.0-13.5", True),
      comp("INR", "1.3", "", "0.8-1.1", True),
      comp("aPTT", "39", "sec", "25-35", True)],
-     comment="Mildly prolonged clotting times with low platelets: early coagulopathy of sepsis."))},
+     comment="Mildly prolonged clotting times."))},
 
  "plasma_procalcitonin": {"changes_with_state": False, "rules": always(val(
      "Procalcitonin", "24.0", "ng/mL", "< 0.10", True))},
@@ -295,9 +302,7 @@ LABS = {
      comp("WBC", "10-20", "/hpf", "0-5", True),
      comp("RBC", "10-20", "/hpf", "0-2", True),
      comp("Bacteria", "None seen", "", "none", False)],
-     comment=("White cells without bacteria or nitrite. Pyuria with no evidence of urinary "
-              "infection is a recognized finding in toxic shock. The blood, and some of the "
-              "white cells, may be menstrual contamination.")))},
+     comment="White cells and red cells. No bacteria and no nitrite."))},
 
  "urine_hcg_qualitative": {"changes_with_state": False, "rules": always(
      report("Negative.", abnormal=False))},
@@ -312,6 +317,14 @@ LABS = {
  "peripheral_smear": {"changes_with_state": False, "rules": always(report(
      "Neutrophilia with a left shift and toxic granulation. Platelets reduced. No "
      "schistocytes. No blasts."))},
+
+ # v0.24 audit, catalog finding 5.5. The catalog default is "Not applicable.", written
+ # for a patient with no rash. She has one. This states what was done and gives no result.
+ "skin_biopsy_of_the_rash": {"changes_with_state": False, "rules": always(report(
+     "Punch biopsy taken from the trunk and sent. No histology result is available during "
+     "this case.", abnormal=False,
+     verify=("A process statement and not a result. Written by a model on 7 October 2026. "
+             "Whether a biopsy has any place here is a question for the physician.")))},
 }
 
 # ============================================================== IMAGING AND ECG
@@ -336,9 +349,16 @@ IMAGING = {
  "ultrasound_cardiac": {"changes_with_state": False, "rules": always(report(
      "Hyperdynamic left ventricle. No pericardial effusion. Right ventricle not dilated. "
      "Inferior vena cava small and collapsing with each breath.",
-     comment=("A small collapsing vena cava and a vigorous ventricle: an empty, dilated "
-              "circulation and a heart that is working. The case shows the same picture in "
-              "every phase, which is a simplification.")))},
+     verify=(VERIFY + " The case shows the same picture in every phase, which is a "
+             "simplification.")))},
+
+ # v0.24 audit, catalog finding 5.4. The catalog default said there was no free fluid in
+ # the pelvis, and this pack's own CT reports a small volume of free pelvic fluid. The
+ # report now agrees with the CT and adds nothing to it.
+ "ultrasound_fast": {"changes_with_state": False, "rules": always(report(
+     "No free fluid in Morison's pouch or the splenorenal recess. Small volume of free "
+     "fluid in the pelvis. No pericardial effusion.",
+     verify=DERIVED + " Derived from the CT report's free pelvic fluid."))},
 
  "ct_abdomen": {"changes_with_state": True, "rules": [
    {"when": OUT, "value": report(
@@ -353,21 +373,45 @@ IMAGING = {
 # ============================================================== CONSULTANTS
 CONSULTANTS = {
  "authoring_note": (
-   "Section 11.5. No consultant quotes a laboratory value, so no rule needs a study "
-   "predicate or a pending tier. Each asks for what has not been done. The intensivist and "
-   "the infectious disease physician both ask about a source, which is what they would ask, "
-   "and which makes a consult one honest way to be pointed at the pelvic examination."),
+   "Section 11.5. No consultant quotes a laboratory value. The intensivist and the "
+   "infectious disease physician both ask about a source, which is what they would ask, "
+   "and which makes a consult one honest way to be pointed at the pelvic examination.\n\n"
+   "v0.24 audit. The intensivist's list was rewritten. It opens with a tier for the "
+   "obtunded patient, which claims no treatment. Every later tier that says a treatment was "
+   "given tests that treatment's flag, so 'Fluid in' is no longer said to a patient who had "
+   "none, and the drug running is called a vasopressor because a covered sibling can be the "
+   "one running. No tier says a lactate has been sent. Nephrology has a reply, with a tier "
+   "for a chemistry that is back, one for a chemistry that is pending and one that asks for "
+   "it. Every new sentence restates a note the pack already carries. A model wrote them on "
+   "7 October 2026 and no physician has read them."),
 
  "consult_critical_care": [
+   {"when": PROF,
+    "value": ("Intensivist: If she's obtunded with a pressure like that, I'm coming down. "
+              "She needs three things together: fluid, a vasopressor and the source found "
+              "and removed. Has anyone done a pelvic exam? Start whichever of those is "
+              "missing now.")},
+   {"when": "flag pressor_running set AND flag fluids_given set AND flag source_removed set",
+    "value": ("Intensivist: Good. Fluid in, a vasopressor running, source out. I'll take "
+              "her. I want a lactate from after the resuscitation before she comes up, and "
+              "make sure she has had vancomycin and clindamycin.")},
    {"when": "flag pressor_running set AND flag source_removed set",
-    "value": ("Intensivist: Good. Fluid in, norepinephrine running, source out. I'll take "
-              "her. Send a repeat lactate before she comes up, and make sure she has had "
-              "vancomycin and clindamycin.")},
-   {"when": "flag pressor_running set",
+    "value": ("Intensivist: A vasopressor running and the source out. Has she had fluid? "
+              "She's dry, and a vasopressor with no fluid behind it is not enough. Give her "
+              "about 30 per kilo and call me back.")},
+   {"when": "flag pressor_running set AND flag fluids_given set",
     "value": ("Intensivist: I'll take her. Before she comes up, what is the source? A "
-              "22-year-old woman with a fever, a red rash and shock on a rising pressor. Has "
+              "22-year-old woman with a fever, a red rash and shock on a vasopressor. Has "
               "anyone asked about tampons or done a pelvic exam? If something is in there, "
               "it comes out before she moves.")},
+   {"when": "flag pressor_running set",
+    "value": ("Intensivist: A vasopressor with no fluid behind it is not enough in a "
+              "patient this dry. Give her about 30 per kilo. And what is the source? Has "
+              "anyone asked about tampons or done a pelvic exam?")},
+   {"when": "flag fluids_given set AND flag source_removed set",
+    "value": ("Intensivist: Good that the source is out. Keep filling her to about 30 per "
+              "kilo. If her mean is still under 65 after that, start norepinephrine through "
+              "a good peripheral line and call me back.")},
    {"when": "flag fluids_given set",
     "value": ("Intensivist: Keep filling her to about 30 per kilo. If her mean is still "
               "under 65 after that, start norepinephrine through a good peripheral line and "
@@ -376,6 +420,18 @@ CONSULTANTS = {
     "value": ("Intensivist: Tell me her vital signs and what you've done. A febrile young "
               "woman with a fast heart rate and a soft pressure needs a line, fluid, cultures "
               "and antibiotics now. Call me back when that is running.")}],
+
+ "consult_renal": [
+   {"when": "study basic_chemistry_chem_7 resulted",
+    "value": ("Nephrology: Her kidneys are not being perfused. The treatment for this "
+              "kidney injury is restoring her circulation, so it is your resuscitation and "
+              "not anything from us tonight. No more ibuprofen and no diuretic. Dose the "
+              "vancomycin for her kidney function and watch her urine output every hour.")},
+   {"when": "study basic_chemistry_chem_7 ordered",
+    "value": "Nephrology: Her chemistry isn't back. Call me when you have it."},
+   {"when": None,
+    "value": ("Nephrology: I can't add anything without a creatinine. Send a chemistry and "
+              "call me when you have it.")}],
 
  "consult_infectious_disease": [
    {"when": "flag source_removed set",

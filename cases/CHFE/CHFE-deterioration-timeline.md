@@ -14,7 +14,7 @@ Vitals in this phase: HR 118, BP 188/104, RR 32, SpO2 85%, T 36.8
 
 - guard: `NOT flag on_niv set AND NOT flag nitrate_given set`
 - destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
-- narration: “He's wearing out on me. He's stopped answering and he's gone grey round the lips.”
+- narration: “He's wearing out on me. He's stopped answering and he's gone gray round the lips.”
 - author rationale: AUTHOR SIGNATURE REQUIRED. The claim is that a sixty-five year old man in hypertensive acute cardiogenic pulmonary edema at a saturation of 85 percent and a respiratory rate of 32 begins to tire inside four minutes if nothing is done. Four minutes is compressed against real disease tempo the way every deadline in these packs is. The guard names both treatments so that either one alone stops it, which is the fairness claim: a learner who did something is not punished for not doing everything.
 
 Prompts in this phase that set nitrate_given, on_niv, which is what the fairness rule requires:
@@ -65,7 +65,7 @@ Vitals in this phase: HR 108, BP 152/88, RR 30, SpO2 88%, T 36.8
 - guard: `NOT flag on_niv set`
 - destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
 - narration: “He's still pulling hard and he's starting to flag. He's gone quiet on me.”
-- author rationale: AUTHOR SIGNATURE REQUIRED. Longer than the other two deadlines on the judgement that a treated afterload buys more time than an untreated one. Five minutes is a teaching tempo.
+- author rationale: AUTHOR SIGNATURE REQUIRED. Longer than the other two deadlines on the judgment that a treated afterload buys more time than an untreated one. Five minutes is a teaching tempo.
 
 Prompts in this phase that set on_niv, which is what the fairness rule requires:
 
@@ -97,7 +97,7 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 
 | from | at | to | vitals immediately after | the line |
 |---|---|---|---|---|
-| `presentation` | 240s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “He's wearing out on me. He's stopped answering and he's gone grey round the lips.” |
+| `presentation` | 240s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “He's wearing out on me. He's stopped answering and he's gone gray round the lips.” |
 | `niv_supported` | 240s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “He's tiring under the mask. He's stopped talking to me and his pressure is no better than when he came in.” |
 | `nitrate_responding` | 300s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “He's still pulling hard and he's starting to flag. He's gone quiet on me.” |
 

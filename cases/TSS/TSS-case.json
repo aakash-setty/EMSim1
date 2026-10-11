@@ -2,16 +2,16 @@
  "case_id": "toxic-shock-tampon-01",
  "schema_version": "0.3",
  "authored_against": {
-  "system_design": "system-design-v2.md (v0.9)",
-  "authoring_requirements": "case-authoring-requirements.md (v0.9, with 6.8 and the v0.21 note)",
-  "action_catalog": "action-catalog.json (0.2-draft, plus Remove Vaginal Foreign Body added for this case)",
-  "diagnosis_catalog": "diagnosis-catalog.json",
+  "system_design": "system-design-v2.md (as of v0.24)",
+  "authoring_requirements": "case-authoring-requirements.md (v0.24). Drafted on 6 October 2026 against the v0.21 text and brought to the v0.24 rules on 7 October 2026 after the audit.",
+  "action_catalog": "action-catalog.json (0.3-draft, 305 entries)",
+  "diagnosis_catalog": "diagnosis-catalog.json (499 entries)",
   "design_guide": "EMSim case design guide (Claude Doc, 5 October 2026)"
  },
  "provenance": {
   "status": "DRAFTED BY A LANGUAGE MODEL. Not reviewed by a physician. Not for use with learners until the section 14.3 checklist is complete.",
   "author": "Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a one-paragraph case plan written in the same conversation. Authoring requirements section 17 applies: the AUTHOR-ONLY fields were generated, and a physician is authoring the ground truth in review.",
-  "warning": "A physician decided four things, listed in TSS-SEED.md section 0: which antibiotic orders count, what happens on an attempted discharge, how she responds to source removal, and when norepinephrine is expected. The same physician approved the plan's patient, story and three learning goals in outline.\n\nEverything else is model output and awaits sign-off: every vital sign, every examination finding, every laboratory value and reference interval, every deadline, every tag, every debrief note, the whole interview, and the diagnosis lists. The model wrote them from general knowledge of toxic shock syndrome and sepsis care and opened no guideline, paper or published simulation while doing so.",
+  "warning": "A physician decided four things, listed in TSS-SEED.md section 0: which antibiotic orders count, what happens on an attempted discharge, how she responds to source removal, and when norepinephrine is expected. The same physician approved the plan's patient, story and three learning goals in outline.\n\nEverything else is model output and awaits sign-off: every vital sign, every examination finding, every laboratory value and reference interval, every deadline, every tag, every debrief note, the whole interview, and the diagnosis lists. The drafting pass wrote them from general knowledge of toxic shock syndrome and sepsis care and opened no guideline, paper or published simulation while doing so. A second model pass on the same day did open sources and compared the pack against them. reference_status below lists each one and how it was read. Neither pass was a physician's review.\n\nOn 7 October 2026 a model changed the pack to meet the v0.24 authoring rules after an audit. It added no clinical number except values derived from numbers already in the pack, each marked in a verify note. The new debrief notes, consultant lines and patient answers restate what the pack already said, and TSS-SEED.md lists each one as awaiting sign-off.",
   "author_only_fields_pending_signoff": [
    "Every vital sign in every phase.",
    "Every laboratory value, reference interval and abnormal flag.",
@@ -22,23 +22,75 @@
    "The tags: vancomycin critical, clindamycin neutral, broad beta-lactams neutral, rate control and ibuprofen and a diuretic and a lumbar puncture discouraged, intubation discouraged until she is obtunded.",
    "That nothing in this case is harmful and nothing ends it except a handoff.",
    "The antibiotic regimen named in the debrief notes, and the statements about the evidence for clindamycin, immunoglobulin, 30 mL/kg, peripheral vasopressors and dopamine.",
-   "The interview in full, and the alternative and additional diagnosis lists."
+   "The interview in full, and the alternative and additional diagnosis lists.",
+   "Consultant advice: every reply of the intensivist, infectious disease, gynecology and nephrology. The intensivist's tiers were rewritten and the nephrology reply was written by a model on 7 October 2026.",
+   "Prompt deadlines and their relative urgency: monitor 20 seconds, vasopressor 30, line 45, fluid 60, source 60, vancomycin 110, and the escalations at 120 (vasopressor), 170 (fluid) and 180 (source). Fluid and source were moved to 60 on 7 October 2026 to meet the default-mode rule.",
+   "The two follow-ups, their deadlines and whether they apply: a second liter 60 seconds after a bolus unless a vasopressor is running, and sedation 90 seconds after intubation.",
+   "The two case prerequisites: a pelvic examination before removal, and a running vasopressor before a stop.",
+   "Every coverage row in the binding map: the crystalloid bolus group, the three vasopressor infusions under norepinephrine, the five stop entries, the maintenance infusions, the five broad beta-lactams, the eight rate-control routes and the loop diuretic group.",
+   "The size and duration of every vital effect: fluid plus 6 systolic and minus 6 heart rate for 60 seconds, a vasopressor without fluid plus 8, a phenylephrine push plus 12 for 90 seconds, rate control minus 16 heart rate and minus 12 systolic for 180 seconds, oxygen plus 2 by cannula and plus 4 by mask, bag or non-invasive ventilation, and acetaminophen minus 0.6 degrees after 30 seconds.",
+   "key_topics (nine interview topics) and key_exams (six examinations), which decide the History and Physical scores.",
+   "The neutral tags given on 7 October 2026 to thirteen studies, the nephrology consult, the maintenance infusions, the bag valve mask, non-invasive ventilation, lorazepam and morphine. Each is a placeholder.",
+   "The five additional diagnoses added on 7 October 2026 and their explanations.",
+   "Results and findings derived by a model on 7 October 2026: the FAST report, the skin biopsy line, the arterial saturation by phase, and the psychiatric finding in the two vasopressor phases.",
+   "Patient answers a model wrote or edited on 7 October 2026. TSS-SEED.md lists them."
   ],
-  "reference_status": "No reference in this pack has been checked. Notes that lean on a guideline or a trial carry an [UNVERIFIED] marker, which the interface strips from the learner's view.",
+  "reference_status": [
+   {
+    "reference": "CDC 2011 toxic shock syndrome case definition",
+    "how_read": "Opened by a model on 6 October 2026, in the independent check after drafting. The drafting pass opened nothing and wrote from memory",
+    "status": "Compared with the pack by that model. Not checked by a physician"
+   },
+   {
+    "reference": "Surviving Sepsis Campaign 2021 guideline text",
+    "how_read": "Opened by a model on 6 October 2026, in the independent check",
+    "status": "Compared with the pack by that model. A newer edition exists and was not opened. Not checked by a physician"
+   },
+   {
+    "reference": "SCCM guideline page",
+    "how_read": "Opened by a model on 6 October 2026, in the independent check",
+    "status": "Compared with the pack by that model. Not checked by a physician"
+   },
+   {
+    "reference": "StatPearls",
+    "how_read": "Opened by a model on 6 October 2026, in the independent check",
+    "status": "A secondary source. The SEED does not record which article. Not checked by a physician"
+   },
+   {
+    "reference": "Internet Book of Critical Care",
+    "how_read": "Opened by a model on 6 October 2026, in the independent check",
+    "status": "A secondary source. The SEED does not record which chapter. Not checked by a physician"
+   },
+   {
+    "reference": "De Backer et al., NEJM 2010, the SOAP II trial",
+    "how_read": "Not opened. The dopamine note was written from memory",
+    "status": "Unverified. The note carries a marker. Not checked by a physician"
+   },
+   {
+    "reference": "Current IDSA and local guidance on the empiric regimen",
+    "how_read": "Not opened. The vancomycin and clindamycin notes were written from memory",
+    "status": "Unverified. The notes carry markers. Not checked by a physician"
+   },
+   {
+    "reference": "No source",
+    "how_read": "From memory",
+    "status": "Four claims have no source at all: that most menstrual toxic shock is methicillin-susceptible, lactate over 4 as a risk marker, the CT appearance of a tampon, and sterile pyuria in toxic shock. Each sits in a debrief note that carries a marker. The pyuria claim is also in the urosepsis and pyelonephritis explanations, which cannot carry a marker because the interface prints it there. Not checked by a physician"
+   }
+  ],
+  "reference_status_summary": "TSS-SEED.md section 4 lists what the independent check confirmed against the opened sources. It does not record which source confirmed which claim.",
+  "reference_status_note": "Markers are [UNVERIFIED] text in square brackets. The interface strips them from an action's debrief note, a timed transition's debrief note, references and the cross-cutting teaching points, and prints them everywhere else, so they sit only in those fields and in verify notes.",
   "catalog_change_requests": [
    "RESOLVED 6 October 2026. 'Remove Vaginal Foreign Body' was added to the action catalog under Procedures, marked source=author-supplied. Before it existed a retained tampon could be found on the genitourinary examination and then not acted on.",
-   "No calcium is authored. Hypocalcemia is described in toxic shock and a reviewer may want it added.",
-   "The diagnosis catalog has no entry for thrombocytopenia that is not immune or heparin-induced, so her platelet count of 98 cannot be named at handover.",
-   "The engine gained handoff.disposition_intercepts and hidden case actions for this case (v0.21), so that one disposition can have a consequence instead of ending the run.",
-   "The patient figure cannot show a rash or a flush, so the erythroderma is text only."
+   "RESOLVED 7 October 2026. The diagnosis catalog gained Thrombocytopenia and Retained vaginal foreign body, and this case now credits both as additional diagnoses.",
+   "Linezolid is not in the action catalog. The vancomycin note names it as an alternative some centers prefer.",
+   "The diagnosis catalog has no entry for acute liver injury or transaminitis short of acute liver failure, so her liver involvement cannot be named at handover."
   ]
  },
  "catalog_change_requests": [
   "RESOLVED 6 October 2026. 'Remove Vaginal Foreign Body' was added to the action catalog under Procedures, marked source=author-supplied. Before it existed a retained tampon could be found on the genitourinary examination and then not acted on.",
-  "No calcium is authored. Hypocalcemia is described in toxic shock and a reviewer may want it added.",
-  "The diagnosis catalog has no entry for thrombocytopenia that is not immune or heparin-induced, so her platelet count of 98 cannot be named at handover.",
-  "The engine gained handoff.disposition_intercepts and hidden case actions for this case (v0.21), so that one disposition can have a consequence instead of ending the run.",
-  "The patient figure cannot show a rash or a flush, so the erythroderma is text only."
+  "RESOLVED 7 October 2026. The diagnosis catalog gained Thrombocytopenia and Retained vaginal foreign body, and this case now credits both as additional diagnoses.",
+  "Linezolid is not in the action catalog. The vancomycin note names it as an alternative some centers prefer.",
+  "The diagnosis catalog has no entry for acute liver injury or transaminitis short of acute liver failure, so her liver involvement cannot be named at handover."
  ],
  "metadata": {
   "working_title": "22-year-old woman, vomiting and diarrhea for two days, walked in with her roommate",
@@ -69,18 +121,27 @@
    "line": "Walked in with her roommate. Triaged as vomiting and diarrhea and placed in a room."
   },
   "complaint": "Vomiting and diarrhea",
-  "category": "Infectious disease"
+  "category": "Infectious disease",
+  "library": {
+   "tempo": "minutes: the shock progresses without fluid",
+   "uncertainty": "the diagnosis in a talking patient, and whether to send her home",
+   "right_answer": "ask the question nobody asks, and remove the source",
+   "danger": "behind near-normal vitals in a young patient; discharge is the trap",
+   "setting": "22 F, walked into a patient room with her roommate",
+   "feel": "puzzling, then urgent",
+   "note": "The six variety dimensions of docs/case-design-guide.md ('Choosing a case'), as this case reads. Printed in docs/generated/case-index.md so a new case can say how it differs. Descriptive, not clinical: no physician has reviewed the wording."
+  }
  },
  "patient": {
   "age": 22,
   "sex": "female",
   "weight_kg": 62,
-  "background": "Graduate student, lives with one roommate. No past medical or surgical history. Takes a combined oral contraceptive pill and nothing else. No allergies. Does not smoke, drinks socially, uses no drugs.\n\nHer period started five days ago. She uses super-absorbency tampons. Four days ago she put one in before an evening out, came home late, and did not take it out. She believes her period has ended and has not thought about the tampon since. Two days ago she developed fever, muscle aches, vomiting and watery diarrhea, which she puts down to a takeout meal. Yesterday she spent an hour at the beach and blames her red skin on that. This morning she nearly fainted in the shower and her roommate drove her in.",
+  "background": "Graduate student, lives with one roommate. No past medical history. Wisdom teeth removed at eighteen and no other surgery. Takes a combined oral contraceptive pill. She took ibuprofen yesterday, two tablets a couple of times, and nothing else. No allergies. Does not smoke, drinks socially, uses no drugs.\n\nHer period started five days ago. She uses super-absorbency tampons. Four days ago she put one in before an evening out, came home late, and did not take it out. She believes her period has ended and has not thought about the tampon since. Two days ago she developed fever, muscle aches, vomiting and watery diarrhea, which she puts down to a takeout meal. Yesterday she took her temperature and it was 102. The same day she spent an hour at the beach and blames her red skin on that. This morning she nearly fainted in the shower and her roommate drove her in.",
   "presenting_vitals_source": "Inherited from phase 'presentation'. Measured at triage.",
   "presenting_appearance": "A young woman sitting up on the bed, talking in full sentences and apologizing for coming in. She is flushed all over, her lips are dry, and she keeps a vomit bag in her lap. She does not look as sick as her numbers.",
   "ems_handover_text": "Twenty-two year old woman, two days of vomiting and watery diarrhea with fever and body aches. She thinks it was a takeout meal. Near-syncope in the shower this morning, no loss of consciousness. Heart rate 128 and pressure 94 over 58 at triage, temperature 39.4. She looks sunburned and says she was at the beach yesterday. Walking, talking, roommate with her.",
   "arrival_handover": "Twenty-two year old, two days of vomiting and diarrhea, says she thinks it was something she ate. Her roommate drove her in after she nearly passed out in the shower this morning.",
-  "handover_authoring_note": "Section 3.2. Two sentences, 34 words, in a triage nurse's voice. No vital sign, no past history, no medication, no pertinent negative. 'Something she ate' is the patient's own wrong explanation, repeated by the nurse who heard it, and it is there on purpose: the case opens with the misleading story already in the room. The fever, the rash and the period are all left for the learner to find."
+  "handover_authoring_note": "Section 3.2. Two sentences, 32 words, in a triage nurse's voice. No vital sign, no past history, no medication, no pertinent negative. 'Something she ate' is the patient's own wrong explanation, repeated by the nurse who heard it, and it is there on purpose: the case opens with the misleading story already in the room. The fever, the rash and the period are all left for the learner to find. Section 14.3 says the handover names no diagnosis in clinical or lay words. 'Something she ate' is a lay diagnosis, it is wrong, and it is a recorded exception (TSS-SEED.md, known gaps)."
  },
  "phase_notes": {
   "count_justification": "Six clinical phases, the ceiling in section 3.3, and one terminal. They are the natural history (compensated, transient response to fluid, hypotensive) crossed with what the learner has done about it (a vasopressor with the source in, the source out) plus one deterioration for a learner who does neither.",
@@ -112,9 +173,10 @@
    "ecg": {
     "pattern": "organised",
     "p_waves": true,
+    "pr_ms": 140,
     "qrs_ms": 84,
     "qtc_ms": 430,
-    "author_note": "Sinus tachycardia with narrow complexes in every phase, as the ECG report says. Model output."
+    "author_note": "Sinus tachycardia with narrow complexes in every phase, with the PR, QRS and QTc the ECG report gives. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -128,7 +190,7 @@
      "after_seconds": 5,
      "measured_from": "guard_true",
      "to": "hypotensive",
-     "narration": "She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure is 78 over 42.",
+     "narration": "She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure has dropped.",
      "debrief_note": "She was discharged with a heart rate over 110 and a fever, and she fainted when she stood up. She is both dry and vasodilated. A young adult in that state holds a blood pressure with her heart rate, and standing takes that away.\n\nThe trap was the story. Vomiting and diarrhea explain a fast heart rate, and fluid makes most people feel better. They do not explain a temperature over 39 with red skin. A patient you are about to send home should have vital signs you would accept at home.",
      "author_rationale": "A delayed consequence of the learner's own action, so the five-second floor applies. Orthostatic syncope in compensated distributive shock is plausible. That it happens every time is a teaching choice. Model output, needs a physician's signature."
     },
@@ -137,8 +199,8 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "fluid_responsive",
-     "narration": "That fluid is in. Her rate has come down to 114 and her pressure is 104 over 62. She says she feels a bit better.",
-     "debrief_note": "The first bolus helped, as it should. She was dry from two days of vomiting and diarrhea, and she is leaking fluid out of her vessels.\n\nRead the response as information, not as a result. A heart rate of 114 and a temperature over 39 after a liter is not a patient who was only dehydrated. The target is about 30 mL/kg, which for her is close to two liters, followed by a reassessment.",
+     "narration": "That fluid is in. Her pressure is better and she says she feels a bit better.",
+     "debrief_note": "The first bolus helped, as it should. She was dry from two days of vomiting and diarrhea, and she is leaking fluid out of her vessels.\n\nRead the response as information, not as a result. A patient who is still tachycardic with a temperature over 39 after a liter was not only dehydrated. The target is about 30 mL/kg, which for her is close to two liters, followed by a reassessment.",
      "author_rationale": "A delayed consequence of the learner's own action. Ten seconds stands for the time a liter takes to run in, heavily compressed. The size of the response is a teaching choice. Model output."
     },
     {
@@ -146,9 +208,9 @@
      "after_seconds": 300,
      "measured_from": "phase_entry",
      "to": "hypotensive",
-     "narration": "She's gone gray and she's getting drowsy. Her pressure is 78 over 42 and her rate is 138.",
-     "debrief_note": "Five minutes passed with no fluid and she stopped compensating. On arrival she was already in shock: a heart rate of 128, a pressure of 94 over 58, a slow capillary refill and a fever. She was holding her pressure with her heart rate.\n\nYoung patients do this well and then fail quickly. The time to treat shock is while the patient is still talking to you.",
-     "author_rationale": "Deterioration on inaction. Untreated toxic shock progresses to hypotension over hours, and five minutes of case clock stands for that. The number is a drafting judgment and needs a physician's signature. The nurse asks for a line at 45 seconds and for fluid at 80 and again at 170."
+     "narration": "She's gone gray and she's getting drowsy. Her pressure has dropped and her rate is up.",
+     "debrief_note": "She was given no fluid bolus and she stopped compensating. On arrival she was already in shock: a heart rate of 128, a pressure of 94 over 58, a slow capillary refill and a fever. She was holding her pressure with her heart rate.\n\nYoung patients do this well and then fail quickly. The time to treat shock is while the patient is still talking to you.",
+     "author_rationale": "Deterioration on inaction. Untreated toxic shock progresses to hypotension over hours, and five minutes of case clock stands for that. The number is a drafting judgment and needs a physician's signature. The nurse asks for a line at 45 seconds and for fluid at 60 and again at 170. In the default mode those are 135, 180 and 510, so the first fluid warning comes 120 seconds before this rule and the escalation is never heard."
     }
    ]
   },
@@ -175,9 +237,10 @@
    "ecg": {
     "pattern": "organised",
     "p_waves": true,
+    "pr_ms": 140,
     "qrs_ms": 84,
     "qtc_ms": 430,
-    "author_note": "Sinus tachycardia with narrow complexes in every phase, as the ECG report says. Model output."
+    "author_note": "Sinus tachycardia with narrow complexes in every phase, with the PR, QRS and QTc the ECG report gives. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -191,7 +254,7 @@
      "after_seconds": 5,
      "measured_from": "guard_true",
      "to": "hypotensive",
-     "narration": "She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure is 78 over 42.",
+     "narration": "She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure has dropped.",
      "debrief_note": "She was discharged with a heart rate over 110 and a fever, and she fainted when she stood up. She is both dry and vasodilated. A young adult in that state holds a blood pressure with her heart rate, and standing takes that away.\n\nThe trap was the story. Vomiting and diarrhea explain a fast heart rate, and fluid makes most people feel better. They do not explain a temperature over 39 with red skin. A patient you are about to send home should have vital signs you would accept at home.",
      "author_rationale": "A delayed consequence of the learner's own action, so the five-second floor applies. Orthostatic syncope in compensated distributive shock is plausible. That it happens every time is a teaching choice. Model output, needs a physician's signature."
     },
@@ -200,8 +263,8 @@
      "after_seconds": 150,
      "measured_from": "phase_entry",
      "to": "stabilizing",
-     "narration": "The fluid on its own isn't holding her any more, but the norepinephrine is. She's 98 over 56 with a rate of 116.",
-     "debrief_note": "The effect of the fluid faded, which is the natural course of this illness, and she did not drop because a vasopressor was already running and the source was out. Starting norepinephrine before the pressure falls is a reasonable choice in septic shock and the case accepts it.",
+     "narration": "The fluid on its own isn't holding her any more, but the vasopressor is, and her pressure is steady.",
+     "debrief_note": "The effect of the fluid faded, which is the natural course of this illness, and she did not drop because a vasopressor was already running and the source was out. Starting a vasopressor before the pressure falls is a reasonable choice in septic shock and the case accepts it.",
      "author_rationale": "The same clock as the unguarded rule below, so that the fade happens at one moment whatever was done. Listed first so a learner who has done everything goes straight to the stable phase. Model output."
     },
     {
@@ -209,7 +272,7 @@
      "after_seconds": 150,
      "measured_from": "phase_entry",
      "to": "supported",
-     "narration": "The fluid on its own isn't holding her any more. The norepinephrine is keeping her at 92 over 50 and I've had to turn it up.",
+     "narration": "The fluid on its own isn't holding her any more. The vasopressor is keeping her pressure up and I've had to turn it up.",
      "debrief_note": "The effect of the fluid faded and the vasopressor caught her. She is holding a borderline pressure on a rising dose, which means something is still driving the shock.",
      "author_rationale": "As above. Model output."
     },
@@ -218,9 +281,9 @@
      "after_seconds": 150,
      "measured_from": "phase_entry",
      "to": "hypotensive",
-     "narration": "That fluid isn't holding. Her pressure is back down to 78 over 42, her rate is 138 and she's getting drowsy.",
+     "narration": "That fluid isn't holding. Her pressure is back down, her rate is back up and she's getting drowsy.",
      "debrief_note": "The response to fluid wore off. This is expected in toxic shock and is not a mistake on your part. The toxin dilates vessels and makes them leak, so crystalloid leaves the circulation soon after it goes in.\n\nThis is the moment the case is built around. A mean arterial pressure under 65 that persists after fluid is an indication for norepinephrine. The usual fluid target is about 30 mL/kg, and a vasopressor does not have to wait for all of it. More fluid alone will buy less each time.",
-     "author_rationale": "Scheduled natural history. The rules above it catch a learner who already started a vasopressor, so in effect this fires when none is running. Two and a half minutes stands for the hour or so over which a transient responder declares herself. Model output, needs a physician's signature.",
+     "author_rationale": "Scheduled natural history. The rules above it catch a learner who already started a vasopressor, so in effect this fires when none is running. Two and a half minutes stands for the hour or so over which a transient responder declares herself. Model output, needs a physician's signature. No prompt names a vasopressor in this phase, so this fade arrives unwarned in both modes. That is deliberate and follows the directing physician's fourth decision (TSS-SEED.md section 0 and section 4a).",
      "unguarded_rationale": "The fade is the illness and not a consequence of anything the learner did or did not do, and the physician directing this case asked for exactly this: the pressure stays under a mean of 65 after about 30 mL/kg and norepinephrine is then the expected move. The nurse says after the first bolus that 30 per kilo is nearly two liters, and the phase this leads to is recoverable with one order."
     }
    ]
@@ -248,9 +311,10 @@
    "ecg": {
     "pattern": "organised",
     "p_waves": true,
+    "pr_ms": 140,
     "qrs_ms": 84,
     "qtc_ms": 430,
-    "author_note": "Sinus tachycardia with narrow complexes in every phase, as the ECG report says. Model output."
+    "author_note": "Sinus tachycardia with narrow complexes in every phase, with the PR, QRS and QTc the ECG report gives. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -264,8 +328,8 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "stabilizing",
-     "narration": "The norepinephrine is working. She's 98 over 56, rate 116, and she's more awake.",
-     "debrief_note": "Norepinephrine restored her pressure, and it is holding because the source is out. Ten seconds is a compression of the several minutes a titration takes.",
+     "narration": "The vasopressor is working. Her pressure is up and she's more awake.",
+     "debrief_note": "The vasopressor restored her pressure, and it is holding because the source is out. Ten seconds is a compression of the several minutes a titration takes.",
      "author_rationale": "A delayed consequence of the learner's own action. Model output."
     },
     {
@@ -273,8 +337,8 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "supported",
-     "narration": "The norepinephrine has brought her up to 92 over 50 and she's more awake. I've had to go up on it twice to get there.",
-     "debrief_note": "Norepinephrine restored a borderline pressure. She needs a rising dose to stay there, which is what an untreated source looks like from the infusion pump.",
+     "narration": "The vasopressor has brought her pressure up and she's more awake. I've had to go up on it twice to get there.",
+     "debrief_note": "The vasopressor restored a borderline pressure. She needs a rising dose to stay there, which is what an untreated source looks like from the infusion pump.",
      "author_rationale": "A delayed consequence of the learner's own action. Model output."
     },
     {
@@ -282,17 +346,17 @@
      "after_seconds": 240,
      "measured_from": "phase_entry",
      "to": "profound_shock",
-     "narration": "I can barely rouse her. Her pressure is 66 over 32 and her rate is 148.",
-     "debrief_note": "Four minutes at a mean arterial pressure of 54 without both fluid and a vasopressor, and she progressed to profound shock.\n\nHypotension that persists after fluid is not treated with more waiting or with fluid alone. Norepinephrine can be started through a good peripheral line while central access is arranged. A vasopressor without any fluid is also not enough in a patient this dry.",
-     "author_rationale": "Deterioration on inaction. The nurse asks for norepinephrine at 30 seconds and again at 120, and for fluid at 80 if none has been given. Four minutes is a drafting judgment and needs a physician's signature."
+     "narration": "I can barely rouse her. Her pressure has dropped again and her rate is higher.",
+     "debrief_note": "Her mean arterial pressure stayed under 65 without both fluid and a vasopressor, and she progressed to profound shock.\n\nHypotension that persists after fluid is not treated with more waiting or with fluid alone. Norepinephrine can be started through a good peripheral line while central access is arranged. A vasopressor without any fluid is also not enough in a patient this dry.",
+     "author_rationale": "Deterioration on inaction. The nurse asks for norepinephrine at 30 seconds and again at 120, and for fluid at 60 if none has been given. In the default mode those are 90, 360 and 180, so both first warnings come at least 60 seconds before this rule and the escalation is never heard. Four minutes is a drafting judgment and needs a physician's signature."
     }
    ]
   },
   {
    "id": "supported",
    "label": "On a vasopressor, source still in place",
-   "short_label": "on norepinephrine",
-   "clinical_description": "Awake again with a mean arterial pressure of 64 on norepinephrine, and the dose is climbing. Fluid and a vasopressor are treating the consequence. The tampon is still there and the toxin is still being made.",
+   "short_label": "on a vasopressor",
+   "clinical_description": "Awake again with a mean arterial pressure of 64 on a vasopressor, and the dose is climbing. Fluid and a vasopressor are treating the consequence. The tampon is still there and the toxin is still being made.",
    "vitals": {
     "heart_rate": 124,
     "systolic_bp": 92,
@@ -311,9 +375,10 @@
    "ecg": {
     "pattern": "organised",
     "p_waves": true,
+    "pr_ms": 140,
     "qrs_ms": 84,
     "qtc_ms": 430,
-    "author_note": "Sinus tachycardia with narrow complexes in every phase, as the ECG report says. Model output."
+    "author_note": "Sinus tachycardia with narrow complexes in every phase, with the PR, QRS and QTc the ECG report gives. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -327,7 +392,7 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "stabilizing",
-     "narration": "I've stopped having to go up on the norepinephrine since that came out. She's 98 over 56 on the same dose.",
+     "narration": "I've stopped having to go up on the vasopressor since that came out. She's holding her pressure on the same dose.",
      "debrief_note": "Removing the tampon stopped the decline. It did not cure her: the toxin already absorbed keeps acting for many hours, and she stays on a vasopressor. What changed is that the dose stopped rising.\n\nThe case shows this within seconds. In a real patient you would see it over the next hour or more, and you would not be able to tell it apart from the effect of everything else you did. That is the reason source control is done on principle and not judged by the monitor.",
      "author_rationale": "A delayed consequence of the learner's own action. The physician directing this case chose 'stops the decline, no dramatic rebound'. Ten seconds is a heavy compression and the debrief note says so. The speed of real improvement after tampon removal is unsourced. Needs a physician's signature."
     },
@@ -336,9 +401,9 @@
      "after_seconds": 270,
      "measured_from": "phase_entry",
      "to": "profound_shock",
-     "narration": "I've been going up and up on the norepinephrine and it isn't enough any more. She's 66 over 32, rate 148, and I can barely rouse her.",
+     "narration": "I've been going up and up on the vasopressor and it isn't enough any more. Her pressure has dropped, her rate is up, and I can barely rouse her.",
      "debrief_note": "She had fluid and a vasopressor and still got worse, because the source was never removed. A retained tampon colonized with toxin-producing staphylococci keeps delivering toxin for as long as it stays in.\n\nShock that needs a rising vasopressor dose after adequate fluid means the cause is still active. Go back and look for it: a full examination including the pelvis, wounds, lines and packing.",
-     "author_rationale": "Deterioration on inaction. The nurse asks whether anyone has examined her fully at 75 seconds and asks about her period at 180. Four and a half minutes is longer than the other clocks on purpose: the directing physician asked that treated sepsis with a missed source decline more slowly. Needs a physician's signature."
+     "author_rationale": "Deterioration on inaction. The nurse asks whether anyone has examined her fully at 60 seconds and asks about her period at 180. In the default mode those are 180 and 540, so the first warning comes 90 seconds before this rule and the escalation is never heard. Four and a half minutes is longer than the other clocks on purpose: the directing physician asked that treated sepsis with a missed source decline more slowly. Needs a physician's signature."
     }
    ]
   },
@@ -365,9 +430,10 @@
    "ecg": {
     "pattern": "organised",
     "p_waves": true,
+    "pr_ms": 140,
     "qrs_ms": 84,
     "qtc_ms": 430,
-    "author_note": "Sinus tachycardia with narrow complexes in every phase, as the ECG report says. Model output."
+    "author_note": "Sinus tachycardia with narrow complexes in every phase, with the PR, QRS and QTc the ECG report gives. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -381,7 +447,7 @@
      "after_seconds": 15,
      "measured_from": "guard_true",
      "to": "stabilizing",
-     "narration": "She's coming back. 98 over 56 on the norepinephrine, rate 116, and she's opening her eyes to my voice.",
+     "narration": "She's coming back. Her pressure is up on the vasopressor, her rate is down, and she's opening her eyes to my voice.",
      "debrief_note": "She recovered a pressure once all three things were done: fluid, a vasopressor and removal of the source. She spent time at a mean pressure in the 40s on the way, and her kidneys and liver will show it over the next days.",
      "author_rationale": "A delayed consequence of the learner's own action. That recovery from this phase is always possible is a teaching choice: the case has no death, so a learner who gets here can still find the answer. Model output."
     }
@@ -390,9 +456,9 @@
   },
   {
    "id": "stabilizing",
-   "label": "Source removed, holding on norepinephrine",
+   "label": "Source removed, holding on a vasopressor",
    "short_label": "stabilizing",
-   "clinical_description": "Awake, mean arterial pressure 70 on a steady dose of norepinephrine, still febrile and tachycardic. This is the intended endpoint and she is not well. She needs intensive care.",
+   "clinical_description": "Awake, mean arterial pressure 70 on a steady dose of a vasopressor, still febrile and tachycardic. This is the intended endpoint and she is not well. She needs intensive care.",
    "vitals": {
     "heart_rate": 116,
     "systolic_bp": 98,
@@ -411,9 +477,10 @@
    "ecg": {
     "pattern": "organised",
     "p_waves": true,
+    "pr_ms": 140,
     "qrs_ms": 84,
     "qtc_ms": 430,
-    "author_note": "Sinus tachycardia with narrow complexes in every phase, as the ECG report says. Model output."
+    "author_note": "Sinus tachycardia with narrow complexes in every phase, with the PR, QRS and QTc the ECG report gives. Model output."
    },
    "terminal": false,
    "transitions": [
@@ -447,9 +514,10 @@
    "ecg": {
     "pattern": "organised",
     "p_waves": true,
+    "pr_ms": 140,
     "qrs_ms": 84,
     "qtc_ms": 430,
-    "author_note": "Sinus tachycardia with narrow complexes in every phase, as the ECG report says. Model output."
+    "author_note": "Sinus tachycardia with narrow complexes in every phase, with the PR, QRS and QTc the ECG report gives. Model output."
    },
    "terminal": true,
    "transitions": [],
@@ -473,7 +541,7 @@
   ],
   "note": "Harmful is not used. See phase_notes.no_halted_phase."
  },
- "flag_namespace_note": "Flags are permanent. fluids_given is set by any crystalloid bolus and fluids_30mlkg by the second one. pressor_running is set by norepinephrine, the three infusions it covers, and dopamine. source_removed is set only by removing the tampon. discharge_attempted is set by the hidden action the Handoff tab logs when discharge is chosen early.",
+ "flag_namespace_note": "Flags are permanent. fluids_given is set by any crystalloid bolus and fluids_30mlkg by the second one. pressor_running is set by norepinephrine, the three infusions it covers, and dopamine. No action clears it: the stop action is refused. source_removed is set only by removing the tampon. discharge_attempted is set by the hidden action the Handoff tab logs when discharge is chosen early. A maintenance infusion sets no flag.",
  "case_actions": [
   {
    "catalog_id": "attach_monitor",
@@ -505,9 +573,12 @@
      "value": "critical"
     }
    ],
+   "flags_set": [
+    "iv_access"
+   ],
    "prompt": {
     "deadline_seconds": 45,
-    "guard": "phase is presentation OR phase is hypotensive",
+    "guard": "(phase is presentation OR phase is hypotensive) AND NOT flag iv_access set",
     "text": "She's got no line and she's been vomiting for two days. Do you want access?"
    },
    "debrief_note": "Everything she needs goes through a vein: fluid, antibiotics and a vasopressor. A large peripheral line is enough to start all three, including norepinephrine."
@@ -519,6 +590,9 @@
      "when": null,
      "value": "recommended"
     }
+   ],
+   "flags_set": [
+    "iv_access"
    ],
    "debrief_note": "A second line lets fluid run beside a vasopressor and antibiotics. Worth having in any patient in shock."
   },
@@ -567,21 +641,33 @@
     }
    ],
    "prompt": {
-    "deadline_seconds": 80,
+    "deadline_seconds": 60,
     "guard": "phase is presentation OR phase is hypotensive OR phase is profound_shock",
-    "text": "Her heart rate is fast, her pressure is soft, and she's kept nothing down for two days. Do you want fluid running?",
+    "text": "Her heart rate is fast, her pressure is soft, and she's kept nothing down for two days. Do you want a fluid bolus?",
     "escalation": {
      "deadline_seconds": 170,
-     "text": "She still hasn't had any fluid. If we don't fill her she is going to drop her pressure. Can I hang a liter?"
+     "text": "She still hasn't had a fluid bolus. She is dry and she needs volume. Can I hang a liter?"
     }
    },
    "debrief_note": "Crystalloid is the first treatment for septic shock, and the usual target is about 30 mL/kg in the first hours. She weighs 62 kg, so that is close to two liters. Guidelines suggest a balanced crystalloid over saline. Both are accepted here.\n\nTwo things to take from how she responded. The first liter helped and the help did not last, because toxic shock dilates vessels and makes them leak. And once her mean pressure was under 65 after fluid, more fluid alone moved the number for a minute and no longer. That pattern is the indication for a vasopressor.\n\nThe 30 mL/kg figure is a guideline default with weak evidence behind the exact number. It is a starting point for reassessment, not a dose to complete before thinking. [UNVERIFIED, confirm against the current Surviving Sepsis guideline]"
   },
   {
+   "catalog_id": "normal_saline_infusion",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "expectation_label": "Maintenance crystalloid infusion",
+   "nurse_alert": "That's running at a maintenance rate. It isn't a bolus.",
+   "debrief_note": "A maintenance infusion is not a bolus. Crystalloid is the first treatment for septic shock, and the usual target is about 30 mL/kg in the first hours, which for her is close to two liters. An infusion at a maintenance rate does not deliver that. The case counts a bolus as fluid resuscitation and does not count this."
+  },
+  {
    "catalog_id": "nasal_cannula_oxygen",
    "tag": [
     {
-     "when": "phase is profound_shock",
+     "when": "phase is hypotensive OR phase is profound_shock",
      "value": "recommended"
     },
     {
@@ -597,7 +683,8 @@
      "vital": "oxygen_saturation",
      "delta": 2,
      "key": "oxygen_support",
-     "while": "(phase is hypotensive OR phase is profound_shock) AND NOT flag intubated set"
+     "while": "(phase is hypotensive OR phase is profound_shock) AND NOT flag intubated set",
+     "note": "Teaching choice, not a modeled quantity."
     }
    ],
    "debrief_note": "Her saturation is normal until she is in established shock, so oxygen has nothing to add early. It does no harm. It is worth applying once she is hypotensive and her saturation falls."
@@ -606,7 +693,7 @@
    "catalog_id": "non_rebreather_mask",
    "tag": [
     {
-     "when": "phase is profound_shock",
+     "when": "phase is hypotensive OR phase is profound_shock",
      "value": "recommended"
     },
     {
@@ -622,10 +709,55 @@
      "vital": "oxygen_saturation",
      "delta": 4,
      "key": "oxygen_support",
-     "while": "(phase is hypotensive OR phase is profound_shock) AND NOT flag intubated set"
+     "while": "(phase is hypotensive OR phase is profound_shock) AND NOT flag intubated set",
+     "note": "Teaching choice, not a modeled quantity."
     }
    ],
    "debrief_note": "Her saturation is normal until she is in established shock, so oxygen has nothing to add early. It does no harm. It is worth applying once she is hypotensive and her saturation falls."
+  },
+  {
+   "catalog_id": "bag_valve_mask",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "flags_set": [
+    "oxygen_applied"
+   ],
+   "vital_effects": [
+    {
+     "vital": "oxygen_saturation",
+     "delta": 4,
+     "key": "oxygen_support",
+     "while": "(phase is hypotensive OR phase is profound_shock) AND NOT flag intubated set",
+     "note": "Teaching choice. The same four points as the non-rebreather mask, on the same key, so this route cannot be stacked on a mask. Derived by a model from the mask's delta on 7 October 2026. Needs a physician's signature."
+    }
+   ],
+   "debrief_note": "Another route to oxygen. In this case it raises the saturation by the same amount as a non-rebreather mask once she is hypotensive, and it does not add to one. She is breathing for herself and protecting her airway until she is obtunded, and her saturation is normal until she is in established shock."
+  },
+  {
+   "catalog_id": "non_invasive_positive_pressure_ventilation",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "flags_set": [
+    "oxygen_applied"
+   ],
+   "vital_effects": [
+    {
+     "vital": "oxygen_saturation",
+     "delta": 4,
+     "key": "oxygen_support",
+     "while": "(phase is hypotensive OR phase is profound_shock) AND NOT flag intubated set",
+     "note": "Teaching choice. The same four points as the non-rebreather mask, on the same key, so this route cannot be stacked on a mask. Derived by a model from the mask's delta on 7 October 2026. Needs a physician's signature."
+    }
+   ],
+   "debrief_note": "Another route to oxygen. In this case it raises the saturation by the same amount as a non-rebreather mask once she is hypotensive, and it does not add to one. She is breathing for herself and protecting her airway until she is obtunded, and her saturation is normal until she is in established shock."
   },
   {
    "catalog_id": "etomidate_bolus",
@@ -677,7 +809,13 @@
    "flags_set": [
     "sedation_given"
    ],
-   "debrief_note": "Slow in onset and it lowers the pressure. Etomidate or ketamine asks less of her."
+   "debrief_note": "Slow in onset and it lowers the pressure. Etomidate or ketamine asks less of her.",
+   "also_satisfies": [
+    {
+     "id": "sedation_after_tube",
+     "when": "flag intubated set"
+    }
+   ]
   },
   {
    "catalog_id": "rocuronium_bolus",
@@ -723,7 +861,7 @@
    "follow_ups_triggered": [
     "post_intubation_sedation"
    ],
-   "debrief_note": "She is breathing for herself and protecting her airway in every phase except the last. Intubating a patient in shock removes her own respiratory drive and adds sedation and positive pressure, each of which lowers the blood pressure. Resuscitate first. If she becomes obtunded and cannot protect her airway, intubation is reasonable, with a vasopressor already running."
+   "debrief_note": "She is breathing for herself and protecting her airway until she is obtunded. Intubating a patient in shock removes her own respiratory drive and adds sedation and positive pressure, each of which lowers the blood pressure. Resuscitate first. If she becomes obtunded and cannot protect her airway, intubation is reasonable, with a vasopressor already running."
   },
   {
    "catalog_id": "fentanyl_bolus",
@@ -736,7 +874,51 @@
    "flags_set": [
     "post_intubation_sedation_given"
    ],
+   "also_satisfies": [
+    {
+     "id": "sedation_after_tube",
+     "when": "flag intubated set"
+    }
+   ],
    "debrief_note": "Analgesia and sedation after intubation with little effect on the pressure."
+  },
+  {
+   "catalog_id": "lorazepam_bolus",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "flags_set": [
+    "post_intubation_sedation_given"
+   ],
+   "also_satisfies": [
+    {
+     "id": "sedation_after_tube",
+     "when": "flag intubated set"
+    }
+   ],
+   "debrief_note": "Counts as sedation after intubation in this case when it is given with the tube in. In shock, choose agents and doses that spare the blood pressure."
+  },
+  {
+   "catalog_id": "morphine_bolus",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "flags_set": [
+    "post_intubation_sedation_given"
+   ],
+   "also_satisfies": [
+    {
+     "id": "sedation_after_tube",
+     "when": "flag intubated set"
+    }
+   ],
+   "debrief_note": "Counts as sedation after intubation in this case when it is given with the tube in. In shock, choose agents and doses that spare the blood pressure."
   },
   {
    "catalog_id": "ketamine_infusion",
@@ -765,6 +947,18 @@
    "debrief_note": "Sedates well and lowers the pressure. In a patient on a vasopressor, expect to need more of the vasopressor."
   },
   {
+   "catalog_id": "sedation_after_tube",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "display_name": "Sedation given after intubation",
+   "hidden": true,
+   "debrief_note": "Not a button. The case credits this when a sedative or analgesic bolus is given with the tube in, so that a dose given before intubation does not discharge the post-intubation sedation follow-up."
+  },
+  {
    "catalog_id": "remove_vaginal_foreign_body",
    "tag": [
     {
@@ -784,12 +978,12 @@
    ],
    "narration_override": "Speculum is in. There's a tampon high in the vault, dark brown and foul-smelling. It's out, and I've bagged it and sent a swab.",
    "prompt": {
-    "deadline_seconds": 75,
+    "deadline_seconds": 60,
     "guard": "phase is supported OR phase is profound_shock",
-    "text": "We've given her fluid and she's on norepinephrine, and I keep having to turn it up. Has anyone examined her from head to toe, including a pelvic?",
+    "text": "She's a young woman in shock and no source has been dealt with. Has anyone examined her from head to toe, including a pelvic exam?",
     "escalation": {
      "deadline_seconds": 180,
-     "text": "She's a young woman with a fever, a rash and shock, and I don't think anyone has asked about her period. Do you want to examine her?"
+     "text": "She's a young woman with a fever, a rash and shock. Has anyone asked about her period? Do you want to examine her?"
     }
    },
    "debrief_note": "This is the action the case turns on. A tampon left in for four days was the site where Staphylococcus aureus was making toxin, and nothing given through a vein removes it.\n\nNobody will tell you it is there. She thinks her period is over and has forgotten the tampon. You find it by asking about menstruation and tampon use, or by doing a pelvic examination because a febrile patient in shock with a red rash has no other source. A CT of the abdomen and pelvis would also show it, later.\n\nThe idea that travels: septic shock without a source means you have not finished looking. Examine the places that are easy to skip, which are the pelvis, the perineum, the back, wounds, and anything packed or implanted.\n\nIn this simulator the pelvic examination has to come first, because you cannot remove what you have not found."
@@ -823,14 +1017,14 @@
      "note": "Teaching choice. A vasopressor in a patient who has had no fluid raises the number a little and does not get her out of the phase. The phase change needs both."
     }
    ],
-   "nurse_alert": "Norepinephrine is running through the peripheral line. I'll titrate to a mean of 65 and watch the site.",
+   "nurse_alert": "The vasopressor is running. I'll titrate to a mean of 65 and watch the site.",
    "prompt": {
     "deadline_seconds": 30,
     "guard": "phase is hypotensive OR phase is profound_shock",
     "text": "Her mean pressure is under 65. Do you want norepinephrine started?",
     "escalation": {
      "deadline_seconds": 120,
-     "text": "Her pressure is still not holding. If we don't get a pressor on her she is going to get worse. Norepinephrine?"
+     "text": "Her mean pressure is still under 65. Can I start norepinephrine?"
     }
    },
    "debrief_note": "Norepinephrine is the first vasopressor in septic shock. The indication is a mean arterial pressure under 65 that persists after fluid. In this case that moment arrives when the effect of the first liters fades.\n\nStarting it earlier, while a second liter runs, is also accepted here. Guidelines allow a vasopressor through a good peripheral line for a short time, so it should not wait for a central line.\n\nEpinephrine, vasopressin and phenylephrine infusions count as the same act in this case. Norepinephrine is the one to reach for first. [UNVERIFIED, confirm against the current Surviving Sepsis guideline]"
@@ -872,8 +1066,19 @@
    "catalog_id": "stop_norepinephrine",
    "tag": [
     {
-     "when": null,
+     "when": "flag pressor_running set",
      "value": "discouraged"
+    },
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "expectation_label": "Stop the vasopressor",
+   "prerequisites": [
+    {
+     "when": "flag pressor_running set",
+     "failure_message": "There's no vasopressor running to stop."
     }
    ],
    "narration_override": "Her pressure depends on it, so I've left it running. Tell me again if you really want it off.",
@@ -910,7 +1115,7 @@
     "toxin_suppression_given",
     "abx_given"
    ],
-   "debrief_note": "The right drug to add. Clindamycin suppresses toxin production by stopping bacterial protein synthesis. It is given with vancomycin, not instead of it, because clindamycin resistance in Staphylococcus aureus is common enough to matter. Not scored in this case on the directing physician's decision."
+   "debrief_note": "The right drug to add. Clindamycin suppresses toxin production by stopping bacterial protein synthesis. It is given with vancomycin, not instead of it, because clindamycin resistance in Staphylococcus aureus is common enough to matter. Not scored in this case on the directing physician's decision. [UNVERIFIED: toxin suppression and the resistance rate]"
   },
   {
    "catalog_id": "ceftriaxone",
@@ -937,7 +1142,7 @@
    "flags_set": [
     "abx_given"
    ],
-   "debrief_note": "Covers methicillin-susceptible staphylococci, which cause most menstrual toxic shock. It is a drug for after the susceptibilities are known. Empirically it leaves MRSA uncovered."
+   "debrief_note": "Covers methicillin-susceptible staphylococci, which cause most menstrual toxic shock. It is a drug for after the susceptibilities are known. Empirically it leaves MRSA uncovered. [UNVERIFIED: that most menstrual toxic shock is methicillin-susceptible]"
   },
   {
    "catalog_id": "intravenous_immunoglobulin",
@@ -947,7 +1152,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Sometimes given in severe toxic shock on the theory that it neutralizes toxin. The evidence is weak and is better for streptococcal than for staphylococcal disease. A decision for intensive care and infectious disease, and not scored here."
+   "debrief_note": "Sometimes given in severe toxic shock on the theory that it neutralizes toxin. The evidence is weak and is better for streptococcal than for staphylococcal disease. A decision for intensive care and infectious disease, and not scored here. [UNVERIFIED: the evidence for immunoglobulin]"
   },
   {
    "catalog_id": "hydrocortisone_bolus",
@@ -957,7 +1162,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Considered in septic shock that needs a rising vasopressor dose despite fluid. A reasonable later step and not a substitute for finding the source."
+   "debrief_note": "Considered in septic shock that needs a rising vasopressor dose despite fluid. A reasonable later step and not a substitute for finding the source. [UNVERIFIED, confirm against the current Surviving Sepsis guideline]"
   },
   {
    "catalog_id": "acetaminophen",
@@ -1037,6 +1242,7 @@
      "value": "discouraged"
     }
    ],
+   "expectation_label": "Loop diuretic",
    "debrief_note": "Her kidneys are failing because they are not being perfused. A diuretic removes volume she does not have. The treatment for this kidney injury is restoring the circulation."
   },
   {
@@ -1071,7 +1277,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "A lactate of 4.6 in a patient who is talking is the laboratory's way of saying what the heart rate already said. A value over 4 marks a high-risk septic patient whatever the blood pressure is. Repeat it after resuscitation."
+   "debrief_note": "Her lactate on arrival was 4.6. A raised lactate in a patient who is talking is the laboratory's way of saying what the heart rate already said. A value over 4 marks a high-risk septic patient whatever the blood pressure is. Repeat it after resuscitation. [UNVERIFIED: lactate over 4 as a risk marker]"
   },
   {
    "catalog_id": "blood_culture_x_2",
@@ -1101,7 +1307,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "A high white count and a platelet count of 98. Thrombocytopenia with fever, rash and hypotension is multi-organ involvement and is one of the criteria used to define toxic shock syndrome."
+   "debrief_note": "A high white count and a platelet count of 98. Thrombocytopenia with fever, rash and hypotension is multi-organ involvement and is one of the criteria used to define toxic shock syndrome. The hemoglobin is at the top of the range in a patient on day five of her period, which fits a dry patient."
   },
   {
    "catalog_id": "urine_hcg_qualitative",
@@ -1121,7 +1327,137 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "A reasonable way to look for a source once she is supported, and it shows the tampon. It takes her out of the department, and a pelvic examination finds the same thing in two minutes at the bedside."
+   "debrief_note": "A reasonable way to look for a source once she is supported, and it shows the tampon. It takes her out of the department, and a pelvic examination finds the same thing in two minutes at the bedside. [UNVERIFIED: the CT appearance of a tampon]"
+  },
+  {
+   "catalog_id": "venous_blood_gas",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "A metabolic acidosis with a raised lactate and respiratory compensation. Her fast breathing with clear lungs is that compensation."
+  },
+  {
+   "catalog_id": "arterial_blood_gas",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "A metabolic acidosis with respiratory compensation. Her fast breathing with clear lungs is that compensation."
+  },
+  {
+   "catalog_id": "liver_function_tests_lfts",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "Liver involvement: raised transaminases and bilirubin, and a low albumin. Kidney, liver, platelets and muscle are all involved in her, and that pattern is what separates toxic shock from gastroenteritis."
+  },
+  {
+   "catalog_id": "creatine_kinase_ck",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "Her creatine kinase is 2,140. That is muscle involvement, and it matches her muscle pain and tenderness. Muscle involvement is part of toxic shock, and with an injured kidney it needs watching."
+  },
+  {
+   "catalog_id": "coagulation_panel",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "Mildly prolonged clotting times with low platelets: early coagulopathy of sepsis."
+  },
+  {
+   "catalog_id": "plasma_procalcitonin",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "Raised at 24.0 ng/mL against a limit of 0.10. A number like this does not tell you where the source is. Shock with no source means you have not finished looking."
+  },
+  {
+   "catalog_id": "c_reactive_protein_crp",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "Raised at 238 mg/L against a limit of 5. It does not tell you where the source is."
+  },
+  {
+   "catalog_id": "urinalysis",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "White cells without bacteria or nitrite. Pyuria with no evidence of urinary infection is a recognized finding in toxic shock. The blood, and some of the white cells, may be menstrual contamination.\n\nThis result is the trap in the case. White cells in the urine without bacteria are not a urinary infection, and treating them as the source ends the search early. [UNVERIFIED: sterile pyuria in toxic shock]"
+  },
+  {
+   "catalog_id": "serum_hcg_quantitative",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "A pregnancy test belongs in the workup of any woman of reproductive age with vomiting, fainting or abdominal symptoms. It is negative."
+  },
+  {
+   "catalog_id": "peripheral_smear",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "The film shows what the blood count shows: a neutrophilia with a left shift and reduced platelets. No schistocytes and no blasts."
+  },
+  {
+   "catalog_id": "ecg_12_lead",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "Sinus tachycardia with narrow complexes and no ST change. A sinus tachycardia in a febrile, hypotensive patient is a sign to find and treat the cause, and is not the thing to treat."
+  },
+  {
+   "catalog_id": "ultrasound_cardiac",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "A small collapsing vena cava and a vigorous ventricle: an empty, dilated circulation and a heart that is working."
+  },
+  {
+   "catalog_id": "ultrasound_fast",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "A small volume of free fluid in the pelvis, which the CT of the abdomen also reports. No fluid anywhere else."
   },
   {
    "catalog_id": "consult_critical_care",
@@ -1166,6 +1502,16 @@
    "debrief_note": "Not needed to remove a tampon, which is a bedside procedure for the emergency physician. Reasonable afterwards for follow-up."
   },
   {
+   "catalog_id": "consult_renal",
+   "tag": [
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "debrief_note": "Her kidneys are failing because they are not being perfused, and the treatment for this kidney injury is restoring the circulation. Nephrology adds nothing tonight that the resuscitation does not. The kidney injury changes how every later drug is dosed, vancomycin first among them."
+  },
+  {
    "catalog_id": "attempt_discharge",
    "tag": [
     {
@@ -1178,7 +1524,7 @@
    "flags_set": [
     "discharge_attempted"
    ],
-   "narration_override": "You want her to go home? Her rate is still fast. All right, I'll get her up and dressed.",
+   "narration_override": "You want her to go home? She still has a fever. All right, I'll get her up and dressed.",
    "debrief_note": "You chose to send her home while she still looked well, and she fainted on standing. The case let that play out instead of ending.\n\nBefore discharging anyone, read the vital signs as if you had not heard the story. A heart rate over 110 with a fever and a low pressure is not explained by a stomach bug until everything else has been excluded."
   },
   {
@@ -1204,7 +1550,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Her airway is her own until the last phase."
+   "debrief_note": "Her airway is her own until she is obtunded."
   },
   {
    "catalog_id": "exam_breath",
@@ -1355,17 +1701,18 @@
    "satisfied_by": [
     "propofol_infusion",
     "ketamine_infusion",
-    "fentanyl_bolus"
+    "sedation_after_tube"
    ],
+   "satisfied_by_note": "v0.24 audit. An infusion counts whenever it was started. A bolus of fentanyl, midazolam, lorazepam or morphine counts only when it is given with the tube in, through the hidden action sedation_after_tube. The sibling packs list midazolam, lorazepam and morphine as satisfiers and this pack did not.",
    "nurse_prompt": "She's tubed and the paralytic is still on board. What do you want her sedated with?",
-   "debrief_note": "A paralyzed patient with no sedation is awake and cannot say so. In shock, choose agents and doses that spare the blood pressure."
+   "debrief_note": "A paralyzed patient with no sedation is awake and cannot say so. In shock, choose agents and doses that spare the blood pressure. A dose given before the tube went in does not count here."
   }
  ],
  "prompt_cap_recommendation": {
   "per_phase": 3,
-  "rationale": "Three. In the arrival phase a learner who does nothing hears the monitor at 20 seconds, the line at 45 and fluid at 80, and the fluid escalation at 170 is exempt from the cap. In the hypotensive phase the vasopressor prompt at 30 is the one the 240-second deterioration rests on and it is the earliest. In the supported phase the source prompt at 75 is the one the 270-second deterioration rests on."
+  "rationale": "Three. In the arrival phase a learner who does nothing hears the monitor at 20 seconds, the line at 45 and fluid at 60, and the fluid escalation at 170 is exempt from the cap. In the hypotensive phase the vasopressor prompt at 30 and the fluid prompt at 60 are the two the 240-second deterioration rests on, and with the line at 45 they are the first three. In the supported phase the source prompt at 60 is the one the 270-second deterioration rests on and it is the earliest. In the default mode every one of those is multiplied by three and still lands before its exit: 180 of 300, 90 and 180 of 240, 180 of 270. The vancomycin prompt at 110 is the fourth in the two shock phases on the do-nothing path and the cap silences it there."
  },
- "prerequisite_semantics_note": "One case prerequisite: the pelvic examination before removing a vaginal foreign body. The catalog's vascular access and intubation prerequisites are kept.",
+ "prerequisite_semantics_note": "Two case prerequisites: the pelvic examination before removing a vaginal foreign body, and a running vasopressor before one can be stopped. The catalog's vascular access and intubation prerequisites are kept.",
  "content_keys": {
   "exam": {
    "authoring_note": "Section 11.2. All fourteen maneuvers are authored. Routing follows the catalog map: capillary refill and pulse quality on exam_circ, the rash on exam_skin, level of consciousness on exam_neuro, costovertebral tenderness on exam_back. The pelvic examination is exam_gu, which is where the retained tampon is found. Phase rules come before flag rules in every list except where the flag describes something the learner did to her that is true in any phase (the tube, the tampon).",
@@ -1645,6 +1992,14 @@
      }
     },
     {
+     "when": "phase is supported OR phase is stabilizing",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": false,
+      "findings": "Awake, cooperative, tired. No longer asking to go home."
+     }
+    },
+    {
      "when": null,
      "value": {
       "kind": "exam_findings",
@@ -1686,7 +2041,7 @@
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Awake, washed out, flushed. Norepinephrine running. GCS 15."
+      "findings": "Awake, washed out, flushed. Vasopressor running. GCS 15."
      }
     },
     {
@@ -1694,7 +2049,7 @@
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Awake, tired, flushed. Norepinephrine running. GCS 15."
+      "findings": "Awake, tired, flushed. Vasopressor running. GCS 15."
      }
     },
     {
@@ -2169,7 +2524,7 @@
         },
         {
          "label": "O2 saturation",
-         "value": "97",
+         "value": "98",
          "unit": "%",
          "reference_range": "95-100",
          "abnormal": false
@@ -2275,7 +2630,7 @@
         },
         {
          "label": "O2 saturation",
-         "value": "97",
+         "value": "96",
          "unit": "%",
          "reference_range": "95-100",
          "abnormal": false
@@ -2506,7 +2861,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Acute kidney injury in a 22-year-old, with a low bicarbonate. Two days of vomiting does not do this without shock."
+       "comment": "Anion gap 17, calculated without potassium."
       }
      }
     ]
@@ -2557,7 +2912,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "A high white count and low platelets. The hemoglobin is at the top of the range in a patient on day five of her period, which fits a dry patient."
+       "comment": "A high white count and low platelets."
       }
      }
     ]
@@ -2622,7 +2977,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Liver involvement: raised transaminases and bilirubin, low albumin."
+       "comment": "Raised transaminases and bilirubin. Low albumin and total protein."
       }
      }
     ]
@@ -2644,8 +2999,7 @@
          "abnormal": true
         }
        ],
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Muscle involvement, which matches her muscle pain and tenderness."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
     ]
@@ -2682,7 +3036,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "Mildly prolonged clotting times with low platelets: early coagulopathy of sepsis."
+       "comment": "Mildly prolonged clotting times."
       }
      }
     ]
@@ -2833,7 +3187,7 @@
         }
        ],
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "White cells without bacteria or nitrite. Pyuria with no evidence of urinary infection is a recognized finding in toxic shock. The blood, and some of the white cells, may be menstrual contamination."
+       "comment": "White cells and red cells. No bacteria and no nitrite."
       }
      }
     ]
@@ -2898,6 +3252,20 @@
        "abnormal": true,
        "report": "Neutrophilia with a left shift and toxic granulation. Platelets reduced. No schistocytes. No blasts.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+      }
+     }
+    ]
+   },
+   "skin_biopsy_of_the_rash": {
+    "changes_with_state": false,
+    "rules": [
+     {
+      "when": null,
+      "value": {
+       "kind": "report",
+       "abnormal": false,
+       "report": "Punch biopsy taken from the trunk and sent. No histology result is available during this case.",
+       "verify": "A process statement and not a result. Written by a model on 7 October 2026. Whether a biopsy has any place here is a question for the physician."
       }
      }
     ]
@@ -2973,8 +3341,21 @@
        "kind": "report",
        "abnormal": true,
        "report": "Hyperdynamic left ventricle. No pericardial effusion. Right ventricle not dilated. Inferior vena cava small and collapsing with each breath.",
-       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]",
-       "comment": "A small collapsing vena cava and a vigorous ventricle: an empty, dilated circulation and a heart that is working. The case shows the same picture in every phase, which is a simplification."
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED] The case shows the same picture in every phase, which is a simplification."
+      }
+     }
+    ]
+   },
+   "ultrasound_fast": {
+    "changes_with_state": false,
+    "rules": [
+     {
+      "when": null,
+      "value": {
+       "kind": "report",
+       "abnormal": true,
+       "report": "No free fluid in Morison's pouch or the splenorenal recess. Small volume of free fluid in the pelvis. No pericardial effusion.",
+       "verify": "Derived by a model from the pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] Derived from the CT report's free pelvic fluid."
       }
      }
     ]
@@ -3004,15 +3385,31 @@
    }
   },
   "consultants": {
-   "authoring_note": "Section 11.5. No consultant quotes a laboratory value, so no rule needs a study predicate or a pending tier. Each asks for what has not been done. The intensivist and the infectious disease physician both ask about a source, which is what they would ask, and which makes a consult one honest way to be pointed at the pelvic examination.",
+   "authoring_note": "Section 11.5. No consultant quotes a laboratory value. The intensivist and the infectious disease physician both ask about a source, which is what they would ask, and which makes a consult one honest way to be pointed at the pelvic examination.\n\nv0.24 audit. The intensivist's list was rewritten. It opens with a tier for the obtunded patient, which claims no treatment. Every later tier that says a treatment was given tests that treatment's flag, so 'Fluid in' is no longer said to a patient who had none, and the drug running is called a vasopressor because a covered sibling can be the one running. No tier says a lactate has been sent. Nephrology has a reply, with a tier for a chemistry that is back, one for a chemistry that is pending and one that asks for it. Every new sentence restates a note the pack already carries. A model wrote them on 7 October 2026 and no physician has read them.",
    "consult_critical_care": [
     {
+     "when": "phase is profound_shock",
+     "value": "Intensivist: If she's obtunded with a pressure like that, I'm coming down. She needs three things together: fluid, a vasopressor and the source found and removed. Has anyone done a pelvic exam? Start whichever of those is missing now."
+    },
+    {
+     "when": "flag pressor_running set AND flag fluids_given set AND flag source_removed set",
+     "value": "Intensivist: Good. Fluid in, a vasopressor running, source out. I'll take her. I want a lactate from after the resuscitation before she comes up, and make sure she has had vancomycin and clindamycin."
+    },
+    {
      "when": "flag pressor_running set AND flag source_removed set",
-     "value": "Intensivist: Good. Fluid in, norepinephrine running, source out. I'll take her. Send a repeat lactate before she comes up, and make sure she has had vancomycin and clindamycin."
+     "value": "Intensivist: A vasopressor running and the source out. Has she had fluid? She's dry, and a vasopressor with no fluid behind it is not enough. Give her about 30 per kilo and call me back."
+    },
+    {
+     "when": "flag pressor_running set AND flag fluids_given set",
+     "value": "Intensivist: I'll take her. Before she comes up, what is the source? A 22-year-old woman with a fever, a red rash and shock on a vasopressor. Has anyone asked about tampons or done a pelvic exam? If something is in there, it comes out before she moves."
     },
     {
      "when": "flag pressor_running set",
-     "value": "Intensivist: I'll take her. Before she comes up, what is the source? A 22-year-old woman with a fever, a red rash and shock on a rising pressor. Has anyone asked about tampons or done a pelvic exam? If something is in there, it comes out before she moves."
+     "value": "Intensivist: A vasopressor with no fluid behind it is not enough in a patient this dry. Give her about 30 per kilo. And what is the source? Has anyone asked about tampons or done a pelvic exam?"
+    },
+    {
+     "when": "flag fluids_given set AND flag source_removed set",
+     "value": "Intensivist: Good that the source is out. Keep filling her to about 30 per kilo. If her mean is still under 65 after that, start norepinephrine through a good peripheral line and call me back."
     },
     {
      "when": "flag fluids_given set",
@@ -3021,6 +3418,20 @@
     {
      "when": null,
      "value": "Intensivist: Tell me her vital signs and what you've done. A febrile young woman with a fast heart rate and a soft pressure needs a line, fluid, cultures and antibiotics now. Call me back when that is running."
+    }
+   ],
+   "consult_renal": [
+    {
+     "when": "study basic_chemistry_chem_7 resulted",
+     "value": "Nephrology: Her kidneys are not being perfused. The treatment for this kidney injury is restoring her circulation, so it is your resuscitation and not anything from us tonight. No more ibuprofen and no diuretic. Dose the vancomycin for her kidney function and watch her urine output every hour."
+    },
+    {
+     "when": "study basic_chemistry_chem_7 ordered",
+     "value": "Nephrology: Her chemistry isn't back. Call me when you have it."
+    },
+    {
+     "when": null,
+     "value": "Nephrology: I can't add anything without a creatinine. Send a chemistry and call me when you have it."
     }
    ],
    "consult_infectious_disease": [
@@ -3054,7 +3465,9 @@
    "voice": "A 22-year-old graduate student. Lay words, apologetic, minimizing. She is sure it is food poisoning and says so, which is her belief and not a diagnosis the case endorses.",
    "the_tampon": "She does not volunteer it and it is a must-ask topic, so no other answer carries it. Asked about her period or tampons in any wording, she says she cannot remember taking the last one out. Section 10.4 holds: she reports what she knows and draws no conclusion from it.",
    "close_to_the_line": "Two answers sit near the section 10.4 line and are flagged for the reviewer. The rash answer says the redness is under her shirt, and the genitourinary answer mentions a smell. Both are things a patient would notice and say. Neither names a cause.",
-   "phrasings": "The canonical question, hand-written variants and echo for forty topics are MGCA's, in case_4_variants.py. Three topics are this case's own: rash, suspect_meal and wounds_and_skin."
+   "phrasings": "The canonical question, hand-written variants and echo for forty topics are MGCA's, in case_4_variants.py. Three topics are this case's own: rash, suspect_meal and wounds_and_skin. EXTRA_VARIANTS adds eleven phrasings by hand, each under the topic whose answer covers it.",
+   "changed_7_october_2026": "After the audit a model edited these and no physician has read them. location_of_pain said her back was among the worst places and abdominal_pain said the pain was not in her back. The case's reasoning against a kidney source rests on no flank pain, so location_of_pain now says thighs and calves. The drowsy abdominal_pain answer gained 'Not my back.' Three topics gained facts (fever_and_chills, nausea_vomiting, current_medications), each restating part of its own answer. Three volunteer lines were replaced because they repeated the answer they ride on. Four British usages were made American.",
+   "pertinent_negatives": "Eleven topics are marked. confusion was the twelfth. Its drowsy answer is 'I feel foggy. Sorry.', which is not a denial, and authoring 10.3 asks that a marked topic deny in every phase, so the mark was removed on 7 October 2026 and the answers were left alone. Whether the drowsy answer should deny instead is an open question for the physician (TSS-SEED.md)."
   },
   "global_answer_rules": [
    {
@@ -3088,7 +3501,6 @@
   ],
   "out_of_scope_bank": [
    "Have you ever had a colonoscopy?",
-   "Any blood when you open your bowels?",
    "Are you constipated?",
    "Any heartburn?",
    "Any indigestion after meals?",
@@ -3106,54 +3518,50 @@
    "Any tremor in your hands?",
    "Any double vision?",
    "Have you ever had a stroke?",
-   "Any back pain?",
-   "Any cramps in your legs?",
-   "Any problems with your hearing?",
+   "Have you broken any bones?",
    "Any ringing or buzzing in your ears?",
    "Any earache?",
    "Do you wear glasses or contact lenses?",
-   "Any nosebleeds?",
+   "When did you last have your eyes tested?",
    "Any moles that have changed?",
-   "Any hair loss?",
    "When did you last see the dentist?",
    "Any toothache?",
+   "Any mouth ulcers?",
    "Any lumps or bumps anywhere?",
    "Have you lost weight without trying?",
-   "Any excessive thirst?",
    "Have you been feeling low in mood?",
    "Any anxiety or panic attacks?",
+   "How are you sleeping generally?",
    "Any trouble sleeping?",
    "Have you ever received blood?",
-   "Do you have a blood donor card?",
    "Who is your GP?",
    "Who is your family doctor?",
+   "Do you have health insurance?",
    "Have you got your NHS number?",
    "Do you have a pharmacy you usually use?",
-   "Is there anyone we should call for you?",
    "Who is your next of kin?",
    "Do you have any religious needs we should know about?",
    "What did you do before you retired?",
    "Did you come in by ambulance?",
-   "Is anyone here with you?",
    "Is your family in the waiting room?",
    "How did you get here today?",
    "Do you have children?",
    "How many kids do you have?",
    "Do you follow any sports?",
    "Do you watch much television?",
+   "What do you do to relax?",
    "Are you comfortable on that trolley?",
    "Would you like a blanket?",
-   "Is the bed at the right height?",
    "Can I get you anything?",
    "What is your date of birth?",
+   "Can you confirm your name for me?",
    "What is your address?",
    "Do you know why you are here?",
-   "How old are you?",
    "Is it okay if the students watch?",
    "Would you prefer a female doctor?",
+   "Have you been waiting long?",
    "Is there anything you would like to ask me?",
    "What year are you in at university?",
-   "What are you studying?",
    "Do you get on with your flatmates?",
    "How much does it cost to park here?"
   ],
@@ -3217,7 +3625,7 @@
       "value": [
        {
         "when": "phase is hypotensive",
-        "value": "'Shivering. Then being sick.'"
+        "value": "'Shivering. Then throwing up.'"
        },
        {
         "when": null,
@@ -3252,7 +3660,7 @@
      "Sorry to ask, but what time did it start?",
      "One more thing. How long ago did this come on?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "timing_progression",
@@ -3305,7 +3713,7 @@
      "Quick one: how has it changed since it began?",
      "Before we go on, constant or does it come and go?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "character_of_symptoms",
@@ -3351,7 +3759,7 @@
      "Can I ask, character of the symptoms?",
      "Sorry to ask, but character of the symptoms?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "location_of_pain",
@@ -3377,7 +3785,7 @@
      },
      {
       "when": null,
-      "value": "'All over, really. My thighs and my back are the worst. My stomach is crampy but it's not one spot.'"
+      "value": "'All over, really. My thighs and calves are the worst. My stomach is crampy but it's not one spot.'"
      }
     ],
     "echo": "where it hurts",
@@ -3401,7 +3809,7 @@
      "Okay, where exactly is it?",
      "Just so I know, where exactly is it?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "radiation_of_pain",
@@ -3449,7 +3857,7 @@
      "Sorry to ask, but does it go anywhere else?",
      "One more thing. Does it go anywhere else?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "severity",
@@ -3496,7 +3904,7 @@
      "Can I ask, on a scale of one to ten?",
      "Sorry to ask, but on a scale of one to ten?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "aggravating_relieving",
@@ -3562,7 +3970,7 @@
      "Before we go on, aggravating or relieving factors?",
      "And aggravating or relieving factors?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "rash",
@@ -3581,7 +3989,9 @@
      "When did you notice your skin was red?",
      "Is your skin peeling?",
      "Did you use sunscreen?",
-     "How long were you in the sun?"
+     "How long were you in the sun?",
+     "Any red, hot or swollen areas of skin?",
+     "Any skin lesions?"
     ],
     "answer": [
      {
@@ -3672,7 +4082,7 @@
      "Quick one: does the rash blanch?",
      "Before we go on, does the rash blanch?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "fever_and_chills",
@@ -3702,7 +4112,48 @@
      }
     ],
     "echo": "a temperature",
-    "volunteer": "'I've been hot and shivery the whole time.'",
+    "facts": [
+     {
+      "id": "since_when",
+      "asks": [
+       "since when",
+       "when did the fever start",
+       "how long have you had a fever"
+      ],
+      "value": [
+       {
+        "when": "phase is hypotensive",
+        "value": "'Two days.'"
+       },
+       {
+        "when": null,
+        "value": "'Since Thursday night.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "how_high",
+      "asks": [
+       "how high",
+       "how high was it",
+       "what was your temperature",
+       "did you take your temperature",
+       "did you measure it"
+      ],
+      "value": [
+       {
+        "when": "phase is hypotensive",
+        "value": "'102 yesterday.'"
+       },
+       {
+        "when": null,
+        "value": "'I took it yesterday and it was 102.'"
+       }
+      ]
+     }
+    ],
+    "volunteer": "'It was 102 when I took it yesterday.'",
     "expanded_variants": [
      "Fever?",
      "Fevers or chills?",
@@ -3721,7 +4172,7 @@
      "Right. Fevers, chills, rigors?",
      "Just so I know, any temperature?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "headache",
@@ -3763,7 +4214,7 @@
      "Just so I know, any head pain?",
      "Sorry to ask, but is your head sore?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "neck_stiffness",
@@ -3811,7 +4262,7 @@
      "Can I ask, is your neck stiff?",
      "Quick one: any stiffness in the neck?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "photophobia",
@@ -3857,7 +4308,7 @@
      "And is the light bothering you?",
      "Can I ask, is the light bothering you?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "nausea_vomiting",
@@ -3879,18 +4330,75 @@
     "answer": [
      {
       "when": "phase is hypotensive",
-      "value": "'Yes. Loads. Can't keep water down.'"
+      "value": "'Yes. A lot. Can't keep water down.'"
      },
      {
       "when": null,
       "value": "'Constantly. I've thrown up maybe eight or ten times since Friday. No blood in it. I can't even keep water down now.'"
      }
     ],
-    "echo": "being sick",
+    "echo": "throwing up",
+    "facts": [
+     {
+      "id": "how_often",
+      "asks": [
+       "how many times",
+       "how often",
+       "how much"
+      ],
+      "value": [
+       {
+        "when": "phase is hypotensive",
+        "value": "'A lot.'"
+       },
+       {
+        "when": null,
+        "value": "'Maybe eight or ten times since Friday.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "blood",
+      "asks": [
+       "any blood in it",
+       "was there blood",
+       "is there blood"
+      ],
+      "value": [
+       {
+        "when": "phase is hypotensive",
+        "value": "'No blood.'"
+       },
+       {
+        "when": null,
+        "value": "'No blood in it.'"
+       }
+      ]
+     },
+     {
+      "id": "fluids",
+      "asks": [
+       "can you keep water down",
+       "can you keep anything down",
+       "can you drink"
+      ],
+      "value": [
+       {
+        "when": "phase is hypotensive",
+        "value": "'Can't keep water down.'"
+       },
+       {
+        "when": null,
+        "value": "'I can't even keep water down now.'"
+       }
+      ]
+     }
+    ],
     "adjacent": [
      "diarrhea"
     ],
-    "volunteer": "'I've been throwing up since early Friday.'",
+    "volunteer": "'I can't even keep water down now.'",
     "expanded_variants": [
      "N/V?",
      "Nausea or vomiting?",
@@ -3908,7 +4416,7 @@
      "Okay, have you thrown up?",
      "Just so I know, have you thrown up?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "diarrhea",
@@ -3925,7 +4433,8 @@
      "Have you been to the toilet?",
      "Any bowel symptoms?",
      "Any cramping and diarrhea?",
-     "Have you had the runs?"
+     "Have you had the runs?",
+     "Any blood when you open your bowels?"
     ],
     "answer": [
      {
@@ -3941,7 +4450,7 @@
     "adjacent": [
      "abdominal_pain"
     ],
-    "volunteer": "'And I've had watery diarrhea since Friday morning.'",
+    "volunteer": "'And I've had watery diarrhea, no blood.'",
     "expanded_variants": [
      "Diarrhea?",
      "Have your bowels been loose?",
@@ -3956,7 +4465,7 @@
      "Can I ask, have your bowels been loose?",
      "Sorry to ask, but have your bowels been loose?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "abdominal_pain",
@@ -3973,12 +4482,14 @@
      "Is there pain across your middle?",
      "Does your stomach hurt when you move?",
      "Any cramping?",
-     "Any pain in your back or sides?"
+     "Any pain in your back or sides?",
+     "Any back pain?",
+     "Does your back hurt?"
     ],
     "answer": [
      {
       "when": "phase is hypotensive",
-      "value": "'Crampy. All over.'"
+      "value": "'Crampy. All over. Not my back.'"
      },
      {
       "when": null,
@@ -4003,7 +4514,7 @@
      "Before we go on, does your belly hurt?",
      "And does your belly hurt?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "chest_pain",
@@ -4055,7 +4566,7 @@
      "Before we go on, is your chest hurting?",
      "And is your chest hurting?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "breathing",
@@ -4103,7 +4614,7 @@
      "Quick one: short of breath?",
      "Just so I know, any shortness of breath?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "cough_sore_throat",
@@ -4129,7 +4640,7 @@
      },
      {
       "when": null,
-      "value": "'No cough, no cold. My throat's sore, I thought from being sick so much.'"
+      "value": "'No cough, no cold. My throat's sore, I thought from throwing up so much.'"
      }
     ],
     "echo": "a cough or sore throat",
@@ -4150,7 +4661,7 @@
      "Just so I know, runny nose or sore throat?",
      "I need to know, runny nose or sore throat?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "urine_output",
@@ -4199,7 +4710,7 @@
      "I need to know, passing water okay?",
      "Right. Passing water okay?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "dizziness_syncope",
@@ -4263,7 +4774,7 @@
      "Okay, dizzy or lightheaded at all?",
      "Just so I know, dizzy or lightheaded at all?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "confusion",
@@ -4293,7 +4804,6 @@
      }
     ],
     "echo": "whether I'm confused",
-    "pertinent_negative": true,
     "expanded_variants": [
      "Are you thinking clearly?",
      "Have you been muddled?",
@@ -4307,7 +4817,7 @@
      "Quick one: have you felt confused?",
      "Okay, are you thinking clearly?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "cold_extremities",
@@ -4351,7 +4861,7 @@
      "Can I ask, are your feet cold?",
      "Sorry to ask, but are your feet cold?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "joint_pain",
@@ -4368,7 +4878,10 @@
      "Any swelling in your joints?",
      "Can you move your joints normally?",
      "Any joint stiffness?",
-     "Is one joint worse than others?"
+     "Is one joint worse than others?",
+     "Any cramps in your legs?",
+     "Do your legs ache?",
+     "Any muscle pain in your legs?"
     ],
     "answer": [
      {
@@ -4398,7 +4911,7 @@
      "Right. Any swollen joints?",
      "Quick one: any swollen joints?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "dysuria_gu_symptoms",
@@ -4445,7 +4958,7 @@
      "Quick one: does it sting to pass urine?",
      "Before we go on, does it sting to pass urine?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "menstrual_and_tampon",
@@ -4551,7 +5064,7 @@
      "And are you on your period?",
      "Can I ask, are you on your period?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "pregnancy",
@@ -4594,7 +5107,7 @@
      "Okay, are you pregnant?",
      "Just so I know, are you pregnant?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "sexual_history",
@@ -4638,7 +5151,7 @@
      "Can I ask, any sexual partners?",
      "Sorry to ask, but any sexual partners?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "past_medical_history",
@@ -4664,7 +5177,7 @@
      },
      {
       "when": null,
-      "value": "'Nothing. I'm never ill. I've never been in hospital.'"
+      "value": "'Nothing. I'm never sick. I've never been in the hospital.'"
      }
     ],
     "echo": "my medical history",
@@ -4694,7 +5207,7 @@
      "Can I ask, any medical problems?",
      "Sorry to ask, but any medical problems?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "past_surgical_history",
@@ -4742,7 +5255,7 @@
      "One more thing. Any operations?",
      "I need to know, ever had surgery?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "current_medications",
@@ -4772,6 +5285,66 @@
      }
     ],
     "echo": "my medication",
+    "facts": [
+     {
+      "id": "regular",
+      "asks": [
+       "what do you take every day",
+       "anything regular",
+       "anything on prescription"
+      ],
+      "value": [
+       {
+        "when": "phase is hypotensive",
+        "value": "'The pill.'"
+       },
+       {
+        "when": null,
+        "value": "'Just the pill.'"
+       }
+      ],
+      "restate": true
+     },
+     {
+      "id": "painkillers",
+      "asks": [
+       "did you take anything for it",
+       "any painkillers",
+       "what dose",
+       "how much did you take",
+       "how many tablets",
+       "when did you take it"
+      ],
+      "value": [
+       {
+        "when": "phase is hypotensive",
+        "value": "'Some ibuprofen yesterday.'"
+       },
+       {
+        "when": null,
+        "value": "'Ibuprofen yesterday. Two tablets, a couple of times.'"
+       }
+      ]
+     },
+     {
+      "id": "other",
+      "asks": [
+       "anything else",
+       "any supplements",
+       "anything over the counter"
+      ],
+      "value": [
+       {
+        "when": "phase is hypotensive",
+        "value": "'Nothing else.'"
+       },
+       {
+        "when": null,
+        "value": "'Nothing else, no supplements.'"
+       }
+      ]
+     }
+    ],
     "expanded_variants": [
      "What meds are you on?",
      "Medications?",
@@ -4794,7 +5367,7 @@
      "Before we go on, what do you take?",
      "And what do you take?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "allergies",
@@ -4841,7 +5414,7 @@
      "Right. Are you allergic to anything?",
      "Quick one: are you allergic to anything?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "social_history",
@@ -4858,7 +5431,9 @@
      "Are you at university?",
      "Any vaping?",
      "Do you take anything at parties?",
-     "Tell me about your living situation"
+     "Tell me about your living situation",
+     "What do you do for a living?",
+     "Are you a student?"
     ],
     "answer": [
      {
@@ -4925,7 +5500,7 @@
      "Can I ask, any drugs, alcohol, smoking?",
      "Sorry to ask, but any drugs, alcohol, smoking?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "family_history",
@@ -4974,7 +5549,7 @@
      "And any heart problems in the family?",
      "Can I ask, any heart problems in the family?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "last_oral_intake",
@@ -5023,7 +5598,7 @@
      "One more thing. Last PO intake?",
      "Okay, last PO intake?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "vaccinations",
@@ -5070,7 +5645,7 @@
      "Okay, vaccination history?",
      "Just so I know, any immunizations?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "sick_contacts",
@@ -5117,7 +5692,7 @@
      "Sorry to ask, but is anyone around you sick?",
      "One more thing. Is anyone around you sick?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "suspect_meal",
@@ -5149,7 +5724,30 @@
     "echo": "what I ate",
     "adjacent": [
      "sick_contacts"
-    ]
+    ],
+    "expanded_variants": [
+     "What did you last eat before you got sick?",
+     "Did you eat anything that could have caused this?",
+     "Any suspicious food?",
+     "Do you think it was something you ate?",
+     "Any bad food?",
+     "Any takeout or restaurant food?",
+     "Did you eat at a restaurant?",
+     "Any undercooked meat or eggs?",
+     "Any shellfish?",
+     "Any leftovers?",
+     "Did anyone who ate with you get sick?",
+     "What did you have for dinner that night?",
+     "Food history?",
+     "Any dietary exposure?",
+     "Any raw or unusual foods?",
+     "Okay, what did you last eat before you got sick?",
+     "Just so I know, what did you last eat before you got sick?",
+     "Right. Did you eat anything that could have caused this?",
+     "Quick one: did you eat anything that could have caused this?",
+     "Right. Any suspicious food?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "travel_history",
@@ -5195,7 +5793,7 @@
      "Okay, have you traveled?",
      "Just so I know, have you traveled?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "tick_and_outdoor_exposure",
@@ -5243,7 +5841,7 @@
      "Before we go on, have you been hiking or camping?",
      "And have you been hiking or camping?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "recent_antibiotics_healthcare",
@@ -5291,7 +5889,7 @@
      "Right. Have you seen a doctor recently?",
      "Right. Any recent hospital visits?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "wounds_and_skin",
@@ -5308,7 +5906,8 @@
      "Any new tattoos?",
      "Have you cut yourself shaving?",
      "Any sores anywhere?",
-     "Any wound that is red or draining?"
+     "Any wound that is red or draining?",
+     "Any nosebleeds?"
     ],
     "answer": [
      {
@@ -5321,7 +5920,30 @@
      }
     ],
     "echo": "cuts or wounds",
-    "pertinent_negative": true
+    "pertinent_negative": true,
+    "expanded_variants": [
+     "Any cuts or scrapes?",
+     "Any wounds?",
+     "Wounds?",
+     "Any breaks in the skin?",
+     "Any skin infection?",
+     "Any boils?",
+     "Any burns recently?",
+     "Any infected bites?",
+     "Any recent surgery or stitches?",
+     "Any wound that looks infected?",
+     "Any injuries lately?",
+     "Any open wounds?",
+     "Any cellulitis?",
+     "Any recent cuts from shaving?",
+     "Any blisters?",
+     "Sorry to ask, but any cuts or scrapes?",
+     "Just so I know, any breaks in the skin?",
+     "I need to know, any breaks in the skin?",
+     "Okay, any skin infection?",
+     "Just so I know, any skin infection?"
+    ],
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "functional_baseline",
@@ -5374,7 +5996,7 @@
      "Okay, exercise tolerance?",
      "Quick one: baseline function?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    },
    {
     "topic": "code_status_goals",
@@ -5424,7 +6046,7 @@
      "And what would you want if things got worse?",
      "Can I ask, what would you want if things got worse?"
     ],
-    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
+    "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here."
    }
   ],
   "must_ask": [
@@ -5449,7 +6071,7 @@
    "allergies",
    "current_medications"
   ],
-  "key_topics_note": "Model judgment, unreviewed. Nine of forty-three: the topics whose answers change what the learner should do."
+  "key_topics_note": "Model judgment, unreviewed. Nine of forty-three: the topics whose answers change what the learner should do. Awaiting a physician's signature."
  },
  "handoff": {
   "correct_disposition": {
@@ -5531,6 +6153,31 @@
     "catalog_id": "dx_rhabdomyolysis",
     "label": "Rhabdomyolysis",
     "explanation": "Her creatine kinase is 2,140 with muscle pain and tenderness. Muscle involvement is part of toxic shock, and with an injured kidney it needs watching."
+   },
+   {
+    "catalog_id": "dx_retained_vaginal_foreign_body",
+    "label": "Retained vaginal foreign body",
+    "explanation": "The retained tampon found on the pelvic examination. It is the source, and the next team needs to hear whether it is out."
+   },
+   {
+    "catalog_id": "dx_thrombocytopenia",
+    "label": "Thrombocytopenia",
+    "explanation": "Her platelet count is 98, against a lower limit of 150. It is one of the organ systems involved."
+   },
+   {
+    "catalog_id": "dx_anion_gap_metabolic_acidosis",
+    "label": "Anion gap metabolic acidosis",
+    "explanation": "Sodium 131, chloride 97 and bicarbonate 17 give an anion gap of 17, with a lactate of 4.6 on arrival."
+   },
+   {
+    "catalog_id": "dx_hyponatremia",
+    "label": "Hyponatremia",
+    "explanation": "Her sodium is 131, against a lower limit of 135."
+   },
+   {
+    "catalog_id": "dx_hypokalemia",
+    "label": "Hypokalemia",
+    "explanation": "Her potassium is 3.3, against a lower limit of 3.5."
    }
   ],
   "alternative_diagnoses": [
@@ -5647,7 +6294,15 @@
      "complete_blood_count_cbc",
      "venous_blood_gas",
      "arterial_blood_gas",
-     "ecg_12_lead"
+     "ecg_12_lead",
+     "liver_function_tests_lfts",
+     "creatine_kinase_ck",
+     "coagulation_panel",
+     "plasma_procalcitonin",
+     "c_reactive_protein_crp",
+     "peripheral_smear",
+     "urine_hcg_qualitative",
+     "serum_hcg_quantitative"
     ]
    },
    {
@@ -5657,6 +6312,7 @@
      "exam_gu",
      "remove_vaginal_foreign_body",
      "ct_abdomen",
+     "ultrasound_fast",
      "exam_abd",
      "exam_back",
      "urinalysis",
@@ -5671,12 +6327,15 @@
      "second_iv",
      "normal_saline_1l_bolus",
      "norepinephrine_drip",
+     "normal_saline_infusion",
      "dopamine_drip",
      "phenylephrine_bolus",
      "stop_norepinephrine",
      "insert_foley_catheter",
      "ultrasound_cardiac",
-     "hydrocortisone_bolus"
+     "hydrocortisone_bolus",
+     "nasal_cannula_oxygen",
+     "non_rebreather_mask"
     ]
    },
    {
@@ -5711,6 +6370,7 @@
     "label": "Consultation and disposition",
     "actions": [
      "consult_critical_care",
+     "consult_renal",
      "handoff_submit"
     ]
    }
@@ -5748,6 +6408,6 @@
    "White cells in the urine without bacteria are not a urinary infection. In this illness they are part of the syndrome, and treating them as the source ends the search early.",
    "A fast heart rate that is holding up a blood pressure is not treated. Find the cause."
   ],
-  "attempt_history_note": "Blocked attempts are surfaced and not penalized. The one this case authors is removing a vaginal foreign body before the pelvic examination, where the nurse says nobody has looked yet."
+  "attempt_history_note": "Blocked attempts are surfaced and not penalized. This case authors two. Removing a vaginal foreign body before the pelvic examination, where the nurse says nobody has looked yet. And stopping a vasopressor when none is running."
  }
 }

@@ -34,11 +34,17 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | rule 1 (default) | plausible |
 
 
+### `action_tag/normal_saline_infusion`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `action_tag/nasal_cannula_oxygen`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| profound_shock | rule 0 (phase is profound_shock) | plausible |
+| hypotensive | rule 0 (phase is hypotensive OR phase is profound_shock) | plausible |
+| profound_shock | rule 0 (phase is hypotensive OR phase is profound_shock) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -46,8 +52,19 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| profound_shock | rule 0 (phase is profound_shock) | plausible |
+| hypotensive | rule 0 (phase is hypotensive OR phase is profound_shock) | plausible |
+| profound_shock | rule 0 (phase is hypotensive OR phase is profound_shock) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
+
+
+### `action_tag/bag_valve_mask`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/non_invasive_positive_pressure_ventilation`
+
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/etomidate_bolus`
@@ -93,12 +110,27 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `action_tag/lorazepam_bolus`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/morphine_bolus`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `action_tag/ketamine_infusion`
 
 Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/propofol_infusion`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/sedation_after_tube`
 
 Single unconditional rule; nothing to enumerate.
 
@@ -132,7 +164,10 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/stop_norepinephrine`
 
-Single unconditional rule; nothing to enumerate.
+| phase | pressor_running | resolves to | reachable? |
+|---|---|---|---|
+| «any phase» | no | rule 1 (default) | plausible |
+| «any phase» | yes | rule 0 (flag pressor_running set) | plausible |
 
 
 ### `action_tag/vancomycin`
@@ -230,6 +265,71 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `action_tag/venous_blood_gas`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/arterial_blood_gas`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/liver_function_tests_lfts`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/creatine_kinase_ck`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/coagulation_panel`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/plasma_procalcitonin`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/c_reactive_protein_crp`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/urinalysis`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/serum_hcg_quantitative`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/peripheral_smear`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/ecg_12_lead`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/ultrasound_cardiac`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/ultrasound_fast`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `action_tag/consult_critical_care`
 
 Single unconditional rule; nothing to enumerate.
@@ -241,6 +341,11 @@ Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/consult_ob_gyn`
+
+Single unconditional rule; nothing to enumerate.
+
+
+### `action_tag/consult_renal`
 
 Single unconditional rule; nothing to enumerate.
 
@@ -431,7 +536,9 @@ Single unconditional rule; nothing to enumerate.
 |---|---|---|
 | hypotensive | rule 1 (phase is hypotensive) &rarr; ABNORMAL: Drowsy and slow to answer. No longer asking to go home. | plausible |
 | profound_shock | rule 0 (phase is profound_shock) &rarr; ABNORMAL: Cannot be assessed. Not answering questions. | plausible |
-| «any other phase» | rule 2 (default) &rarr; normal: Calm, cooperative, apologetic. Asks when she can go home. | plausible |
+| stabilizing | rule 2 (phase is supported OR phase is stabilizing) &rarr; normal: Awake, cooperative, tired. No longer asking to go home. | plausible |
+| supported | rule 2 (phase is supported OR phase is stabilizing) &rarr; normal: Awake, cooperative, tired. No longer asking to go home. | plausible |
+| «any other phase» | rule 3 (default) &rarr; normal: Calm, cooperative, apologetic. Asks when she can go home. | plausible |
 
 
 ### `general_status`
@@ -444,9 +551,9 @@ Single unconditional rule; nothing to enumerate.
 | hypotensive | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
 | profound_shock | no | rule 1 (phase is profound_shock) &rarr; ABNORMAL: Obtunded, gray and mottled, responds only to pain. GCS 10. | plausible |
 | profound_shock | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
-| stabilizing | no | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Awake, tired, flushed. Norepinephrine running. GCS 15. | plausible |
+| stabilizing | no | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Awake, tired, flushed. Vasopressor running. GCS 15. | plausible |
 | stabilizing | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
-| supported | no | rule 3 (phase is supported) &rarr; ABNORMAL: Awake, washed out, flushed. Norepinephrine running. GCS 15. | plausible |
+| supported | no | rule 3 (phase is supported) &rarr; ABNORMAL: Awake, washed out, flushed. Vasopressor running. GCS 15. | plausible |
 | supported | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
 | «any other phase» | no | rule 6 (default) &rarr; ABNORMAL: Sitting up, talking, flushed all over, dry lips, vomit bag in her lap.... | plausible |
 | «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
@@ -488,11 +595,11 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_responsive | rule 0 (phase is fluid_responsive) &rarr; **pH 7.34**; **pCO2 30 mmHg**; pO2 92 mmHg; **HCO3 16 mEq/L**; **Base excess -7 mEq/L**; O2 saturation 97 % | plausible |
+| fluid_responsive | rule 0 (phase is fluid_responsive) &rarr; **pH 7.34**; **pCO2 30 mmHg**; pO2 92 mmHg; **HCO3 16 mEq/L**; **Base excess -7 mEq/L**; O2 saturation 98 % | plausible |
 | hypotensive | rule 1 (phase is hypotensive) &rarr; **pH 7.27**; **pCO2 26 mmHg**; **pO2 78 mmHg**; **HCO3 12 mEq/L**; **Base excess -12 mEq/L**; O2 saturation 95 % | plausible |
 | profound_shock | rule 3 (phase is profound_shock) &rarr; **pH 7.19**; **pCO2 23 mmHg**; **pO2 64 mmHg**; **HCO3 9 mEq/L**; **Base excess -16 mEq/L**; **O2 saturation 92 %** | plausible |
 | stabilizing | rule 4 (phase is stabilizing) &rarr; **pH 7.34**; **pCO2 29 mmHg**; pO2 92 mmHg; **HCO3 15 mEq/L**; **Base excess -8 mEq/L**; O2 saturation 97 % | plausible |
-| supported | rule 2 (phase is supported) &rarr; **pH 7.30**; **pCO2 27 mmHg**; pO2 92 mmHg; **HCO3 13 mEq/L**; **Base excess -10 mEq/L**; O2 saturation 97 % | plausible |
+| supported | rule 2 (phase is supported) &rarr; **pH 7.30**; **pCO2 27 mmHg**; pO2 92 mmHg; **HCO3 13 mEq/L**; **Base excess -10 mEq/L**; O2 saturation 96 % | plausible |
 | «any other phase» | rule 5 (default) &rarr; **pH 7.33**; **pCO2 29 mmHg**; pO2 92 mmHg; **HCO3 15 mEq/L**; **Base excess -8 mEq/L**; O2 saturation 97 % | plausible |
 
 
@@ -556,6 +663,11 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `labs/skin_biopsy_of_the_rash`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `imaging/ecg_12_lead`
 
 | phase | resolves to | reachable? |
@@ -573,6 +685,11 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `imaging/ultrasound_fast`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `imaging/ct_abdomen`
 
 | phase | source_removed | resolves to | reachable? |
@@ -585,14 +702,31 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | fluids_given | pressor_running | source_removed | resolves to | reachable? |
 |---|---|---|---|---|---|
-| «any phase» | no | no | no | rule 3 (default) | plausible |
-| «any phase» | no | no | yes | rule 3 (default) | plausible |
-| «any phase» | no | yes | no | rule 1 (flag pressor_running set) | plausible |
-| «any phase» | no | yes | yes | rule 0 (flag pressor_running set AND flag source_removed set) | plausible |
-| «any phase» | yes | no | no | rule 2 (flag fluids_given set) | plausible |
-| «any phase» | yes | no | yes | rule 2 (flag fluids_given set) | plausible |
-| «any phase» | yes | yes | no | rule 1 (flag pressor_running set) | plausible |
-| «any phase» | yes | yes | yes | rule 0 (flag pressor_running set AND flag source_removed set) | plausible |
+| profound_shock | no | no | no | rule 0 (phase is profound_shock) | plausible |
+| profound_shock | no | no | yes | rule 0 (phase is profound_shock) | plausible |
+| profound_shock | no | yes | no | rule 0 (phase is profound_shock) | plausible |
+| profound_shock | no | yes | yes | rule 0 (phase is profound_shock) | plausible |
+| profound_shock | yes | no | no | rule 0 (phase is profound_shock) | plausible |
+| profound_shock | yes | no | yes | rule 0 (phase is profound_shock) | plausible |
+| profound_shock | yes | yes | no | rule 0 (phase is profound_shock) | plausible |
+| profound_shock | yes | yes | yes | rule 0 (phase is profound_shock) | plausible |
+| «any other phase» | no | no | no | rule 7 (default) | plausible |
+| «any other phase» | no | no | yes | rule 7 (default) | plausible |
+| «any other phase» | no | yes | no | rule 4 (flag pressor_running set) | plausible |
+| «any other phase» | no | yes | yes | rule 2 (flag pressor_running set AND flag source_removed set) | plausible |
+| «any other phase» | yes | no | no | rule 6 (flag fluids_given set) | plausible |
+| «any other phase» | yes | no | yes | rule 5 (flag fluids_given set AND flag source_removed set) | plausible |
+| «any other phase» | yes | yes | no | rule 3 (flag pressor_running set AND flag fluids_given set) | plausible |
+| «any other phase» | yes | yes | yes | rule 1 (flag pressor_running set AND flag fluids_given set AND flag source_removed set) | plausible |
+
+
+### `consultant/consult_renal`
+
+| phase | basic_chemistry_chem_7 | resolves to | reachable? |
+|---|---|---|---|
+| «any phase» | not_ordered | rule 2 (default) | plausible |
+| «any phase» | pending | rule 1 (study basic_chemistry_chem_7 ordered) | plausible |
+| «any phase» | resulted | rule 0 (study basic_chemistry_chem_7 resulted) | plausible |
 
 
 ### `consultant/consult_infectious_disease`

@@ -19,6 +19,26 @@
   },
   {
    "register": "expansion",
+   "q": "Any shock or fright today?",
+   "expect": "what_she_was_doing"
+  },
+  {
+   "register": "expansion",
+   "q": "Have you had a hard few days?",
+   "expect": "what_she_was_doing"
+  },
+  {
+   "register": "expansion",
+   "q": "Any trigger you can think of?",
+   "expect": "what_she_was_doing"
+  },
+  {
+   "register": "expansion",
+   "q": "Quick one: has anything upsetting happened?",
+   "expect": "what_she_was_doing"
+  },
+  {
+   "register": "expansion",
    "q": "Has it been the same the whole time?",
    "expect": "timing_progression"
   },
@@ -121,6 +141,46 @@
    "register": "expansion",
    "q": "Quick one: what makes it better or worse?",
    "expect": "aggravating_relieving"
+  },
+  {
+   "register": "expansion",
+   "q": "Any pain going down your back?",
+   "expect": "back_or_tearing_pain"
+  },
+  {
+   "register": "expansion",
+   "q": "Any lower back pain?",
+   "expect": "back_or_tearing_pain"
+  },
+  {
+   "register": "expansion",
+   "q": "Does it feel like something is tearing?",
+   "expect": "back_or_tearing_pain"
+  },
+  {
+   "register": "expansion",
+   "q": "Was the pain at its worst right at the start?",
+   "expect": "back_or_tearing_pain"
+  },
+  {
+   "register": "expansion",
+   "q": "Okay, does your back hurt?",
+   "expect": "back_or_tearing_pain"
+  },
+  {
+   "register": "expansion",
+   "q": "Did you break into a sweat?",
+   "expect": "sweating"
+  },
+  {
+   "register": "expansion",
+   "q": "Any sweating with this?",
+   "expect": "sweating"
+  },
+  {
+   "register": "expansion",
+   "q": "Just so I know, are you sweating?",
+   "expect": "sweating"
   },
   {
    "register": "expansion",
@@ -286,6 +346,36 @@
    "register": "expansion",
    "q": "One more thing. Is your head sore?",
    "expect": "headache"
+  },
+  {
+   "register": "expansion",
+   "q": "Any history of angina?",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "expansion",
+   "q": "Do you see a heart doctor?",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "expansion",
+   "q": "Prior cardiac workup?",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "expansion",
+   "q": "Any heart failure?",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "expansion",
+   "q": "Has a doctor told you your heart does not pump properly?",
+   "expect": "prior_heart_problems"
+  },
+  {
+   "register": "expansion",
+   "q": "Right. Any heart problems in the past?",
+   "expect": "prior_heart_problems"
   },
   {
    "register": "expansion",
@@ -504,77 +594,82 @@
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any trouble swallowing?",
+   "q": "Any change in your bowel habit?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Do you get up at night to pass water?",
+   "q": "Any trouble with your prostate?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "When was your last smear test?",
+   "q": "Any weakness in your arms or legs?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any tremor in your hands?",
+   "q": "Any double vision?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any pain in your hips?",
+   "q": "Any problems with your hearing?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any earache?",
+   "q": "Any nosebleeds?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any itching?",
+   "q": "Any toothache?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any lumps or bumps anywhere?",
+   "q": "Any anxiety or panic attacks?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Any trouble sleeping?",
+   "q": "Have you ever received blood?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Who is your GP?",
+   "q": "Do you have a pharmacy you usually use?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Who is your next of kin?",
+   "q": "What did you do before you retired?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Is anyone here with you?",
+   "q": "Do you have children?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Would you like a blanket?",
+   "q": "Do you have a garden?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "Do you know why you are here?",
+   "q": "Can you confirm your name for me?",
    "expect": null
   },
   {
    "register": "out_of_scope_expansion",
-   "q": "What year are you in at university?",
+   "q": "Have you been waiting long?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_expansion",
+   "q": "Who is the prime minister?",
    "expect": null
   }
  ]

@@ -443,6 +443,146 @@
    ],
    "expect_phase": "obstructed",
    "note": "Blocked by the prerequisite, so no flag is set and nobody comes."
+  },
+  {
+   "name": "Fluid alone, then the clock: worsening shock at four minutes",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "normal_saline_500ml_bolus",
+    {
+     "wait": 250
+    }
+   ],
+   "expect_phase": "shock_untreated",
+   "note": "Authoring 16 step 8: one deficit treated and the clock takes the other."
+  },
+  {
+   "name": "A vasoconstrictor alone, then the clock: worsening shock at four minutes",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "phenylephrine_drip",
+    {
+     "wait": 250
+    }
+   ],
+   "expect_phase": "shock_untreated",
+   "note": "Authoring 16 step 8."
+  },
+  {
+   "name": "A rescue inside the last window: the pair before four minutes are up",
+   "steps": [
+    {
+     "wait": 185
+    },
+    "insert_iv",
+    {
+     "wait": 180
+    },
+    "normal_saline_500ml_bolus",
+    "phenylephrine_drip",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": "The runner cannot show that she never entered worsening shock. TAKO-tests.js does, at 1.5 seconds either side of the deadline."
+  },
+  {
+   "name": "A rescue one action too late: the second drug lands after four minutes",
+   "steps": [
+    {
+     "wait": 185
+    },
+    "insert_iv",
+    {
+     "wait": 222
+    },
+    "normal_saline_500ml_bolus",
+    "phenylephrine_drip"
+   ],
+   "expect_phase": "shock_untreated",
+   "note": "She recovers ten seconds later. The scenario stops before that to show where the late drug found her."
+  },
+  {
+   "name": "Push-dose epinephrine on arrival makes her worse",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "epinephrine_bolus",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "shock_worse",
+   "note": "Covered under the inotrope action since 7 October 2026."
+  },
+  {
+   "name": "The catheterization laboratory is not activated without a twelve-lead",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "consult_activate_cath_lab",
+    {
+     "wait": 20
+    }
+   ],
+   "expect_phase": "presentation",
+   "note": "The press is refused and changes nothing. TAKO-tests.js checks that it earns no credit."
+  },
+  {
+   "name": "A nitrate with the pair already running: the fall, then steadied",
+   "steps": [
+    "insert_iv",
+    "normal_saline_500ml_bolus",
+    "phenylephrine_drip",
+    "nitroglycerin",
+    {
+     "wait": 30
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": ""
+  },
+  {
+   "name": "Cardiology takes over from an inotrope and she stays steadied",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    "aspirin",
+    "consult_activate_cath_lab",
+    {
+     "wait": 150
+    },
+    "dobutamine_drip",
+    {
+     "wait": 12
+    },
+    "ultrasound_cardiac",
+    "consult_cardiology",
+    {
+     "wait": 95
+    },
+    {
+     "wait": 300
+    }
+   ],
+   "expect_phase": "steadied",
+   "note": "The monitor numbers after the takeover are checked in TAKO-tests.js."
   }
  ]
 }

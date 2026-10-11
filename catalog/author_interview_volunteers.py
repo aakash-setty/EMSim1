@@ -4,6 +4,10 @@ safety screens, into the case sources (v0.18a).
 
     python3 catalog/author_interview_volunteers.py [AFRVR|CHFE|DIPH|MGCA ...]
 
+Packs written after v0.20 (TSS, TAKO, DKA) author echo, facts, adjacent, volunteer and
+must_ask directly in their own case_4_interview.py. This script holds the older packs
+only. Do not run it on a pack it does not list.
+
 A real patient answering "when did this start?" rarely stops at a time. They say how it
 has gone since, and the learner needs fewer questions to see the picture. The engine
 (composeInterview, volunteersFor) appends the `volunteer` line of each `adjacent` topic to
@@ -378,5 +382,20 @@ def write_py_pack(prefix):
           f"{len(spec['must_ask'])} must-ask screens")
 
 if __name__ == "__main__":
-    for prefix in (sys.argv[1:] or ["AFRVR", "CHFE", "DIPH", "MGCA"]):
+    # Frozen since 7 October 2026 (docs/restructure-plan.md): the packs this script holds
+    # were edited by hand after it last ran, and a run overwrites them. It writes nothing
+    # without --force, and no longer runs on every pack by default.
+    force = "--force" in sys.argv
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    unknown = [a for a in args if a not in CASES]
+    if unknown:
+        sys.exit("this script holds " + ", ".join(sorted(CASES)) + " only. Not: " + ", ".join(unknown)
+                 + ". Newer packs author these lines in their own case_4_interview.py.")
+    if not args:
+        sys.exit("name the pack(s). This script holds " + ", ".join(sorted(CASES)) + ".")
+    if not force:
+        sys.exit("refusing to write " + ", ".join(args) + ": these packs were edited by hand after this "
+                 "script last ran, and a run overwrites them (docs/restructure-plan.md). Use --force "
+                 "only if you have diffed the result and will commit it.")
+    for prefix in args:
         (write_py_pack if prefix in ("AFRVR", "DIPH") else write_json_pack)(prefix)
