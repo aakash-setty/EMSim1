@@ -2350,6 +2350,7 @@ function wlBind(){
   document.addEventListener('keydown',e=>{
     if(!wlVisible()) return;
     if(ACCESS_UI.modalOpen()) return;   // typing a password must not search or open a case
+    if(CHARGE.isOpen()) return;         // a case is downloading behind the charging screen
     const q=el('wl-q');
     if(e.key==='/'&&document.activeElement!==q){ e.preventDefault(); q.focus(); q.select(); return; }
     if(e.key==='Escape'){
@@ -2372,6 +2373,92 @@ function wlBind(){
       wlOpen(); }
   });
 }
+/* ---------- the charging defibrillator (author instruction, 11 October 2026) ----------
+   Shown by access.js while a locked case downloads, which can take tens of seconds. The
+   download reports no progress, so the bar is a waiting indicator, not a measurement: it
+   climbs quickly and then slows, never passing 92 percent until the case is actually in
+   hand, and then fills. The shock button to the right is disabled until then. Pressing it
+   flashes and fades the overlay away, uncovering the case's arrival screen, which
+   chooseCase has already drawn underneath. Cancel, or Escape while charging, closes the
+   overlay and leaves the learner on the case list; a download still in flight is kept for
+   later and does not open the case. */
+const CHARGE=(function(){
+  const JOULES=200, CAP=0.92, TAU=9;
+  let open=false, ready=false, t0=0, raf=0, onCancel=null, shown=0;
+  const $=id=>document.getElementById(id);
+  function paint(f){
+    const bar=$('chg-bar'), j=$('chg-j');
+    if(bar) bar.setAttribute('width',String(Math.max(0,Math.min(1,f))*264));
+    if(j) j.textContent=Math.round(Math.max(0,Math.min(1,f))*JOULES)+' J';
+  }
+  function tick(){
+    if(!open||ready) return;
+    const t=(Date.now()-t0)/1000;
+    shown=Math.min(CAP,1-Math.exp(-t/TAU));
+    paint(shown);
+    raf=requestAnimationFrame(tick);
+  }
+  function setStatus(s){ const n=$('chargestatus'); if(n) n.textContent=s; }
+  function start(title,cancel){
+    const v=$('chargeview'); if(!v) return;
+    open=true; ready=false; t0=Date.now(); shown=0; onCancel=cancel||null;
+    v.classList.remove('hidden','ready','shocked','leaving');
+    $('chargetitle').textContent=title||'';
+    $('chg-state').textContent='CHARGING';
+    $('chg-led').setAttribute('fill','#3a3f45');
+    const b=$('chargedeliver'); b.disabled=true;
+    setStatus('Charging. Opening the case.');
+    paint(0);
+    cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);
+    const c=$('chargecancel'); if(c) c.focus();
+  }
+  /* The case is bound and its arrival screen is drawn underneath. The bar finishes its
+     fill over half a second, then the shock button arms and takes the focus. */
+  function done(){
+    if(!open) return;
+    ready=true; cancelAnimationFrame(raf);
+    const from=shown, s0=performance.now();
+    const fill=now=>{
+      if(!open) return;
+      const k=Math.min(1,(now-s0)/500);
+      paint(from+(1-from)*k);
+      if(k<1){ raf=requestAnimationFrame(fill); return; }
+      const v=$('chargeview'); v.classList.add('ready');
+      $('chg-state').textContent='CHARGED';
+      $('chg-led').setAttribute('fill','#38e07b');
+      const b=$('chargedeliver'); b.disabled=false; b.focus();
+      setStatus('Charged. Deliver the charge to enter the case.');
+    };
+    raf=requestAnimationFrame(fill);
+  }
+  function hide(){
+    open=false; ready=false; cancelAnimationFrame(raf);
+    const v=$('chargeview'); if(v) v.classList.add('hidden');
+  }
+  function deliver(){
+    if(!open||!ready) return;
+    const v=$('chargeview'); open=false;
+    v.classList.add('shocked','leaving');
+    const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(()=>{ v.classList.add('hidden'); v.classList.remove('shocked','leaving','ready');
+      const bb=el('beginbtn'); if(bb) bb.focus(); }, reduce?0:380);
+  }
+  function cancel(){
+    if(!open||ready) return;
+    const cb=onCancel; hide(); if(cb) cb();
+  }
+  function bind(){
+    const d=$('chargedeliver'), c=$('chargecancel');
+    if(d) d.addEventListener('click',e=>{ e.stopPropagation(); deliver(); });
+    if(c) c.addEventListener('click',e=>{ e.stopPropagation(); cancel(); });
+    document.addEventListener('keydown',e=>{
+      if(!open) return;
+      if(e.key==='Escape'){ e.preventDefault(); e.stopImmediatePropagation(); cancel(); }
+    },true);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind); else bind();
+  return {start, done, fail:hide, isOpen:()=>open||!!(document.getElementById('chargeview')&&!document.getElementById('chargeview').classList.contains('hidden'))};
+})();
 function chooseCase(i){
   /* A locked stub is fetched first; access.js calls back here once the pack is in place. */
   if(ACCESS_UI.isLocked(i)){ ACCESS_UI.open(i); return; }

@@ -5,6 +5,21 @@ is usable with learners.
 
 ---
 
+## v0.26a: a charging defibrillator while a case downloads (11 October 2026)
+
+Opening a locked case can take tens of seconds. `access.js` now shows a full-screen overlay
+for the whole download: a generic monitor-defibrillator, no maker's name or mark, with its
+charge button held down and a charge bar filling. The download reports no progress, so the
+bar is a waiting indicator: it climbs and slows and stops at 92 percent until the case is
+bound, then fills. The shock button to its right, under "Enter case", arms only then, and
+pressing it uncovers the case's arrival screen. Cancel or Escape closes it while charging;
+a download already in flight is kept but does not open the case. A failed download closes
+the overlay and shows the same message as before. Unlocked cases (the local build) open as
+they did, with no overlay. Checked headless against the deployed security policy with the
+download mocked: normal, cancelled and failed loads.
+
+---
+
 ## v0.26: the action menus, rearranged on author instruction (11 October 2026)
 
 Placement and interface only. No action id, result, turnaround, prerequisite or tag changed,

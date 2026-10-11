@@ -238,15 +238,26 @@ const ACCESS_UI = (function(){
     if(!session){ busy=false; showDialog(i); return; }
     say(''); loading=i; paintRow();
     const t0=Date.now(), prefix=CASES[i].prefix;
+    /* The charging defibrillator (ui.js, CHARGE) holds the screen while the pack downloads.
+       Cancel closes it and leaves the learner on the list. The download is not aborted:
+       if it arrives it is kept, so the next click opens the case at once, but it does not
+       open the case on its own. */
+    let cancelled=false;
+    const charge=(typeof CHARGE!=='undefined')?CHARGE:null;
+    if(charge) charge.start(((CASES[i].card||{}).title)||'', ()=>{ cancelled=true; });
     try{
       const pack=await fetchPack(CASES[i]);
       A.track('case_loaded', {case:prefix, ms:Date.now()-t0, bytes:CASES[i].packBytes||null});
       CASES[i]=pack;
       busy=false; loading=-1; paintRow();
+      if(cancelled) return;
       chooseCase(i);
+      if(charge) charge.done();
     }catch(err){
       loading=-1;
+      if(charge) charge.fail();
       A.track('case_load_failed', {case:prefix, reason:(err&&err.reason)||(err&&err.code)||'other', status:(err&&err.status)||null});
+      if(cancelled) return;
       if(err&&err.code==='signin'){ session=null; paint(); showDialog(i); }
       else say((err&&err.userMessage)||'This case could not be opened. Try again.');
     }finally{
