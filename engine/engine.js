@@ -192,9 +192,10 @@ function mergeAction(eff, base, caseAct, extra){
        can be an ordinary logged action with a tag, flags and a note. */
     rec.hidden=!!caseAct.hidden;
   }
-  /* v0.26. A catalog entry can be kept off the menus too: the three primary-survey exams,
-     which are performed together through the composite that names them in `performs`. */
-  if(base&&base.menu_hidden) rec.hidden=true;
+  /* v0.26. A catalog entry kept off the menus and out of search: the three primary-survey
+     exams, performed together through the composite that names them in `performs`. Kept
+     apart from `hidden`, which is the case-authored flag, and still sayable by voice. */
+  rec.menu_hidden=!!(base&&base.menu_hidden);
   return rec;
 }
 

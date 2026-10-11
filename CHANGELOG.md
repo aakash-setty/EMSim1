@@ -5,6 +5,33 @@ is usable with learners.
 
 ---
 
+## v0.26: the action menus, rearranged on author instruction (11 October 2026)
+
+Placement and interface only. No action id, result, turnaround, prerequisite or tag changed,
+so no case changed and every pack's tests pass unchanged.
+
+- **Stabilization is the top tab and the one a case opens on.** `TAB_ORDER` and the
+  interface's starting tab.
+- **Airway, breathing and circulation are examined together, from Stabilization.** New
+  catalog field `performs`: the composite `exam_abc` names the three exams, and the
+  interface logs those three in its place from every route (button, order, voice), so the
+  fold, the tags and the debrief's Physical row see the same three actions as before. New
+  catalog field `menu_hidden` keeps the three off the Exam tab and out of search. It is
+  separate from the case-authored `hidden`. Their findings show on Stabilization and in
+  the record. Authoring requirements section 9 says to bind the three and never `exam_abc`.
+- **Start Chest Compressions moved to Nursing.**
+- **Intubation is one folder.** Intubation Drugs folded into Intubation, the drugs under a
+  Medications heading. New placement field `subgroup`, with `subgroupOrder` in the build.
+- **Imaging has sub-tabs: CT, X-ray, Ultrasound, MRI.** The eight bedside ultrasounds moved
+  into Imaging. Doppler stays a bedside test. A group listed in `subgroupTabs` draws its
+  subgroups as sub-tabs. A filter shows every matching subgroup at once.
+- Voice phrases added for `exam_abc` ("ABC exam", "primary survey" and similar).
+- Checked with a Playwright play-through of TSS: opens on Stabilization, one press logs the
+  three exams, the Exam tab no longer lists them, the Intubation folder and Imaging sub-tabs
+  draw as described.
+
+---
+
 ## Fix: the enhanced question matcher never loaded on the deployed site
 
 **Every page served with the `vercel.json` headers fell back to wording-only matching,

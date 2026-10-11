@@ -353,11 +353,6 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
-### `action_tag/echo_formal`
-
-Single unconditional rule; nothing to enumerate.
-
-
 ### `action_tag/consult_cardiology`
 
 Single unconditional rule; nothing to enumerate.
@@ -749,11 +744,6 @@ Single unconditional rule; nothing to enumerate.
 
 
 ### `imaging/ct_pulmonary_angiogram`
-
-Single unconditional rule; nothing to enumerate.
-
-
-### `imaging/echo_formal`
 
 Single unconditional rule; nothing to enumerate.
 

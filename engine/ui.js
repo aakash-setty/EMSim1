@@ -199,8 +199,7 @@ function renderMonitor(){
      <div class="vitval v-${c[3]}">${c[1]}</div><div class="vitunit">${c[2]}</div></div>`).join('')
     + `<div class="clockbox"><div class="vitlab">elapsed</div>
        <div class="clock">${mmss(ST.now)}</div>
-       <div class="phasechip">${esc(PROTO.phaseShort[ST.phase]||ST.phase)}</div>
-       <div class="phasechip">${esc(PROTO.difficulty.modes[MODE].label)}</div></div>`;
+       <div class="phasechip">${esc(PROTO.phaseShort[ST.phase]||ST.phase)}</div></div>`;
   if(LASTPHASE!==null && LASTPHASE!==ST.phase) el('monitor').animate?.([{opacity:.35},{opacity:1}],{duration:420});
   LASTPHASE=ST.phase;
   /* The trace is live: the monitor module draws it, one lead, at paper speed, from the
@@ -404,6 +403,10 @@ function feedItems(){
     if(x.type==='end') continue;
     /* A study appears twice: once when it is sent, once when it results. Same name on
        both reads as a duplicate, so the order is labelled as an order. */
+    /* A consultation is charted once, by the readout that carries the consultant's
+       answer, below. The order line above it said the same name again. Kept only when
+       the consult was harmful, so the harm marker is not lost. */
+    if(catOf(x.id)==='consultant'&&x.tag!=='harmful') continue;
     const isStudy=catOf(x.id)==='investigation';
     add({t:x.t,kind:x.tag==='harmful'?'harm':(isStudy?'order':'action'),
          name:isStudy?('Ordered: '+x.label):x.label});
@@ -618,7 +621,7 @@ function actionsFor(tab){
   const f=filterOf(tab), out={};
   for(const id in ACT){
     const a=ACT[id];
-    if(a.tab!==tab||a.hidden) continue;
+    if(a.tab!==tab||a.hidden||a.menu_hidden) continue;
     if(f && !(a.name.toLowerCase().includes(f)||id.includes(f))) continue;
     for(const g of (a.groups||[a.group])) (out[g]=out[g]||[]).push(id);
   }
@@ -780,7 +783,16 @@ function renderTab(){
              +readoutPanel('consult','Conversations')
   };
   const active=document.activeElement, keepId=active&&active.id, keepPos=active&&active.selectionStart;
+  { const th=el('imsgthread'); if(th) THREAD_TOP=th.scrollTop; }
   box.innerHTML=(R[TAB]||tabHistory)();
+  /* The thread follows the newest message when one arrives, and otherwise keeps the
+     place a reader scrolled back to. */
+  { const th=el('imsgthread');
+    if(th){
+      const n=ST.readouts.filter(r=>r.kind==='speech').length;
+      th.scrollTop = (n!==THREAD_N) ? th.scrollHeight : THREAD_TOP;
+      THREAD_N=n;
+    } }
   if(keepId==='filterbox'||keepId==='dxbox'||keepId==='askbox'){
     const back=el(keepId);
     if(back){ back.focus(); try{ back.setSelectionRange(keepPos,keepPos); }catch(e){} }
@@ -803,7 +815,7 @@ function generalStatusPanel(){
 function readoutPanel(kind,title){
   const outs=ST.readouts.filter(r=>r.kind===kind).slice(-8).reverse().map(r=>
     kind==='consult'
-      ? `<div class="speech"><div class="who">${esc(r.title)}, ${mmss(r.t)}${r.source!=='case'?'  (catalog default)':''}</div>${esc(r.body)}</div>`
+      ? `<div class="speech"><div class="who">${esc(r.title)}, ${mmss(r.t)}</div>${esc(r.body)}</div>`
       : `<div class="read"><h4>${esc(r.title)}</h4>
          <div class="body${(r.body&&r.body.abnormal)?' abn-report':''}">${esc(
             r.body&&r.body.findings!==undefined?r.body.findings:r.body)}</div>
@@ -895,10 +907,33 @@ function semChip(){
     <b>Question matching: ${S[0]}</b><span>${esc(S[1])}</span></div>`;
 }
 
+/* The interview as a phone message thread (author instruction, 11 October 2026): the
+   learner's questions on the right in blue, the answers on the left, oldest at the top
+   and newest at the bottom, the box to type in underneath. A case-clock time is shown
+   above the first message and wherever more than a minute has passed. The answer's
+   outer quotation marks are dropped, because a bubble already says who is speaking. */
+function bubbleText(s){
+  const t=String(s==null?'':s).trim();
+  const m=t.match(/^(['\u2018\u201C"])([\s\S]*)(['\u2019\u201D"])$/);
+  return m?m[2].trim():t;
+}
+function historyThread(){
+  const rs=ST.readouts.filter(r=>r.kind==='speech');
+  if(!rs.length) return `<div class="imsg-empty">Your conversation with the patient appears here.</div>`;
+  let html='', lastT=-1e9;
+  rs.forEach((r,i)=>{
+    /* Only a message that has just arrived slides in. The tab is rebuilt on other
+       changes too, and replaying the animation on the whole thread would flicker. */
+    const fresh=(i===rs.length-1&&rs.length>THREAD_N)?' fresh':'';
+    if(r.t-lastT>=60) html+=`<div class="imsg-time">${mmss(r.t)}</div>`;
+    lastT=r.t;
+    html+=`<div class="imsg-row me${fresh}"><div class="imsg me">${esc(r.title)}</div></div>`;
+    html+=`<div class="imsg-row them${fresh}"><div class="imsg them${r.matched?'':' unmatched'}">${esc(bubbleText(r.body))}</div></div>`;
+  });
+  return html;
+}
+let THREAD_N=-1, THREAD_TOP=0;
 function tabHistory(){
-  const outs=ST.readouts.filter(r=>r.kind==='speech').slice(-10).reverse().map(r=>
-    `<div class="speech"><div class="who">You asked: ${esc(r.title)}</div>${esc(r.body)}
-     </div>`).join('');
   const p=CASE.patient||{};
   /* Age, sex and weight stay on screen. They are not history to be taken: they
      are on the wristband, and weight-based dosing is unanswerable without the
@@ -919,14 +954,16 @@ function tabHistory(){
          assumes the patient answers, which is a case-level question rather than a string:
          see DIPH's review packet, section 3. -->
     <h3>Ask the patient</h3>
-    <p class="sub">Type a question in your own words.</p>
-    <div style="display:flex;gap:8px">
-      <input type="text" id="askbox" placeholder="Ask the patient something" autocomplete="off" value="${esc(ASKTEXT)}">
-      <button class="btn" id="askbtn">Ask</button>
+    <div class="imsg-glass">
+      <div class="imsg-thread" id="imsgthread" aria-live="polite">${historyThread()}</div>
+      <div class="imsg-compose">
+        <input type="text" id="askbox" placeholder="Ask the patient something" autocomplete="off" value="${esc(ASKTEXT)}">
+        <button class="imsg-send" id="askbtn" title="Ask" aria-label="Ask">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/></svg></button>
+      </div>
     </div>
     ${semChip()}
-</div>
-    ${outs?`<div class="panel"><h3>What you were told</h3>${outs}</div>`:''}`;
+</div>`;
 }
 
 /* Line icons for the disposition tiles. Chosen from words in the disposition id, which a
@@ -1770,6 +1807,20 @@ const GATE_TITLE={failed:'Case Failed',
                   all:'All Critical Actions Achieved!',
                   missed:'Critical Actions Missed'};
 
+/* The debrief's first screen: a dial from 0 to 100 percent, filled by the share of the
+   case's critical actions completed, with the count in the centre ("6/8"). Nothing is
+   drawn for a case that expects no critical action. Author instruction, 11 October 2026. */
+function critDial(n,total){
+  if(!total) return '';
+  const f=Math.max(0,Math.min(1,n/total)), r=52, c=2*Math.PI*r;
+  return `<div class="critdial" role="img" aria-label="${n} of ${total} critical actions completed, ${Math.round(f*100)} percent">
+    <svg viewBox="0 0 128 128" aria-hidden="true">
+      <circle class="track" cx="64" cy="64" r="${r}"/>
+      <circle class="fill" cx="64" cy="64" r="${r}" stroke-dasharray="${(f*c).toFixed(2)} ${c.toFixed(2)}"
+        transform="rotate(-90 64 64)"/>
+    </svg>
+    <div class="critdial-n">${n}/${total}<span>${Math.round(f*100)}%</span></div></div>`;
+}
 function gateHTML(){
   const kind=endingKind();
   const done=[...ST.expected].filter(id=>ST.satisfied.has(id));
@@ -1778,16 +1829,25 @@ function gateHTML(){
      action is still an answer, and this screen is deliberately not the answer key. */
   return `<div class="dbf">
     <div class="dbsec gate">
+      <div class="gatecols">
+      <div class="gateleft">
       <h2 class="gatetitle ${kind==='all'?'g-ok':'g-bad'}">${esc(GATE_TITLE[kind])}</h2>
       ${ST.failed&&ST.failed.reason?`<p class="sub">${esc(ST.failed.reason)}</p>`:''}
       ${ST.halted&&ST.halted.reason?`<p class="sub">${esc(ST.halted.reason)}</p>`:''}
+      <div class="gatedialrow">
+        ${critDial(done.length,ST.expected.size)}
+        <button class="btn bigreplay" id="restart">Replay this case</button>
+      </div>
+      </div>
+      <div class="gateright">
       <h3 class="gatesub">Critical actions you completed</h3>
       ${done.length
         ? `<div class="gatelist">${done.map(id=>
             `<div class="gitem">${esc(dispExp(id))}</div>`).join('')}</div>`
         : `<p class="sub">None of this case's critical actions were completed.</p>`}
+      </div>
+      </div>
       <div class="gatebtns">
-        <button class="btn" id="restart">Replay this case</button>
         <button class="btn ghost" id="revealanswers">Reveal Case Answers</button>
         ${CASES.length>1?'<button class="btn ghost" id="pickanother">Choose a different case</button>':''}
       </div>
@@ -1795,6 +1855,13 @@ function gateHTML(){
   </div>`;
 }
 
+/* A debrief section that starts closed and opens on its down arrow. Native <details>, so
+   it works from the keyboard with no script. `sub` draws it at subsection size. */
+function dbFold(title,inner,sub){
+  return `<details class="dbfold${sub?' sub':''}"><summary><span class="dbfold-t">${esc(title)}</span>
+    <svg class="dbfold-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div class="dbfold-body">${inner}</div></details>`;
+}
 function revealAnswers(){
   REVEALED=true; AN.track('debrief_revealed',{case:PACK.prefix});
   const v=el('endview');
@@ -1998,8 +2065,8 @@ function debriefHTML(){
         <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(dExp)}</div></div>
       <h3>Diagnoses you handed over</h3>
       ${dx.rows.map((r,i)=>dxItem((i?'':'Primary: ')+dxLabel(r.id),PILL[r.verdict]||['','p-neu'],r.why)).join('')}
-      ${dx.missed.length?'<h3>Also true of this patient, and not named</h3>'
-        +dx.missed.map(m=>dxItem(dxLabel(m.id),['not named','p-warn'],m.why)).join(''):''}
+      ${dx.missed.length?dbFold('Also true of this patient, and not named',
+        dx.missed.map(m=>dxItem(dxLabel(m.id),['not named','p-warn'],m.why)).join(''),true):''}
       ${named?'':dxItem('The case\'s diagnosis: '+dxLabel(PROTO.correctDxId),['answer','p-neu'],PROTO.correctDxExplanation)}
       </div>`;
   } else if(ST.earlyExit){
@@ -2059,6 +2126,8 @@ function debriefHTML(){
       :`<div class="item"><div class="hd">${head}</div></div>`});
   });
   rows.sort((a,b)=>a.t-b.t||a.k-b.k);
+  /* Removed from the debrief on author instruction (11 October 2026). Still built, so the
+     rows above stay available if it is brought back. */
   const timeline=`<div class="dbsec"><h2>What happened, in order</h2>
     <p class="sub">Every action you took and every change in the patient, at its time on the case clock.
     Where the patient changed on a clock, open the line to read why.</p>
@@ -2099,8 +2168,6 @@ function debriefHTML(){
     ${points.length?`<div class="dbsec"><h2>Points to carry out of this case</h2>
       ${points.slice(0,3).map(pointItem).join('')}</div>`:''}
 
-    ${timeline}
-
     ${(recDone.length||recMissed.length)?`<div class="dbsec"><h2>Other actions worth doing</h2>
       <p class="sub">Recommended rather than critical: none of these decides the case, and each is the kind of thing a reviewer would ask about.</p>
       ${recMissed.map(id=>item(id,'not done','p-warn')).join('')}
@@ -2128,13 +2195,13 @@ function debriefHTML(){
 
     ${ho}
 
-    ${read.length?`<div class="dbsec"><h2>Your results, read</h2>
+    ${read.length?`<div class="dbsec">${dbFold('Your results, read',`
       <p class="sub">While the case ran you saw the numbers and nothing else. This is the
       case's own reading of each panel you ordered, in the order they came back.</p>
       ${read.map(r=>`<div class="item"><div class="hd"><span class="nm">${esc(dispName(r.id))}</span>
         <span class="pill p-neu">${mmss(r.o.dueT)}</span></div>
         ${renderPayload(r.o.value)}
-        <div class="note" style="background:none;border:0;padding:0;margin:6px 0 0">${esc(r.o.value.comment)}</div></div>`).join('')}</div>`:''}
+        <div class="note" style="background:none;border:0;padding:0;margin:6px 0 0">${esc(r.o.value.comment)}</div></div>`).join('')}`)}</div>`:''}
 
     ${defaults.length?`<div class="dbsec"><h2>Answered by a default, not by the case</h2>
       <p class="sub">These returned the catalog's normal result or the global response because this case
@@ -2146,8 +2213,8 @@ function debriefHTML(){
       ${stillPending.length?`<p>Still pending when the case ended: ${stillPending.map(i=>esc(dispName(i))).join(', ')}.</p>`:''}
       <p class="sub">Handing over with a result you never looked at is a real handover failure.</p></div>`:''}
 
-    ${points.length>3?`<div class="dbsec"><h2>More points from this case</h2>
-      ${points.slice(3).map(pointItem).join('')}</div>`:''}
+    ${points.length>3?`<div class="dbsec">${dbFold('More points from this case',
+      points.slice(3).map(pointItem).join(''))}</div>`:''}
 
   </div>`;
 }
@@ -2603,7 +2670,7 @@ function searchHits(){
   const acts=[], lines=[];
   for(const id in ACT){
     const a=ACT[id];
-    if(!(PROTO.tabLabel||{})[a.tab]||a.hidden) continue;
+    if(!(PROTO.tabLabel||{})[a.tab]||a.hidden||a.menu_hidden) continue;
     const groups=(a.groups||[a.group]).filter(Boolean).join(' ');
     const sc=searchScore(q,a.name,groups+' '+id.replace(/_/g,' ')+' '+(PROTO.tabLabel[a.tab]||''));
     if(sc>=0) acts.push({id,tab:a.tab,name:a.name,group:groups,score:sc});

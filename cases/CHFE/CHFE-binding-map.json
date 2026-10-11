@@ -275,16 +275,6 @@
    "catalog_id": "arterial_blood_gas"
   },
   {
-   "case_id": "echo_formal",
-   "catalog_id": null,
-   "note": "No formal echocardiogram in the catalog.",
-   "unmatched_placement": {
-    "tab": "investigations",
-    "group": "Imaging"
-   },
-   "unmatched_narration": "{name} is ordered."
-  },
-  {
    "case_id": "vent_settings_lung_protective",
    "catalog_id": null,
    "note": "No ventilator settings action.",

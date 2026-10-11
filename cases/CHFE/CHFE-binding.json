@@ -6,7 +6,7 @@
  "counts": {
   "exact": 20,
   "mapped": 41,
-  "unmatched": 7
+  "unmatched": 6
  },
  "group_coverage": {
   "pocus_lung_cardiac": [
@@ -351,12 +351,6 @@
    "catalog_id": "urinalysis",
    "status": "mapped",
    "note": null
-  },
-  {
-   "case_id": "echo_formal",
-   "catalog_id": null,
-   "status": "unmatched",
-   "note": "No formal echocardiogram in the catalog."
   },
   {
    "case_id": "consult_cardiology",

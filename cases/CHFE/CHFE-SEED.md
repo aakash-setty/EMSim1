@@ -21,3 +21,10 @@ status.
 section 3 template that `engine/new_case.py` generates, fill it in independently of the
 case file, and then diff the two. Anything in the case file that the seed does not
 support is an invented fact and should be removed rather than reconciled.
+
+## What a person decided
+
+- 11 October 2026, Aakash Setty: the formal transthoracic echocardiogram (`echo_formal`)
+  is removed from the case: the action, its result (no sonographer available, booked for
+  the morning) and its place in the debrief's domain list. A formal echo is not used in
+  this simulator. It was a neutral, uncataloged action.

@@ -717,7 +717,7 @@ CATALOG = {
         "No action restarts a stopped infusion. DKA reads a second administration of insulin as the restart.",
         "No catheterization laboratory activation. TAKO carries it as a case-only action on the Consults tab, by physician decision.",
         "Venous Blood Gas and the five Nursing entries were added on author instruction and carry no source marker. field_provenance lists display_name as transcribed, which is not true of any author-supplied entry.",
-        "Reference-case ids with still no catalog counterpart: bp_cycling_q5min, urine_output_monitoring, echo_formal, vent_settings_lung_protective, peep_reduce, handoff_submit. See reference_case_id_map.",
+        "Reference-case ids with still no catalog counterpart: bp_cycling_q5min, urine_output_monitoring, vent_settings_lung_protective, peep_reduce, handoff_submit. See reference_case_id_map.",
     ],
     "reference_case_id_map": {
         "_note": "Ids used in sim_check.py mapped to this catalog. 'unmatched' means "

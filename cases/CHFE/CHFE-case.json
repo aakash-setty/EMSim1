@@ -1616,18 +1616,6 @@
    "debrief_note": "Neutral. Part of an infection screen if you are pursuing one; not informative here."
   },
   {
-   "catalog_id": "echo_formal",
-   "display_name": "Formal transthoracic echocardiogram",
-   "tag": [
-    {
-     "when": null,
-     "value": "neutral"
-    }
-   ],
-   "flags_set": [],
-   "debrief_note": "Appropriate to request for the admission, not available on the timescale of this resuscitation, and not needed to make the decisions in front of you. Bedside ultrasound answers the immediate questions about ventricular function, filling and B-lines; the formal study answers the questions about valve lesions and quantified ejection fraction that will guide his inpatient therapy."
-  },
-  {
    "catalog_id": "consult_cardiology",
    "display_name": "Consult cardiology",
    "tag": [
@@ -3265,20 +3253,6 @@
        "kind": "report",
        "abnormal": false,
        "report": "No filling defect in the pulmonary arterial tree to the segmental level. No pulmonary embolism. Cardiomegaly. Bilateral dependent ground glass opacification with smooth interlobular septal thickening and small bilateral pleural effusions, consistent with pulmonary edema. Coronary artery calcification. No consolidation, no mass."
-      }
-     }
-    ],
-    "result_shape": "structured"
-   },
-   "echo_formal": {
-    "changes_with_state": false,
-    "rules": [
-     {
-      "when": null,
-      "value": {
-       "kind": "report",
-       "abnormal": true,
-       "report": "Cardiology sonography reports that no sonographer is available for a formal study within the emergency department timeframe. The study is booked for the inpatient team in the morning."
       }
      }
     ],
@@ -6260,8 +6234,7 @@
      "labs_lft",
      "labs_magnesium",
      "labs_tsh",
-     "labs_urinalysis",
-     "echo_formal"
+     "labs_urinalysis"
     ]
    },
    {

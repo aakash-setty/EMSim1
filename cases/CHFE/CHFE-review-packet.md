@@ -546,9 +546,11 @@ blood gas both exist now, so the deterioration branch has a working exit and the
 authorable. A critical care consultant exists. The exam gaps reported here previously are also
 resolved. See section 18 for what changed and what to check.
 
-Seven case actions still have no catalog entry: `bp_cycling_q5min`, `echo_formal`,
+Six case actions still have no catalog entry: `bp_cycling_q5min`,
 `handoff_submit`, `interview_topic_medication_adherence`, `peep_reduce`,
-`urine_output_monitoring`, `vent_settings_lung_protective`. None is load-bearing for the
+`urine_output_monitoring`, `vent_settings_lung_protective`. A seventh, `echo_formal`
+(formal transthoracic echocardiogram), was removed from the case on 11 October 2026 by
+Aakash Setty, who decided a formal echo is not used in this simulator. None is load-bearing for the
 intended path, and each is rendered in a separate group so the gap stays visible.
 
 **Harm that is escapable. Partly fixed.** The fluid bolus now covers all four crystalloid

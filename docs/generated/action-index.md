@@ -2,7 +2,7 @@
 
 # Action index
 
-One line per catalog entry (305 entries, catalog 0.3-draft).
+One line per catalog entry (306 entries, catalog 0.3-draft).
 Full entry: `python3 engine/lookup.py action <id or word>`. The learner sees the whole
 catalog whether or not the case binds an entry (authoring 6.1).
 
@@ -205,14 +205,6 @@ stop action for an infusion, and whether a default result exists (D).
 | `ecg_12_lead` | ECG | investigations / Bedside Tests | investigation | ecg |  | 0 |  |  | D |
 | `fingerstick_blood_sugar` | Fingerstick Blood Sugar | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
 | `peak_expiratory_flow_meter` | Peak Expiratory Flow Meter | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_aorta` | Ultrasound - Aorta | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_cardiac` | Ultrasound - Cardiac | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_fast` | Ultrasound - FAST | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_lower_extremity_venous` | Ultrasound - Lower Extremity Venous | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_lung` | Ultrasound - Lung | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_renal` | Ultrasound - Renal | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_ruq` | Ultrasound - RUQ | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_soft_tissue` | Ultrasound - Soft Tissue | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
 | `ct_abdomen` | CT - Abdomen | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `ct_aorta` | CT - Aorta | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `ct_c_spine` | CT - C-spine | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
@@ -224,6 +216,14 @@ stop action for an infusion, and whether a default result exists (D).
 | `mri_lumbar_spine` | MRI - Lumbar Spine | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `mri_mra_head_and_neck` | MRI/MRA - Head and Neck | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `mri_thoracic_spine` | MRI - Thoracic Spine | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
+| `ultrasound_aorta` | Ultrasound - Aorta | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
+| `ultrasound_cardiac` | Ultrasound - Cardiac | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
+| `ultrasound_fast` | Ultrasound - FAST | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
+| `ultrasound_lower_extremity_venous` | Ultrasound - Lower Extremity Venous | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
+| `ultrasound_lung` | Ultrasound - Lung | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
+| `ultrasound_renal` | Ultrasound - Renal | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
+| `ultrasound_ruq` | Ultrasound - RUQ | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
+| `ultrasound_soft_tissue` | Ultrasound - Soft Tissue | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
 | `xr_chest` | XR - Chest | investigations / Imaging | investigation | radiograph |  | 0 |  |  | D |
 | `xr_pelvis` | XR - Pelvis | investigations / Imaging | investigation | radiograph |  | 0 |  |  | D |
 | `arterial_blood_gas` | Arterial Blood Gas | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
@@ -274,8 +274,8 @@ stop action for an infusion, and whether a default result exists (D).
 | `urine_rapid_antigen_test_for_s_pneumoniae` | Urine Rapid Antigen Test for S. pneumoniae | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
 | `urine_tox_screen` | Urine Tox Screen | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
 | `attach_monitor` | Attach Monitor | stabilization /  | stabilization |  |  | 0 |  |  |  |
+| `exam_abc` | Airway, Breathing and Circulation Exam | stabilization /  | exam |  |  | 0 |  |  | D |
 | `insert_iv` | Insert IV | stabilization /  | stabilization |  | iv_access | 0 |  |  |  |
-| `start_chest_compressions` | Start Chest Compressions | stabilization /  | stabilization |  |  | 0 |  |  |  |
 | `d5_1_2_ns_infusion` | D5 1/2 NS infusion | stabilization / Fluids | stabilization |  |  | 1 |  |  |  |
 | `d5_ns_bolus` | D5 NS bolus | stabilization / Fluids | stabilization |  |  | 1 |  |  |  |
 | `lactated_ringer_s_1l_bolus` | Lactated Ringer's 1L bolus | stabilization / Fluids | stabilization |  |  | 1 | crystalloid_bolus |  |  |
@@ -285,23 +285,24 @@ stop action for an infusion, and whether a default result exists (D).
 | `normal_saline_500ml_bolus` | Normal Saline 500mL bolus | stabilization / Fluids | stabilization |  |  | 1 | crystalloid_bolus |  |  |
 | `normal_saline_infusion` | Normal Saline infusion | stabilization / Fluids | stabilization |  |  | 1 |  |  |  |
 | `cricothyrotomy` | Cricothyrotomy | stabilization / Intubation | stabilization |  |  | 0 |  |  |  |
+| `etomidate_bolus` | Etomidate bolus | stabilization / Intubation | stabilization |  | sedation_given | 1 |  |  |  |
 | `intubate_rapid_sequence` | Intubate (Rapid Sequence) | stabilization / Intubation | stabilization |  | intubated | 1 |  |  |  |
+| `ketamine_bolus` | Ketamine bolus | stabilization / Intubation | stabilization |  | sedation_given | 1 |  |  |  |
+| `lidocaine_bolus` | Lidocaine bolus | stabilization / Intubation | stabilization |  |  | 1 |  |  |  |
+| `midazolam_bolus` | Midazolam bolus | stabilization / Intubation | stabilization |  | sedation_given | 1 |  |  |  |
+| `phenylephrine_bolus` | Phenylephrine bolus | stabilization / Intubation | stabilization |  |  | 1 |  |  |  |
 | `position_for_intubation` | Position for Intubation | stabilization / Intubation | stabilization |  |  | 0 |  |  |  |
 | `preoxygenate_for_intubation` | Preoxygenate for Intubation | stabilization / Intubation | stabilization |  |  | 0 |  |  |  |
 | `prepare_endotracheal_tube` | Prepare Endotracheal Tube | stabilization / Intubation | stabilization |  |  | 0 |  |  |  |
+| `propofol_bolus` | Propofol bolus | stabilization / Intubation | stabilization |  | sedation_given | 1 |  |  |  |
+| `rocuronium_bolus` | Rocuronium bolus | stabilization / Intubation | stabilization |  | paralytic_given | 1 |  |  |  |
+| `succinylcholine_bolus` | Succinylcholine bolus | stabilization / Intubation | stabilization |  | paralytic_given | 1 |  |  |  |
 | `suction` | Suction | stabilization / Intubation | stabilization |  |  | 0 |  |  |  |
-| `etomidate_bolus` | Etomidate bolus | stabilization / Intubation Drugs | stabilization |  | sedation_given | 1 |  |  |  |
-| `ketamine_bolus` | Ketamine bolus | stabilization / Intubation Drugs | stabilization |  | sedation_given | 1 |  |  |  |
-| `lidocaine_bolus` | Lidocaine bolus | stabilization / Intubation Drugs | stabilization |  |  | 1 |  |  |  |
-| `midazolam_bolus` | Midazolam bolus | stabilization / Intubation Drugs | stabilization |  | sedation_given | 1 |  |  |  |
-| `phenylephrine_bolus` | Phenylephrine bolus | stabilization / Intubation Drugs | stabilization |  |  | 1 |  |  |  |
-| `propofol_bolus` | Propofol bolus | stabilization / Intubation Drugs | stabilization |  | sedation_given | 1 |  |  |  |
-| `rocuronium_bolus` | Rocuronium bolus | stabilization / Intubation Drugs | stabilization |  | paralytic_given | 1 |  |  |  |
-| `succinylcholine_bolus` | Succinylcholine bolus | stabilization / Intubation Drugs | stabilization |  | paralytic_given | 1 |  |  |  |
 | `airborne_precautions` | Airborne Precautions | stabilization / Nursing | stabilization |  | airborne_precautions | 0 |  |  |  |
 | `contact_precautions` | Contact Precautions | stabilization / Nursing | stabilization |  | contact_precautions | 0 |  |  |  |
 | `cooling_measures` | Cooling Measures | stabilization / Nursing | stabilization |  | cooling_measures | 0 |  |  |  |
 | `droplet_precautions` | Droplet Precautions | stabilization / Nursing | stabilization |  | droplet_precautions | 0 |  |  |  |
+| `start_chest_compressions` | Start Chest Compressions | stabilization / Nursing | stabilization |  |  | 0 |  |  |  |
 | `warming_measures` | Warming Measures | stabilization / Nursing | stabilization |  | warming_measures | 0 |  |  |  |
 | `bag_valve_mask` | Bag Valve Mask | stabilization / Oxygen | stabilization |  |  | 0 |  |  |  |
 | `nasal_cannula_oxygen` | Nasal Cannula Oxygen | stabilization / Oxygen | stabilization |  |  | 0 |  |  |  |
