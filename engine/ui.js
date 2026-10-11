@@ -640,7 +640,7 @@ function groupNames(tab,groups){
 /* Buttons carry the name and nothing else. Prerequisites and turnaround times used to
    be printed underneath; they are system detail the resident does not read off a menu,
    and a blocked attempt teaches the prerequisite better than a label does. */
-function actionButton(id,tab){
+function actionButton(id,tab,grp){
   const a=ACT[id];
   const orders=ST.orders[id]||[];
   const last=orders[orders.length-1];
@@ -653,7 +653,9 @@ function actionButton(id,tab){
   } else if(ST.taken.has(id)) cls+=' done';
   if(a.orphan) cls+=' orphan';
   if(tab&&basketOf(tab).has(id)) cls+=' picked';
-  return `<button class="${cls}" data-act="${esc(id)}" data-tabof="${esc(tab||'')}">${esc(a.name)}</button>`;
+  /* v0.26b. A button in one of PROTO.immediateGroups acts on the click, like an exam. */
+  const now=!!(grp&&((PROTO.immediateGroups||{})[tab]||[]).includes(grp));
+  return `<button class="${cls}" data-act="${esc(id)}" data-tabof="${esc(tab||'')}"${now?' data-now="1"':''}>${esc(a.name)}</button>`;
 }
 /* v0.26. One group's buttons. Entries with no subgroup come first as a plain grid. The
    rest are split by subgroup, in PROTO.subgroupOrder, and drawn either as headings inside
@@ -661,7 +663,7 @@ function actionButton(id,tab){
    time. While a filter is set every matching subgroup shows under its heading, because a
    search result hidden behind a sub-tab is not a result. */
 function groupBody(tab,g,ids,filtering){
-  const grid=list=>`<div class="grid">${list.map(id=>actionButton(id,tab)).join('')}</div>`;
+  const grid=list=>`<div class="grid">${list.map(id=>actionButton(id,tab,g)).join('')}</div>`;
   const plain=ids.filter(id=>!ACT[id].subgroup);
   const by={};
   for(const id of ids){ const s=ACT[id].subgroup; if(s) (by[s]=by[s]||[]).push(id); }
@@ -1559,7 +1561,7 @@ document.addEventListener('click',e=>{
   if(t&&t.id==='railmenu'){ askLeave('menu'); return; }
   if(t&&t.id==='searchbtn'){ SEARCH_OPEN?closeSearch():openSearch(); return; }
   if(t&&t.id==='searchclose'){ closeSearch(); return; }
-  if(t&&t.dataset.sgo!==undefined){ searchGoTo(t.dataset.sgo); return; }
+  if(t&&t.dataset.sgo!==undefined){ searchPick(t.dataset.sgo); return; }
   if(t&&t.dataset.schart!==undefined){ closeSearch(); expandRecord(); return; }
   /* Anything else inside the search panel stops here. It covers the record panel, which is
      a click target in its own right, and a click on the panel's own background must not
@@ -1602,6 +1604,8 @@ document.addEventListener('click',e=>{
     /* A composite exam is an examination, not an order, so it is performed at once
        wherever its button sits, exactly as the Exam tab's buttons are. */
     if(ACT[id]&&ACT[id].performs){ log({actionId:id}); render(); return; }
+    /* v0.26b. The top Stabilization folder orders on the click, with no Submit Order. */
+    if(t.dataset.now){ log({actionId:id}); render(); return; }
     /* On an orderable tab a click selects; nothing is sent until Submit Order. */
     if(tabof&&PROTO.orderableTabs.includes(tabof)){
       const bag=basketOf(tabof);
@@ -1937,7 +1941,7 @@ function restart(){
   Object.keys(FILTERS).forEach(k=>delete FILTERS[k]);
   REFLECT_DONE=false; REFLECT_NOTE=''; REFLECT_NOTE2=''; REFLECT_OPEN=false;
   el('reflectview').classList.add('hidden');
-  SEARCH_Q=''; closeSearch();
+  SEARCH_Q=''; SEARCH_DONE=''; closeSearch();
   Object.keys(BASKET).forEach(k=>delete BASKET[k]);
   Object.keys(EXPANDED).forEach(k=>delete EXPANDED[k]);
   Object.keys(SUBTAB).forEach(k=>delete SUBTAB[k]);
@@ -2145,7 +2149,60 @@ function debriefHTML(){
   const endLabel=ST.failed?(PHASE[ST.failed.phase].label||ST.failed.phase):'';
   const notScored=ST.halted?'Not scored: a harmful action ended the case.'
     :(ST.failed?'Not scored: the case ended in '+endLabel.charAt(0).toLowerCase()+endLabel.slice(1)+'.':'');
-  const scoreTable=`<table class="score"><tr><th>Category</th><th class="n">Score</th><th class="n">Points</th><th>Detail</th></tr>${scoreRows}</table>`;
+  /* Author instruction, 11 October 2026: the summary is one closed drop-down per
+     category, and inside each, one closed drop-down per thing not done. History lists the
+     key questions not asked, with what the patient would have said. Physical and the four
+     ordering tabs list the actions not taken, with the case's teaching note. Handoff lists
+     what the handover got wrong or left out. */
+  const missedOf=r=>{
+    const miss=r.missed||[];
+    if(r.id==='history'){
+      const topics=(CASE.interview&&CASE.interview.topics)||[];
+      return miss.map(tid=>{
+        const tp=topics.find(x=>x.topic===tid)||{};
+        const rules=Array.isArray(tp.answer)?tp.answer:[];
+        const base=rules.length?(rules.find(x=>!x.when)||rules[rules.length-1]).value:'';
+        const label=tp.canonical||String(tid).replace(/_/g,' ');
+        const ans=bubbleText(learnerText(base||''));
+        return ans?`<div class="item"><details class="teach"><summary class="hd"><span class="nm">${esc(label)}</span>
+            <span class="pill p-warn">not asked</span><span class="expand">Answer</span></summary>
+            <div class="note" style="background:none;border:0;padding:0;margin:8px 0 0">${esc(ans)}</div></details></div>`
+          :`<div class="item"><div class="hd"><span class="nm">${esc(label)}</span><span class="pill p-warn">not asked</span></div></div>`;
+      }).join('');
+    }
+    if(r.id==='handoff') return handoffMisses();
+    return miss.map(id=>item(id,'not done',
+      (ST.expected.has(id)?'p-harm':'p-warn'),dispExp(id))).join('');
+  };
+  const handoffMisses=()=>{
+    if(!ST.handoff) return '';
+    const H=CASE.handoff, dId=ST.handoff.disposition, out=[];
+    const fold=(label,pill,pillcls,body)=>body
+      ?`<div class="item"><details class="teach"><summary class="hd"><span class="nm">${esc(label)}</span>
+          <span class="pill ${pillcls}">${esc(pill)}</span><span class="expand">Why</span></summary>
+          <div class="note" style="background:none;border:0;padding:0;margin:8px 0 0">${esc(learnerText(body))}</div></details></div>`
+      :`<div class="item"><div class="hd"><span class="nm">${esc(label)}</span><span class="pill ${pillcls}">${esc(pill)}</span></div></div>`;
+    if(dId!==H.correct_disposition.id)
+      out.push(fold('Disposition: '+H.correct_disposition.label,'not chosen','p-harm',H.correct_disposition.explanation));
+    const dx=scoreDiagnoses(ST);
+    const named=dx.rows.some(x=>x.verdict==='primary_correct'||x.verdict==='main_not_primary');
+    if(!named) out.push(fold('Diagnosis: '+dxLabel(PROTO.correctDxId),'not named','p-harm',PROTO.correctDxExplanation));
+    dx.missed.forEach(m=>out.push(fold('Diagnosis: '+dxLabel(m.id),'not named','p-warn',m.why)));
+    return out.join('');
+  };
+  const scoreTable=`<div class="catlist">${summaryScores(ST).map(r=>{
+    const cls=r.pct===null?'':(r.pct<50?'low':(r.pct<80?'mid':''));
+    const inner=missedOf(r);
+    return `<details class="catfold"><summary>
+      <span class="cat-l">${esc(r.label)}</span>
+      <span class="cat-s">${r.pct===null?'<span class="pill p-neu">n/a</span>'
+        :`${r.pct}%<span class="bar ${cls}"><i style="width:${r.pct}%"></i></span>`}</span>
+      <span class="cat-p">${r.max?r.points+' / '+r.max:''}</span>
+      <svg class="dbfold-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      <span class="cat-d">${esc(r.detail)}${r.halted?' <span class="pill p-harm">halted here</span>':''}</span>
+      </summary>
+      <div class="cat-body">${inner||'<p class="sub" style="margin:0">Nothing missed here.</p>'}</div></details>`;
+  }).join('')}</div>`;
 
   /* Critical actions lead. They are what the case is about, and a resident reading top
      to bottom should meet the medicine before the scoreboard. */
@@ -2383,32 +2440,47 @@ function wlBind(){
    overlay and leaves the learner on the case list; a download still in flight is kept for
    later and does not open the case. */
 const CHARGE=(function(){
-  const JOULES=200, CAP=0.92, TAU=9;
-  let open=false, ready=false, t0=0, raf=0, onCancel=null, shown=0;
+  /* The bar's fill is a CSS animation on a transform (shell.html, .chg-barfill), so it
+     runs on the compositor and keeps moving while the main thread is busy with the
+     download. The joule count reads the bar's current scale each frame rather than
+     keeping a clock of its own, so the two cannot drift apart, and is only rewritten
+     when the whole number changes. */
+  const JOULES=200;
+  let open=false, ready=false, raf=0, onCancel=null, lastJ=-1;
   const $=id=>document.getElementById(id);
-  function paint(f){
-    const bar=$('chg-bar'), j=$('chg-j');
-    if(bar) bar.setAttribute('width',String(Math.max(0,Math.min(1,f))*264));
-    if(j) j.textContent=Math.round(Math.max(0,Math.min(1,f))*JOULES)+' J';
+  function scaleNow(){
+    const b=$('chg-bar'); if(!b) return 0;
+    const m=getComputedStyle(b).transform;
+    if(!m||m==='none') return 0;
+    const v=m.match(/matrix\(([^,]+)/); return v?Math.max(0,Math.min(1,parseFloat(v[1]))):0;
+  }
+  function paintJ(f){
+    const n=Math.round(Math.max(0,Math.min(1,f))*JOULES);
+    if(n===lastJ) return; lastJ=n;
+    const j=$('chg-j'); if(j) j.textContent=n+' J';
   }
   function tick(){
     if(!open||ready) return;
-    const t=(Date.now()-t0)/1000;
-    shown=Math.min(CAP,1-Math.exp(-t/TAU));
-    paint(shown);
+    paintJ(scaleNow());
     raf=requestAnimationFrame(tick);
   }
   function setStatus(s){ const n=$('chargestatus'); if(n) n.textContent=s; }
   function start(title,cancel){
     const v=$('chargeview'); if(!v) return;
-    open=true; ready=false; t0=Date.now(); shown=0; onCancel=cancel||null;
-    v.classList.remove('hidden','ready','shocked','leaving');
+    open=true; ready=false; lastJ=-1; onCancel=cancel||null;
+    const bar=$('chg-bar');
+    if(bar){ bar.style.transition='none'; bar.style.transform=''; }
+    v.classList.remove('hidden','ready','shocked','leaving','charging');
+    void v.offsetWidth;                    // restart the fill from zero on a second open
+    v.classList.add('charging');
+    document.body.classList.add('chg-cover');
     $('chargetitle').textContent=title||'';
     $('chg-state').textContent='CHARGING';
+    $('chg-btnlab').textContent='CHARGING';
     $('chg-led').setAttribute('fill','#3a3f45');
     const b=$('chargedeliver'); b.disabled=true;
     setStatus('Charging. Opening the case.');
-    paint(0);
+    paintJ(0);
     cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);
     const c=$('chargecancel'); if(c) c.focus();
   }
@@ -2417,14 +2489,21 @@ const CHARGE=(function(){
   function done(){
     if(!open) return;
     ready=true; cancelAnimationFrame(raf);
-    const from=shown, s0=performance.now();
+    /* Freeze the bar where the animation has it, then let a transition finish the fill. */
+    const v=$('chargeview'), bar=$('chg-bar'), from=scaleNow(), s0=performance.now();
+    if(bar){
+      bar.style.transition='none'; bar.style.transform='scaleX('+from+')';
+      v.classList.remove('charging'); void bar.offsetWidth;
+      bar.style.transition='transform .5s cubic-bezier(.2,.7,.3,1)'; bar.style.transform='scaleX(1)';
+    }
     const fill=now=>{
       if(!open) return;
       const k=Math.min(1,(now-s0)/500);
-      paint(from+(1-from)*k);
+      paintJ(from+(1-from)*(1-Math.pow(1-k,3)));
       if(k<1){ raf=requestAnimationFrame(fill); return; }
-      const v=$('chargeview'); v.classList.add('ready');
+      v.classList.add('ready');
       $('chg-state').textContent='CHARGED';
+      $('chg-btnlab').textContent='CHARGED';
       $('chg-led').setAttribute('fill','#38e07b');
       const b=$('chargedeliver'); b.disabled=false; b.focus();
       setStatus('Charged. Deliver the charge to enter the case.');
@@ -2433,11 +2512,13 @@ const CHARGE=(function(){
   }
   function hide(){
     open=false; ready=false; cancelAnimationFrame(raf);
-    const v=$('chargeview'); if(v) v.classList.add('hidden');
+    const v=$('chargeview'); if(v){ v.classList.add('hidden'); v.classList.remove('charging'); }
+    document.body.classList.remove('chg-cover');
   }
   function deliver(){
     if(!open||!ready) return;
     const v=$('chargeview'); open=false;
+    document.body.classList.remove('chg-cover');
     v.classList.add('shocked','leaving');
     const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
     setTimeout(()=>{ v.classList.add('hidden'); v.classList.remove('shocked','leaving','ready');
@@ -2703,11 +2784,13 @@ function closeReflect(){
 
 /* ---------- global search ----------
    One list over everything the case holds: every action on every tab, whatever the tab's
-   own filter is set to, and every line of the chart. It navigates and never acts. Opening
-   an action takes the resident to its tab with the tab's filter set to its name, which is
-   the same state typing that name into the tab would produce, so the accordion opens on
-   its group and the button is under the cursor. Nothing is ordered on their behalf. */
-let SEARCH_OPEN=false, SEARCH_Q='';
+   own filter is set to, and every line of the chart.
+
+   v0.26b, author instruction (11 October 2026): pressing an action in the results orders
+   it, exactly as its own button would after Submit Order, and the box is cleared and keeps
+   the focus for the next search. Enter orders the top result. An action on a tab nothing
+   can be ordered from (the interview) still navigates to it, as before. */
+let SEARCH_OPEN=false, SEARCH_Q='', SEARCH_DONE='';
 function searchOpen(){ return SEARCH_OPEN; }
 function openSearch(){
   if(!inCase()) return;
@@ -2723,7 +2806,7 @@ function openSearch(){
 }
 function closeSearch(){
   if(!SEARCH_OPEN) return;
-  SEARCH_OPEN=false;
+  SEARCH_OPEN=false; SEARCH_DONE='';
   el('searchpanel').hidden=true;
   el('searchbtn').setAttribute('aria-expanded','false');
 }
@@ -2793,10 +2876,12 @@ function renderSearch(){
   const box=el('searchresults'); if(!box) return;
   const hits=searchHits();
   if(!hits){
-    box.innerHTML='<div class="srch-none">Type to search every tab at once: an examination, a study, '
-      +'a drug, a consultation, or anything already in the chart.</div>';
+    box.innerHTML=(SEARCH_DONE?`<div class="srch-done">${esc(SEARCH_DONE)} Search for the next one.</div>`:'')
+      +'<div class="srch-none">Type to search every tab at once: an examination, a study, '
+      +'a drug, a consultation, or anything already in the chart. Pressing an action orders it.</div>';
     return;
   }
+  SEARCH_DONE='';
   let html='';
   if(hits.acts.length){
     html+='<div class="srch-sec">'+(hits.acts[0].synonym?'Actions, by another name':'Actions')+'</div>'+hits.acts.map(a=>
@@ -2811,6 +2896,16 @@ function renderSearch(){
         <span class="sh-meta">${mmss(l.t)}</span></button>`).join('');
   }
   box.innerHTML=html||'<div class="srch-none">Nothing matches that. Try fewer words.</div>';
+}
+function searchPick(id){
+  const a=ACT[id]; if(!a) return;
+  if(!(PROTO.voiceTabs||PROTO.orderableTabs).includes(a.tab)){ searchGoTo(id); return; }
+  log({actionId:id});
+  const verb=a.category==='exam'?'Done':(a.category==='consultant'?'Called':'Ordered');
+  SEARCH_DONE=verb+': '+(a.name||id)+'.';
+  SEARCH_Q='';
+  const b=el('searchbox'); if(b){ b.value=''; b.focus(); }
+  render(); renderSearch();
 }
 function searchGoTo(id){
   const a=ACT[id]; if(!a) return;

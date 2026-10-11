@@ -922,8 +922,12 @@
     },
     {
       "id": "place_pads_for_monitoring",
-      "display_name": "Place Pads for Monitoring",
+      "display_name": "Place Defibrillator Pads",
       "placements": [
+        {
+          "tab": "stabilization",
+          "group": null
+        },
         {
           "tab": "stabilization",
           "group": "Pacer/Defib"
@@ -937,7 +941,8 @@
       "default_prerequisites": [],
       "flags_set_default": [
         "pacing_pads_placed"
-      ]
+      ],
+      "source": "renamed and placed on author instruction (v0.26b); was 'Place Pads for Monitoring'"
     },
     {
       "id": "second_iv",

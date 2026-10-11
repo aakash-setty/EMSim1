@@ -276,6 +276,7 @@ stop action for an infusion, and whether a default result exists (D).
 | `attach_monitor` | Attach Monitor | stabilization /  | stabilization |  |  | 0 |  |  |  |
 | `exam_abc` | Airway, Breathing and Circulation Exam | stabilization /  | exam |  |  | 0 |  |  | D |
 | `insert_iv` | Insert IV | stabilization /  | stabilization |  | iv_access | 0 |  |  |  |
+| `place_pads_for_monitoring` | Place Defibrillator Pads | stabilization /  | stabilization |  | pacing_pads_placed | 0 |  |  |  |
 | `d5_1_2_ns_infusion` | D5 1/2 NS infusion | stabilization / Fluids | stabilization |  |  | 1 |  |  |  |
 | `d5_ns_bolus` | D5 NS bolus | stabilization / Fluids | stabilization |  |  | 1 |  |  |  |
 | `lactated_ringer_s_1l_bolus` | Lactated Ringer's 1L bolus | stabilization / Fluids | stabilization |  |  | 1 | crystalloid_bolus |  |  |
@@ -310,7 +311,6 @@ stop action for an infusion, and whether a default result exists (D).
 | `non_rebreather_mask` | Non-Rebreather Mask | stabilization / Oxygen | stabilization |  |  | 0 |  |  |  |
 | `cardiac_pacing` | Cardiac Pacing | stabilization / Pacer/Defib | stabilization |  |  | 1 |  |  |  |
 | `defibrillate` | Defibrillate | stabilization / Pacer/Defib | stabilization |  |  | 0 |  |  |  |
-| `place_pads_for_monitoring` | Place Pads for Monitoring | stabilization / Pacer/Defib | stabilization |  | pacing_pads_placed | 0 |  |  |  |
 | `synchronized_cardioversion` | Synchronized Cardioversion | stabilization / Pacer/Defib | stabilization |  |  | 0 |  |  |  |
 | `unsynchronized_cardioversion` | Unsynchronized Cardioversion | stabilization / Pacer/Defib | stabilization |  |  | 0 |  |  |  |
 | `arterial_line` | Arterial Line | stabilization / Vascular Access | stabilization |  |  | 0 |  |  |  |

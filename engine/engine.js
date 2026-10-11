@@ -1310,7 +1310,7 @@ function summaryScores(st){
     const dAlt=(H.alternative_dispositions||[]).find(a=>a.id===h.disposition);
     const dDef=!dOK&&dAlt&&dAlt.verdict==='acceptable_with_qualification';
     hp+=dOK?W.disp:(dDef?W.disp/2:0);
-    bits.push('level of care '+(dOK?'correct':(dDef?'defensible':'incorrect')));
+    bits.push('disposition '+(dOK?'correct':(dDef?'defensible':'incorrect')));
     const dx=scoreDiagnoses(st);
     const first=dx.rows[0];
     const mainListed=dx.rows.some(r=>r.verdict==='main_not_primary');

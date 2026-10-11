@@ -156,6 +156,9 @@ shared = {
     "subgroupOrder": {"Imaging": ["CT", "X-ray", "Ultrasound", "MRI"],
                       "Intubation": ["Medications"]},
     "subgroupTabs": ["Imaging"],
+    # v0.26b. Groups on an ordering tab whose buttons act on the click, with no basket and
+    # no Submit Order: the first acts of any resuscitation. Author instruction.
+    "immediateGroups": {"stabilization": ["Stabilization"]},
     # Groups that render already open the first time their tab is opened. Stabilization
     # holds the three acts that come first in any resuscitation, and one of them now
     # gates the monitor, so making the resident click a header to find them buries the

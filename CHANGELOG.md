@@ -5,6 +5,21 @@ is usable with learners.
 
 ---
 
+## v0.26b: one-click ordering in two places (11 October 2026, author instruction)
+
+- **Place Defibrillator Pads.** The catalog's "Place Pads for Monitoring" is renamed and
+  shown in the top Stabilization folder as well as under Pacer/Defib. Same id
+  (`place_pads_for_monitoring`) and flag (`pacing_pads_placed`), so no case changed.
+- **The top Stabilization folder orders on the click.** No basket and no Submit Order for
+  the ABC exam, Attach Monitor, Insert IV and the pads there. Build field `immediateGroups`.
+  The pads under Pacer/Defib still go through the basket like the rest of that folder.
+- **Universal search orders what is pressed.** An action on any tab that can act (the three
+  ordering tabs, the exam and consults) is ordered on the press or on Enter for the top
+  result, the box clears and keeps the focus, and a line confirms what was sent. Interview
+  entries still navigate.
+
+---
+
 ## v0.26a: a charging defibrillator while a case downloads (11 October 2026)
 
 Opening a locked case can take tens of seconds. `access.js` now shows a full-screen overlay
@@ -17,6 +32,14 @@ a download already in flight is kept but does not open the case. A failed downlo
 the overlay and shows the same message as before. Unlocked cases (the local build) open as
 they did, with no overlay. Checked headless against the deployed security policy with the
 download mocked: normal, cancelled and failed loads.
+
+Smoothed the same day: the drawing's drop-shadow filter, which re-rendered the whole SVG on
+every frame the screen changed, moved to a static layer; the bar's fill is now an HTML
+element animated by transform on the compositor, with the joule count read from it; the
+screen label no longer blinks; the charge button reads CHARGING, then CHARGED, and no longer
+pulses; the armed pulse on the shock button is a transform and opacity ring rather than an
+animated shadow; the arrival screen and case list are not painted while the overlay covers
+them.
 
 ---
 

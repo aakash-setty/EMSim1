@@ -120,6 +120,8 @@ STAB = {
                "Normal Saline infusion", "Lactated Ringer's infusion"],
     "Pacer/Defib": ["Defibrillate", "Cardiac Pacing", "Synchronized Cardioversion",
                     "Unsynchronized Cardioversion", "Place Pads for Monitoring"],
+    # v0.26b: the pads entry is renamed and shown in the top Stabilization folder too.
+    # See the v0.26 layout block below.
     "Vascular Access": ["Second IV", "Central Venous Catheter (triple lumen)",
                         "Central Venous Catheter (cordis)", "Intraosseous Line",
                         "Arterial Line"],
@@ -520,6 +522,15 @@ def _imaging_subgroup(e):
     if i.startswith("ultrasound_"): return "Ultrasound"
     if i.startswith("mri_"): return "MRI"
     raise SystemExit("imaging entry with no subgroup: " + i)
+# v0.26b, author instruction (11 October 2026): the pads are named "Place Defibrillator
+# Pads" and sit in the top Stabilization folder, where they order on a click, and stay
+# under Pacer/Defib as well. Same id, same flag (pacing_pads_placed), so no case changes.
+for e in ENTRIES:
+    if e["id"] == "place_pads_for_monitoring":
+        e["display_name"] = "Place Defibrillator Pads"
+        e["placements"] = [{"tab": "stabilization", "group": None},
+                           {"tab": "stabilization", "group": "Pacer/Defib"}]
+        e["source"] = "renamed and placed on author instruction (v0.26b); was 'Place Pads for Monitoring'"
 for e in ENTRIES:
     p = e["placements"][0]
     if p["tab"] == "stabilization" and p["group"] == "Intubation Drugs":
