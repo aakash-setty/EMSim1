@@ -217,10 +217,10 @@ DEBRIEF = {
 
 PROVENANCE = {
  "status": ("DRAFTED BY A LANGUAGE MODEL. Not reviewed by a physician. Not for use with "
-            "learners until the section 14.3 checklist is complete."),
+            "learners until the section 11.5 checklist is complete."),
  "author": ("Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a "
             "plan and four decisions made in the same conversation. Authoring "
-            "requirements section 17 applies."),
+            "requirements section 1 applies."),
  "warning": (
    "A physician decided the things listed in DKA-SEED.md section 0. Everything else is "
    "model output and awaits sign-off: every vital sign, finding, laboratory value, delay, "
@@ -325,7 +325,7 @@ PROVENANCE = {
    "The rhythm field has two values, regular and irregularly irregular. The falling "
    "phase describes extra beats, dropped beats and ectopy in the exam, the interview and "
    "the ECG report, over a regular beat and a regular trace. A third value for occasional "
-   "ectopy would let the monitor agree (authoring 6.0a).",
+   "ectopy would let the monitor agree (authoring 5.2).",
    "A spoken 'insulin' offers the bolus or the infusion and not the subcutaneous entry. "
    "The bolus is the discouraged one in this case. The fix is in "
    "catalog/build_voice_aliases.py.",

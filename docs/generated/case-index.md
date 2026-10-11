@@ -18,4 +18,4 @@ SEED says so.
 | TAKO | Chest pain | Cardiovascular | `dx_st_elevation_myocardial_infarction` | 5 | clock, delayed consequences, vital effects, conditional credit, inherit vitals | minutes: obstruction and shock run on a clock | the diagnosis, occlusion against stress cardiomyopathy, and which treatment makes the shock worse | treat it as an occlusion, call cardiology, avoid the drugs that look right | created by the treatment | 68 F, EMS to the resuscitation bay, a funeral in the story | tender |
 | TSS | Vomiting and diarrhea | Infectious disease | `dx_toxic_shock_syndrome` | 6 | clock, delayed consequences, vital effects, repeat dose, conditional credit, inherit vitals, intercept | minutes: the shock progresses without fluid | the diagnosis in a talking patient, and whether to send her home | ask the question nobody asks, and remove the source | behind near-normal vitals in a young patient; discharge is the trap | 22 F, walked into a patient room with her roommate | puzzling, then urgent |
 
-7 cases.
+7 cases, as of the last generation.

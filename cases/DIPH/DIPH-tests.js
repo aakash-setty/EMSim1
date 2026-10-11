@@ -8,7 +8,7 @@
  *
  *   1. An UNGUARDED time-guarded transition. The author's instruction is that a seizure
  *      occurs regardless of how well the case is being managed, which is authoring
- *      section 5.1's third pattern, a scheduled natural history. No pack used it before,
+ *      section 15.1's third pattern, a scheduled natural history. No pack used it before,
  *      and the Python scenario runner could not walk it until the same day this file was
  *      written, so the assertions below check it from both ends: it fires with nobody
  *      doing anything, and it fires just the same after a flawless four minutes.
@@ -542,7 +542,7 @@ chk('the deliberate nature of the ingestion is named in the handover',
     CASE.handoff.additional_diagnoses.some(d => d.catalog_id === 'dx_suicide_attempt'));
 /* The whole case in one assertion. Naming the toxidrome is right and incomplete, so it has
    to be scored twice: credit when it is listed beside the agent, and a defensible verdict
-   when it is offered as the primary instead. Authoring 12.1 allows exactly this, and
+   when it is offered as the primary instead. Authoring 10.2 allows exactly this, and
    before the catalog gained an id for the agent the case could not express it, because the
    toxidrome WAS the correct answer. */
 chk('the toxidrome earns credit as an additional diagnosis',

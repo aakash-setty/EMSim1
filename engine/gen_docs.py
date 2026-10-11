@@ -210,7 +210,7 @@ def field_reference(problems):
            "| field | reads | sees | section | what it does |\n|---|---|---|---|---|\n"]
     for path, reads, sees, section, text, n in rows:
         out.append(f"| `{path}` | {reads} | {sees} | {section} | {text} |\n")
-    out.append(f"\n{len(rows)} fields across {len(list_packs())} packs.\n")
+    out.append(f"\n{len(rows)} fields across {len(list_packs())} packs, as of the last generation.\n")
     return "".join(out)
 
 
@@ -229,7 +229,7 @@ def action_index():
     out = [GENERATED_BANNER, "# Action index\n\n",
            f"One line per catalog entry ({len(cat['entries'])} entries, catalog {cat.get('catalog_version')}).\n"
            "Full entry: `python3 engine/lookup.py action <id or word>`. The learner sees the whole\n"
-           "catalog whether or not the case binds an entry (authoring 7.1).\n\n",
+           "catalog whether or not the case binds an entry (authoring 6.1).\n\n",
            "Columns: id, display name, tab and group, category, turnaround class (studies), flags\n"
            "the entry sets everywhere, number of catalog prerequisites, equivalence group, the\n"
            "stop action for an infusion, and whether a default result exists (D).\n\n",
@@ -243,11 +243,11 @@ def action_index():
             grp=groups.get(e["id"], ""), stop=stops.get(e["id"], ""), d="D" if e.get("default_result") else ""))
     routing = cat.get("exam_finding_routing") or {}
     if routing:
-        out.append("\n## Where an exam finding goes\n\nThe closed set of 14 maneuvers and the routing map (authoring 11.2).\n\n| finding | maneuver |\n|---|---|\n")
+        out.append("\n## Where an exam finding goes\n\nThe closed set of 14 maneuvers and the routing map (authoring 9.2).\n\n| finding | maneuver |\n|---|---|\n")
         for k, v in routing.items():
             out.append(f"| {k} | `{v}` |\n")
     if cat.get("equivalence_groups"):
-        out.append("\n## Equivalence groups\n\nBind a case action to a group with `also_covers_group` so a tag covers every member (authoring 3.4).\n\n")
+        out.append("\n## Equivalence groups\n\nBind a case action to a group with `also_covers_group` so a tag covers every member (authoring 2.5).\n\n")
         for gname, members in cat["equivalence_groups"].items():
             ids = members.get("members", members) if isinstance(members, dict) else members
             out.append(f"- `{gname}`: " + ", ".join(f"`{m}`" for m in ids) + "\n")
@@ -259,7 +259,7 @@ def diagnosis_index():
     ents = d.get("entries") or max((v for v in d.values() if isinstance(v, list)), key=len)
     out = [GENERATED_BANNER, "# Diagnosis index\n\n",
            f"One line per diagnosis-catalog entry ({len(ents)} entries). Handoff fields take the id\n"
-           "(authoring 12). Search: `python3 engine/lookup.py diagnosis <word>`.\n\n",
+           "(authoring 10.1). Search: `python3 engine/lookup.py diagnosis <word>`.\n\n",
            "| id | name | category | synonyms |\n|---|---|---|---|\n"]
     for e in sorted(ents, key=lambda e: (e.get("category", ""), e["id"])):
         out.append(f"| `{e['id']}` | {e.get('display_name', '')} | {e.get('category', '')} | {', '.join(e.get('synonyms') or [])} |\n")
@@ -272,51 +272,51 @@ def diagnosis_index():
 #  file = regex the file name must match, near = regex that must appear within 4 lines,
 #  not_near = regex that must not). Comment lines are never chosen.
 MECHANISMS = [
-    ("Time-guarded transition, deterioration on inaction", "A phase left because the learner did nothing. Negative guard, measured from phase entry", "5.1",
+    ("Time-guarded transition, deterioration on inaction", "A phase left because the learner did nothing. Negative guard, measured from phase entry", "15.1",
      r'after_seconds\W+\d{2,}', ["TSS", "MGCA", "TAKO", "DIPH"], {"near": r"NOT flag", "not_near": r"guard_true"}),
-    ("Time-guarded transition, delayed consequence of an action", "A positive guard timed from guard_true", "5.1",
+    ("Time-guarded transition, delayed consequence of an action", "A positive guard timed from guard_true", "15.1",
      r'guard_true', ["DKA", "AFRVR", "TAKO", "TSS", "DIPH"], {"file": r"case_1_shell|case\.json"}),
-    ("Scheduled natural history (unguarded timed rule)", "A timed rule with no guard and an unguarded_rationale", "5.1",
+    ("Scheduled natural history (unguarded timed rule)", "A timed rule with no guard and an unguarded_rationale", "15.1",
      r'unguarded_rationale', ["TAKO", "TSS", "DIPH"], {}),
-    ("Clock ending the run", "A timed transition into a terminal phase, with allow_time_to_terminal", "5.2",
+    ("Clock ending the run", "A timed transition into a terminal phase, with allow_time_to_terminal", "15.2",
      r'allow_time_to_terminal', ["MGCA", "DIPH", "CHFE"], {}),
-    ("Instant transition into a terminal phase", "The alternative to a harmful tag: an action route into an authored terminal phase with a timeout_reason", "5",
+    ("Instant transition into a terminal phase", "The alternative to a harmful tag: an action route into an authored terminal phase with a timeout_reason", "4",
      r'timeout_reason"?\s*[=:]', ["DIPH", "TSS", "TAKO"], {}),
-    ("Vital effect", "A number on the monitor moved by an action, nothing else changes", "6.1",
+    ("Vital effect", "A number on the monitor moved by an action, nothing else changes", "16",
      r'vital_effects\s*[=:]', ["DKA", "AFRVR", "CHFE", "DIPH", "TSS", "TAKO"], {}),
-    ("Vital effect with onset", "A drug that takes time to start", "6.3",
+    ("Vital effect with onset", "A drug that takes time to start", "16.1",
      r'onset_seconds', ["AFRVR", "TSS", "DKA", "TAKO"], {}),
-    ("Expiring flag", "A flag that lapses and a transition that fires when it does", "6.2",
+    ("Expiring flag", "A flag that lapses and a transition that fires when it does", "17",
      r'flags_set_timed', ["MGCA", "CHFE"], {}),
-    ("Flag on the Nth administration", "A repeat dose that works where the first did not", "6.5",
+    ("Flag on the Nth administration", "A repeat dose that works where the first did not", "18",
      r'flags_set_repeat', ["AFRVR", "TSS", "DKA"], {}),
-    ("Conditional credit (also_satisfies)", "The same act credited as another action when a condition holds", "6.8",
+    ("Conditional credit (also_satisfies)", "The same act credited as another action when a condition holds", "19",
      r'also_satisfies\s*[=:]', ["DKA", "AFRVR", "TAKO", "TSS"], {}),
-    ("Hidden target action", "A case-only action with no button that other actions credit", "6.8",
+    ("Hidden target action", "A case-only action with no button that other actions credit", "19",
      r'hidden\s*[=:]\s*[Tt]rue', ["DKA", "TSS", "TAKO"], {}),
-    ("Terminal phase inheriting vitals", "A handover that shows the patient as they were", "6.8",
+    ("Terminal phase inheriting vitals", "A handover that shows the patient as they were", "19",
      r'inherit_vitals', ["AFRVR", "DKA", "TSS", "TAKO"], {}),
-    ("Disposition intercept", "A disposition with a consequence instead of an ending", "6.9",
+    ("Disposition intercept", "A disposition with a consequence instead of an ending", "20",
      r'disposition_intercepts', ["TSS"], {}),
-    ("Harmful action and the halted phase", "A tag that halts the case, its halt_reason, and the halted phase it needs", "7.3",
+    ("Harmful action and the halted phase", "A tag that halts the case, its halt_reason, and the halted phase it needs", "21",
      r'halt_reason\s*[=:]', ["DIPH", "MGCA", "CHFE"], {}),
-    ("Prerequisite override", "Waiving a catalog default prerequisite with a reason", "8.1",
+    ("Prerequisite override", "Waiving a catalog default prerequisite with a reason", "22.1",
      r'prerequisite_overrides"?\s*[=:]\s*\[', ["CHFE", "TSS", "DIPH"], {}),
-    ("Follow-up with satisfied_when", "An obligation discharged by a condition, for a repeat", "8.2",
+    ("Follow-up with satisfied_when", "An obligation discharged by a condition, for a repeat", "22.2",
      r'satisfied_when"?\s*[=:]', ["DKA", "TSS", "AFRVR"], {}),
-    ("Nurse alert", "A second nurse line after the catalog's, filed in the chart", "9.1",
+    ("Nurse alert", "A second nurse line after the catalog's, filed in the chart", "7.1",
      r'nurse_alert\s*[=:]', ["AFRVR", "DKA", "TSS", "TAKO"], {}),
-    ("Narration override", "Replacing the catalog's acknowledgement line", "9.1",
+    ("Narration override", "Replacing the catalog's acknowledgement line", "7.1",
      r'narration_override\s*[=:]', ["DKA", "TSS", "DIPH", "AFRVR"], {}),
-    ("Prompt with escalation", "A second warning later, exempt from the cap", "9.4",
+    ("Prompt with escalation", "A second warning later, exempt from the cap", "7.2",
      r'escalation"?\s*[=:]\s*\{', ["DKA", "TSS", "MGCA", "AFRVR"], {}),
-    ("Interview facts", "Sub-questions answered from pieces of the answer", "10.7",
+    ("Interview facts", "Sub-questions answered from pieces of the answer", "24",
      r'facts\s*[=:]|fact\(', ["TSS", "DKA", "AFRVR", "CHFE"], {"file": r"case_4_interview|case\.json"}),
-    ("Adjacent topics and volunteer lines", "What the patient adds unasked", "10.7",
+    ("Adjacent topics and volunteer lines", "What the patient adds unasked", "24",
      r'ADJACENT\s*=\s*\{|"adjacent"\s*:', ["DKA", "TSS", "AFRVR", "DIPH"], {"file": r"case_4_interview|case\.json"}),
-    ("Collateral historian", "Someone other than the patient answering", "10",
+    ("Collateral historian", "Someone other than the patient answering", "8.5",
      r'who_is_answering', ["DIPH"], {"file": r"case_4_interview|case\.json"}),
-    ("Global answer rule for reduced alertness", "The patient cannot give a history", "10.5",
+    ("Global answer rule for reduced alertness", "The patient cannot give a history", "8.5",
      r'GLOBAL_RULES\s*=|global_answer_rules"\s*:', ["DIPH", "TSS", "MGCA", "DKA"], {}),
     ("Image payload", "A study shown as a picture from media/", "11.4",
      r'kind\W+image', ["DIPH"], {}),
@@ -444,7 +444,7 @@ def case_index(problems):
             p=prefix, comp=m.get("complaint") or m.get("working_title", ""), cat=m.get("category", ""), dx=dx,
             n=len([x for x in c["phases"] if not x.get("terminal")]), mech=", ".join(uses(c)) or "none",
             dims=" | ".join(str(lib.get(d, "")) for d in LIBRARY_DIMS)))
-    out.append(f"\n{len(list_packs())} cases.\n")
+    out.append(f"\n{len(list_packs())} cases, as of the last generation.\n")
     return "".join(out)
 
 

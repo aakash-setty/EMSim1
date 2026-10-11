@@ -63,7 +63,7 @@ def always(v):
 
 EXAM = {
  "authoring_note": (
-   "Section 11.2. Routing follows the catalog map: neck veins on exam_neck, the murmur on "
+   "Section 9.2. Routing follows the catalog map: neck veins on exam_neck, the murmur on "
    "exam_card, capillary refill on exam_circ, lung sounds on exam_pulm. The murmur's "
    "response to posture is written into the cardiac finding because the catalog has no "
    "maneuver for it."),
@@ -118,7 +118,7 @@ EXAM = {
 }
 
 GENERAL_STATUS = {
- "authoring_note": "Section 11.3. Consistent with exam_neuro and each phase's appearance values.",
+ "authoring_note": "Section 9.3. Consistent with exam_neuro and each phase's appearance values.",
  "rules": [
    {"when": WORSE, "value": gs("Gray, cold and confused. Barely speaking. GCS 14.")},
    {"when": OBS, "value": gs("Gray and sweating, says she feels faint. Fist on her chest. GCS 15.")},
@@ -162,7 +162,7 @@ LABS = {
    "prerenal changes from five days of poor intake. Every value needs a signature."),
 
  # No comment on either. A comment may not name the diagnosis or quote another result
- # (authoring 11.4). The interpretation is in each study's debrief note.
+ # (authoring 9.4). The interpretation is in each study's debrief note.
  "troponin_t": {"changes_with_state": False, "rules": always(val(
      "Troponin T, high sensitivity", "186", "ng/L", "< 14", True))},
 
@@ -197,10 +197,10 @@ LABS = {
 
 IMAGING = {
  "authoring_note": (
-   "Section 11.4. Findings only: no report names takotsubo or obstruction. No report "
+   "Section 9.4. Findings only: no report names takotsubo or obstruction. No report "
    "carries a comment, because the interface never shows a comment on a report. The "
    "interpretation is in each study's debrief note. The ECG report quotes no rate, because "
-   "three vital effects on the heart rate have no end (authoring 11.4)."),
+   "three vital effects on the heart rate have no end (authoring 9.4)."),
 
  "ecg_12_lead": {"changes_with_state": False, "rules": always(report(
      "Sinus tachycardia. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST "
@@ -237,7 +237,7 @@ IMAGING = {
 COMING = " I'm on my way down, and I'll sort it out myself when I get there if it isn't done."
 CONSULTANTS = {
  "authoring_note": (
-   "Section 11.5. The cardiologist cannot be reached until the ECG and the echo have both "
+   "Section 9.5. The cardiologist cannot be reached until the ECG and the echo have both "
    "resulted (a prerequisite on the consult), so every rule may speak about both and no "
    "pending tier is needed. Rules are ordered steadied, on an inotrope, then by what is "
    "already running. The catheterization laboratory cannot be activated until the "

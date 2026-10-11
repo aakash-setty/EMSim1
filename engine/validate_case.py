@@ -2,7 +2,7 @@
 """
 Validator and review-matrix generator for the EM case simulator.
 
-Implements the structural checks listed in section 14.1 of
+Implements the structural checks listed in section 11.1 of
 case-authoring-requirements.md and section 13 of system-design-v2.md,
 plus the per-key review matrix described in section 14.2.
 
@@ -588,7 +588,10 @@ def run_checks(case):
     # -- A: unconditional default last -------------------------------------
     for path, rules, needs_default in collect_rule_lists(case):
         if not rules:
-            errors.append(f"[default] {path}: empty rule list")
+            # The global interview rules are guards prepended to every topic, not a key.
+            # A case with no alertness-gated phase has none (authoring 8.5).
+            if path != "interview/global_answer_rules":
+                errors.append(f"[default] {path}: empty rule list")
             continue
         if needs_default and rules[-1].get("when") is not None:
             errors.append(f"[default] {path}: last rule is guarded; every content key must end "
@@ -615,7 +618,7 @@ def run_checks(case):
         any(r.get("value") == "harmful" for r in a["tag"]) for a in case["case_actions"]
     )
     if harm_capable:
-        reach.add("halted")   # entered outside the transition graph, per section 5
+        reach.add("halted")   # entered outside the transition graph, per section 4
         halted = next((p for p in case["phases"] if p["id"] == "halted"), None)
         if halted is None:
             errors.append("[halt] an action can evaluate to harmful but the case has no phase "
@@ -629,6 +632,17 @@ def run_checks(case):
             errors.append(f"[reach] phase {p['id']!r} is unreachable")
         if not p.get("terminal") and not p.get("transitions"):
             errors.append(f"[reach] non-terminal phase {p['id']!r} has no transition")
+        elif not p.get("terminal"):
+            # The engine marks a run complete only by entering case_complete, so a phase
+            # without the handoff rule records a confirmed handoff as no handoff (authoring 4).
+            if not any(t.get("to") == "case_complete" for t in p["transitions"]):
+                errors.append(f"[reach] non-terminal phase {p['id']!r} has no transition into "
+                              f"'case_complete'; a handoff confirmed there is recorded as no handoff")
+        for i, t in enumerate(p.get("transitions") or []):
+            if "after_seconds" not in t and t.get("narration"):
+                warnings.append(f"[time] {p['id']}/transitions[{i}]: narration on a transition with no "
+                                f"after_seconds is never spoken; put the words in a nurse_alert on "
+                                f"the action that causes it")
 
     # -- E: every critical action reachable --------------------------------
     for a in case["case_actions"]:
@@ -646,7 +660,7 @@ def run_checks(case):
                 errors.append(f"[reach] {a['catalog_id']} is critical in unreachable phase {cp!r}")
 
 
-    # -- T: time-guarded transitions (design 2.1a, authoring 5.1) -----------
+    # -- T: time-guarded transitions (design 2.1a, authoring 15.1) -----------
     # Six rules. Each is a lesson from a way a deterioration on a clock can become a
     # trap rather than a lesson, so the reasoning is in the message, not only the rule.
     FLOOR_ERROR, FLOOR_WARN, PROMPT_LEAD = 30, 60, 20
@@ -1022,7 +1036,7 @@ def run_checks(case):
         if "rhythm" in p and p["rhythm"] not in RHYTHMS:
             errors.append(f"[vitals] {p['id']}: rhythm {p['rhythm']!r} is not one of "
                           f"{sorted(RHYTHMS)}; an unknown value sounds regular and says nothing")
-        # The monitor's waveform (design 8.4c, authoring 6.0b). Optional, and absent
+        # The monitor's waveform (design 8.4c, authoring 5.2). Optional, and absent
         # means a narrow complex with P waves, so every case written before this existed
         # draws what its rhythm alone implied. The same spelling-check stance as the
         # rhythm: the authoritative copy of the vocabulary and the ranges is
@@ -1032,7 +1046,7 @@ def run_checks(case):
         if "ecg" in p:
             _check_ecg(p, errors, warnings)
 
-    # -- V: vital effects (design 2.3, authoring 5.2) -----------------------
+    # -- V: vital effects (design 2.3, authoring 16) -----------------------
     # Six rules, and the reason for each is that the mechanism is easy to author into
     # a trap. An effect is invisible in the review matrix, which enumerates what a key
     # resolves to in a phase and knows nothing about the clock, so anything the matrix
@@ -1091,7 +1105,7 @@ def run_checks(case):
     if windows:
         notes.append("vital effect windows: " + "; ".join(windows))
 
-    # -- W: expiring flags (design 2.7, authoring 6.3) ----------------------
+    # -- W: expiring flags (design 2.7, authoring 17) ----------------------
     # A flag that lapses is the only way a case can react to something wearing off, so
     # the failure modes are all silent: the flag is never read, or it can never expire
     # because something else grants it for good, or it expires and nothing is authored
@@ -1154,7 +1168,7 @@ def run_checks(case):
                             f"action that becomes critical because this flag lapsed will not be "
                             f"listed as missed. Put the consequence on a transition instead")
 
-    # -- W1b: conditional credit (v0.20, authoring 6.8) -----------------------
+    # -- W1b: conditional credit (v0.20, authoring 19) -----------------------
     # also_satisfies names another case action whose expectation this one discharges when
     # a condition holds. A target that is not a case action, or is the action itself, is a
     # credit nothing can read; an unparseable condition is silently false in the engine.
@@ -1178,7 +1192,7 @@ def run_checks(case):
             errors.append(f"[inherit_vitals] {p['id']}: only a terminal phase may inherit the "
                           f"vitals of the phase before it")
 
-    # -- W2: flags granted on repetition (design 2.10, authoring 6.7) ---------
+    # -- W2: flags granted on repetition (design 2.10, authoring 18) ---------
     # Section 15 tells authors that flags are binary and permanent and not to build cases
     # that depend on redosing. This is the one exception, and it is narrow on purpose: an
     # act that has to be repeated before it works. The failure modes are the same shape as
@@ -1430,6 +1444,17 @@ def run_checks(case):
         for a in case["case_actions"]:
             cid = a["catalog_id"]
             row = rows.get(cid)
+            # A waiver matches a catalog prerequisite by its `when` string, character for
+            # character. One that matches nothing waives nothing, silently (authoring 22.1).
+            target = E.get((row or {}).get("catalog_id") or cid)
+            if a.get("prerequisite_overrides") and target is not None:
+                defaults = {p.get("when") for p in target.get("default_prerequisites") or []}
+                for w in a["prerequisite_overrides"]:
+                    ws = (w or {}).get("waived")
+                    if ws not in defaults:
+                        warnings.append(f"[prereq] {cid}: prerequisite_overrides waives {ws!r}, which is "
+                                        f"not a default prerequisite of {target['id']!r}; it waives nothing "
+                                        f"(python3 engine/lookup.py prereq {target['id']})")
             if row is None:
                 errors.append(f"action {cid} has no row in the catalog binding")
                 continue
@@ -1502,7 +1527,7 @@ def run_checks(case):
                 except Exception as exc:
                     badconds.setdefault(p["when"], [str(exc), []])[1].append(x["id"])
         for cstr, (msg, who) in badconds.items():
-            errors.append(f"catalog prerequisite {cstr!r} does not parse in the section 4 grammar "
+            errors.append(f"catalog prerequisite {cstr!r} does not parse in the section 3 grammar "
                           f"({msg}); used by {len(who)} entries including {who[0]}")
 
     # -- P1: exam set is closed, and every exam carries a default ------------
@@ -1542,7 +1567,7 @@ def run_checks(case):
     for t in iv["topics"]:
         n = len(t.get("variants", []))
         if n < 10:
-            warnings.append(f"[interview] {t['topic']}: {n} paraphrase variants, section 10.1 asks for 10-20")
+            warnings.append(f"[interview] {t['topic']}: {n} paraphrase variants, section 8.1 asks for 10-20")
     neg = [t["topic"] for t in iv["topics"] if t.get("pertinent_negative")]
     notes.append(f"pertinent negatives authored as explicit denials: {len(neg)} ({', '.join(neg)})")
     notes.append(f"interview topics: {len(iv['topics'])}; total paraphrase variants: "
@@ -1567,6 +1592,19 @@ def run_checks(case):
     dx_names = {d["display_name"].lower() for d in (dxcat or {}).get("entries", [])}
     ho = case.get("handoff") or {}
     correct = (ho.get("correct_diagnosis") or {}).get("catalog_id")
+    # The build resolves an id, an exact display name or a synonym, and falls back to a
+    # note that the handoff cannot be scored. Catch it here instead (authoring 10.1).
+    if dx_ids:
+        def _resolves(d):
+            cid, lab = (d or {}).get("catalog_id"), str((d or {}).get("label") or "")
+            return cid in dx_ids or lab.lower() in dx_names
+        if not _resolves(ho.get("correct_diagnosis")):
+            errors.append(f"[handoff] correct_diagnosis {correct!r} is not in the diagnosis catalog; "
+                          f"the handoff cannot be scored (python3 engine/lookup.py diagnosis <word>)")
+        for a in ho.get("alternative_diagnoses") or []:
+            if not _resolves(a):
+                errors.append(f"[handoff] alternative diagnosis {a.get('catalog_id') or a.get('label')!r} "
+                              f"is not in the diagnosis catalog")
     seen_addl = set()
     for a in ho.get("additional_diagnoses") or []:
         cid, lab = a.get("catalog_id"), a.get("label", "")
@@ -1662,7 +1700,7 @@ def run_checks(case):
             errors.append(f"[interview] phase {p['id']!r} has alertness "
                           f"{p['appearance']['alertness_level']} but is not covered by a global answer rule")
 
-    # -- N: arrival and the two-sentence handover (section 3.2) -------------
+    # -- N: arrival and the two-sentence handover (section 2.3) -------------
     # The handover is the only history the learner is given without asking for it,
     # so its length is a clinical constraint rather than a style preference. The
     # Patient tab used to print the whole background; it is gone, and everything
@@ -1691,8 +1729,8 @@ def run_checks(case):
         h = str(h).strip()
         sentences = [s for s in re.split(r"(?<=[.!?])\s+", h) if s.strip()]
         if len(sentences) > 2:
-            errors.append(f"[arrival] arrival_handover is {len(sentences)} sentences; "
-                          f"section 3.2 allows two")
+            warnings.append(f"[arrival] arrival_handover is {len(sentences)} sentences; "
+                            f"two is the default (authoring 2.3), say why in the SEED")
         if len(h.split()) > 45:
             warnings.append(f"[arrival] arrival_handover is {len(h.split())} words; two sentences "
                             f"of handover is usually under 40")
@@ -1724,7 +1762,7 @@ def run_checks(case):
 
 
 # --------------------------------------------------------------------------
-# Per-key review matrix (section 14.2)
+# Per-key review matrix (section 11.2)
 # --------------------------------------------------------------------------
 
 # Declared mutually exclusive / impossible combinations, labelled not trusted.
@@ -1874,7 +1912,7 @@ def main():
         return 1
 
     print("=" * 70)
-    print("VALIDATOR (section 14.1 / system design section 13)")
+    print("VALIDATOR (authoring 11.1 / system design section 13)")
     print("=" * 70)
     for n in notes:
         print(f"  note:    {n}")
@@ -1886,7 +1924,7 @@ def main():
 
     matrix = ("# Per-key review matrix\n\n"
               f"Generated by `engine/validate_case.py` from `{os.path.basename(PACK.case)}`, "
-              "per section 14.2 of the authoring requirements.\n\n"
+              "per section 11.2 of the authoring requirements.\n\n"
               "For each key this enumerates every combination of the flags, studies, phases and "
               "actions appearing in **that key's own rule list**, and shows which rule the key "
               "resolves to. Study predicates take three values. Combinations that cannot occur in "

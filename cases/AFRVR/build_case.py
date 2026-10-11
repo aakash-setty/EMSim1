@@ -58,7 +58,7 @@ CASE = {
  "patient": PATIENT,
  "phase_notes": {
    "count_justification": (
-     "Six clinical phases, which is the ceiling in section 3.3, and each one is a state a learner "
+     "Six clinical phases, which was the ceiling the authoring document set at the time, and each one is a state a learner "
      "can actually reach and a reviewer has to read. They are the two axes of this case crossed: "
      "whether the breathing is supported and whether the rate is controlled, giving arrival, "
      "breathing supported alone, rate controlled alone, and both; plus the deterioration branch "

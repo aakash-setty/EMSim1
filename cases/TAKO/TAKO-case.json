@@ -9,8 +9,8 @@
   "design_guide": "EMSim case design guide (Claude Doc, 5 October 2026)"
  },
  "provenance": {
-  "status": "DRAFTED BY A LANGUAGE MODEL. Not reviewed by a physician. Not for use with learners until the section 14.3 checklist is complete.",
-  "author": "Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a plan, a case map and a set of decisions made in the same conversation. Authoring requirements section 17 applies.",
+  "status": "DRAFTED BY A LANGUAGE MODEL. Not reviewed by a physician. Not for use with learners until the section 11.5 checklist is complete.",
+  "author": "Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a plan, a case map and a set of decisions made in the same conversation. Authoring requirements section 1 applies.",
   "warning": "A physician decided the things listed in TAKO-SEED.md section 0. Everything else is model output and awaits sign-off: every vital sign, finding, laboratory value, deadline, tag, debrief note, interview answer and diagnosis explanation.",
   "author_only_fields_pending_signoff": [
    "Every vital sign in every phase (shock_worse and shock_untreated share one set), and the four clocks: 180, 240, 90 and 10 seconds.",
@@ -62,14 +62,14 @@
    }
   ],
   "catalog_change_requests": [
-   "'Activate Catheterization Lab' stays a case-only action on the Consults tab, on the directing physician's decision of 6 October 2026. Authoring 7.1 permits that by a recorded decision since v0.24. A global entry would give nothing away and would serve any future infarct case.",
+   "'Activate Catheterization Lab' stays a case-only action on the Consults tab, on the directing physician's decision of 6 October 2026. Authoring 6.1 permits that by a recorded decision since v0.24. A global entry would give nothing away and would serve any future infarct case.",
    "The catalog offers crystalloid only as 500 mL and one liter. The dose this case teaches is 250 to 500 mL.",
    "The catalog's troponin T and NT-proBNP defaults are qualitative. This case authors numbers.",
    "The catalog has push-dose phenylephrine and vasopressin. This case does not bind them, pending a physician's decision (TAKO-SEED.md, open questions)."
   ]
  },
  "catalog_change_requests": [
-  "'Activate Catheterization Lab' stays a case-only action on the Consults tab, on the directing physician's decision of 6 October 2026. Authoring 7.1 permits that by a recorded decision since v0.24. A global entry would give nothing away and would serve any future infarct case.",
+  "'Activate Catheterization Lab' stays a case-only action on the Consults tab, on the directing physician's decision of 6 October 2026. Authoring 6.1 permits that by a recorded decision since v0.24. A global entry would give nothing away and would serve any future infarct case.",
   "The catalog offers crystalloid only as 500 mL and one liter. The dose this case teaches is 250 to 500 mL.",
   "The catalog's troponin T and NT-proBNP defaults are qualitative. This case authors numbers.",
   "The catalog has push-dose phenylephrine and vasopressin. This case does not bind them, pending a physician's decision (TAKO-SEED.md, open questions)."
@@ -123,7 +123,7 @@
   "presenting_appearance": "A woman in a black dress, sitting upright on the stretcher, pale and sweating, one fist against her breastbone. She answers in short sentences. Her daughter is beside her holding her other hand.",
   "ems_handover_text": "Sixty-eight year old woman, crushing central chest pain for about an hour, came on at her husband's funeral reception. Radiates to the left arm and jaw, with sweating and nausea. Hypertension and high cholesterol. Rate 115, pressure 96 over 60 with us. We gave nothing, she didn't have a line when we left. Daughter thinks it's stress.",
   "arrival_handover": "Sixty-eight year old lady, chest pain for about an hour, came on at her husband's funeral. Her daughter's with her and says she's been in a state all week.",
-  "handover_authoring_note": "Section 3.2. Two sentences, 29 words. No vital sign, no past history, no medication, no pertinent negative. It carries the misleading frame on purpose: the crew repeats the daughter's explanation, as crews do."
+  "handover_authoring_note": "Section 2.3. Two sentences, 29 words. No vital sign, no past history, no medication, no pertinent negative. It carries the misleading frame on purpose: the crew repeats the daughter's explanation, as crews do."
  },
  "phase_notes": {
   "count_justification": "Four clinical phases and one terminal: arrival, the obstruction declaring itself, worse on the wrong treatment or none, and steadied. No halted phase and no arrest.",
@@ -192,7 +192,7 @@
      "to": "obstructed",
      "narration": "Her pressure has fallen and her rate is up. She's gone gray and I can hear that murmur from here.",
      "debrief_note": "Her pressure fell at the moment this illness makes it fall. A nitrate or an inotrope had been given seconds before, and what that drug does to an obstructed outflow tract is described under the drug.",
-     "author_rationale": "Added on 7 October 2026 to close a race between timed rules (authoring 5.4). A nitrate or an inotrope given less than ten seconds before the scripted fall, with fluid and a vasoconstrictor already running, used to send her straight to steadied with the wrong drug's effect on the monitor and a nurse line that said her pressure was holding. Now the fall happens first and the wrong drug acts from the obstructed phase, as it does at every other time. Same clock as the two rules below, so the owner's 180 seconds is unchanged. A positive guard, so it asks for no prompt. Model output."
+     "author_rationale": "Added on 7 October 2026 to close a race between timed rules (authoring 15.4). A nitrate or an inotrope given less than ten seconds before the scripted fall, with fluid and a vasoconstrictor already running, used to send her straight to steadied with the wrong drug's effect on the monitor and a nurse line that said her pressure was holding. Now the fall happens first and the wrong drug acts from the obstructed phase, as it does at every other time. Same clock as the two rules below, so the owner's 180 seconds is unchanged. A positive guard, so it asks for no prompt. Model output."
     },
     {
      "when": "flag fluids_given set AND flag vasoconstrictor_running set",
@@ -284,7 +284,7 @@
      "to": "shock_untreated",
      "narration": "She's getting worse. Her rate is up, her pressure is down and she's not making sense.",
      "debrief_note": "Her outflow tract stayed obstructed and her output kept falling. The base of her heart was squeezing hard into a narrowed outflow tract, and a ventricle that cannot empty past the obstruction supplies less blood to the brain and to the heart itself. The fast rate left it less time to fill, and an emptier ventricle obstructs more.\n\nA small fluid bolus and a vasoconstrictor with no inotropic effect, given together, would have opened it. Either one alone was not enough.\n\nIf you were unsure what to do, that is reasonable. This is a hard presentation. Calling cardiology was always available, and the nurse suggested it.",
-     "author_rationale": "Deterioration on inaction. The nurse recommends cardiology at 20 seconds, fluid at 45 and a vasoconstrictor at 60. In the default mode those are 60, 135 and 180 seconds, so all three are spoken before this rule fires at 240 (authoring 9.7). Four minutes is a drafting judgment."
+     "author_rationale": "Deterioration on inaction. The nurse recommends cardiology at 20 seconds, fluid at 45 and a vasoconstrictor at 60. In the default mode those are 60, 135 and 180 seconds, so all three are spoken before this rule fires at 240 (authoring 7.4). Four minutes is a drafting judgment."
     }
    ]
   },
@@ -696,7 +696,7 @@
      "key": "nitrate_bp",
      "duration_seconds": 120,
      "while": "NOT phase is presentation AND NOT phase is obstructed",
-     "note": "Teaching choice. On arrival the nitrate moves her to the obstructed phase, and that phase's own numbers are the fall. The effect is guarded off there by name so the fall is counted once (authoring 6.1). A guard is read against the state now and cannot see where the drug was given, so a nitrate given in the obstructed phase also shows no further fall while she stays there. In worsening shock or once steadied it costs twelve points for what is left of two minutes."
+     "note": "Teaching choice. On arrival the nitrate moves her to the obstructed phase, and that phase's own numbers are the fall. The effect is guarded off there by name so the fall is counted once (authoring 16). A guard is read against the state now and cannot see where the drug was given, so a nitrate given in the obstructed phase also shows no further fall while she stays there. In worsening shock or once steadied it costs twelve points for what is left of two minutes."
     }
    ],
    "debrief_note": "Nitrates are a reflex for cardiac chest pain. They lower the filling of the heart and the resistance it pumps against. In outflow obstruction both make the obstruction worse, and her pressure was only 96 over 60 before it was given.\n\nGuidelines say to hold nitrates with a systolic pressure under 90, or well below the patient's usual pressure, or with a fast heart rate. She is a treated hypertensive at 96 with a rate of 115. And a new murmur should be explained before preload is lowered. [UNVERIFIED: the nitrate thresholds were written from memory of the STEMI guidelines]"
@@ -1290,7 +1290,7 @@
  "prerequisite_semantics_note": "Three case prerequisites, all on consults. Cardiology needs a resulted twelve-lead and a resulted bedside echo (owner's decision). The catheterization laboratory needs a twelve-lead ordered, and then resulted (model choice, 7 October 2026). The catalog's vascular access rule is kept.",
  "content_keys": {
   "exam": {
-   "authoring_note": "Section 11.2. Routing follows the catalog map: neck veins on exam_neck, the murmur on exam_card, capillary refill on exam_circ, lung sounds on exam_pulm. The murmur's response to posture is written into the cardiac finding because the catalog has no maneuver for it.",
+   "authoring_note": "Section 9.2. Routing follows the catalog map: neck veins on exam_neck, the murmur on exam_card, capillary refill on exam_circ, lung sounds on exam_pulm. The murmur's response to posture is written into the cardiac finding because the catalog has no maneuver for it.",
    "exam_airway": [
     {
      "when": "(phase is shock_worse OR phase is shock_untreated)",
@@ -1511,7 +1511,7 @@
    ]
   },
   "general_status": {
-   "authoring_note": "Section 11.3. Consistent with exam_neuro and each phase's appearance values.",
+   "authoring_note": "Section 9.3. Consistent with exam_neuro and each phase's appearance values.",
    "rules": [
     {
      "when": "(phase is shock_worse OR phase is shock_untreated)",
@@ -2039,7 +2039,7 @@
    }
   },
   "imaging": {
-   "authoring_note": "Section 11.4. Findings only: no report names takotsubo or obstruction. No report carries a comment, because the interface never shows a comment on a report. The interpretation is in each study's debrief note. The ECG report quotes no rate, because three vital effects on the heart rate have no end (authoring 11.4).",
+   "authoring_note": "Section 9.4. Findings only: no report names takotsubo or obstruction. No report carries a comment, because the interface never shows a comment on a report. The interpretation is in each study's debrief note. The ECG report quotes no rate, because three vital effects on the heart rate have no end (authoring 9.4).",
    "ecg_12_lead": {
     "changes_with_state": false,
     "rules": [
@@ -2107,7 +2107,7 @@
    }
   },
   "consultants": {
-   "authoring_note": "Section 11.5. The cardiologist cannot be reached until the ECG and the echo have both resulted (a prerequisite on the consult), so every rule may speak about both and no pending tier is needed. Rules are ordered steadied, on an inotrope, then by what is already running. The catheterization laboratory cannot be activated until the twelve-lead has resulted (two prerequisites on the action, 7 October 2026), so its one reply may speak about the ECG. Its pending tier is the second prerequisite's failure message, which the nurse says while the tracing is still printing.",
+   "authoring_note": "Section 9.5. The cardiologist cannot be reached until the ECG and the echo have both resulted (a prerequisite on the consult), so every rule may speak about both and no pending tier is needed. Rules are ordered steadied, on an inotrope, then by what is already running. The catheterization laboratory cannot be activated until the twelve-lead has resulted (two prerequisites on the action, 7 October 2026), so its one reply may speak about the ECG. Its pending tier is the second prerequisite's failure message, which the nurse says while the tracing is still printing.",
    "consult_cardiology": [
     {
      "when": "phase is steadied",

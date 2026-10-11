@@ -239,7 +239,7 @@ DEBRIEF = {
 
  "key_exams": ["exam_circ", "exam_skin", "exam_gu", "exam_heent", "exam_neck", "exam_abd"],
  "key_exams_note": (
-   "Section 13.0. Every exam is tagged neutral, so the Physical score reads this list. These "
+   "Section 10.4. Every exam is tagged neutral, so the Physical score reads this list. These "
    "six are the ones that separate toxic shock from its mimics: perfusion, the rash, the "
    "pelvis, the mucous membranes, the neck and the abdomen. Model judgment, unreviewed."),
 
@@ -289,10 +289,10 @@ DEBRIEF = {
 # ==================================================================== provenance
 PROVENANCE = {
  "status": ("DRAFTED BY A LANGUAGE MODEL. Not reviewed by a physician. Not for use with "
-            "learners until the section 14.3 checklist is complete."),
+            "learners until the section 11.5 checklist is complete."),
  "author": ("Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a "
             "one-paragraph case plan written in the same conversation. Authoring "
-            "requirements section 17 applies: the AUTHOR-ONLY fields were generated, and a "
+            "requirements section 1 applies: the AUTHOR-ONLY fields were generated, and a "
             "physician is authoring the ground truth in review."),
  "warning": (
    "A physician decided four things, listed in TSS-SEED.md section 0: which antibiotic "

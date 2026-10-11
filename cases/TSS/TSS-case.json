@@ -9,8 +9,8 @@
   "design_guide": "EMSim case design guide (Claude Doc, 5 October 2026)"
  },
  "provenance": {
-  "status": "DRAFTED BY A LANGUAGE MODEL. Not reviewed by a physician. Not for use with learners until the section 14.3 checklist is complete.",
-  "author": "Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a one-paragraph case plan written in the same conversation. Authoring requirements section 17 applies: the AUTHOR-ONLY fields were generated, and a physician is authoring the ground truth in review.",
+  "status": "DRAFTED BY A LANGUAGE MODEL. Not reviewed by a physician. Not for use with learners until the section 11.5 checklist is complete.",
+  "author": "Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a one-paragraph case plan written in the same conversation. Authoring requirements section 1 applies: the AUTHOR-ONLY fields were generated, and a physician is authoring the ground truth in review.",
   "warning": "A physician decided four things, listed in TSS-SEED.md section 0: which antibiotic orders count, what happens on an attempted discharge, how she responds to source removal, and when norepinephrine is expected. The same physician approved the plan's patient, story and three learning goals in outline.\n\nEverything else is model output and awaits sign-off: every vital sign, every examination finding, every laboratory value and reference interval, every deadline, every tag, every debrief note, the whole interview, and the diagnosis lists. The drafting pass wrote them from general knowledge of toxic shock syndrome and sepsis care and opened no guideline, paper or published simulation while doing so. A second model pass on the same day did open sources and compared the pack against them. reference_status below lists each one and how it was read. Neither pass was a physician's review.\n\nOn 7 October 2026 a model changed the pack to meet the v0.24 authoring rules after an audit. It added no clinical number except values derived from numbers already in the pack, each marked in a verify note. The new debrief notes, consultant lines and patient answers restate what the pack already said, and TSS-SEED.md lists each one as awaiting sign-off.",
   "author_only_fields_pending_signoff": [
    "Every vital sign in every phase.",
@@ -141,10 +141,10 @@
   "presenting_appearance": "A young woman sitting up on the bed, talking in full sentences and apologizing for coming in. She is flushed all over, her lips are dry, and she keeps a vomit bag in her lap. She does not look as sick as her numbers.",
   "ems_handover_text": "Twenty-two year old woman, two days of vomiting and watery diarrhea with fever and body aches. She thinks it was a takeout meal. Near-syncope in the shower this morning, no loss of consciousness. Heart rate 128 and pressure 94 over 58 at triage, temperature 39.4. She looks sunburned and says she was at the beach yesterday. Walking, talking, roommate with her.",
   "arrival_handover": "Twenty-two year old, two days of vomiting and diarrhea, says she thinks it was something she ate. Her roommate drove her in after she nearly passed out in the shower this morning.",
-  "handover_authoring_note": "Section 3.2. Two sentences, 32 words, in a triage nurse's voice. No vital sign, no past history, no medication, no pertinent negative. 'Something she ate' is the patient's own wrong explanation, repeated by the nurse who heard it, and it is there on purpose: the case opens with the misleading story already in the room. The fever, the rash and the period are all left for the learner to find. Section 14.3 says the handover names no diagnosis in clinical or lay words. 'Something she ate' is a lay diagnosis, it is wrong, and it is a recorded exception (TSS-SEED.md, known gaps)."
+  "handover_authoring_note": "Section 2.3. Two sentences, 32 words, in a triage nurse's voice. No vital sign, no past history, no medication, no pertinent negative. 'Something she ate' is the patient's own wrong explanation, repeated by the nurse who heard it, and it is there on purpose: the case opens with the misleading story already in the room. The fever, the rash and the period are all left for the learner to find. Section 11.5 says the handover names no diagnosis in clinical or lay words. 'Something she ate' is a lay diagnosis, it is wrong, and it is a recorded exception (TSS-SEED.md, known gaps)."
  },
  "phase_notes": {
-  "count_justification": "Six clinical phases, the ceiling in section 3.3, and one terminal. They are the natural history (compensated, transient response to fluid, hypotensive) crossed with what the learner has done about it (a vasopressor with the source in, the source out) plus one deterioration for a learner who does neither.",
+  "count_justification": "Six clinical phases, the ceiling the authoring document set at the time, and one terminal. They are the natural history (compensated, transient response to fluid, hypotensive) crossed with what the learner has done about it (a vasopressor with the source in, the source out) plus one deterioration for a learner who does neither.",
   "no_halted_phase": "Nothing in this case is tagged harmful and there is no halted phase and no arrest. Every wrong turn is recoverable. That follows the design guide ('failure is safe, visible and owned') and AFRVR's v0.20 precedent.",
   "the_intended_path_goes_through_hypotension": "On the directing physician's decision the learner is expected to see the fluid response fade and then start norepinephrine. The hypotensive phase is a waypoint, not a failure.",
   "antibiotics_move_nothing": "No antibiotic changes a phase or a vital sign. That is deliberate: their benefit is not visible in an emergency department stay, and showing one would be false. They are scored and prompted, and the debrief says why the monitor did not move."
@@ -1715,7 +1715,7 @@
  "prerequisite_semantics_note": "Two case prerequisites: the pelvic examination before removing a vaginal foreign body, and a running vasopressor before one can be stopped. The catalog's vascular access and intubation prerequisites are kept.",
  "content_keys": {
   "exam": {
-   "authoring_note": "Section 11.2. All fourteen maneuvers are authored. Routing follows the catalog map: capillary refill and pulse quality on exam_circ, the rash on exam_skin, level of consciousness on exam_neuro, costovertebral tenderness on exam_back. The pelvic examination is exam_gu, which is where the retained tampon is found. Phase rules come before flag rules in every list except where the flag describes something the learner did to her that is true in any phase (the tube, the tampon).",
+   "authoring_note": "Section 9.2. All fourteen maneuvers are authored. Routing follows the catalog map: capillary refill and pulse quality on exam_circ, the rash on exam_skin, level of consciousness on exam_neuro, costovertebral tenderness on exam_back. The pelvic examination is exam_gu, which is where the retained tampon is found. Phase rules come before flag rules in every list except where the flag describes something the learner did to her that is true in any phase (the tube, the tampon).",
    "exam_airway": [
     {
      "when": "flag intubated set",
@@ -2010,7 +2010,7 @@
    ]
   },
   "general_status": {
-   "authoring_note": "Section 11.3. The one finding every learner sees. Consistent with exam_neuro and the appearance values of each phase. It never names the rash as anything but color.",
+   "authoring_note": "Section 9.3. The one finding every learner sees. Consistent with exam_neuro and the appearance values of each phase. It never names the rash as anything but color.",
    "rules": [
     {
      "when": "flag intubated set",
@@ -2089,7 +2089,7 @@
    ]
   },
   "labs": {
-   "authoring_note": "Section 11.4. Structured payloads with model-set abnormal flags. The pattern is the point: kidney, liver, platelets and muscle are all involved, which is what separates toxic shock from gastroenteritis. Every value needs a physician's signature.",
+   "authoring_note": "Section 9.4. Structured payloads with model-set abnormal flags. The pattern is the point: kidney, liver, platelets and muscle are all involved, which is what separates toxic shock from gastroenteritis. Every value needs a physician's signature.",
    "lactate": {
     "changes_with_state": true,
     "rules": [
@@ -3272,7 +3272,7 @@
    }
   },
   "imaging": {
-   "authoring_note": "Section 11.4. The chest film is left to the catalog default, which is normal, and that is intended: her lungs are clear. The CT shows the tampon, so it is a second and slower route to the source for a learner who did not examine her.",
+   "authoring_note": "Section 9.4. The chest film is left to the catalog default, which is normal, and that is intended: her lungs are clear. The CT shows the tampon, so it is a second and slower route to the source for a learner who did not examine her.",
    "ecg_12_lead": {
     "changes_with_state": true,
     "rules": [
@@ -3385,7 +3385,7 @@
    }
   },
   "consultants": {
-   "authoring_note": "Section 11.5. No consultant quotes a laboratory value. The intensivist and the infectious disease physician both ask about a source, which is what they would ask, and which makes a consult one honest way to be pointed at the pelvic examination.\n\nv0.24 audit. The intensivist's list was rewritten. It opens with a tier for the obtunded patient, which claims no treatment. Every later tier that says a treatment was given tests that treatment's flag, so 'Fluid in' is no longer said to a patient who had none, and the drug running is called a vasopressor because a covered sibling can be the one running. No tier says a lactate has been sent. Nephrology has a reply, with a tier for a chemistry that is back, one for a chemistry that is pending and one that asks for it. Every new sentence restates a note the pack already carries. A model wrote them on 7 October 2026 and no physician has read them.",
+   "authoring_note": "Section 9.5. No consultant quotes a laboratory value. The intensivist and the infectious disease physician both ask about a source, which is what they would ask, and which makes a consult one honest way to be pointed at the pelvic examination.\n\nv0.24 audit. The intensivist's list was rewritten. It opens with a tier for the obtunded patient, which claims no treatment. Every later tier that says a treatment was given tests that treatment's flag, so 'Fluid in' is no longer said to a patient who had none, and the drug running is called a vasopressor because a covered sibling can be the one running. No tier says a lactate has been sent. Nephrology has a reply, with a tier for a chemistry that is back, one for a chemistry that is pending and one that asks for it. Every new sentence restates a note the pack already carries. A model wrote them on 7 October 2026 and no physician has read them.",
    "consult_critical_care": [
     {
      "when": "phase is profound_shock",
@@ -3463,11 +3463,11 @@
  "interview": {
   "authoring_notes": {
    "voice": "A 22-year-old graduate student. Lay words, apologetic, minimizing. She is sure it is food poisoning and says so, which is her belief and not a diagnosis the case endorses.",
-   "the_tampon": "She does not volunteer it and it is a must-ask topic, so no other answer carries it. Asked about her period or tampons in any wording, she says she cannot remember taking the last one out. Section 10.4 holds: she reports what she knows and draws no conclusion from it.",
-   "close_to_the_line": "Two answers sit near the section 10.4 line and are flagged for the reviewer. The rash answer says the redness is under her shirt, and the genitourinary answer mentions a smell. Both are things a patient would notice and say. Neither names a cause.",
+   "the_tampon": "She does not volunteer it and it is a must-ask topic, so no other answer carries it. Asked about her period or tampons in any wording, she says she cannot remember taking the last one out. Section 8.4 holds: she reports what she knows and draws no conclusion from it.",
+   "close_to_the_line": "Two answers sit near the section 8.4 line and are flagged for the reviewer. The rash answer says the redness is under her shirt, and the genitourinary answer mentions a smell. Both are things a patient would notice and say. Neither names a cause.",
    "phrasings": "The canonical question, hand-written variants and echo for forty topics are MGCA's, in case_4_variants.py. Three topics are this case's own: rash, suspect_meal and wounds_and_skin. EXTRA_VARIANTS adds eleven phrasings by hand, each under the topic whose answer covers it.",
    "changed_7_october_2026": "After the audit a model edited these and no physician has read them. location_of_pain said her back was among the worst places and abdominal_pain said the pain was not in her back. The case's reasoning against a kidney source rests on no flank pain, so location_of_pain now says thighs and calves. The drowsy abdominal_pain answer gained 'Not my back.' Three topics gained facts (fever_and_chills, nausea_vomiting, current_medications), each restating part of its own answer. Three volunteer lines were replaced because they repeated the answer they ride on. Four British usages were made American.",
-   "pertinent_negatives": "Eleven topics are marked. confusion was the twelfth. Its drowsy answer is 'I feel foggy. Sorry.', which is not a denial, and authoring 10.3 asks that a marked topic deny in every phase, so the mark was removed on 7 October 2026 and the answers were left alone. Whether the drowsy answer should deny instead is an open question for the physician (TSS-SEED.md)."
+   "pertinent_negatives": "Eleven topics are marked. confusion was the twelfth. Its drowsy answer is 'I feel foggy. Sorry.', which is not a denial, and authoring 8.3 asks that a marked topic deny in every phase, so the mark was removed on 7 October 2026 and the answers were left alone. Whether the drowsy answer should deny instead is an open question for the physician (TSS-SEED.md)."
   },
   "global_answer_rules": [
    {
@@ -6383,7 +6383,7 @@
    "exam_neck",
    "exam_abd"
   ],
-  "key_exams_note": "Section 13.0. Every exam is tagged neutral, so the Physical score reads this list. These six are the ones that separate toxic shock from its mimics: perfusion, the rash, the pelvis, the mucous membranes, the neck and the abdomen. Model judgment, unreviewed.",
+  "key_exams_note": "Section 10.4. Every exam is tagged neutral, so the Physical score reads this list. These six are the ones that separate toxic shock from its mimics: perfusion, the rash, the pelvis, the mucous membranes, the neck and the abdomen. Model judgment, unreviewed.",
   "intended_path": [
    "presentation",
    "fluid_responsive",

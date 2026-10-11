@@ -24,7 +24,7 @@ RF   = "phase is respiratory_failure"
 SUPPORTED = "phase is breathing_supported OR phase is stabilized"
 
 EXAM = {
- "authoring_note": ("Section 11.2. Twelve of the fourteen catalog maneuvers are authored; "
+ "authoring_note": ("Section 9.2. Twelve of the fourteen catalog maneuvers are authored; "
    "genitourinary and back inherit the catalog default. Peripheral edema sits on the "
    "cardiovascular examination and jugular venous pressure on the neck, per exam_finding_routing, "
    "not where a clinician would instinctively look for them."),
@@ -100,7 +100,7 @@ EXAM = {
 }
 
 GENERAL_STATUS = {
- "authoring_note": ("Section 11.3. Rendered above the exam list and not clickable, so it is the "
+ "authoring_note": ("Section 9.3. Rendered above the exam list and not clickable, so it is the "
    "one examination finding every learner sees. Kept consistent with the neurological examination "
    "and with the appearance values in each phase."),
  "rules": [
@@ -206,7 +206,7 @@ PATIENT_VISUAL = {
 }
 
 LABS = {
- "authoring_note": ("Section 11.4. Structured payloads with abnormal flags set by the author, not "
+ "authoring_note": ("Section 9.4. Structured payloads with abnormal flags set by the author, not "
    "computed by the renderer. Reference intervals are assay- and institution-specific and every "
    "one of them is awaiting a physician's signature; see the review packet."),
 
@@ -345,7 +345,7 @@ LABS = {
 
 IMAGING = {
  "authoring_note": (
-   "Section 11.4. Reports freeze at the state in which they were ordered, so a tracing "
+   "Section 9.4. Reports freeze at the state in which they were ordered, so a tracing "
    "taken before rate control still reads 160 when it arrives after.\n\n"
    "FINDINGS ONLY. No report in this case carries an interpretation line, and that is an "
    "authoring decision rather than an oversight. Naming the rhythm, calling the ST "
@@ -438,7 +438,7 @@ DX_KNOWN = "study ultrasound_cardiac resulted"
 ECG_DONE = "study ecg_12_lead resulted"
 
 CONSULTANTS = {
- "authoring_note": ("Section 11.5. Ordered most specific to least specific, with a pending tier "
+ "authoring_note": ("Section 9.5. Ordered most specific to least specific, with a pending tier "
    "per study rather than per group, so a consultant never claims to be looking at something that "
    "has not come back."),
 

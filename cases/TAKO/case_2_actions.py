@@ -27,7 +27,7 @@ LOW_G = "(" + LOW + ")"
 ACTIVE = "flag inotrope_given set AND NOT flag inotrope_stopped set"
 ECG_BACK = "study ecg_12_lead resulted"
 # A chest examination, a lung ultrasound or a chest film counts as the recheck only when it
-# is taken after fluid has been given (authoring 8.2, the hidden target pattern).
+# is taken after fluid has been given (authoring 22.2, the hidden target pattern).
 RECHECK = [{"id": "chest_rechecked", "when": "flag fluids_given set"}]
 
 # =====================================================================  FIRST MINUTES
@@ -63,7 +63,7 @@ act("ecg_12_lead",
       "tool]"))
 
 act("aspirin", ALWAYS("critical"),
-    # The guard tests the tracing, because the text cites it (authoring 9.5 rule 3). The
+    # The guard tests the tracing, because the text cites it (authoring 7.3 rule 3). The
     # twelve-lead prompt at 40 seconds covers the learner who has no tracing.
     prompt={"deadline_seconds": 90, "guard": "(" + PRES + " OR " + STEADY + ") AND " + ECG_BACK,
             "text": "She has ST elevation and she hasn't had aspirin. Do you want it given?"},
@@ -80,7 +80,7 @@ act("consult_activate_cath_lab", ALWAYS("critical"),
     # Model choice of 7 October 2026, for the owner to confirm: the laboratory is not
     # activated without a twelve-lead that has come back. Two prerequisites, so the refusal
     # says which is true: no tracing ordered, or one still printing. A refused press sets no
-    # flag and earns no credit (authoring 11.5). Written like the cardiology prerequisite.
+    # flag and earns no credit (authoring 9.5). Written like the cardiology prerequisite.
     prerequisites=[
       {"when": "study ecg_12_lead ordered",
        "failure_message": ("The cath lab will want a twelve-lead before they call the team "
@@ -89,7 +89,7 @@ act("consult_activate_cath_lab", ALWAYS("critical"),
        "failure_message": ("The twelve-lead is still printing. The cath lab will want to "
                            "see it before they call the team in.")}],
     # Spoken phrases for a case-only action, which has no row in the voice table
-    # (authoring 7.1, v0.24). Each was tried in the built simulator's parser.
+    # (authoring 6.1, v0.24). Each was tried in the built simulator's parser.
     voice_phrases=["activate the cath lab", "activate cath lab", "cath lab",
                    "cath lab activation", "call the cath lab", "code stemi", "stemi alert",
                    "stemi activation", "catheterization lab", "cardiac cath", "primary pci"],
@@ -149,7 +149,7 @@ act("nitroglycerin", ALWAYS("discouraged"),
                     "note": ("Teaching choice. On arrival the nitrate moves her to the "
                              "obstructed phase, and that phase's own numbers are the fall. "
                              "The effect is guarded off there by name so the fall is counted "
-                             "once (authoring 6.1). A guard is read against the state now and "
+                             "once (authoring 16). A guard is read against the state now and "
                              "cannot see where the drug was given, so a nitrate given in the "
                              "obstructed phase also shows no further fall while she stays "
                              "there. In worsening shock or once steadied it costs twelve "
@@ -234,7 +234,7 @@ act("normal_saline_1l_bolus",
                     "while": LOW_G + " AND NOT flag vasoconstrictor_running set",
                     "note": "Teaching choice: fluid alone helps a little and briefly."}],
     # 45 seconds, so that in the default mode (times 3, 135 seconds) it is spoken well
-    # before the 240-second deterioration (authoring 9.7).
+    # before the 240-second deterioration (authoring 7.4).
     prompt={"deadline_seconds": 45, "guard": LOW,
             "text": ("Her chest is clear and she's hardly had a drink in five days. Do you "
                      "want a small fluid bolus?")},
@@ -255,7 +255,7 @@ act("phenylephrine_drip",
                     "while": LOW_G + " AND NOT flag fluids_given set",
                     "note": "Teaching choice: a vasoconstrictor alone helps a little."}],
     # 60 seconds. At 80 the default mode put this at 240, the same instant as the
-    # deterioration it warns about, and the nurse never said it. Now 180 (authoring 9.7).
+    # deterioration it warns about, and the nurse never said it. Now 180 (authoring 7.4).
     prompt={"deadline_seconds": 60, "guard": LOW,
             "text": ("Her pressure is still low. Do you want a pressor that squeezes the "
                      "vessels without driving the heart, like phenylephrine?")},
@@ -456,7 +456,7 @@ FOLLOW_UPS = [
   "deadline_seconds": 60,
   # Only a chest examination, a lung ultrasound or a chest film taken AFTER the fluid
   # discharges this. Each of the three credits the hidden action chest_rechecked through
-  # also_satisfies when fluids_given is already set (authoring 8.2). Once credited it stays
+  # also_satisfies when fluids_given is already set (authoring 22.2). Once credited it stays
   # credited, so a second bolus asks for nothing.
   "satisfied_by": ["chest_rechecked"],
   "nurse_prompt": "That bolus is in. Do you want to listen to her chest before she gets any more?",

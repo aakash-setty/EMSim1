@@ -125,7 +125,7 @@ act("normal_saline_infusion", ALWAYS("neutral"),
       "case counts a bolus as fluid resuscitation and does not count this."))
 
 # ---------------------------------------------------------------- oxygen
-# Four routes, one key, so no two of them stack (authoring 6.1). The cannula and the mask
+# Four routes, one key, so no two of them stack (authoring 16). The cannula and the mask
 # were authored on 6 October 2026. The bag and non-invasive ventilation were bound on
 # 7 October 2026 after the audit, with the mask's delta and a neutral tag. The delta is
 # derived by a model from the mask's and is a teaching choice awaiting sign-off.

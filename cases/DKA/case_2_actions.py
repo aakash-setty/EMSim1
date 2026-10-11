@@ -29,13 +29,13 @@ RECOV = "phase is recovering"
 READY = REPL + " OR " + RECOV
 CHEM = "study basic_chemistry_chem_7 resulted"
 
-# The catalog's own rule for an intravenous drug (authoring 8.1), so a central or an
+# The catalog's own rule for an intravenous drug (authoring 22.1), so a central or an
 # intraosseous line counts.
 IV_LINE = [{
   "when": "flag iv_access set OR flag central_access set OR flag io_access set",
   "failure_message": "She doesn't have a line yet. Do you want me to get IV access first?"}]
 
-# Markers go only in fields the interface strips (authoring 13): an action's debrief_note.
+# Markers go only in fields the interface strips (authoring 10.3): an action's debrief_note.
 REPORT = " [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
 MEMORY = " [UNVERIFIED: general teaching written by a model from memory, no source opened]"
 # The potassium rule by level (hold insulin under 3.5, 20 to 40 mEq an hour, recheck every
@@ -104,7 +104,7 @@ act("arterial_blood_gas", ALWAYS("neutral"),
 act("basic_chemistry_chem_7", ALWAYS("critical"),
     expectation_label="Chemistry, for the potassium and the anion gap",
     # A chemistry sent once the potassium has run in is the repeat level the follow-up
-    # asks for. Judged on the phase at the moment of the order (authoring 8.2), so a
+    # asks for. Judged on the phase at the moment of the order (authoring 22.2), so a
     # second panel sent before the potassium does not count.
     also_satisfies=[{"id": "repeat_potassium_level", "when": READY + " OR " + TREATED}],
     prompt={"deadline_seconds": 75, "guard": PRES + " AND NOT " + "study basic_chemistry_chem_7 ordered",
@@ -262,7 +262,7 @@ act("potassium_chloride_kcl",
     nurse_alert="It's on the pump. It takes a while to run in.",
     # The guard is read once, at the deadline. The nurse asks for the chemistry at 75
     # seconds, so the first potassium prompt comes after a learner who needed that prompt
-    # can have the result (authoring 9.5 rule 4). The escalation reads as a first warning
+    # can have the result (authoring 7.3 rule 4). The escalation reads as a first warning
     # too, and claims no result, because in the falling phase the guard tests none.
     prompt={"deadline_seconds": 110,
             "guard": "(" + PRES + " AND " + CHEM + " AND NOT flag potassium_iv_given set) OR ("
@@ -334,7 +334,7 @@ INSULIN_NOTE = (
 INSULIN_TAG = [{"when": READY, "value": "critical"},
                {"when": TREATED, "value": "neutral"},
                {"when": None, "value": "discouraged"}]
-# Order is carried by two hidden actions that nothing presses (authoring 6.8 and 8.2).
+# Order is carried by two hidden actions that nothing presses (authoring 19 and 8.2).
 # The credit is judged on the phase at the moment of the order.
 #   early_insulin    rapid insulin by any route, ordered in the arrival phase
 #   insulin_restart  an infusion or a subcutaneous dose ordered in the recovering phase
@@ -555,7 +555,7 @@ FOLLOW_UPS = [
   "applies_when": "flag potassium_iv_given set",
   "deadline_seconds": 50,
   # A hidden target, credited by a chemistry sent once the potassium has run in
-  # (authoring 8.2). A panel sent before the potassium, or while it runs, does not count.
+  # (authoring 22.2). A panel sent before the potassium, or while it runs, does not count.
   "satisfied_by": ["repeat_potassium_level"],
   "nurse_prompt": "The potassium has been through for a bit. Do you want a repeat level?",
   "debrief_note": (

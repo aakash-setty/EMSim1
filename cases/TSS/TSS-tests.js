@@ -535,7 +535,7 @@ chk('the discharge line holds after a liter and rate control: rate 98, still feb
   st.vitals.heart_rate === 98 && st.vitals.temperature_c > 38 && said(st, /still has a fever/) && !said(st, /rate is still fast/), JSON.stringify(st.vitals));
 
 section('the default mode: every warning still comes before its deterioration');
-/* Authoring 9.7. Normal is the mode a learner starts in and multiplies every prompt
+/* Authoring 7.4. Normal is the mode a learner starts in and multiplies every prompt
    deadline by three. Deteriorations are not multiplied. The fluid prompt was at 80, which
    is 240 in this mode, the instant the hypotensive phase ends. */
 const fired = (s, id, level, before) => s.promptFires.find(p => p.id === id && p.level === level && p.t < before);
@@ -576,7 +576,7 @@ for (const m of [1, 3]) {
 }
 
 section('two timed rules pending at once, on both sides of each boundary');
-/* Authoring 5.4. One check per row of the table in TSS-SEED.md. */
+/* Authoring 15.4. One check per row of the table in TSS-SEED.md. */
 const at = (steps, t) => { const s = fold(mk(steps), t); return s.phaseSeq.map(p => p.id + '@' + p.t).join(' > '); };
 const B5 = [[1, 'insert_iv'], [20.2, 'normal_saline_1l_bolus']];
 chk('bolus, discharge 3.7 seconds later: the faint comes first', at(B5.concat([[23.9, 'attempt_discharge']]), 60) === 'presentation@0 > hypotensive@28.9', at(B5.concat([[23.9, 'attempt_discharge']]), 60));

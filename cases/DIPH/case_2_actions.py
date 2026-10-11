@@ -1,7 +1,7 @@
 """DIPH part 2: the action spine, tags, flags, prompts and vital effects.
 
 Tag rule lists are ordered and first match wins. Every list ends unconditionally.
-The fallthrough in every phase is the thing to read: authoring 7.3 says so and it is
+The fallthrough in every phase is the thing to read: authoring 6.3 says so and it is
 the commonest defect in a case that otherwise validates.
 """
 
@@ -35,7 +35,7 @@ O2_KEY = "oxygen_support"
 # is a phase baseline that already includes the gain. The airway is the second guard, because
 # a mask on an intubated patient is not what is oxygenating her.
 HYPOXIC = "phase is seizing OR phase is post_ictal OR phase is wide_complex_tachycardia"
-# Parenthesised, and it has to be. AND binds tighter than OR in the section 4 grammar, so
+# Parenthesised, and it has to be. AND binds tighter than OR in the section 3 grammar, so
 # HYPOXIC + " AND NOT flag airway_protected set" parses as
 #   seizing OR post_ictal OR (wide_complex AND NOT airway_protected)
 # which is true in the post-ictal phase whatever the airway is doing. The effect of that was
@@ -429,7 +429,7 @@ act("fos_phenytoin", ALWAYS("discouraged"),
       "unhelpful and is plausibly harmful in a patient whose QRS is already 132 milliseconds.\n\n"
       "It is tagged discouraged rather than harmful, although many toxicology references list it as contraindicated in sodium-channel-blocker poisoning. The reason for the softer tag: the evidence that phenytoin worsens outcomes in "
       "sodium-channel-blocker poisoning is extrapolated from tricyclic antidepressant work and "
-      "from animal data rather than established in humans, and authoring 7.3 says that halting a "
+      "from animal data rather than established in humans, and authoring 6.3 says that halting a "
       "case is the strongest claim this system can make and should be reserved for genuine "
       "lethality. The author wrote 'avoided', not 'kills'.\n\n"
       "What to use instead if the seizure recurs after adequate benzodiazepine dosing: "
@@ -956,7 +956,7 @@ for cid, note in [
     act(cid, ALWAYS("neutral"), debrief_note=note)
 
 # -------------------------------------------------------------------- examinations
-# Section 11.2: fourteen maneuvers, closed set, and the routing map decides which one owns
+# Section 9.2: fourteen maneuvers, closed set, and the routing map decides which one owns
 # each finding. Twelve are authored here; back and genitourinary carry the catalog default,
 # except that the palpable bladder is authored on the genitourinary examination because the
 # author lists it there and it is one of the findings that makes the toxidrome.
@@ -1038,7 +1038,7 @@ FOLLOW_UPS = [
     "The obligation is discharged either by a second bolus or by starting an infusion, because "
     "both are the same decision: that the treatment continues until the conduction says it can "
     "stop. It uses satisfied_when rather than satisfied_by because a repeat of the triggering "
-    "action cannot be expressed as set membership, per authoring 8.2.")},
+    "action cannot be expressed as set membership, per authoring 22.2.")},
 
  {"id": "repeat_ecg_after_bicarbonate",
   "triggered_by": "na_bicarbonate_bolus",

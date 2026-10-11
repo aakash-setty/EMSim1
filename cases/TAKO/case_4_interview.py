@@ -19,7 +19,7 @@ STEADY = "phase is steadied"
 
 
 def steadied(value):
-    """A steadied-phase answer. Goes before any flag rule: phase rules first (section 4)."""
+    """A steadied-phase answer. Goes before any flag rule: phase rules first (section 3)."""
     return {"when": STEADY, "value": value}
 
 TOPICS = []
@@ -27,7 +27,7 @@ NEGATIVES = {"fever_and_chills", "cough_sore_throat", "abdominal_pain", "headach
              "leg_swelling_and_lying_flat", "back_or_tearing_pain", "bleeding_risk",
              "prior_heart_problems", "travel_history", "allergies"}
 # past_surgical_history is not here: she reports a gallbladder operation, so the answer is
-# not a denial (authoring 10.3).
+# not a denial (authoring 8.3).
 
 
 def topic(tid, full, short, canonical=None, variants=None, echo=None, extra=None):

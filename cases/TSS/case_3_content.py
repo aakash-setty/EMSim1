@@ -64,7 +64,7 @@ def always(v):
 # ============================================================== EXAMINATION
 EXAM = {
  "authoring_note": (
-   "Section 11.2. All fourteen maneuvers are authored. Routing follows the catalog map: "
+   "Section 9.2. All fourteen maneuvers are authored. Routing follows the catalog map: "
    "capillary refill and pulse quality on exam_circ, the rash on exam_skin, level of "
    "consciousness on exam_neuro, costovertebral tenderness on exam_back. The pelvic "
    "examination is exam_gu, which is where the retained tampon is found. Phase rules come "
@@ -147,7 +147,7 @@ EXAM = {
 # ============================================================== GENERAL STATUS
 GENERAL_STATUS = {
  "authoring_note": (
-   "Section 11.3. The one finding every learner sees. Consistent with exam_neuro and the "
+   "Section 9.3. The one finding every learner sees. Consistent with exam_neuro and the "
    "appearance values of each phase. It never names the rash as anything but color."),
  "rules": [
    {"when": TUBED, "value": gs("Intubated and sedated. Flushed.")},
@@ -220,7 +220,7 @@ def abg(p):
     # v0.24 audit. The saturation was 97 in every phase but two, against a monitor reading
     # 98 after fluid and 96 on a vasopressor. It is now the phase's own authored
     # saturation. Derived by a model from the phase vitals on 7 October 2026. The pO2 is
-    # unchanged. The gas never sees a vital effect (authoring 6.6), so oxygen running in
+    # unchanged. The gas never sees a vital effect (authoring 12), so oxygen running in
     # the two low phases still shows a higher number on the monitor than on the gas.
     sat = {"presentation": "97", "fluid_responsive": "98", "hypotensive": "95",
            "supported": "96", "profound_shock": "92", "stabilizing": "97"}[p]
@@ -237,7 +237,7 @@ def abg(p):
 
 LABS = {
  "authoring_note": (
-   "Section 11.4. Structured payloads with model-set abnormal flags. The pattern is the "
+   "Section 9.4. Structured payloads with model-set abnormal flags. The pattern is the "
    "point: kidney, liver, platelets and muscle are all involved, which is what separates "
    "toxic shock from gastroenteritis. Every value needs a physician's signature."),
 
@@ -340,7 +340,7 @@ def ecg(p):
 
 IMAGING = {
  "authoring_note": (
-   "Section 11.4. The chest film is left to the catalog default, which is normal, and that "
+   "Section 9.4. The chest film is left to the catalog default, which is normal, and that "
    "is intended: her lungs are clear. The CT shows the tampon, so it is a second and slower "
    "route to the source for a learner who did not examine her."),
 
@@ -373,7 +373,7 @@ IMAGING = {
 # ============================================================== CONSULTANTS
 CONSULTANTS = {
  "authoring_note": (
-   "Section 11.5. No consultant quotes a laboratory value. The intensivist and the "
+   "Section 9.5. No consultant quotes a laboratory value. The intensivist and the "
    "infectious disease physician both ask about a source, which is what they would ask, "
    "and which makes a consult one honest way to be pointed at the pelvic examination.\n\n"
    "v0.24 audit. The intensivist's list was rewritten. It opens with a tier for the "

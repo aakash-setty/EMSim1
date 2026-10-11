@@ -253,7 +253,7 @@ RATE_CONTROL_HR_EFFECTS = [
      "a workaround for the schema rather than physiology, and the review packet says so.")},
 ]
 
-# Two pushes, not one. Flags are otherwise binary and permanent and authoring section 15
+# Two pushes, not one. Flags are otherwise binary and permanent and authoring section 10.1
 # tells you not to build a case that depends on redosing; this is the exception the
 # mechanic was added for. All four routes share one counter, so a resident who gives
 # metoprolol and then amiodarone has made two attempts at nodal blockade and is credited

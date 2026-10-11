@@ -90,7 +90,7 @@ st = F([[2.5, 'insulin_drip']], 60);
 chk('an insulin infusion with no line is blocked and is not early insulin',
   st.blocked.some(b => b.id === 'insulin_drip') && !st.satisfied.has('early_insulin') && st.phase === 'presentation');
 
-/* Authoring 5.4. One test per row of the table in DKA-SEED.md, with fractional times on
+/* Authoring 15.4. One test per row of the table in DKA-SEED.md, with fractional times on
    both sides of every boundary. Potassium is ordered at 10.25 seconds in every row. */
 section('the race table: insulin and potassium both pending');
 const race = (gap, drug) => F(LINE.concat([[10.25, 'potassium_chloride_kcl'], [10.25 + gap, drug || 'insulin_drip']]), 120);
@@ -160,7 +160,7 @@ chk('with potassium given and insulin never held she stays weak', st.phase === '
 st = F(A0.concat([[20.5, 'insulin_subcutaneous'], [40.5, 'stop_insulin'], [42.5, 'potassium_chloride_kcl']]), 70);
 chk('a subcutaneous dose is held the same way', st.phase === 'recovering', st.phase);
 
-/* Authoring 6.5 and section 16 step 8: every first dose. One order placed in the
+/* Authoring 18 and section 13 step 7: every first dose. One order placed in the
    recovering phase is the restart, whatever was ordered before it. */
 section('after the rescue, one insulin order reaches treated, from every first dose');
 const rescue = first => A0.concat(first, [[40.5, 'stop_insulin'], [42.5, 'potassium_chloride_kcl']]);
@@ -240,7 +240,7 @@ chk('the oral potassium line is true in the treated phase, where she is no longe
 st = F(A0.concat([[20.5, 'potassium_chloride_kcl'], [22.5, 'insulin_drip']]), 50);
 chk('insulin two seconds after potassium is still too early', st.phase === 'potassium_falling', seq(st));
 
-/* Authoring 8.2: both ways round. Only a chemistry sent once the potassium has run in
+/* Authoring 22.2: both ways round. Only a chemistry sent once the potassium has run in
    discharges the repeat-level follow-up. */
 section('the repeat-potassium follow-up');
 const fuRepeat = st => st.fuFires.some(f => f.fid === 'repeat_potassium_after_replacement');
@@ -309,7 +309,7 @@ st = F(early, 140);
 chk('it is not asked when insulin was given too early', !st.fuFires.some(f => f.fid === 'dextrose_plan_after_insulin'));
 chk('stopping insulin in the treated phase is discouraged', tagOf('stop_insulin', F(ready.concat([[50.5, 'insulin_drip']]), 65)) === 'discouraged');
 
-/* Authoring 9.5 and 6.1. The fluid effect has no end, so every line that gives a
+/* Authoring 7.3 and 16. The fluid effect has no end, so every line that gives a
    direction is read against the folded monitor, with fluid and without. */
 section('every narration is true of the monitor, with fluid and without');
 for (const fluid of [null, 'normal_saline_1l_bolus', 'lactated_ringer_s_infusion']) {
@@ -370,7 +370,7 @@ st = F(A0.concat([[20.5, 'ultrasound_cardiac']]), 30);
 chk('the cardiac ultrasound agrees with a dry patient', last(st, 'ultrasound_cardiac').body.abnormal === true &&
   /small and collapsing/.test(last(st, 'ultrasound_cardiac').body.report) && !st.defaultsServed.has('ultrasound_cardiac'));
 
-/* Authoring 11.4, 6.1 and 11.2. */
+/* Authoring 9.4, 16 and 9.2. */
 section('results hold findings, and nothing quotes a rate the fluid effect can move');
 const eachPayload = fn => {
   for (const block of [CASE.content_keys.labs, CASE.content_keys.imaging]) for (const k in block) {
@@ -398,7 +398,7 @@ chk('the falling neurological exam leads with the abnormal finding', /^Proximal 
 chk('every exam finding is a chart line of about 15 words', Object.keys(CASE.content_keys.exam).every(k => !Array.isArray(CASE.content_keys.exam[k]) ||
   CASE.content_keys.exam[k].every(r => r.value.findings.split(/\s+/).length <= 16)));
 
-/* Authoring 11.5. `study S resulted` means a result exists, not that it was sent in this
+/* Authoring 9.5. `study S resulted` means a result exists, not that it was sent in this
    phase, so no consultant line names a laboratory value at all. */
 section('the consultants read no result that is not back, and name no value');
 const consult = (who, log, t) => last(F(log.concat([[t, who]]), t + 0.5), who).body;

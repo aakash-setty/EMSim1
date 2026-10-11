@@ -53,7 +53,7 @@ TURNAROUND = _CAT.get("turnaround_seconds_by_class", {})
 def effective_prerequisites(aid, act):
     """Catalog defaults plus the case's own, minus anything the case waives.
 
-    Authoring 8.1: case prerequisites are ADDITIVE to the catalog defaults rather than a
+    Authoring 22.1: case prerequisites are ADDITIVE to the catalog defaults rather than a
     substitute for them, and a default is removed only by an explicit waiver. A case that
     copies a default into its own list, as CHFE and AFRVR do, must not get it twice, so
     identical conditions are collapsed.
@@ -128,7 +128,7 @@ def holds(when, assign):
     engine.js does it: parseCond('') returns {t:'true'} and test(null, st) is true.
 
     Until v0.9 both loops below skipped any rule with a falsy `when`, which silently
-    made the third of authoring section 5.1's three time-guarded patterns unwalkable:
+    made the third of authoring section 15.1's three time-guarded patterns unwalkable:
     a scheduled natural history has no guard by definition, so a case whose illness
     does something regardless of the resident could not be simulated at all. No pack
     used the pattern before DIPH, so nothing failed and the gap did not show."""

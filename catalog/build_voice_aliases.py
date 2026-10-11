@@ -2028,6 +2028,9 @@ examact("exam_breath", "breathing", "breathing exam", "work of breathing", "resp
         "chest rise", "breathing assessment")
 examact("exam_circ", "circulation", "circulation exam", "perfusion", "capillary refill", "cap refill",
         "peripheral perfusion", "pulses", "peripheral pulses", "circulatory assessment")
+# v0.26. The composite on Stabilization. Saying it performs all three, like the button.
+examact("exam_abc", "abc", "abcs", "a b c", "airway breathing and circulation",
+        "airway breathing circulation", "primary survey", "abc assessment")
 examact("exam_heent", "heent", "head and eyes", "eyes", "pupils", "mouth", "oropharynx", "ears", "nose",
         "head", "face")
 examact("exam_neck", "neck", "jvp", "jugular venous pressure", "jvd", "jugular venous distension",

@@ -4,7 +4,7 @@
 
 One line per catalog entry (305 entries, catalog 0.3-draft).
 Full entry: `python3 engine/lookup.py action <id or word>`. The learner sees the whole
-catalog whether or not the case binds an entry (authoring 7.1).
+catalog whether or not the case binds an entry (authoring 6.1).
 
 Columns: id, display name, tab and group, category, turnaround class (studies), flags
 the entry sets everywhere, number of catalog prerequisites, equivalence group, the
@@ -320,7 +320,7 @@ stop action for an infusion, and whether a default result exists (D).
 
 ## Where an exam finding goes
 
-The closed set of 14 maneuvers and the routing map (authoring 11.2).
+The closed set of 14 maneuvers and the routing map (authoring 9.2).
 
 | finding | maneuver |
 |---|---|
@@ -343,7 +343,7 @@ The closed set of 14 maneuvers and the routing map (authoring 11.2).
 
 ## Equivalence groups
 
-Bind a case action to a group with `also_covers_group` so a tag covers every member (authoring 3.4).
+Bind a case action to a group with `also_covers_group` so a tag covers every member (authoring 2.5).
 
 - `_note`: `S`, `e`, `t`, `s`, ` `, `o`, `f`, ` `, `e`, `n`, `t`, `r`, `i`, `e`, `s`, ` `, `a`, ` `, `c`, `a`, `s`, `e`, ` `, `m`, `a`, `y`, ` `, `t`, `r`, `e`, `a`, `t`, ` `, `a`, `s`, ` `, `i`, `n`, `t`, `e`, `r`, `c`, `h`, `a`, `n`, `g`, `e`, `a`, `b`, `l`, `e`, `.`, ` `, `W`, `h`, `e`, `r`, `e`, ` `, `a`, ` `, `c`, `a`, `s`, `e`, ` `, `r`, `e`, `q`, `u`, `i`, `r`, `e`, `s`, ` `, `o`, `r`, ` `, `f`, `o`, `r`, `b`, `i`, `d`, `s`, ` `, `t`, `h`, `e`, ` `, `a`, `c`, `t`, ` `, `r`, `a`, `t`, `h`, `e`, `r`, ` `, `t`, `h`, `a`, `n`, ` `, `o`, `n`, `e`, ` `, `s`, `p`, `e`, `c`, `i`, `f`, `i`, `c`, ` `, `a`, `g`, `e`, `n`, `t`, `,`, ` `, `b`, `i`, `n`, `d`, ` `, `o`, `n`, `e`, ` `, `c`, `a`, `s`, `e`, ` `, `a`, `c`, `t`, `i`, `o`, `n`, ` `, `t`, `o`, ` `, `t`, `h`, `e`, ` `, `w`, `h`, `o`, `l`, `e`, ` `, `g`, `r`, `o`, `u`, `p`, ` `, `w`, `i`, `t`, `h`, ` `, `a`, `l`, `s`, `o`, `_`, `c`, `o`, `v`, `e`, `r`, `s`, `_`, `g`, `r`, `o`, `u`, `p`, ` `, `s`, `o`, ` `, `t`, `h`, `e`, ` `, `t`, `a`, `g`, ` `, `a`, `p`, `p`, `l`, `i`, `e`, `s`, ` `, `t`, `o`, ` `, `e`, `v`, `e`, `r`, `y`, ` `, `r`, `o`, `u`, `t`, `e`, `.`, ` `, `A`, ` `, `h`, `a`, `r`, `m`, `f`, `u`, `l`, ` `, `t`, `a`, `g`, ` `, `o`, `n`, ` `, `o`, `n`, `e`, ` `, `m`, `e`, `m`, `b`, `e`, `r`, ` `, `a`, `n`, `d`, ` `, `n`, `o`, `t`, ` `, `t`, `h`, `e`, ` `, `o`, `t`, `h`, `e`, `r`, `s`, ` `, `l`, `e`, `a`, `v`, `e`, `s`, ` `, `a`, `n`, ` `, `e`, `s`, `c`, `a`, `p`, `e`, ` `, `h`, `a`, `t`, `c`, `h`, ` `, `f`, `r`, `o`, `m`, ` `, `t`, `h`, `e`, ` `, `l`, `e`, `s`, `s`, `o`, `n`, `.`
 - `crystalloid_bolus`: `normal_saline_1l_bolus`, `normal_saline_500ml_bolus`, `lactated_ringer_s_1l_bolus`, `lactated_ringer_s_500ml_bolus`

@@ -93,7 +93,7 @@ def always(v):
 # ============================================================== EXAMINATION
 EXAM = {
  "authoring_note": (
-   "Section 11.2. Thirteen of the fourteen catalog maneuvers are authored; the back "
+   "Section 9.2. Thirteen of the fourteen catalog maneuvers are authored; the back "
    "examination inherits the catalog default. The routing is the catalog's and not this "
    "author's preference: the dry hot skin and the absent sweating go to exam_skin, the "
    "agitation and thought content to exam_psych rather than exam_neuro, which owns the level "
@@ -198,7 +198,7 @@ EXAM = {
 # ============================================================== GENERAL STATUS
 GENERAL_STATUS = {
  "authoring_note": (
-   "Section 11.3. Rendered above the maneuver list and not clickable, so it is the one "
+   "Section 9.3. Rendered above the maneuver list and not clickable, so it is the one "
    "examination finding every learner sees. Kept consistent with the neurological and "
    "psychiatric examinations and with the appearance values of each phase."),
  "rules": [
@@ -271,7 +271,7 @@ PATIENT_VISUAL = {
 
 LABS = {
  "authoring_note": (
-   "Section 11.4. Structured payloads with abnormal flags set by the author of the case file "
+   "Section 9.4. Structured payloads with abnormal flags set by the author of the case file "
    "and not computed by the renderer. The numbers are Dr Medwid's, from her admitting form and "
    "her scenario flow. Not one reference interval appears in her document, so every one below "
    "is model output awaiting a physician's signature. Where the catalog carries a default for "
@@ -531,7 +531,7 @@ LABS = {
 # ============================================================== IMAGING, ECG, BEDSIDE
 IMAGING = {
  "authoring_note": (
-   "Section 11.4, kind report: findings and not conclusions. The words sodium-channel blockade "
+   "Section 9.4, kind report: findings and not conclusions. The words sodium-channel blockade "
    "do not appear in any tracing below; they appear in the debrief note on the ECG action, "
    "where the learner meets them after committing to an interpretation rather than before.\n\n"
    "Two of the source document's four images ARE used, since v0.12: the arrival twelve-lead "
@@ -629,7 +629,7 @@ IMAGING = {
 # ============================================================== CONSULTANTS
 CONSULTANTS = {
  "authoring_note": (
-   "Section 11.5. Rules run from most specific to least specific and every one of them gates on "
+   "Section 9.5. Rules run from most specific to least specific and every one of them gates on "
    "the study state, so that no consultant discusses a tracing nobody has ordered and none "
    "discusses a result that has not come back. Each has a pending tier, because with a "
    "ten-second turnaround there is a real window in which the ECG is ordered and not resulted.\n\n"

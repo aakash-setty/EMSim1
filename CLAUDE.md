@@ -10,8 +10,9 @@ is right. Both are kept short on purpose: the files they point to are the author
 Read, in this order, and in full:
 
 1. `docs/case-design-guide.md`. What a case is for, and what we refuse.
-2. `docs/case-authoring-requirements.md`. The rules. Section 0, then section 16, then
-   the rest as section 16 points into it.
+2. `docs/case-authoring-requirements.md`. The rules. Part One in full, section 0 first
+   and section 13 (the route) second. Part Two one section at a time, only for the
+   mechanisms the case uses, as section 14 says.
 3. `README.md`, the sections "Trust", "Working on a case" and "Things that have gone
    wrong before".
 4. `docs/generated/field-reference.md`. Every case field, who reads it, what the learner

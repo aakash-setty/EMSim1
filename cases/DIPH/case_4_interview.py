@@ -9,7 +9,7 @@ the mother answers in the patient's place. Every answer below is her voice.
 
 Three consequences, and the second is the one a reviewer should push on.
 
-1. Section 10.4 still holds and is easier to hold. The mother uses lay language because she
+1. Section 8.4 still holds and is easier to hold. The mother uses lay language because she
    is a lay person, and she cannot report a laboratory value or a vital sign because she has
    not been told any. She does not name a diagnosis anywhere.
 2. The history does not disappear when the patient's alertness falls. In every other pack an
@@ -449,19 +449,19 @@ AUTHORING_NOTES = {
    "answer is written in the third person about her daughter, so that a resident who typed a "
    "question meant for the patient can tell from the first reply who they are talking to."),
  "alertness_gating": (
-   "Section 10.5. The condition language has no alertness predicate, so alertness is reached "
+   "Section 8.5. The condition language has no alertness predicate, so alertness is reached "
    "through the phases that carry it. Three phases sit at alertness 2 or above and all three are "
    "named in the global rule, along with the halted phase. If a phase is added later at "
    "alertness 2 or 3 the validator will catch it."),
  "speech_gating": (
-   "Section 10.5's second gate, speech limited by distress, does not apply here and this is the "
+   "Section 8.5's second gate, speech limited by distress, does not apply here and this is the "
    "one place where the mother-as-historian makes authoring easier rather than harder. The "
    "person answering is not the person who is short of breath, so no topic needs a second "
    "clipped answer for a distressed phase, and the doubling of interview effort that section "
    "10.5 warns about does not happen. What replaces it is a different cost: the history is "
    "available in phases where every other pack would have withdrawn it."),
  "diagnosis_disclosure": (
-   "Section 10.4. The mother never names a diagnosis, never uses a clinical word, and never "
+   "Section 8.4. The mother never names a diagnosis, never uses a clinical word, and never "
    "reports a number she could not have been told. She names Benadryl, which is a brand on a "
    "bottle her son is holding rather than a diagnosis, and she names it only in answer to a "
    "question about what was found. She does not connect it to how her daughter is behaving, and "
@@ -479,7 +479,7 @@ AUTHORING_NOTES = {
    "Nothing in the case's management depends on the disclosure. Sodium bicarbonate is indicated "
    "by the ECG and not by the history, and that is the point being made."),
  "required_coverage": (
-   "Section 10.2. Onset, timing and progression, past medical and surgical history, current "
+   "Section 8.2. Onset, timing and progression, past medical and surgical history, current "
    "medications, allergies, social history including substance use, family history, last oral "
    "intake and pregnancy status are all present. Location, radiation, character and severity are "
    "collapsed into one topic, pain_anywhere, because the presenting problem is confusion rather "
@@ -489,7 +489,7 @@ AUTHORING_NOTES = {
    "care are not authored: she is eighteen, previously well, and the presentation does not make "
    "them live."),
  "pertinent_negatives": (
-   "Section 10.3. Fifteen topics exist to be denied: fever and infection, headache, neck "
+   "Section 8.3. Fifteen topics exist to be denied: fever and infection, headache, neck "
    "stiffness, rash, head injury, seizure history, diabetes, vomiting, abdominal pain, pain "
    "anywhere, urinary symptoms, chest symptoms, breathing, travel and contacts, and previous "
    "self-harm. Each has an explicit denial rather than falling through to the out-of-scope "
@@ -511,7 +511,7 @@ KEY_TOPICS = ["bottle_or_pills_found", "what_she_took", "medicines_in_the_house"
 
 
 # ---- further hand-written variants ----
-# Section 10.1 asks for ten to twenty paraphrases per topic and the validator warns below
+# Section 8.1 asks for ten to twenty paraphrases per topic and the validator warns below
 # ten. These are hand-written like the ones in the topic() calls above, kept separate only
 # because they were added in a second pass. They are not generated and they are not the
 # expansion library: the generated phrasings live in the EXPANDED block below and are

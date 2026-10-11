@@ -92,7 +92,7 @@ PATIENT = {
    "Twenty-four year old woman, two days of vomiting and diarrhea, says she feels weak and "
    "can't keep fluids down. She looked dry and worn out so I brought her straight through."),
  "handover_authoring_note": (
-   "Section 3.2. Two sentences, 31 words. No vital sign, no past history, no medication, "
+   "Section 2.3. Two sentences, 31 words. No vital sign, no past history, no medication, "
    "no pertinent negative. It leaves out the diabetes on purpose: the triage nurse did not "
    "ask, and the learner finds it by asking or by checking a sugar."),
  "avatar": {"build": "thin"},
@@ -126,7 +126,7 @@ ANY_INSULIN = "flag insulin_given set"
 RUNNING = "flag insulin_running set"
 HELD = "flag insulin_stopped set"
 # Two hidden case actions carry "when" for the phase machine, because no flag can
-# (authoring 6.8 and 8.2). Nothing presses them. Each is credited through also_satisfies
+# (authoring 19 and 8.2). Nothing presses them. Each is credited through also_satisfies
 # on the real insulin orders, with a condition on the phase at the moment of the order.
 #   early_insulin    any rapid insulin ordered in the arrival phase
 #   insulin_restart  an infusion or a subcutaneous dose ordered in the recovering phase

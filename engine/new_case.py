@@ -48,7 +48,7 @@ def skeleton(prefix, title):
             "final_diagnosis": todo("3.1", "diagnosis catalog id, not free text"),
             "target_level": [todo("3.1", "medical_student | intern | junior_resident | senior_resident")],
             "estimated_runtime_seconds": 480,
-            "learning_objectives": [todo("3.1", "three to six objectives")],
+            "learning_objectives": [todo("2.1", "three to six goals, each with a source")],
             "care_setting": {
                 "label": "Quaternary care, Level 1 trauma centre",
                 "detail": ("Adult emergency department. Full laboratory, imaging and blood bank on "
@@ -100,7 +100,7 @@ def skeleton(prefix, title):
                 # the finding: a resident who can hear that the beat is uneven before
                 # they read the tracing has learned something the monitor cannot show.
                 "rhythm": "regular",
-                # What the monitor's single lead looks like (authoring 6.0b). Every field
+                # What the monitor's single lead looks like (authoring 5.2). Every field
                 # is optional and the whole block may be omitted: a phase with none draws
                 # a narrow complex with P waves at the authored rate. Author it wherever
                 # the tracing is part of the finding, from the same numbers as the ECG
@@ -155,6 +155,8 @@ def skeleton(prefix, title):
                 "catalog_id": "handoff_submit",
                 "display_name": "Submit handoff",
                 "tag": [{"when": None, "value": "neutral"}],
+                "state_changing": True,
+                "flags_set": ["handoff_submitted"],
                 "debrief_note": "Ends the case.",
             }
         ],
@@ -193,13 +195,13 @@ def skeleton(prefix, title):
             # v0.9. What is also true of the patient and appropriate to name beside the
             # primary at handover: {catalog_id, label, explanation}. The learner lists as
             # many diagnoses as apply; each of these earns credit when named beside the
-            # primary and is printed in the debrief when it is not. Authoring 12.1.
+            # primary and is printed in the debrief when it is not. Authoring 10.2.
             "additional_diagnoses": [],
         },
         "debrief_configuration": {
             "intended_path": ["presentation", "improving", "case_complete"],
             # v0.9. Read by the summary's Physical score when no exam is tagged critical
-            # or recommended. Authoring 13.0.
+            # or recommended. Authoring 10.4.
             "key_exams": [],
             "clinical_domains": [
                 {"id": "examination", "label": "Physical examination", "actions": []},
@@ -215,14 +217,16 @@ def skeleton(prefix, title):
 
 BINDING_MAP = {
     "map_version": "0.1",
-    "status": "SKELETON. One row per case action. See section 7.2.",
+    "status": "SKELETON. One row per case action. See authoring 6.2.",
     "how_to_read": {
         "catalog_id equals case_id": "exact, nothing to review",
         "catalog_id differs": "mapped; the note says why, and it needs the author's signature",
-        "catalog_id null": "unmatched; a validator error and a catalog change request",
+        "catalog_id null": "unmatched; a validator warning, an error if the note starts BLOCKING",
     },
     "rows": [{"case_id": "handoff_submit", "catalog_id": None,
-              "note": "The catalog has no handoff action; listed in its own known_gaps."}],
+              "note": "The catalog has no handoff action; listed in its own known_gaps.",
+              "unmatched_placement": {"tab": "handoff", "group": "Not in the catalog"},
+              "unmatched_narration": "I'll get the notes together for the unit."}],
 }
 
 SCENARIOS = {
@@ -296,7 +300,7 @@ Fill this in before any drafting. Section numbers refer to
 - Working title:
 - Chief complaint, patient's words:
 - Final diagnosis (diagnosis catalog id):
-- Learning objectives (three to six):
+- Learning goals (three to six, each with its source, authoring 2.1):
 - Target level:
 
 ## 3.2 Patient
@@ -311,7 +315,7 @@ Fill this in before any drafting. Section numbers refer to
 - The full handover, for the review packet only:
 - The care setting, if it is not a quaternary centre:
 
-## 3.3 Phases (three to six clinical, plus the two terminals)
+## 3.3 Phases (as few as the truth allows, usually four to ten, plus case_complete; halted only with a harmful tag)
 For each: label, one-line description, and the six vital signs.
 At least one resolution phase. A deterioration phase if deterioration is plausible.
 **Every deterioration branch needs an exit action that exists in the catalog.**

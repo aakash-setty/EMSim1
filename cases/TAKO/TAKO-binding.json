@@ -77,7 +77,7 @@
    "case_id": "consult_activate_cath_lab",
    "catalog_id": null,
    "status": "unmatched",
-   "note": "Case-only button on the Consults tab, on the directing physician's instruction of 6 October 2026. Not in the catalog. Authoring 7.1 permits a case-only action by recorded decision. Its spoken phrases are voice_phrases on the case action."
+   "note": "Case-only button on the Consults tab, on the directing physician's instruction of 6 October 2026. Not in the catalog. Authoring 6.1 permits a case-only action by recorded decision. Its spoken phrases are voice_phrases on the case action."
   },
   {
    "case_id": "heparin_bolus_drip",
@@ -270,7 +270,7 @@
    "case_id": "chest_rechecked",
    "catalog_id": null,
    "status": "unmatched",
-   "note": "Not a catalog action and not a button. The target of the follow-up recheck_lungs_after_fluid. A chest examination, a lung ultrasound or a chest film taken after fluid credits it through also_satisfies (authoring 8.2). Hidden from every tab and from search."
+   "note": "Not a catalog action and not a button. The target of the follow-up recheck_lungs_after_fluid. A chest examination, a lung ultrasound or a chest film taken after fluid credits it through also_satisfies (authoring 22.2). Hidden from every tab and from search."
   },
   {
    "case_id": "handoff_submit",

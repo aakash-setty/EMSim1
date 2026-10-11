@@ -93,7 +93,7 @@ PATIENT = {
 # Every non-terminal phase's oxygen saturation is the UNSUPPORTED baseline. Positive
 # pressure adds up to eight points through four staged vital effects, and supplemental
 # oxygen adds three or five, so any of these numbers with a mask on will read higher.
-# Authoring 6.1: if a phase is rebased wrongly the gain is counted twice.
+# Authoring 16: if a phase is rebased wrongly the gain is counted twice.
 # Every phase in this case defaults to an irregularly irregular beat, because the
 # patient is in atrial fibrillation from the moment he arrives and is still in it when
 # he is handed over: not converting is explicitly not a failure here, so there is no
@@ -112,7 +112,7 @@ def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp,
       "appearance": {"distress_level": distress, "alertness_level": alert,
                      "pupil_size": pupil, "pupil_reactivity": react},
       "rhythm": rhythm,
-      # The monitor's lead (authoring 6.0b), looked up by phase id from ECG below so the
+      # The monitor's lead (authoring 5.2), looked up by phase id from ECG below so the
       # picture and the phase's ECG report are authored from one set of numbers.
       **({"ecg": ECG[pid]} if pid in ECG else {}),
       "terminal": terminal, "transitions": transitions,

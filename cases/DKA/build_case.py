@@ -124,7 +124,7 @@ COVERAGE = {
    "note": "Either route is bicarbonate for a pH of 7.27."},
 }
 
-# Case-only actions that nothing presses (authoring 6.8, 6.9 and 8.2). Each needs a
+# Case-only actions that nothing presses (authoring 19, 6.9 and 8.2). Each needs a
 # placement or the build does not create it. The handoff tab draws no button and the
 # microphone does not read it. hidden keeps them out of search.
 HIDDEN_TARGETS = {

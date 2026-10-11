@@ -184,7 +184,7 @@
    "case_id": "sedation_after_tube",
    "catalog_id": null,
    "status": "unmatched",
-   "note": "Not a catalog action and not a button. Nothing presses it. A sedative or analgesic bolus given with the tube in credits it through also_satisfies, and the post-intubation sedation follow-up is discharged by it (authoring 8.2). Hidden from every tab and from search."
+   "note": "Not a catalog action and not a button. Nothing presses it. A sedative or analgesic bolus given with the tube in credits it through also_satisfies, and the post-intubation sedation follow-up is discharged by it (authoring 22.2). Hidden from every tab and from search."
   },
   {
    "case_id": "remove_vaginal_foreign_body",
@@ -219,7 +219,7 @@
    "case_id": "stop_norepinephrine",
    "catalog_id": "stop_norepinephrine",
    "status": "exact",
-   "note": "v0.24 audit. The stop entry of every infusion that sets pressor_running. One case action refuses all five, so no stop button is an unscored way round the lesson (authoring 3.4).",
+   "note": "v0.24 audit. The stop entry of every infusion that sets pressor_running. One case action refuses all five, so no stop button is an unscored way round the lesson (authoring 2.5).",
    "also_covers": [
     "stop_dopamine",
     "stop_epinephrine",
@@ -306,7 +306,7 @@
    "case_id": "furosemide_40_mg_iv",
    "catalog_id": "furosemide_40_mg_iv",
    "status": "exact",
-   "note": "v0.24 audit. Bound through the catalog's loop diuretic group, so the tag follows the group as the catalog grows (authoring 3.4)."
+   "note": "v0.24 audit. Bound through the catalog's loop diuretic group, so the tag follows the group as the catalog grows (authoring 2.5)."
   },
   {
    "case_id": "lumbar_puncture",

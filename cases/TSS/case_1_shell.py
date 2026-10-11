@@ -93,11 +93,11 @@ PATIENT = {
    "Twenty-two year old, two days of vomiting and diarrhea, says she thinks it was something "
    "she ate. Her roommate drove her in after she nearly passed out in the shower this morning."),
  "handover_authoring_note": (
-   "Section 3.2. Two sentences, 32 words, in a triage nurse's voice. No vital sign, no past "
+   "Section 2.3. Two sentences, 32 words, in a triage nurse's voice. No vital sign, no past "
    "history, no medication, no pertinent negative. 'Something she ate' is the patient's own "
    "wrong explanation, repeated by the nurse who heard it, and it is there on purpose: the "
    "case opens with the misleading story already in the room. The fever, the rash and the "
-   "period are all left for the learner to find. Section 14.3 says the handover names no "
+   "period are all left for the learner to find. Section 11.5 says the handover names no "
    "diagnosis in clinical or lay words. 'Something she ate' is a lay diagnosis, it is wrong, "
    "and it is a recorded exception (TSS-SEED.md, known gaps)."),
 }
@@ -138,7 +138,7 @@ SOURCE = "flag source_removed set"
 # continues.
 # v0.24 audit, on every narration in this file. A timed narration is spoken at the moment
 # the monitor changes, and the monitor shows the destination phase's numbers plus every
-# vital effect acting there (authoring 9.5). Rate control acts in every phase, and fluid,
+# vital effect acting there (authoring 7.3). Rate control acts in every phase, and fluid,
 # a push-dose vasopressor and a vasopressor without fluid act in the low phases, so every
 # destination can carry an effect and no narration quotes a figure. Each keeps the
 # direction. "Pressure" is judged on the mean arterial pressure. TSS-tests.js folds each

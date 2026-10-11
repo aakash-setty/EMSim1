@@ -81,7 +81,7 @@
   "arrival_handover": "Sixty-eight year old man, heart's been racing since yesterday and he's got more and more winded with it. His daughter called us this morning when he had to stop halfway across the living room."
  },
  "phase_notes": {
-  "count_justification": "Six clinical phases, which is the ceiling in section 3.3, and each one is a state a learner can actually reach and a reviewer has to read. They are the two axes of this case crossed: whether the breathing is supported and whether the rate is controlled, giving arrival, breathing supported alone, rate controlled alone, and both; plus the deterioration branch for a patient whose breathing was never supported, and the ventilated phase.",
+  "count_justification": "Six clinical phases, which was the ceiling the authoring document set at the time, and each one is a state a learner can actually reach and a reviewer has to read. They are the two axes of this case crossed: whether the breathing is supported and whether the rate is controlled, giving arrival, breathing supported alone, rate controlled alone, and both; plus the deterioration branch for a patient whose breathing was never supported, and the ventilated phase.",
   "deterioration_path": "Two time-guarded transitions, both guarded on positive pressure not having been applied: 240 seconds from arrival and 120 seconds from the rate-controlled-but-congested phase. Both land in respiratory failure, which has exits and is not terminal. The clock cannot end this case: a learner who does nothing at all reaches respiratory failure and stays there. That was the author's explicit instruction and it is the reason no transition in this case carries allow_time_to_terminal.",
   "rate_control_delay": "The two transitions that follow rate control carry a 10-second guard_true delay, so the ventricular rate falls about ten seconds after the drug rather than on the click. Without it the case teaches that rate control is instantaneous. The delay is paired with a nurse line said the moment the drug goes in, because a delay on its own reads as the drug having failed and invites a second dose; the line is what carries the lesson and the delay is what stops the number being a button. It was thirty seconds until v0.9; the validator's thirty-second floor is a fairness rule for deteriorations and does not apply to a delayed consequence of the resident's own action, as the transition rationale records."
  },
@@ -2032,7 +2032,7 @@
  "prerequisite_semantics_note": "A prerequisite is a requirement that must already hold, not a condition that blocks. Two are authored here beyond the catalog defaults: positive pressure requires that the patient is not already intubated, and synchronized cardioversion requires that he has been given something for sedation, because he is awake and talking.",
  "content_keys": {
   "exam": {
-   "authoring_note": "Section 11.2. Twelve of the fourteen catalog maneuvers are authored; genitourinary and back inherit the catalog default. Peripheral edema sits on the cardiovascular examination and jugular venous pressure on the neck, per exam_finding_routing, not where a clinician would instinctively look for them.",
+   "authoring_note": "Section 9.2. Twelve of the fourteen catalog maneuvers are authored; genitourinary and back inherit the catalog default. Peripheral edema sits on the cardiovascular examination and jugular venous pressure on the neck, per exam_finding_routing, not where a clinician would instinctively look for them.",
    "exam_airway": [
     {
      "when": "phase is intubated",
@@ -2291,7 +2291,7 @@
    ]
   },
   "general_status": {
-   "authoring_note": "Section 11.3. Rendered above the exam list and not clickable, so it is the one examination finding every learner sees. Kept consistent with the neurological examination and with the appearance values in each phase.",
+   "authoring_note": "Section 9.3. Rendered above the exam list and not clickable, so it is the one examination finding every learner sees. Kept consistent with the neurological examination and with the appearance values in each phase.",
    "rules": [
     {
      "when": "phase is intubated",
@@ -2430,7 +2430,7 @@
    ]
   },
   "labs": {
-   "authoring_note": "Section 11.4. Structured payloads with abnormal flags set by the author, not computed by the renderer. Reference intervals are assay- and institution-specific and every one of them is awaiting a physician's signature; see the review packet.",
+   "authoring_note": "Section 9.4. Structured payloads with abnormal flags set by the author, not computed by the renderer. Reference intervals are assay- and institution-specific and every one of them is awaiting a physician's signature; see the review packet.",
    "basic_chemistry_chem_7": {
     "changes_with_state": false,
     "rules": [
@@ -2966,7 +2966,7 @@
    }
   },
   "imaging": {
-   "authoring_note": "Section 11.4. Reports freeze at the state in which they were ordered, so a tracing taken before rate control still reads 160 when it arrives after.\n\nFINDINGS ONLY. No report in this case carries an interpretation line, and that is an authoring decision rather than an oversight. Naming the rhythm, calling the ST depression rate-related, or concluding that the B-lines are cardiogenic is the resident's work, and a report that does it for them removes the task the case exists to set. The reasoning that used to sit at the end of these reports has not been lost; it is in the debrief note on each study, which is where a learner reads it after they have committed to an answer rather than before.\n\nThey are also deliberately short. A resident who has to read eight sentences to find the ejection fraction is spending attention on comprehension rather than on management, and length in a report reads as importance, so a long report about a negative study is actively misleading.",
+   "authoring_note": "Section 9.4. Reports freeze at the state in which they were ordered, so a tracing taken before rate control still reads 160 when it arrives after.\n\nFINDINGS ONLY. No report in this case carries an interpretation line, and that is an authoring decision rather than an oversight. Naming the rhythm, calling the ST depression rate-related, or concluding that the B-lines are cardiogenic is the resident's work, and a report that does it for them removes the task the case exists to set. The reasoning that used to sit at the end of these reports has not been lost; it is in the debrief note on each study, which is where a learner reads it after they have committed to an answer rather than before.\n\nThey are also deliberately short. A resident who has to read eight sentences to find the ejection fraction is spending attention on comprehension rather than on management, and length in a report reads as importance, so a long report about a negative study is actively misleading.",
    "ecg_12_lead": {
     "changes_with_state": true,
     "result_shape": "structured",
@@ -3114,7 +3114,7 @@
    }
   },
   "consultants": {
-   "authoring_note": "Section 11.5. Ordered most specific to least specific, with a pending tier per study rather than per group, so a consultant never claims to be looking at something that has not come back.",
+   "authoring_note": "Section 9.5. Ordered most specific to least specific, with a pending tier per study rather than per group, so a consultant never claims to be looking at something that has not come back.",
    "consult_cardiology": [
     {
      "when": "study ultrasound_cardiac resulted AND study ecg_12_lead resulted AND flag rate_control_adequate set",
@@ -3173,11 +3173,11 @@
  },
  "interview": {
   "authoring_notes": {
-   "alertness_gating": "Section 10.5. The condition language has no alertness predicate, so alertness is reached indirectly through the phases that carry it. Only the intubated phase in this case is at alertness 2 or above, and the global rule names it. If a phase is added later at alertness 2 or 3 the validator will catch it; do not remove that check.",
-   "speech_gating": "Section 10.5 covers alertness and not speech limited by respiratory distress, which is the commoner problem. This patient is deliberately authored as able to complete a short sentence on arrival, per the seed, so the arrival phase gets the full answer. What he cannot do is talk in the respiratory failure phase, so every topic carries a second, clipped answer for that phase with the pauses marked by ellipses. That is two answers per topic rather than the three a case with a distressed arrival would need.",
-   "diagnosis_disclosure": "Section 10.4. He never names a rhythm, an ejection fraction or heart failure, because he has never been told any of them and the case turns on the resident finding them. He does describe his heartbeat in lay terms, which is his own sensation and not a diagnosis, and he does describe the coronary calcification found on a CT three years ago, which is a past diagnosis he was given and is entitled to know. He offers the barbecue and the extra beers spontaneously, framed as a question, because that is how patients volunteer a precipitant, and it is not an assertion that alcohol caused this.",
+   "alertness_gating": "Section 8.5. The condition language has no alertness predicate, so alertness is reached indirectly through the phases that carry it. Only the intubated phase in this case is at alertness 2 or above, and the global rule names it. If a phase is added later at alertness 2 or 3 the validator will catch it; do not remove that check.",
+   "speech_gating": "Section 8.5 covers alertness and not speech limited by respiratory distress, which is the commoner problem. This patient is deliberately authored as able to complete a short sentence on arrival, per the seed, so the arrival phase gets the full answer. What he cannot do is talk in the respiratory failure phase, so every topic carries a second, clipped answer for that phase with the pauses marked by ellipses. That is two answers per topic rather than the three a case with a distressed arrival would need.",
+   "diagnosis_disclosure": "Section 8.4. He never names a rhythm, an ejection fraction or heart failure, because he has never been told any of them and the case turns on the resident finding them. He does describe his heartbeat in lay terms, which is his own sensation and not a diagnosis, and he does describe the coronary calcification found on a CT three years ago, which is a past diagnosis he was given and is entitled to know. He offers the barbecue and the extra beers spontaneously, framed as a question, because that is how patients volunteer a precipitant, and it is not an assertion that alcohol caused this.",
    "precipitant_note": "The case authors three plausible contributors and settles none of them: a weekend alcohol load two days before onset, undiagnosed obstructive sleep apnea, and a cardiomyopathy that may be the cause of the arrhythmia or its consequence. A resident who takes a full history finds all three. Deciding between them is not the emergency department's task and the case does not score it.",
-   "coverage": "Every topic in the section 10.2 minimum list is authored except pregnancy status, which does not apply to a sixty-eight year old man; a resident who asks gets the out-of-scope response. Location and radiation of pain are folded into the chest pain topic because the pain being asked about does not exist, and a denial is the whole content."
+   "coverage": "Every topic in the section 8.2 minimum list is authored except pregnancy status, which does not apply to a sixty-eight year old man; a resident who asks gets the out-of-scope response. Location and radiation of pain are folded into the chest pain topic because the pain being asked about does not exist, and a denial is the whole content."
   },
   "global_answer_rules": [
    {

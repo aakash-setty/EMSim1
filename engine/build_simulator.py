@@ -64,7 +64,8 @@ CE = {x["id"]: x for x in catalog["entries"]}
 # The Patient tab was removed. It printed the whole authored background before the
 # learner had asked for any of it; the two-sentence EMS or triage handover now sits at
 # the top of History. See docs/arrival-and-history-change.md.
-TAB_ORDER = ["history", "exam", "stabilization",
+# v0.26, author instruction: Stabilization is the top tab and the one a case opens on.
+TAB_ORDER = ["stabilization", "history", "exam",
              "investigations", "interventions", "consultations", "handoff"]
 TAB_LABEL = {"history": "History", "exam": "Exam",
              "investigations": "Investigations", "stabilization": "Stabilization",
@@ -102,6 +103,14 @@ def action_base(ce):
             if p.get("tab") == tab and p.get("group") and p.get("group") != group]
     if more:
         rec["groups"] = [group] + more
+    # v0.26. A subgroup inside the first placement's group, a composite's constituents,
+    # and an entry hidden from the menus. See catalog/build_catalog.py, "v0.26 layout".
+    if pl.get("subgroup"):
+        rec["subgroup"] = pl["subgroup"]
+    if ce.get("performs"):
+        rec["performs"] = ce["performs"]
+    if ce.get("menu_hidden"):
+        rec["menu_hidden"] = True
     for k, out in [("state_changing", "state_changing"), ("turnaround_class", "turnaround_class"),
                    ("narration_template", "narration_template"), ("default_result", "default_result"),
                    ("default_prerequisites", "default_prerequisites"),
@@ -140,7 +149,13 @@ shared = {
     # in a single group each, where an accordion would add a click and hide nothing.
     "collapsibleTabs": ["interventions", "investigations", "stabilization"],
     "groupOrder": {"stabilization": ["Stabilization", "Nursing", "Vascular Access", "Oxygen",
-                                     "Intubation", "Intubation Drugs", "Fluids", "Pacer/Defib"]},
+                                     "Intubation", "Fluids", "Pacer/Defib"]},
+    # v0.26. Order of the subgroups inside a group. Entries with no subgroup come first.
+    # A group listed in subgroupTabs draws its subgroups as sub-tabs, one showing at a
+    # time. Any other group draws them as headings inside the one folder.
+    "subgroupOrder": {"Imaging": ["CT", "X-ray", "Ultrasound", "MRI"],
+                      "Intubation": ["Medications"]},
+    "subgroupTabs": ["Imaging"],
     # Groups that render already open the first time their tab is opened. Stabilization
     # holds the three acts that come first in any resuscitation, and one of them now
     # gates the monitor, so making the resident click a header to find them buries the
@@ -208,8 +223,7 @@ shared = {
                                        "she does. This is the honest test of whether you would have "
                                        "acted unaided.")},
             "easy": {"label": "Easy", "prompt_multiplier": 1,
-                     "description": ("The nurse prompts at the case's own deadlines. Choose this if "
-                                     "the case is unfamiliar.")},
+                     "description": "More prompts from the nurse."},
         },
     },
     # How the debrief opens, and how long the monitor holds on a terminal phase before
@@ -387,7 +401,8 @@ shared["reflect"] = {
     "atSeconds": 180,
     "title": "Pause: consider your differential diagnosis.",
     "body": ("Consider the implications of each. What do you need to check or give?"),
-    "placeholder": "Optional free text area for your use",
+    "placeholder": "Your differential diagnosis (optional)",
+    "placeholder2": "What you need to check or give (optional)",
     "_note": ("Fires once per case at atSeconds of case time, wherever the case has got to. "
               "It does not fire after the case has ended, and the note is not scored, not "
               "logged and not read by the engine."),

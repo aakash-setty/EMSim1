@@ -260,7 +260,7 @@ DEFAULTS = {
 # ============================================================================
 # DEFAULT EXAM FINDINGS
 # ============================================================================
-# case-authoring-requirements.md section 11: "Author only maneuvers whose
+# case-authoring-requirements.md section 9.2: "Author only maneuvers whose
 # findings are abnormal or that change with treatment. Everything else inherits
 # the global normal finding." This is that global normal finding.
 #
@@ -270,7 +270,7 @@ DEFAULTS = {
 # US EM resident would expect a normal maneuver to report.
 #
 # Exams are reads: they never change state (design principle 4) and are never
-# narrated (section 9.1). They may be repeated freely and return current state.
+# narrated (section 7.1). They may be repeated freely and return current state.
 #
 # The 14 entries here are the complete set. There is no fifteenth exam. The
 # generator fails if an exam has no default or a default has no exam, so this
@@ -285,6 +285,9 @@ EXAM_DEFAULTS = {
 "exam_airway": exam("Patent. Speaking in full sentences. No stridor or swelling."),
 "exam_breath": exam("Normal rate and effort. Symmetric chest rise. No accessory muscle use."),
 "exam_circ": exam("Warm, well perfused. Capillary refill under 2 seconds. Pulses equal."),
+# v0.26. The composite is never logged by the interface, which logs the three above in its
+# place. This default exists only so the catalog's every-exam-has-a-default rule holds.
+"exam_abc": exam("Airway patent. Normal rate and effort of breathing. Warm and well perfused."),
 "exam_heent": exam("Pupils equal and reactive. Moist mucous membranes. Oropharynx clear."),
 "exam_neck": exam("Supple. No JVD. Trachea midline. No lymphadenopathy."),
 "exam_card": exam("Regular rate and rhythm. No murmur, rub or gallop. No edema."),

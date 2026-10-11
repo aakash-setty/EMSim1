@@ -99,7 +99,7 @@ PATIENT = {
    "Eighteen year old, her mom found her like this when she got in from work about an hour ago. "
    "She's been fighting us the whole way in and she's burning up."),
  "handover_authoring_note": (
-   "Section 3.2. Two sentences, 32 words, no vital sign, no past history, no medication, no "
+   "Section 2.3. Two sentences, 32 words, no vital sign, no past history, no medication, no "
    "allergy, no pertinent negative and no word that names a diagnosis. It is deliberately worse "
    "than the ems_handover_text above it: the crew knows more than this, and a resident who wants "
    "it has to ask for it. 'Burning up' is a lay description of what anyone touching her would "
@@ -108,7 +108,7 @@ PATIENT = {
 
 # ---------------------------------------------------------------- phases
 #
-# Six clinical phases and three terminals. Section 3.3 caps the clinical count at six and
+# Six clinical phases and three terminals. The authoring document capped the clinical count at six at the time, and
 # this case uses all six, so there is deliberately NO separate intubated phase. Intubation
 # sets a flag, moves the saturation through a vital effect and changes the airway and
 # general-status content, and it does not change the phase. Two reasons, and the second is
@@ -120,7 +120,7 @@ PATIENT = {
 #      Here the historian is the mother, who is standing in the corridor and is not sedated.
 #      Gating the history on the patient's airway would be wrong. See case_4_interview.
 #
-# Oxygen saturation in every phase is the UNSUPPORTED baseline (section 6.1). A cannula, a
+# Oxygen saturation in every phase is the UNSUPPORTED baseline (section 16). A cannula, a
 # non-rebreather and an endotracheal tube each add to it through vital effects that share one
 # key, so they replace one another rather than stacking. Temperature in every phase is the
 # UNCOOLED baseline; active cooling subtracts 0.9 through its own effect. If either is
@@ -141,7 +141,7 @@ def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp,
       "appearance": {"distress_level": distress, "alertness_level": alert,
                      "pupil_size": pupil, "pupil_reactivity": react},
       "rhythm": rhythm,
-      # The monitor's lead (authoring 6.0b), looked up by phase id from ECG below so the
+      # The monitor's lead (authoring 5.2), looked up by phase id from ECG below so the
       # picture and the phase's ECG report are authored from one set of numbers.
       **({"ecg": ECG[pid]} if pid in ECG else {}),
       "terminal": terminal, "transitions": transitions,
@@ -209,7 +209,7 @@ HANDOFF_T = {"when": "action handoff_submit taken", "to": "case_complete",
 SEIZURE_RATIONALE = (
   "The author writes, of the seizure: 'A seizure will occur as part of the natural process, "
   "regardless of how well the examinee is doing.' That is a scheduled natural history in the "
-  "sense of authoring section 5.1, and the rule carries no guard, exactly as she wrote it. "
+  "sense of authoring section 15.1, and the rule carries no guard, exactly as she wrote it. "
   "The clinical claim behind it is hers: a patient four hours into a diphenhydramine "
   "ingestion large enough to widen the QRS is going to seize. The deadline is her own four "
   "minutes, carried at its authored value.\n\n"

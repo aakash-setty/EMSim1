@@ -121,7 +121,8 @@
     "Remove Vaginal Foreign Body added under Procedures on author instruction for the toxic shock case (v0.21). Not from a screenshot; carries source=author-supplied. It is inert in every case that does not bind it.",
     "Nursing group added under Stabilization on author instruction, not from a screenshot: droplet, contact and airborne precautions, warming measures and cooling measures. Each sets a flag of its own name and asserts nothing clinical.",
     "attach_monitor carries reveals_vitals. The interface shows no vitals and plays no heartbeat until an action carrying this flag has been taken.",
-    "Physostigmine added to Meds - Tox on author instruction for the diphenhydramine case. Not transcribed from any screenshot; carries source=author-supplied. It is an intravenous push and is not in NON_IV, so it inherits the vascular-access prerequisite like every other intravenous drug."
+    "Physostigmine added to Meds - Tox on author instruction for the diphenhydramine case. Not transcribed from any screenshot; carries source=author-supplied. It is an intravenous push and is not in NON_IV, so it inherits the vascular-access prerequisite like every other intravenous drug.",
+    "v0.26 layout on author instruction (11 October 2026), placement only: airway, breathing and circulation exams hidden from the menus and performed together by the composite exam_abc on Stabilization; Start Chest Compressions moved to Nursing; Intubation Drugs folded into Intubation under the subgroup Medications; Imaging split into the subgroups CT, X-ray, Ultrasound and MRI, with the bedside ultrasounds moved into it. No ids, results or prerequisites changed."
   ],
   "known_gaps": [
     "Meds - Respiratory truncated in screenshot: only Albuterol and Ipratropium visible, list continues.",
@@ -187,6 +188,7 @@
       "flags_set_default": [],
       "short_code": "AIRWAY",
       "repeatable": true,
+      "menu_hidden": true,
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
@@ -211,6 +213,7 @@
       "flags_set_default": [],
       "short_code": "BREATH",
       "repeatable": true,
+      "menu_hidden": true,
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
@@ -235,6 +238,7 @@
       "flags_set_default": [],
       "short_code": "CIRC",
       "repeatable": true,
+      "menu_hidden": true,
       "default_result": {
         "kind": "exam_findings",
         "abnormal": false,
@@ -507,6 +511,36 @@
       }
     },
     {
+      "id": "exam_abc",
+      "display_name": "Airway, Breathing and Circulation Exam",
+      "placements": [
+        {
+          "tab": "stabilization",
+          "group": null
+        }
+      ],
+      "category": "exam",
+      "state_changing": false,
+      "dose_required": false,
+      "turnaround_class": null,
+      "narration_template": null,
+      "default_prerequisites": [],
+      "flags_set_default": [],
+      "short_code": "ABC",
+      "repeatable": true,
+      "performs": [
+        "exam_airway",
+        "exam_breath",
+        "exam_circ"
+      ],
+      "source": "author-supplied, not in screenshots (v0.26)",
+      "default_result": {
+        "kind": "exam_findings",
+        "abnormal": false,
+        "findings": "Airway patent. Normal rate and effort of breathing. Warm and well perfused."
+      }
+    },
+    {
       "id": "insert_iv",
       "display_name": "Insert IV",
       "placements": [
@@ -549,7 +583,7 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": null
+          "group": "Nursing"
         }
       ],
       "category": "stabilization",
@@ -1126,7 +1160,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Intubation Drugs"
+          "group": "Intubation",
+          "subgroup": "Medications"
         },
         {
           "tab": "interventions",
@@ -1153,7 +1188,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Intubation Drugs"
+          "group": "Intubation",
+          "subgroup": "Medications"
         },
         {
           "tab": "interventions",
@@ -1182,7 +1218,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Intubation Drugs"
+          "group": "Intubation",
+          "subgroup": "Medications"
         },
         {
           "tab": "interventions",
@@ -1215,7 +1252,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Intubation Drugs"
+          "group": "Intubation",
+          "subgroup": "Medications"
         },
         {
           "tab": "interventions",
@@ -1248,7 +1286,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Intubation Drugs"
+          "group": "Intubation",
+          "subgroup": "Medications"
         },
         {
           "tab": "interventions",
@@ -1281,7 +1320,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Intubation Drugs"
+          "group": "Intubation",
+          "subgroup": "Medications"
         },
         {
           "tab": "interventions",
@@ -1310,7 +1350,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Intubation Drugs"
+          "group": "Intubation",
+          "subgroup": "Medications"
         },
         {
           "tab": "interventions",
@@ -1339,7 +1380,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Intubation Drugs"
+          "group": "Intubation",
+          "subgroup": "Medications"
         },
         {
           "tab": "interventions",
@@ -1575,7 +1617,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Bedside Tests"
+          "group": "Imaging",
+          "subgroup": "Ultrasound"
         }
       ],
       "category": "investigation",
@@ -1598,7 +1641,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Bedside Tests"
+          "group": "Imaging",
+          "subgroup": "Ultrasound"
         }
       ],
       "category": "investigation",
@@ -1621,7 +1665,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Bedside Tests"
+          "group": "Imaging",
+          "subgroup": "Ultrasound"
         }
       ],
       "category": "investigation",
@@ -1644,7 +1689,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Bedside Tests"
+          "group": "Imaging",
+          "subgroup": "Ultrasound"
         }
       ],
       "category": "investigation",
@@ -1667,7 +1713,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Bedside Tests"
+          "group": "Imaging",
+          "subgroup": "Ultrasound"
         }
       ],
       "category": "investigation",
@@ -1690,7 +1737,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Bedside Tests"
+          "group": "Imaging",
+          "subgroup": "Ultrasound"
         }
       ],
       "category": "investigation",
@@ -1713,7 +1761,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Bedside Tests"
+          "group": "Imaging",
+          "subgroup": "Ultrasound"
         }
       ],
       "category": "investigation",
@@ -1736,7 +1785,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Bedside Tests"
+          "group": "Imaging",
+          "subgroup": "Ultrasound"
         }
       ],
       "category": "investigation",
@@ -3462,7 +3512,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "CT"
         }
       ],
       "category": "investigation",
@@ -3485,7 +3536,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "CT"
         }
       ],
       "category": "investigation",
@@ -3508,7 +3560,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "CT"
         }
       ],
       "category": "investigation",
@@ -3531,7 +3584,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "CT"
         }
       ],
       "category": "investigation",
@@ -3554,7 +3608,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "CT"
         }
       ],
       "category": "investigation",
@@ -3577,7 +3632,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "CT"
         }
       ],
       "category": "investigation",
@@ -3600,7 +3656,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "CT"
         }
       ],
       "category": "investigation",
@@ -3623,7 +3680,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "MRI"
         }
       ],
       "category": "investigation",
@@ -3646,7 +3704,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "MRI"
         }
       ],
       "category": "investigation",
@@ -3669,7 +3728,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "MRI"
         }
       ],
       "category": "investigation",
@@ -3692,7 +3752,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "MRI"
         }
       ],
       "category": "investigation",
@@ -3715,7 +3776,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "X-ray"
         }
       ],
       "category": "investigation",
@@ -3738,7 +3800,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Imaging"
+          "group": "Imaging",
+          "subgroup": "X-ray"
         }
       ],
       "category": "investigation",

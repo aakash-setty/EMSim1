@@ -84,6 +84,27 @@ baseline are in `docs/cold-start-test.md`. What has landed:
   `catalog/`, outside the three frozen interview scripts.
 - README: a case's history lives in its own folder (SEED decisions, review packet).
   `CHANGELOG.md` gives a new case one line.
+- `docs/case-authoring-requirements.md` rewritten (12 October 2026). Part One is the core,
+  read for every case: how the case runs, who decides what, the seed, the condition
+  language, phases, vitals and the monitor, actions and tags, the nurse, the interview,
+  content, handoff and debrief, the checks and the sign-off, the limits, and the route.
+  Part Two is one section per optional mechanism, read only when the case uses it. Every
+  rule is labeled Engine (the code requires it), Truth (the case would otherwise say
+  something false) or Default (our usual choice, departed from with a reason in the SEED).
+  The 21 owner decisions of 9 October are applied: no phase count rule (guidance of four to
+  ten), the clock as a seldom-used tool, halts allowed and sparing, three to six goals with
+  sources, prompts name the problem by default, floors as the only hard timing rule,
+  handover rules as defaults except "no diagnosis", topic coverage kept, model-added
+  denials listed, section 17 as the ordinary route, and no priority-order sentence. The
+  design guide's seed requirements are in section 2 and the sign-off. 27,900 tokens, from
+  48,700. Section numbers are remapped everywhere they are cited.
+- Validator: a non-terminal phase needs a transition into `case_complete`; a narration on
+  an instant transition warns; the correct and alternative diagnosis ids must resolve; a
+  `waived` string that names no catalog prerequisite warns; the two-sentence handover is a
+  warning; `global_answer_rules` may be empty. Nine tests.
+- The splash says "Time is compressed. Results return in seconds, not hours."
+- The scaffold's `handoff_submit` carries its placement, `state_changing` and flag.
+- Kit budget lowered to 65,000 tokens.
 
 ---
 

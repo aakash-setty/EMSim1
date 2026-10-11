@@ -52,7 +52,7 @@ CASE = {
  "patient": PATIENT,
  "phase_notes": {
    "count_justification": (
-     "Six clinical phases, which is the ceiling in section 3.3, and three terminals. The six are "
+     "Six clinical phases, which was the ceiling the authoring document set at the time, and three terminals. The six are "
      "the author's timed scenario crossed with the two axes the case turns on: whether the "
      "seizure has been treated and whether the sodium-channel blockade has been treated. "
      "Arrival, seizing, post-ictal, the wide-complex branch for a blockade nobody treated, and "
@@ -65,7 +65,7 @@ CASE = {
    "the_seizure": (
      "The one transition in this case with no guard. The author writes that a seizure occurs as "
      "part of the natural process regardless of how well the examinee is doing, so it is "
-     "authored as a scheduled natural history at her own four minutes. Section 5.1 requires an "
+     "authored as a scheduled natural history at her own four minutes. Section 15.1 requires an "
      "unguarded_rationale for exactly this construct, and hers is quoted in it.\n\n"
      "It is unguarded and, since 5 September 2026, not unavoidable. The rule listed above it "
      "moves a patient who has received both sodium bicarbonate and a benzodiazepine out of the arrival phase after ten "
@@ -88,7 +88,7 @@ CASE = {
      "case reaches cardiac arrest, and that is a decision the seed records rather than an "
      "oversight. Sodium bicarbonate is prompted for in every phase on that path."),
    "the_two_delayed_consequences": (
-     "Bicarbonate narrows the QRS ten seconds after it is given rather than on the click, in the arrival, post-ictal and wide-complex phases alike. These are delayed consequences of the resident's own action in the sense of section 5.1, so the five-second "
+     "Bicarbonate narrows the QRS ten seconds after it is given rather than on the click, in the arrival, post-ictal and wide-complex phases alike. These are delayed consequences of the resident's own action in the sense of section 15.1, so the five-second "
      "floor applies rather than the thirty-second one. The bicarbonate delay is paired with a "
      "nurse_alert said the instant the drug goes in, because a delay with no explanation reads "
      "as a drug that has failed."),
@@ -117,7 +117,7 @@ CASE = {
    "Three. Post-intubation sedation applies only if she has been intubated. The two bicarbonate "
    "obligations apply only once bicarbonate has been given, and both use satisfied_when rather "
    "than satisfied_by, because each is an obligation to do something again and a repeat of the "
-   "triggering action cannot be expressed as set membership (authoring 8.2). They are discharged "
+   "triggering action cannot be expressed as set membership (authoring 22.2). They are discharged "
    "by the flags that the second administration grants."),
  "prompt_cap_recommendation": {
    "per_phase": 4,

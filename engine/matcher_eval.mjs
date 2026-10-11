@@ -73,7 +73,7 @@ const END = '/* ---------- fusion of the lexical and semantic matchers ---------
 const si = html.indexOf(START), ei = html.indexOf(END);
 if (si < 0 || ei < 0 || ei < si) {
   console.error('could not extract the matcher from the build: the marker comments in engine/ui.js changed.\n'
-    + 'Fix the markers here rather than pasting a copy of the matcher: section 10.6 requires\n'
+    + 'Fix the markers here rather than pasting a copy of the matcher: section 8.6 requires\n'
     + 'that the evaluation runs the matcher that ships.');
   process.exit(1);
 }
@@ -344,7 +344,7 @@ for (const pack of PACKS) {
     if (WANT_SWEEP) {
       if (!tune.length) {
         console.log('\n    --sweep skipped: no tuning set. Sweeping on the held-out set and then quoting it');
-        console.log('    measures memorisation (section 10.6). Create cases/' + pack.prefix + '/' + pack.prefix + '-matcher-tune-questions.json.');
+        console.log('    measures memorisation (section 8.6). Create cases/' + pack.prefix + '/' + pack.prefix + '-matcher-tune-questions.json.');
       } else {
         console.log('\n    sweep ON THE TUNING SET, shipped matchQuestion with FUSE overridden');
         console.log('    cells: correct / wrong / fell / out-of-scope answered anyway');

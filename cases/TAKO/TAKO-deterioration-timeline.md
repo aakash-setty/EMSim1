@@ -39,7 +39,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 - guard: `flag inotrope_given set OR flag nitrate_given set`
 - destination vitals: HR 124, BP 82/50, RR 24, SpO2 95%, T 36.9
 - narration: “Her pressure has fallen and her rate is up. She's gone gray and I can hear that murmur from here.”
-- author rationale: Added on 7 October 2026 to close a race between timed rules (authoring 5.4). A nitrate or an inotrope given less than ten seconds before the scripted fall, with fluid and a vasoconstrictor already running, used to send her straight to steadied with the wrong drug's effect on the monitor and a nurse line that said her pressure was holding. Now the fall happens first and the wrong drug acts from the obstructed phase, as it does at every other time. Same clock as the two rules below, so the owner's 180 seconds is unchanged. A positive guard, so it asks for no prompt. Model output.
+- author rationale: Added on 7 October 2026 to close a race between timed rules (authoring 15.4). A nitrate or an inotrope given less than ten seconds before the scripted fall, with fluid and a vasoconstrictor already running, used to send her straight to steadied with the wrong drug's effect on the monitor and a nurse line that said her pressure was holding. Now the fall happens first and the wrong drug acts from the obstructed phase, as it does at every other time. Same clock as the two rules below, so the owner's 180 seconds is unchanged. A positive guard, so it asks for no prompt. Model output.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
@@ -118,7 +118,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 - guard: `NOT flag fluids_given set OR NOT flag vasoconstrictor_running set`
 - destination vitals: HR 138, BP 70/42, RR 28, SpO2 93%, T 36.8
 - narration: “She's getting worse. Her rate is up, her pressure is down and she's not making sense.”
-- author rationale: Deterioration on inaction. The nurse recommends cardiology at 20 seconds, fluid at 45 and a vasoconstrictor at 60. In the default mode those are 60, 135 and 180 seconds, so all three are spoken before this rule fires at 240 (authoring 9.7). Four minutes is a drafting judgment.
+- author rationale: Deterioration on inaction. The nurse recommends cardiology at 20 seconds, fluid at 45 and a vasoconstrictor at 60. In the default mode those are 60, 135 and 180 seconds, so all three are spoken before this rule fires at 240 (authoring 7.4). Four minutes is a drafting judgment.
 
 Prompts in this phase that set fluids_given, vasoconstrictor_running, which is what the fairness rule requires:
 

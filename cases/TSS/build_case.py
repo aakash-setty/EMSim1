@@ -45,7 +45,7 @@ CASE = {
  "patient": PATIENT,
  "phase_notes": {
    "count_justification": (
-     "Six clinical phases, the ceiling in section 3.3, and one terminal. They are the natural "
+     "Six clinical phases, the ceiling the authoring document set at the time, and one terminal. They are the natural "
      "history (compensated, transient response to fluid, hypotensive) crossed with what the "
      "learner has done about it (a vasopressor with the source in, the source out) plus one "
      "deterioration for a learner who does neither."),
@@ -135,7 +135,7 @@ COVERAGE = {
                    "stop_dopamine"],
    "note": ("v0.24 audit. The stop entry of every infusion that sets pressor_running. One "
             "case action refuses all five, so no stop button is an unscored way round the "
-            "lesson (authoring 3.4)."),
+            "lesson (authoring 2.5)."),
  },
  "normal_saline_infusion": {
    "also_covers": ["lactated_ringer_s_infusion"],
@@ -161,12 +161,12 @@ COVERAGE = {
  "furosemide_40_mg_iv": {
    "also_covers_group": "loop_diuretic",
    "note": ("v0.24 audit. Bound through the catalog's loop diuretic group, so the tag "
-            "follows the group as the catalog grows (authoring 3.4)."),
+            "follows the group as the catalog grows (authoring 2.5)."),
  },
 }
 
 # Case actions that are not catalog entries and are not buttons. Each needs a row with a
-# placement on the handoff tab or the build does not create it (authoring 6.9 and 8.2).
+# placement on the handoff tab or the build does not create it (authoring 20 and 8.2).
 HIDDEN_ROWS = {
  "attempt_discharge": {
    "note": ("Not a catalog action and not a button. Logged by the Handoff tab when "
@@ -176,7 +176,7 @@ HIDDEN_ROWS = {
  "sedation_after_tube": {
    "note": ("Not a catalog action and not a button. Nothing presses it. A sedative or "
             "analgesic bolus given with the tube in credits it through also_satisfies, and "
-            "the post-intubation sedation follow-up is discharged by it (authoring 8.2). "
+            "the post-intubation sedation follow-up is discharged by it (authoring 22.2). "
             "Hidden from every tab and from search."),
    "unmatched_narration": "Sedation is running."},
 }

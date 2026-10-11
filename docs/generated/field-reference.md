@@ -28,160 +28,160 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `authored_against.design_guide` | none | never |  | Reviewer note. Nothing reads it |
 | `authored_against.diagnosis_catalog` | tools | never |  | Reviewer note. Nothing reads it |
 | `authored_against.system_design` | tools | never |  | Reviewer note. Nothing reads it |
-| `case_actions[].also_covers_group` | tools | never | 3.4 | Reviewer note. Coverage itself is authored in the binding map (also_covers) |
-| `case_actions[].also_satisfies[].id` | generic | no | 6.8 | Another case action credited as done when this one is taken and `when` holds, judged before this action's flags |
-| `case_actions[].also_satisfies[].when` | generic | no | 6.8 | Condition, or null for always |
+| `case_actions[].also_covers_group` | tools | never | 2.5 | Reviewer note. Coverage itself is authored in the binding map (also_covers) |
+| `case_actions[].also_satisfies[].id` | generic | no | 19 | Another case action credited as done when this one is taken and `when` holds, judged before this action's flags |
+| `case_actions[].also_satisfies[].when` | generic | no | 19 | Condition, or null for always |
 | `case_actions[].binding_note` | none | never |  | Reviewer note. Nothing reads it |
-| `case_actions[].catalog_id` | engine+build+validator+tools | button | 7.1 | The case id of the action. Usually the catalog id; the binding map says otherwise. Used in conditions and content keys. Underscores removed as a fallback button name |
-| `case_actions[].debrief_note` | engine+validator+tools | debrief | 13 | The expander under the action. Marker-stripped. Every tagged action needs one |
-| `case_actions[].display_name` | engine+build+validator+tools | button+chart+debrief | 7.1 | Overrides the catalog name everywhere. IGNORED on a sibling covered through also_covers, which keeps its own catalog name |
-| `case_actions[].expectation_label` | engine | end+debrief | 7.1 | The name used in the critical-action lists on the gate and in the debrief, where the button name would be wrong (a hidden target, a covering action) |
-| `case_actions[].flags_set` | engine+validator+tools | no | 7.1 | Permanent flags, merged with the catalog's flags_set_default. Granted by any state-changing action. Exams and interview topics never grant them. A consult grants them unless the case sets state_changing: false |
-| `case_actions[].flags_set_repeat[].after_administrations` | engine+validator+tools | no | 6.5 | At least 2 |
-| `case_actions[].flags_set_repeat[].counter` | generic | no | 6.5 | The tally this administration adds to. Defaults to the act, so covered siblings share it |
-| `case_actions[].flags_set_repeat[].flag` | generic | no | 6.5 | Granted permanently on the Nth administration |
-| `case_actions[].flags_set_timed[].duration_seconds` | engine+validator+tools | no | 6.2 | From the administration. A repeat extends to the later deadline |
-| `case_actions[].flags_set_timed[].flag` | generic | no | 6.2 | A flag that lapses. A permanent grant of the same flag wins in either order. Expiry re-checks transitions |
-| `case_actions[].follow_ups_triggered` | engine+validator | no | 8.2 | Ids in follow_ups that this press schedules. THIS is the field the engine reads; follow_ups[].triggered_by is read by the validator only. Author both |
-| `case_actions[].halt_reason` | engine+validator+tools | nurse+end | 7.3 | Spoken and printed when the tag resolves harmful. Needs a `halted` phase to exist. Not marker-stripped. If absent the end screen prints 'This action halted the case.' and the nurse says nothing |
-| `case_actions[].hidden` | generic | no | 6.9 | Removes the action from global search only. It is still drawn, and reachable by voice, on any tab that draws action buttons (the ordering tabs, exam and consultations). A hidden target needs a placement on `handoff` or `history` to have no button and no voice phrase |
-| `case_actions[].narration_override` | engine | nurse | 9.1 | Replaces the catalog's acknowledgement line for this action in this case. Borrowed by covered siblings |
+| `case_actions[].catalog_id` | engine+build+validator+tools | button | 6.1 | The case id of the action. Usually the catalog id; the binding map says otherwise. Used in conditions and content keys. Underscores removed as a fallback button name |
+| `case_actions[].debrief_note` | engine+validator+tools | debrief | 10.3 | The expander under the action. Marker-stripped. Every tagged action needs one |
+| `case_actions[].display_name` | engine+build+validator+tools | button+chart+debrief | 6.1 | Overrides the catalog name everywhere. IGNORED on a sibling covered through also_covers, which keeps its own catalog name |
+| `case_actions[].expectation_label` | engine | end+debrief | 6.1 | The name used in the critical-action lists on the gate and in the debrief, where the button name would be wrong (a hidden target, a covering action) |
+| `case_actions[].flags_set` | engine+validator+tools | no | 6.1 | Permanent flags, merged with the catalog's flags_set_default. Granted by any state-changing action. Exams and interview topics never grant them. A consult grants them unless the case sets state_changing: false |
+| `case_actions[].flags_set_repeat[].after_administrations` | engine+validator+tools | no | 18 | At least 2 |
+| `case_actions[].flags_set_repeat[].counter` | generic | no | 18 | The tally this administration adds to. Defaults to the act, so covered siblings share it |
+| `case_actions[].flags_set_repeat[].flag` | generic | no | 18 | Granted permanently on the Nth administration |
+| `case_actions[].flags_set_timed[].duration_seconds` | engine+validator+tools | no | 17 | From the administration. A repeat extends to the later deadline |
+| `case_actions[].flags_set_timed[].flag` | generic | no | 17 | A flag that lapses. A permanent grant of the same flag wins in either order. Expiry re-checks transitions |
+| `case_actions[].follow_ups_triggered` | engine+validator | no | 22.2 | Ids in follow_ups that this press schedules. THIS is the field the engine reads; follow_ups[].triggered_by is read by the validator only. Author both |
+| `case_actions[].halt_reason` | engine+validator+tools | nurse+end | 6.3 | Spoken and printed when the tag resolves harmful. Needs a `halted` phase to exist. Not marker-stripped. If absent the end screen prints 'This action halted the case.' and the nurse says nothing |
+| `case_actions[].hidden` | generic | no | 20 | Removes the action from global search only. It is still drawn, and reachable by voice, on any tab that draws action buttons (the ordering tabs, exam and consultations). A hidden target needs a placement on `handoff` or `history` to have no button and no voice phrase |
+| `case_actions[].narration_override` | engine | nurse | 7.1 | Replaces the catalog's acknowledgement line for this action in this case. Borrowed by covered siblings |
 | `case_actions[].no_vital_effect_note` | none | never |  | Reviewer note. Nothing reads it |
-| `case_actions[].nurse_alert` | engine | nurse+chart | 9.1 | A second line after the catalog's own, filed in the chart, said again on a repeat. Borrowed by covered siblings. Not a prompt: no slot, no trill |
+| `case_actions[].nurse_alert` | engine+validator | nurse+chart | 7.1 | A second line after the catalog's own, filed in the chart, said again on a repeat. Borrowed by covered siblings. Not a prompt: no slot, no trill |
 | `case_actions[].prerequisite_overrides[].author_rationale` | engine+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `case_actions[].prerequisite_overrides[].source` | generic | never |  | Reviewer note. Nothing reads it |
-| `case_actions[].prerequisite_overrides[].waived` | engine+tools | no | 8.1 | The exact text of a catalog default prerequisite to drop. Matched by string equality |
-| `case_actions[].prerequisites[].failure_message` | engine+validator+tools | nurse+chart | 8.1 | Spoken when the action is blocked, in the nurse's voice. The attempt is logged and nothing changes |
-| `case_actions[].prerequisites[].source` | generic | never | 8.1 | Reviewer note |
-| `case_actions[].prerequisites[].when` | generic | no | 8.1 | Added to the catalog's defaults. Write the requirement, not the block. A condition that does not parse PASSES |
-| `case_actions[].prompt.deadline_seconds` | engine+validator+tools | no | 9.4 | From phase entry. Multiplied by 3 in the default (normal) mode. The validator warns only when the raw value lands at or past the earliest phase-entry timed exit; the x3 is not checked, so check it yourself (9.7) |
-| `case_actions[].prompt.escalation.deadline_seconds` | engine+validator+tools | no | 9.4 | From phase entry, multiplied like the first |
-| `case_actions[].prompt.escalation.text` | generic | nurse+chart+sound | 9.4 | A second line later. Does not count against the cap |
-| `case_actions[].prompt.guard` | generic | no | 9.4 | Section 4 condition read once, at the deadline. A prompt that cites a study must guard on it |
-| `case_actions[].prompt.text` | generic | nurse+chart+sound | 9.4 | One string, spoken in every phase where the action is critical on entry and its guard allows. Must be true in all of them, quote no vital sign, and imply no trajectory |
+| `case_actions[].prerequisite_overrides[].waived` | engine+validator+tools | no | 22.1 | The exact text of a catalog default prerequisite to drop. Matched by string equality |
+| `case_actions[].prerequisites[].failure_message` | engine+validator+tools | nurse+chart | 22.1 | Spoken when the action is blocked, in the nurse's voice. The attempt is logged and nothing changes |
+| `case_actions[].prerequisites[].source` | generic | never | 22.1 | Reviewer note |
+| `case_actions[].prerequisites[].when` | generic | no | 22.1 | Added to the catalog's defaults. Write the requirement, not the block. A condition that does not parse PASSES |
+| `case_actions[].prompt.deadline_seconds` | engine+validator+tools | no | 7.2 | From phase entry. Multiplied by 3 in the default (normal) mode. The validator warns only when the raw value lands at or past the earliest phase-entry timed exit; the x3 is not checked, so check it yourself (9.7) |
+| `case_actions[].prompt.escalation.deadline_seconds` | engine+validator+tools | no | 7.2 | From phase entry, multiplied like the first |
+| `case_actions[].prompt.escalation.text` | generic | nurse+chart+sound | 7.2 | A second line later. Does not count against the cap |
+| `case_actions[].prompt.guard` | generic | no | 7.2 | Section 4 condition read once, at the deadline. A prompt that cites a study must guard on it |
+| `case_actions[].prompt.text` | generic | nurse+chart+sound | 7.2 | One string, spoken in every phase where the action is critical on entry and its guard allows. Must be true in all of them, quote no vital sign, and imply no trajectory |
 | `case_actions[].prompt_removed_note` | none | never |  | Reviewer note. Nothing reads it |
-| `case_actions[].references` | generic | debrief | 13 | Printed under the note; one trailing bracketed marker removed |
+| `case_actions[].references` | generic | debrief | 10.3 | Printed under the note; one trailing bracketed marker removed |
 | `case_actions[].schema_note` | none | never |  | Reviewer note. Nothing reads it |
-| `case_actions[].state_changing` | engine+build+validator+tools | no | 7.1 | Read only where the catalog entry carries no value, which is consults and case-only actions, where the default is true. Its one effect is false: the action becomes observational and grants no flags, no tag, no effects. Ignored on an entry the catalog marks true, and on every exam |
-| `case_actions[].tag[].value` | generic | debrief | 7.3 | One of the five tags. Shown as a pill in the debrief timeline |
-| `case_actions[].tag[].when` | generic | no | 7.3 | Section 4 condition, or null for the default |
+| `case_actions[].state_changing` | engine+build+validator+tools | no | 6.1 | Read only where the catalog entry carries no value, which is consults and case-only actions, where the default is true. Its one effect is false: the action becomes observational and grants no flags, no tag, no effects. Ignored on an entry the catalog marks true, and on every exam |
+| `case_actions[].tag[].value` | generic | debrief | 6.3 | One of the five tags. Shown as a pill in the debrief timeline |
+| `case_actions[].tag[].when` | generic | no | 6.3 | Section 4 condition, or null for the default |
 | `case_actions[].turnaround_override_rationale` | none | never |  | Reviewer note. Nothing reads it |
-| `case_actions[].turnaround_override_seconds` | engine | no | 11.4 | Result delay for this study in this case, instead of the catalog class |
-| `case_actions[].vital_effects[].delta` | generic | monitor | 6.1 | Added to the phase baseline while the effect acts. Terminal phases ignore it |
-| `case_actions[].vital_effects[].duration_seconds` | engine+validator+tools | no | 6.1 | From the administration, so it must outlast onset |
-| `case_actions[].vital_effects[].key` | generic | no | 6.1 | Effects sharing a key do not stack. Two routes to one drug must share one key |
-| `case_actions[].vital_effects[].note` | generic | never | 6.1 | Why this size. Printed nowhere |
-| `case_actions[].vital_effects[].onset_seconds` | engine+validator+tools | no | 6.3 | Delay before the effect starts, from the administration |
-| `case_actions[].vital_effects[].vital` | generic | monitor | 6.1 | One of the six vitals |
-| `case_actions[].vital_effects[].while` | generic | no | 6.1 | Condition re-evaluated continuously. One that does not parse stays active |
-| `case_actions[].voice_phrases` | engine+validator+tools | no | 7.1 | Whole phrases that reach this action by voice in this case, ahead of the global table. Not inherited by covered siblings |
-| `case_id` | engine+build+validator+tools | list | 3.1 | Pack id. Shown on the case list only when complaint and working_title are both missing |
+| `case_actions[].turnaround_override_seconds` | engine | no | 9.4 | Result delay for this study in this case, instead of the catalog class |
+| `case_actions[].vital_effects[].delta` | generic | monitor | 16 | Added to the phase baseline while the effect acts. Terminal phases ignore it |
+| `case_actions[].vital_effects[].duration_seconds` | engine+validator+tools | no | 16 | From the administration, so it must outlast onset |
+| `case_actions[].vital_effects[].key` | generic | no | 16 | Effects sharing a key do not stack. Two routes to one drug must share one key |
+| `case_actions[].vital_effects[].note` | generic | never | 16 | Why this size. Printed nowhere |
+| `case_actions[].vital_effects[].onset_seconds` | engine+validator+tools | no | 16.1 | Delay before the effect starts, from the administration |
+| `case_actions[].vital_effects[].vital` | generic | monitor | 16 | One of the six vitals |
+| `case_actions[].vital_effects[].while` | generic | no | 16 | Condition re-evaluated continuously. One that does not parse stays active |
+| `case_actions[].voice_phrases` | engine+validator+tools | no | 6.1 | Whole phrases that reach this action by voice in this case, ahead of the global table. Not inherited by covered siblings |
+| `case_id` | engine+build+validator+tools | list | 2.2 | Pack id. Shown on the case list only when complaint and working_title are both missing |
 | `catalog_change_requests[].detail` | generic | never |  | Reviewer note. Nothing reads it |
 | `catalog_change_requests[].id` | generic | never |  | Reviewer note. Nothing reads it |
 | `catalog_change_requests[].severity` | generic | never |  | Reviewer note. Nothing reads it |
-| `content_keys.consultants.<id>.rules[].value` | generic | chart | 11.5 | Rule list whose value is a plain string. Resolved live. Needs a pending tier per study |
-| `content_keys.consultants.<id>.rules[].when` | generic | chart | 11.5 | Rule list whose value is a plain string. Resolved live. Needs a pending tier per study |
+| `content_keys.consultants.<id>.rules[].value` | generic | chart | 9.5 | Rule list whose value is a plain string. Resolved live. Needs a pending tier per study |
+| `content_keys.consultants.<id>.rules[].when` | generic | chart | 9.5 | Rule list whose value is a plain string. Resolved live. Needs a pending tier per study |
 | `content_keys.exam.<id>.rules[].prose` | validator | never |  | Reviewer note. Nothing reads it |
-| `content_keys.exam.<id>.rules[].value.abnormal` | generic | chart | 11.2 | {kind: exam_findings, abnormal, findings}. About 15 words, findings first |
-| `content_keys.exam.<id>.rules[].value.findings` | generic | chart | 11.2 | {kind: exam_findings, abnormal, findings}. About 15 words, findings first |
-| `content_keys.exam.<id>.rules[].value.kind` | generic | chart | 11.2 | {kind: exam_findings, abnormal, findings}. About 15 words, findings first |
-| `content_keys.exam.<id>.rules[].when` | generic | chart | 11.2 | Rule list for one of the 14 maneuvers. Resolved live at the click. A maneuver not authored returns the catalog's normal finding |
+| `content_keys.exam.<id>.rules[].value.abnormal` | generic | chart | 9.2 | {kind: exam_findings, abnormal, findings}. About 15 words, findings first |
+| `content_keys.exam.<id>.rules[].value.findings` | generic | chart | 9.2 | {kind: exam_findings, abnormal, findings}. About 15 words, findings first |
+| `content_keys.exam.<id>.rules[].value.kind` | generic | chart | 9.2 | {kind: exam_findings, abnormal, findings}. About 15 words, findings first |
+| `content_keys.exam.<id>.rules[].when` | generic | chart | 9.2 | Rule list for one of the 14 maneuvers. Resolved live at the click. A maneuver not authored returns the catalog's normal finding |
 | `content_keys.general_status.authoring_note` | engine+validator+tools | never |  | Reviewer note. Nothing reads it |
-| `content_keys.general_status.rules[].value.abnormal` | generic | chart | 11.3 | The always-visible line above the exam. Resolved live. Default 'No acute distress. GCS 15.' when absent or when no rule matches |
-| `content_keys.general_status.rules[].value.findings` | generic | chart | 11.3 | The always-visible line above the exam. Resolved live. Default 'No acute distress. GCS 15.' when absent or when no rule matches |
-| `content_keys.general_status.rules[].value.kind` | generic | chart | 11.3 | The always-visible line above the exam. Resolved live. Default 'No acute distress. GCS 15.' when absent or when no rule matches |
-| `content_keys.general_status.rules[].when` | generic | chart | 11.3 | The always-visible line above the exam. Resolved live. Default 'No acute distress. GCS 15.' when absent or when no rule matches |
+| `content_keys.general_status.rules[].value.abnormal` | generic | chart | 9.3 | The always-visible line above the exam. Resolved live. Default 'No acute distress. GCS 15.' when absent or when no rule matches |
+| `content_keys.general_status.rules[].value.findings` | generic | chart | 9.3 | The always-visible line above the exam. Resolved live. Default 'No acute distress. GCS 15.' when absent or when no rule matches |
+| `content_keys.general_status.rules[].value.kind` | generic | chart | 9.3 | The always-visible line above the exam. Resolved live. Default 'No acute distress. GCS 15.' when absent or when no rule matches |
+| `content_keys.general_status.rules[].when` | generic | chart | 9.3 | The always-visible line above the exam. Resolved live. Default 'No acute distress. GCS 15.' when absent or when no rule matches |
 | `content_keys.imaging.<id>.author_note` | validator | never |  | Reviewer note. Nothing reads it |
 | `content_keys.imaging.<id>.changes_with_state` | none | never |  | Reviewer note. Nothing reads it |
 | `content_keys.imaging.<id>.result_shape` | none | never |  | Reviewer note. Nothing reads it |
 | `content_keys.imaging.<id>.rules[].prose` | validator | never |  | Reviewer note. Nothing reads it |
-| `content_keys.imaging.<id>.rules[].value.abnormal` | generic | chart | 11.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
-| `content_keys.imaging.<id>.rules[].value.caption` | generic | chart | 11.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
-| `content_keys.imaging.<id>.rules[].value.image` | generic | chart | 11.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
-| `content_keys.imaging.<id>.rules[].value.kind` | generic | chart | 11.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
-| `content_keys.imaging.<id>.rules[].value.report` | generic | chart | 11.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
+| `content_keys.imaging.<id>.rules[].value.abnormal` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
+| `content_keys.imaging.<id>.rules[].value.caption` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
+| `content_keys.imaging.<id>.rules[].value.image` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
+| `content_keys.imaging.<id>.rules[].value.kind` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
+| `content_keys.imaging.<id>.rules[].value.report` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
 | `content_keys.imaging.<id>.rules[].value.verify` | generic | never |  | Reviewer note. Nothing reads it |
-| `content_keys.imaging.<id>.rules[].when` | generic | chart | 11.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
+| `content_keys.imaging.<id>.rules[].when` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
 | `content_keys.imaging.<id>.verify` | generic | never |  | Reviewer note. Nothing reads it |
 | `content_keys.labs.<id>.author_note` | validator | never |  | Reviewer note. Nothing reads it |
 | `content_keys.labs.<id>.changes_with_state` | none | never |  | Reviewer note. Nothing reads it |
 | `content_keys.labs.<id>.engine_limitation_note` | none | never |  | Reviewer note. Nothing reads it |
 | `content_keys.labs.<id>.result_shape` | none | never |  | Reviewer note. Nothing reads it |
-| `content_keys.labs.<id>.rules[].prose` | validator | never | 11.4 | Legacy (CHFE, MGCA): the result as prose before payloads were structured. Not read. Do not author it |
-| `content_keys.labs.<id>.rules[].value.abnormal` | generic | chart | 11.4 | Authored, not computed. Must equal the OR of the components |
-| `content_keys.labs.<id>.rules[].value.comment` | engine | debrief | 11.4 | HIDDEN during play. Printed once in the debrief under 'Your results, read', and never for a report payload |
-| `content_keys.labs.<id>.rules[].value.components[].abnormal` | generic | chart | 11.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
-| `content_keys.labs.<id>.rules[].value.components[].label` | generic | chart | 11.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
-| `content_keys.labs.<id>.rules[].value.components[].reference_range` | generic | chart | 11.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
-| `content_keys.labs.<id>.rules[].value.components[].unit` | generic | chart | 11.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
-| `content_keys.labs.<id>.rules[].value.components[].value` | generic | chart | 11.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
-| `content_keys.labs.<id>.rules[].value.kind` | generic | chart | 11.4 | Rule list for a study. Resolved against the state WHEN ORDERED, delivered after the turnaround. Unauthored studies return the catalog's normal default with no error |
-| `content_keys.labs.<id>.rules[].value.report` | generic | chart | 11.4 | Text of a report payload. Findings, not conclusions |
-| `content_keys.labs.<id>.rules[].value.verify` | generic | never | 11.4 | Note to the reviewing physician |
-| `content_keys.labs.<id>.rules[].when` | generic | chart | 11.4 | Rule list for a study. Resolved against the state WHEN ORDERED, delivered after the turnaround. Unauthored studies return the catalog's normal default with no error |
-| `content_keys.patient_visual.also[].addons` | engine+build+validator+tools | figure | 6.0c | Every matching entry adds its addons. Not in the review matrix |
-| `content_keys.patient_visual.also[].when` | generic | figure | 6.0c | Every matching entry adds its addons. Not in the review matrix |
+| `content_keys.labs.<id>.rules[].prose` | validator | never | 9.4 | Legacy (CHFE, MGCA): the result as prose before payloads were structured. Not read. Do not author it |
+| `content_keys.labs.<id>.rules[].value.abnormal` | generic | chart | 9.4 | Authored, not computed. Must equal the OR of the components |
+| `content_keys.labs.<id>.rules[].value.comment` | engine | debrief | 9.4 | HIDDEN during play. Printed once in the debrief under 'Your results, read', and never for a report payload |
+| `content_keys.labs.<id>.rules[].value.components[].abnormal` | generic | chart | 9.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
+| `content_keys.labs.<id>.rules[].value.components[].label` | generic | chart | 9.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
+| `content_keys.labs.<id>.rules[].value.components[].reference_range` | generic | chart | 9.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
+| `content_keys.labs.<id>.rules[].value.components[].unit` | generic | chart | 9.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
+| `content_keys.labs.<id>.rules[].value.components[].value` | generic | chart | 9.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
+| `content_keys.labs.<id>.rules[].value.kind` | generic | chart | 9.4 | Rule list for a study. Resolved against the state WHEN ORDERED, delivered after the turnaround. Unauthored studies return the catalog's normal default with no error |
+| `content_keys.labs.<id>.rules[].value.report` | generic | chart | 9.4 | Text of a report payload. Findings, not conclusions |
+| `content_keys.labs.<id>.rules[].value.verify` | generic | never | 9.4 | Note to the reviewing physician |
+| `content_keys.labs.<id>.rules[].when` | generic | chart | 9.4 | Rule list for a study. Resolved against the state WHEN ORDERED, delivered after the turnaround. Unauthored studies return the catalog's normal default with no error |
+| `content_keys.patient_visual.also[].addons` | engine+build+validator+tools | figure | 5.3 | Every matching entry adds its addons. Not in the review matrix |
+| `content_keys.patient_visual.also[].when` | generic | figure | 5.3 | Every matching entry adds its addons. Not in the review matrix |
 | `content_keys.patient_visual.authoring_note` | engine+validator+tools | never |  | Reviewer note. Nothing reads it |
-| `content_keys.patient_visual.rules[].value.addons` | engine+build+validator+tools | figure | 6.0c | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
-| `content_keys.patient_visual.rules[].value.eyes` | engine+build+validator+tools | figure | 6.0c | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
-| `content_keys.patient_visual.rules[].value.seizure` | engine+build+validator | figure | 6.0c | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
-| `content_keys.patient_visual.rules[].value.work_of_breathing` | engine+build+validator+tools | figure | 6.0c | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
-| `content_keys.patient_visual.rules[].when` | generic | figure | 6.0c | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
+| `content_keys.patient_visual.rules[].value.addons` | engine+build+validator+tools | figure | 5.3 | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
+| `content_keys.patient_visual.rules[].value.eyes` | engine+build+validator+tools | figure | 5.3 | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
+| `content_keys.patient_visual.rules[].value.seizure` | engine+build+validator | figure | 5.3 | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
+| `content_keys.patient_visual.rules[].value.work_of_breathing` | engine+build+validator+tools | figure | 5.3 | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
+| `content_keys.patient_visual.rules[].when` | generic | figure | 5.3 | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
 | `content_keys.patient_visual.verify` | generic | never |  | Reviewer note. Nothing reads it |
 | `debrief_configuration.attempt_history_note` | none | never |  | Reviewer note. Nothing reads it |
-| `debrief_configuration.clinical_domains[].actions` | generic | never | 13.0 | id, label, actions |
-| `debrief_configuration.clinical_domains[].id` | generic | never | 13.0 | id, label, actions |
-| `debrief_configuration.clinical_domains[].label` | generic | never | 13.0 | id, label, actions |
-| `debrief_configuration.cross_cutting_teaching_points` | engine+tools | debrief | 13 | Strings or {point}. The first three print under the critical actions, the rest at the end. Marker-stripped. The object is required |
-| `debrief_configuration.intended_path` | tools | never | 14.2b | The author's intended route, for the reviewer and the scenario file. Nothing at runtime reads it |
+| `debrief_configuration.clinical_domains[].actions` | generic | never | 10.4 | id, label, actions |
+| `debrief_configuration.clinical_domains[].id` | generic | never | 10.4 | id, label, actions |
+| `debrief_configuration.clinical_domains[].label` | generic | never | 10.4 | id, label, actions |
+| `debrief_configuration.cross_cutting_teaching_points` | engine+tools | debrief | 10.3 | Strings or {point}. The first three print under the critical actions, the rest at the end. Marker-stripped. The object is required |
+| `debrief_configuration.intended_path` | tools | never | 11.3 | The author's intended route, for the reviewer and the scenario file. Nothing at runtime reads it |
 | `debrief_configuration.intended_path_note` | none | never |  | Reviewer note. Nothing reads it |
-| `debrief_configuration.key_exams` | engine+validator+tools | no | 13.0 | Physical score denominator, used only when no exam is tagged critical or recommended |
+| `debrief_configuration.key_exams` | engine+validator+tools | no | 10.4 | Physical score denominator, used only when no exam is tagged critical or recommended |
 | `debrief_configuration.key_exams_note` | none | never |  | Reviewer note. Nothing reads it |
-| `debrief_configuration.trap_actions` | build+tools | debrief | 13 | Action ids listed under 'looked reasonable and were not', only when the press was tagged neutral at the time |
+| `debrief_configuration.trap_actions` | build+tools | debrief | 10.3 | Action ids listed under 'looked reasonable and were not', only when the press was tagged neutral at the time |
 | `debrief_configuration.trap_actions_note` | none | never |  | Reviewer note. Nothing reads it |
 | `flag_namespace_note` | none | never |  | Reviewer note. Nothing reads it |
 | `follow_up_condition_note` | none | never |  | Reviewer note. Nothing reads it |
-| `follow_ups[].applies_when` | engine+validator+tools | no | 8.2 | Tested at the deadline |
-| `follow_ups[].deadline_seconds` | engine+validator+tools | no | 8.2 | From the triggering press, multiplied by difficulty |
-| `follow_ups[].debrief_note` | engine+validator+tools | debrief | 8.2 | Printed under the open obligation. Not marker-stripped |
-| `follow_ups[].id` | generic | debrief | 8.2 | Printed, underscores removed, as the heading of an open obligation in the debrief. Name it as a learner would read it |
-| `follow_ups[].nurse_prompt` | engine+validator | nurse+chart+sound | 8.2 | Spoken at the deadline. Never capped, but it takes a slot in the current phase |
-| `follow_ups[].satisfied_by` | engine+validator+tools | no | 8.2 | Ids that discharge it, meaning taken EVER in the run, before or after the trigger |
+| `follow_ups[].applies_when` | engine+validator+tools | no | 22.2 | Tested at the deadline |
+| `follow_ups[].deadline_seconds` | engine+validator+tools | no | 22.2 | From the triggering press, multiplied by difficulty |
+| `follow_ups[].debrief_note` | engine+validator+tools | debrief | 22.2 | Printed under the open obligation. Not marker-stripped |
+| `follow_ups[].id` | generic | debrief | 22.2 | Printed, underscores removed, as the heading of an open obligation in the debrief. Name it as a learner would read it |
+| `follow_ups[].nurse_prompt` | engine+validator | nurse+chart+sound | 22.2 | Spoken at the deadline. Never capped, but it takes a slot in the current phase |
+| `follow_ups[].satisfied_by` | engine+validator+tools | no | 22.2 | Ids that discharge it, meaning taken EVER in the run, before or after the trigger |
 | `follow_ups[].satisfied_by_note` | none | never |  | Reviewer note. Nothing reads it |
-| `follow_ups[].satisfied_when` | engine+validator+tools | no | 8.2 | Condition that discharges it. Use for 'again' and 'unless' |
-| `follow_ups[].triggered_by` | validator | no | 8.2 | Read by the validator. The engine fires from case_actions[].follow_ups_triggered. Author both and keep them equal |
-| `handoff.additional_diagnoses[].catalog_id` | engine+build+validator+tools | no | 12.1 | Catalog id of something also true of the patient. Credited beside the primary |
-| `handoff.additional_diagnoses[].explanation` | generic | debrief | 12.1 | The sentence you would say at the bedside about why it belongs in the handover |
-| `handoff.additional_diagnoses[].label` | generic | no | 12.1 | Fallback for resolving the catalog id. The debrief prints the catalog's display name |
+| `follow_ups[].satisfied_when` | engine+validator+tools | no | 22.2 | Condition that discharges it. Use for 'again' and 'unless' |
+| `follow_ups[].triggered_by` | validator | no | 22.2 | Read by the validator. The engine fires from case_actions[].follow_ups_triggered. Author both and keep them equal |
+| `handoff.additional_diagnoses[].catalog_id` | engine+build+validator+tools | no | 10.2 | Catalog id of something also true of the patient. Credited beside the primary |
+| `handoff.additional_diagnoses[].explanation` | generic | debrief | 10.2 | The sentence you would say at the bedside about why it belongs in the handover |
+| `handoff.additional_diagnoses[].label` | generic | no | 10.2 | Fallback for resolving the catalog id. The debrief prints the catalog's display name |
 | `handoff.additional_diagnoses_note` | none | never |  | Reviewer note. Nothing reads it |
-| `handoff.alternative_diagnoses[].catalog_id` | engine+build+validator+tools | no | 12 | Catalog id |
-| `handoff.alternative_diagnoses[].explanation` | generic | debrief | 12 | Printed if the learner named it |
-| `handoff.alternative_diagnoses[].label` | generic | no | 12 | Fallback for resolving the catalog id. The debrief prints the catalog's display name |
-| `handoff.alternative_diagnoses[].verdict` | engine+build+tools | debrief | 12 | acceptable_with_qualification is defensible; anything else incorrect |
-| `handoff.alternative_dispositions[].explanation` | generic | debrief | 12 | Printed when chosen. Not marker-stripped |
-| `handoff.alternative_dispositions[].id` | generic | no | 12 | Case-defined id |
-| `handoff.alternative_dispositions[].label` | generic | button+debrief | 12 | Button text, and the level of care named in the debrief |
-| `handoff.alternative_dispositions[].verdict` | engine+build+tools | debrief | 12 | acceptable_with_qualification earns half credit and prints as defensible; anything else is incorrect |
+| `handoff.alternative_diagnoses[].catalog_id` | engine+build+validator+tools | no | 10.1 | Catalog id |
+| `handoff.alternative_diagnoses[].explanation` | generic | debrief | 10.1 | Printed if the learner named it |
+| `handoff.alternative_diagnoses[].label` | generic | no | 10.1 | Fallback for resolving the catalog id. The debrief prints the catalog's display name |
+| `handoff.alternative_diagnoses[].verdict` | engine+build+tools | debrief | 10.1 | acceptable_with_qualification is defensible; anything else incorrect |
+| `handoff.alternative_dispositions[].explanation` | generic | debrief | 10.1 | Printed when chosen. Not marker-stripped |
+| `handoff.alternative_dispositions[].id` | generic | no | 10.1 | Case-defined id |
+| `handoff.alternative_dispositions[].label` | generic | button+debrief | 10.1 | Button text, and the level of care named in the debrief |
+| `handoff.alternative_dispositions[].verdict` | engine+build+tools | debrief | 10.1 | acceptable_with_qualification earns half credit and prints as defensible; anything else is incorrect |
 | `handoff.correct_diagnosis._note` | build | never |  | Reviewer note. Nothing reads it |
-| `handoff.correct_diagnosis.catalog_id` | engine+build+validator+tools | no | 12 | A diagnosis catalog id. Resolved by exact id, name or synonym at build; a miss is a build note, not an error |
-| `handoff.correct_diagnosis.explanation` | generic | debrief | 12 | Printed in the debrief |
-| `handoff.correct_diagnosis.label` | generic | no | 12 | A fallback the build uses to resolve the catalog id when catalog_id does not. The debrief prints the catalog's own display name |
+| `handoff.correct_diagnosis.catalog_id` | engine+build+validator+tools | no | 10.1 | A diagnosis catalog id. Resolved by exact id, name or synonym at build; a miss is a build note, not an error |
+| `handoff.correct_diagnosis.explanation` | generic | debrief | 10.1 | Printed in the debrief |
+| `handoff.correct_diagnosis.label` | generic | no | 10.1 | A fallback the build uses to resolve the catalog id when catalog_id does not. The debrief prints the catalog's own display name |
 | `handoff.correct_diagnosis.label_note` | none | never |  | Reviewer note. Nothing reads it |
-| `handoff.correct_disposition.explanation` | generic | debrief | 12 | Printed in the debrief |
-| `handoff.correct_disposition.id` | generic | no | 12 | Disposition ids are case-defined. There is no catalog of them |
-| `handoff.correct_disposition.label` | generic | button+debrief | 12 | Button text on the Handoff tab, and the level of care named in the debrief |
-| `handoff.correct_disposition.level_of_care` | none | never | 12 | Nothing reads it |
-| `handoff.diagnosis_entry_method` | none | never | 12 | Not read. Diagnoses are always entered by catalog search |
-| `handoff.disposition_display_order` | build+tools | button | 12 | Button order. Missing ids are appended with a build note |
+| `handoff.correct_disposition.explanation` | generic | debrief | 10.1 | Printed in the debrief |
+| `handoff.correct_disposition.id` | generic | no | 10.1 | Disposition ids are case-defined. There is no catalog of them |
+| `handoff.correct_disposition.label` | generic | button+debrief | 10.1 | Button text on the Handoff tab, and the level of care named in the debrief |
+| `handoff.correct_disposition.level_of_care` | none | never | 10.1 | Nothing reads it |
+| `handoff.diagnosis_entry_method` | none | never | 10.1 | Not read. Diagnoses are always entered by catalog search |
+| `handoff.disposition_display_order` | build+tools | button | 10.1 | Button order. Missing ids are appended with a build note |
 | `handoff.disposition_display_order_note` | none | never |  | Reviewer note. Nothing reads it |
-| `handoff.disposition_intercepts[].action` | generic | no | 6.9 | The hidden case action logged in its place |
+| `handoff.disposition_intercepts[].action` | generic | no | 20 | The hidden case action logged in its place |
 | `handoff.disposition_intercepts[].author_note` | validator | never |  | Reviewer note. Nothing reads it |
-| `handoff.disposition_intercepts[].disposition` | generic | no | 6.9 | A disposition that, in the named state, does not end the run |
-| `handoff.disposition_intercepts[].when` | generic | no | 6.9 | Include NOT flag <the flag> set, or that disposition can never be handed over |
-| `handoff.early_exit.available` | generic | never | 12 | Not read |
+| `handoff.disposition_intercepts[].disposition` | generic | no | 20 | A disposition that, in the named state, does not end the run |
+| `handoff.disposition_intercepts[].when` | generic | no | 20 | Include NOT flag <the flag> set, or that disposition can never be handed over |
+| `handoff.early_exit.available` | generic | never | 10.1 | Not read |
 | `handoff.early_exit.note` | generic | never |  | Reviewer note. Nothing reads it |
-| `handoff.early_exit.produces` | generic | never | 12 | Not read |
-| `handoff.pending_result_warning` | none | never | 12 | Not read. Pending results at handoff are recorded automatically |
+| `handoff.early_exit.produces` | generic | never | 10.1 | Not read |
+| `handoff.pending_result_warning` | none | never | 10.1 | Not read. Pending results at handoff are recorded automatically |
 | `interview.authoring_notes.added_denials` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.alertness_gating` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.breathlessness_gating` | none | never |  | Reviewer note. Nothing reads it |
@@ -211,69 +211,69 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `interview.authoring_notes.who_is_answering` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.facts_note` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.global_answer_rules[].note` | generic | never |  | Reviewer note. Nothing reads it |
-| `interview.global_answer_rules[].value` | generic | history+chart | 10.5 | when, value, and a note. Matched speech is filed in the running chart too |
-| `interview.global_answer_rules[].when` | generic | history+chart | 10.5 | when, value, and a note. Matched speech is filed in the running chart too |
-| `interview.key_topics` | engine+validator+tools | no | 13.0 | Denominator of the History score. Ids not in topics are dropped. Absent means every topic counts |
+| `interview.global_answer_rules[].value` | generic | history+chart | 8.5 | when, value, and a note. Matched speech is filed in the running chart too |
+| `interview.global_answer_rules[].when` | generic | history+chart | 8.5 | when, value, and a note. Matched speech is filed in the running chart too |
+| `interview.key_topics` | engine+validator+tools | no | 10.4 | Denominator of the History score. Ids not in topics are dropped. Absent means every topic counts |
 | `interview.key_topics_note` | none | never |  | Reviewer note. Nothing reads it |
-| `interview.must_ask` | engine+validator+tools | no | 10.7 | Never volunteered: safety screens and whatever the case is built around the learner discovering |
-| `interview.out_of_scope_bank` | engine+tools | no | 10.6 | Generated. Questions the case has no answer to, scored as a reserved topic. A match here gives the fallback |
+| `interview.must_ask` | engine+validator+tools | no | 24 | Never volunteered: safety screens and whatever the case is built around the learner discovering |
+| `interview.out_of_scope_bank` | engine+tools | no | 8.6 | Generated. Questions the case has no answer to, scored as a reserved topic. A match here gives the fallback |
 | `interview.out_of_scope_bank_note` | none | never |  | Reviewer note. Nothing reads it |
-| `interview.out_of_scope_fallback[].value` | generic | history | 10.6 | when and value. The value is the non-committal line in this patient's voice |
-| `interview.out_of_scope_fallback[].when` | generic | history | 10.6 | when and value. The value is the non-committal line in this patient's voice |
-| `interview.topics[].adjacent` | generic | history | 10.7 | Up to two topics whose volunteer line is added on first ask, and which then count as asked |
-| `interview.topics[].answer[].value` | generic | history+chart | 10.4 | Speech, in single quotes, lay language, never a number the patient could not know, never the diagnosis |
-| `interview.topics[].answer[].when` | generic | no | 10.1 | Section 4 condition, or null for the default. Phase rules first |
-| `interview.topics[].canonical` | generic | history | 10.1 | The reference phrasing. Asked verbatim when an interview_topic_* button exists |
-| `interview.topics[].echo` | generic | history+chart | 10.7 | Patient speech: spoken back when the match was uncertain, and in the clarifying question. Must read after 'do you mean' |
-| `interview.topics[].expanded_variants` | build | no | 10.6 | Generated by catalog/expand_interview_variants.py. Merged into variants at build time |
-| `interview.topics[].facts[].asks` | generic | history+chart | 10.7 | id, asks (match phrases), value (speech), restate (true marks the fact whose value is said on a repeat ask, else the first fact), in_answer (false keeps it untold until asked) |
-| `interview.topics[].facts[].id` | generic | history+chart | 10.7 | id, asks (match phrases), value (speech), restate (true marks the fact whose value is said on a repeat ask, else the first fact), in_answer (false keeps it untold until asked) |
-| `interview.topics[].facts[].restate` | engine+tools | history+chart | 10.7 | id, asks (match phrases), value (speech), restate (true marks the fact whose value is said on a repeat ask, else the first fact), in_answer (false keeps it untold until asked) |
-| `interview.topics[].facts[].value[].value` | generic | history+chart | 10.7 | id, asks (match phrases), value (speech), restate (true marks the fact whose value is said on a repeat ask, else the first fact), in_answer (false keeps it untold until asked) |
-| `interview.topics[].facts[].value[].when` | generic | history+chart | 10.7 | id, asks (match phrases), value (speech), restate (true marks the fact whose value is said on a repeat ask, else the first fact), in_answer (false keeps it untold until asked) |
-| `interview.topics[].pertinent_negative` | validator+tools | never | 10.3 | Validator and matcher only. Marks a topic whose answer is a denial in every phase |
-| `interview.topics[].topic` | generic | debrief | 10.1 | Topic id. Printed with underscores removed in the debrief timeline, so name it as a reader would |
-| `interview.topics[].variants` | generic | no | 10.1 | Hand-written paraphrases, never touched by tooling. Ten to twenty |
+| `interview.out_of_scope_fallback[].value` | generic | history | 8.6 | when and value. The value is the non-committal line in this patient's voice |
+| `interview.out_of_scope_fallback[].when` | generic | history | 8.6 | when and value. The value is the non-committal line in this patient's voice |
+| `interview.topics[].adjacent` | generic | history | 24 | Up to two topics whose volunteer line is added on first ask, and which then count as asked |
+| `interview.topics[].answer[].value` | generic | history+chart | 8.4 | Speech, in single quotes, lay language, never a number the patient could not know, never the diagnosis |
+| `interview.topics[].answer[].when` | generic | no | 8.1 | Section 4 condition, or null for the default. Phase rules first |
+| `interview.topics[].canonical` | generic | history | 8.1 | The reference phrasing, and the name the debrief uses for an interview_topic_* case action |
+| `interview.topics[].echo` | generic | history+chart | 24 | Patient speech: spoken back when the match was uncertain, and in the clarifying question. Must read after 'do you mean' |
+| `interview.topics[].expanded_variants` | build | no | 8.6 | Generated by catalog/expand_interview_variants.py. Merged into variants at build time |
+| `interview.topics[].facts[].asks` | generic | history+chart | 24 | id, asks (match phrases), value (speech), restate (true marks the fact whose value is said on a repeat ask, else the first fact), in_answer (false keeps it untold until asked) |
+| `interview.topics[].facts[].id` | generic | history+chart | 24 | id, asks (match phrases), value (speech), restate (true marks the fact whose value is said on a repeat ask, else the first fact), in_answer (false keeps it untold until asked) |
+| `interview.topics[].facts[].restate` | engine+tools | history+chart | 24 | id, asks (match phrases), value (speech), restate (true marks the fact whose value is said on a repeat ask, else the first fact), in_answer (false keeps it untold until asked) |
+| `interview.topics[].facts[].value[].value` | generic | history+chart | 24 | id, asks (match phrases), value (speech), restate (true marks the fact whose value is said on a repeat ask, else the first fact), in_answer (false keeps it untold until asked) |
+| `interview.topics[].facts[].value[].when` | generic | history+chart | 24 | id, asks (match phrases), value (speech), restate (true marks the fact whose value is said on a repeat ask, else the first fact), in_answer (false keeps it untold until asked) |
+| `interview.topics[].pertinent_negative` | validator+tools | never | 8.3 | Validator and matcher only. Marks a topic whose answer is a denial in every phase |
+| `interview.topics[].topic` | generic | debrief | 8.1 | Topic id. Printed with underscores removed in the debrief timeline, so name it as a reader would |
+| `interview.topics[].variants` | generic | no | 8.1 | Hand-written paraphrases, never touched by tooling. Ten to twenty |
 | `interview.topics[].variants_provenance` | none | never |  | Reviewer note. Nothing reads it |
-| `interview.topics[].volunteer[].value` | generic | history+chart | 10.7 | when and value of a phase-conditional volunteer line; a null value volunteers nothing |
-| `interview.topics[].volunteer[].when` | generic | history+chart | 10.7 | when and value of a phase-conditional volunteer line; a null value volunteers nothing |
-| `interview.volunteer_blocked_when` | engine+validator+tools | no | 10.7 | Condition under which nothing is volunteered |
+| `interview.topics[].volunteer[].value` | generic | history+chart | 24 | when and value of a phase-conditional volunteer line; a null value volunteers nothing |
+| `interview.topics[].volunteer[].when` | generic | history+chart | 24 | when and value of a phase-conditional volunteer line; a null value volunteers nothing |
+| `interview.volunteer_blocked_when` | engine+validator+tools | no | 24 | Condition under which nothing is volunteered |
 | `interview.volunteers_note` | none | never |  | Reviewer note. Nothing reads it |
-| `metadata.arrival.line` | generic | history | 3.2 | Internal description, but it is printed as the handover if patient.arrival_handover is missing. Do not rely on it staying hidden |
-| `metadata.arrival.location` | generic | splash | 3.2 | resuscitation_bay, trauma_bay or patient_room. The one line of scene on the splash |
-| `metadata.arrival.mode` | generic | history | 3.2 | ems or triage. Chooses the heading over the handover. Anything that is not triage, walk or ambulatory reads as the paramedics, with no error |
-| `metadata.care_setting.detail` | generic | never | 3.2 | Detail and provenance. Nothing reads them |
-| `metadata.care_setting.label` | generic | splash | 3.2 | Printed on the splash |
+| `metadata.arrival.line` | generic | history | 2.3 | Internal description, but it is printed as the handover if patient.arrival_handover is missing. Do not rely on it staying hidden |
+| `metadata.arrival.location` | generic | splash | 2.3 | resuscitation_bay, trauma_bay or patient_room. The one line of scene on the splash |
+| `metadata.arrival.mode` | generic | history | 2.3 | ems or triage. Chooses the heading over the handover. Anything that is not triage, walk or ambulatory reads as the paramedics, with no error |
+| `metadata.care_setting.detail` | generic | never | 2.3 | Detail and provenance. Nothing reads them |
+| `metadata.care_setting.label` | generic | splash | 2.3 | Printed on the splash |
 | `metadata.care_setting.provenance` | generic | never |  | Reviewer note. Nothing reads it |
-| `metadata.category` | engine+build+validator+tools | list | 3.1 | Group heading and filter chip on the case list. Can name an organ system, which narrows the field before play |
-| `metadata.chief_complaint_patient_voice` | engine+build+tools | splash | 3.1 | Quoted on the splash in the patient's words |
-| `metadata.complaint` | engine+build | list | 3.1 | Row title on the case list. Three or four words in clinical register. Falls back to working_title |
-| `metadata.estimated_runtime_seconds` | build+tools | list | 3.1 | Printed as minutes on the case list |
-| `metadata.final_diagnosis` | tools | never | 3.1 | Read by the validator and new_case.py only. The handoff block is what the engine scores |
-| `metadata.learning_objectives` | tools | never | 3.1 | For the seed and the review packet. Nothing reads them at runtime |
-| `metadata.library.danger` | generic | never | 3.1 | Where the danger hides: obvious at the door, behind normal vitals, or created by the treatment |
-| `metadata.library.feel` | generic | never | 3.1 | How it feels: urgent, puzzling, tender, tense |
+| `metadata.category` | engine+build+validator+tools | list | 2.2 | Group heading and filter chip on the case list. Can name an organ system, which narrows the field before play |
+| `metadata.chief_complaint_patient_voice` | engine+build+tools | splash | 2.2 | Quoted on the splash in the patient's words |
+| `metadata.complaint` | engine+build | list | 2.2 | Row title on the case list. Three or four words in clinical register. Falls back to working_title |
+| `metadata.estimated_runtime_seconds` | build+tools | list | 2.2 | Printed as minutes on the case list |
+| `metadata.final_diagnosis` | tools | never | 2.2 | Read by the validator and new_case.py only. The handoff block is what the engine scores |
+| `metadata.learning_objectives` | tools | never | 2.2 | For the seed and the review packet. Nothing reads them at runtime |
+| `metadata.library.danger` | generic | never | 2.2 | Where the danger hides: obvious at the door, behind normal vitals, or created by the treatment |
+| `metadata.library.feel` | generic | never | 2.2 | How it feels: urgent, puzzling, tender, tense |
 | `metadata.library.note` | generic | never |  | Reviewer note. Nothing reads it |
-| `metadata.library.right_answer` | generic | never | 3.1 | The kind of right answer: do more, do less, wait and watch, ask someone, or send home |
-| `metadata.library.setting` | generic | never | 3.1 | The patient and the room: age, story, setting, who is at the bedside, what resources exist |
-| `metadata.library.tempo` | generic | never | 3.1 | Design guide variety dimension, printed in docs/generated/case-index.md: seconds, minutes, or no clock |
-| `metadata.library.uncertainty` | generic | never | 3.1 | What is uncertain: the diagnosis, the treatment, the timing, when to stop, or whether to act |
-| `metadata.target_level` | engine+build+tools | list | 3.1 | Printed on the case list (three or more entries print as first to last) |
+| `metadata.library.right_answer` | generic | never | 2.2 | The kind of right answer: do more, do less, wait and watch, ask someone, or send home |
+| `metadata.library.setting` | generic | never | 2.2 | The patient and the room: age, story, setting, who is at the bedside, what resources exist |
+| `metadata.library.tempo` | generic | never | 2.2 | Design guide variety dimension, printed in docs/generated/case-index.md: seconds, minutes, or no clock |
+| `metadata.library.uncertainty` | generic | never | 2.2 | What is uncertain: the diagnosis, the treatment, the timing, when to stop, or whether to act |
+| `metadata.target_level` | engine+build+tools | list | 2.2 | Printed on the case list (three or more entries print as first to last) |
 | `metadata.teaching_frame` | none | never |  | Reviewer note. Nothing reads it |
-| `metadata.working_title` | engine+build+tools | splash | 3.1 | The splash headline. Not an internal name: the learner reads it before pressing Begin, so it must not name the diagnosis |
+| `metadata.working_title` | engine+build+tools | splash | 2.2 | The splash headline. Not an internal name: the learner reads it before pressing Begin, so it must not name the diagnosis |
 | `migrations` | none | never |  | Reviewer note. Nothing reads it |
-| `patient.age` | generic | history+list+figure | 3.2 | History line, case list, and the figure's age group (young under 40, middle 40 to 59, older from 60) |
-| `patient.arrival_handover` | engine+validator+tools | history | 3.2 | The two sentences the learner reads at the top of the History tab. The only history given without asking |
+| `patient.age` | generic | history+list+figure | 2.3 | History line, case list, and the figure's age group (young under 40, middle 40 to 59, older from 60) |
+| `patient.arrival_handover` | engine+validator+tools | history | 2.3 | The two sentences the learner reads at the top of the History tab. The only history given without asking |
 | `patient.arrival_handover_authoring_note` | none | never |  | Reviewer note. Nothing reads it |
-| `patient.avatar.<key>` | generic | figure | 6.0c | One avataaars option. Unknown keys and values fall back with no error |
-| `patient.background` | generic | never | 3.2 | Not shown. The interview answers are built from it; the review packet quotes it |
-| `patient.ems_handover_text` | tools | never | 3.2 | The full handover for the reviewer. Not shown; arrival_handover is |
+| `patient.avatar.<key>` | generic | figure | 5.3 | One avataaars option. Unknown keys and values fall back with no error |
+| `patient.background` | generic | never | 2.3 | Not shown. The interview answers are built from it; the review packet quotes it |
+| `patient.ems_handover_text` | tools | never | 2.3 | The full handover for the reviewer. Not shown; arrival_handover is |
 | `patient.handover_authoring_note` | none | never |  | Reviewer note. Nothing reads it |
-| `patient.presenting_appearance` | tools | never | 3.2 | For the seed. Nothing reads it; patient_visual and the phase appearance draw the figure |
-| `patient.presenting_vitals_source` | none | never | 3.2 | Reviewer note |
-| `patient.sex` | generic | history+list+figure | 3.2 | History line, case list, figure base, and pronouns in shared nurse strings |
-| `patient.stated_dry_weight_kg` | none | never | 3.2 | Reviewer note in one pack. Nothing reads it |
-| `patient.weight_kg` | engine+tools | history | 3.2 | Printed on the History line |
+| `patient.presenting_appearance` | tools | never | 2.3 | For the seed. Nothing reads it; patient_visual and the phase appearance draw the figure |
+| `patient.presenting_vitals_source` | none | never | 2.3 | Reviewer note |
+| `patient.sex` | generic | history+list+figure | 2.3 | History line, case list, figure base, and pronouns in shared nurse strings |
+| `patient.stated_dry_weight_kg` | none | never | 2.3 | Reviewer note in one pack. Nothing reads it |
+| `patient.weight_kg` | engine+tools | history | 2.3 | Printed on the History line |
 | `phase_notes.antibiotics_move_nothing` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.count_justification` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.deterioration_path` | none | never |  | Reviewer note. Nothing reads it |
@@ -291,52 +291,52 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `phase_notes.the_two_delayed_consequences` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.three_ways_into_the_narrowing_phase` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.time_guarded_transitions` | none | never |  | Reviewer note. Nothing reads it |
-| `phases[].appearance.alertness_level` | engine+validator+tools | figure | 6 | 0 to 3. Lids, nodding, slack jaw. Also the levels the global interview rule must cover |
-| `phases[].appearance.distress_level` | engine+validator+tools | figure | 6 | 0 to 3. The resting face |
-| `phases[].appearance.pupil_reactivity` | validator+tools | never | 6 | Validated, drawn by nothing |
-| `phases[].appearance.pupil_size` | validator+tools | never | 6 | Validated, drawn by nothing |
+| `phases[].appearance.alertness_level` | engine+validator+tools | figure | 5 | 0 to 3. Lids, nodding, slack jaw. Also the levels the global interview rule must cover |
+| `phases[].appearance.distress_level` | engine+validator+tools | figure | 5 | 0 to 3. The resting face |
+| `phases[].appearance.pupil_reactivity` | validator+tools | never | 5 | Validated, drawn by nothing |
+| `phases[].appearance.pupil_size` | validator+tools | never | 5 | Validated, drawn by nothing |
 | `phases[].authoring_note` | engine+validator+tools | never |  | Reviewer note. Nothing reads it |
-| `phases[].clinical_description` | tools | never | 5 | One line for the reviewer. Validator and timeline tool print it; the learner never sees it |
+| `phases[].clinical_description` | tools | never | 4 | One line for the reviewer. Validator and timeline tool print it; the learner never sees it |
 | `phases[].ecg.author_note` | validator | never |  | Reviewer note. Nothing reads it |
-| `phases[].ecg.p_waves` | engine+build+validator+tools | monitor | 6.0b | Default true, or false under an irregularly irregular rhythm |
-| `phases[].ecg.pattern` | generic | monitor+sound | 6.0b | organised, ventricular_fibrillation or asystole. The last two draw no complexes and silence the heartbeat |
-| `phases[].ecg.pr_ms` | engine+build+validator | monitor | 6.0b | Default 160 |
-| `phases[].ecg.qrs_ms` | engine+build+validator+tools | monitor | 6.0b | Default 90. The field that makes a complex wide. Take it from the phase's ECG report |
-| `phases[].ecg.qtc_ms` | engine+build+validator | monitor | 6.0b | Default 420 |
-| `phases[].ecg.st_mv` | engine+build+validator | monitor | 6.0b | ST level at the J point in lead II |
-| `phases[].ecg.t_mv` | engine+build+validator | monitor | 6.0b | T amplitude in lead II |
+| `phases[].ecg.p_waves` | engine+build+validator+tools | monitor | 5.2 | Default true, or false under an irregularly irregular rhythm |
+| `phases[].ecg.pattern` | generic | monitor+sound | 5.2 | organised, ventricular_fibrillation or asystole. The last two draw no complexes and silence the heartbeat |
+| `phases[].ecg.pr_ms` | engine+build+validator | monitor | 5.2 | Default 160 |
+| `phases[].ecg.qrs_ms` | engine+build+validator+tools | monitor | 5.2 | Default 90. The field that makes a complex wide. Take it from the phase's ECG report |
+| `phases[].ecg.qtc_ms` | engine+build+validator | monitor | 5.2 | Default 420 |
+| `phases[].ecg.st_mv` | engine+build+validator | monitor | 5.2 | ST level at the J point in lead II |
+| `phases[].ecg.t_mv` | engine+build+validator | monitor | 5.2 | T amplitude in lead II |
 | `phases[].ecg.verify` | generic | never |  | Reviewer note. Nothing reads it |
 | `phases[].entered_by` | none | never |  | Reviewer note |
-| `phases[].id` | generic | no | 5 | State machine key and the condition atom `phase is X`. The first phase in the list is the start. `halted` and `case_complete` are reserved |
-| `phases[].inherit_vitals` | engine+validator | monitor | 6.8 | A terminal phase shows the vitals as they stood when it was entered, effects included, instead of its own. Its own vitals block is still required |
-| `phases[].label` | generic | debrief+monitor | 5 | Debrief timeline and the fail card. Also the monitor chip when short_label is missing |
-| `phases[].rhythm` | engine+build+validator+tools | sound+monitor | 6.0a | regular or irregularly_irregular. Anything else is silently regular |
+| `phases[].id` | generic | no | 4 | State machine key and the condition atom `phase is X`. The first phase in the list is the start. `halted` and `case_complete` are reserved |
+| `phases[].inherit_vitals` | engine+validator | monitor | 19 | A terminal phase shows the vitals as they stood when it was entered, effects included, instead of its own. Its own vitals block is still required |
+| `phases[].label` | generic | debrief+monitor | 4 | Debrief timeline and the fail card. Also the monitor chip when short_label is missing |
+| `phases[].rhythm` | engine+build+validator+tools | sound+monitor | 5.2 | regular or irregularly_irregular. Anything else is silently regular |
 | `phases[].schema_gap_note` | none | never |  | Reviewer note. Nothing reads it |
 | `phases[].schema_note` | none | never |  | Reviewer note. Nothing reads it |
-| `phases[].short_label` | build+tools | monitor | 5 | Printed on the monitor chip for the whole run. Must not name the diagnosis or the drug. If absent the engine prints label, which usually does |
-| `phases[].terminal` | generic | end | 5 | No prompts and no vital effects in the phase. A terminal phase that is not halted, case_complete or early exit ends the run as a failure five seconds later |
-| `phases[].timeout_reason` | engine | end | 5.2 | Printed on the end screen when the run ends in this phase by clock OR by action, so it must be true of both. Not marker-stripped |
-| `phases[].transitions[].after_seconds` | engine+validator+tools | no | 5.1 | Makes the rule timed. Not multiplied by difficulty. Below 30 fails for deterioration on inaction; the floor for a delayed consequence of an action is 5 |
-| `phases[].transitions[].allow_time_to_terminal` | engine+validator+tools | no | 5.2 | Validator opt-in for a clock ending the run |
+| `phases[].short_label` | build+tools | monitor | 4 | Printed on the monitor chip for the whole run. Must not name the diagnosis or the drug. If absent the engine prints label, which usually does |
+| `phases[].terminal` | generic | end | 4 | No prompts and no vital effects in the phase. A terminal phase that is not halted, case_complete or early exit ends the run as a failure five seconds later |
+| `phases[].timeout_reason` | engine | end | 15.2 | Printed on the end screen when the run ends in this phase by clock OR by action, so it must be true of both. Not marker-stripped |
+| `phases[].transitions[].after_seconds` | engine+validator+tools | no | 15.1 | Makes the rule timed. Not multiplied by difficulty. Below 30 fails for deterioration on inaction; the floor for a delayed consequence of an action is 5 |
+| `phases[].transitions[].allow_time_to_terminal` | engine+validator+tools | no | 15.2 | Validator opt-in for a clock ending the run |
 | `phases[].transitions[].author_note` | validator | never |  | Reviewer note. Nothing reads it |
 | `phases[].transitions[].author_rationale` | engine+validator+tools | never |  | Reviewer note. Nothing reads it |
-| `phases[].transitions[].debrief_note` | engine+validator+tools | debrief | 5.1 | Printed under the phase change ONLY for a timed rule. Marker-stripped |
-| `phases[].transitions[].measured_from` | engine+validator+tools | no | 5.1 | phase_entry (default) or guard_true |
-| `phases[].transitions[].narration` | engine+validator+tools | nurse+chart | 5.1 | Spoken ONLY on a timed rule. An instant transition says nothing; use nurse_alert on the action instead. Must be true of the vitals shown next, with effects included |
+| `phases[].transitions[].debrief_note` | engine+validator+tools | debrief | 15.1 | Printed under the phase change ONLY for a timed rule. Marker-stripped |
+| `phases[].transitions[].measured_from` | engine+validator+tools | no | 15.1 | phase_entry (default) or guard_true |
+| `phases[].transitions[].narration` | engine+validator+tools | nurse+chart | 15.1 | Spoken ONLY on a timed rule. An instant transition says nothing; use nurse_alert on the action instead. Must be true of the vitals shown next, with effects included |
 | `phases[].transitions[].terminal_opt_in_rationale` | validator | never |  | Reviewer note. Nothing reads it |
-| `phases[].transitions[].to` | generic | no | 5 | Target phase id |
+| `phases[].transitions[].to` | generic | no | 4 | Target phase id |
 | `phases[].transitions[].unguarded_rationale` | validator | never |  | Reviewer note. Nothing reads it |
-| `phases[].transitions[].when` | generic | no | 5 | Section 4 condition. First matching rule in list order wins and ends the scan, even if its target is the current phase |
-| `phases[].vitals.diastolic_bp` | engine+validator+tools | splash+monitor | 6 | Baseline |
-| `phases[].vitals.heart_rate` | engine+validator+tools | splash+monitor+sound+figure | 6 | Baseline. Phase 0 prints on the splash before the monitor is attached. Sets the heartbeat tempo |
-| `phases[].vitals.oxygen_saturation` | engine+validator+tools | splash+monitor+sound | 6 | Baseline. Sets the beep pitch. The figure does not draw cyanosis |
-| `phases[].vitals.respiratory_rate` | engine+validator+tools | splash+monitor+figure | 6 | Baseline. The figure's chest moves at this rate, in terminal phases too |
-| `phases[].vitals.systolic_bp` | engine+validator+tools | splash+monitor | 6 | Baseline. Splash card and monitor only; the figure does not draw pallor |
-| `phases[].vitals.temperature_c` | engine+validator+tools | splash+monitor | 6 | Baseline, in Celsius. A Fahrenheit value fails the range check |
+| `phases[].transitions[].when` | generic | no | 4 | Section 4 condition. First matching rule in list order wins and ends the scan, even if its target is the current phase |
+| `phases[].vitals.diastolic_bp` | engine+validator+tools | splash+monitor | 5 | Baseline |
+| `phases[].vitals.heart_rate` | engine+validator+tools | splash+monitor+sound+figure | 5 | Baseline. Phase 0 prints on the splash before the monitor is attached. Sets the heartbeat tempo |
+| `phases[].vitals.oxygen_saturation` | engine+validator+tools | splash+monitor+sound | 5 | Baseline. Sets the beep pitch. The figure does not draw cyanosis |
+| `phases[].vitals.respiratory_rate` | engine+validator+tools | splash+monitor+figure | 5 | Baseline. The figure's chest moves at this rate, in terminal phases too |
+| `phases[].vitals.systolic_bp` | engine+validator+tools | splash+monitor | 5 | Baseline. Splash card and monitor only; the figure does not draw pallor |
+| `phases[].vitals.temperature_c` | engine+validator+tools | splash+monitor | 5 | Baseline, in Celsius. A Fahrenheit value fails the range check |
 | `phases[].vitals_note` | none | never |  | Reviewer note. Nothing reads it |
 | `phases_note` | none | never |  | Reviewer note. Nothing reads it |
 | `prerequisite_semantics_note` | none | never |  | Reviewer note. Nothing reads it |
-| `prompt_cap_recommendation.per_phase` | build+tools | no | 9.5 | THE prompt cap. The engine speaks at most this many first-level prompts per phase, default 3. Named a recommendation; it is the live setting |
+| `prompt_cap_recommendation.per_phase` | build+tools | no | 7.3 | THE prompt cap. The engine speaks at most this many first-level prompts per phase, default 3. Named a recommendation; it is the live setting |
 | `prompt_cap_recommendation.prompts_removed_for_the_cap` | none | never |  | Reviewer note. Nothing reads it |
 | `prompt_cap_recommendation.rationale` | generic | never |  | Reviewer note. Nothing reads it |
 | `prompt_cap_recommendation.suggested_order` | none | never |  | Reviewer note. Nothing reads it |
@@ -358,21 +358,21 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `provenance.reference_verification` | none | never |  | Reviewer note. Nothing reads it |
 | `provenance.seed_fidelity_note` | none | never |  | Reviewer note. Nothing reads it |
 | `provenance.source_fidelity_note` | none | never |  | Reviewer note. Nothing reads it |
-| `provenance.status` | generic | never | 17 | Who wrote what and what awaits a physician. Free text; nothing reads it |
+| `provenance.status` | generic | never | 1 | Who wrote what and what awaits a physician. Free text; nothing reads it |
 | `provenance.unused_source_material` | none | never |  | Reviewer note. Nothing reads it |
-| `provenance.warning` | generic | list | 17 | Truthiness only: when present the case list marks the case an unsigned draft. The text is never shown |
+| `provenance.warning` | generic | list | 1 | Truthiness only: when present the case list marks the case an unsigned draft. The text is never shown |
 | `result_payload_contract.abnormal` | generic | never |  | Reviewer note. Nothing reads it |
 | `result_payload_contract.prose_field` | none | never |  | Reviewer note. Nothing reads it |
 | `result_payload_contract.resolution_order` | none | never |  | Reviewer note. Nothing reads it |
 | `result_payload_contract.shape` | engine+build+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `result_payload_contract.unverified` | none | never |  | Reviewer note. Nothing reads it |
-| `review_hints.implausible[].flag` | generic | no | 14.2 | flag, requires, why |
-| `review_hints.implausible[].requires` | validator+tools | no | 14.2 | flag, requires, why |
-| `review_hints.implausible[].why` | engine+build+validator+tools | no | 14.2 | flag, requires, why |
-| `review_hints.note` | generic | never | 14.2 | A note |
+| `review_hints.implausible[].flag` | generic | no | 11.2 | flag, requires, why |
+| `review_hints.implausible[].requires` | validator+tools | no | 11.2 | flag, requires, why |
+| `review_hints.implausible[].why` | engine+build+validator+tools | no | 11.2 | flag, requires, why |
+| `review_hints.note` | generic | never | 11.2 | A note |
 | `schema_version` | tools | never |  | Recorded for reviewers. Nothing reads it |
 | `tag_vocabulary.note` | generic | never |  | Reviewer note. Nothing reads it |
 | `tag_vocabulary.values` | engine+build+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `tag_vocabulary.values_used_by_this_case` | none | never |  | Reviewer note. Nothing reads it |
 
-352 fields across 7 packs.
+352 fields across 7 packs, as of the last generation.

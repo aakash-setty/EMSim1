@@ -88,7 +88,7 @@ PATIENT = {
    "Sixty-eight year old lady, chest pain for about an hour, came on at her husband's "
    "funeral. Her daughter's with her and says she's been in a state all week."),
  "handover_authoring_note": (
-   "Section 3.2. Two sentences, 29 words. No vital sign, no past history, no medication, "
+   "Section 2.3. Two sentences, 29 words. No vital sign, no past history, no medication, "
    "no pertinent negative. It carries the misleading frame on purpose: the crew repeats "
    "the daughter's explanation, as crews do."),
 }
@@ -194,7 +194,7 @@ PHASES = [
        "inotrope had been given seconds before, and what that drug does to an obstructed "
        "outflow tract is described under the drug."),
      "author_rationale": (
-       "Added on 7 October 2026 to close a race between timed rules (authoring 5.4). A "
+       "Added on 7 October 2026 to close a race between timed rules (authoring 15.4). A "
        "nitrate or an inotrope given less than ten seconds before the scripted fall, with "
        "fluid and a vasoconstrictor already running, used to send her straight to steadied "
        "with the wrong drug's effect on the monitor and a nurse line that said her pressure "
@@ -290,7 +290,7 @@ PHASES = [
      "author_rationale": (
        "Deterioration on inaction. The nurse recommends cardiology at 20 seconds, fluid at "
        "45 and a vasoconstrictor at 60. In the default mode those are 60, 135 and 180 "
-       "seconds, so all three are spoken before this rule fires at 240 (authoring 9.7). "
+       "seconds, so all three are spoken before this rule fires at 240 (authoring 7.4). "
        "Four minutes is a drafting judgment.")}],
    ),
 

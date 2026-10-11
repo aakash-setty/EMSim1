@@ -3,7 +3,7 @@
 # Diagnosis index
 
 One line per diagnosis-catalog entry (499 entries). Handoff fields take the id
-(authoring 12). Search: `python3 engine/lookup.py diagnosis <word>`.
+(authoring 10.1). Search: `python3 engine/lookup.py diagnosis <word>`.
 
 | id | name | category | synonyms |
 |---|---|---|---|

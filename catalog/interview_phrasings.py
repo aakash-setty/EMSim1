@@ -18,7 +18,7 @@ Registers, deliberately mixed inside each list:
 PROVENANCE. Written by an AI assistant in September 2026 from the vocabulary of the
 existing banks and ordinary emergency-department usage. Not reviewed by a physician.
 A phrasing that maps a question to the wrong concept produces a confident wrong
-answer, which section 10.6 names as the failure the learner cannot see, so this file
+answer, which section 8.6 names as the failure the learner cannot see, so this file
 is clinical content and belongs on the review list with the action catalog.
 
 Held out by construction: `expand_interview_variants.py` diverts every Nth phrasing

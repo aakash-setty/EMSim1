@@ -149,7 +149,7 @@ for a in ACTIONS:
           "note": ("Not a catalog action and not a button. The target of the follow-up "
                    "recheck_lungs_after_fluid. A chest examination, a lung ultrasound or a "
                    "chest film taken after fluid credits it through also_satisfies "
-                   "(authoring 8.2). Hidden from every tab and from search."),
+                   "(authoring 22.2). Hidden from every tab and from search."),
           "unmatched_placement": {"tab": "handoff", "group": "Not in the catalog"},
           "unmatched_narration": "Noted."})
         continue
@@ -157,7 +157,7 @@ for a in ACTIONS:
         BINDING_ROWS.append({
           "case_id": cid, "catalog_id": None,
           "note": ("Case-only button on the Consults tab, on the directing physician's "
-                   "instruction of 6 October 2026. Not in the catalog. Authoring 7.1 "
+                   "instruction of 6 October 2026. Not in the catalog. Authoring 6.1 "
                    "permits a case-only action by recorded decision. Its spoken phrases "
                    "are voice_phrases on the case action."),
           "unmatched_placement": {"tab": "consultations", "group": "Consultations"},

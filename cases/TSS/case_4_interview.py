@@ -60,7 +60,7 @@ def fact(fid, asks, value, short=None, restate=False):
 
 def topic(tid, full, short, canonical=None, variants=None, echo=None, facts=None):
     """`full` is the answer when she is alert. `short` is the same fact said by a drowsy,
-    hypotensive patient (authoring 10.5). Phrasings come from SHARED unless given."""
+    hypotensive patient (authoring 8.5). Phrasings come from SHARED unless given."""
     s = SHARED.get(tid, {})
     t = {"topic": tid,
          "canonical": canonical or s["canonical"],
@@ -374,9 +374,9 @@ AUTHORING_NOTES = {
            "case endorses."),
  "the_tampon": ("She does not volunteer it and it is a must-ask topic, so no other answer "
                 "carries it. Asked about her period or tampons in any wording, she says she "
-                "cannot remember taking the last one out. Section 10.4 holds: she reports "
+                "cannot remember taking the last one out. Section 8.4 holds: she reports "
                 "what she knows and draws no conclusion from it."),
- "close_to_the_line": ("Two answers sit near the section 10.4 line and are flagged for the "
+ "close_to_the_line": ("Two answers sit near the section 8.4 line and are flagged for the "
                        "reviewer. The rash answer says the redness is under her shirt, and "
                        "the genitourinary answer mentions a smell. Both are things a patient "
                        "would notice and say. Neither names a cause."),
@@ -395,7 +395,7 @@ AUTHORING_NOTES = {
    "made American."),
  "pertinent_negatives": (
    "Eleven topics are marked. confusion was the twelfth. Its drowsy answer is 'I feel "
-   "foggy. Sorry.', which is not a denial, and authoring 10.3 asks that a marked topic deny "
+   "foggy. Sorry.', which is not a denial, and authoring 8.3 asks that a marked topic deny "
    "in every phase, so the mark was removed on 7 October 2026 and the answers were left "
    "alone. Whether the drowsy answer should deny instead is an open question for the "
    "physician (TSS-SEED.md)."),
@@ -407,7 +407,7 @@ KEY_TOPICS = ["menstrual_and_tampon", "rash", "sick_contacts", "urine_output",
 
 # --------------------------------------------------------------- volunteered answers
 # Written by hand for this pack. Safety screens and the topic the case is built around the
-# learner discovering are in must_ask and are never volunteered (authoring 10.7).
+# learner discovering are in must_ask and are never volunteered (authoring 24).
 ADJACENT = {
  "onset": ["fever_and_chills", "nausea_vomiting"],
  "nausea_vomiting": ["diarrhea"],

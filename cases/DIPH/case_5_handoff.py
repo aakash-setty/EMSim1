@@ -309,7 +309,7 @@ DEBRIEF = {
 
  "key_exams": ["exam_skin", "exam_heent", "exam_abd", "exam_neuro", "exam_psych", "exam_neck"],
  "key_exams_note": (
-   "Section 13.0. Every exam in this case is tagged neutral, so without this list the Physical "
+   "Section 10.4. Every exam in this case is tagged neutral, so without this list the Physical "
    "score would count all thirteen authored maneuvers equally and a resident who examined the "
    "six that make the diagnosis would score under fifty percent. These six are the ones that "
    "distinguish an anticholinergic toxidrome from its mimics: the dry skin, the pupils and dry "

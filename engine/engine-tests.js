@@ -697,7 +697,7 @@ section('vital effects');
        prerequisites, so the assertion is about the effect and not about the block.
 
        Two further filters, both added after a case failed this section for reasons that
-       were not defects. Prefer an effect with no `while` guard: section 6.1 explicitly
+       were not defects. Prefer an effect with no `while` guard: section 16 explicitly
        allows one, and an effect guarded off in the start phase moves nothing there by
        design, so reading it at t=3 measured the guard rather than the effect. And read
        after the onset rather than at a fixed t=3, because an effect with a thirty-second

@@ -72,17 +72,32 @@ EXAMS = [
     ("MSK", "Perform Musculoskeletal Exam"), ("SKIN", "Perform Skin Exam"),
     ("NEURO", "Perform Neurological Exam"), ("PSYCH", "Perform Psychological Exam"),
 ]
+# v0.26, author instruction (11 October 2026): airway, breathing and circulation are
+# examined together, from the Stabilization tab. The three entries stay exactly as they
+# were, so every case's findings, tags and expectations keep working, and they stay on
+# the exam tab for the debrief's Physical row. They are hidden from the menus and search
+# (`menu_hidden`), and one composite entry performs all three in one press (`performs`).
+# The interface logs the three constituents, never the composite, so a case binds and
+# tags the constituents and never `exam_abc`.
+ABC_EXAMS = {"AIRWAY", "BREATH", "CIRC"}
 for code, display in EXAMS:
+    kw = {"menu_hidden": True} if code in ABC_EXAMS else {}
     add(display, "exam", None, category="exam",
         id="exam_" + code.lower(),
         state_changing=False, short_code=code,
         narration_template=None,  # section 7.1: exams are not narrated
-        repeatable=True)
+        repeatable=True, **kw)
+add("Airway, Breathing and Circulation Exam", "stabilization", None, category="exam",
+    id="exam_abc", state_changing=False, short_code="ABC", narration_template=None,
+    repeatable=True, performs=["exam_airway", "exam_breath", "exam_circ"],
+    source="author-supplied, not in screenshots (v0.26)")
 
 # ================================================ STABILIZATION (images 2-4)
 STAB_TOP = ["Insert IV", "Attach Monitor", "Start Chest Compressions"]
 for d in STAB_TOP:
-    add(d, "stabilization", None, category="stabilization")
+    # v0.26, author instruction: chest compressions sit with the nursing acts.
+    add(d, "stabilization", "Nursing" if d == "Start Chest Compressions" else None,
+        category="stabilization")
 
 # Attaching the monitor is what puts numbers on the screen. Before it, the
 # simulator shows no vitals and plays no heartbeat, because the resident has no
@@ -491,6 +506,30 @@ for d in CONSULTS:
         narration_template="Paging {name}.",
         default_response="global unrelated-consultant response (design section 3)")
 
+# ---- v0.26 layout, author instruction (11 October 2026) ----
+# Placement only. No id, result, turnaround or prerequisite changes, so no case changes.
+# A placement may carry `subgroup`: the interface draws a group's subgroups as headings
+# inside the one folder, or as sub-tabs where the build lists the group in subgroupTabs.
+#   Intubation and Intubation Drugs are one folder, with the drugs under Medications.
+#   Imaging is split into CT, X-ray, Ultrasound and MRI, and the bedside ultrasounds move
+#   into it from Bedside Tests. Doppler stays a bedside test.
+def _imaging_subgroup(e):
+    i = e["id"]
+    if i.startswith("ct_"): return "CT"
+    if i.startswith("xr_"): return "X-ray"
+    if i.startswith("ultrasound_"): return "Ultrasound"
+    if i.startswith("mri_"): return "MRI"
+    raise SystemExit("imaging entry with no subgroup: " + i)
+for e in ENTRIES:
+    p = e["placements"][0]
+    if p["tab"] == "stabilization" and p["group"] == "Intubation Drugs":
+        p["group"], p["subgroup"] = "Intubation", "Medications"
+    elif p["tab"] == "investigations" and p["group"] == "Bedside Tests" \
+            and e["id"].startswith("ultrasound_"):
+        p["group"] = "Imaging"
+    if p["tab"] == "investigations" and p["group"] == "Imaging":
+        p["subgroup"] = _imaging_subgroup(e)
+
 # ---- attach default normal findings to every exam ----
 ex_missing, ex_orphan = [], set(EXAM_DEFAULTS)
 for e in ENTRIES:
@@ -650,6 +689,12 @@ CATALOG = {
         "case. Not transcribed from any screenshot; carries source=author-supplied. It is "
         "an intravenous push and is not in NON_IV, so it inherits the vascular-access "
         "prerequisite like every other intravenous drug.",
+        "v0.26 layout on author instruction (11 October 2026), placement only: airway, "
+        "breathing and circulation exams hidden from the menus and performed together by the "
+        "composite exam_abc on Stabilization; Start Chest Compressions moved to Nursing; "
+        "Intubation Drugs folded into Intubation under the subgroup Medications; Imaging "
+        "split into the subgroups CT, X-ray, Ultrasound and MRI, with the bedside "
+        "ultrasounds moved into it. No ids, results or prerequisites changed.",
     ],
     "known_gaps": [
         "Meds - Respiratory truncated in screenshot: only Albuterol and Ipratropium visible, list continues.",

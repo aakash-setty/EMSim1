@@ -165,7 +165,7 @@ st = F([{ t: 190.5, actionId: 'handoff_submit', payload: { disposition: 'icu', d
 chk('handed over hypotensive, shown hypotensive', st.vitals.systolic_bp === 82);
 
 section('what the nurse says is true of the monitor');
-/* Authoring 9.5. Every timed narration is folded on a route with each effect-bearing drug
+/* Authoring 7.3. Every timed narration is folded on a route with each effect-bearing drug
    acting, and each claim about a direction is compared with the vitals the monitor shows
    just before and just after the line. The phase's authored numbers are not consulted. */
 for (const p of CASE.phases) for (const tr of (p.transitions || [])) {
@@ -345,7 +345,7 @@ section('the catheterization laboratory can be asked for aloud (catalog audit 3.
   chk('and the bedside echo is still the bedside echo', echo.length === 1 && echo[0].id === 'ultrasound_cardiac', JSON.stringify(echo));
 }
 
-section('the default mode warns before the 240-second deterioration (authoring 9.7)');
+section('the default mode warns before the 240-second deterioration (authoring 7.4)');
 const exit240 = CASE.phases.find(p => p.id === 'obstructed').transitions.find(tr => tr.after_seconds === 240);
 for (const id of ['consult_cardiology', 'normal_saline_1l_bolus', 'phenylephrine_drip'])
   chk(id + ': three times the deadline is under 240', ACT[id].prompt.deadline_seconds * 3 < exit240.after_seconds, String(ACT[id].prompt.deadline_seconds));
@@ -366,7 +366,7 @@ chk('easy mode: 20, 45 and 60 after the fall', fires(st, 'consult_cardiology')[0
 st = F(A0, 179.9, 3);
 chk('default mode on arrival, recorded: only the monitor and ECG prompts can precede the fall', fires(st, 'aspirin').length === 0 && fires(st, 'consult_activate_cath_lab').length === 0);
 
-section('one treatment, and the last window (authoring 16 step 8)');
+section('one treatment, and the last window (authoring 13 step 8)');
 st = F(A0.concat([[185.5, 'normal_saline_500ml_bolus']]), 430.5);
 chk('fluid alone, then the clock: untreated shock', seq(st) === 'presentation > obstructed > shock_untreated', seq(st));
 st = F(A0.concat([[185.5, 'vasopressin_drip']]), 430.5);
@@ -376,7 +376,7 @@ chk('the second drug 1.5 seconds before the deadline: steadied, never in untreat
 st = F(A0.concat([[405.5, 'normal_saline_500ml_bolus'], [421.5, 'phenylephrine_drip']]), 432.5);
 chk('the second drug 1.5 seconds after it: through untreated shock', seq(st) === 'presentation > obstructed > shock_untreated > steadied', seq(st));
 
-section('two timed rules pending at once (authoring 5.4, the table in the SEED)');
+section('two timed rules pending at once (authoring 15.4, the table in the SEED)');
 const pair = t => [[t, 'normal_saline_500ml_bolus'], [t + 1, 'phenylephrine_drip']];
 const lands = (name, log, t, want) => { const s4 = F(log, t); chk(name, seq(s4) === want, seq(s4)); return s4; };
 lands('arrival: an inotrope 10.5 seconds before the fall acts first', IV.concat([[169.5, 'dobutamine_drip']]), 200, 'presentation > shock_worse');
@@ -452,7 +452,7 @@ chk('which is what the status line and the skin examination say', /pain easing/.
 chk('on arrival it has not let up', /hasn't let up/.test(askIn(A0, 'timing_progression', 30.5)) && /drenched/.test(askIn(A0, 'sweating', 30.5)));
 chk('with a low pressure she is still short', askIn(A0, 'sweating', 190.5) === "'Yes. Cold and clammy.'");
 
-section('the interview bank and the held-out file (authoring 10.3 and 10.6)');
+section('the interview bank and the held-out file (authoring 8.3 and 10.6)');
 const topicOf = id => CASE.interview.topics.find(t => t.topic === id);
 chk('a surgical history that reports an operation is not a pertinent negative', !topicOf('past_surgical_history').pertinent_negative);
 chk('every pertinent negative denies in every phase', CASE.interview.topics.filter(t => t.pertinent_negative).every(t => t.answer.every(x => /^'(No|Never|None)\b/.test(x.value))),

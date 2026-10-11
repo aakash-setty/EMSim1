@@ -207,10 +207,10 @@ DEBRIEF = {
 
 PROVENANCE = {
  "status": ("DRAFTED BY A LANGUAGE MODEL. Not reviewed by a physician. Not for use with "
-            "learners until the section 14.3 checklist is complete."),
+            "learners until the section 11.5 checklist is complete."),
  "author": ("Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a "
             "plan, a case map and a set of decisions made in the same conversation. "
-            "Authoring requirements section 17 applies."),
+            "Authoring requirements section 1 applies."),
  "warning": (
    "A physician decided the things listed in TAKO-SEED.md section 0. Everything else is "
    "model output and awaits sign-off: every vital sign, finding, laboratory value, "
@@ -264,7 +264,7 @@ PROVENANCE = {
  ],
  "catalog_change_requests": [
    "'Activate Catheterization Lab' stays a case-only action on the Consults tab, on the "
-   "directing physician's decision of 6 October 2026. Authoring 7.1 permits that by a "
+   "directing physician's decision of 6 October 2026. Authoring 6.1 permits that by a "
    "recorded decision since v0.24. A global entry would give nothing away and would serve "
    "any future infarct case.",
    "The catalog offers crystalloid only as 500 mL and one liter. The dose this case teaches "

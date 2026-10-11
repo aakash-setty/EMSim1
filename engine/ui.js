@@ -1,7 +1,8 @@
 /* ============================================================
    UI. Everything below renders derived state; nothing stores it.
    ============================================================ */
-let LOG=[], SEQ=0, T0=Date.now(), ST=null, TAB='history', ENDED=false;
+/* v0.26: a case opens on Stabilization, the top tab. */
+let LOG=[], SEQ=0, T0=Date.now(), ST=null, TAB='stabilization', ENDED=false;
 /* v0.9: `diagnoses` is an ordered list and its first entry is the primary. The
    singular is filled in at submit for readers written before the list existed. */
 let PENDING_HANDOFF={disposition:null,diagnoses:[]};
@@ -12,6 +13,9 @@ const FILTERS={}, BASKET={};
 /* Expanded state for collapsible groups, per tab, so leaving and returning to a tab
    leaves the accordion exactly as it was. */
 const EXPANDED={};
+/* v0.26. The chosen sub-tab of a group drawn as sub-tabs (PROTO.subgroupTabs), keyed
+   tab|group. Unset means the first subgroup in subgroupOrder. */
+const SUBTAB={};
 /* Seeded once per tab from SHARED.defaultExpanded, then left alone. A learner who
    collapses a group that opened by default keeps it collapsed for the rest of the run,
    because the set exists from the first call and is never re-seeded. */
@@ -81,7 +85,18 @@ const elapsedMs = ()=> (PAUSED?PAUSED_AT:Date.now()) - T0 - PAUSED_MS;
 const now = ()=> ENDED ? ST.now : (STARTED ? Math.max(0,elapsedMs())/1000 : 0);
 /* v0.18f. Analytics: a no-op outside the deployed site (see analytics.js). */
 const AN=(typeof ANALYTICS==='object'&&ANALYTICS)||{track(){},count(){},takeCounts(){return {};}};
-function log(e){ e.seq=SEQ++; e.t=now(); LOG.push(e); refold(); }
+function log(e){
+  /* v0.26. A composite (catalog `performs`) is never logged itself. Each act it names is
+     logged in its place, at the same instant and in order, so the fold, the tags and the
+     debrief see exactly what pressing the three buttons would have produced. Every route
+     in comes through here: a button, a submitted order and the microphone. */
+  const a=e&&e.actionId&&ACT[e.actionId];
+  if(a&&a.performs&&a.performs.length&&!e.kind){
+    for(const id of a.performs) if(ACT[id]) log(Object.assign({},e,{actionId:id}));
+    return;
+  }
+  e.seq=SEQ++; e.t=now(); LOG.push(e); refold();
+}
 function refold(){ ST=fold(LOG,now(),DM()); }
 
 const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -502,6 +517,12 @@ function renderFeed(){
      seen and never clicked. Nothing in the chart carries a live number, so the string
      is the state. */
   if(html!==FEED_HTML){ FEED_HTML=html; el('feed').innerHTML=html; }
+  /* The record stays tucked away until the first thing enters it: an order pending or
+     an entry in the chart. The CSS takes its docked width to zero while it is empty, and
+     the workspace and the patient widen into the space. */
+  const hasRecord = items.length>0 || !!(ST && ST.pending && ST.pending.length);
+  const rec = hasRecord ? 'has' : 'empty';
+  if(document.body.dataset.record!==rec) document.body.dataset.record=rec;
   /* Follow the newest entry only when something has actually been added, so a reader
      scrolled down through earlier results is not yanked back every tick. The newest
      entry is now at the TOP, so following it means scrolling to zero rather than to the
@@ -597,7 +618,7 @@ function actionsFor(tab){
   const f=filterOf(tab), out={};
   for(const id in ACT){
     const a=ACT[id];
-    if(a.tab!==tab) continue;
+    if(a.tab!==tab||a.hidden) continue;
     if(f && !(a.name.toLowerCase().includes(f)||id.includes(f))) continue;
     for(const g of (a.groups||[a.group])) (out[g]=out[g]||[]).push(id);
   }
@@ -624,10 +645,40 @@ function actionButton(id,tab){
   if(IS_STUDY(id)){
     if(last&&last.value===null) cls+=' pend';
     else if(last) cls+=' hasres';
+  } else if(a.performs){
+    if(a.performs.every(p=>ST.taken.has(p))) cls+=' done';
   } else if(ST.taken.has(id)) cls+=' done';
   if(a.orphan) cls+=' orphan';
   if(tab&&basketOf(tab).has(id)) cls+=' picked';
   return `<button class="${cls}" data-act="${esc(id)}" data-tabof="${esc(tab||'')}">${esc(a.name)}</button>`;
+}
+/* v0.26. One group's buttons. Entries with no subgroup come first as a plain grid. The
+   rest are split by subgroup, in PROTO.subgroupOrder, and drawn either as headings inside
+   the folder or, for a group in PROTO.subgroupTabs, as sub-tabs with one showing at a
+   time. While a filter is set every matching subgroup shows under its heading, because a
+   search result hidden behind a sub-tab is not a result. */
+function groupBody(tab,g,ids,filtering){
+  const grid=list=>`<div class="grid">${list.map(id=>actionButton(id,tab)).join('')}</div>`;
+  const plain=ids.filter(id=>!ACT[id].subgroup);
+  const by={};
+  for(const id of ids){ const s=ACT[id].subgroup; if(s) (by[s]=by[s]||[]).push(id); }
+  const order=((PROTO.subgroupOrder||{})[g]||[]);
+  const rank=s=>{ const i=order.indexOf(s); return i<0?500:i; };
+  const subs=Object.keys(by).sort((a,b)=>rank(a)-rank(b)||a.localeCompare(b));
+  let html=plain.length?grid(plain):'';
+  if(!subs.length) return html;
+  const asTabs=(PROTO.subgroupTabs||[]).includes(g)&&!filtering;
+  if(asTabs){
+    const key=tab+'|'+g;
+    const cur=subs.includes(SUBTAB[key])?SUBTAB[key]:subs[0];
+    html+=`<div class="subtabs" role="tablist" aria-label="${esc(g)}">${subs.map(s=>
+      `<button class="subtab" role="tab" data-subtab="${esc(s)}" data-subgroup="${esc(g)}" data-tabof="${esc(tab)}"
+        aria-selected="${s===cur}">${esc(s)}<span class="n">${by[s].length}</span></button>`).join('')}</div>`;
+    html+=grid(by[cur]);
+  } else {
+    for(const s of subs) html+=`<div class="subhead">${esc(s)}</div>`+grid(by[s]);
+  }
+  return html;
 }
 function renderActionTab(tab,intro){
   const groups=actionsFor(tab);
@@ -662,7 +713,7 @@ function renderActionTab(tab,intro){
     }
     if(g==='Not in the catalog')
       html+=`<div class="note" style="border-left-color:var(--harm)">${esc(PROTO.orphanNote)}</div>`;
-    html+=`<div class="grid">${groups[g].map(id=>actionButton(id,tab)).join('')}</div>`;
+    html+=groupBody(tab,g,groups[g],forced);
     if(collapsible) html+='</div>';
   }
   if(!names.length) html='<p class="sub">Nothing matches that filter.</p>';
@@ -722,7 +773,8 @@ function renderTab(){
        room and left a resident unsure which one the case meant. */
     investigations:()=>renderActionTab('investigations',
       'A result reflects the patient at the moment it was ordered, not when it arrives. Results appear in the record.'),
-    stabilization:()=>renderActionTab('stabilization','Access, airway, oxygen and monitoring.')+blockPanel(),
+    stabilization:()=>renderActionTab('stabilization','Access, airway, oxygen and monitoring.')
+             +compositeFindingsPanel('stabilization')+blockPanel(),
     interventions:()=>renderActionTab('interventions','')+blockPanel(),
     consultations:()=>renderActionTab('consultations','')
              +readoutPanel('consult','Conversations')
@@ -758,6 +810,20 @@ function readoutPanel(kind,title){
          <div class="meta">${mmss(r.t)}</div></div>`
   ).join('');
   return outs?`<div class="panel"><h3>${title}</h3>${outs}</div>`:'';
+}
+/* v0.26. Findings from a composite exam placed on an ordering tab (the airway, breathing
+   and circulation exam on Stabilization), shown under that tab the way the Exam tab shows
+   its own. They also go to the record like any exam. */
+function compositeFindingsPanel(tab){
+  const keys=new Set();
+  for(const id in ACT){ const a=ACT[id]; if(a.tab===tab&&a.performs) a.performs.forEach(p=>keys.add(p)); }
+  if(!keys.size) return '';
+  const outs=ST.readouts.filter(r=>r.kind==='exam'&&keys.has(r.key)).slice(-6).reverse().map(r=>
+    `<div class="read"><h4>${esc(r.title)}</h4>
+       <div class="body${(r.body&&r.body.abnormal)?' abn-report':''}">${esc(
+          r.body&&r.body.findings!==undefined?r.body.findings:r.body)}</div>
+       <div class="meta">${mmss(r.t)}</div></div>`).join('');
+  return outs?`<div class="panel"><h3>Findings</h3>${outs}</div>`:'';
 }
 function blockPanel(){
   const blk=ST.blocked.slice(-3).reverse().map(b=>
@@ -863,6 +929,35 @@ function tabHistory(){
     ${outs?`<div class="panel"><h3>What you were told</h3>${outs}</div>`:''}`;
 }
 
+/* Line icons for the disposition tiles. Chosen from words in the disposition id, which a
+   case authors, so the engine names no case and a new id falls back to the hospital. */
+const DISP_ICON={
+  home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/>',
+  talk:'<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>',
+  bed:'<path d="M3 6v13M3 15h18v4M21 15v-3a3 3 0 0 0-3-3h-8v6"/><circle cx="6.5" cy="11.5" r="2"/>',
+  ecg:'<path d="M2 12h4l2-5 3 10 3-8 2 3h6"/>',
+  monitor:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M5.5 10h3l1.5-3 2 6 1.5-3h5"/><path d="M9 20h6M12 16v4"/>',
+  heart:'<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/><path d="M15 3c2 1 2.5 3 1.5 5"/>',
+  scalpel:'<path d="M4 20l9-9"/><path d="M13 11l6-6c1 2 0 5-3 7l-2 1z"/>',
+  transfer:'<rect x="2" y="8" width="12" height="9" rx="1"/><path d="M14 11h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/><path d="M7 12.5h4M9 10.5v4"/>',
+  hospital:'<path d="M4 21V5h16v16"/><path d="M2 21h20M12 8v6M9 11h6"/>'
+};
+function dispIcon(id){
+  const s=String(id||'').toLowerCase();
+  const k=/home|discharge/.test(s)?'home'
+    :/observ/.test(s)?'clock'
+    :/psych/.test(s)?'talk'
+    :/cath/.test(s)?'heart'
+    :/operat|surg|theatre/.test(s)?'scalpel'
+    :/transfer/.test(s)?'transfer'
+    :/icu|ccu|intensive|critical/.test(s)?'monitor'
+    :/step|hdu|intermediate/.test(s)?'ecg'
+    :/floor|ward|medical/.test(s)?'bed'
+    :'hospital';
+  return `<svg class="dispicon" viewBox="0 0 24 24" aria-hidden="true">${DISP_ICON[k]}</svg>`;
+}
+
 function tabHandoff(){
   const h=CASE.handoff;
   const disp=[{id:h.correct_disposition.id,label:h.correct_disposition.label}]
@@ -875,8 +970,10 @@ function tabHandoff(){
   return `<div class="panel"><h2>Handoff</h2>
     <p class="sub">Submitting and confirming ends the case and generates the debrief.
     The diagnosis list is the full catalog, ${PROTO.diagnoses.length} entries.</p>
-    <h3>Level of care</h3>
-    ${disp.map(d=>`<button class="opt" data-disp="${esc(d.id)}" aria-pressed="${PENDING_HANDOFF.disposition===d.id}">${esc(d.label)}</button>`).join('')}
+    <h3>Disposition</h3>
+    <div class="dispgrid${disp.length>6?' g4':''}">
+    ${disp.map(d=>`<button class="opt disptile" data-disp="${esc(d.id)}" aria-pressed="${PENDING_HANDOFF.disposition===d.id}">${dispIcon(d.id)}<span>${esc(d.label)}</span></button>`).join('')}
+    </div>
     <h3>Diagnoses</h3>
     <p class="sub">Name everything you are handing over. The first entry is your primary
     diagnosis; add as many others as apply to this patient.</p>
@@ -896,7 +993,7 @@ function tabHandoff(){
     </div>`;
 }
 
-/* ---------- interview matching (section 10.6) ---------- */
+/* ---------- interview matching (section 8.6) ---------- */
 const STOP=new Set(('a an the is are was were do does did you your yours he him his i me my of to in on at it '
  +'any have has had can could would will about for with what when how why where which that this and or but '
  +'tell please sir mr been being get got some there their they').split(' '));
@@ -920,7 +1017,7 @@ function norm(s){ return s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/
 
    THIS IS CLINICAL CONTENT AND NEEDS A PHYSICIAN'S REVIEW, on the same footing
    as the action catalog. A wrong entry here produces a confident wrong answer,
-   which section 10.6 names as the failure mode invisible to the learner. Two
+   which section 8.6 names as the failure mode invisible to the learner. Two
    rules kept the list conservative:
 
      - No key shorter than two letters that could be a typo of something else.
@@ -1391,7 +1488,7 @@ async function matchQuestion(q){
 
 /* Bind both matchers to the selected case. Kept out of buildMatcher deliberately:
    engine/matcher_eval.mjs extracts the region above verbatim from the build and
-   runs it, per section 10.6, so that region has to stay free of anything the
+   runs it, per section 8.6, so that region has to stay free of anything the
    lexical matcher does not need. */
 function bindCase(){
   buildMatcher();
@@ -1411,7 +1508,7 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
     +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,'
-    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart]');
+    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart],[data-subtab]');
   if(t&&t.id==='soundbtn'){ AUDIO.toggle(); renderSound(); return; }
   AUDIO.unlock();
   /* Panel controls run before the ENDED guard and before the null check: the
@@ -1465,6 +1562,9 @@ document.addEventListener('click',e=>{
       const tp=CASE.interview.topics.find(x=>x.topic===tid);
       ask(tp?tp.canonical:tid.replace(/_/g,' ')); return;
     }
+    /* A composite exam is an examination, not an order, so it is performed at once
+       wherever its button sits, exactly as the Exam tab's buttons are. */
+    if(ACT[id]&&ACT[id].performs){ log({actionId:id}); render(); return; }
     /* On an orderable tab a click selects; nothing is sent until Submit Order. */
     if(tabof&&PROTO.orderableTabs.includes(tabof)){
       const bag=basketOf(tabof);
@@ -1477,6 +1577,10 @@ document.addEventListener('click',e=>{
   if(t.id==='backtopicker'){ backToPicker(); return; }
   if(t.dataset.mode){ MODE=t.dataset.mode; renderSplash(); return; }
   if(t.id==='beginbtn'){ begin(); return; }
+  if(t.dataset.subtab){
+    SUBTAB[t.dataset.tabof+'|'+t.dataset.subgroup]=t.dataset.subtab;
+    renderTab(); return;
+  }
   if(t.dataset.group){
     const set=expandedOf(t.dataset.tabof);
     set.has(t.dataset.group)?set.delete(t.dataset.group):set.add(t.dataset.group);
@@ -1758,17 +1862,18 @@ function finish(){
   v.scrollTop=0;
 }
 function restart(){
-  LOG=[];SEQ=0;ENDED=false;STARTED=false;TAB='history';LASTNURSE=-1;LASTPHASE=null;
+  LOG=[];SEQ=0;ENDED=false;STARTED=false;TAB='stabilization';LASTNURSE=-1;LASTPHASE=null;
   RUNID++; ASKTEXT=''; DXTEXT='';
   VOICE.reset();
   closeImage(); IMG_SEEN=new Set(); IMG_QUEUE=[];
   resetRamp();
   Object.keys(FILTERS).forEach(k=>delete FILTERS[k]);
-  REFLECT_DONE=false; REFLECT_NOTE=''; REFLECT_OPEN=false;
+  REFLECT_DONE=false; REFLECT_NOTE=''; REFLECT_NOTE2=''; REFLECT_OPEN=false;
   el('reflectview').classList.add('hidden');
   SEARCH_Q=''; closeSearch();
   Object.keys(BASKET).forEach(k=>delete BASKET[k]);
   Object.keys(EXPANDED).forEach(k=>delete EXPANDED[k]);
+  Object.keys(SUBTAB).forEach(k=>delete SUBTAB[k]);
   PENDING_HANDOFF={disposition:null,diagnoses:[]};
   PAUSED=false; PAUSED_MS=0; PAUSED_AT=0;
   el('pauseview').classList.add('hidden'); closeLeave();
@@ -1798,11 +1903,16 @@ function learnerText(s){
    the learner can compare what they thought at the time with what it was. Nothing is
    printed when the box was left empty. */
 function reflectHTML(){
-  const n=String(REFLECT_NOTE||'').trim();
-  if(!n) return '';
-  return `<div class="item"><div class="hd"><span class="nm">Your differential at ${mmss(REFLECT_AT)}</span>
+  /* Two boxes since the pause card was split: the differential, then what to check or
+     give. Each prints only when it was filled in. */
+  const one=(title,s)=>{
+    const n=String(s||'').trim();
+    if(!n) return '';
+    return `<div class="item"><div class="hd"><span class="nm">${esc(title)} at ${mmss(REFLECT_AT)}</span>
       <span class="pill p-neu">your note</span></div>
       <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0;white-space:pre-wrap">${esc(n)}</div></div>`;
+  };
+  return one('Your differential',REFLECT_NOTE)+one('What you planned to check or give',REFLECT_NOTE2);
 }
 function dxAnswerHTML(){
   return `<div class="item"><div class="hd"><span class="nm">${esc('The case\'s diagnosis: '+dxLabel(PROTO.correctDxId))}</span>
@@ -1883,7 +1993,7 @@ function debriefHTML(){
     const named=dx.rows.some(r=>r.verdict==='primary_correct'||r.verdict==='main_not_primary');
     ho=`<div class="dbsec"><h2>Handoff</h2>
       ${reflectHTML()}
-      <div class="item"><div class="hd"><span class="nm">Level of care: ${esc(dispLabel(dId))}</span>
+      <div class="item"><div class="hd"><span class="nm">Disposition: ${esc(dispLabel(dId))}</span>
         <span class="pill ${dV[1]}">${dV[0]}</span></div>
         <div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(dExp)}</div></div>
       <h3>Diagnoses you handed over</h3>
@@ -2225,7 +2335,7 @@ function backToPicker(){
 /* ---------- splash ---------- */
 function renderSplash(){
   const m=CASE.metadata, p=CASE.patient, cs=m.care_setting||{}, ar=m.arrival||{};
-  el('sp-setting').textContent=cs.label||'';
+  /* The care setting label is no longer shown on the splash. */
   el('sp-title').textContent=m.working_title||'';
   el('sp-cc').textContent=m.chief_complaint_patient_voice
     ? '\u201C'+m.chief_complaint_patient_voice+'\u201D' : '';
@@ -2407,7 +2517,7 @@ el('resumebtn').addEventListener('click',resumeSim);
    modal on top of the first is two dialogs arguing. Whichever is up, the check waits. */
 const REFLECT=(SHARED.reflect||{});
 const REFLECT_AT=(typeof REFLECT.atSeconds==='number')?REFLECT.atSeconds:180;
-let REFLECT_DONE=false, REFLECT_NOTE='', REFLECT_OPEN=false;
+let REFLECT_DONE=false, REFLECT_NOTE='', REFLECT_NOTE2='', REFLECT_OPEN=false;
 function reflectDue(){
   return !REFLECT_DONE && !REFLECT_OPEN && inCase() && !PAUSED && ST && ST.now>=REFLECT_AT
          && el('leaveview').classList.contains('hidden');
@@ -2418,8 +2528,11 @@ function openReflect(){
   el('reflecttitle').textContent=REFLECT.title||'Pause: consider your differential diagnosis.';
   el('reflectbody').textContent=REFLECT.body||'';
   const box=el('reflectnote');
-  box.placeholder=REFLECT.placeholder||'Optional free text area for your use';
+  box.placeholder=REFLECT.placeholder||'Your differential diagnosis (optional)';
   box.value=REFLECT_NOTE;
+  const box2=el('reflectnote2');
+  if(box2){ box2.placeholder=REFLECT.placeholder2||'What you need to check or give (optional)';
+            box2.value=REFLECT_NOTE2; }
   el('reflectview').classList.remove('hidden');
   /* The button, not the box: the prompt is a question to think about, and a cursor already
      blinking in a text field reads as one that has to be answered in writing. */
@@ -2428,6 +2541,7 @@ function openReflect(){
 function closeReflect(){
   if(!REFLECT_OPEN) return;
   const box=el('reflectnote'); REFLECT_NOTE=box?box.value:'';
+  const box2=el('reflectnote2'); REFLECT_NOTE2=box2?box2.value:'';
   REFLECT_OPEN=false;
   el('reflectview').classList.add('hidden');
   releaseClock();

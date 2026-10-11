@@ -43,7 +43,7 @@ def cmd_action(words, full):
     cat = load("action-catalog.json")
     hits = [e for e in cat["entries"] if any(w in (e["id"] + " " + e.get("display_name", "")).lower() for w in words)]
     if not hits:
-        print("no catalog entry matches", " ".join(words), "(a missing entry is a catalog change request, authoring 7.1)")
+        print("no catalog entry matches", " ".join(words), "(a missing entry is a catalog change request, authoring 6.1)")
         return 1
     for e in hits:
         if full:
@@ -63,7 +63,7 @@ def cmd_diagnosis(words):
     ents = d.get("entries") or max((v for v in d.values() if isinstance(v, list)), key=len)
     hits = [e for e in ents if any(w in (e["id"] + " " + e.get("display_name", "") + " " + " ".join(e.get("synonyms") or [])).lower() for w in words)]
     if not hits:
-        print("no diagnosis matches", " ".join(words), "(a missing entry is a catalog change request, authoring 12)")
+        print("no diagnosis matches", " ".join(words), "(a missing entry is a catalog change request, authoring 10.1)")
         return 1
     for e in hits:
         print(f"{e['id']:<48} {e.get('display_name', '')}  [{e.get('category', '')}]  " + ", ".join(e.get("synonyms") or []))

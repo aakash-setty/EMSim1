@@ -34,7 +34,7 @@ function pAtom(p){
   if(k[i]==='study'&&k[i+2]==='resulted'){p.i=i+3; return {t:'resulted',v:k[i+1]};}
   if(k[i]==='action'&&k[i+2]==='taken'){p.i=i+3; return {t:'taken',v:k[i+1]};}
   /* The catalog ships prerequisites written as "flag F" without the trailing
-     keyword, which section 4 does not permit. Accept it here so the prototype can
+     keyword, which section 3 does not permit. Accept it here so the prototype can
      run, and record it so the interface can say the grammar is being bent. */
   if(k[i]==='flag'&&(k[i+2]===undefined||k[i+2]==='AND'||k[i+2]==='OR'||k[i+2]===')')){
     LOOSE_CONDITIONS.add(p.k.join(' '));
@@ -119,6 +119,8 @@ function mergeAction(eff, base, caseAct, extra){
     tab:(extra&&extra.tab)||base.tab,
     group:(extra&&extra.group)||base.group,
     groups:(extra&&extra.group)?null:(base.groups||null),
+    subgroup:(extra&&extra.group)?null:(base.subgroup||null),
+    performs:base.performs||null,
     category:base.category||(extra&&extra.category)||orphanCategory(eff),
     state_changing:base.state_changing!==undefined?base.state_changing
                   :(caseAct.state_changing!==undefined?caseAct.state_changing:true),
@@ -159,7 +161,7 @@ function mergeAction(eff, base, caseAct, extra){
        to key on. Not borrowed by a covered sibling: the phrases name the action that
        authors them, and a sibling keeps its own catalog name and table rows. */
     rec.voice_phrases=(extra&&extra.coveredBy)?null:(caseAct.voice_phrases||null);
-    /* Authoring 9.1 has always said a case may override the catalog's narration where
+    /* Authoring 7.1 has always said a case may override the catalog's narration where
        the standard line would be wrong or confusing. Nothing read it, so the promise was
        not kept. Both this and nurse_alert below are borrowed by a covered sibling, so a
        line authored on a coverage group speaks for every route to the act. */
@@ -170,7 +172,7 @@ function mergeAction(eff, base, caseAct, extra){
        scrolled off the nurse's line by the time they wonder whether the drug failed. */
     rec.nurse_alert=caseAct.nurse_alert;
     /* Flags granted only on the Nth administration of an act. Flags are otherwise
-       binary and permanent and section 15 tells authors not to build cases that depend
+       binary and permanent and section 12 tells authors not to build cases that depend
        on redosing, which is true of everything EXCEPT the one thing this expresses: an
        act that has to be repeated before it works. Counting is per counter rather than
        per action id, so a case can decide whether two doses of one drug and one dose
@@ -190,6 +192,9 @@ function mergeAction(eff, base, caseAct, extra){
        can be an ordinary logged action with a tag, flags and a note. */
     rec.hidden=!!caseAct.hidden;
   }
+  /* v0.26. A catalog entry can be kept off the menus too: the three primary-survey exams,
+     which are performed together through the composite that names them in `performs`. */
+  if(base&&base.menu_hidden) rec.hidden=true;
   return rec;
 }
 
@@ -1050,7 +1055,7 @@ function fold(log, now, difficultyMultiplier){
    DURATION. duration_seconds absent means the effect lasts as long as its guard holds.
    Present, it lapses that many seconds after the administration.
 
-   GUARD. `while` is an ordinary section 4 condition, evaluated against the state as it
+   GUARD. `while` is an ordinary section 3 condition, evaluated against the state as it
    now stands. An effect whose guard has gone false is simply not in the list.
 
    KEY. Effects sharing a key do not stack: the most recent administration wins. The key

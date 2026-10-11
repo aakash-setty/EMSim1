@@ -3,15 +3,15 @@
 EVERY VALUE IN THIS FILE IS MODEL OUTPUT. No physician supplied a number, a finding or a
 reference interval. Reference intervals are the catalog's where it has one.
 
-A repeat study only changes when the phase or a flag has changed (authoring 11.4), so the
+A repeat study only changes when the phase or a flag has changed (authoring 9.4), so the
 chemistry, the gas, the glucose and the ECG are keyed to both. Phase rules come before
 flag rules in every list.
 
-Results hold findings only (authoring 11.4). The one comment left is a caption on the
+Results hold findings only (authoring 9.4). The one comment left is a caption on the
 chemistry. Every interpretive sentence that used to sit in a comment is now in the
 debrief note of that study's action in case_2_actions.py.
 
-No report and no exam line quotes a heart rate (authoring 6.1, 11.2 and 11.4). The fluid
+No report and no exam line quotes a heart rate (authoring 16, 11.2 and 11.4). The fluid
 effect takes ten off the rate and never ends, so a quoted rate would disagree with the
 monitor for the rest of the case. In the treated phase the monitor reads 104 without
 fluid and 94 with it, so that phase's report says sinus rhythm and its exam lines do not
@@ -76,7 +76,7 @@ def always(v):
 
 EXAM = {
  "authoring_note": (
-   "Section 11.2. Routing follows the catalog map: capillary refill and pulse on "
+   "Section 9.2. Routing follows the catalog map: capillary refill and pulse on "
    "exam_circ, work of breathing on exam_breath, lung sounds on exam_pulm, limb power and "
    "reflexes on exam_neuro, turgor and injection sites on exam_skin."),
 
@@ -123,7 +123,7 @@ EXAM = {
 }
 
 GENERAL_STATUS = {
- "authoring_note": "Section 11.3. Consistent with exam_neuro and each phase's appearance values.",
+ "authoring_note": "Section 9.3. Consistent with exam_neuro and each phase's appearance values.",
  "rules": [
    {"when": FALLING, "value": gs("Lying flat, says her arms and legs are heavy. Alert and frightened. GCS 15.")},
    {"when": TREATED, "value": gs("Sitting up, color better, no longer retching. GCS 15.", abnormal=False)},
@@ -149,7 +149,7 @@ CHEM = {
  "falling":     (134, "2.6", 101, 17, 22, "1.1", 262),
  "recovering":  (134, "3.6", 102, 17, 22, "1.1", 285),
 }
-# A caption, not a reading (authoring 11.4). The same words in every state.
+# A caption, not a reading (authoring 9.4). The same words in every state.
 CHEM_CAPTION = "Anion gap calculated without potassium."
 FINGERSTICK = {"pres": 342, "pres_fluid": 314, "pres_bicarb": 342, "pres_both": 314,
                "replaced": 318, "treated": 266, "falling": 258, "recovering": 282}
@@ -320,7 +320,7 @@ ECG_RULES.append({"when": None, "value": ecg("pres")})
 
 IMAGING = {
  "authoring_note": (
-   "Section 11.4. The chest film and the abdominal CT are left to the catalog defaults, "
+   "Section 9.4. The chest film and the abdominal CT are left to the catalog defaults, "
    "which are normal, and that is intended. The ECG report is findings only and quotes "
    "no rate. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc "
    "as its report here, without the ondansetron increment."),
@@ -343,7 +343,7 @@ IMAGING = {
 # ============================================================== CONSULTANTS
 # Most specific first. No line names a value. A line that reads a result sits on a rule
 # that tests the study resulted, and says only what is true of every variant of that
-# result (authoring 11.5). `study S resulted` means a result exists, not that it was
+# result (authoring 9.5). `study S resulted` means a result exists, not that it was
 # sent in this phase, so the falling-phase lines read no result at all: they describe
 # what the room can see and ask for the studies.
 ENDO_PLAN = (
@@ -355,7 +355,7 @@ ENDO_PLAN = (
 ICU_WORKUP = "Intensivist: Call me back when you have a gas and a chemistry."
 CONSULTANTS = {
  "authoring_note": (
-   "Section 11.5. Rules are ordered by phase, then by study state. The endocrinologist "
+   "Section 9.5. Rules are ordered by phase, then by study state. The endocrinologist "
    "and the intensivist each have a tier for both studies back, one for each study "
    "alone, a pending tier and a default. In the arrival phase every variant of the "
    "chemistry reads a potassium under 3.5 (3.1, 3.0 or 2.9), which is all the "

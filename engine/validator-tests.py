@@ -543,5 +543,41 @@ expect("a ten-second deterioration guarded on NOT action X taken is rejected lik
            {"when": "NOT action " + act(c)["catalog_id"] + " taken", "to": c["phases"][1]["id"], "after_seconds": 10}),
        "below the 30s floor")
 
+
+# -- v0.25, the authoring document rewrite: checks the document names as engine facts -----
+
+def _no_complete(c):
+    ph = c["phases"][0]
+    ph["transitions"] = [t for t in ph["transitions"] if t.get("to") != "case_complete"]
+    if not ph["transitions"]:
+        ph["transitions"].append({"when": "flag handoff_submitted set", "to": c["phases"][1]["id"]})
+
+expect("a non-terminal phase with no transition into case_complete is rejected",
+       _no_complete, "no transition into 'case_complete'")
+expect("a narration on an instant transition warns, since it is never spoken",
+       lambda c: c["phases"][0]["transitions"][0].__setitem__("narration", "She looks worse."),
+       "never spoken", where="warnings")
+expect_clean("a narration on a timed transition does not draw the instant-rule warning",
+             lambda c: None, "never spoken", where="warnings")
+expect("a correct diagnosis that is not in the catalog is rejected",
+       lambda c: c["handoff"]["correct_diagnosis"].update({"catalog_id": "dx_nope", "label": "Nope"}),
+       "correct_diagnosis 'dx_nope' is not in the diagnosis catalog")
+expect("an alternative diagnosis that is not in the catalog is rejected",
+       lambda c: c["handoff"].setdefault("alternative_diagnoses", []).append(
+           {"catalog_id": "dx_nope2", "label": "Nope", "verdict": "incorrect", "explanation": "x"}),
+       "alternative diagnosis 'dx_nope2' is not in the diagnosis catalog")
+expect("a waiver that names no catalog prerequisite of the entry warns, since it waives nothing",
+       lambda c: act(c).__setitem__("prerequisite_overrides", [{"waived": "flag nothing_like_this set"}]),
+       "waives nothing", where="warnings")
+expect("a three-sentence handover warns rather than errors",
+       lambda c: c["patient"].__setitem__("arrival_handover", "One. Two. Three sentences here."),
+       "3 sentences", where="warnings")
+expect_clean("a three-sentence handover is not an error",
+             lambda c: c["patient"].__setitem__("arrival_handover", "One. Two. Three sentences here."),
+             "sentences")
+expect_clean("an empty global_answer_rules list is allowed",
+             lambda c: c["interview"].__setitem__("global_answer_rules", []),
+             "global_answer_rules: empty rule list")
+
 print(f"\n  {COUNT} checks, " + (f"{len(FAILS)} FAILURES" if FAILS else "all passed"))
 sys.exit(1 if FAILS else 0)

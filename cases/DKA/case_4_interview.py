@@ -20,7 +20,7 @@ FALLING = "phase is potassium_falling"
 TREATED = "phase is treated"
 
 TOPICS = []
-# Only topics whose answer is a denial in every phase (authoring 10.3). Fever, headache
+# Only topics whose answer is a denial in every phase (authoring 8.3). Fever, headache
 # and family history report something, so they are not marked.
 NEGATIVES = {"cough_sore_throat", "chest_pain", "radiation_of_pain", "dysuria_gu_symptoms",
              "travel_history", "allergies", "pregnancy"}
@@ -43,7 +43,7 @@ def topic(tid, answer, canonical=None, variants=None, echo=None, extra=None, mor
 
 
 def fact(fid, asks, value, restate=False):
-    """A piece of a topic's answer, for a follow-up question (authoring 10.7). It restates
+    """A piece of a topic's answer, for a follow-up question (authoring 24). It restates
     part of the paragraph and adds nothing to it."""
     f = {"id": fid, "asks": asks, "value": [{"when": None, "value": value}]}
     if restate:
@@ -293,7 +293,7 @@ AUTHORING_NOTES = {
    "diabetes topic, the sugar readings and the thirst topic all lead to it."),
  "no_global_rule": "No phase is at alertness 2 or 3, so there is no alertness rule.",
  "near_the_10_4_line": (
-   "Two answers sit close to the limits in authoring 10.4 and are flagged for the "
+   "Two answers sit close to the limits in authoring 8.4 and are flagged for the "
    "reviewer. The diabetes topic says 'they said my blood had gone acidic' about her "
    "admission at age eleven. That is her own past history in lay words, and she does not "
    "connect it to today. The sugar topic quotes her home meter, 380 and 290. Those are "
@@ -310,13 +310,13 @@ AUTHORING_NOTES = {
    "the denial (no blood, no cramps)."),
 }
 
-# The same list as management_changing in DKA-matcher-eval-questions.json (authoring 10.6).
+# The same list as management_changing in DKA-matcher-eval-questions.json (authoring 8.6).
 KEY_TOPICS = ["past_medical_history", "diabetes_history", "current_medications",
               "insulin_taken_recently", "glucose_monitoring", "thirst_and_urination",
               "sick_contacts", "pregnancy", "allergies"]
 
 # One adjacency. A volunteer line must not repeat the answer it rides on, and a key topic
-# is never volunteered (authoring 10.7). The three removed on 7 October 2026: location
+# is never volunteered (authoring 24). The three removed on 7 October 2026: location
 # rode on the abdominal pain answer and repeated it, and thirst and the diabetes history
 # are key topics.
 ADJACENT = {

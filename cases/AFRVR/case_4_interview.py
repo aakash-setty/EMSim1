@@ -516,19 +516,19 @@ OUT_OF_SCOPE = [
 
 AUTHORING_NOTES = {
  "alertness_gating": (
-   "Section 10.5. The condition language has no alertness predicate, so alertness is reached "
+   "Section 8.5. The condition language has no alertness predicate, so alertness is reached "
    "indirectly through the phases that carry it. Only the intubated phase in this case is at "
    "alertness 2 or above, and the global rule names it. If a phase is added later at alertness 2 "
    "or 3 the validator will catch it; do not remove that check."),
  "speech_gating": (
-   "Section 10.5 covers alertness and not speech limited by respiratory distress, which is the "
+   "Section 8.5 covers alertness and not speech limited by respiratory distress, which is the "
    "commoner problem. This patient is deliberately authored as able to complete a short sentence "
    "on arrival, per the seed, so the arrival phase gets the full answer. What he cannot do is talk "
    "in the respiratory failure phase, so every topic carries a second, clipped answer for that "
    "phase with the pauses marked by ellipses. That is two answers per topic rather than the three "
    "a case with a distressed arrival would need."),
  "diagnosis_disclosure": (
-   "Section 10.4. He never names a rhythm, an ejection fraction or heart failure, because he has "
+   "Section 8.4. He never names a rhythm, an ejection fraction or heart failure, because he has "
    "never been told any of them and the case turns on the resident finding them. He does describe "
    "his heartbeat in lay terms, which is his own sensation and not a diagnosis, and he does "
    "describe the coronary calcification found on a CT three years ago, which is a past diagnosis "
@@ -542,7 +542,7 @@ AUTHORING_NOTES = {
    "finds all three. Deciding between them is not the emergency department's task and the case "
    "does not score it."),
  "coverage": (
-   "Every topic in the section 10.2 minimum list is authored except pregnancy status, which does "
+   "Every topic in the section 8.2 minimum list is authored except pregnancy status, which does "
    "not apply to a sixty-eight year old man; a resident who asks gets the out-of-scope response. "
    "Location and radiation of pain are folded into the chest pain topic because the pain being "
    "asked about does not exist, and a denial is the whole content."),

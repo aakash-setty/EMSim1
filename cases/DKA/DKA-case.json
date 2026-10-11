@@ -9,8 +9,8 @@
   "design_guide": "EMSim case design guide (Claude Doc, 5 October 2026)"
  },
  "provenance": {
-  "status": "DRAFTED BY A LANGUAGE MODEL. Not reviewed by a physician. Not for use with learners until the section 14.3 checklist is complete.",
-  "author": "Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a plan and four decisions made in the same conversation. Authoring requirements section 17 applies.",
+  "status": "DRAFTED BY A LANGUAGE MODEL. Not reviewed by a physician. Not for use with learners until the section 11.5 checklist is complete.",
+  "author": "Drafted by Claude at the request of Aakash Setty on 6 October 2026, from a plan and four decisions made in the same conversation. Authoring requirements section 1 applies.",
   "warning": "A physician decided the things listed in DKA-SEED.md section 0. Everything else is model output and awaits sign-off: every vital sign, finding, laboratory value, delay, tag, debrief note, interview answer and diagnosis explanation.",
   "author_only_fields_pending_signoff": [
    "Every vital sign in every phase, and the three delays: 10 seconds for insulin to act, 20 seconds for potassium to run in, and 5 seconds for insulin given during the potassium infusion to act once it finishes.",
@@ -97,7 +97,7 @@
    "The existing potassium entry has no route. This case shows it as 'Potassium Chloride (KCl) IV' and adds a vascular access prerequisite. A global rename would be cleaner.",
    "There is no action for restarting a stopped infusion. This case reads an insulin order placed in the recovering phase as the restart, through a hidden case action.",
    "The catalog has no dose, so the rate of potassium replacement cannot be taught by doing.",
-   "The rhythm field has two values, regular and irregularly irregular. The falling phase describes extra beats, dropped beats and ectopy in the exam, the interview and the ECG report, over a regular beat and a regular trace. A third value for occasional ectopy would let the monitor agree (authoring 6.0a).",
+   "The rhythm field has two values, regular and irregularly irregular. The falling phase describes extra beats, dropped beats and ectopy in the exam, the interview and the ECG report, over a regular beat and a regular trace. A third value for occasional ectopy would let the monitor agree (authoring 5.2).",
    "A spoken 'insulin' offers the bolus or the infusion and not the subcutaneous entry. The bolus is the discouraged one in this case. The fix is in catalog/build_voice_aliases.py.",
    "The scenario runner does not implement also_satisfies. Scenarios that depend on a hidden target name it as a step. DKA-tests.js folds the real routes."
   ]
@@ -108,7 +108,7 @@
   "The existing potassium entry has no route. This case shows it as 'Potassium Chloride (KCl) IV' and adds a vascular access prerequisite. A global rename would be cleaner.",
   "There is no action for restarting a stopped infusion. This case reads an insulin order placed in the recovering phase as the restart, through a hidden case action.",
   "The catalog has no dose, so the rate of potassium replacement cannot be taught by doing.",
-  "The rhythm field has two values, regular and irregularly irregular. The falling phase describes extra beats, dropped beats and ectopy in the exam, the interview and the ECG report, over a regular beat and a regular trace. A third value for occasional ectopy would let the monitor agree (authoring 6.0a).",
+  "The rhythm field has two values, regular and irregularly irregular. The falling phase describes extra beats, dropped beats and ectopy in the exam, the interview and the ECG report, over a regular beat and a regular trace. A third value for occasional ectopy would let the monitor agree (authoring 5.2).",
   "A spoken 'insulin' offers the bolus or the infusion and not the subcutaneous entry. The bolus is the discouraged one in this case. The fix is in catalog/build_voice_aliases.py.",
   "The scenario runner does not implement also_satisfies. Scenarios that depend on a hidden target name it as a step. DKA-tests.js folds the real routes."
  ],
@@ -161,7 +161,7 @@
   "presenting_appearance": "A slim young woman lying on the stretcher with a vomit bowl, tired and dry-lipped, breathing a little deeply. She answers clearly. Her roommate is in the chair.",
   "ems_handover_text": "Twenty-four year old woman with type 1 diabetes, two days of vomiting and diarrhea after her roommate had the same. Not eating, so she cut back and then stopped her insulin. Thirsty and weak since yesterday. Rate 112, pressure 104 over 64, respirations 22, saturation 99 percent, temperature 37.3. No sugar done at triage.",
   "arrival_handover": "Twenty-four year old woman, two days of vomiting and diarrhea, says she feels weak and can't keep fluids down. She looked dry and worn out so I brought her straight through.",
-  "handover_authoring_note": "Section 3.2. Two sentences, 31 words. No vital sign, no past history, no medication, no pertinent negative. It leaves out the diabetes on purpose: the triage nurse did not ask, and the learner finds it by asking or by checking a sugar.",
+  "handover_authoring_note": "Section 2.3. Two sentences, 31 words. No vital sign, no past history, no medication, no pertinent negative. It leaves out the diabetes on purpose: the triage nurse did not ask, and the learner finds it by asking or by checking a sugar.",
   "avatar": {
    "build": "thin"
   }
@@ -1431,7 +1431,7 @@
  "prerequisite_semantics_note": "One case prerequisite: intravenous potassium needs a line, by the catalog's own three-flag condition (peripheral, central or intraosseous). The catalog's vascular access rule is kept for everything else.",
  "content_keys": {
   "exam": {
-   "authoring_note": "Section 11.2. Routing follows the catalog map: capillary refill and pulse on exam_circ, work of breathing on exam_breath, lung sounds on exam_pulm, limb power and reflexes on exam_neuro, turgor and injection sites on exam_skin.",
+   "authoring_note": "Section 9.2. Routing follows the catalog map: capillary refill and pulse on exam_circ, work of breathing on exam_breath, lung sounds on exam_pulm, limb power and reflexes on exam_neuro, turgor and injection sites on exam_skin.",
    "exam_airway": [
     {
      "when": null,
@@ -1638,7 +1638,7 @@
    ]
   },
   "general_status": {
-   "authoring_note": "Section 11.3. Consistent with exam_neuro and each phase's appearance values.",
+   "authoring_note": "Section 9.3. Consistent with exam_neuro and each phase's appearance values.",
    "rules": [
     {
      "when": "phase is potassium_falling",
@@ -3551,7 +3551,7 @@
    }
   },
   "imaging": {
-   "authoring_note": "Section 11.4. The chest film and the abdominal CT are left to the catalog defaults, which are normal, and that is intended. The ECG report is findings only and quotes no rate. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc as its report here, without the ondansetron increment.",
+   "authoring_note": "Section 9.4. The chest film and the abdominal CT are left to the catalog defaults, which are normal, and that is intended. The ECG report is findings only and quotes no rate. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc as its report here, without the ondansetron increment.",
    "ecg_12_lead": {
     "changes_with_state": true,
     "rules": [
@@ -3663,7 +3663,7 @@
    }
   },
   "consultants": {
-   "authoring_note": "Section 11.5. Rules are ordered by phase, then by study state. The endocrinologist and the intensivist each have a tier for both studies back, one for each study alone, a pending tier and a default. In the arrival phase every variant of the chemistry reads a potassium under 3.5 (3.1, 3.0 or 2.9), which is all the endocrinologist says of it. Grading the ketoacidosis as mild needs the gas, so that word sits behind the gas. The phase rules for the ready and treated phases give advice and read no result.",
+   "authoring_note": "Section 9.5. Rules are ordered by phase, then by study state. The endocrinologist and the intensivist each have a tier for both studies back, one for each study alone, a pending tier and a default. In the arrival phase every variant of the chemistry reads a potassium under 3.5 (3.1, 3.0 or 2.9), which is all the endocrinologist says of it. Grading the ketoacidosis as mild needs the gas, so that word sits behind the gas. The phase rules for the ready and treated phases give advice and read no result.",
    "consult_endocrinology": [
     {
      "when": "phase is potassium_falling",
@@ -3732,7 +3732,7 @@
    "the_insulin": "She reduced and then stopped her insulin because she was not eating. She says so only when asked about her insulin. It is in must_ask and is never volunteered.",
    "the_diabetes": "The handover does not mention diabetes. Past medical history, medications, the diabetes topic, the sugar readings and the thirst topic all lead to it.",
    "no_global_rule": "No phase is at alertness 2 or 3, so there is no alertness rule.",
-   "near_the_10_4_line": "Two answers sit close to the limits in authoring 10.4 and are flagged for the reviewer. The diabetes topic says 'they said my blood had gone acidic' about her admission at age eleven. That is her own past history in lay words, and she does not connect it to today. The sugar topic quotes her home meter, 380 and 290. Those are numbers she read herself, not results from this visit. A reviewer may prefer either softened.",
+   "near_the_10_4_line": "Two answers sit close to the limits in authoring 8.4 and are flagged for the reviewer. The diabetes topic says 'they said my blood had gone acidic' about her admission at age eleven. That is her own past history in lay words, and she does not connect it to today. The sugar topic quotes her home meter, 380 and 290. Those are numbers she read herself, not results from this visit. A reviewer may prefer either softened.",
    "added_denials": "Model-written on 7 October 2026, awaiting sign-off: 'No cramps' in the weakness answer and 'it isn't black' in the diarrhea answer. Both were added so that questions the out-of-scope bank used to refuse now get an answer.",
    "facts": "Six topics carry facts: onset, diarrhea, weakness, current_medications, insulin_taken_recently and glucose_monitoring. Each fact restates part of its topic's paragraph. On diarrhea and weakness the short form given on a repeat keeps the denial (no blood, no cramps)."
   },

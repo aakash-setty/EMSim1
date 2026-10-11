@@ -66,7 +66,7 @@ List what exists instead of trusting any list written down: `ls cases`, `ls engi
 5. The whole state is recomputed from the action log on every tick (a fold). Nothing is
    stored between ticks.
 
-Read authoring requirements section 0 before touching a case, and section 6.4 before using
+Read authoring requirements section 0 before touching a case, and section 14 before using
 anything that involves time.
 
 ## Working on a case
@@ -107,7 +107,7 @@ must stay within their budget and point at real sections. `CLAUDE.md` says what 
 files are, and `docs/restructure-plan.md` says why.
 
 New case: `python3 engine/new_case.py XX "Title"` scaffolds a JSON pack that fails
-validation on purpose. The error list is the to-do list. Authoring requirements section 16
+validation on purpose. The error list is the to-do list. Authoring requirements section 13
 is the full sequence. To write the case as Python instead, copy `build_case.py` and the
 `case_*.py` layout from the newest pack that has them.
 

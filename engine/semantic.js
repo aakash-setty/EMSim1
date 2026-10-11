@@ -59,7 +59,7 @@ const SEM = (function () {
      the lexical matcher found a token overlap. It is DISABLED (0) by choice,
      not by oversight.
 
-     The case for it is section 10.6: an out-of-scope question answered as
+     The case for it is section 8.6: an out-of-scope question answered as
      though it were a different question is a wrong answer the learner cannot
      see. The case against it, which won here, is that this simulator is the
      learner's only source of history. There is no textbook page, no chart to

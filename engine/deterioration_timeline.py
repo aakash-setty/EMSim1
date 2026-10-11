@@ -3,7 +3,7 @@
 
     python3 engine/deterioration_timeline.py [cases/AFRVR]
 
-Authoring section 14.2c requires this artifact for any case that uses a time-guarded
+Authoring section 11.4 requires this artifact for any case that uses a time-guarded
 transition, and until now it was written by hand, which meant it could disagree with the
 case file and nobody would know. The per-key review matrix cannot show any of this,
 because it enumerates what a key resolves to IN a phase and knows nothing about how the
