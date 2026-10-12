@@ -2685,8 +2685,32 @@ const CHARGE=(function(){
      keeping a clock of its own, so the two cannot drift apart, and is only rewritten
      when the whole number changes. */
   const JOULES=200;
-  let open=false, ready=false, raf=0, onCancel=null, lastJ=-1;
+  let open=false, ready=false, raf=0, onCancel=null, lastJ=-1, janim=null;
   const $=id=>document.getElementById(id);
+  /* The count is a column of every value, moved by a transform, so it keeps counting on the
+     compositor while the download holds the main thread (11 October 2026: rewriting the text
+     each frame froze with it). ty(n) puts value n in the window. */
+  const ty=n=>'translateY('+(-n/(JOULES+1)*100)+'%)';
+  /* One keyframe per joule, at the moment the bar reaches it. The bar is CSS
+     cubic-bezier(.12,.62,.32,1) over 45 s to 92 percent (shell.html, chgfill), so the
+     keyframe for n sits where that curve reaches n/184, and each holds until the next. */
+  const KF=(function(){
+    const x1=.12,y1=.62,x2=.32,y2=1,S=[];
+    for(let i=0;i<=4000;i++){ const u=i/4000,a=1-u;
+      S.push([3*a*a*u*x1+3*a*u*u*x2+u*u*u, 3*a*a*u*y1+3*a*u*u*y2+u*u*u]); }
+    const top=Math.round(.92*JOULES), out=[]; let k=0;
+    for(let n=0;n<=top;n++){
+      const p=n/top; while(k<S.length-1&&S[k][1]<p) k++;
+      out.push({offset:n?Math.min(1,S[k][0]):0,transform:ty(n),easing:'step-end'});
+    }
+    if(out[out.length-1].offset<1) out.push({offset:1,transform:ty(top)});
+    return out;
+  })();
+  function jcol(){
+    const c=$('chg-jcol'); if(!c) return null;
+    if(!c.childElementCount){ let h=''; for(let n=0;n<=JOULES;n++) h+='<div>'+n+' J</div>'; c.innerHTML=h; }
+    return c;
+  }
   function scaleNow(){
     const b=$('chg-bar'); if(!b) return 0;
     const m=getComputedStyle(b).transform;
@@ -2696,12 +2720,7 @@ const CHARGE=(function(){
   function paintJ(f){
     const n=Math.round(Math.max(0,Math.min(1,f))*JOULES);
     if(n===lastJ) return; lastJ=n;
-    const j=$('chg-j'); if(j) j.textContent=n+' J';
-  }
-  function tick(){
-    if(!open||ready) return;
-    paintJ(scaleNow());
-    raf=requestAnimationFrame(tick);
+    const c=jcol(); if(c) c.style.transform=ty(n);
   }
   function setStatus(s){ const n=$('chargestatus'); if(n) n.textContent=s; }
   function start(title,cancel){
@@ -2719,8 +2738,12 @@ const CHARGE=(function(){
     $('chg-led').setAttribute('fill','#3a3f45');
     const b=$('chargedeliver'); b.disabled=true;
     setStatus('Charging. Opening the case.');
+    cancelAnimationFrame(raf);
+    if(janim){ janim.cancel(); janim=null; }
     paintJ(0);
-    cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);
+    const jc=jcol(), reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(jc&&reduce) paintJ(.6);
+    else if(jc&&jc.animate) janim=jc.animate(KF,{duration:45000,fill:'forwards'});
     const c=$('chargecancel'); if(c) c.focus();
   }
   /* The case is bound and its arrival screen is drawn underneath. The bar finishes its
@@ -2728,6 +2751,7 @@ const CHARGE=(function(){
   function done(){
     if(!open) return;
     ready=true; cancelAnimationFrame(raf);
+    const f0=scaleNow(); if(janim){ janim.cancel(); janim=null; } lastJ=-1; paintJ(f0);
     /* Freeze the bar where the animation has it, then let a transition finish the fill. */
     const v=$('chargeview'), bar=$('chg-bar'), from=scaleNow(), s0=performance.now();
     if(bar){
@@ -2745,12 +2769,13 @@ const CHARGE=(function(){
       $('chg-btnlab').textContent='CHARGED';
       $('chg-led').setAttribute('fill','#38e07b');
       const b=$('chargedeliver'); b.disabled=false; b.focus();
-      setStatus('Charged. Deliver the charge to enter the case.');
+      setStatus('Charged. Press the button to enter the case.');
     };
     raf=requestAnimationFrame(fill);
   }
   function hide(){
     open=false; ready=false; cancelAnimationFrame(raf);
+    if(janim){ janim.cancel(); janim=null; }
     const v=$('chargeview'); if(v){ v.classList.add('hidden'); v.classList.remove('charging'); }
     document.body.classList.remove('chg-cover');
   }

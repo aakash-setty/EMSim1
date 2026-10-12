@@ -1075,7 +1075,7 @@ table.labtbl tr.abn td.val::after{content:" \2691";font-size:10px}
   gap:18px 44px;align-items:center;width:min(980px,100%)}
 /* The shadow sits on a static layer under the drawing. A filter on the SVG itself was
    re-rendered on every frame the screen changed, which is what made the charge stutter. */
-.charge-device{grid-area:dev;min-width:0;position:relative}
+.charge-device{grid-area:dev;min-width:0;position:relative;container-type:inline-size}
 .charge-device::before{content:"";position:absolute;left:6%;right:6%;top:18%;bottom:4%;border-radius:40px;
   box-shadow:0 46px 70px rgba(0,0,0,.55),0 8px 18px rgba(0,0,0,.35);z-index:0}
 .defib{position:relative;z-index:1;display:block;width:100%;height:auto;will-change:transform}
@@ -1093,9 +1093,21 @@ table.labtbl tr.abn td.val::after{content:" \2691";font-size:10px}
 .df-state{fill:#ffb020;font-size:13px;font-weight:600;letter-spacing:.14em}
 .df-small{fill:rgba(255,255,255,.45);font-size:11px;letter-spacing:.12em}
 .df-btnlab{fill:#2a2200;font-size:13.5px;font-weight:700;letter-spacing:.06em}
-.df-ecg{fill:none;stroke:#38e07b;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;
-  stroke-dasharray:420 900;animation:chgecg 2.4s linear infinite}
-@keyframes chgecg{from{stroke-dashoffset:420}to{stroke-dashoffset:-900}}
+/* Screen area in the drawing: viewBox x 52 to 344, the trace band y 130 to 215. Four beats
+   per screen width at the displayed rate of 132 (0.4545 s a beat). */
+.chg-ecg{position:absolute;z-index:2;left:9.286%;top:32.5%;width:52.143%;height:21.25%;
+  overflow:hidden;pointer-events:none}
+.chg-ecgstrip{position:absolute;left:0;top:0;height:100%;width:216.44%;will-change:transform;
+  animation:chgsweep 1.818s linear infinite}
+.chg-ecgstrip svg{display:block;width:100%;height:100%}
+.chg-ecgstrip path{fill:none;stroke:#38e07b;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+@keyframes chgsweep{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* The joule readout: right edge at viewBox x 332, a 40-unit line from y 80. 7.143cqw is 40
+   units of the 560-unit drawing at any width. */
+.chg-jwin{position:absolute;z-index:2;right:40.714%;top:20%;height:7.143cqw;overflow:hidden;pointer-events:none}
+.chg-jcol{will-change:transform;font-family:var(--mono);font-weight:600;color:#ffb020;font-size:7.143cqw;
+  font-variant-numeric:tabular-nums;text-align:right}
+.chg-jcol div{height:7.143cqw;line-height:7.143cqw;white-space:nowrap}
 .chargeview.ready .df-state{fill:#38e07b}
 .charge-side{grid-area:side;display:flex;flex-direction:column;align-items:center;gap:22px;padding-top:8px}
 .charge-sub{font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55);
@@ -1121,7 +1133,6 @@ body.chg-cover #splash,body.chg-cover #picker{visibility:hidden}
 .charge-shock:not(:disabled):hover{filter:brightness(1.08)}
 .charge-shock:not(:disabled):active{transform:scale(.96)}
 .charge-shock:focus-visible{outline:3px solid #fff;outline-offset:12px}
-.charge-btnlab{font-size:15px;font-weight:600;color:rgba(255,255,255,.85)}
 .charge-foot{grid-area:foot;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;
   border-top:1px solid rgba(255,255,255,.10);padding-top:16px}
 .charge-title{font-size:18px;font-weight:600;color:#fff;letter-spacing:-.01em}
@@ -1138,7 +1149,7 @@ body.chg-cover #splash,body.chg-cover #picker{visibility:hidden}
   .charge-shock{width:108px;height:108px}
 }
 @media (prefers-reduced-motion:reduce){
-  .df-ecg,.chargeview.ready .charge-shock::after,.chargeview,.chargeview.leaving{animation:none}
+  .chg-ecgstrip,.chargeview.ready .charge-shock::after,.chargeview,.chargeview.leaving{animation:none}
   .chargeview.charging .chg-barfill{animation:none;transform:scaleX(.6)}
   .chargeview.shocked .charge-flash{animation:none}
 }
@@ -2052,8 +2063,6 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
           <path d="M100 84V272M150 84V272M200 84V272M250 84V272M300 84V272"/>
         </g>
         <text x="64" y="106" class="df-hr">HR 132</text>
-        <text x="332" y="112" class="df-j" text-anchor="end" id="chg-j">0 J</text>
-        <path class="df-ecg" d="M52 182 h18 l6 -4 l6 4 h10 l4 6 l6 -46 l6 58 l5 -14 h20 l8 -6 l8 6 h22 l4 6 l6 -46 l6 58 l5 -14 h20 l8 -6 l8 6 h22 l4 6 l6 -46 l6 58 l5 -14 h20 l8 -6 l8 6 h22 l4 6 l6 -46 l6 58 l5 -14 h12"/>
         <text x="64" y="240" class="df-state" id="chg-state">CHARGING</text>
         <rect x="64" y="250" width="268" height="12" rx="4" fill="none" stroke="#ffb020" stroke-opacity=".7" stroke-width="1.5"/>
         <!-- speaker grille -->
@@ -2093,13 +2102,19 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
            SVG, so its fill runs as a compositor animation and stays smooth while the page
            is busy downloading and parsing the case. -->
       <div class="chg-barfill" id="chg-bar"></div>
+      <!-- The trace and the joule count are HTML laid over the screen for the same reason as
+           the bar: each moves by a transform animation, which the compositor runs while the
+           page is busy. The trace is a strip two screens wide sliding one screen left, clipped
+           to the screen. The count is a column of every value from 0 J to 200 J in a window one
+           line high, stepped up the column in time with the bar. -->
+      <div class="chg-ecg"><div class="chg-ecgstrip"><svg viewBox="0 0 632 85" preserveAspectRatio="none"><path d="M0 52 h10 l6 -4 l6 4 h8 l3 5 l5 -45 l5 52 l4 -12 h12 l9 -7 l9 7 h2 h10 l6 -4 l6 4 h8 l3 5 l5 -45 l5 52 l4 -12 h12 l9 -7 l9 7 h2 h10 l6 -4 l6 4 h8 l3 5 l5 -45 l5 52 l4 -12 h12 l9 -7 l9 7 h2 h10 l6 -4 l6 4 h8 l3 5 l5 -45 l5 52 l4 -12 h12 l9 -7 l9 7 h2 h10 l6 -4 l6 4 h8 l3 5 l5 -45 l5 52 l4 -12 h12 l9 -7 l9 7 h2 h10 l6 -4 l6 4 h8 l3 5 l5 -45 l5 52 l4 -12 h12 l9 -7 l9 7 h2 h10 l6 -4 l6 4 h8 l3 5 l5 -45 l5 52 l4 -12 h12 l9 -7 l9 7 h2 h10 l6 -4 l6 4 h8 l3 5 l5 -45 l5 52 l4 -12 h12 l9 -7 l9 7 h2"/></svg></div></div>
+      <div class="chg-jwin"><div class="chg-jcol" id="chg-jcol"></div></div>
     </div>
     <div class="charge-side">
       <div class="charge-sub">Enter case</div>
       <button id="chargedeliver" class="charge-shock" type="button" disabled aria-label="Deliver charge and enter the case">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 2.5 5.5 13.4h5.3l-1.2 8.1 8.9-12.2h-5.6z"/></svg>
       </button>
-      <div class="charge-btnlab">Deliver charge</div>
     </div>
     <div class="charge-foot">
       <div class="charge-title" id="chargetitle"></div>
@@ -9872,8 +9887,32 @@ const CHARGE=(function(){
      keeping a clock of its own, so the two cannot drift apart, and is only rewritten
      when the whole number changes. */
   const JOULES=200;
-  let open=false, ready=false, raf=0, onCancel=null, lastJ=-1;
+  let open=false, ready=false, raf=0, onCancel=null, lastJ=-1, janim=null;
   const $=id=>document.getElementById(id);
+  /* The count is a column of every value, moved by a transform, so it keeps counting on the
+     compositor while the download holds the main thread (11 October 2026: rewriting the text
+     each frame froze with it). ty(n) puts value n in the window. */
+  const ty=n=>'translateY('+(-n/(JOULES+1)*100)+'%)';
+  /* One keyframe per joule, at the moment the bar reaches it. The bar is CSS
+     cubic-bezier(.12,.62,.32,1) over 45 s to 92 percent (shell.html, chgfill), so the
+     keyframe for n sits where that curve reaches n/184, and each holds until the next. */
+  const KF=(function(){
+    const x1=.12,y1=.62,x2=.32,y2=1,S=[];
+    for(let i=0;i<=4000;i++){ const u=i/4000,a=1-u;
+      S.push([3*a*a*u*x1+3*a*u*u*x2+u*u*u, 3*a*a*u*y1+3*a*u*u*y2+u*u*u]); }
+    const top=Math.round(.92*JOULES), out=[]; let k=0;
+    for(let n=0;n<=top;n++){
+      const p=n/top; while(k<S.length-1&&S[k][1]<p) k++;
+      out.push({offset:n?Math.min(1,S[k][0]):0,transform:ty(n),easing:'step-end'});
+    }
+    if(out[out.length-1].offset<1) out.push({offset:1,transform:ty(top)});
+    return out;
+  })();
+  function jcol(){
+    const c=$('chg-jcol'); if(!c) return null;
+    if(!c.childElementCount){ let h=''; for(let n=0;n<=JOULES;n++) h+='<div>'+n+' J</div>'; c.innerHTML=h; }
+    return c;
+  }
   function scaleNow(){
     const b=$('chg-bar'); if(!b) return 0;
     const m=getComputedStyle(b).transform;
@@ -9883,12 +9922,7 @@ const CHARGE=(function(){
   function paintJ(f){
     const n=Math.round(Math.max(0,Math.min(1,f))*JOULES);
     if(n===lastJ) return; lastJ=n;
-    const j=$('chg-j'); if(j) j.textContent=n+' J';
-  }
-  function tick(){
-    if(!open||ready) return;
-    paintJ(scaleNow());
-    raf=requestAnimationFrame(tick);
+    const c=jcol(); if(c) c.style.transform=ty(n);
   }
   function setStatus(s){ const n=$('chargestatus'); if(n) n.textContent=s; }
   function start(title,cancel){
@@ -9906,8 +9940,12 @@ const CHARGE=(function(){
     $('chg-led').setAttribute('fill','#3a3f45');
     const b=$('chargedeliver'); b.disabled=true;
     setStatus('Charging. Opening the case.');
+    cancelAnimationFrame(raf);
+    if(janim){ janim.cancel(); janim=null; }
     paintJ(0);
-    cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);
+    const jc=jcol(), reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(jc&&reduce) paintJ(.6);
+    else if(jc&&jc.animate) janim=jc.animate(KF,{duration:45000,fill:'forwards'});
     const c=$('chargecancel'); if(c) c.focus();
   }
   /* The case is bound and its arrival screen is drawn underneath. The bar finishes its
@@ -9915,6 +9953,7 @@ const CHARGE=(function(){
   function done(){
     if(!open) return;
     ready=true; cancelAnimationFrame(raf);
+    const f0=scaleNow(); if(janim){ janim.cancel(); janim=null; } lastJ=-1; paintJ(f0);
     /* Freeze the bar where the animation has it, then let a transition finish the fill. */
     const v=$('chargeview'), bar=$('chg-bar'), from=scaleNow(), s0=performance.now();
     if(bar){
@@ -9932,12 +9971,13 @@ const CHARGE=(function(){
       $('chg-btnlab').textContent='CHARGED';
       $('chg-led').setAttribute('fill','#38e07b');
       const b=$('chargedeliver'); b.disabled=false; b.focus();
-      setStatus('Charged. Deliver the charge to enter the case.');
+      setStatus('Charged. Press the button to enter the case.');
     };
     raf=requestAnimationFrame(fill);
   }
   function hide(){
     open=false; ready=false; cancelAnimationFrame(raf);
+    if(janim){ janim.cancel(); janim=null; }
     const v=$('chargeview'); if(v){ v.classList.add('hidden'); v.classList.remove('charging'); }
     document.body.classList.remove('chg-cover');
   }

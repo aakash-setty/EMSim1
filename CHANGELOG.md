@@ -5,6 +5,20 @@ is usable with learners.
 
 ---
 
+## Charging screen: trace kept on the screen, count no longer freezes (11 October 2026, author instruction)
+
+The trace ran past the right edge of the defibrillator's screen and drifted lower with each
+beat. It is now a strip clipped to the screen, four level beats per screen at the displayed
+rate of 132. The trace and the joule count were animated on the main thread, so they froze
+while the case downloaded and was set up, while the bar (a compositor animation) kept
+moving. Both now move by transform animations the compositor runs: the trace slides, and
+the count steps through a column of every value in time with the bar. Checked with the main
+thread blocked for four seconds: the count, the trace and the bar all kept moving. The
+"Deliver charge" label under the button is gone, and the status line says "Press the
+button to enter the case."
+
+---
+
 ## Chart filters: Labs Only and Nurse Only (11 October 2026, author instruction)
 
 Two buttons beside the Chart heading in the record. The one that is on is highlighted with a
