@@ -638,108 +638,56 @@ CONSULTANTS = {
 
  "consult_toxicology": [
    {"when": "study ecg_12_lead resulted AND flag bicarb_given set",
-    "value": ("Toxicology fellow: good, you have treated the QRS and that is the right call. "
-              "Keep going on the same principle. Repeat boluses of 1 to 2 mEq/kg until the QRS "
-              "narrows, then put up an infusion, and take her pH to about 7.50 to 7.55 and no "
-              "further. Watch the sodium, the potassium and the ionized calcium, because you "
-              "will move all three. Serial tracings, and I want continuous monitoring wherever "
-              "she goes.\n\nThree other things. Do not give her physostigmine, whatever the "
-              "delirium looks like, while that QRS is anything other than normal. Do not use a "
-              "class IA or IC antiarrhythmic if she has ventricular ectopy; if she needs "
-              "anything beyond bicarbonate, call me and we will talk about lidocaine. And check "
-              "her acetaminophen, because these are over-the-counter combination products and "
-              "people do not always know what they took.\n\nIf the QRS will not narrow on "
-              "adequate bicarbonate and an adequate pH, the options are more sodium as "
-              "hypertonic saline, lidocaine, lipid emulsion, and in extremis extracorporeal "
-              "support. The evidence for all of those is case reports and extrapolation, so "
-              "involve me before you need them rather than after.")},
+    "value": ("Toxicology fellow: good, keep going. Repeat the boluses until the QRS narrows, "
+              "then start an infusion, aiming for a pH of about 7.50 to 7.55. Watch the sodium, "
+              "potassium and ionized calcium. No physostigmine until the QRS is normal.")},
    {"when": "study ecg_12_lead resulted",
-    "value": ("Toxicology fellow: read me the QRS again. A hundred and thirty-two milliseconds "
-              "with a terminal R in aVR is sodium-channel blockade, and diphenhydramine does "
-              "that at high dose. That is your indication to treat and you do not need to wait "
-              "for a level or for the history to firm up. Sodium bicarbonate, 1 to 2 mEq/kg as "
-              "a bolus, repeated, with a tracing after each one.\n\nDo not give physostigmine. "
-              "I know the delirium is the textbook picture for it and I know somebody will "
-              "suggest it. Not with that QRS.\n\nBenzodiazepines for the agitation, and please "
-              "do not use haloperidol. Cool her actively and do not bother with paracetamol. "
-              "Send a creatine kinase if you have not. Call me back with the repeat tracing.")},
+    "value": ("Toxicology fellow: a wide QRS with a terminal R in aVR is sodium-channel "
+              "blockade. Give sodium bicarbonate, 1 to 2 mEq/kg, repeated, with a tracing after "
+              "each. No physostigmine and no haloperidol. Benzodiazepines and active cooling.")},
    {"when": "study ecg_12_lead ordered",
-    "value": ("Toxicology fellow: the tracing is not through yet, so I am not going to guess. "
-              "The one thing I want from you before it comes is the QRS duration and whether "
-              "there is a terminal R wave in aVR, because that decides everything else, "
-              "including whether physostigmine is even a conversation. While you wait: "
-              "benzodiazepines for the agitation, cool her actively, get a glucose if you have "
-              "not, and send a creatine kinase, an acetaminophen and a salicylate.")},
+    "value": ("Toxicology fellow: I need the QRS duration and whether there is a terminal R in "
+              "aVR, because that decides everything. Meanwhile benzodiazepines, active cooling, "
+              "a glucose, and an acetaminophen level.")},
    {"when": None,
-    "value": ("Toxicology fellow: I need a twelve-lead before I can help you much. A delirious "
-              "hyperthermic teenager with big pupils and dry skin is an antimuscarinic picture "
-              "and diphenhydramine is at the top of that list in this country, but the thing "
-              "that decides her management is the QRS duration and I do not have it. Get me an "
-              "ECG and call me straight back. In the meantime, benzodiazepines rather than "
-              "antipsychotics, cool her physically, and send a paracetamol and a salicylate "
-              "level.")}],
+    "value": ("Toxicology fellow: this looks antimuscarinic, but the QRS decides her "
+              "management. Get me an ECG and call me straight back. Meanwhile benzodiazepines "
+              "rather than antipsychotics, cool her, and send an acetaminophen level.")}],
 
  "consult_critical_care": [
    {"when": "study ecg_12_lead resulted AND flag bicarb_given set",
-    "value": ("Intensivist: yes, we will take her. Keep the bicarbonate going, keep her on the "
-              "monitor and send me the tracings. She stays on continuous cardiac monitoring "
-              "with serial ECGs and serial gases, and nobody moves her to a psychiatric bed "
-              "until that QRS has been normal for a good while. Have you got a creatine kinase "
-              "and a urine output? If she has been that hot and that agitated she is going to "
-              "declare a rhabdomyolysis overnight.")},
+    "value": ("Intensivist: yes, we will take her. Keep the bicarbonate going with continuous "
+              "monitoring and serial ECGs. No psychiatric bed until the QRS has been normal for "
+              "a good while. Send a creatine kinase.")},
    {"when": "study ecg_12_lead resulted",
-    "value": ("Intensivist: with a QRS of 132 she is coming to us, and she needs sodium "
-              "bicarbonate before she comes rather than after. Start it, get a repeat tracing, "
-              "and call me when you have both. Is she cooled? A temperature of 40 with a "
-              "conduction abnormality is a bad combination and I would rather she came to me "
-              "already coming down.")},
+    "value": ("Intensivist: with a QRS like that she is coming to us, but start sodium "
+              "bicarbonate before she comes. Get a repeat tracing, and cool her.")},
    {"when": "study ecg_12_lead ordered",
-    "value": ("Intensivist: I am happy to take a young overdose with a temperature of 40 and a "
-              "seizure. What I want before I write anything is the twelve-lead, because whether "
-              "she has a conduction problem changes what happens in the first hour with me. "
-              "Call me the moment it is through.")},
+    "value": ("Intensivist: she is coming to us. I want the twelve-lead first, because a "
+              "conduction problem changes her first hour. Call me when it is through.")},
    {"when": None,
-    "value": ("Intensivist: tell me the ECG and the temperature. A confused hyperthermic "
-              "eighteen year old with an unknown ingestion is an intensive care patient in "
-              "principle, and what I need to know is whether she has a conduction abnormality "
-              "and whether anybody has treated it.")}],
+    "value": ("Intensivist: tell me the ECG and the temperature. What I need to know is whether "
+              "she has a conduction abnormality and whether anyone has treated it.")}],
 
  "consult_psychiatry": [
    {"when": "flag bicarb_given set AND flag cooling_started set",
-    "value": ("Psychiatry registrar: thank you for calling once she is treated. We will see her, "
-              "and not tonight in your department. She needs a monitored medical bed until the "
-              "conduction and the temperature are sorted out, and we will assess her there.\n\n"
-              "Two things while you have me. Somebody should be with her continuously, and her "
-              "mother should not be the one doing it. And the history is worth writing down "
-              "while it is fresh: an eighteen year old who has been bullied online, has lost a "
-              "relationship and has withdrawn from her friends, who took an entire bottle of "
-              "something at home alone in the afternoon while her mother was at work. That is a "
-              "planned act in a period of isolation and it is not a low-risk presentation.")},
+    "value": ("Psychiatry registrar: thank you for waiting until she is treated. She needs a "
+              "monitored medical bed and we will assess her there. Someone should be with her "
+              "continuously, and not her mother.")},
    {"when": None,
-    "value": ("Psychiatry registrar: I will happily see her and she is not ready for me. She has "
-              "not got a stable rhythm, she is over 40 degrees and she is delirious, so she "
-              "cannot give me any history I could rely on and I cannot assess capacity or risk "
-              "in a patient who does not know where she is.\n\nMedical clearance is not a form "
-              "somebody signs. It means the medical problem is treated and the patient can "
-              "engage. Call me when she is on a monitored bed and awake, and in the meantime "
-              "please have someone with her.")}],
+    "value": ("Psychiatry registrar: she is not ready for me. She is delirious, so I cannot "
+              "assess capacity or risk. Call me when she is on a monitored bed and awake, and "
+              "keep someone with her.")}],
 
  "consult_neurology": [
    {"when": "study ct_head resulted AND study ecg_12_lead resulted",
-    "value": ("Neurology registrar: the scan is clear and the tracing is not, and the tracing is "
-              "the one I would be looking at. This is a toxic seizure with a cause you can "
-              "point to, so it does not need my imaging or my drugs. Benzodiazepines, correct "
-              "the acidosis, correct the temperature. If it recurs after adequate "
-              "benzodiazepine dosing use levetiracetam or propofol and please do not use "
-              "phenytoin, because it does the same thing to the sodium channel that whatever "
-              "she took is doing. No indication for an EEG unless she stays down without "
-              "waking.")},
+    "value": ("Neurology registrar: the scan is clear and the tracing is not. This is a toxic "
+              "seizure, so benzodiazepines and fix the physiology. If it recurs, levetiracetam "
+              "or propofol, and no phenytoin.")},
    {"when": None,
-    "value": ("Neurology registrar: a first seizure in a hyperthermic delirious teenager with an "
-              "unknown ingestion is a provoked seizure until proven otherwise, and I would not "
-              "be loading her with an anticonvulsant. Benzodiazepines, find and fix the "
-              "provocation, and get a head CT if you have not. Do not use phenytoin in an "
-              "overdose you have not characterized.")}],
+    "value": ("Neurology registrar: this is a provoked seizure until proven otherwise. "
+              "Benzodiazepines, fix the cause, and get a head CT if you have not. No phenytoin "
+              "in an unknown overdose.")}],
 
  "consult_cardiology": [
    # The escape hatch for a resident who cannot read the tracing, and it is deliberately not
@@ -747,54 +695,30 @@ CONSULTANTS = {
    # ECG out loud, which is the one thing the images cannot do for themselves, and then hands
    # the management back, because the management is toxicological.
    {"when": "phase is wide_complex_tachycardia OR phase is pulseless_vt",
-    "value": ("Cardiology fellow, looking at the monitor: that is a broad complex tachycardia "
-              "and I can see why you called, but I do not think this is mine. A young heart "
-              "with no structural disease does not do this on its own. In a poisoning it is "
-              "the sodium channel, and the drug for it is bicarbonate rather than anything "
-              "from my shelf.\n\nDo not give her amiodarone. Do not give her procainamide. "
-              "If she loses her pressure, shock her, and give the bicarbonate either way. Call "
-              "toxicology, not me.")},
+    "value": ("Cardiology fellow, looking at the monitor: in a poisoning this is the sodium "
+              "channel, and it is not mine. Bicarbonate, no amiodarone and no procainamide. If "
+              "she loses her pressure, shock her. Call toxicology.")},
    {"when": "study ecg_12_lead resulted AND flag bicarb_given set",
-    "value": ("Cardiology fellow: I have both tracings. Walk through them with me.\n\nOn the "
-              "first one the rate is about 135 and it is sinus, so the tachycardia itself is "
-              "not the problem. The QRS is 132 milliseconds, which is wide for a young woman "
-              "with no bundle branch block, and look at aVR: there is a terminal R wave of "
-              "about 5 millimeters and the R to S ratio there is over 0.7. The terminal axis "
-              "is rightward. That combination is sodium-channel blockade and it is the same "
-              "picture a tricyclic gives you.\n\nOn the repeat the QRS is about 104 and the "
-              "aVR R wave is down to a couple of millimeters, so whatever you gave is working. "
-              "Keep going and keep repeating it. The QTc is still long, so no QT-prolonging "
-              "drugs and keep her potassium and magnesium up.\n\nNothing here needs a "
-              "cardiologist. It needs toxicology and it needs a monitored bed.")},
+    "value": ("Cardiology fellow: the QRS was 132 milliseconds with a terminal R in aVR, and on "
+              "the repeat it is about 104, so the bicarbonate is working. Keep going. This "
+              "needs toxicology, not me.")},
    {"when": "study ecg_12_lead resulted",
-    "value": ("Cardiology fellow: let me read it to you, because there are three things on it "
-              "and only one is obvious.\n\nThe rate is about 135 and it is sinus. The QRS is "
-              "132 milliseconds, which is wide, and there is no bundle branch morphology to "
-              "explain it in an eighteen year old. Now look at aVR specifically: terminal R "
-              "wave about 5 millimeters, R to S ratio over 0.7, and the terminal part of the "
-              "QRS is swinging rightward. The QTc is about 495.\n\nThat is sodium-channel "
-              "blockade, and it is the same tracing a tricyclic overdose gives you. It is not "
-              "ischemia, it is not a bundle, and it is not something for the catheter "
-              "laboratory. The treatment is sodium bicarbonate and the call is to toxicology "
-              "rather than to me. Repeat the tracing after each dose and watch that QRS.")},
+    "value": ("Cardiology fellow: sinus tachycardia, a QRS of 132 milliseconds and a terminal R "
+              "in aVR. That is sodium-channel blockade, not ischemia. Treat it with sodium "
+              "bicarbonate, and the call is to toxicology.")},
    {"when": "study ecg_12_lead ordered",
-    "value": ("Cardiology fellow: the tracing is not through yet. Send it to me when it is and "
-              "I will read it with you. A sinus tachycardia in a poisoned teenager is not a "
-              "cardiology problem, but if the QRS is wide I will tell you what I see.")},
+    "value": ("Cardiology fellow: the tracing is not through yet. Send it to me and I will read "
+              "it with you.")},
    {"when": None,
-    "value": ("Cardiology fellow: get a twelve-lead and send it to me and I will look at it "
-              "with you. There is nothing I can say about a heart I have no tracing of. If it "
-              "turns out to be a wide QRS from a sodium-channel blocker, the treatment is "
-              "bicarbonate and the call is to toxicology.")}],
+    "value": ("Cardiology fellow: send me a twelve-lead and I will read it with you. If the QRS "
+              "is wide from a sodium-channel blocker, the treatment is bicarbonate and the call "
+              "is to toxicology.")}],
 
  "consult_renal": [
    {"when": "study creatine_kinase_ck resulted",
-    "value": ("Renal registrar: a creatine kinase of 540 is early and her creatinine is normal, "
-              "so this is volume and observation rather than anything from me. Keep her filled, "
-              "measure the urine output, repeat the creatine kinase and the electrolytes. Call "
-              "me if the creatine kinase climbs into the thousands or the creatinine moves.\n\n"
-              "On the drug itself: diphenhydramine is not effectively removed by hemodialysis, "
-              "so there is no clearance argument for putting her on a machine.")},
+    "value": ("Renal registrar: that creatine kinase is early and her creatinine is normal, so "
+              "keep her filled and measure the urine output. Dialysis does not remove "
+              "diphenhydramine.")},
    {"when": None,
     "value": ("Renal registrar: nothing for me yet. Send a creatine kinase and a creatinine and "
               "call me back if either is bad. Dialysis does not remove diphenhydramine, if that "

@@ -908,7 +908,8 @@ for cid, tag_v, note in [
    "of calling the poison center. The rule underneath it: call before you need the rescue, not "
    "after. Do not wait for cardiac arrest to involve toxicology or to find out whether "
    "extracorporeal support is available."),
-  ("consult_critical_care", "critical",
+  # 11 October 2026, Aakash Setty: recommended, not critical.
+  ("consult_critical_care", "recommended",
    "She is going to a critical care bed and the earlier that is arranged the better. This patient meets at least six of the usual indications for critical care admission after this poisoning: QRS widening, a seizure, persistent delirium, "
    "hyperthermia, a bicarbonate infusion, and a significant metabolic abnormality. Add "
    "intubation if she has been intubated."),

@@ -555,7 +555,7 @@ Single unconditional rule; nothing to enumerate.
 | stabilizing | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
 | supported | no | rule 3 (phase is supported) &rarr; ABNORMAL: Awake, washed out, flushed. Vasopressor running. GCS 15. | plausible |
 | supported | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
-| «any other phase» | no | rule 6 (default) &rarr; ABNORMAL: Sitting up, talking, flushed all over, dry lips, vomit bag in her lap.... | plausible |
+| «any other phase» | no | rule 6 (default) &rarr; ABNORMAL: Sitting up, talking, flushed all over, dry lips. GCS 15. | plausible |
 | «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
 
 

@@ -28,3 +28,4 @@ support is an invented fact and should be removed rather than reconciled.
   is removed from the case: the action, its result (no sonographer available, booked for
   the morning) and its place in the debrief's domain list. A formal echo is not used in
   this simulator. It was a neutral, uncataloged action.
+- 11 October 2026, Aakash Setty: every consultant answer over 40 words is shortened to 40 or fewer (authoring 9.5), keeping what the consultant thinks, what to do now and the disposition or callback. Wording by a model. Rule order, conditions, tags and debrief notes are unchanged. Not physician reviewed. Twelve of thirteen answers changed (cardiology, critical care, nephrology). Dropped: continuing carvedilol and the repeat echocardiogram (cardiology), the quoted systolic of 188 and saturation of 85 (critical care), and nephrology's list of dialysis indications, which its debrief note still gives. Physician review question CHFE-16 quotes the old wording.

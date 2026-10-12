@@ -3277,55 +3277,55 @@
    "consult_cardiology": [
     {
      "when": "phase is post_intubation_hypotension",
-     "value": "Cardiology fellow: that is a very different patient from the one you described. If he dropped his pressure straight after induction, my first thoughts are the induction agent, the positive pressure, and whatever vasodilator you still have running. Turn the nitrate off and get a pressor going, norepinephrine rather than epinephrine. I am not taking him to the catheter laboratory on that ECG. Get him a bed in intensive care and I will see him there."
+     "value": "Cardiology fellow: a pressure drop straight after induction is the induction agent, the positive pressure and any vasodilator still running. Stop the nitrate and start norepinephrine. This is not a catheter laboratory case. Get him an intensive care bed."
     },
     {
      "when": "study ecg_12_lead resulted AND study labs_troponin_hs resulted",
-     "value": "Cardiology fellow: I have looked at the tracing. That anterior Q wave pattern is his old infarct, there is no acute ST elevation and nothing new, so this is not a catheter laboratory activation. A troponin in that range is what I would expect from demand in a decompensated ventricle, and I would not chase it as an acute coronary syndrome unless the story changes. This sounds like straightforward volume and afterload decompensation, most likely because he stopped his diuretic. Keep going with positive pressure and the nitrate, diurese him properly, and keep his carvedilol going at his home dose once he is taking tablets, since he is warm and perfusing. Admit him somewhere monitored, we will see him on the ward round, and he needs a repeat echocardiogram this admission."
+     "value": "Cardiology fellow: the Q waves are his old infarct, nothing is acute, and that troponin is demand. This is decompensation after stopping his diuretic. Keep the mask and the nitrate, diurese him, and admit him somewhere monitored."
     },
     {
      "when": "study ecg_12_lead resulted AND study labs_troponin_hs ordered",
-     "value": "Cardiology fellow: I have the tracing up. No acute ST elevation, and that anterior Q wave pattern is his old infarct rather than anything new, so I am not activating the laboratory on this. Your troponin has not landed on my screen yet. Send it through when it does. It will not change my answer unless it is very high, because a modest rise is expected in a decompensated ventricle, but I would like to see it before I commit."
+     "value": "Cardiology fellow: no acute ST elevation, and the Q waves are his old infarct, so this is not a catheter laboratory case. Send me the troponin when it lands."
     },
     {
      "when": "study ecg_12_lead resulted",
-     "value": "Cardiology fellow: I have the tracing up. No acute ST elevation, the anterior Q waves are his old infarct, and there is no arrhythmia to explain this. That is not a catheter laboratory case from where I am sitting. I do not see a troponin ordered on him at all though. Send one, because I want to know whether there is a demand injury sitting underneath this before I sign off on it."
+     "value": "Cardiology fellow: no acute ST elevation, and the Q waves are his old infarct. This is not a catheter laboratory case. I do not see a troponin ordered, so send one."
     },
     {
      "when": "study ecg_12_lead ordered",
-     "value": "Cardiology fellow: I can see an ECG has been requested but there is no tracing on my screen yet, and I am not going to commit before I have seen it. Call me the moment it is up. In the meantime, if he is that hypertensive and that wet, keep the positive pressure on and keep working on the afterload."
+     "value": "Cardiology fellow: there is no tracing on my screen yet. Call me when it is up. Meanwhile keep the positive pressure on and keep working on the afterload."
     },
     {
      "when": null,
-     "value": "Cardiology fellow: whatever else you have sent, I cannot tell you whether this is ischemic without a twelve lead, and there is not one on him. Get one done and call me back. If you want my instinct in the meantime, a known cardiomyopathy who has stopped his diuretic and gained weight is usually exactly what it looks like, but I am not saying that on the phone without a tracing."
+     "value": "Cardiology fellow: I cannot tell you whether this is ischemic without a twelve lead. Get one done and call me back."
     }
    ],
    "consult_critical_care": [
     {
      "when": "phase is post_intubation_hypotension",
-     "value": "Intensivist: yes, we will take him. While you are waiting: stop the nitrate, start norepinephrine peripherally through your best cannula rather than waiting on a central line, and do not give him fluid, he is overloaded not dry. Have a look at your PEEP as well, it is doing useful work on the edema but it is also part of why his pressure is down. Make sure he is properly sedated, he has had rocuronium."
+     "value": "Intensivist: yes, we will take him. Stop the nitrate and start norepinephrine through your best peripheral line. No fluid, because he is overloaded. Check your PEEP and make sure he is sedated."
     },
     {
      "when": "flag on_niv set AND flag nitro_infusion_running set",
-     "value": "Intensivist: that is the right treatment and he sounds like he is responding. He will need a bed that can keep the mask on and keep titrating the nitrate, so that is us or the coronary care unit depending on who has space. We will take him. Keep an eye on his pressure while the nitrate is running and let us know if he tires rather than improves."
+     "value": "Intensivist: that is the right treatment and he sounds like he is responding. We will take him for the mask and the nitrate. Watch his pressure and tell us if he tires."
     },
     {
      "when": "flag on_niv set",
-     "value": "Intensivist: good, the mask is the right move. What are you doing about his pressure? At 188 systolic with that much fluid on his chest he needs afterload reduction as well as positive pressure. Get something running for that and we will find him a bed."
+     "value": "Intensivist: good, the mask is right. With that pressure and that much fluid on his chest he needs afterload reduction too. Get something running and we will find him a bed."
     },
     {
      "when": null,
-     "value": "Intensivist: tell me what you have actually done for his breathing so far. If he is at 85 percent on a cannula and working that hard, the first question is whether he is on positive pressure yet, and from what you are describing he is not. Sort that first and call me back with what happens."
+     "value": "Intensivist: from what you are describing he is not on positive pressure yet. Sort that first and call me back with what happens."
     }
    ],
    "consult_nephrology": [
     {
      "when": "study labs_bmp resulted",
-     "value": "Nephrology fellow: I have seen the chemistry. A creatinine of 1.6 against a baseline of 1.4 in a congested patient is not an indication for anything from us. That is cardiorenal, and it is mostly venous congestion transmitted back to the kidney rather than poor forward flow. The treatment is to decongest him, and his creatinine may well rise a little while you do that, which is expected and is not a reason to stop. There is no hyperkalemia, no severe acidosis, no uremic complication. Call us back if he genuinely does not respond to diuresis."
+     "value": "Nephrology fellow: that creatinine in a congested patient is cardiorenal, not a reason for us. Decongest him, and expect it to rise a little while you do. Call us if he does not respond to diuresis."
     },
     {
      "when": "study labs_bmp ordered",
-     "value": "Nephrology fellow: I cannot advise before I have seen a chemistry panel. I can see one has been sent but there is no result on my screen. What is his potassium, and is he making urine? Call me when the numbers are back."
+     "value": "Nephrology fellow: the chemistry is not back yet. What is his potassium, and is he making urine? Call me when the numbers are back."
     },
     {
      "when": null,

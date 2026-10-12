@@ -175,3 +175,12 @@ requirement, RR above 30, increasing fatigue, persistent hypoxaemia, and ultimat
 patient may require intubation. **Teaching point: in acute cardiogenic pulmonary edema
 with respiratory failure, respiratory support is an immediate treatment priority, not
 something to defer until the arrhythmia is completely controlled.**
+
+## What a person decided
+
+- 11 October 2026, Aakash Setty: the pulmonology consultant's answer is shortened to "This is
+  not a primary lung problem. I would look at the heart. His sleep apnea can be managed
+  outside the emergency department." The detailed reasoning it used to give (B-lines,
+  venous pressure, edema, cardiac wheeze) is gone; the debrief note for the consult still
+  says the lung findings are cardiogenic and the treatment is cardiac.
+- 11 October 2026, Aakash Setty: every consultant answer over 40 words is shortened to 40 or fewer (authoring 9.5), keeping what the consultant thinks, what to do now and the disposition or callback. Wording by a model. Rule order, conditions, tags and debrief notes are unchanged. Not physician reviewed. Eleven of twelve answers changed (cardiology and critical care). Dropped: the CHA2DS2-VASc count and the rate-related cardiomyopathy reasoning, the beta-blocker advice, the advice to diurese first if he is still fast after two doses, and critical care's request for a film. AFRVR-05 still holds: no answer advises pushing digoxin again. Physician review question AFRVR-28 quotes the old wording.

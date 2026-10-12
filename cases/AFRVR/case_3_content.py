@@ -444,94 +444,54 @@ CONSULTANTS = {
 
  "consult_cardiology": [
   {"when": DX_KNOWN + " AND " + ECG_DONE + " AND flag rate_control_adequate set",
-   "value": "Cardiology fellow: good, that is a rate I can live with, and he does not have to be "
-     "in sinus rhythm today. Nobody can tell me how long he has been in it, so I am not "
-     "cardioverting him and neither should you. Three things before he leaves you. He needs to be "
-     "anticoagulated, and his CHA2DS2-VASc is at least four so there is no argument to have "
-     "about it. He needs a bed that can keep the mask on him and watch the rate, because a "
-     "ventricle at thirty to thirty-five percent that has just been slowed can go the other way "
-     "if the edema is not treated. And he needs a formal echocardiogram this admission, because "
-     "if this cardiomyopathy turns out to be rate related it may recover once he stays in rhythm, "
-     "and that changes what he goes home on."},
+   "value": ("Cardiology fellow: good, that is a rate I can live with. Do not cardiovert him, "
+             "since his onset is unknown. He needs to be anticoagulated. He needs a monitored "
+             "bed and a formal echocardiogram this admission.")},
   {"when": DX_KNOWN + " AND " + ECG_DONE + " AND flag rate_control_given set",
-   "value": "Cardiology fellow: so he has had a dose and he is still up around 140. That is a "
-     "partial response, which is what one dose usually buys you. Stay with the same strategy "
-     "and give more on that drug's own schedule. A beta blocker or amiodarone can be repeated "
-     "now. Digoxin is loaded over hours, so if digoxin was your first dose, add amiodarone "
-     "rather than pushing it again. Do not let a partial response push you toward diltiazem, "
-     "because with an ejection fraction of thirty to thirty-five that is the one agent you "
-     "should not use. Watch the pressure.\n\n"
-     "And reassess before a third. If he is still fast after two decent doses, the rate is "
-     "often being driven by the decompensation. Get the positive pressure on him and diurese "
-     "him first, and the rate will often follow. If it does not, call me back and we will talk "
-     "about more amiodarone."},
+   "value": ("Cardiology fellow: that is a partial response. Stay with the same strategy. "
+             "Digoxin is loaded over hours, so if digoxin was your first dose, add amiodarone. "
+             "Avoid diltiazem with his ejection fraction. Reassess before a third.")},
   {"when": DX_KNOWN + " AND " + ECG_DONE,
-   "value": "Cardiology fellow: right, so this is new atrial fibrillation with a rapid ventricular "
-     "response and a left ventricle you have just found is running at thirty to thirty-five "
-     "percent. Two things follow from that. Do not use diltiazem or verapamil, they are negative "
-     "inotropes and the guideline is explicit about avoiding them when systolic function is "
-     "significantly reduced. Digoxin or amiodarone are the sensible choices, and if you want a "
-     "beta blocker use a small dose and only once his oxygenation is sorted out, because he is "
-     "leaning on his sympathetic tone at the moment. Expect it to take more than one dose: the first will take the edge off and will not get him where you want him, and digoxin in particular is loaded over hours. Second thing: anticoagulate him. His "
-     "CHA2DS2-VASc is at least four and there is nothing stopping you, and I would not cardiovert "
-     "him today because nobody can tell me how long he has been in it. Get the positive pressure "
-     "on, diurese him, slow him down, and we will see him upstairs. He needs a formal "
-     "echocardiogram this admission."},
+   "value": ("Cardiology fellow: new atrial fibrillation with a reduced ejection fraction, so "
+             "no diltiazem or verapamil. Use digoxin or amiodarone and expect to need a second "
+             "dose. Anticoagulate him, do not cardiovert today, and treat the edema.")},
   {"when": DX_KNOWN,
-   "value": "Cardiology fellow: an ejection fraction of thirty to thirty-five in a man who has "
-     "never had an echocardiogram is a significant finding and it changes your drug choice, so "
-     "stay away from diltiazem. I have not seen a twelve-lead on him though, and I am not going "
-     "to commit to anything about the rhythm or about ischemia until somebody shows me one. Send "
-     "it through."},
+   "value": ("Cardiology fellow: an ejection fraction that low changes your drug choice, so "
+             "stay away from diltiazem. I will not commit on the rhythm until I see a "
+             "twelve-lead. Send it through.")},
   {"when": ECG_DONE,
-   "value": "Cardiology fellow: I have the tracing. That is atrial fibrillation with a rapid "
-     "ventricular response, the QRS is narrow, there is no pre-excitation, and the lateral ST "
-     "depression is rate related rather than an occlusion, so I am not activating the laboratory "
-     "on this. Before I tell you what to slow him down with I want to know what his ventricle is "
-     "doing. Put the probe on him and call me back, because if the ejection fraction is reduced "
-     "the answer is not diltiazem."},
+   "value": ("Cardiology fellow: atrial fibrillation with a rapid ventricular response. The ST "
+             "depression is rate related, not an occlusion. Before I pick a drug I need to know "
+             "what his left ventricle is doing. Put the probe on him.")},
   {"when": "study ecg_12_lead ordered",
-   "value": "Cardiology fellow: I can see an ECG has been requested and there is nothing on my "
-     "screen yet. I am not going to talk about the rhythm from a description. Send it through when "
-     "it prints and put an ultrasound probe on his heart while you wait, because that is the other "
-     "thing I am going to ask you for."},
+   "value": ("Cardiology fellow: there is no tracing on my screen yet. Send it through when it "
+             "prints, and put an ultrasound probe on his heart while you wait.")},
   {"when": None,
-   "value": "Cardiology fellow: you have told me he is fast and irregular and that is about all I "
-     "have. I need a twelve-lead and I need to know what his left ventricle is doing before I can "
-     "give you anything useful. Get both and call me back."},
+   "value": ("Cardiology fellow: fast and irregular is all I have. I need a twelve-lead and to "
+             "know what his left ventricle is doing. Get both and call me back.")},
  ],
 
  "consult_critical_care": [
   {"when": "phase is intubated",
-   "value": "Intensive care registrar: he is tubed, so he is coming to us. Keep him sedated, watch "
-     "his pressure closely because a poorly contracting ventricle on positive pressure with a "
-     "recently given rate-controlling drug is exactly the combination that drops, and get me a "
-     "film. Have you anticoagulated him yet, and has anybody sorted out what caused this?"},
+   "value": ("Intensive care registrar: he is tubed, so he is coming to us. Keep him sedated "
+             "and watch his pressure closely, because positive pressure can drop it. Has he "
+             "been anticoagulated? Do you know why he failed?")},
   {"when": "flag on_niv set AND " + DX_KNOWN,
-   "value": "Intensive care registrar: non-invasive ventilation plus a new ejection fraction of "
-     "thirty to thirty-five is a monitored bed at minimum, and if he is going to stay on the mask "
-     "it is us or a step-down unit that can run it. What I need to know is whether he is settling "
-     "on it: respiratory rate, whether he is tolerating the mask, and what his carbon dioxide is "
-     "doing. If his rate is still 160 he is going to keep failing whatever I do with the "
-     "ventilator settings, so slow him down first."},
+   "value": ("Intensive care registrar: on the mask with an ejection fraction that low, he "
+             "needs us or a step-down unit that can run it. Is he settling on it? If he is "
+             "still fast, slow him down first.")},
   {"when": "flag on_niv set",
-   "value": "Intensive care registrar: a patient on non-invasive ventilation is a patient we will "
-     "take, but tell me what you are treating. Have you established why he is in pulmonary "
-     "edema, and specifically does anybody know what his left ventricle looks like? Put a probe "
-     "on him before you call me back."},
+   "value": ("Intensive care registrar: we will take a patient on the mask, but why is he in "
+             "pulmonary edema? Put a probe on his heart before you call me back.")},
   {"when": None,
-   "value": "Intensive care registrar: from what you are describing he is in respiratory failure "
-     "and nothing has been done about it. Get positive pressure on him before we have a "
-     "conversation about beds, because that decision is more urgent than my decision."},
+   "value": ("Intensive care registrar: he is in respiratory failure and nothing has been done "
+             "about it. Get positive pressure on him first. The bed comes after that.")},
  ],
 
  "consult_pulmonology": [
   {"when": None,
-   "value": "Respiratory registrar: I have listened to what you have described and I do not think "
-     "this is a primary lung problem. Diffuse symmetrical B-lines, a raised jugular venous "
-     "pressure and peripheral edema in a man in fast atrial fibrillation is cardiogenic pulmonary "
-     "edema, and the wheeze you are hearing is edema around the airways rather than "
-     "bronchospasm. Treat the heart. If you want us later for the sleep apnea question, that is "
-     "an outpatient conversation."},
+   # Shortened on author instruction, 11 October 2026.
+   "value": "Respiratory registrar: This is not a primary lung problem. I would look at the "
+     "heart. His sleep apnea can be managed outside the emergency department."},
  ],
 }

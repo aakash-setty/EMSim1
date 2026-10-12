@@ -575,6 +575,16 @@ expect("a three-sentence handover warns rather than errors",
 expect_clean("a three-sentence handover is not an error",
              lambda c: c["patient"].__setitem__("arrival_handover", "One. Two. Three sentences here."),
              "sentences")
+def consult_words(c, n):
+    ck = c["content_keys"]["consultants"]
+    k = next(k for k, v in ck.items() if k != "authoring_note" and isinstance(v, list))
+    ck[k][0]["value"] = "Consultant: " + " ".join(["word"] * (n - 1)) + "."
+
+
+expect("a consultant line over 40 words warns",
+       lambda c: consult_words(c, 41), "41 words, over the 40", where="warnings")
+expect_clean("a consultant line of 40 words does not warn",
+             lambda c: consult_words(c, 40), "over the 40", where="warnings")
 expect_clean("an empty global_answer_rules list is allowed",
              lambda c: c["interview"].__setitem__("global_answer_rules", []),
              "global_answer_rules: empty rule list")

@@ -1937,16 +1937,29 @@ const GATE_TITLE={failed:'Case Failed',
 /* The debrief's first screen: a dial from 0 to 100 percent, filled by the share of the
    case's critical actions completed, with the count in the centre ("6/8"). Nothing is
    drawn for a case that expects no critical action. Author instruction, 11 October 2026. */
-function critDial(n,total){
-  if(!total) return '';
-  const f=Math.max(0,Math.min(1,n/total)), r=52, c=2*Math.PI*r;
-  return `<div class="critdial" role="img" aria-label="${n} of ${total} critical actions completed, ${Math.round(f*100)} percent">
+function dialSVG(f,big,small,label,aria,cls){
+  f=Math.max(0,Math.min(1,f)); const r=52, c=2*Math.PI*r;
+  return `<figure class="dialwrap"><div class="critdial${cls?' '+cls:''}" role="img" aria-label="${esc(aria)}">
     <svg viewBox="0 0 128 128" aria-hidden="true">
       <circle class="track" cx="64" cy="64" r="${r}"/>
       <circle class="fill" cx="64" cy="64" r="${r}" stroke-dasharray="${(f*c).toFixed(2)} ${c.toFixed(2)}"
         transform="rotate(-90 64 64)"/>
     </svg>
-    <div class="critdial-n">${n}/${total}<span>${Math.round(f*100)}%</span></div></div>`;
+    <div class="critdial-n">${big}${small?`<span>${small}</span>`:''}</div></div>
+    <figcaption>${esc(label)}</figcaption></figure>`;
+}
+function critDial(n,total){
+  if(!total) return '';
+  const f=n/total;
+  return dialSVG(f, n+'/'+total, Math.round(f*100)+'%', 'Critical actions',
+    n+' of '+total+' critical actions completed, '+Math.round(f*100)+' percent');
+}
+/* The second dial: overall score (engine overallScore). A run that was halted or ended in
+   a terminal phase is not scored, so its dial is empty and says so. */
+function overallDial(){
+  const o=overallScore(ST);
+  if(!o.scored) return dialSVG(0,'n/a','not scored','Overall score','Overall score: not scored, the case ended early','muted');
+  return dialSVG(o.pct/100, o.pct+'%', '', 'Overall score', 'Overall score '+o.pct+' percent', 'overall');
 }
 function gateHTML(){
   const kind=endingKind();
@@ -1963,6 +1976,7 @@ function gateHTML(){
       ${ST.halted&&ST.halted.reason?`<p class="sub">${esc(ST.halted.reason)}</p>`:''}
       <div class="gatedialrow">
         ${critDial(done.length,ST.expected.size)}
+        ${overallDial()}
         <button class="btn bigreplay" id="restart">Replay this case</button>
       </div>
       </div>
@@ -2345,8 +2359,17 @@ function debriefHTML(){
       <div class="gatebtns"><button class="btn" id="restart">Replay this case</button>
       ${CASES.length>1?'<button class="btn ghost" id="pickanother">Choose a different case</button>':''}</div></div>
 
-    ${points.length?`<div class="dbsec"><h2>Points to carry out of this case</h2>
-      ${points.slice(0,3).map(pointItem).join('')}</div>`:''}
+    <div class="dbsec"><h2>Summary</h2>
+      <p class="sub">${ST.halted?'Halted':(ST.failed?(ST.failed.byClock?'Ended by the clock':'Ended by an action'):(ST.earlyExit?'Ended early, incomplete':'Completed'))} at ${mmss(ST.now)},
+      in ${esc(PROTO.difficulty.modes[MODE].label.toLowerCase())} mode${DM()===1&&MODE!==PROTO.difficulty.default?`, so the nurse prompted at the deadlines the case authored rather than waiting past them`:''}.
+      Points direct review; they do not rank you. Critical actions count two, recommended
+      actions one, a discouraged action costs one, and a harmful action zeroes its tab.</p>
+      ${notScored?`<p><b>${esc(notScored)}</b> Start with what ended it, above.</p>
+        <details class="teach"><summary class="hd"><span class="nm" style="font-weight:400">Show the category scores anyway</span><span class="expand">Show</span></summary>${scoreTable}</details>`
+        :scoreTable}</div>
+
+    ${points.length?`<div class="dbsec">${dbFold('Points to carry out of this case',
+      points.slice(0,3).map(pointItem).join(''))}</div>`:''}
 
     <!-- "Other actions worth doing" removed on author instruction, 11 October 2026.
          Missed recommended actions are still listed under each category in the Summary. -->
@@ -2357,15 +2380,6 @@ function debriefHTML(){
       drug that produces the effect you asked for can still be the wrong drug for the
       disease underneath it.</p>
       ${dis.map(id=>item(id,'discouraged','p-warn')).join('')}</div>`:''}
-
-    <div class="dbsec"><h2>Summary</h2>
-      <p class="sub">${ST.halted?'Halted':(ST.failed?(ST.failed.byClock?'Ended by the clock':'Ended by an action'):(ST.earlyExit?'Ended early, incomplete':'Completed'))} at ${mmss(ST.now)},
-      in ${esc(PROTO.difficulty.modes[MODE].label.toLowerCase())} mode${DM()===1&&MODE!==PROTO.difficulty.default?`, so the nurse prompted at the deadlines the case authored rather than waiting past them`:''}.
-      Points direct review; they do not rank you. Critical actions count two, recommended
-      actions one, a discouraged action costs one, and a harmful action zeroes its tab.</p>
-      ${notScored?`<p><b>${esc(notScored)}</b> Start with what ended it, above.</p>
-        <details class="teach"><summary class="hd"><span class="nm" style="font-weight:400">Show the category scores anyway</span><span class="expand">Show</span></summary>${scoreTable}</details>`
-        :scoreTable}</div>
 
     ${traps.length?`<div class="dbsec"><h2>Things that looked reasonable and were not</h2>
       ${traps.map(x=>item(x.id,'no benefit here','p-neu')).join('')}

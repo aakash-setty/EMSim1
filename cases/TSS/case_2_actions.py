@@ -41,7 +41,7 @@ act("attach_monitor",
     debrief_note=(
       "The monitor is dark until it is attached. In this case the numbers are the whole "
       "argument against the story she tells: a heart rate of 128, a pressure of 94 over 58 "
-      "and a temperature of 39.4 in someone who says she has a stomach bug."))
+      "and a temperature of 39.4 in someone who says she has the flu."))
 
 # The prompt says she has no line, so its guard tests the peripheral access flag (authoring
 # 9.5 rule 2). Without that the nurse said it to a learner who had pressed Second IV first,
@@ -53,7 +53,7 @@ act("insert_iv", ALWAYS("critical"),
     flags_set=["iv_access"],
     prompt={"deadline_seconds": 45,
             "guard": "(" + PRES + " OR " + HYPO + ") AND NOT flag iv_access set",
-            "text": "She's got no line and she's been vomiting for two days. Do you want access?"},
+            "text": "She's got no line and she's barely drunk anything in two days. Do you want access?"},
     debrief_note=(
       "Everything she needs goes through a vein: fluid, antibiotics and a vasopressor. A "
       "large peripheral line is enough to start all three, including norepinephrine."))
@@ -247,7 +247,8 @@ act("remove_vaginal_foreign_body", ALWAYS("critical"),
     # genitourinary examination and a bare "pelvic" is offered as a choice with a film.
     prompt={"deadline_seconds": 60, "guard": SUPP + " OR " + PROF,
             "text": ("She's a young woman in shock and no source has been dealt with. Has "
-                     "anyone examined her from head to toe, including a pelvic exam?"),
+                     "anyone asked about her period, or examined her from head to toe, "
+                     "including a pelvic exam?"),
             "escalation": {"deadline_seconds": 180,
                            "text": ("She's a young woman with a fever, a rash and shock. Has "
                                     "anyone asked about her period? Do you want to examine "
@@ -408,8 +409,8 @@ act("acetaminophen", ALWAYS("neutral"),
 
 act("ondansetron", ALWAYS("neutral"),
     debrief_note=(
-      "Reasonable for the vomiting. Feeling less sick is not the same as being less sick, "
-      "and her vital signs do not change with it."))
+      "She is not vomiting, so this treats nothing here. Feeling less sick is not the same "
+      "as being less sick, and her vital signs do not change with it."))
 
 act("ibuprofen", ALWAYS("discouraged"),
     debrief_note=(
@@ -473,8 +474,8 @@ act("blood_culture_x_2", ALWAYS("recommended"),
 
 act("basic_chemistry_chem_7", ALWAYS("recommended"),
     debrief_note=(
-      "Her creatinine is 2.6 at age 22. Vomiting does not do that in two days without "
-      "shock. This is one of the results that should end the gastroenteritis story."))
+      "Her creatinine is 2.6 at age 22. Two days of flu does not do that without shock. "
+      "This is one of the results that should end the flu story."))
 
 act("complete_blood_count_cbc", ALWAYS("recommended"),
     debrief_note=(
@@ -511,7 +512,7 @@ STUDY_NOTES = {
   "liver_function_tests_lfts": (
     "Liver involvement: raised transaminases and bilirubin, and a low albumin. Kidney, "
     "liver, platelets and muscle are all involved in her, and that pattern is what "
-    "separates toxic shock from gastroenteritis."),
+    "separates toxic shock from flu or another viral illness."),
   "creatine_kinase_ck": (
     "Her creatine kinase is 2,140. That is muscle involvement, and it matches her muscle "
     "pain and tenderness. Muscle involvement is part of toxic shock, and with an injured "
@@ -593,8 +594,8 @@ act("attempt_discharge", ALWAYS("discouraged"),
       "You chose to send her home while she still looked well, and she fainted on standing. "
       "The case let that play out instead of ending.\n\n"
       "Before discharging anyone, read the vital signs as if you had not heard the story. "
-      "A heart rate over 110 with a fever and a low pressure is not explained by a stomach "
-      "bug until everything else has been excluded."))
+      "A heart rate over 110 with a fever, a low pressure and a faint is not explained by the "
+      "flu until everything else has been excluded."))
 
 act("handoff_submit", ALWAYS("neutral"),
     display_name="Submit handoff",
@@ -616,8 +617,8 @@ EXAM_NOTES = {
   "exam_card": "A fast regular rhythm and a flow murmur. No sign of a failing heart.",
   "exam_pulm": "Clear lungs. This is not a pneumonia, and she can take fluid.",
   "exam_abd": (
-    "Mild diffuse tenderness with a soft abdomen and no guarding. Enough to fit "
-    "gastroenteritis, and not enough to explain shock."),
+    "A soft, non-tender abdomen. There is no abdominal source here, which is one more "
+    "reason to keep looking."),
   "exam_gu": (
     "The examination that finds the diagnosis. A pelvic examination is part of looking for a "
     "source in a febrile woman in shock, and it is the one most often left out. Do it with a "

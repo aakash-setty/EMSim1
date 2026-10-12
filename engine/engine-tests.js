@@ -1519,6 +1519,20 @@ section('the seven-category summary (v0.9)');
       JSON.stringify(summaryScores(fold([], 10))) === JSON.stringify(rows));
 }
 
+section('the overall score (11 October 2026)');
+{
+  const none = overallScore(fold([], 10));
+  chk('weights: critical 85, the rest 15 shared evenly',
+      none.parts.reduce((s, p) => s + p.weight, 0) === (none.parts.length ? 15 : 0) &&
+      none.parts.every(p => Math.abs(p.weight - none.parts[0].weight) < 1e-9));
+  chk('nothing done scores no more than the critical share a case without critical actions gives',
+      none.pct <= (none.critical.total ? 15 : 100), String(none.pct));
+  const allCrit = [...fold([], 1).expected];
+  chk('the critical share is 85 times the fraction done', Math.abs(none.critical.points - 85 * (none.critical.total ? 0 : 1)) < 1e-9);
+  chk('the score is between 0 and 100 and deterministic',
+      none.pct >= 0 && none.pct <= 100 && JSON.stringify(overallScore(fold([], 10))) === JSON.stringify(none));
+}
+
 /* ================= voice orders ================= */
 /* The parser is fenced in the bundle and evaluated here against the terminology block
    that shipped in the same file. `const VOICE` does not leak out of a direct eval any

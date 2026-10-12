@@ -5,6 +5,58 @@ is usable with learners.
 
 ---
 
+## Shorter consultant answers in every case (11 October 2026, author instruction)
+
+Every consultant answer over 40 words is now 40 or fewer: 82 of 112 rules across the seven
+packs. Each keeps what the consultant thinks, what to do now, and the disposition or callback.
+Conditions, order, tags and debrief notes are unchanged, and every case test still passes.
+Authoring requirements 9.5 makes 40 words the default, the sign-off checklist asks for it, and
+the validator warns above 40 (`engine/validator-tests.py` covers the warning). What each case
+dropped is in its SEED. Physician review questions AFRVR-28, CHFE-16, DIPH-02, DIPH-30 and
+MGCA-25 quote the old wording and need re-checking before their answers are applied. Wording
+by a model, not physician reviewed.
+
+---
+
+## AFRVR: a shorter pulmonology answer (11 October 2026, author instruction)
+
+One line: the pulmonology consult now answers in three sentences. See `cases/AFRVR/AFRVR-SEED.md`.
+
+---
+
+## DIPH edits (11 October 2026, author instruction)
+
+One line, as the README asks: Consult Critical Care is recommended rather than critical, the
+Benadryl is her own (kept for occasional allergic reactions) and her mother says so, and her
+recent low mood shows in the common answers. Details in `cases/DIPH/DIPH-SEED.md`.
+
+---
+
+## An overall score dial on the debrief (11 October 2026, author instruction)
+
+The first debrief screen shows a second dial, Overall score, beside the critical actions
+dial (engine `overallScore`). Critical actions are 85 of the 100, by the share completed.
+The other 15 is split evenly between history (key topics asked), examination (expected
+regions examined), recommended actions on every tab (less one per discouraged action, never
+below zero) and the handoff score. A part the case gives nothing to score drops out and the
+others share its weight. A halted run or one that ended in a terminal phase is not scored
+and the dial says so. Engine tests cover the weights. A critical action done only after the nurse prompted for it
+earns half its share. On the revealed debrief the Summary now comes directly under Critical
+actions, and "Points to carry out of this case" starts closed.
+
+---
+
+## TSS rewritten as fainting, fever and rash (11 October 2026, author instruction)
+
+One line per case, as the README asks: TSS now presents with a faint, two days of fever and
+a rash, with no vomiting or diarrhea, and the source is slightly easier to find (her answer
+about the faint mentions her period, and the nurse's first source prompt asks about it).
+Details in `cases/TSS/TSS-SEED.md`. `engine/matcher_eval.mjs` looked for the interview
+matcher under its pre-renumbering marker (section 10.6) and could not run; it now looks for
+section 8.6.
+
+---
+
 ## v0.26d: the reflection pause at six minutes (11 October 2026, author instruction)
 
 The pause now comes at six minutes of case time instead of three, and the line under its

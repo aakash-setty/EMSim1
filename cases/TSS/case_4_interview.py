@@ -9,12 +9,15 @@ which is also model output. Nothing here has been reviewed by a physician.
 
 What she knows and does not know, which is the design of this interview:
 
-  - She believes she has food poisoning and says so. She never names any other diagnosis.
+  - She believes she has the flu and says so. She never names any other diagnosis.
   - She has an explanation for the red skin (the beach) and offers it. It is wrong.
-  - She does not connect her period to her illness and will not bring it up. Asked
-    directly, she says she cannot remember taking the last tampon out. That is the honest
-    answer and it is the single most useful sentence in the history.
-  - Her roommate ate the same meal and is well. She finds that odd and says so if asked.
+  - She has no vomiting and no diarrhea (rewritten 11 October 2026, author instruction: the
+    case presents as fainting, fever and a rash).
+  - She does not connect her period to her illness, but asked about the faint she wonders
+    aloud whether her period had something to do with it. That is the one nudge toward the
+    source, added the same day to make the diagnosis slightly easier to reach. Asked
+    directly about tampons, she says she cannot remember taking the last one out. That is
+    the honest answer and it is the single most useful sentence in the history.
 """
 from case_4_variants import SHARED
 
@@ -28,6 +31,7 @@ TOPICS = []
 # 10.3). confusion was in this set until 7 October 2026. Its drowsy answer is "I feel
 # foggy. Sorry.", which reports a symptom, so the mark came off. The answers are unchanged.
 NEGATIVES = {
+ "nausea_vomiting", "diarrhea", "abdominal_pain",
  "radiation_of_pain", "neck_stiffness", "photophobia", "chest_pain",
  "travel_history", "tick_and_outdoor_exposure", "recent_antibiotics_healthcare",
  "wounds_and_skin", "past_medical_history", "allergies", "pregnancy",
@@ -77,16 +81,16 @@ def topic(tid, full, short, canonical=None, variants=None, echo=None, facts=None
 
 # --------------------------------------------------------------- the illness
 topic("onset",
-  "'Two days ago. Thursday night I started shivering and aching, and by the early hours I "
-  "was throwing up. The diarrhea started Friday morning.'",
+  "'Two days ago. Thursday night I started shivering and aching, and by Friday morning I "
+  "had a proper fever.'",
   "'Two days ago. Thursday night.'",
   facts=[
     fact("when", ["when exactly", "what day", "what time", "how long ago"],
          "'Thursday night, maybe eleven. So two and a half days.'",
          "'Thursday night.'", restate=True),
     fact("first_symptom", ["what came first", "what was the first thing", "how did it start"],
-         "'The shivering and the aching came first. The vomiting was a few hours after that.'",
-         "'Shivering. Then throwing up.'")])
+         "'The shivering and the aching came first. Then the fever.'",
+         "'Shivering. Then the fever.'")])
 
 topic("timing_progression",
   "'Worse. Yesterday I could get up and about for a bit. Today I can't stand without "
@@ -94,13 +98,11 @@ topic("timing_progression",
   "'Worse. Much worse today.'")
 
 topic("character_of_symptoms",
-  "'Like the worst flu I've ever had. Everything aches, I'm hot and cold, and my stomach "
-  "keeps turning over.'",
+  "'Like the worst flu I've ever had. Everything aches and I'm hot and cold.'",
   "'Like flu. Everything aches.'")
 
 topic("location_of_pain",
-  "'All over, really. My thighs and calves are the worst. My stomach is crampy but it's "
-  "not one spot.'",
+  "'All over, really. My thighs and calves are the worst.'",
   "'Everywhere. My legs mostly.'")
 
 topic("radiation_of_pain",
@@ -113,8 +115,7 @@ topic("severity",
 
 topic("aggravating_relieving",
   "'Standing up makes everything worse. I get dizzy and my heart pounds. I took some "
-  "ibuprofen yesterday and it brought the fever down for a couple of hours. Nothing has "
-  "stayed down today.'",
+  "ibuprofen yesterday and it brought the fever down for a couple of hours.'",
   "'Standing is worse. Nothing helps.'")
 
 topic("rash",
@@ -164,26 +165,26 @@ topic("photophobia",
   "'No.'")
 
 topic("nausea_vomiting",
-  "'Constantly. I've thrown up maybe eight or ten times since Friday. No blood in it. I "
-  "can't even keep water down now.'",
-  "'Yes. A lot. Can't keep water down.'",
+  "'No, I haven't thrown up at all, and I don't feel sick. I just don't want to eat. I can "
+  "drink a little.'",
+  "'No. Not sick.'",
   echo="throwing up",
   facts=[
     fact("how_often", ["how many times", "how often", "how much"],
-         "'Maybe eight or ten times since Friday.'", "'A lot.'", restate=True),
+         "'I haven't thrown up at all.'", "'No.'", restate=True),
     fact("blood", ["any blood in it", "was there blood", "is there blood"],
-         "'No blood in it.'", "'No blood.'"),
+         "'No.'", "'No.'"),
     fact("fluids", ["can you keep water down", "can you keep anything down", "can you drink"],
-         "'I can't even keep water down now.'", "'Can't keep water down.'")])
+         "'I can drink a little.'", "'No. Not sick.'")])
 
 topic("diarrhea",
-  "'Yes, watery. Maybe six times yesterday and a few today. No blood.'",
-  "'Yes. Watery. No blood.'")
+  "'No, nothing like that.'",
+  "'No.'")
 
 topic("abdominal_pain",
-  "'Crampy, all over, and it comes with the diarrhea. It's not a sharp pain anywhere, and "
-  "not in my sides or my back.'",
-  "'Crampy. All over. Not my back.'")
+  "'No, my stomach doesn't hurt. The aching is in my muscles, and it's not in my sides or my "
+  "back.'",
+  "'No. Not my back.'")
 
 topic("chest_pain",
   "'No chest pain. My heart's racing, though. I can feel it when I stand up.'",
@@ -194,7 +195,7 @@ topic("breathing",
   "'A bit fast. I'm okay.'")
 
 topic("cough_sore_throat",
-  "'No cough, no cold. My throat's sore, I thought from throwing up so much.'",
+  "'No cough, no cold. My throat's sore, I thought from the flu.'",
   "'No cough. Sore throat.'")
 
 topic("urine_output",
@@ -203,9 +204,10 @@ topic("urine_output",
   "'Barely. Not today.'")
 
 topic("dizziness_syncope",
-  "'Yes. This morning in the shower everything went gray and I had to sit down on the "
-  "floor. I didn't black out. My roommate found me and made me come in.'",
-  "'Yes. Nearly fainted this morning.'")
+  "'Yes. This morning in the shower everything went gray and I went down. My roommate heard "
+  "me and found me on the floor. She says I was out for a few seconds. I didn't hit my head. "
+  "I thought maybe it was my period on top of the flu.'",
+  "'Yes. I fainted this morning.'")
 
 topic("confusion",
   "'No, I know where I am. I'm just exhausted.'",
@@ -290,8 +292,8 @@ topic("family_history",
   "'Dad has high blood pressure. That's all.'")
 
 topic("last_oral_intake",
-  "'I had a few sips of water this morning and brought them back up. I haven't eaten since "
-  "Thursday.'",
+  "'A few sips of water this morning. I haven't really eaten since Thursday. I'm just not "
+  "hungry.'",
   "'Sips of water. Nothing since Thursday.'")
 
 topic("vaccinations",
@@ -300,14 +302,12 @@ topic("vaccinations",
   "'Yes. Everything for college.'")
 
 topic("sick_contacts",
-  "'No. My roommate had the same takeout I did on Thursday and she's completely fine. My "
-  "boyfriend's fine too. Nobody I know is sick.'",
-  "'No. My roommate ate the same and she's fine.'")
+  "'No. My roommate's fine and my boyfriend's fine. Nobody I know is sick.'",
+  "'No. Nobody.'")
 
 topic("suspect_meal",
-  "'Thai takeout on Thursday, about seven. I started feeling ill a few hours later. My "
-  "roommate ate the same dishes and she's fine, which is the part I don't get.'",
-  "'Takeout on Thursday. My roommate had it too.'",
+  "'Nothing unusual. I don't think it's anything I ate. I thought it was the flu.'",
+  "'Nothing unusual. I thought it was flu.'",
   canonical="What did you eat before this started?",
   variants=["What did you eat?", "What do you think caused this?", "Was it something you ate?",
             "What was the last meal before you got sick?", "Did you eat anything unusual?",
@@ -370,7 +370,7 @@ OUT_OF_SCOPE = [
 
 AUTHORING_NOTES = {
  "voice": ("A 22-year-old graduate student. Lay words, apologetic, minimizing. She is sure "
-           "it is food poisoning and says so, which is her belief and not a diagnosis the "
+           "it is the flu and says so, which is her belief and not a diagnosis the "
            "case endorses."),
  "the_tampon": ("She does not volunteer it and it is a must-ask topic, so no other answer "
                 "carries it. Asked about her period or tampons in any wording, she says she "
@@ -409,18 +409,13 @@ KEY_TOPICS = ["menstrual_and_tampon", "rash", "sick_contacts", "urine_output",
 # Written by hand for this pack. Safety screens and the topic the case is built around the
 # learner discovering are in must_ask and are never volunteered (authoring 24).
 ADJACENT = {
- "onset": ["fever_and_chills", "nausea_vomiting"],
- "nausea_vomiting": ["diarrhea"],
- "diarrhea": ["abdominal_pain"],
+ "onset": ["fever_and_chills"],
  "suspect_meal": ["sick_contacts"],
  "past_medical_history": ["past_surgical_history"],
  "location_of_pain": ["joint_pain"],
 }
 VOLUNTEER = {
  "fever_and_chills": "'It was 102 when I took it yesterday.'",
- "nausea_vomiting": "'I can't even keep water down now.'",
- "diarrhea": "'And I've had watery diarrhea, no blood.'",
- "abdominal_pain": "'My stomach's crampy with it.'",
  "sick_contacts": "'Nobody else is sick.'",
  "past_surgical_history": "'Just my wisdom teeth out.'",
  "joint_pain": "'It's the muscles, not the joints.'",

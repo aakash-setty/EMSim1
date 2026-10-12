@@ -453,6 +453,7 @@ The most state-dependent key. **Engine.** First match wins, so order rules from 
 - **Truth.** A tier that says a treatment was given tests its flag.
 - **Truth.** A consultant who declines must not give credit. A state-changing consult satisfies its expectation whatever the reply says. If the consult needs a study first, make that a prerequisite on the action with the request as its failure message.
 - **Default.** Author a pending tier per study, not per group: with a 5 to 10 second turnaround there is a window in which a study is ordered and not resulted, and "either study ordered" fires when one has resulted and the other was never sent.
+- **Default. 40 words or fewer, in about three short sentences:** what the consultant thinks, what to do now, and where the patient goes or when to call back. The learner reads the reply in the middle of the case, and a long one hides the instruction. The reasoning and the teaching go in the action's `debrief_note`. The validator warns above 40 words.
 
 One workable order, an example and not a template: deteriorated-phase advice, then definitive advice once the key studies have resulted, then a holding reply while they are pending, then a default asking for the workup that has not happened.
 
@@ -512,6 +513,7 @@ The Summary prints one score per category and the arithmetic beside it. **Engine
 - Arrival: `mode` and `location` values, the handover present and not the scaffold text, a note on its sentence and word count, a warning above two sentences, a warning when a quoted saturation disagrees with the first phase.
 - Handoff: the correct and alternative diagnosis ids resolve, additional diagnoses resolve and do not repeat the correct one, intercepts name a disposition the case offers and a case action other than `handoff_submit`.
 - Mechanisms: `also_satisfies` targets a case action other than itself, `inherit_vitals` sits on a terminal phase only, `flags_set_repeat` needs at least 2 and its flag is not in `flags_set`, a flag nothing reads warns, `voice_phrases` are non-empty strings and a duplicate warns.
+- A consultant line over 40 words warns (9.5).
 - A shape fault the checks cannot read (a missing required key) prints one `[crash]` error naming the line instead of a traceback. Fix it and run again: the list is not complete until the validator runs through.
 
 **What it does not check**, each of which a pack has shipped with: that a narration, report or finding is true of the monitor with effects counted (section 16), that a prompt's text is true in every phase its guard allows (7.3), that a warning comes before its deterioration in the default mode (7.4), that a `satisfied_by` action could not have been done before the trigger (22.2), that a consultant tier quoting a value tests the study (9.5), what a `comment` says, whether a `pertinent_negative` topic denies, that the out-of-scope bank holds no answerable question, which of two pending timed rules fires first (15.4), and what an image shows (section 23). Those are sign-off items.
@@ -573,6 +575,7 @@ The release gate. Every line, by the physician named in the SEED.
 
 **Results and consultants**
 - [ ] No consultant line references a study not ordered or still pending. Every line with a number sits on a rule that tests `study S resulted`, deteriorated tiers included, and is true for every variant on the chart. No consultant declines while the press earns credit. A pending tier exists per study.
+- [ ] Every consultant line is 40 words or fewer and gives the impression, the next step and the disposition or callback. Its reasoning is in the debrief note.
 - [ ] No `comment` names the diagnosis, quotes another result or speaks to the reviewer. No report carries a comment the learner needs.
 - [ ] No report, finding or alert quotes a vital an endless effect can move.
 

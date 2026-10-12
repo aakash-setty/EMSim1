@@ -79,8 +79,8 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `catalog_change_requests[].detail` | generic | never |  | Reviewer note. Nothing reads it |
 | `catalog_change_requests[].id` | generic | never |  | Reviewer note. Nothing reads it |
 | `catalog_change_requests[].severity` | generic | never |  | Reviewer note. Nothing reads it |
-| `content_keys.consultants.<id>.rules[].value` | generic | chart | 9.5 | Rule list whose value is a plain string. Resolved live. Needs a pending tier per study |
-| `content_keys.consultants.<id>.rules[].when` | generic | chart | 9.5 | Rule list whose value is a plain string. Resolved live. Needs a pending tier per study |
+| `content_keys.consultants.<id>.rules[].value` | generic | chart | 9.5 | Rule list whose value is a plain string of 40 words or fewer. Resolved live. Needs a pending tier per study |
+| `content_keys.consultants.<id>.rules[].when` | generic | chart | 9.5 | Rule list whose value is a plain string of 40 words or fewer. Resolved live. Needs a pending tier per study |
 | `content_keys.exam.<id>.rules[].prose` | validator | never |  | Reviewer note. Nothing reads it |
 | `content_keys.exam.<id>.rules[].value.abnormal` | generic | chart | 9.2 | {kind: exam_findings, abnormal, findings}. About 15 words, findings first |
 | `content_keys.exam.<id>.rules[].value.findings` | generic | chart | 9.2 | {kind: exam_findings, abnormal, findings}. About 15 words, findings first |

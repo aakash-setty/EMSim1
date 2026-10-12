@@ -3667,27 +3667,27 @@
    "consult_endocrinology": [
     {
      "when": "phase is potassium_falling",
-     "value": "Endocrinologist: Hold the insulin now. Weakness and a fluttering heart after insulin is a falling potassium until a level says otherwise. Give intravenous potassium on the monitor, give magnesium, get a twelve-lead and send a chemistry. Insulin goes back on when the potassium is 3.5 or more."
+     "value": "Endocrinologist: Hold the insulin now. Weakness and palpitations after insulin mean a falling potassium until proven otherwise. Give intravenous potassium and magnesium on the monitor. Get a twelve-lead and a chemistry. Restart insulin when potassium is 3.5 or more."
     },
     {
      "when": "phase is treated AND flag basal_given set",
-     "value": "Endocrinologist: Good, and I'm glad the glargine is back in. Glucose every hour, potassium every one to two hours at first, and 20 to 30 of potassium in each liter. When the glucose is under 250 change to fluid with dextrose and keep the insulin going. Don't stop insulin because the sugar looks better."
+     "value": "Endocrinologist: Good, and I'm glad the glargine is back in. Hourly glucose, potassium every one to two hours, and potassium in every liter. When glucose is under 250, add dextrose and keep the insulin going."
     },
     {
      "when": "phase is treated",
-     "value": "Endocrinologist: Good. Glucose every hour, potassium every one to two hours at first, and 20 to 30 of potassium in each liter. When the glucose is under 250 change to fluid with dextrose and keep the insulin going. Don't stop insulin because the sugar looks better. Give her usual long-acting insulin tonight, and well before any infusion comes off."
+     "value": "Endocrinologist: Good. Hourly glucose, potassium every one to two hours, and potassium in every liter. When glucose is under 250, add dextrose and keep the insulin going. Give her usual long-acting insulin tonight, before any infusion comes off."
     },
     {
      "when": "phase is potassium_replaced OR phase is recovering",
-     "value": "Endocrinologist: If the repeat potassium is 3.5 or more, start insulin now. An infusion at 0.1 units per kilo an hour. Subcutaneous rapid-acting insulin is an option if the gas says this is mild. No bolus. Keep 20 to 30 of potassium in each liter."
+     "value": "Endocrinologist: If the repeat potassium is 3.5 or more, start insulin now at 0.1 units per kilo an hour, or subcutaneous rapid-acting if the gas says this is mild. No bolus. Keep potassium in every liter."
     },
     {
      "when": "study basic_chemistry_chem_7 resulted AND (study venous_blood_gas resulted OR study arterial_blood_gas resulted)",
-     "value": "Endocrinologist: Her potassium is under 3.5, and that changes the order. Insulin waits. Fluids, and intravenous potassium on a monitor, 20 to 40 an hour, which on most units means a central line or two peripheral lines. Check a magnesium. Repeat the potassium every hour or two, and start insulin once it's 3.5 or more. After that keep 20 to 30 in each liter. No bolus and no bicarbonate. It's mild on the gas, so an infusion at 0.1 units per kilo an hour or subcutaneous rapid-acting insulin both work."
+     "value": "Endocrinologist: Her potassium is under 3.5. Insulin waits. Fluids and intravenous potassium on a monitor, and check a magnesium. Start insulin once it's 3.5 or more. No bolus, no bicarbonate. It's mild on the gas, so subcutaneous rapid-acting works too."
     },
     {
      "when": "study basic_chemistry_chem_7 resulted",
-     "value": "Endocrinologist: Her potassium is under 3.5, and that changes the order. Insulin waits. Fluids, and intravenous potassium on a monitor, 20 to 40 an hour, which on most units means a central line or two peripheral lines. Check a magnesium. Repeat the potassium every hour or two, and start insulin once it's 3.5 or more. After that keep 20 to 30 in each liter. No bolus and no bicarbonate. Get a gas so we can grade this."
+     "value": "Endocrinologist: Her potassium is under 3.5. Insulin waits. Fluids and intravenous potassium on a monitor, and check a magnesium. Start insulin once it's 3.5 or more. No bolus, no bicarbonate. Get a gas so we can grade this."
     },
     {
      "when": "study basic_chemistry_chem_7 ordered",

@@ -234,7 +234,7 @@ IMAGING = {
 # Most specific first. The cardiologist never quotes a study that has not resulted. On the
 # directing physician's instruction the cardiologist gives the plan outright and, ninety
 # seconds after being called with a low pressure, arrives and carries it out (case_1).
-COMING = " I'm on my way down, and I'll sort it out myself when I get there if it isn't done."
+COMING = " I'm coming down to take over."
 CONSULTANTS = {
  "authoring_note": (
    "Section 9.5. The cardiologist cannot be reached until the ECG and the echo have both "
@@ -248,35 +248,25 @@ CONSULTANTS = {
  "consult_cardiology": [
    {"when": STEADY,
     "value": ("Cardiologist: Good, that's holding. Keep the vasoconstrictor where it is, no "
-              "nitrates and nothing inotropic. If she fails on this, the next step is a "
-              "pump such as an Impella, not a balloon pump, which can worsen obstruction. "
-              "The lab is ready. Bring her up with the "
-              "monitor on, and I'll do the angiogram and a ventriculogram.")},
+              "nitrates and nothing inotropic. The lab is ready, so bring her up on the "
+              "monitor.")},
    {"when": ACTIVE,
-    "value": ("Cardiologist: Stop that inotrope now. A new murmur with a falling pressure "
-              "on an inotrope is outflow obstruction until proven otherwise, and you're "
-              "driving it. Then give 250 to 500 of crystalloid, her chest is clear, and "
-              "start phenylephrine or vasopressin." + COMING)},
+    "value": ("Cardiologist: Stop that inotrope now. You're driving the obstruction. Then give "
+              "250 to 500 of crystalloid and start phenylephrine or vasopressin." + COMING)},
    {"when": "(" + LOW + ") AND " + FLUID + " AND NOT " + VASO,
-    "value": ("Cardiologist: The fluid was right. Now start phenylephrine, or vasopressin "
-              "if you prefer. You want the vessels squeezed without driving the heart. No "
+    "value": ("Cardiologist: The fluid was right. Now start phenylephrine or vasopressin. No "
               "dobutamine, no epinephrine, no nitrates." + COMING)},
    {"when": "(" + LOW + ") AND " + VASO + " AND NOT " + FLUID,
-    "value": ("Cardiologist: Good choice of pressor. Give her 250 to 500 of crystalloid "
-              "with it. Her lungs are clear and she's dry, and a fuller ventricle obstructs "
-              "less. No inotropes and no nitrates." + COMING)},
+    "value": ("Cardiologist: Good choice of pressor. Add 250 to 500 of crystalloid, because "
+              "she's dry. No inotropes and no nitrates." + COMING)},
    {"when": LOW,
-    "value": ("Cardiologist: An apex that isn't moving, a base that's squeezing hard and "
-              "that murmur. She's obstructing her outflow tract. Do three things. No "
-              "nitrates and no inotropes. Give 250 to 500 of crystalloid, her chest is "
-              "clear. Start phenylephrine or vasopressin. She still comes to the lab." + COMING)},
+    "value": ("Cardiologist: A still apex, a hard-working base and that murmur. She's "
+              "obstructing. No nitrates or inotropes. Give 250 to 500 of crystalloid and start "
+              "phenylephrine or vasopressin. She still comes to the lab." + COMING)},
    {"when": None,
-    "value": ("Cardiologist: Sorry, I was scrubbed. ST elevation with ongoing pain is the "
-              "lab, whatever happened at the funeral. Activate and give aspirin. That echo "
-              "with that murmur worries me: a stiff apex and a hard-working base can "
-              "obstruct. Hold nitrates, and no dobutamine or epinephrine if her pressure "
-              "falls. If it does, give 250 to 500 of crystalloid and start phenylephrine, "
-              "and call me straight back.")}],
+    "value": ("Cardiologist: Sorry, I was scrubbed. ST elevation with ongoing pain is the lab. "
+              "Activate and give aspirin. That echo worries me for obstruction. Hold nitrates "
+              "and inotropes, and if her pressure falls give fluid and start phenylephrine.")}],
 
  "consult_activate_cath_lab": [
    {"when": None,

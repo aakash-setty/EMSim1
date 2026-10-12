@@ -612,3 +612,7 @@ Model-written text added on 7 October 2026:
   the cardiac ultrasound are new. The chemistry, gas, ECG and blood count notes took in
   the sentences that used to be result comments.
 - Handoff: the two explanations for hyponatremia and acute kidney injury.
+
+## What a person decided
+
+- 11 October 2026, Aakash Setty: every consultant answer over 40 words is shortened to 40 or fewer (authoring 9.5), keeping what the consultant thinks, what to do now and the disposition or callback. Wording by a model. Rule order, conditions, tags and debrief notes are unchanged. Not physician reviewed. Six of fourteen answers changed, all endocrinology. Dropped: the potassium infusion rate and the line it needs, the 20 to 30 per liter figure (now "potassium in every liter"), and "don't stop insulin because the sugar looks better" (now "keep the insulin going"). The falling-phase answer says palpitations where the narration says fluttering. Mild on the gas now says subcutaneous rapid-acting insulin works too, and the infusion rate is in the answer after replacement.

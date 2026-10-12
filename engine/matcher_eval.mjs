@@ -68,7 +68,7 @@ const SHARED = jsonBlock('shared-data');
 const PACKS = jsonBlock('cases-data');
 
 /* ---------- the shipped lexical matcher, extracted ---------- */
-const START = '/* ---------- interview matching (section 10.6) ---------- */';
+const START = '/* ---------- interview matching (section 8.6) ---------- */';
 const END = '/* ---------- fusion of the lexical and semantic matchers ----------';
 const si = html.indexOf(START), ei = html.indexOf(END);
 if (si < 0 || ei < 0 || ei < si) {

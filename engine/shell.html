@@ -1293,13 +1293,19 @@ details.catfold[open] .dbfold-arrow{transform:rotate(180deg)}
 .gate{padding:26px 24px 22px}
 /* Verdict on the left, completed critical actions on the right, buttons underneath.
    Stacks on a narrow screen. Author instruction, 11 October 2026. */
-.gatecols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px 40px;align-items:start}
+.gatecols{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px 40px;align-items:start}
 @media (max-width:760px){.gatecols{grid-template-columns:minmax(0,1fr)}}
 .gatetitle{font-size:40px;line-height:1.12;margin:0 0 10px;letter-spacing:-.02em}
 .gatetitle.g-ok{color:var(--ok)}
 .gatetitle.g-bad{color:var(--harm)}
 .gatesub{font-size:24px;color:var(--ok);margin:4px 0 8px}
-.gatedialrow{display:flex;align-items:center;gap:28px;flex-wrap:wrap;margin-top:18px}
+.gatedialrow{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:18px}
+.gatedialrow .critdial{width:124px;height:124px}
+.gatedialrow .critdial-n{font-size:29px}
+.dialwrap{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px}
+.dialwrap figcaption{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+.critdial.overall .fill{stroke:var(--act)}
+.critdial.muted .critdial-n{font-size:24px;color:var(--ink3)}
 .critdial{position:relative;width:150px;height:150px;flex:0 0 auto}
 .critdial svg{width:100%;height:100%;display:block}
 .critdial circle{fill:none;stroke-width:13}
@@ -1309,7 +1315,7 @@ details.catfold[open] .dbfold-arrow{transform:rotate(180deg)}
   justify-content:center;font-size:34px;font-weight:700;color:var(--ink);letter-spacing:-.02em;
   font-variant-numeric:tabular-nums;line-height:1}
 .critdial-n span{font-size:13px;font-weight:500;color:var(--ink3);margin-top:6px;letter-spacing:0}
-.btn.bigreplay{font-size:20px;padding:18px 34px;border-radius:6px}
+.btn.bigreplay{font-size:19px;padding:17px 28px;border-radius:6px}
 /* Debrief sections that start closed. */
 details.dbfold>summary{list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer}
 details.dbfold>summary::-webkit-details-marker{display:none}

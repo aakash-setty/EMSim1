@@ -5691,41 +5691,41 @@
    "consult_critical_care": [
     {
      "when": "phase is frank_septic_shock",
-     "value": "Intensivist, at the bedside: \"Right. Her mean pressure is about 51. Norepinephrine now through your best line, do not wait for a central. Has she had hydrocortisone? With a sodium in the 120s, a potassium in the high fives and a glucose in the fifties, in a 21 year old, that is adrenal until proven otherwise, and if you have not given it she will not respond to the norepinephrine the way you expect. And tell me she has had ceftriaxone. I will take her as soon as she has a pressure.\""
+     "value": "Intensivist, at the bedside: \"Norepinephrine now through your best line. Do not wait for a central. Has she had hydrocortisone and ceftriaxone? If her sodium is low, potassium high and sugar low, this is adrenal until proven otherwise.\""
     },
     {
      "when": "(phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag steroid_given set",
-     "value": "Intensivist: \"She has had fluid and she is still in the eighties, so yes, start norepinephrine. But before you titrate it up: what is her sodium, her potassium and her sugar? If that is a sodium in the 120s, a potassium in the mid to high fives and a glucose under 70, this is not just septic vasoplegia, she has no cortisol, and catecholamines work badly in a patient who cannot make it. One hundred milligrams of hydrocortisone, now, and then call me back.\""
+     "value": "Intensivist: \"Start norepinephrine, but first: what are her sodium, potassium and sugar? If the sodium is low, the potassium high and the sugar low, she has no cortisol. One hundred milligrams of hydrocortisone now, then call me back.\""
     },
     {
      "when": "(phase is adrenal_crisis OR phase is progressive_meningococcemia) AND NOT flag abx_given set",
-     "value": "Intensivist: \"Stop. Before anything else, has she had an antibiotic? A febrile 21 year old with non-blanching purpura and a lactate over three is meningococcus until proven otherwise, and every hour of delay costs her. Two grams of ceftriaxone now. Then start the norepinephrine and call me back and I will find her a bed.\""
+     "value": "Intensivist: \"Stop. Has she had an antibiotic? Non-blanching purpura with shock is meningococcus until proven otherwise. Two grams of ceftriaxone now, then the norepinephrine, then call me back.\""
     },
     {
      "when": "flag abx_given set AND flag steroid_given set AND flag pressor_running set",
-     "value": "Intensivist: \"Antibiotic in, hydrocortisone in, norepinephrine running. Good, that is the three things. I will take her. Keep the mean pressure at 65 or above, add vasopressin rather than pushing the norepinephrine up indefinitely, and keep the hydrocortisone going at 200 milligrams over 24 hours rather than as a single dose. Send me her platelet count and coagulation trend, and tell me whether public health has been called and whether she is in droplet precautions, because that affects how we move her.\""
+     "value": "Intensivist: \"Antibiotic, hydrocortisone and norepinephrine, good. I will take her. Add vasopressin rather than pushing the norepinephrine up, and keep the hydrocortisone going. Tell me whether public health has been called.\""
     },
     {
      "when": "flag abx_given set AND flag steroid_given set",
-     "value": "Intensivist: \"Antibiotic and hydrocortisone both in, and she is holding a pressure without a pressor. That is a good place to be and she still needs a unit bed: purpura that was spreading an hour ago, a falling platelet count, a creatinine well above what a 21 year old should have, and an endocrine problem she did not have yesterday. I will take her. Recheck her lactate and her coagulation screen before she moves.\""
+     "value": "Intensivist: \"Antibiotic and hydrocortisone in, and she is holding a pressure. She still needs a unit bed and I will take her. Recheck her lactate and her coagulation screen before she moves.\""
     },
     {
      "when": "study lactate resulted AND NOT flag abx_given set",
-     "value": "Intensivist: \"A lactate like that in a 21 year old with a rash that does not blanch is septic shock with a visible source, and her pressure being normal means nothing at her age. Do not wait for me. Ceftriaxone, 30 mL/kg, and think about her adrenals. Call me back when you have started.\""
+     "value": "Intensivist: \"That lactate with a rash that does not blanch is septic shock, whatever her pressure says. Ceftriaxone and 30 mL/kg now, and think about her adrenals. Call me back when you have started.\""
     },
     {
      "when": "study lactate ordered AND NOT study lactate resulted",
-     "value": "Intensivist: \"Your lactate is still cooking so I will not act on it. Tell me three things I can act on now: what the rash looks like when you press it, whether she has had an antibiotic, and what her sugar is.\""
+     "value": "Intensivist: \"Your lactate is not back. Tell me what the rash does when you press it, whether she has had an antibiotic, and what her sugar is.\""
     },
     {
      "when": null,
-     "value": "Intensivist: \"Give me something to work with. What are her numbers, what does the rash do when you press it, has she had an antibiotic, and what is her sugar and her potassium? Send a chemistry panel and a lactate and call me back.\""
+     "value": "Intensivist: \"Give me something to work with. What does the rash do when you press it, and has she had an antibiotic? Send a chemistry panel and a lactate and call me back.\""
     }
    ],
    "consult_infectious_disease": [
     {
      "when": "flag abx_given set AND flag blood_cultures_drawn set",
-     "value": "Infectious diseases: \"Cultures before the cephalosporin, which is what I wanted to hear, and do not ever let that sequence delay the drug. In a previously well 21 year old in a hall of residence with fever, shock and non-blanching purpura, my organism is Neisseria meningitidis, with staphylococcal or streptococcal toxic shock second and Rocky Mountain spotted fever third if there is any tick exposure at all. Keep the vancomycin on until the isolate is back. And call public health now, not after the culture.\""
+     "value": "Infectious diseases: \"Cultures before the cephalosporin, good. This is Neisseria meningitidis until the isolate says otherwise. Keep the vancomycin on until then, and call public health now, not after the culture.\""
     },
     {
      "when": "flag abx_given set AND NOT flag blood_cultures_drawn set",
@@ -5733,33 +5733,33 @@
     },
     {
      "when": "study blood_culture_x_2 ordered AND NOT flag abx_given set",
-     "value": "Infectious diseases: \"The cultures are in the incubator and they will tell you nothing for a day, so they are not a reason to wait. She needs a third-generation cephalosporin now. Describe the rash to me: does it blanch when you press it?\""
+     "value": "Infectious diseases: \"The cultures will tell you nothing for a day, so do not wait for them. She needs a third-generation cephalosporin now. Does the rash blanch?\""
     },
     {
      "when": null,
-     "value": "Infectious diseases: \"Describe the rash. Does it blanch under pressure? Where did it start and how fast has it moved? If you are ringing me about a shocked young adult with non-blanching purpura, the answer is that she needs two grams of ceftriaxone before we discuss anything else, and we can talk about the rest afterwards.\""
+     "value": "Infectious diseases: \"Does the rash blanch? If this is a shocked young adult with non-blanching purpura, she needs two grams of ceftriaxone before we discuss anything else.\""
     }
    ],
    "consult_endocrinology": [
     {
      "when": "(phase is improving OR phase is stabilized_shock) AND flag steroid_given set",
-     "value": "Endocrinology: \"Her numbers are moving in the right direction, which is what replacement does and is itself supportive of the diagnosis. Keep the hydrocortisone going at 200 milligrams over 24 hours rather than stopping after one dose, because the deficit has not gone away. She does not need fludrocortisone while she is on that much hydrocortisone. A cortisol drawn before you replaced her would have been worth having and one drawn now will not be interpretable, so do not chase it tonight. Adrenal imaging, education, an emergency injection kit and a steroid card all belong to the admission.\""
+     "value": "Endocrinology: \"Her numbers are moving the right way, which supports the diagnosis. Keep the hydrocortisone at 200 milligrams over 24 hours. No fludrocortisone at that dose. The rest belongs to the admission.\""
     },
     {
      "when": "flag steroid_given set AND study basic_chemistry_chem_7 resulted",
-     "value": "Endocrinology: \"Hyponatremia, hyperkalemia and hypoglycemia with shock in a previously well 21 year old, and you have given hydrocortisone. That is the right order: in suspected adrenal crisis you treat and confirm afterwards, and if this is meningococcal sepsis the mechanism is bilateral adrenal hemorrhage. Keep going with 200 milligrams over 24 hours rather than one dose. She does not need fludrocortisone while she is on that much hydrocortisone, because at stress doses it has enough mineralocorticoid activity of its own. Ask the lab to add a cortisol to the sample drawn on arrival if they still have it, since a cortisol drawn before replacement is worth having and ours will not return tonight. She will need imaging of the adrenals, education, an emergency injection kit and a steroid card before she goes home, and none of that is tonight's problem.\""
+     "value": "Endocrinology: \"Low sodium, high potassium and low glucose in shock, and you gave hydrocortisone first, which is right. Keep it at 200 milligrams over 24 hours, and ask the lab to add a cortisol to her arrival sample.\""
     },
     {
      "when": "study basic_chemistry_chem_7 resulted AND NOT flag steroid_given set",
-     "value": "Endocrinology: \"Read those three results together rather than one at a time. A low sodium, a raised potassium and a glucose below 70, in a shocked 21 year old with no diabetes and no diuretic. That is combined glucocorticoid and mineralocorticoid failure, and with a purpuric rash the mechanism is adrenal hemorrhage. Give 100 milligrams of hydrocortisone intravenously now. Do not wait for a cortisol level and do not give dexamethasone instead unless you are planning a stimulation test, because it has no mineralocorticoid activity and her sodium and potassium need that.\""
+     "value": "Endocrinology: \"Low sodium, high potassium and low glucose in a shocked 21 year old is adrenal failure, and with this rash it is adrenal hemorrhage. Give 100 milligrams of hydrocortisone now. Do not wait for a cortisol.\""
     },
     {
      "when": "study basic_chemistry_chem_7 ordered AND NOT study basic_chemistry_chem_7 resulted",
-     "value": "Endocrinology: \"I cannot say anything useful until that panel is back. Three numbers decide this: sodium, potassium and glucose. Ring me the moment you have them. If her sugar is low and you have a bedside reading already, tell me that now.\""
+     "value": "Endocrinology: \"I need the sodium, the potassium and the glucose. Ring me when they are back, and tell me now if a bedside sugar is low.\""
     },
     {
      "when": "study fingerstick_blood_sugar resulted",
-     "value": "Endocrinology: \"A glucose that low in a 21 year old who is not diabetic and has taken no insulin needs an explanation, and in a shocked febrile patient the explanation to exclude first is that she has no cortisol. Send a full chemistry panel and look specifically at the sodium and potassium. If they are low and high respectively, treat her.\""
+     "value": "Endocrinology: \"A glucose that low in a non-diabetic in shock makes me think she has no cortisol. Send a chemistry panel and look at the sodium and potassium. If they fit, treat her.\""
     },
     {
      "when": null,
@@ -5769,29 +5769,29 @@
    "consult_public_health_authorities": [
     {
      "when": "flag isolation_precautions set AND flag abx_given set",
-     "value": "Communicable disease duty officer: \"Thank you for calling tonight rather than tomorrow. Taking the details now. She is in droplet precautions and has had ceftriaxone, which is what we want, and because it was ceftriaxone she does not need a separate course to clear her own carriage before discharge. On the contacts: household members, anyone she has kissed or shared drinks or utensils with, and anyone exposed to her oral secretions in the seven days before she became unwell. For a student in a shared hall that means her room, her immediate suite or floor if they share a kitchen or bathroom, and her partner if she has one. Whole-building prophylaxis is not indicated and we will not be doing it. It also means your own staff: anyone who intubated her, suctioned her or bag-masked her without a mask goes on the list, so please give me those names. We use rifampin, ciprofloxacin or ceftriaxone, azithromycin if needed, and we are avoiding ciprofloxacin in this catchment at the moment because of resistant isolates. Ideally everyone is dosed within 24 hours; after 14 days there is little point. Send me the isolate and the serogroup as soon as you have them, because if this is group B we will be looking at whether her contacts need a group B vaccine as well as antibiotics, and whether there are other cases on that campus.\""
+     "value": "Communicable disease duty officer: \"Thank you for calling tonight. Droplet precautions and ceftriaxone, good. Send me her close contacts, including any staff who managed her airway unmasked, and the serogroup when you have it. We will arrange prophylaxis.\""
     },
     {
      "when": "flag abx_given set",
-     "value": "Communicable disease duty officer: \"Noted, and I will start the notification now on clinical suspicion. Two things at your end before I go. Is she in droplet precautions, because she needs to be until she has had 24 hours of treatment, and has anyone had an unprotected airway exposure, because those staff need prophylaxis. On her contacts: household and anyone exposed to her oral secretions in the previous seven days, and for a student that means her room and shared living space rather than the whole hall. Rifampin, ceftriaxone or azithromycin, ideally inside 24 hours. Send me the serogroup when it comes.\""
+     "value": "Communicable disease duty officer: \"I will start the notification on suspicion. Is she in droplet precautions, and was anyone exposed to her airway unprotected? Send me her close contacts and the serogroup when it comes.\""
     },
     {
      "when": null,
-     "value": "Communicable disease duty officer: \"I can take this as a suspected case now, and I would rather have it early and be wrong than late and right. Tell me what makes you suspect it and what she has had. Has she had an antibiotic yet, and is she in droplet precautions? Those two answers change what I do at this end. If you have not treated her yet, do that first and call me straight back.\""
+     "value": "Communicable disease duty officer: \"I will take this as a suspected case now. Has she had an antibiotic, and is she in droplet precautions? If not, do that first and call me back.\""
     }
    ],
    "consult_renal": [
     {
      "when": "study basic_chemistry_chem_7 resulted AND flag steroid_given set",
-     "value": "Nephrology: \"A creatinine in that range in a 21 year old whose baseline would be about 0.7 is a stage 2 injury by the KDIGO ratio, not a mild one, and it is prerenal and septic rather than intrinsic renal disease. No dialysis indication: no refractory acidosis, no refractory hyperkalemia, no uremic complication, no fluid-refractory overload. Do the boring things. Keep the mean pressure at 65, get a catheter in and follow hourly output, and keep non-steroidals, contrast and aminoglycosides away from her. Her potassium is an aldosterone problem and it will come down as the hydrocortisone and the volume work; do not reach for insulin and dextrose in a patient who was hypoglycemic an hour ago. And do not expect the creatinine to fall tonight, because it lags.\""
+     "value": "Nephrology: \"That is a septic, prerenal kidney injury, not a dialysis case. Keep the mean pressure at 65, catheterize her and follow hourly output, and avoid nephrotoxins. Do not treat this potassium with insulin and dextrose. She was hypoglycemic.\""
     },
     {
      "when": "study basic_chemistry_chem_7 resulted",
-     "value": "Nephrology: \"A creatinine well above what a 21 year old should have, with a low bicarbonate and a raised potassium. That is a prerenal and septic acute kidney injury and the treatment is the treatment of her shock. No dialysis indication. Avoid non-steroidals and contrast, measure her urine output. One thing I would say before I hang up: a raised potassium with a low sodium in a shocked young person is a hormone problem, not a renal one, and somebody should be thinking about her adrenals.\""
+     "value": "Nephrology: \"Prerenal and septic, so treat the shock. No dialysis indication. Avoid non-steroidals and contrast. And a high potassium with a low sodium in a shocked young person is a hormone problem, so think about her adrenals.\""
     },
     {
      "when": "study basic_chemistry_chem_7 ordered AND NOT study basic_chemistry_chem_7 resulted",
-     "value": "Nephrology: \"Nothing useful from me until the chemistry is back. Send me the creatinine, the potassium and the bicarbonate when they land, and tell me what her urine output has been. Meanwhile keep her pressure up, which is the only thing that will help her kidneys tonight.\""
+     "value": "Nephrology: \"Nothing from me until the chemistry is back. Tell me her urine output, and keep her pressure up, which is what helps her kidneys tonight.\""
     },
     {
      "when": null,
@@ -5801,15 +5801,15 @@
    "consult_heme_onc": [
     {
      "when": "study coagulation_panel resulted AND study peripheral_smear resulted",
-     "value": "Hematology: \"Platelets falling, INR up, aPTT up, D-dimer very high, and no schistocytes on the film. That combination is disseminated intravascular coagulation from her sepsis, not a microangiopathy, and the absence of fragments is what rules out thrombotic thrombocytopenic purpura. So: no plasma exchange, and treat the sepsis, because that is the treatment for the coagulopathy. She is not bleeding, so no platelets and no plasma. Do not anticoagulate her. Watch the fibrinogen rather than the platelet count, because a normal fibrinogen in a septic patient is already a fall. If the purpura starts extending into confluent necrosis with a threatened limb, ring me immediately, because purpura fulminans is a different conversation and protein C replacement has been used in it.\""
+     "value": "Hematology: \"No schistocytes, so this is disseminated intravascular coagulation from her sepsis, not a microangiopathy. Treat the sepsis. She is not bleeding, so no products and no anticoagulation. Ring me if the purpura becomes necrotic.\""
     },
     {
      "when": "study coagulation_panel resulted",
-     "value": "Hematology: \"Prolonged times with a raised D-dimer and a falling platelet count in a septic patient is consumptive coagulopathy. Treat the sepsis. She is not bleeding, so hold off on products, and do not anticoagulate. Send me a film, because the one thing I want to exclude is a microangiopathy, and schistocytes are how I do that.\""
+     "value": "Hematology: \"That looks like consumptive coagulopathy from sepsis. Treat the sepsis, give no products unless she bleeds, and send me a film to exclude a microangiopathy.\""
     },
     {
      "when": "study coagulation_panel ordered AND NOT study coagulation_panel resulted",
-     "value": "Hematology: \"Send me the numbers when they arrive, and a fibrinogen with them. Is she actually bleeding anywhere, or are we talking about a rash? If the purpura is spreading while you watch it, say so now, because that changes what I do.\""
+     "value": "Hematology: \"Send me the numbers with a fibrinogen when they arrive. Is she bleeding, and is the purpura spreading while you watch?\""
     },
     {
      "when": null,

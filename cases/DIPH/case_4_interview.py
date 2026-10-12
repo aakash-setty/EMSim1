@@ -30,12 +30,13 @@ WIDE = "phase is wide_complex_tachycardia"
 TOPICS = []
 
 
+# 11 October 2026: current_medications and past_medical_history left this set. The first now
+# names her own Benadryl, and the second mentions her low mood, so neither is a plain denial.
 NEGATIVES = {
  "fever_or_infection", "neck_stiffness", "rash", "head_injury", "seizure_history",
  "diabetes", "vomiting", "abdominal_pain", "pain_anywhere", "urinary_symptoms",
  "chest_or_palpitations", "breathing", "travel_and_contacts", "previous_self_harm",
- "suicidal_intent", "past_surgical_history", "allergies", "current_medications",
- "past_medical_history",
+ "suicidal_intent", "past_surgical_history", "allergies",
 }
 
 
@@ -104,7 +105,8 @@ topic("what_she_was_doing", "What was she doing before this?",
    "What was she up to today?", "Where had she been?", "Was she out anywhere?",
    "Who was she with?", "Was she alone?", "What did she do today?"],
   ("'She was off school today, she said she had a headache last night and wanted a day at home. "
-   "So she was in on her own from half seven. Her brother got back about three, he was upstairs "
+   "That's been happening a lot lately. She's missed a lot of school these last few weeks, she "
+   "just stays in her room. So she was in on her own from half seven. Her brother got back about three, he was upstairs "
    "on his computer, he says he didn't hear anything.'"),
   "what she was doing today")
 
@@ -118,17 +120,17 @@ topic("bottle_or_pills_found", "Was there anything near her? Any bottles or pack
   ("She stops. 'I didn't look. I just saw her on the floor and I called the ambulance, I "
    "didn't look at anything else.' She takes out her phone. 'Let me ring her brother, he's still "
    "at home.'\n\nShe steps out and comes back a couple of minutes later, holding the phone.\n\n"
-   "'He's found a bottle. It was on the floor by the bed, half under it. It's Benadryl, the big "
-   "bottle, and it's empty. I bought it in about a month ago for my hay fever and I'd hardly "
-   "touched it.'"),
+   "'He's found a bottle. It was on the floor by the bed, half under it. It's her Benadryl, the "
+   "big bottle she keeps in her room for her allergies, and it's empty. I bought it about a "
+   "month ago and she'd hardly touched it.'"),
   "whether there was anything near her",
   facts=[
     fact("what_bottle", ["what was it", "what bottle", "what kind", "what was in it",
                          "what medication"],
-         "'Benadryl. The pink and white bottle. It's what I use for my hay fever.'", restate=True),
+         "'Benadryl. The pink and white bottle. The one she keeps for her allergies.'", restate=True),
     fact("how_many", ["how many were in it", "how full was it", "how many tablets",
                       "what size bottle", "how much was left"],
-         ("'It was the big one. I bought it about a month ago and I've maybe taken four or five "
+         ("'It was the big one. I bought it about a month ago and she'd maybe taken four or five "
           "out of it. He says it's completely empty.'")),
     fact("where_found", ["where was it", "where did he find it", "whereabouts"],
          "'On the floor by her bed, pushed half under it.'")])
@@ -153,7 +155,8 @@ topic("medicines_in_the_house", "What medicines do you keep in the house?",
    "Any co-ingestants?", "Co-ingestants?", "What else was available to her?",
    "Is there anything else in the house she could have taken?",
    "Any other medicines at home?", "What has she got access to at home?"],
-  ("'Not much. Paracetamol and ibuprofen in the kitchen drawer, and the Benadryl. I take "
+  ("'Not much. Paracetamol and ibuprofen in the kitchen drawer, and her Benadryl, which she "
+   "keeps in her room. I take "
    "something for my blood pressure, ramipril, and that's in my bedroom and the packet's still "
    "full, I checked it before we left. There's nothing strong in the house. Nobody's got "
    "anything for pain or anything like that.'"),
@@ -164,8 +167,9 @@ topic("past_medical_history", "Does she have any medical problems?",
   ["Any medical problems?", "Is she normally healthy?", "Does she see a doctor for anything?",
    "Any past medical history?", "Has she been unwell before?", "Any conditions?",
    "Is she under anyone at the hospital?", "PMH?", "Any health problems?"],
-  ("'Nothing. She's never been in hospital in her life. She had her tonsils looked at when she "
-   "was about nine and they left them alone. That's it.'"),
+  ("'Nothing physical. She's never been in hospital in her life. She had her tonsils looked at "
+   "when she was about nine and they left them alone.' She hesitates. 'She's been very low "
+   "lately, though. Not herself at all.'"),
   "her health")
 
 topic("past_surgical_history", "Has she had any operations?",
@@ -179,14 +183,16 @@ topic("current_medications", "Is she on any medication?",
    "Does she take anything daily?", "Any prescriptions of her own?", "Is she on the pill?",
    "Any inhalers?", "Medications?", "Meds?", "Drug history?", "Any drug history?",
    "What is she prescribed?", "Is she on any regular treatment?"],
-  ("'Nothing at all. She's not even on the pill. She won't take a paracetamol for a headache "
-   "usually, she doesn't like taking things.'"),
+  ("'Nothing regular. She's not even on the pill. She keeps a bottle of Benadryl in her room "
+   "because she gets the odd allergic reaction, hives mostly, and she takes one when that "
+   "happens. Otherwise she doesn't like taking things.'"),
   "what she takes")
 
 topic("allergies", "Does she have any allergies?",
   ["Any allergies?", "Is she allergic to anything?", "Any drug allergies?", "NKDA?",
    "Any reactions to medicines?", "Allergies?"],
-  "'No, none. Not that we've ever found.'", "allergies")
+  "'No drug allergies. She comes out in hives now and then and we've never found out what "
+  "from. She takes Benadryl when it happens.'", "allergies")
 
 topic("family_history", "Is there anything that runs in the family?",
   ["Any family history?", "Does anything run in the family?", "Any illness in the family?",
@@ -266,7 +272,8 @@ topic("sleep_and_appetite", "How have her sleep and appetite been?",
    "Has she lost weight?", "Is she sleeping alright?", "Any change in her eating?",
    "Has she been up at night?"],
   ("'She's been up half the night and asleep half the day for weeks. And she's not been eating "
-   "with us. I don't know what she's been having, she takes things up to her room.'"),
+   "with us. I don't know what she's been having, she takes things up to her room. She's "
+   "lost weight, I can see it in her face.'"),
   "her sleeping and eating")
 
 # --------------------------------------------------------------- substances

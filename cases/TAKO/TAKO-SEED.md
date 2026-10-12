@@ -601,3 +601,7 @@ line. In `catalog/expand_interview_variants.py` this pack's cover tags are now:
 
 `mood_stress` and `companion` were removed because no answer covers those questions (open
 question 11). `gi_bleeding` was added because the bleeding topic answers it.
+
+## What a person decided
+
+- 11 October 2026, Aakash Setty: every consultant answer over 40 words is shortened to 40 or fewer (authoring 9.5), keeping what the consultant thinks, what to do now and the disposition or callback. Wording by a model. Rule order, conditions, tags and debrief notes are unchanged. Not physician reviewed. Six of nine answers changed, all cardiology. The arrival-and-takeover line is now "I'm coming down to take over" and the takeover itself is unchanged. Dropped: an Impella rather than a balloon pump if she fails on a vasoconstrictor, which the phenylephrine note still gives, the angiogram and ventriculogram plan, the mechanism sentences (a fuller ventricle obstructs less, squeeze the vessels without driving the heart), and "whatever happened at the funeral".

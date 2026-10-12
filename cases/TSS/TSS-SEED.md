@@ -690,3 +690,18 @@ consciousness, no tick bite, no new drug apart from ibuprofen, no injected drugs
 
 - 11 October 2026, Aakash Setty: the skin biopsy of the rash is removed from the simulator,
   so the authored "biopsy taken, no result" line and its test are gone.
+- 11 October 2026, Aakash Setty: the presentation is fainting, fever and a rash, not
+  vomiting and diarrhea. She now has no gut symptoms and believes it is the flu; the beach
+  still explains the rash to her. She fainted (out for a few seconds, no head strike).
+  Rewritten by a model the same evening: the title, complaint, chief complaint, handovers,
+  background, appearance, interview answers (onset, character, pain, aggravating, nausea,
+  diarrhea, abdominal pain, throat, syncope, oral intake, contacts, suspected cause), and the
+  debrief and diagnosis notes that relied on the gut story. The handover no longer carries
+  "something she ate", so that recorded exception to section 11.5 is closed.
+- Same day, Aakash Setty: make the source slightly easier to find. Two changes, both model
+  wording: asked about the faint, she says she wondered whether it was her period on top of
+  the flu; and the nurse's first source prompt now asks whether anyone has asked about her
+  period as well as examined her. Deadlines, phases, vitals and scoring are unchanged.
+  Not physician reviewed.
+
+- 11 October 2026, Aakash Setty: every consultant answer over 40 words is shortened to 40 or fewer (authoring 9.5), keeping what the consultant thinks, what to do now and the disposition or callback. Wording by a model. Rule order, conditions, tags and debrief notes are unchanged. Not physician reviewed. Four of sixteen answers changed (critical care after fluid and a vasopressor, nephrology with the chemistry back, both infectious disease answers). Dropped: the intensivist's summary of her, "send the swab and blood cultures" and the immunoglobulin sentence, which the immunoglobulin action's own note covers.

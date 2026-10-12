@@ -1758,6 +1758,18 @@ def run_checks(case):
         notes.append(f"arrival: {mode or 'unset'} to {loc or 'unset'}; handover "
                      f"{len(sentences)} sentence(s), {len(h.split())} words")
 
+    # Authoring 9.5 (11 October 2026): a consultant answers in 40 words or fewer. The
+    # learner reads the reply mid-case, and the reasoning belongs in the debrief note.
+    for k, rules in (case["content_keys"].get("consultants") or {}).items():
+        if k == "authoring_note" or not isinstance(rules, list):
+            continue
+        for i, r in enumerate(rules):
+            v = r.get("value") if isinstance(r, dict) else None
+            if isinstance(v, str) and len(v.split()) > 40:
+                warnings.append(f"[consultant] {k} rule {i} is {len(v.split())} words, over the "
+                                f"40 of authoring 9.5. Move the reasoning to the debrief note, "
+                                f"or say why in the SEED")
+
     return errors, warnings, notes
 
 

@@ -46,7 +46,7 @@ HANDOFF = {
    {"id": "discharge_home", "label": "Discharge home",
     "verdict": "incorrect",
     "explanation": (
-      "She is in shock. The story of a stomach bug fits her symptoms and does not fit her "
+      "She is in shock. The story of the flu and a sunburn fits her symptoms and does not fit her "
       "vital signs, her skin or her laboratory results. Sending her home is the error this "
       "case exists to prevent.")},
    {"id": "transfer_tertiary", "label": "Transfer to another hospital",
@@ -128,16 +128,15 @@ HANDOFF = {
    {"catalog_id": "dx_viral_gastroenteritis", "label": "Viral gastroenteritis",
     "verdict": "incorrect",
     "explanation": (
-      "This is the story she walked in with, and it explains the vomiting and diarrhea. It "
-      "does not explain a temperature of 39.4 with a red rash, a creatinine of 2.6, "
-      "platelets of 98 or a lactate of 4.6. Vomiting and diarrhea are part of toxic shock. "
-      "When a common diagnosis explains the symptoms and not the vital signs, keep looking.")},
+      "She has no vomiting and no diarrhea, so this does not fit even her symptoms. It does "
+      "not explain a temperature of 39.4 with a red rash, a creatinine of 2.6, platelets of "
+      "98 or a lactate of 4.6. When a common diagnosis does not explain the vital signs, "
+      "keep looking.")},
    {"catalog_id": "dx_infectious_gastroenteritis", "label": "Infectious gastroenteritis",
     "verdict": "incorrect",
     "explanation": (
-      "The same answer as food poisoning. Her roommate ate the same meal and is well, and a "
-      "gut infection does not cause a diffuse rash, liver injury and low platelets. The gut "
-      "symptoms here are caused by the toxin.")},
+      "She has no gut symptoms, and a gut infection does not cause a diffuse rash, liver "
+      "injury and low platelets.")},
    {"catalog_id": "dx_hypovolemia", "label": "Hypovolemia",
     "verdict": "incorrect",
     "explanation": (
@@ -177,7 +176,7 @@ HANDOFF = {
     "verdict": "incorrect",
     "explanation": (
       "The beach is her explanation for the rash, and it does not hold. She was febrile and "
-      "vomiting a day and a half before she went.")},
+      "aching a day and a half before she went.")},
    {"catalog_id": "dx_pelvic_inflammatory_disease", "label": "Pelvic inflammatory disease",
     "verdict": "incorrect",
     "explanation": (

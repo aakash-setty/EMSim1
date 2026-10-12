@@ -604,3 +604,15 @@ gives no turnaround times at all, so nothing here contradicts it.
 on `study ecg_12_lead resulted`, so the window in which giving physostigmine halts the case is
 now five seconds after the order rather than ten. See review packet section 2.9 and section
 2.1.
+
+## What a person decided
+
+- 11 October 2026, Aakash Setty (not yet put to Dr Medwid): Consult Critical Care is
+  recommended, not critical. The Benadryl is now hers, kept in her room for occasional
+  allergic reactions (hives); her mother says so when asked about medications or
+  allergies, and the bottle her brother finds is that one. Her recent low mood now shows in
+  the common answers too: missing school and staying in her room (what she was doing),
+  "very low lately" (medical history) and weight loss (sleep and appetite). Wording by a
+  model. current_medications and past_medical_history are no longer marked pertinent
+  negatives, because neither answer is a plain denial now.
+- 11 October 2026, Aakash Setty: every consultant answer over 40 words is shortened to 40 or fewer (authoring 9.5), keeping what the consultant thinks, what to do now and the disposition or callback. Wording by a model. Rule order, conditions, tags and debrief notes are unchanged. Not physician reviewed. Eighteen of nineteen answers changed. Dropped: toxicology's rescue ladder (lidocaine, hypertonic saline, lipid, extracorporeal support), which its debrief note still names, the class IA and IC warning, which the amiodarone and lidocaine notes give, the aVR measurements and the QTc of 495 in cardiology, the history summary and "medical clearance is not a form" in psychiatry (its debrief note keeps the second), and some creatine kinase and salicylate requests. Critical care no longer quotes a QRS of 132. Cardiology still reads 132 and then 104, which the case tests require. Physician review questions DIPH-02 and DIPH-30 quote the old wording. Not yet put to Dr Medwid.

@@ -188,7 +188,7 @@ FIELDS = {
 "content_keys.labs.<id>.rules[].value.report": ("chart", "9.4", "Text of a report payload. Findings, not conclusions"),
 "content_keys.labs.<id>.rules[].value.comment": ("debrief", "9.4", "HIDDEN during play. Printed once in the debrief under 'Your results, read', and never for a report payload"),
 "content_keys.labs.<id>.rules[].value.verify": ("never", "9.4", "Note to the reviewing physician"),
-"content_keys.consultants.<id>": ("chart", "9.5", "Rule list whose value is a plain string. Resolved live. Needs a pending tier per study"),
+"content_keys.consultants.<id>": ("chart", "9.5", "Rule list whose value is a plain string of 40 words or fewer. Resolved live. Needs a pending tier per study"),
 "content_keys.general_status": ("chart", "9.3", "The always-visible line above the exam. Resolved live. Default 'No acute distress. GCS 15.' when absent or when no rule matches"),
 "content_keys.patient_visual": ("figure", "5.3", "First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase"),
 "content_keys.patient_visual.rules[].value.expression": ("figure", "5.3", "{eyeType, eyebrowType, mouthType} in avataaars names. Overrides the resting face drawn from distress"),

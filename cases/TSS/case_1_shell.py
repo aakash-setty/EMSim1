@@ -15,8 +15,8 @@ one of them:
 """
 
 META = {
- "working_title": "22-year-old woman, vomiting and diarrhea for two days, walked in with her roommate",
- "chief_complaint_patient_voice": "I think I've got food poisoning. I can't keep anything down.",
+ "working_title": "22-year-old woman, fainted at home with a fever and a rash, walked in with her roommate",
+ "chief_complaint_patient_voice": "I fainted in the shower. I've had a fever for two days and now I'm red all over.",
  "final_diagnosis": (
    "Menstrual staphylococcal toxic shock syndrome from a tampon retained for about four days, "
    "with septic shock, acute kidney injury, thrombocytopenia, transaminitis and early "
@@ -25,7 +25,7 @@ META = {
  "target_level": ["medical_student", "intern", "junior_resident"],
  "estimated_runtime_seconds": 600,
  "learning_objectives": [
-   "Recognize shock in a young, talking patient from the heart rate, the blood pressure, the capillary refill and the lactate, and do not let a plausible story of gastroenteritis explain them away.",
+   "Recognize shock in a young, talking patient from the heart rate, the blood pressure, the capillary refill and the lactate, and do not let a plausible story of flu and a sunburn explain them away.",
    "In fever, rash and hypotension with no clear source, ask about menstruation and tampon use and do a pelvic examination.",
    "Remove the source. A retained tampon is found and removed at the bedside, and nothing else in the resuscitation replaces that.",
    "Give about 30 mL/kg of crystalloid, reassess, and start norepinephrine when the mean arterial pressure stays under 65 after fluid.",
@@ -47,9 +47,9 @@ META = {
  "arrival": {
    "mode": "triage",
    "location": "patient_room",
-   "line": "Walked in with her roommate. Triaged as vomiting and diarrhea and placed in a room.",
+   "line": "Walked in with her roommate after fainting at home. Triaged as fever and rash and placed in a room.",
  },
- "complaint": "Vomiting and diarrhea",
+ "complaint": "Fainting, fever and rash",
  "category": "Infectious disease",
  "library": {
    "tempo": "minutes: the shock progresses without fluid",
@@ -74,32 +74,33 @@ PATIENT = {
    "Her period started five days ago. She uses super-absorbency tampons. Four days ago she "
    "put one in before an evening out, came home late, and did not take it out. She believes "
    "her period has ended and has not thought about the tampon since. Two days ago she "
-   "developed fever, muscle aches, vomiting and watery diarrhea, which she puts down to a "
-   "takeout meal. Yesterday she took her temperature and it was 102. The same day she spent "
-   "an hour at the beach and blames her red skin on that. "
-   "This morning she nearly fainted in the shower and her roommate drove her in."),
+   "developed fever, chills, muscle aches and a sore throat, which she puts down to the flu. "
+   "She has no vomiting and no diarrhea, and she has barely eaten or drunk since. Yesterday "
+   "she took her temperature and it was 102. The same day she spent an hour at the beach "
+   "and blames her red skin on that. This morning she fainted in the shower, for a few "
+   "seconds by her roommate's account and without hitting her head, and her roommate "
+   "drove her in. Rewritten on 11 October 2026 on author instruction: she presents fainting, "
+   "febrile and with a rash, not with vomiting and diarrhea."),
  "presenting_vitals_source": "Inherited from phase 'presentation'. Measured at triage.",
  "presenting_appearance": (
    "A young woman sitting up on the bed, talking in full sentences and apologizing for coming "
-   "in. She is flushed all over, her lips are dry, and she keeps a vomit bag in her lap. She "
-   "does not look as sick as her numbers."),
+   "in. She is flushed red all over and her lips are dry. She does not look as sick as her "
+   "numbers."),
  "ems_handover_text": (
-   "Twenty-two year old woman, two days of vomiting and watery diarrhea with fever and body "
-   "aches. She thinks it was a takeout meal. Near-syncope in the shower this morning, no "
-   "loss of consciousness. Heart rate 128 and pressure 94 over 58 at triage, temperature "
+   "Twenty-two year old woman, two days of fever, chills and body aches. She thinks it is "
+   "the flu. Fainted in the shower this morning, out for a few seconds by her roommate's "
+   "account, no head strike. Heart rate 128 and pressure 94 over 58 at triage, temperature "
    "39.4. She looks sunburned and says she was at the beach yesterday. Walking, talking, "
    "roommate with her."),
  "arrival_handover": (
-   "Twenty-two year old, two days of vomiting and diarrhea, says she thinks it was something "
-   "she ate. Her roommate drove her in after she nearly passed out in the shower this morning."),
+   "Twenty-two year old, fever for two days and red all over since yesterday. She fainted in "
+   "the shower this morning and her roommate drove her in."),
  "handover_authoring_note": (
-   "Section 2.3. Two sentences, 32 words, in a triage nurse's voice. No vital sign, no past "
-   "history, no medication, no pertinent negative. 'Something she ate' is the patient's own "
-   "wrong explanation, repeated by the nurse who heard it, and it is there on purpose: the "
-   "case opens with the misleading story already in the room. The fever, the rash and the "
-   "period are all left for the learner to find. Section 11.5 says the handover names no "
-   "diagnosis in clinical or lay words. 'Something she ate' is a lay diagnosis, it is wrong, "
-   "and it is a recorded exception (TSS-SEED.md, known gaps)."),
+   "Section 2.3. Two sentences, 26 words, in a triage nurse's voice. No vital sign, no past "
+   "history, no medication, no pertinent negative, and no diagnosis in clinical or lay "
+   "words. Rewritten on 11 October 2026: the presentation is fainting, fever and a rash. "
+   "The period is left for the learner to find. The earlier wording repeated her "
+   "'something she ate', a recorded exception to section 11.5 that no longer applies."),
 }
 
 
@@ -154,10 +155,10 @@ DISCHARGE_T = {
     "She was discharged with a heart rate over 110 and a fever, and she fainted when she "
     "stood up. She is both dry and vasodilated. A young adult in that state holds a blood "
     "pressure with her heart rate, and standing takes that away.\n\n"
-    "The trap was the story. Vomiting and diarrhea explain a fast heart rate, and fluid "
-    "makes most people feel better. They do not explain a temperature over 39 with red "
-    "skin. A patient you are about to send home should have vital signs you would accept "
-    "at home."),
+    "The trap was the story. The flu and a day at the beach seem to explain the fever and "
+    "the red skin, and fluid makes most people feel better. They do not explain a fit 22 "
+    "year old who fainted, with a low pressure and slow capillary refill. A patient you are "
+    "about to send home should have vital signs you would accept at home."),
   "author_rationale": (
     "A delayed consequence of the learner's own action, so the five-second floor applies. "
     "Orthostatic syncope in compensated distributive shock is plausible. That it happens "
@@ -181,8 +182,8 @@ PHASES = [
      "narration": ("That fluid is in. Her pressure is better and she says she feels a bit "
                    "better."),
      "debrief_note": (
-       "The first bolus helped, as it should. She was dry from two days of vomiting and "
-       "diarrhea, and she is leaking fluid out of her vessels.\n\n"
+       "The first bolus helped, as it should. She was dry from two days of fever and barely "
+       "drinking, and she is leaking fluid out of her vessels.\n\n"
        "Read the response as information, not as a result. A patient who is still "
        "tachycardic with a temperature over 39 after a liter was not only dehydrated. The "
        "target is about 30 mL/kg, which for her is close to two liters, followed by a "

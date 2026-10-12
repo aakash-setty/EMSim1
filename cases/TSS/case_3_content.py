@@ -110,7 +110,7 @@ EXAM = {
    "Clear, equal air entry. No crackles or wheeze.", abnormal=False)),
 
  "exam_abd": always(ex(
-   "Soft. Mild diffuse tenderness, no guarding or rebound. Bowel sounds active.")),
+   "Soft, non-tender, no guarding or rebound. Bowel sounds present.")),
 
  "exam_gu": [
    {"when": OUT, "value": ex(
@@ -156,7 +156,7 @@ GENERAL_STATUS = {
    {"when": SUPP, "value": gs("Awake, washed out, flushed. Vasopressor running. GCS 15.")},
    {"when": STAB, "value": gs("Awake, tired, flushed. Vasopressor running. GCS 15.")},
    {"when": RESP, "value": gs("Sitting up, flushed, says she feels a bit better. GCS 15.")},
-   {"when": None, "value": gs("Sitting up, talking, flushed all over, dry lips, vomit bag in her lap. GCS 15.")},
+   {"when": None, "value": gs("Sitting up, talking, flushed all over, dry lips. GCS 15.")},
  ],
 }
 
@@ -239,7 +239,7 @@ LABS = {
  "authoring_note": (
    "Section 9.4. Structured payloads with model-set abnormal flags. The pattern is the "
    "point: kidney, liver, platelets and muscle are all involved, which is what separates "
-   "toxic shock from gastroenteritis. Every value needs a physician's signature."),
+   "toxic shock from a viral illness. Every value needs a physician's signature."),
 
  "lactate": {"changes_with_state": True, "rules": by_phase(lactate_val)},
  "venous_blood_gas": {"changes_with_state": True, "rules": by_phase(vbg)},
@@ -395,10 +395,9 @@ CONSULTANTS = {
               "She's dry, and a vasopressor with no fluid behind it is not enough. Give her "
               "about 30 per kilo and call me back.")},
    {"when": "flag pressor_running set AND flag fluids_given set",
-    "value": ("Intensivist: I'll take her. Before she comes up, what is the source? A "
-              "22-year-old woman with a fever, a red rash and shock on a vasopressor. Has "
-              "anyone asked about tampons or done a pelvic exam? If something is in there, "
-              "it comes out before she moves.")},
+    "value": ("Intensivist: I'll take her. Before she comes up, what is the source? Has anyone "
+              "asked about tampons or done a pelvic exam? If something is in there, it comes "
+              "out before she moves.")},
    {"when": "flag pressor_running set",
     "value": ("Intensivist: A vasopressor with no fluid behind it is not enough in a "
               "patient this dry. Give her about 30 per kilo. And what is the source? Has "
@@ -418,10 +417,9 @@ CONSULTANTS = {
 
  "consult_renal": [
    {"when": "study basic_chemistry_chem_7 resulted",
-    "value": ("Nephrology: Her kidneys are not being perfused. The treatment for this "
-              "kidney injury is restoring her circulation, so it is your resuscitation and "
-              "not anything from us tonight. No more ibuprofen and no diuretic. Dose the "
-              "vancomycin for her kidney function and watch her urine output every hour.")},
+    "value": ("Nephrology: Her kidneys are not being perfused, so the treatment is your "
+              "resuscitation, not us. No more ibuprofen and no diuretic. Dose the vancomycin "
+              "for her kidneys and watch her urine output.")},
    {"when": "study basic_chemistry_chem_7 ordered",
     "value": "Nephrology: Her chemistry isn't back. Call me when you have it."},
    {"when": None,
@@ -430,16 +428,13 @@ CONSULTANTS = {
 
  "consult_infectious_disease": [
    {"when": "flag source_removed set",
-    "value": ("Infectious disease: With a retained tampon, treat this as menstrual toxic "
-              "shock. Vancomycin plus clindamycin. The clindamycin is there to cut toxin "
-              "production. Send the swab and blood cultures, and expect the blood to stay "
-              "negative. Immunoglobulin is an option if she keeps getting worse, and the "
-              "evidence for it is thin.")},
+    "value": ("Infectious disease: With a retained tampon, treat this as menstrual toxic shock. "
+              "Vancomycin plus clindamycin, which cuts toxin production. Expect the blood "
+              "cultures to stay negative.")},
    {"when": None,
-    "value": ("Infectious disease: Fever, a diffuse red rash and low pressure in a young "
-              "woman. Cover with vancomycin and clindamycin, and add ceftriaxone if "
-              "meningococcal disease is possible. I would want to know there is no retained "
-              "tampon, wound or packing. Has she been examined fully?")}],
+    "value": ("Infectious disease: Cover with vancomycin and clindamycin, and add ceftriaxone "
+              "if meningococcal disease is possible. Has she been examined fully for a tampon, "
+              "a wound or packing?")}],
 
  "consult_ob_gyn": [
    {"when": "flag source_removed set",

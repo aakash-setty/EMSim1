@@ -244,9 +244,16 @@ chk('no other answer mentions a tampon',
     .every(t => !/tampon/i.test(JSON.stringify(t.answer) + JSON.stringify(t.volunteer || '') + JSON.stringify(t.facts || ''))));
 chk('no answer names the diagnosis',
   CASE.interview.topics.every(t => !/toxic shock|sepsis|septic/i.test(JSON.stringify(t.answer) + JSON.stringify(t.facts || ''))));
-chk('the arrival handover names neither the fever, the rash nor her period',
-  !/fever|rash|red|period|tampon|temperature/i.test(CASE.patient.arrival_handover), CASE.patient.arrival_handover);
-chk('her roommate ate the same meal and is well', /roommate/.test(ask('sick_contacts', 5)) && /fine/.test(ask('sick_contacts', 5)));
+// 11 October 2026, author instruction: she presents fainting, febrile and with a rash, so the
+// handover now names those. It still leaves the source to be found.
+chk('the arrival handover names the faint, the fever and the rash, and not her period',
+  /fainted/.test(CASE.patient.arrival_handover) && /fever/.test(CASE.patient.arrival_handover) &&
+  /red all over/.test(CASE.patient.arrival_handover) &&
+  !/period|tampon|temperature|\d/i.test(CASE.patient.arrival_handover), CASE.patient.arrival_handover);
+chk('the faint is where she mentions her period, unprompted by any question about it',
+  /period/.test(ask('dizziness_syncope', 5)) && !/tampon/.test(ask('dizziness_syncope', 5)), ask('dizziness_syncope', 5));
+chk('she has no vomiting and no diarrhea', /^'No/.test(ask('nausea_vomiting', 5)) && /^'No/.test(ask('diarrhea', 5)));
+chk('her roommate is well', /roommate/.test(ask('sick_contacts', 5)) && /fine/.test(ask('sick_contacts', 5)));
 chk('drowsy, she gives the same fact in fewer words',
   /don't remember taking the last one out/.test(ask('menstrual_and_tampon', 310)), ask('menstrual_and_tampon', 310));
 chk('in profound shock she does not answer', /does not answer/.test(ask('onset', 560)), ask('onset', 560));
@@ -658,7 +665,8 @@ for (const id of ['fever_and_chills', 'nausea_vomiting', 'current_medications'])
   const extra = T(id).facts.flatMap(f => f.value.flatMap(r => wordsOf(r.value))).filter(w => !own.has(w));
   chk(id + ': every word of every new fact is in the topic\'s own answer, so a fact adds nothing', extra.length === 0, extra.join());
 }
-for (const [host, adj] of [['onset', 'fever_and_chills'], ['onset', 'nausea_vomiting'], ['nausea_vomiting', 'diarrhea']]) {
+// 11 October 2026: the case no longer has vomiting or diarrhea, so only the fever rides on onset.
+for (const [host, adj] of [['onset', 'fever_and_chills']]) {
   const vol = T(adj).volunteer.replace(/'/g, ''), hostAns = T(host).answer[1].value;
   const words = w => w.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(' ').filter(x => x.length > 3);
   chk(adj + ' volunteered on ' + host + ' adds something the answer has not just said',

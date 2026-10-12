@@ -74,13 +74,14 @@ PATIENT = {
  "weight_kg": 60,
  "background": (
    "No past medical history and no past surgical history. On no regular medication. No known "
-   "drug allergies. Family history of hypertension on her mother's side. She is in her final "
+   "drug allergies. She gets occasional allergic reactions (hives) and keeps her own bottle "
+   "of Benadryl in her bedroom for them. Family history of hypertension on her mother's side. She is in her final "
    "year at school and lives at home with her mother and a younger brother.\n\n"
    "Not known to the department and not known to the resident: for the past several months she "
    "has been increasingly low. She has been bullied on social media, she broke up with her "
    "boyfriend a few weeks ago, and she has stopped speaking to several friends since. About four "
-   "hours before her mother came home from work she swallowed the contents of a bottle of "
-   "diphenhydramine. The bottle is on the floor beside her bed and nobody has looked for it."),
+   "hours before her mother came home from work she swallowed the contents of her own bottle "
+   "of diphenhydramine. The bottle is on the floor beside her bed and nobody has looked for it."),
  "presenting_vitals_source": (
    "Inherited from phase 'presentation'. The crew put no oxygen on her and got no line in on the "
    "way. The temperature is the one the department measured, not one the crew reported."),

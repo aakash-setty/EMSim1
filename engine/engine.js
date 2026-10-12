@@ -1333,3 +1333,40 @@ function summaryScores(st){
              detail:bits.join(', ')});
   return rows;
 }
+
+/* ---------- overall score (author instruction, 11 October 2026) ----------
+   One number for the debrief's second dial. Critical actions carry 85 of the 100: all of
+   them done is 85, and each counts its share. The other 15 is split evenly between four
+   parts, each a fraction from 0 to 1: the history (key topics asked), the examination
+   (expected regions examined), the recommended actions across every tab (less one for each
+   discouraged action taken, never below zero), and the handoff (its own 0 to 100). A part
+   the case gives nothing to score drops out and the others share its weight. A case with
+   no critical actions gives the 85 in full. A run that a harmful action halted or that ended
+   in a terminal phase is not scored, as everywhere else in the debrief: `scored` is false. */
+const OVERALL={critical:85, rest:15};
+function overallScore(st){
+  /* A critical action done only after the nurse prompted for it earns half (author
+     instruction, 11 October 2026). A prompt fires only while the act is still undone, so
+     prompted and satisfied means it was done after the prompt. */
+  const crit=[...st.expected], critDone=crit.filter(id=>st.satisfied.has(id)).length;
+  const critCredit=crit.reduce((s,id)=>s+(st.satisfied.has(id)?(st.prompted.has(id)?0.5:1):0),0);
+  const critFrac=crit.length?critCredit/crit.length:1;
+  const rows=summaryScores(st), byId={}; rows.forEach(r=>byId[r.id]=r);
+  const frac=r=>(r&&r.max>0)?Math.max(0,Math.min(1,r.points/r.max)):null;
+  const rec=[...st.recommendedExpected].filter(id=>!st.expected.has(id));
+  const recDone=rec.filter(id=>st.satisfied.has(id)).length;
+  const recFrac=rec.length?Math.max(0,recDone-st.discouragedTaken.size)/rec.length:null;
+  const parts=[
+    {id:'history',label:'History',frac:frac(byId.history)},
+    {id:'physical',label:'Examination',frac:frac(byId.physical)},
+    {id:'recommended',label:'Recommended actions',frac:recFrac},
+    {id:'handoff',label:'Handoff',frac:frac(byId.handoff)},
+  ].filter(p=>p.frac!==null);
+  const each=parts.length?OVERALL.rest/parts.length:0;
+  parts.forEach(p=>{ p.weight=each; p.points=p.frac*each; });
+  const restPts=parts.length?parts.reduce((s,p)=>s+p.points,0):OVERALL.rest;
+  const total=OVERALL.critical*critFrac+restPts;
+  return {scored:!(st.halted||st.failed), pct:Math.round(total),
+          critical:{done:critDone,total:crit.length,points:OVERALL.critical*critFrac},
+          parts};
+}
