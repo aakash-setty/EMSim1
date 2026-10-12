@@ -5,6 +5,41 @@ is usable with learners.
 
 ---
 
+## Chart filters: Labs Only and Nurse Only (11 October 2026, author instruction)
+
+Two buttons beside the Chart heading in the record. The one that is on is highlighted with a
+small x that turns it off, and the other is greyed out until then. Nurse Only shows the
+nurse's prompts, her alerts and the reasons she gave when an order could not go ahead.
+Labs Only replaces the running list with one table of every lab result that is back: a
+column per draw, newest on the left, headed by the draw time, with each cell's tooltip
+giving the drawn and resulted times. Studies sent within two seconds of each other (one
+Submit Order) share a column, and a study sent twice gets a column each time. Imaging and
+the ECG are not labs and are left out. The study names stay in place while the values scroll
+sideways in the docked record, and the reference ranges show when the record is expanded.
+A search hit in the chart clears the filter so the line it points to is visible, and a new
+case starts unfiltered.
+
+---
+
+## Search keeps the cursor after an order (11 October 2026, author instruction)
+
+After a search result is ordered, the cursor is back in the search box, so the next keystroke
+starts the next search. The confirmation now reads only "Ordered: <name>." without "Search for
+the next one."
+
+---
+
+## Defibrillator pads appear on the patient in every case (11 October 2026, author instruction)
+
+Place Defibrillator Pads drew pads on the figure only where a case authored a rule for them,
+and only AFRVR did, so in the other six cases the button put nothing on the patient. The
+pads now follow the button in every case, the same way the airway devices do: a new
+`wornActions` map in the shared patient block (`engine/build_simulator.py`) names the catalog
+entry and the add-on, and `patientVisual` draws it once the press has gone through. The pads
+stay on when an airway device goes on. Engine tests check both in every pack.
+
+---
+
 ## Shorter consultant answers in every case (11 October 2026, author instruction)
 
 Every consultant answer over 40 words is now 40 or fewer: 82 of 112 rules across the seven

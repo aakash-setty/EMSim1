@@ -528,16 +528,113 @@ function feedPayload(v){
   return txt?`<div class="fb${v.abnormal?' abn':''}">${esc(txt)}</div>`:'';
 }
 
-let FEED_N=-1, FEED_HTML='';
+/* ---------- chart filters (author instruction, 11 October 2026) ----------
+   Labs Only and Nurse Only, one at a time. Labs Only replaces the running list with one
+   table of every lab result. Nurse Only keeps the running list and shows what the nurse
+   said: her prompts, her alerts and the reasons she gave when an order could not go
+   ahead. The filter changes what is shown and nothing else: feedItems(), the search and
+   the decision to open the record all read the whole chart. */
+let CHART_FILTER=null;                     // null, 'labs' or 'nurse'
+const NURSE_KINDS={nurse:1,nursealert:1,blocked:1};
+/* A lab is an investigation drawn from a specimen. Imaging and the ECG are investigations
+   too and are not labs. The last two tests catch a case-only lab with no catalog entry. */
+function isLabId(id){
+  const a=ACT[id]||{};
+  return catOf(id)==='investigation' && (!!a.specimen || a.group==='Lab Work' || /^labs_/.test(id));
+}
+function chartFilterHTML(){
+  const b=(k,label)=>{
+    const on=CHART_FILTER===k, off=!!CHART_FILTER&&!on;
+    return `<button type="button" class="cfbtn${on?' on':''}" data-cfilter="${k}" aria-pressed="${on}"`
+      +`${off?' disabled':''} title="${on?'Show the whole chart':'Show '+label.toLowerCase()}">`
+      +`${label}${on?'<span class="cfx" aria-hidden="true">\u00d7</span>':''}</button>`;
+  };
+  return b('labs','Labs Only')+b('nurse','Nurse Only');
+}
+/* One table of every lab result that is back. Pending ones are in the Pending box above.
+
+   Columns are draws. Studies sent within two seconds of each other went off together (one
+   Submit Order sends the whole basket) and share a column, headed by when they were drawn.
+   A study sent twice is two columns, because a column never holds the same study twice.
+   Newest on the left. Each cell's tooltip gives the drawn and resulted times.
+
+   Rows are grouped by study, the study with the most recent draw first. A panel is a name
+   row with a row per component under it, in the order of its latest result. A study with
+   a single number is one row under the component's own label. A result that is words
+   (a smear, a qualitative test) is one row with the words in the cell. */
+function labTable(){
+  const draws=[];
+  Object.keys(ST.orders).forEach(id=>{
+    if(!isLabId(id)) return;
+    ST.orders[id].forEach(o=>{ if(o.value!==null) draws.push({id,orderT:o.orderT,dueT:o.dueT,v:o.value}); });
+  });
+  if(!draws.length) return {n:0,html:'<div class="emptyline">No lab results yet.</div>'};
+  draws.sort((a,b)=>a.orderT-b.orderT||a.dueT-b.dueT);
+  const cols=[];
+  for(const d of draws){
+    let c=cols.find(c=>d.orderT-c.t<=2&&!c.ids.has(d.id));
+    if(!c){ c={t:d.orderT,ids:new Set()}; cols.push(c); }
+    c.ids.add(d.id); d.col=c;
+  }
+  cols.reverse(); cols.forEach((c,i)=>{ c.i=i; });
+  const P={}, panels=[];
+  for(let k=draws.length-1;k>=0;k--){             // newest first, so its row order wins
+    const d=draws[k], v=d.v;
+    let p=P[d.id];
+    if(!p){ p=P[d.id]={id:d.id,last:d.orderT,rows:[],by:{},text:false}; panels.push(p); }
+    const comps=(v&&typeof v==='object'&&Array.isArray(v.components))?v.components:null;
+    const put=(key,label,unit,ref,val,abn)=>{
+      let r=p.by[key];
+      if(!r){ r=p.by[key]={label,unit:unit||'',ref:ref||'',cells:{}}; p.rows.push(r); }
+      if(!r.cells[d.col.i]) r.cells[d.col.i]={val,abn,d};
+    };
+    if(comps&&comps.length){
+      for(const c of comps) put('c:'+c.label,c.label,c.unit,c.reference_range,c.value,!!c.abnormal);
+    } else {
+      p.text=true;
+      const txt=(v&&typeof v==='object')?(v.report||v.findings||v.value||v.caption||''):String(v==null?'':v);
+      put('t',dispName(d.id),'','',txt,!!(v&&v.abnormal));
+    }
+  }
+  panels.sort((a,b)=>b.last-a.last);
+  const N=cols.length, tip=d=>'Drawn '+mmss(d.orderT)+', resulted '+mmss(d.dueT);
+  const row=(p,r,cls)=>{
+    let h=`<tr class="${cls}"><td class="lb">${esc(r.label)}${r.unit?' <span class="u">'+esc(r.unit)+'</span>':''}</td>`;
+    for(let i=0;i<N;i++){
+      const c=r.cells[i];
+      h+=c?`<td class="v${c.abn?' abn':''}${p.text?' tx':''}" title="${esc(tip(c.d))}">${esc(c.val)}</td>`:'<td class="v"></td>';
+    }
+    return h+`<td class="rf">${esc(r.ref)}</td></tr>`;
+  };
+  let h='<div class="labwrap"><table class="labt"><thead><tr><th class="lb">Drawn</th>'
+    +cols.map(c=>`<th>${mmss(c.t)}</th>`).join('')+'<th class="rf">Range</th></tr></thead><tbody>';
+  for(const p of panels){
+    if(p.rows.length===1){ h+=row(p,p.rows[0],'lg one'); continue; }
+    h+=`<tr class="lg"><td class="lb">${esc(dispName(p.id))}</td>${'<td></td>'.repeat(N)}<td class="rf"></td></tr>`;
+    for(const r of p.rows) h+=row(p,r,'lc');
+  }
+  return {n:draws.length,html:h+'</tbody></table></div>'};
+}
+
+let FEED_N=-1, FEED_HTML='', CF_HTML='';
 function renderFeed(){
-  const items=feedItems();
-  el('feedcount').textContent = items.length ? items.length : '';
-  const html = items.length ? items.map(i=>
+  const all=feedItems();
+  const cf=chartFilterHTML();
+  if(cf!==CF_HTML){ CF_HTML=cf; el('chartfilters').innerHTML=cf; }
+  let items=all, html, n;
+  if(CHART_FILTER==='labs'){ const L=labTable(); html=L.html; n=L.n; }
+  else {
+    if(CHART_FILTER==='nurse') items=all.filter(i=>NURSE_KINDS[i.kind]);
+    n=items.length;
+  }
+  el('feedcount').textContent = n ? n : '';
+  if(html===undefined) html = items.length ? items.map(i=>
     `<div class="fitem k-${i.kind}${(i.payload&&i.payload.abnormal)?' abnormal':''}">
        <div class="fh"><span class="ft">${mmss(i.t)}</span><span class="fn">${esc(i.name)}</span></div>
        ${i.payload!==undefined?feedPayload(i.payload):(i.body?`<div class="fb">${esc(i.body)}</div>`:'')}
      </div>`).join('')
-    : '<div class="emptyline">Nothing yet.</div>';
+    : (CHART_FILTER==='nurse'?'<div class="emptyline">Nothing from the nurse yet.</div>'
+                             :'<div class="emptyline">Nothing yet.</div>');
   /* Written only when it differs. This runs from the frame loop, and assigning the same
      markup sixty times a second replaced every node in the chart between one mouse
      button going down and coming up, which is why a thumbnail in the record could be
@@ -547,15 +644,16 @@ function renderFeed(){
   /* The record stays tucked away until the first thing enters it: an order pending or
      an entry in the chart. The CSS takes its docked width to zero while it is empty, and
      the workspace and the patient widen into the space. */
-  const hasRecord = items.length>0 || !!(ST && ST.pending && ST.pending.length);
+  const hasRecord = all.length>0 || !!(ST && ST.pending && ST.pending.length);
   const rec = hasRecord ? 'has' : 'empty';
   if(document.body.dataset.record!==rec) document.body.dataset.record=rec;
   /* Follow the newest entry only when something has actually been added, so a reader
      scrolled down through earlier results is not yanked back every tick. The newest
      entry is now at the TOP, so following it means scrolling to zero rather than to the
      full height. */
-  if(items.length!==FEED_N){
-    FEED_N=items.length;
+  const feedKey=(CHART_FILTER||'all')+':'+n;
+  if(feedKey!==FEED_N){
+    FEED_N=feedKey;
     /* Which element actually scrolls depends on the panel state: docked, the
        feed scrolls inside its box; expanded, the feed is a multi-column block
        of natural height and the panel body around it is the scroller. */
@@ -1661,7 +1759,7 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
     +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,'
-    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart],[data-subtab],#askmic,[data-subfold]');
+    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart],[data-subtab],#askmic,[data-subfold],[data-cfilter]');
   if(t&&t.id==='soundbtn'){ AUDIO.toggle(); renderSound(); return; }
   AUDIO.unlock();
   /* Panel controls run before the ENDED guard and before the null check: the
@@ -1669,6 +1767,12 @@ document.addEventListener('click',e=>{
      inside it, so the toggle has to be tested first or every expand would be
      followed immediately by the panel's own handler. */
   if(t&&t.id==='rp-toggle'){ RIGHT_WIDE?minimiseRecord():expandRecord(); return; }
+  /* A chart filter changes what the record shows and does not expand it. A greyed-out one
+     does nothing: the filter that is on has to be turned off first. */
+  if(t&&t.dataset.cfilter!==undefined){
+    if(!t.disabled){ CHART_FILTER=CHART_FILTER===t.dataset.cfilter?null:t.dataset.cfilter; renderFeed(); }
+    return;
+  }
   if(t&&t.id==='lp-collapse'){ setPanels(false,RIGHT_WIDE); renderTabs(); return; }
   /* Leaving by the rail button asks the same question the browser's back button asks, and
      takes the same route out, so there is one way to end a case early and one guard on it. */
@@ -1676,7 +1780,7 @@ document.addEventListener('click',e=>{
   if(t&&t.id==='searchbtn'){ SEARCH_OPEN?closeSearch():openSearch(); return; }
   if(t&&t.id==='searchclose'){ closeSearch(); return; }
   if(t&&t.dataset.sgo!==undefined){ searchPick(t.dataset.sgo); return; }
-  if(t&&t.dataset.schart!==undefined){ closeSearch(); expandRecord(); return; }
+  if(t&&t.dataset.schart!==undefined){ CHART_FILTER=null; closeSearch(); expandRecord(); return; }
   /* Anything else inside the search panel stops here. It covers the record panel, which is
      a click target in its own right, and a click on the panel's own background must not
      expand the chart underneath it. After the panel's controls, never before them. */
@@ -2680,6 +2784,7 @@ function chooseCase(i){
   if(ACCESS_UI.isLocked(i)){ ACCESS_UI.open(i); return; }
   selectCase(i);
   bindCase();
+  CHART_FILTER=null;
   MODE=SHARED.difficulty.default;
   AN.track('case_opened',{case:PACK.prefix});
   /* Fold the chosen case at t=0 before anything reads ST. Until v0.17 ST still held the
@@ -3012,7 +3117,7 @@ function renderSearch(){
   const box=el('searchresults'); if(!box) return;
   const hits=searchHits();
   if(!hits){
-    box.innerHTML=(SEARCH_DONE?`<div class="srch-done">${esc(SEARCH_DONE)} Search for the next one.</div>`:'')
+    box.innerHTML=(SEARCH_DONE?`<div class="srch-done">${esc(SEARCH_DONE)}</div>`:'')
       +'<div class="srch-none">Type to search every tab at once: an examination, a study, '
       +'a drug, a consultation, or anything already in the chart. Pressing an action orders it.</div>';
     return;
@@ -3040,8 +3145,13 @@ function searchPick(id){
   const verb=a.category==='exam'?'Done':(a.category==='consultant'?'Called':'Ordered');
   SEARCH_DONE=verb+': '+(a.name||id)+'.';
   SEARCH_Q='';
-  const b=el('searchbox'); if(b){ b.value=''; b.focus(); }
+  const b=el('searchbox'); if(b) b.value='';
   render(); renderSearch();
+  /* The cursor goes back into the box after the render, and again on the next frame, so
+     nothing the press redrew (the record, the nurse) keeps the focus: the next keystroke
+     types into the search. */
+  const refocus=()=>{ const x=el('searchbox'); if(x&&SEARCH_OPEN){ x.focus(); x.setSelectionRange(x.value.length,x.value.length); } };
+  refocus(); requestAnimationFrame(refocus); setTimeout(refocus,60);
 }
 function searchGoTo(id){
   const a=ACT[id]; if(!a) return;

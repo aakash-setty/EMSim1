@@ -405,6 +405,11 @@ shared["patient"] = {
     "deviceActions": {"nasal_cannula_oxygen": "nasal_cannula", "non_rebreather_mask": "nonrebreather",
                       "non_invasive_positive_pressure_ventilation": "bipap_mask",
                       "bag_valve_mask": "bag_valve_mask", "intubate_rapid_sequence": "intubated"},
+    # 11 October 2026. Things put on the patient that stay on once placed and replace
+    # nothing, drawn whenever the catalog entry (through the pack's bindings) has been
+    # taken. Before this the pads were drawn only where a case authored a rule for them,
+    # which only AFRVR did, so the button put nothing on the figure in the other six.
+    "wornActions": {"place_pads_for_monitoring": "defib_pads"},
 }
 
 # The six-minute pause. Not a case's to author: it is a property of how the tool teaches,

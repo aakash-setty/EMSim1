@@ -1882,6 +1882,17 @@ else {
       chk(PACK.prefix + ': ' + cid + ' puts ' + dev[cid] + ' on the figure, and nothing else',
           got.length === 1 && got[0] === dev[cid], got.join('+'));
     }
+    /* 11 October 2026. The pads follow the button in every case, not a rule the case authored. */
+    const worn = (SHARED.patient || {}).wornActions || {};
+    for (const cid in worn) {
+      if (!ACT[eff(cid)] || blocked([[1, eff(cid)]])) continue;
+      const before = patientVisual(fold(mk([]), 3)).value.addons || [];
+      const after = patientVisual(fold(mk([[1, eff(cid)]]), 3)).value.addons || [];
+      chk(PACK.prefix + ': ' + cid + ' puts ' + worn[cid] + ' on the figure',
+          after.includes(worn[cid]) && !before.includes(worn[cid]), after.join('+'));
+      const later = patientVisual(fold(mk([[1, eff(cid)], [2, eff('nasal_cannula_oxygen')]]), 4)).value.addons || [];
+      chk(PACK.prefix + ': and they stay on when an airway device goes on', later.includes(worn[cid]), later.join('+'));
+    }
     const nc = eff('nasal_cannula_oxygen'), nrb = eff('non_rebreather_mask'), niv = eff('non_invasive_positive_pressure_ventilation');
     if (ACT[nc] && ACT[nrb]) {
       chk(PACK.prefix + ': cannula, then mask, then cannula shows the cannula',

@@ -87,7 +87,7 @@ function resolveText(v,st){
    copy of the catalog. Section 6.2: catalog defaults apply unless the case waives
    them, and case prerequisites are additional rather than a replacement. */
 let CASE=null, PROTO=null, PACK=null;
-let PHASE={}, ACT={}, FU={}, CK=null, CONTENT={}, GENERAL_STATUS=null, PATIENT_VISUAL=null, PATIENT_ALSO=[], DEVICE_BY_ID={};
+let PHASE={}, ACT={}, FU={}, CK=null, CONTENT={}, GENERAL_STATUS=null, PATIENT_VISUAL=null, PATIENT_ALSO=[], DEVICE_BY_ID={}, WORN_BY_ID={};
 
 function orphanCategory(eff){
   if(eff.indexOf('exam_')===0) return 'exam';
@@ -319,6 +319,11 @@ function selectCase(ref){
   DEVICE_BY_ID={};
   const _dev=(SHARED.patient&&SHARED.patient.deviceActions)||{};
   for(const cid in _dev){ const eff=(PACK.bindings||{})[cid]||cid; if(ACT[eff]) DEVICE_BY_ID[eff]=_dev[cid]; }
+  /* 11 October 2026. The same for what stays on once placed and replaces nothing (the
+     pads): SHARED.patient.wornActions, drawn once the entry has gone through. */
+  WORN_BY_ID={};
+  const _worn=(SHARED.patient&&SHARED.patient.wornActions)||{};
+  for(const cid in _worn){ const eff=(PACK.bindings||{})[cid]||cid; if(ACT[eff]) WORN_BY_ID[eff]=_worn[cid]; }
   return PACK;
 }
 
@@ -333,6 +338,7 @@ function patientVisual(st){
      every combination. */
   const extra=[];
   for(const r of PATIENT_ALSO) if(test(r.when,st)) for(const a of (r.addons||[])) if(extra.indexOf(a)<0) extra.push(a);
+  for(const id in WORN_BY_ID) if(st.taken&&st.taken.has(id)&&extra.indexOf(WORN_BY_ID[id])<0) extra.push(WORN_BY_ID[id]);
   const withExtra=v=>{ if(!extra.length) return v; const o=Object.assign({},v);
     o.addons=(v.addons||[]).concat(extra.filter(a=>(v.addons||[]).indexOf(a)<0)); return o; };
   let out;
