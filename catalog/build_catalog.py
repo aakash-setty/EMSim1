@@ -198,7 +198,7 @@ OTHER_LABS = ["Acetaminophen Level", "Amylase", "Blood Culture x 2",
               "Erythrocyte Sedimentation Rate (ESR)", "Ethanol Level (EtOH)",
               "Influenza A&B Antigen Test", "Lactate dehydrogenase (LDH)",
               "Osmolality", "Peripheral smear", "Salicylate (Aspirin) Level",
-              "Serum HCG (quantitative)", "Skin Biopsy of the Rash", "TSH",
+              "Serum HCG (quantitative)", "TSH",
               "Uric Acid", "Urine Culture", "Urine HCG (qualitative)",
               "Urine Rapid Antigen Test for N. meningitidis",
               "Urine Rapid Antigen Test for S. pneumoniae", "Urine Tox Screen"]
@@ -541,6 +541,62 @@ for e in ENTRIES:
     if p["tab"] == "investigations" and p["group"] == "Imaging":
         p["subgroup"] = _imaging_subgroup(e)
 
+# ---- v0.26c, author instruction (11 October 2026): labs by tube and source ----
+# Lab Work and Other Labs become one Lab Work folder, sectioned by what is drawn or
+# collected: blood by tube top, blood gas, blood cultures, CSF, urine, point of care, other.
+# Fingerstick glucose moves in from Bedside Tests as point of care. Placement only.
+# THE TUBE ASSIGNMENTS ARE NOT PHYSICIAN REVIEWED and vary between laboratories (lactate on
+# a gray top or the gas, chemistry on green or gold). They follow common US practice.
+S_LAV, S_BLUE = "Blood, lavender or pink top (EDTA)", "Blood, light blue top (citrate)"
+S_CSF, S_URINE, S_POC, S_OTHER = "CSF", "Urine", "Point of care", "Other"
+# Author instruction, same day: gold top folded into green; blood gas, blood cultures, the
+# gray-top tests (lactate, ethanol) and the skin biopsy together under Other.
+S_GREEN = "Blood, green top (lithium heparin)"
+S_GOLD = S_GREEN
+S_GRAY = S_GAS = S_CULT = S_OTHER
+LAB_SECTION = {
+    # Author instruction, same evening: the two blood gases are point of care.
+    "Arterial Blood Gas": S_POC, "Venous Blood Gas": S_POC, "Calcium (ionized)": S_GAS,
+    "Basic Chemistry (Chem 7)": S_GREEN, "Beta-Hydroxybutyrate": S_GREEN,
+    "Calcium Level": S_GREEN, "Lipase": S_GREEN, "Liver Function Tests (LFTs)": S_GREEN,
+    "Magnesium Level": S_GREEN, "Phosphate Level": S_GREEN, "Plasma Procalcitonin": S_GREEN,
+    "NT-proBNP": S_GREEN, "Troponin-T": S_GREEN, "Acetaminophen Level": S_GREEN,
+    "Amylase": S_GREEN, "C-reactive Protein (CRP)": S_GREEN, "Creatine Kinase (CK)": S_GREEN,
+    "Lactate dehydrogenase (LDH)": S_GREEN, "Salicylate (Aspirin) Level": S_GREEN,
+    "Uric Acid": S_GREEN,
+    "Blood Type & Screen": S_LAV, "Complete Blood Count (CBC)": S_LAV,
+    "Erythrocyte Sedimentation Rate (ESR)": S_LAV, "Peripheral smear": S_LAV,
+    "Coagulation Panel": S_BLUE, "D-Dimer": S_BLUE,
+    "TSH": S_GOLD, "Serum HCG (quantitative)": S_GOLD, "Osmolality": S_GOLD,
+    "Lactate": S_GRAY, "Ethanol Level (EtOH)": S_GRAY,
+    "Blood Culture x 2": S_CULT,
+    "CSF Cell Count": S_CSF, "CSF Culture": S_CSF, "CSF Glucose": S_CSF, "CSF Gram Stain": S_CSF,
+    "CSF Protein": S_CSF, "CSF Rapid Antigen Test for N. meningitidis": S_CSF,
+    "Urinalysis": S_URINE, "Urine Culture": S_URINE, "Urine HCG (qualitative)": S_URINE,
+    "Urine Rapid Antigen Test for N. meningitidis": S_URINE,
+    "Urine Rapid Antigen Test for S. pneumoniae": S_URINE, "Urine Tox Screen": S_URINE,
+    "Fingerstick Blood Sugar": S_POC, "COVID-19 test": S_POC, "Influenza A&B Antigen Test": S_POC,
+}
+# The specimen, for the colour of each lab button's edge (author instruction, same day):
+# blood dark red, blood gas light red, urine yellow, CSF gray, swabs green.
+# Only the arterial gas is light red. Venous gas and ionized calcium are venous blood
+# (author instruction, same evening).
+GAS_LABS = {"Arterial Blood Gas"}
+SWAB_LABS = {"COVID-19 test", "Influenza A&B Antigen Test"}
+for e in ENTRIES:
+    p = e["placements"][0]
+    if p["tab"] != "investigations" or p["group"] not in ("Lab Work", "Other Labs", "Bedside Tests"):
+        continue
+    sec = LAB_SECTION.get(e["display_name"])
+    if sec is None:
+        if p["group"] == "Bedside Tests":
+            continue
+        raise SystemExit("lab with no section: " + e["display_name"])
+    p["group"], p["subgroup"] = "Lab Work", sec
+    d = e["display_name"]
+    e["specimen"] = ("gas" if d in GAS_LABS else "swab" if d in SWAB_LABS
+                     else "urine" if sec == S_URINE else "csf" if sec == S_CSF else "blood")
+
 # ---- attach default normal findings to every exam ----
 ex_missing, ex_orphan = [], set(EXAM_DEFAULTS)
 for e in ENTRIES:
@@ -700,6 +756,8 @@ CATALOG = {
         "case. Not transcribed from any screenshot; carries source=author-supplied. It is "
         "an intravenous push and is not in NON_IV, so it inherits the vascular-access "
         "prerequisite like every other intravenous drug.",
+        "Skin Biopsy of the Rash removed on author instruction (11 October 2026): not used in "
+        "this simulator. MGCA and TSS no longer reference it.",
         "v0.26 layout on author instruction (11 October 2026), placement only: airway, "
         "breathing and circulation exams hidden from the menus and performed together by the "
         "composite exam_abc on Stabilization; Start Chest Compressions moved to Nursing; "

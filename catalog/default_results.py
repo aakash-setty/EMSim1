@@ -205,11 +205,6 @@ DEFAULTS = {
            "normal value. Every unauthored patient is now not pregnant, including "
            "male patients, for whom the study should arguably be unavailable. Any "
            "obstetric case must override this."),
-"skin_biopsy_of_the_rash": report("Not applicable.",
-    verify="Author choice: 'Not applicable', since the study name presupposes a "
-           "rash the default patient does not have. Note the resident can still "
-           "order it and consume time doing so; if that is unwanted, the action "
-           "needs to be case-enabled rather than always available."),
 "tsh": value("TSH", "2.0", "mIU/L", "0.4-4.0"),
 "uric_acid": value("Uric acid", "5.0", "mg/dL", "3.5-7.2",
                    verify="Sex-specific ranges differ."),

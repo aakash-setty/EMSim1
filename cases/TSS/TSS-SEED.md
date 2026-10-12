@@ -685,3 +685,8 @@ consciousness, no tick bite, no new drug apart from ibuprofen, no injected drugs
 - Additional diagnoses credited (9): Septic shock, Acute kidney injury, Lactic acidosis, Rhabdomyolysis, Retained vaginal foreign body, Thrombocytopenia, Anion gap metabolic acidosis, Hyponatremia, Hypokalemia.
 - Alternatives with a verdict and an explanation (15): Septic shock (acceptable with qualification), Sepsis (incorrect), Viral gastroenteritis (incorrect), Infectious gastroenteritis (incorrect), Hypovolemia (incorrect), Meningococcemia (incorrect), Urosepsis (incorrect), Pyelonephritis (incorrect), Scarlet fever (incorrect), Heat stroke (incorrect), Heat exhaustion (incorrect), Pelvic inflammatory disease (incorrect), Stevens-Johnson syndrome (incorrect), Kawasaki disease (incorrect), Rocky Mountain spotted fever (incorrect).
 - Alternatives with no verdict yet: question 23.
+
+## What a person decided
+
+- 11 October 2026, Aakash Setty: the skin biopsy of the rash is removed from the simulator,
+  so the authored "biopsy taken, no result" line and its test are gone.

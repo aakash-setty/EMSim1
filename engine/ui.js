@@ -16,6 +16,9 @@ const EXPANDED={};
 /* v0.26. The chosen sub-tab of a group drawn as sub-tabs (PROTO.subgroupTabs), keyed
    tab|group. Unset means the first subgroup in subgroupOrder. */
 const SUBTAB={};
+/* Subgroups listed in PROTO.subgroupCollapsed that the learner has opened, keyed
+   tab|group|subgroup. Closed unless listed here. */
+const SUBOPEN=new Set();
 /* Seeded once per tab from SHARED.defaultExpanded, then left alone. A learner who
    collapses a group that opened by default keeps it collapsed for the rest of the run,
    because the set exists from the first call and is never re-seeded. */
@@ -67,6 +70,16 @@ function minimiseRecord(){
 const DM = () => PROTO.difficulty.modes[MODE].prompt_multiplier;
 const filterOf = t => FILTERS[t]||'';
 const basketOf = t => (BASKET[t]=BASKET[t]||new Set());
+/* v0.26c, author instruction: Submit Order on any tab sends everything selected on every
+   ordering tab. Each pick is numbered so the whole order goes out in the order it was
+   picked, across tabs, exactly as it would have one tab at a time. */
+let PICKSEQ={}, PICKN=0;
+function allPicked(){
+  const out=[];
+  for(const t of PROTO.orderableTabs) for(const id of basketOf(t)) out.push({id,t});
+  return out.sort((a,b)=>(PICKSEQ[a.id]||0)-(PICKSEQ[b.id]||0));
+}
+function clearAllBaskets(){ for(const t of PROTO.orderableTabs) basketOf(t).clear(); PICKSEQ={}; }
 
 /* Label lookups the handoff and debrief need. Plain functions rather than properties
    hung on PROTO, because PROTO is rebound whenever a case is selected and anything
@@ -336,6 +349,16 @@ function clearSplashPatient(){
 }
 
 /* ---------- nurse ---------- */
+/* When the nurse says something, her picture grows for ten seconds and then settles
+   back. A new line restarts the ten seconds. Transform only, so it is smooth and moves
+   nothing around it. Author instruction, 11 October 2026. */
+let NURSE_BIG_T=0;
+function nurseSpeaking(){
+  const f=document.querySelector('.nurse'); if(!f) return;
+  f.classList.add('speaking');
+  clearTimeout(NURSE_BIG_T);
+  NURSE_BIG_T=setTimeout(()=>f.classList.remove('speaking'),10000);
+}
 function renderNurse(){
   const n=ST.nurse[ST.nurse.length-1];
   const line=el('nurseline');
@@ -349,6 +372,7 @@ function renderNurse(){
        Skipped for the very first line, as the trill always was. */
     if(LASTNURSE>=0){ if(n.kind==='prompt') AUDIO.trill(); else AUDIO.cue(); }
     LASTNURSE=ST.nurse.length;
+    nurseSpeaking();
   }
   line.textContent=n.text;
   const lab={prompt:'prompt',blocked:'blocked action',result:'result',halt:'halt',
@@ -640,6 +664,13 @@ function groupNames(tab,groups){
 /* Buttons carry the name and nothing else. Prerequisites and turnaround times used to
    be printed underneath; they are system detail the resident does not read off a menu,
    and a blocked attempt teaches the prerequisite better than a label does. */
+/* On the buttons only, a leading "Consult" or "Perform" is dropped (author instruction,
+   11 October 2026): the tab already says what the button does. The full name stays
+   everywhere else: the record, the nurse, the debrief, search and voice. */
+function buttonLabel(n){
+  const t=String(n||'').replace(/^(consult|perform)\s+/i,'');
+  return t ? t.charAt(0).toUpperCase()+t.slice(1) : String(n||'');
+}
 function actionButton(id,tab,grp){
   const a=ACT[id];
   const orders=ST.orders[id]||[];
@@ -652,10 +683,11 @@ function actionButton(id,tab,grp){
     if(a.performs.every(p=>ST.taken.has(p))) cls+=' done';
   } else if(ST.taken.has(id)) cls+=' done';
   if(a.orphan) cls+=' orphan';
+  if(a.specimen) cls+=' spec-'+a.specimen;
   if(tab&&basketOf(tab).has(id)) cls+=' picked';
   /* v0.26b. A button in one of PROTO.immediateGroups acts on the click, like an exam. */
   const now=!!(grp&&((PROTO.immediateGroups||{})[tab]||[]).includes(grp));
-  return `<button class="${cls}" data-act="${esc(id)}" data-tabof="${esc(tab||'')}"${now?' data-now="1"':''}>${esc(a.name)}</button>`;
+  return `<button class="${cls}" data-act="${esc(id)}" data-tabof="${esc(tab||'')}"${now?' data-now="1"':''}>${esc(buttonLabel(a.name))}</button>`;
 }
 /* v0.26. One group's buttons. Entries with no subgroup come first as a plain grid. The
    rest are split by subgroup, in PROTO.subgroupOrder, and drawn either as headings inside
@@ -681,7 +713,17 @@ function groupBody(tab,g,ids,filtering){
         aria-selected="${s===cur}">${esc(s)}<span class="n">${by[s].length}</span></button>`).join('')}</div>`;
     html+=grid(by[cur]);
   } else {
-    for(const s of subs) html+=`<div class="subhead">${esc(s)}</div>`+grid(by[s]);
+    const sw=PROTO.subgroupSwatch||{};
+    const folds=(PROTO.subgroupCollapsed||{})[g]||[];
+    for(const s of subs){
+      const chip=sw[s]?`<span class="swatch" style="background:${esc(sw[s])}"></span>`:'';
+      if(folds.includes(s)){
+        const key=tab+'|'+g+'|'+s, open=filtering||SUBOPEN.has(key);
+        html+=`<button class="subhead subfold" type="button" data-subfold="${esc(key)}" aria-expanded="${open}">${chip}${esc(s)}
+          <span class="n">${by[s].length}</span><svg class="dbfold-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`;
+        if(open) html+=grid(by[s]);
+      } else html+=`<div class="subhead">${chip}${esc(s)}</div>`+grid(by[s]);
+    }
   }
   return html;
 }
@@ -723,7 +765,9 @@ function renderActionTab(tab,intro){
   }
   if(!names.length) html='<p class="sub">Nothing matches that filter.</p>';
   const orderable=PROTO.orderableTabs.includes(tab);
-  const basket=[...basketOf(tab)];
+  const basket=[...basketOf(tab)], everything=allPicked();
+  const elsewhere=PROTO.orderableTabs.filter(t=>t!==tab&&basketOf(t).size)
+    .map(t=>esc(PROTO.tabLabel[t])+': '+[...basketOf(t)].map(id=>esc(dispName(id))).join(', ')).join('. ');
   return `<div class="panel"><h2>${esc(PROTO.tabLabel[tab])}</h2>
     <p class="sub">${intro}</p>
     <div class="toolbar">
@@ -733,12 +777,13 @@ function renderActionTab(tab,intro){
         ${filterOf(tab)?`<button class="clearfilter" id="clearfilter" data-tabof="${tab}"
           title="Clear the filter" aria-label="Clear the filter">\u00D7</button>`:''}
       </span>
-      ${orderable?`<button class="btn" id="submitorder" data-tabof="${tab}" ${basket.length?'':'disabled'}>
-          Submit Order${basket.length?' ('+basket.length+')':''}</button>
-        <button class="btn ghost" id="clearorder" data-tabof="${tab}" ${basket.length?'':'disabled'}>Clear</button>`:''}
+      ${orderable?`<button class="btn" id="submitorder" data-tabof="${tab}" ${everything.length?'':'disabled'}>
+          Submit Order${everything.length?' ('+everything.length+')':''}</button>
+        <button class="btn ghost" id="clearorder" data-tabof="${tab}" ${everything.length?'':'disabled'}>${elsewhere?'Clear all':'Clear'}</button>`:''}
     </div>
-    ${orderable?`<div class="basket${basket.length?'':' empty'}">${basket.length
-        ? 'Selected, not yet sent: '+basket.map(id=>esc(dispName(id))).join(', ')+'.'
+    ${orderable?`<div class="basket${everything.length?'':' empty'}">${everything.length
+        ? (basket.length?'Selected, not yet sent: '+basket.map(id=>esc(dispName(id))).join(', ')+'.':'Nothing selected on this tab.')
+          +(elsewhere?' Also selected on '+elsewhere+'.':'')
         : 'Nothing selected. Click items to add them, then Submit Order.'}</div>`:''}
     ${html}</div>`;
 }
@@ -934,6 +979,71 @@ function historyThread(){
   });
   return html;
 }
+/* ---------- speaking a question to the patient (author instruction, 11 October 2026) ----------
+   Optional. The microphone beside the question box dictates one question with the
+   browser's own speech recognition. What is heard shows in the box as it is heard, and
+   when the speaker stops, the question is asked exactly as if it had been typed and sent.
+   Pressing the microphone again while it listens stops it and sends what was heard. It is
+   separate from voice orders and never runs alongside them. Browsers without speech
+   recognition do not show the button. */
+const ASKMIC=(function(){
+  const SR=(typeof window!=='undefined')?(window.SpeechRecognition||window.webkitSpeechRecognition||null):null;
+  let rec=null, ON=false, ARMED=false, FINAL='', INTERIM='', MSG='';
+  function setText(){
+    ASKTEXT=(FINAL+' '+INTERIM).replace(/\s+/g,' ').trim();
+    const b=el('askbox'); if(b) b.value=ASKTEXT;
+  }
+  function paint(){
+    const m=el('askmic');
+    if(m){ m.classList.toggle('on',ON); m.setAttribute('aria-pressed',ON?'true':'false');
+           m.title=ON?'Listening. Press to stop and ask.':'Ask by voice'; }
+    const n=el('askmicmsg'); if(n){ n.textContent=MSG; n.hidden=!MSG; }
+  }
+  function start(){
+    if(!SR||ON||ENDED) return;
+    if(typeof VOICE!=='undefined'&&VOICE.listening&&VOICE.listening()){
+      MSG='Voice orders are listening. Stop them first, then ask.'; paint(); return; }
+    FINAL=''; INTERIM=''; MSG=''; ON=true; ARMED=true;
+    rec=new SR();
+    rec.continuous=false; rec.interimResults=true; rec.maxAlternatives=1;
+    rec.lang=(navigator.language&&/^en/i.test(navigator.language))?navigator.language:'en-US';
+    rec.onaudiostart=()=>{ ARMED=false; };
+    rec.onresult=e=>{
+      let interim='';
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const r=e.results[i];
+        if(r.isFinal) FINAL+=r[0].transcript+' '; else interim+=r[0].transcript+' ';
+      }
+      INTERIM=interim; setText();
+    };
+    rec.onerror=e=>{
+      const k=e&&e.error;
+      if(k==='not-allowed'||k==='service-not-allowed') MSG='The browser blocked the microphone. Allow it for this page, or type the question.';
+      else if(k==='network') MSG='The browser could not reach its speech service. Type the question.';
+      else if(k==='audio-capture') MSG='No microphone was found. Type the question.';
+      else if(k==='no-speech') MSG='Nothing was heard. Press the microphone and ask again.';
+    };
+    rec.onend=()=>{
+      const heard=(FINAL+' '+INTERIM).replace(/\s+/g,' ').trim();
+      ON=false; ARMED=false; rec=null; FINAL=''; INTERIM='';
+      paint();
+      if(heard&&!ENDED){ MSG=''; paint(); ask(heard); }
+    };
+    try{ rec.start(); }
+    catch(err){ ON=false; ARMED=false; rec=null; MSG='The microphone could not be started. Type the question.'; }
+    paint();
+  }
+  function stop(){ if(ON&&rec){ try{ rec.stop(); }catch(err){} } }
+  /* Leaving, restarting or pausing a case: nothing heard is asked. */
+  function abort(){
+    if(!rec){ ON=false; ARMED=false; return; }
+    const r=rec; r.onresult=r.onend=r.onerror=r.onaudiostart=null;
+    try{ r.abort(); }catch(err){}
+    rec=null; ON=false; ARMED=false; FINAL=''; INTERIM=''; paint();
+  }
+  return {supported:()=>!!SR, listening:()=>ON, arming:()=>ARMED, msg:()=>MSG,
+          toggle:()=>{ ON?stop():start(); }, abort, paint};
+})();
 let THREAD_N=-1, THREAD_TOP=0;
 function tabHistory(){
   const p=CASE.patient||{};
@@ -959,11 +1069,15 @@ function tabHistory(){
     <div class="imsg-glass">
       <div class="imsg-thread" id="imsgthread" aria-live="polite">${historyThread()}</div>
       <div class="imsg-compose">
-        <input type="text" id="askbox" placeholder="Ask the patient something" autocomplete="off" value="${esc(ASKTEXT)}">
+        ${ASKMIC.supported()?`<button class="imsg-mic${ASKMIC.listening()?' on':''}" id="askmic" type="button"
+          aria-pressed="${ASKMIC.listening()}" title="${ASKMIC.listening()?'Listening. Press to stop and ask.':'Ask by voice'}" aria-label="Ask by voice">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>`:''}
+        <input type="text" id="askbox" placeholder="${ASKMIC.listening()?'Listening…':'Ask the patient something'}" autocomplete="off" value="${esc(ASKTEXT)}">
         <button class="imsg-send" id="askbtn" title="Ask" aria-label="Ask">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/></svg></button>
       </div>
     </div>
+    <div class="askmicmsg" id="askmicmsg"${ASKMIC.msg()?'':' hidden'}>${esc(ASKMIC.msg())}</div>
     ${semChip()}
 </div>`;
 }
@@ -1547,7 +1661,7 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
     +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,'
-    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart],[data-subtab]');
+    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart],[data-subtab],#askmic,[data-subfold]');
   if(t&&t.id==='soundbtn'){ AUDIO.toggle(); renderSound(); return; }
   AUDIO.unlock();
   /* Panel controls run before the ENDED guard and before the null check: the
@@ -1609,7 +1723,7 @@ document.addEventListener('click',e=>{
     /* On an orderable tab a click selects; nothing is sent until Submit Order. */
     if(tabof&&PROTO.orderableTabs.includes(tabof)){
       const bag=basketOf(tabof);
-      bag.has(id)?bag.delete(id):bag.add(id);
+      if(bag.has(id)){ bag.delete(id); delete PICKSEQ[id]; } else { bag.add(id); PICKSEQ[id]=++PICKN; }
       renderTab(); return;
     }
     log({actionId:id}); render(); return;
@@ -1618,6 +1732,10 @@ document.addEventListener('click',e=>{
   if(t.id==='backtopicker'){ backToPicker(); return; }
   if(t.dataset.mode){ MODE=t.dataset.mode; renderSplash(); return; }
   if(t.id==='beginbtn'){ begin(); return; }
+  if(t.dataset.subfold){
+    const k=t.dataset.subfold; SUBOPEN.has(k)?SUBOPEN.delete(k):SUBOPEN.add(k);
+    renderTab(); return;
+  }
   if(t.dataset.subtab){
     SUBTAB[t.dataset.tabof+'|'+t.dataset.subgroup]=t.dataset.subtab;
     renderTab(); return;
@@ -1633,14 +1751,18 @@ document.addEventListener('click',e=>{
     const box=el('filterbox'); if(box) box.focus();
     return;
   }
-  if(t.id==='clearorder'){ basketOf(t.dataset.tabof).clear(); renderTab(); return; }
+  if(t.id==='clearorder'){ clearAllBaskets(); renderTab(); return; }
   if(t.id==='submitorder'){
-    const tabof=t.dataset.tabof, bag=basketOf(tabof);
-    /* Submit in the order they were picked. Each is a separate log entry at the same
-       instant, so the fold applies them in sequence and prerequisites, transitions and
-       harmful tags all evaluate exactly as they would one at a time. */
-    for(const id of [...bag]) log({actionId:id});
-    bag.clear();
+    const tabof=t.dataset.tabof;
+    /* Submit everything selected on every ordering tab, in the order it was picked. Each
+       is a separate log entry at the same instant, so the fold applies them in sequence and
+       prerequisites, transitions and harmful tags all evaluate exactly as they would one at
+       a time. */
+    const picks=allPicked();
+    for(const p of picks) log({actionId:p.id});
+    const tabsUsed=[...new Set(picks.map(p=>p.t))];
+    clearAllBaskets();
+    tabsUsed.forEach(x=>{ if(x!==tabof) resetTabView(x); });
     /* A submitted order is the end of one search, so the tab goes back to where that
        search started rather than staying where it ended. The filter text and the opened
        group are both scaffolding for finding the thing that has now been ordered, and
@@ -1659,6 +1781,7 @@ document.addEventListener('click',e=>{
     render(); scrollTabTop(); return;
   }
   if(t.dataset.ask){ ask(t.dataset.ask); return; }
+  if(t.id==='askmic'){ ASKMIC.toggle(); return; }
   if(t.id==='askbtn'){ const b=el('askbox'); if(b&&b.value.trim()) ask(b.value.trim()); return; }
   if(t.dataset.disp){ PENDING_HANDOFF.disposition=t.dataset.disp; render(); return; }
   if(t.dataset.dx){
@@ -1689,7 +1812,7 @@ document.addEventListener('click',e=>{
     finish(); return;
   }
   if(t.id==='earlyexit'){ log({actionId:'early_exit',kind:'early_exit'}); finish(); return; }
-  if(t.id==='restart'){ restart(); return; }
+  if(t.id==='restart'){ askReplay(); return; }
   if(t.id==='revealanswers'){ revealAnswers(); return; }
   if(t.id==='pickanother'){ toPickerFromDebrief(); return; }
 });
@@ -1911,7 +2034,7 @@ function finish(){
      and ambience still humming under it is the interface not noticing the case is over.
      setScene('idle') stops the heartbeat and the room together. */
   refold(); ENDED=true; RUNID++; AUDIO.setScene('idle'); MONITOR.setScene('idle');
-  VOICE.reset();
+  VOICE.reset(); ASKMIC.abort();
   /* Neither overlay belongs over a debrief. The case is over, so there is nothing to
      resume and nothing left to lose by leaving. */
   el('pauseview').classList.add('hidden'); closeLeave(); PAUSED=false;
@@ -1935,16 +2058,16 @@ function finish(){
 function restart(){
   LOG=[];SEQ=0;ENDED=false;STARTED=false;TAB='stabilization';LASTNURSE=-1;LASTPHASE=null;
   RUNID++; ASKTEXT=''; DXTEXT='';
-  VOICE.reset();
+  VOICE.reset(); ASKMIC.abort();
   closeImage(); IMG_SEEN=new Set(); IMG_QUEUE=[];
   resetRamp();
   Object.keys(FILTERS).forEach(k=>delete FILTERS[k]);
   REFLECT_DONE=false; REFLECT_NOTE=''; REFLECT_NOTE2=''; REFLECT_OPEN=false;
   el('reflectview').classList.add('hidden');
   SEARCH_Q=''; SEARCH_DONE=''; closeSearch();
-  Object.keys(BASKET).forEach(k=>delete BASKET[k]);
+  Object.keys(BASKET).forEach(k=>delete BASKET[k]); PICKSEQ={}; PICKN=0;
   Object.keys(EXPANDED).forEach(k=>delete EXPANDED[k]);
-  Object.keys(SUBTAB).forEach(k=>delete SUBTAB[k]);
+  Object.keys(SUBTAB).forEach(k=>delete SUBTAB[k]); SUBOPEN.clear();
   PENDING_HANDOFF={disposition:null,diagnoses:[]};
   PAUSED=false; PAUSED_MS=0; PAUSED_AT=0;
   el('pauseview').classList.add('hidden'); closeLeave();
@@ -2225,10 +2348,8 @@ function debriefHTML(){
     ${points.length?`<div class="dbsec"><h2>Points to carry out of this case</h2>
       ${points.slice(0,3).map(pointItem).join('')}</div>`:''}
 
-    ${(recDone.length||recMissed.length)?`<div class="dbsec"><h2>Other actions worth doing</h2>
-      <p class="sub">Recommended rather than critical: none of these decides the case, and each is the kind of thing a reviewer would ask about.</p>
-      ${recMissed.map(id=>item(id,'not done','p-warn')).join('')}
-      ${recDone.map(id=>item(id,'done','p-ok')).join('')}</div>`:''}
+    <!-- "Other actions worth doing" removed on author instruction, 11 October 2026.
+         Missed recommended actions are still listed under each category in the Summary. -->
 
     ${dis.length?`<div class="dbsec"><h2>Wrong here, and worth understanding why</h2>
       <p class="sub">These did not stop the case and some of them will have moved a number
@@ -2557,7 +2678,7 @@ function chooseCase(i){
   renderSplash();
 }
 function backToPicker(){
-  VOICE.reset();
+  VOICE.reset(); ASKMIC.abort();
   clearPatient(); clearSplashPatient();
   AUDIO.setScene('idle'); MONITOR.setScene('idle'); MONITOR.reset();
   el('splash').classList.add('hidden');
@@ -2708,9 +2829,9 @@ function pauseSim(){
      itself the moment someone tries to speak to it would be a poor first impression of
      the feature, so the blur that the prompt causes is not a pause. A hidden tab still
      is: visibilitychange does not come through here with the flag set. */
-  if(VOICE.arming()&&!document.hidden) return;
+  if((VOICE.arming()||ASKMIC.arming())&&!document.hidden) return;
   /* A paused case is not listening. What was heard so far is kept in the list. */
-  VOICE.pause();
+  VOICE.pause(); ASKMIC.abort();
   PAUSED=true; PAUSED_AT=Date.now();
   AUDIO.setScene('idle'); MONITOR.setScene('idle');
   el('pauseview').classList.remove('hidden');
@@ -2740,7 +2861,7 @@ el('resumebtn').addEventListener('click',resumeSim);
    click on the browser's own reload control is not: the only hook is beforeunload, whose
    wording no browser has let a page choose for over a decade. So that path gets the
    native dialog, and the two look different because the platform makes them different. */
-/* ---------- the three-minute pause ----------
+/* ---------- the six-minute pause ----------
    Once per case, at SHARED.reflect.atSeconds of case time, wherever the case has got to.
    It holds the clock, it has no way out but Continue, and the note it takes is the
    resident's own: nothing reads it, nothing scores it and it never reaches the log. It is
@@ -2751,7 +2872,7 @@ el('resumebtn').addEventListener('click',resumeSim);
    the leave dialog, because in each of those the case is already stopped and a second
    modal on top of the first is two dialogs arguing. Whichever is up, the check waits. */
 const REFLECT=(SHARED.reflect||{});
-const REFLECT_AT=(typeof REFLECT.atSeconds==='number')?REFLECT.atSeconds:180;
+const REFLECT_AT=(typeof REFLECT.atSeconds==='number')?REFLECT.atSeconds:360;
 let REFLECT_DONE=false, REFLECT_NOTE='', REFLECT_NOTE2='', REFLECT_OPEN=false;
 function reflectDue(){
   return !REFLECT_DONE && !REFLECT_OPEN && inCase() && !PAUSED && ST && ST.now>=REFLECT_AT
@@ -2762,6 +2883,7 @@ function openReflect(){
   holdClock();
   el('reflecttitle').textContent=REFLECT.title||'Pause: consider your differential diagnosis.';
   el('reflectbody').textContent=REFLECT.body||'';
+  el('reflectbody').hidden=!REFLECT.body;
   const box=el('reflectnote');
   box.placeholder=REFLECT.placeholder||'Your differential diagnosis (optional)';
   box.value=REFLECT_NOTE;
@@ -2949,6 +3071,15 @@ function releaseClock(){
 }
 
 el('reflectok').addEventListener('click',closeReflect);
+/* Replay this case asks first. */
+function askReplay(){ el('replayview').classList.remove('hidden'); el('replayok').focus(); }
+function closeReplay(){ el('replayview').classList.add('hidden'); }
+/* The other choice is to read the answers instead (author instruction). */
+el('replaycancel').addEventListener('click',e=>{ e.stopPropagation(); closeReplay(); revealAnswers(); });
+el('replayok').addEventListener('click',e=>{ e.stopPropagation(); closeReplay(); restart(); });
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!el('replayview').classList.contains('hidden')){ e.preventDefault(); closeReplay(); }
+});
 el('searchbox').addEventListener('input',e=>{ SEARCH_Q=e.target.value; renderSearch(); });
 el('searchbox').addEventListener('keydown',e=>{
   if(e.key==='Escape'){ closeSearch(); el('searchbtn').focus(); return; }

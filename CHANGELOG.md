@@ -5,6 +5,40 @@ is usable with learners.
 
 ---
 
+## v0.26d: the reflection pause at six minutes (11 October 2026, author instruction)
+
+The pause now comes at six minutes of case time instead of three, and the line under its
+title ("Consider the implications of each...") is gone. Authoring requirements section 7.4
+updated to say six minutes. Action buttons drop a leading "Consult" or "Perform" (so "Cardiology",
+"Abdominal Exam"); the full name stays in the record, the nurse's lines, the debrief, search
+and voice. Replay this case now asks first: "Are you sure?", with "Try it one more time" to
+restart and "Reveal answers" to open the case answers instead. Escape closes it.
+
+---
+
+## v0.26c: labs by tube and source, and one basket across tabs (11 October 2026, author instruction)
+
+- **Lab Work is one folder, in sections.** Lab Work and Other Labs merged and sectioned by
+  what is drawn: blood by tube top (lavender or pink, light blue, green, gold, gray, each
+  with a colour chip), blood gas syringe, blood culture bottles, CSF, urine, point of care,
+  other. Fingerstick glucose moved in from Bedside Tests as point of care. Placement only.
+  Revised the same evening: gold top folded into green; blood gas, blood cultures, lactate,
+  ethanol and the skin biopsy share one Other section; CSF is a closed drop-down inside the
+  folder (build field `subgroupCollapsed`). Arterial and venous blood gases then moved to point
+  of care. Each lab button's left edge shows its specimen (catalog field `specimen`): blood
+  dark red (venous gas and ionized calcium included), arterial blood gas light red, urine yellow, CSF gray, swabs green.
+- **Skin Biopsy of the Rash removed from the catalog** on author instruction: not used in
+  this simulator. MGCA lost the recommended action, its result, one infectious diseases
+  answer and two sentences suggesting a biopsy; TSS lost its "taken, no result" line and
+  the test for it. Both SEEDs record the decision.
+  **The tube assignments are not physician reviewed** and vary between laboratories.
+- **Submit Order sends everything selected on every ordering tab**, Stabilization,
+  Investigations and Interventions, in the order picked across tabs. Each tab's count and
+  line show what is waiting elsewhere, and Clear becomes Clear all when other tabs hold
+  selections.
+
+---
+
 ## v0.26b: one-click ordering in two places (11 October 2026, author instruction)
 
 - **Place Defibrillator Pads.** The catalog's "Place Pads for Monitoring" is renamed and

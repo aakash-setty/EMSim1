@@ -477,11 +477,6 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
-### `action_tag/skin_biopsy_of_the_rash`
-
-Single unconditional rule; nothing to enumerate.
-
-
 ### `action_tag/complete_blood_count_cbc`
 
 Single unconditional rule; nothing to enumerate.
@@ -1009,11 +1004,6 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
-### `labs/skin_biopsy_of_the_rash`
-
-Single unconditional rule; nothing to enumerate.
-
-
 ### `labs/urine_rapid_antigen_test_for_n_meningitidis`
 
 Single unconditional rule; nothing to enumerate.
@@ -1255,44 +1245,20 @@ Single unconditional rule; nothing to enumerate.
 
 ### `consultant/consult_infectious_disease`
 
-| phase | abx_given | blood_cultures_drawn | blood_culture_x_2 | skin_biopsy_of_the_rash | resolves to | reachable? |
-|---|---|---|---|---|---|---|
-| «any phase» | no | no | not_ordered | not_ordered | rule 4 (default) | plausible |
-| «any phase» | no | no | not_ordered | pending | rule 4 (default) | plausible |
-| «any phase» | no | no | not_ordered | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | no | no | pending | not_ordered | rule 3 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
-| «any phase» | no | no | pending | pending | rule 3 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
-| «any phase» | no | no | pending | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | no | no | resulted | not_ordered | rule 3 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
-| «any phase» | no | no | resulted | pending | rule 3 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
-| «any phase» | no | no | resulted | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | no | yes | not_ordered | not_ordered | rule 4 (default) | plausible |
-| «any phase» | no | yes | not_ordered | pending | rule 4 (default) | plausible |
-| «any phase» | no | yes | not_ordered | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | no | yes | pending | not_ordered | rule 3 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
-| «any phase» | no | yes | pending | pending | rule 3 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
-| «any phase» | no | yes | pending | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | no | yes | resulted | not_ordered | rule 3 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
-| «any phase» | no | yes | resulted | pending | rule 3 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
-| «any phase» | no | yes | resulted | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | yes | no | not_ordered | not_ordered | rule 2 (flag abx_given set AND NOT flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | no | not_ordered | pending | rule 2 (flag abx_given set AND NOT flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | no | not_ordered | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | yes | no | pending | not_ordered | rule 2 (flag abx_given set AND NOT flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | no | pending | pending | rule 2 (flag abx_given set AND NOT flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | no | pending | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | yes | no | resulted | not_ordered | rule 2 (flag abx_given set AND NOT flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | no | resulted | pending | rule 2 (flag abx_given set AND NOT flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | no | resulted | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | yes | yes | not_ordered | not_ordered | rule 1 (flag abx_given set AND flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | yes | not_ordered | pending | rule 1 (flag abx_given set AND flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | yes | not_ordered | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | yes | yes | pending | not_ordered | rule 1 (flag abx_given set AND flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | yes | pending | pending | rule 1 (flag abx_given set AND flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | yes | pending | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
-| «any phase» | yes | yes | resulted | not_ordered | rule 1 (flag abx_given set AND flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | yes | resulted | pending | rule 1 (flag abx_given set AND flag blood_cultures_drawn set) | plausible |
-| «any phase» | yes | yes | resulted | resulted | rule 0 (study skin_biopsy_of_the_rash resulted) | plausible |
+| phase | abx_given | blood_cultures_drawn | blood_culture_x_2 | resolves to | reachable? |
+|---|---|---|---|---|---|
+| «any phase» | no | no | not_ordered | rule 3 (default) | plausible |
+| «any phase» | no | no | pending | rule 2 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
+| «any phase» | no | no | resulted | rule 2 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
+| «any phase» | no | yes | not_ordered | rule 3 (default) | plausible |
+| «any phase» | no | yes | pending | rule 2 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
+| «any phase» | no | yes | resulted | rule 2 (study blood_culture_x_2 ordered AND NOT flag abx_given set) | plausible |
+| «any phase» | yes | no | not_ordered | rule 1 (flag abx_given set AND NOT flag blood_cultures_drawn set) | plausible |
+| «any phase» | yes | no | pending | rule 1 (flag abx_given set AND NOT flag blood_cultures_drawn set) | plausible |
+| «any phase» | yes | no | resulted | rule 1 (flag abx_given set AND NOT flag blood_cultures_drawn set) | plausible |
+| «any phase» | yes | yes | not_ordered | rule 0 (flag abx_given set AND flag blood_cultures_drawn set) | plausible |
+| «any phase» | yes | yes | pending | rule 0 (flag abx_given set AND flag blood_cultures_drawn set) | plausible |
+| «any phase» | yes | yes | resulted | rule 0 (flag abx_given set AND flag blood_cultures_drawn set) | plausible |
 
 
 ### `consultant/consult_endocrinology`

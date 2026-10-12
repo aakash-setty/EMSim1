@@ -318,13 +318,8 @@ LABS = {
      "Neutrophilia with a left shift and toxic granulation. Platelets reduced. No "
      "schistocytes. No blasts."))},
 
- # v0.24 audit, catalog finding 5.5. The catalog default is "Not applicable.", written
- # for a patient with no rash. She has one. This states what was done and gives no result.
- "skin_biopsy_of_the_rash": {"changes_with_state": False, "rules": always(report(
-     "Punch biopsy taken from the trunk and sent. No histology result is available during "
-     "this case.", abnormal=False,
-     verify=("A process statement and not a result. Written by a model on 7 October 2026. "
-             "Whether a biopsy has any place here is a question for the physician.")))},
+ # The skin biopsy line was removed with the catalog entry on 11 October 2026 (author
+ # instruction: a skin biopsy is not used in this simulator).
 }
 
 # ============================================================== IMAGING AND ECG

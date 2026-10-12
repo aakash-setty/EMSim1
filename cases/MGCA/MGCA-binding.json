@@ -4,7 +4,7 @@
  "catalog_version": "0.3-draft",
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
-  "exact": 123,
+  "exact": 122,
   "mapped": 0,
   "unmatched": 1
  },
@@ -505,12 +505,6 @@
   {
    "case_id": "csf_rapid_antigen_test_for_n_meningitidis",
    "catalog_id": "csf_rapid_antigen_test_for_n_meningitidis",
-   "status": "exact",
-   "note": null
-  },
-  {
-   "case_id": "skin_biopsy_of_the_rash",
-   "catalog_id": "skin_biopsy_of_the_rash",
    "status": "exact",
    "note": null
   },

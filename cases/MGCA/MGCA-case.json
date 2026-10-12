@@ -2109,19 +2109,6 @@
    ]
   },
   {
-   "catalog_id": "skin_biopsy_of_the_rash",
-   "tag": [
-    {
-     "when": null,
-     "value": "recommended"
-    }
-   ],
-   "debrief_note": "An underused test and the only one in this catalog that can hand you the organism inside this encounter. Gram stain and culture of a punch biopsy or aspirate of a purpuric lesion demonstrates Gram-negative diplococci in a substantial proportion of cases, and unlike blood cultures it frequently stays positive for some hours after the first antibiotic dose. It confirms a diagnosis you should already be treating: do not wait for it, and do not treat a negative result as reassurance.",
-   "flags_set": [
-    "skin_biopsy_sent"
-   ]
-  },
-  {
    "catalog_id": "complete_blood_count_cbc",
    "tag": [
     {
@@ -4810,22 +4797,7 @@
      }
     ],
     "result_shape": "structured",
-    "author_note": "Deliberately uninformative, matching the catalog default and its warning. Cultures take 24 to 48 hours and the five-second laboratory turnaround in this simulator cannot represent that, so a case whose teaching point was a positive blood culture could not be authored honestly. The organism is meant to be reached clinically here, and the one fast confirmatory route that does exist in the catalog is the skin lesion biopsy."
-   },
-   "skin_biopsy_of_the_rash": {
-    "changes_with_state": false,
-    "rules": [
-     {
-      "when": null,
-      "value": {
-       "kind": "report",
-       "abnormal": true,
-       "report": "Punch biopsy of a purpuric lesion on the left shin. Gram stain: Gram-negative diplococci, intracellular and extracellular, with abundant neutrophils. Histology shows fibrin thrombi occluding dermal vessels with surrounding hemorrhage and neutrophilic infiltration. Culture pending."
-      },
-      "prose": "Gram-negative diplococci on Gram stain. Dermal vessel fibrin thrombi with hemorrhage."
-     }
-    ],
-    "result_shape": "structured"
+    "author_note": "Deliberately uninformative, matching the catalog default and its warning. Cultures take 24 to 48 hours and the five-second laboratory turnaround in this simulator cannot represent that, so a case whose teaching point was a positive blood culture could not be authored honestly. The organism is meant to be reached clinically here. The skin lesion biopsy that once gave a fast confirmatory route was removed on 11 October 2026 (author instruction)."
    },
    "urine_rapid_antigen_test_for_n_meningitidis": {
     "changes_with_state": false,
@@ -5752,16 +5724,12 @@
    ],
    "consult_infectious_disease": [
     {
-     "when": "study skin_biopsy_of_the_rash resulted",
-     "value": "Infectious diseases: \"Gram-negative diplococci out of a purpuric lesion in a shocked 21 year old. That is invasive meningococcal disease and you should already be treating it. Ceftriaxone two grams twice daily, and you can stop the vancomycin once the blood culture confirms it. Three things I want you to do tonight rather than tomorrow. Notify public health, because they run the contact tracing and prophylaxis for her hall of residence and it works best inside 24 hours. Make sure anyone who managed her airway without a mask is on the contact list. And ask about her vaccination history: if she had the routine conjugate vaccine at 11 and 16, that covers A, C, W and Y and not B, and serogroup B is the one that does this to students. We will chase the serogroup.\""
-    },
-    {
      "when": "flag abx_given set AND flag blood_cultures_drawn set",
-     "value": "Infectious diseases: \"Cultures before the cephalosporin, which is what I wanted to hear, and do not ever let that sequence delay the drug. In a previously well 21 year old in a hall of residence with fever, shock and non-blanching purpura, my organism is Neisseria meningitidis, with staphylococcal or streptococcal toxic shock second and Rocky Mountain spotted fever third if there is any tick exposure at all. Keep the vancomycin on until the isolate is back. If you want a fast answer tonight, biopsy or aspirate one of those purpuric lesions and Gram stain it. And call public health now, not after the culture.\""
+     "value": "Infectious diseases: \"Cultures before the cephalosporin, which is what I wanted to hear, and do not ever let that sequence delay the drug. In a previously well 21 year old in a hall of residence with fever, shock and non-blanching purpura, my organism is Neisseria meningitidis, with staphylococcal or streptococcal toxic shock second and Rocky Mountain spotted fever third if there is any tick exposure at all. Keep the vancomycin on until the isolate is back. And call public health now, not after the culture.\""
     },
     {
      "when": "flag abx_given set AND NOT flag blood_cultures_drawn set",
-     "value": "Infectious diseases: \"You treated first, which was the right call, and we may now never grow it. Draw the cultures anyway, and biopsy a purpuric lesion for Gram stain and culture, because lesion sampling stays positive for some hours after the first dose in a way the blood does not. Do not stop or delay treatment to chase microbiology.\""
+     "value": "Infectious diseases: \"You treated first, which was the right call, and we may now never grow it. Draw the cultures anyway. Do not stop or delay treatment to chase microbiology.\""
     },
     {
      "when": "study blood_culture_x_2 ordered AND NOT flag abx_given set",
@@ -8804,7 +8772,6 @@
      "basic_chemistry_chem_7",
      "fingerstick_blood_sugar",
      "peripheral_smear",
-     "skin_biopsy_of_the_rash",
      "urine_rapid_antigen_test_for_n_meningitidis"
     ]
    },

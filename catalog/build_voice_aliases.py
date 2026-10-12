@@ -489,7 +489,6 @@ alias("urine_rapid_antigen_test_for_n_meningitidis", "urine meningitidis antigen
 alias("urine_rapid_antigen_test_for_s_pneumoniae", "urine pneumococcal antigen", "urine strep pneumo antigen",
       "pneumococcal antigen", "urine pneumo antigen", "strep pneumo antigen", "urine s pneumoniae", "pneumococcal urine antigen",
       "urinary antigen", "urine antigen", "urine legionella pneumococcal antigen")
-alias("skin_biopsy_of_the_rash", "skin biopsy", "biopsy of the rash", "rash biopsy", "punch biopsy", "biopsy")
 
 # Panels and pairs residents say as one phrase. Only NAMED things: a word that stands for a
 # fixed set of orders ("CMP", "MTP", "DuoNeb", "DAPT") or an explicit pair ("vanc and zosyn").

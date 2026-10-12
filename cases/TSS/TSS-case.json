@@ -3255,20 +3255,6 @@
       }
      }
     ]
-   },
-   "skin_biopsy_of_the_rash": {
-    "changes_with_state": false,
-    "rules": [
-     {
-      "when": null,
-      "value": {
-       "kind": "report",
-       "abnormal": false,
-       "report": "Punch biopsy taken from the trunk and sent. No histology result is available during this case.",
-       "verify": "A process statement and not a result. Written by a model on 7 October 2026. Whether a biopsy has any place here is a question for the physician."
-      }
-     }
-    ]
    }
   },
   "imaging": {

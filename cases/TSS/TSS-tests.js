@@ -456,12 +456,10 @@ chk('no result comment names the diagnosis, her period or the reviewer',
   PANELS.every(vv => !/toxic shock|sepsis|period|menstrual|simplification|the case shows/i.test(vv.comment || '')),
   PANELS.filter(vv => /toxic shock|sepsis|period|menstrual|simplification|the case shows/i.test(vv.comment || '')).map(vv => vv.comment).join(' | '));
 chk('no report carries a comment, because a report comment is never shown', PANELS.every(vv => vv.kind !== 'report' || !vv.comment));
-st = fold(mk(START.concat([[3, 'ultrasound_fast'], [3.5, 'ct_abdomen'], [4, 'skin_biopsy_of_the_rash']])), 40);
+st = fold(mk(START.concat([[3, 'ultrasound_fast'], [3.5, 'ct_abdomen']])), 40);
 chk('the FAST agrees with the CT about free pelvic fluid',
   /free fluid in the pelvis/.test(st.orders.ultrasound_fast[0].value.report) && /free pelvic fluid/.test(st.orders.ct_abdomen[0].value.report) &&
   st.orders.ultrasound_fast[0].source === 'case');
-chk('the skin biopsy says it was taken and gives no result',
-  /taken/.test(st.orders.skin_biopsy_of_the_rash[0].value.report) && !/Not applicable/.test(st.orders.skin_biopsy_of_the_rash[0].value.report));
 const abgSat = p => CASE.content_keys.labs.arterial_blood_gas.rules.find(r => (r.when || 'phase is presentation') === 'phase is ' + p)
   .value.components.find(c => c.label === 'O2 saturation').value;
 chk('the arterial saturation is the phase saturation in every phase',

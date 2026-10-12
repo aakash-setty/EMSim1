@@ -71,3 +71,11 @@ you should confirm you accept it for this case.
 **Second consequence you should decide on: the adrenal crisis branch will be entered by most good runs.** Your state 2 trigger is fluid or dextrose without hydrocortisone. Fluid resuscitation is a critical action and it will almost always precede the chemistry panel that reveals the adrenal component, so a resident doing sepsis care correctly enters the deterioration branch. The phase ordering mitigates this: if the antibiotic and the hydrocortisone are already in when the fluid finishes, the case goes straight to `improving` instead. So the branch discriminates on order rather than on competence, and a resident who sends the chemistry, reads it, gives hydrocortisone and then gives fluid avoids it entirely. Whether that is the lesson you want, or whether it unfairly penalises the conventional sequence, is your call.
 
 ---
+
+## What a person decided
+
+- 11 October 2026, Aakash Setty: the skin biopsy of the rash is removed from the simulator.
+  In this case that removed the recommended action and its debrief note, the Gram stain
+  result, the infectious diseases answer that fired once the biopsy had resulted, and the
+  biopsy from the recognition domain's action list. Two other infectious diseases answers
+  lost the sentence suggesting a lesion biopsy. Nothing else changed.

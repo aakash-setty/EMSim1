@@ -2,7 +2,7 @@
 
 # Action index
 
-One line per catalog entry (306 entries, catalog 0.3-draft).
+One line per catalog entry (305 entries, catalog 0.3-draft).
 Full entry: `python3 engine/lookup.py action <id or word>`. The learner sees the whole
 catalog whether or not the case binds an entry (authoring 6.1).
 
@@ -203,7 +203,6 @@ stop action for an infusion, and whether a default result exists (D).
 | `whole_bowel_irrigation_by_ng_tube` | Whole Bowel Irrigation by NG tube | interventions / Procedures | procedure |  |  | 0 |  |  |  |
 | `doppler` | Doppler | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
 | `ecg_12_lead` | ECG | investigations / Bedside Tests | investigation | ecg |  | 0 |  |  | D |
-| `fingerstick_blood_sugar` | Fingerstick Blood Sugar | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
 | `peak_expiratory_flow_meter` | Peak Expiratory Flow Meter | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
 | `ct_abdomen` | CT - Abdomen | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `ct_aorta` | CT - Aorta | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
@@ -226,53 +225,53 @@ stop action for an infusion, and whether a default result exists (D).
 | `ultrasound_soft_tissue` | Ultrasound - Soft Tissue | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
 | `xr_chest` | XR - Chest | investigations / Imaging | investigation | radiograph |  | 0 |  |  | D |
 | `xr_pelvis` | XR - Pelvis | investigations / Imaging | investigation | radiograph |  | 0 |  |  | D |
+| `acetaminophen_level` | Acetaminophen Level | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `amylase` | Amylase | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `arterial_blood_gas` | Arterial Blood Gas | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `basic_chemistry_chem_7` | Basic Chemistry (Chem 7) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `beta_hydroxybutyrate` | Beta-Hydroxybutyrate | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `blood_culture_x_2` | Blood Culture x 2 | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `blood_type_and_screen` | Blood Type & Screen | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `c_reactive_protein_crp` | C-reactive Protein (CRP) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `calcium_ionized` | Calcium (ionized) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `calcium_level` | Calcium Level | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `coagulation_panel` | Coagulation Panel | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `complete_blood_count_cbc` | Complete Blood Count (CBC) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `covid_19_test` | COVID-19 test | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `creatine_kinase_ck` | Creatine Kinase (CK) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `csf_cell_count` | CSF Cell Count | investigations / Lab Work | investigation | lab |  | 1 |  |  | D |
+| `csf_culture` | CSF Culture | investigations / Lab Work | investigation | lab |  | 1 |  |  | D |
+| `csf_glucose` | CSF Glucose | investigations / Lab Work | investigation | lab |  | 1 |  |  | D |
+| `csf_gram_stain` | CSF Gram Stain | investigations / Lab Work | investigation | lab |  | 1 |  |  | D |
+| `csf_protein` | CSF Protein | investigations / Lab Work | investigation | lab |  | 1 |  |  | D |
+| `csf_rapid_antigen_test_for_n_meningitidis` | CSF Rapid Antigen Test for N. meningitidis | investigations / Lab Work | investigation | lab |  | 1 |  |  | D |
 | `d_dimer` | D-Dimer | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `erythrocyte_sedimentation_rate_esr` | Erythrocyte Sedimentation Rate (ESR) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `ethanol_level_etoh` | Ethanol Level (EtOH) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `fingerstick_blood_sugar` | Fingerstick Blood Sugar | investigations / Lab Work | investigation | bedside |  | 0 |  |  | D |
+| `influenza_a_and_b_antigen_test` | Influenza A&B Antigen Test | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `lactate` | Lactate | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `lactate_dehydrogenase_ldh` | Lactate dehydrogenase (LDH) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `lipase` | Lipase | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `liver_function_tests_lfts` | Liver Function Tests (LFTs) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `magnesium_level` | Magnesium Level | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `nt_probnp` | NT-proBNP | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `osmolality` | Osmolality | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `peripheral_smear` | Peripheral smear | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `phosphate_level` | Phosphate Level | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `plasma_procalcitonin` | Plasma Procalcitonin | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `salicylate_aspirin_level` | Salicylate (Aspirin) Level | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `serum_hcg_quantitative` | Serum HCG (quantitative) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `troponin_t` | Troponin-T | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `tsh` | TSH | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `uric_acid` | Uric Acid | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `urinalysis` | Urinalysis | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `urine_culture` | Urine Culture | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `urine_hcg_qualitative` | Urine HCG (qualitative) | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `urine_rapid_antigen_test_for_n_meningitidis` | Urine Rapid Antigen Test for N. meningitidis | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `urine_rapid_antigen_test_for_s_pneumoniae` | Urine Rapid Antigen Test for S. pneumoniae | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
+| `urine_tox_screen` | Urine Tox Screen | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
 | `venous_blood_gas` | Venous Blood Gas | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |
-| `acetaminophen_level` | Acetaminophen Level | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `amylase` | Amylase | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `blood_culture_x_2` | Blood Culture x 2 | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `c_reactive_protein_crp` | C-reactive Protein (CRP) | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `covid_19_test` | COVID-19 test | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `creatine_kinase_ck` | Creatine Kinase (CK) | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `csf_cell_count` | CSF Cell Count | investigations / Other Labs | investigation | lab |  | 1 |  |  | D |
-| `csf_culture` | CSF Culture | investigations / Other Labs | investigation | lab |  | 1 |  |  | D |
-| `csf_glucose` | CSF Glucose | investigations / Other Labs | investigation | lab |  | 1 |  |  | D |
-| `csf_gram_stain` | CSF Gram Stain | investigations / Other Labs | investigation | lab |  | 1 |  |  | D |
-| `csf_protein` | CSF Protein | investigations / Other Labs | investigation | lab |  | 1 |  |  | D |
-| `csf_rapid_antigen_test_for_n_meningitidis` | CSF Rapid Antigen Test for N. meningitidis | investigations / Other Labs | investigation | lab |  | 1 |  |  | D |
-| `erythrocyte_sedimentation_rate_esr` | Erythrocyte Sedimentation Rate (ESR) | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `ethanol_level_etoh` | Ethanol Level (EtOH) | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `influenza_a_and_b_antigen_test` | Influenza A&B Antigen Test | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `lactate_dehydrogenase_ldh` | Lactate dehydrogenase (LDH) | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `osmolality` | Osmolality | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `peripheral_smear` | Peripheral smear | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `salicylate_aspirin_level` | Salicylate (Aspirin) Level | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `serum_hcg_quantitative` | Serum HCG (quantitative) | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `skin_biopsy_of_the_rash` | Skin Biopsy of the Rash | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `tsh` | TSH | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `uric_acid` | Uric Acid | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `urine_culture` | Urine Culture | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `urine_hcg_qualitative` | Urine HCG (qualitative) | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `urine_rapid_antigen_test_for_n_meningitidis` | Urine Rapid Antigen Test for N. meningitidis | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `urine_rapid_antigen_test_for_s_pneumoniae` | Urine Rapid Antigen Test for S. pneumoniae | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
-| `urine_tox_screen` | Urine Tox Screen | investigations / Other Labs | investigation | lab |  | 0 |  |  | D |
 | `attach_monitor` | Attach Monitor | stabilization /  | stabilization |  |  | 0 |  |  |  |
 | `exam_abc` | Airway, Breathing and Circulation Exam | stabilization /  | exam |  |  | 0 |  |  | D |
 | `insert_iv` | Insert IV | stabilization /  | stabilization |  | iv_access | 0 |  |  |  |

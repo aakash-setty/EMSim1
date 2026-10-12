@@ -663,11 +663,6 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
-### `labs/skin_biopsy_of_the_rash`
-
-Single unconditional rule; nothing to enumerate.
-
-
 ### `imaging/ecg_12_lead`
 
 | phase | resolves to | reachable? |

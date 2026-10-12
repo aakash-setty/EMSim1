@@ -111,6 +111,8 @@ def action_base(ce):
         rec["performs"] = ce["performs"]
     if ce.get("menu_hidden"):
         rec["menu_hidden"] = True
+    if ce.get("specimen"):
+        rec["specimen"] = ce["specimen"]
     for k, out in [("state_changing", "state_changing"), ("turnaround_class", "turnaround_class"),
                    ("narration_template", "narration_template"), ("default_result", "default_result"),
                    ("default_prerequisites", "default_prerequisites"),
@@ -154,7 +156,17 @@ shared = {
     # A group listed in subgroupTabs draws its subgroups as sub-tabs, one showing at a
     # time. Any other group draws them as headings inside the one folder.
     "subgroupOrder": {"Imaging": ["CT", "X-ray", "Ultrasound", "MRI"],
-                      "Intubation": ["Medications"]},
+                      "Intubation": ["Medications"],
+                      "Lab Work": ["Blood, lavender or pink top (EDTA)", "Blood, light blue top (citrate)",
+                                   "Blood, green top (lithium heparin)", "CSF", "Urine",
+                                   "Point of care", "Other"]},
+    # Subgroups drawn as a closed drop-down inside their folder, opened on a click. A filter
+    # opens them. Author instruction, 11 October 2026.
+    "subgroupCollapsed": {"Lab Work": ["CSF"]},
+    # v0.26c. A colour chip beside a subgroup heading: the tube top. Display only.
+    "subgroupSwatch": {"Blood, lavender or pink top (EDTA)": "#A98BD8",
+                       "Blood, light blue top (citrate)": "#8CC8EE",
+                       "Blood, green top (lithium heparin)": "#4FAE6E"},
     "subgroupTabs": ["Imaging"],
     # v0.26b. Groups on an ordering tab whose buttons act on the click, with no basket and
     # no Submit Order: the first acts of any resuscitation. Author instruction.
@@ -395,15 +407,15 @@ shared["patient"] = {
                       "bag_valve_mask": "bag_valve_mask", "intubate_rapid_sequence": "intubated"},
 }
 
-# The three-minute pause. Not a case's to author: it is a property of how the tool teaches,
+# The six-minute pause. Not a case's to author: it is a property of how the tool teaches,
 # the same for every case, and a case that could turn it off would be a case that could
 # decide a resident does not need to stop and think. The clock is held while it is up, for
 # the reason every modal here holds it: the deadlines a case authors are claims about a
 # patient, and charging a resident for time the interface took from them makes those false.
 shared["reflect"] = {
-    "atSeconds": 180,
+    "atSeconds": 360,   # six minutes (author instruction, 11 October 2026; was three)
     "title": "Pause: consider your differential diagnosis.",
-    "body": ("Consider the implications of each. What do you need to check or give?"),
+    "body": "",          # the line under the title was removed on author instruction
     "placeholder": "Your differential diagnosis (optional)",
     "placeholder2": "What you need to check or give (optional)",
     "_note": ("Fires once per case at atSeconds of case time, wherever the case has got to. "

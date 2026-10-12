@@ -122,6 +122,7 @@
     "Nursing group added under Stabilization on author instruction, not from a screenshot: droplet, contact and airborne precautions, warming measures and cooling measures. Each sets a flag of its own name and asserts nothing clinical.",
     "attach_monitor carries reveals_vitals. The interface shows no vitals and plays no heartbeat until an action carrying this flag has been taken.",
     "Physostigmine added to Meds - Tox on author instruction for the diphenhydramine case. Not transcribed from any screenshot; carries source=author-supplied. It is an intravenous push and is not in NON_IV, so it inherits the vascular-access prerequisite like every other intravenous drug.",
+    "Skin Biopsy of the Rash removed on author instruction (11 October 2026): not used in this simulator. MGCA and TSS no longer reference it.",
     "v0.26 layout on author instruction (11 October 2026), placement only: airway, breathing and circulation exams hidden from the menus and performed together by the composite exam_abc on Stabilization; Start Chest Compressions moved to Nursing; Intubation Drugs folded into Intubation under the subgroup Medications; Imaging split into the subgroups CT, X-ray, Ultrasound and MRI, with the bedside ultrasounds moved into it. No ids, results or prerequisites changed."
   ],
   "known_gaps": [
@@ -1559,7 +1560,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Bedside Tests"
+          "group": "Lab Work",
+          "subgroup": "Point of care"
         }
       ],
       "category": "investigation",
@@ -1570,6 +1572,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -1814,7 +1817,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Point of care"
         }
       ],
       "category": "investigation",
@@ -1825,6 +1829,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "gas",
       "default_result": {
         "kind": "panel",
         "abnormal": false,
@@ -1881,7 +1886,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Point of care"
         }
       ],
       "category": "investigation",
@@ -1892,6 +1898,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "panel",
         "abnormal": false,
@@ -1941,7 +1948,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -1952,6 +1960,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "panel",
         "abnormal": false,
@@ -2015,7 +2024,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2027,6 +2037,7 @@
       "flags_set_default": [],
       "repeatable": true,
       "source": "author-supplied, not in screenshots (v0.23)",
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2048,7 +2059,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, lavender or pink top (EDTA)"
         }
       ],
       "category": "investigation",
@@ -2059,6 +2071,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "panel",
         "abnormal": false,
@@ -2087,7 +2100,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Other"
         }
       ],
       "category": "investigation",
@@ -2098,6 +2112,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2118,7 +2133,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2129,6 +2145,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2149,7 +2166,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, light blue top (citrate)"
         }
       ],
       "category": "investigation",
@@ -2160,6 +2178,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "panel",
         "abnormal": false,
@@ -2194,7 +2213,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, lavender or pink top (EDTA)"
         }
       ],
       "category": "investigation",
@@ -2205,6 +2225,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "panel",
         "abnormal": false,
@@ -2254,7 +2275,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, light blue top (citrate)"
         }
       ],
       "category": "investigation",
@@ -2265,6 +2287,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2286,7 +2309,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Other"
         }
       ],
       "category": "investigation",
@@ -2297,6 +2321,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2317,7 +2342,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2328,6 +2354,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2348,7 +2375,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2359,6 +2387,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "panel",
         "abnormal": false,
@@ -2421,7 +2450,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2432,6 +2462,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2452,7 +2483,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2463,6 +2495,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2483,7 +2516,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2494,6 +2528,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2514,7 +2549,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2525,6 +2561,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2546,7 +2583,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2557,6 +2595,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2578,7 +2617,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Lab Work"
+          "group": "Lab Work",
+          "subgroup": "Urine"
         }
       ],
       "category": "investigation",
@@ -2589,6 +2629,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "urine",
       "default_result": {
         "kind": "panel",
         "abnormal": false,
@@ -2693,7 +2734,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2704,6 +2746,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2724,7 +2767,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2735,6 +2779,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2755,7 +2800,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Other"
         }
       ],
       "category": "investigation",
@@ -2766,6 +2812,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -2779,7 +2826,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2790,6 +2838,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2810,7 +2859,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Point of care"
         }
       ],
       "category": "investigation",
@@ -2821,6 +2871,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "swab",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -2833,7 +2884,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -2844,6 +2896,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2865,7 +2918,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "CSF"
         }
       ],
       "category": "investigation",
@@ -2882,6 +2936,7 @@
       ],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "csf",
       "default_result": {
         "kind": "panel",
         "abnormal": false,
@@ -2916,7 +2971,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "CSF"
         }
       ],
       "category": "investigation",
@@ -2933,6 +2989,7 @@
       ],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "csf",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -2946,7 +3003,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "CSF"
         }
       ],
       "category": "investigation",
@@ -2963,6 +3021,7 @@
       ],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "csf",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -2983,7 +3042,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "CSF"
         }
       ],
       "category": "investigation",
@@ -3000,6 +3060,7 @@
       ],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "csf",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -3012,7 +3073,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "CSF"
         }
       ],
       "category": "investigation",
@@ -3029,6 +3091,7 @@
       ],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "csf",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -3049,7 +3112,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "CSF"
         }
       ],
       "category": "investigation",
@@ -3066,6 +3130,7 @@
       ],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "csf",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -3078,7 +3143,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, lavender or pink top (EDTA)"
         }
       ],
       "category": "investigation",
@@ -3089,6 +3155,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -3110,7 +3177,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Other"
         }
       ],
       "category": "investigation",
@@ -3121,6 +3189,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -3141,7 +3210,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Point of care"
         }
       ],
       "category": "investigation",
@@ -3152,6 +3222,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "swab",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -3164,7 +3235,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -3175,6 +3247,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -3195,7 +3268,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -3206,6 +3280,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -3226,7 +3301,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, lavender or pink top (EDTA)"
         }
       ],
       "category": "investigation",
@@ -3237,6 +3313,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -3249,7 +3326,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -3260,6 +3338,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -3280,7 +3359,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -3291,6 +3371,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -3307,36 +3388,13 @@
       }
     },
     {
-      "id": "skin_biopsy_of_the_rash",
-      "display_name": "Skin Biopsy of the Rash",
-      "placements": [
-        {
-          "tab": "investigations",
-          "group": "Other Labs"
-        }
-      ],
-      "category": "investigation",
-      "state_changing": true,
-      "dose_required": false,
-      "turnaround_class": "lab",
-      "narration_template": "Sending {name}.",
-      "default_prerequisites": [],
-      "flags_set_default": [],
-      "repeatable": true,
-      "default_result": {
-        "kind": "report",
-        "abnormal": false,
-        "report": "Not applicable.",
-        "verify": "Author choice: 'Not applicable', since the study name presupposes a rash the default patient does not have. Note the resident can still order it and consume time doing so; if that is unwanted, the action needs to be case-enabled rather than always available."
-      }
-    },
-    {
       "id": "tsh",
       "display_name": "TSH",
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -3347,6 +3405,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -3367,7 +3426,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Blood, green top (lithium heparin)"
         }
       ],
       "category": "investigation",
@@ -3378,6 +3438,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "blood",
       "default_result": {
         "kind": "value",
         "abnormal": false,
@@ -3399,7 +3460,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Urine"
         }
       ],
       "category": "investigation",
@@ -3410,6 +3472,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "urine",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -3423,7 +3486,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Urine"
         }
       ],
       "category": "investigation",
@@ -3434,6 +3498,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "urine",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -3447,7 +3512,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Urine"
         }
       ],
       "category": "investigation",
@@ -3458,6 +3524,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "urine",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -3470,7 +3537,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Urine"
         }
       ],
       "category": "investigation",
@@ -3481,6 +3549,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "urine",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -3493,7 +3562,8 @@
       "placements": [
         {
           "tab": "investigations",
-          "group": "Other Labs"
+          "group": "Lab Work",
+          "subgroup": "Urine"
         }
       ],
       "category": "investigation",
@@ -3504,6 +3574,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "specimen": "urine",
       "default_result": {
         "kind": "report",
         "abnormal": false,

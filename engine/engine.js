@@ -121,6 +121,7 @@ function mergeAction(eff, base, caseAct, extra){
     groups:(extra&&extra.group)?null:(base.groups||null),
     subgroup:(extra&&extra.group)?null:(base.subgroup||null),
     performs:base.performs||null,
+    specimen:base.specimen||null,
     category:base.category||(extra&&extra.category)||orphanCategory(eff),
     state_changing:base.state_changing!==undefined?base.state_changing
                   :(caseAct.state_changing!==undefined?caseAct.state_changing:true),
