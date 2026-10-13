@@ -5,6 +5,17 @@ is usable with learners.
 
 ---
 
+## The nurse introduces the case (13 October 2026, author instruction)
+
+When a case starts, a card in the middle of the screen shows the nurse's portrait with his
+opening line beside it. After three seconds the line slides in behind the portrait like a
+drawer closing, and the portrait flies to its place in the top left corner of the header.
+The room behind the card is softly veiled. The case clock is held while the card is up
+(about four and a half seconds), and a click or any key skips straight to the flight.
+Reduced-motion settings get the card without the movement.
+
+---
+
 ## Charging screen: trace kept on the screen, count no longer freezes (11 October 2026, author instruction)
 
 The trace ran past the right edge of the defibrillator's screen and drifted lower with each

@@ -2823,6 +2823,7 @@ function chooseCase(i){
 }
 function backToPicker(){
   VOICE.reset(); ASKMIC.abort();
+  if(typeof NINTRO==='object') NINTRO.cancel();
   clearPatient(); clearSplashPatient();
   AUDIO.setScene('idle'); MONITOR.setScene('idle'); MONITOR.reset();
   el('splash').classList.add('hidden');
@@ -2939,7 +2940,70 @@ function begin(){
   render();
   VOICE.paint();
   startLoop();
+  NINTRO.play();
 }
+
+/* ---------- the nurse's opening card (author instruction, 13 October 2026) ----------
+   See .nintro in shell.html. Three seconds of card, then the drawer closes (0.65 s), then
+   the portrait flies to the header's portrait (0.75 s) and the header one takes over. The
+   flight measures the header portrait at that moment, so it lands wherever the layout put
+   it. The case clock is held for the whole of it and released at the end. */
+const NINTRO=(function(){
+  const HOLD=3000, DRAWER=650, FLY=750;
+  let node=null, timers=[], phase='', held=false;
+  const later=(f,ms)=>{ timers.push(setTimeout(f,ms)); };
+  function clear(){ timers.forEach(clearTimeout); timers=[]; }
+  function finish(){
+    clear(); phase='done';
+    if(node){ node.remove(); node=null; }
+    document.body.classList.remove('nintro-on');
+    if(held){ held=false; releaseClock(); }
+  }
+  function fly(){
+    if(!node||phase==='fly'||phase==='done') return;
+    clear(); phase='fly';
+    node.classList.add('closing');
+    const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    later(()=>{
+      if(!node) return;
+      const face=node.querySelector('.nintro-face'), dest=document.querySelector('.nurse .nurseface');
+      if(face&&dest&&!reduce){
+        const a=face.getBoundingClientRect(), b=dest.getBoundingClientRect();
+        const k=b.width/a.width;
+        node.classList.add('flying');
+        face.style.transform=`translate(${b.left-a.left}px,${b.top-a.top}px) scale(${k})`;
+        face.style.borderWidth='1px';
+      }
+      node.classList.add('away');
+      later(finish, reduce?0:FLY);
+    }, reduce?0:DRAWER);
+  }
+  function play(){
+    if(node) finish();
+    const line=(el('nurseline')||{}).textContent||PROTO.nurseIdle||'';
+    const src=(document.querySelector('.nurse .nurseface')||{}).src||'';
+    node=document.createElement('div');
+    node.className='nintro'; node.setAttribute('role','status'); node.setAttribute('aria-live','polite');
+    node.innerHTML=`<div class="nintro-card">
+        <img class="nintro-face" src="${esc(src)}" alt="" draggable="false">
+        <div class="nintro-clip"><div class="nintro-drawer"><div class="nintro-says">
+          <div class="nintro-lab">Nurse</div><div class="nintro-line">${esc(line)}</div>
+        </div></div></div></div>`;
+    node.addEventListener('click',e=>{ e.stopPropagation(); fly(); });
+    document.body.appendChild(node);
+    document.body.classList.add('nintro-on');
+    phase='hold';
+    if(!PAUSED){ holdClock(); held=CLOCK_HELD; }
+    later(fly,HOLD);
+  }
+  /* Any key skips to the flight, and is not passed on: the first keystroke of a case
+     should not also type into whatever has the focus behind the card. */
+  document.addEventListener('keydown',e=>{
+    if(!node||phase!=='hold') return;
+    e.preventDefault(); e.stopPropagation(); fly();
+  },true);
+  return {play, active:()=>!!node, cancel:finish};
+})();
 
 /* The header is fixed and its height varies with the nurse line, so every
    panel top and the debrief scroller are offset from a measured value rather
