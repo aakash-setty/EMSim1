@@ -303,7 +303,8 @@ section('tab presentation');
   /* Ordered groups likewise: a name in groupOrder that no entry uses is a rename that
      was made in the catalog and not here, and it silently loses its position. */
   for (const tab of Object.keys(PROTO.groupOrder || {})) {
-    const have = Object.keys(groupsOf(tab));
+    /* A group shown on this tab as well as its own (PROTO.groupAlsoOn) counts as here. */
+    const have = Object.keys(groupsOf(tab)).concat(((PROTO.groupAlsoOn || {})[tab] || []).map(x => x[1]));
     const ghost = PROTO.groupOrder[tab].filter(g => !have.includes(g));
     chk('every ordered group on ' + tab + ' exists', ghost.length === 0, ghost.join(', '));
   }

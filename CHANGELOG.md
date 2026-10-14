@@ -5,6 +5,46 @@ is usable with learners.
 
 ---
 
+## Author notes during a case (14 October 2026, author instruction, temporary)
+
+A Note button beside Search opens a box for a note to yourself at any moment in a case.
+Enter saves it (Shift and Enter for a new line) and the case clock waits while the box has
+the focus. Each note is kept with a snapshot of the case at that moment: the case, the time,
+the state, the vitals, the flags, every action so far with its time, what is pending and
+the nurse's last line. Every note saved in the browser is listed, oldest first, at the
+bottom of each debrief, with Copy all and Clear all notes. Notes survive replays and other
+cases until cleared. Meant to be removed: `authorNotes` false in the shared build config
+hides it all.
+
+---
+
+## Tab filters, tab names, drug groups and fluids on Actions (14 October 2026, author instruction)
+
+The Filter box on Stabilization, Actions and Labs/Imaging now matches the way the global
+search does: every word in any order, at the start of or inside a name, a group or an id,
+plus the brand names, slang and abbreviations in the microphone's table. When nothing matches
+exactly, the table's close guesses are shown too, so a misspelling ("metroprolol", "troponn")
+still finds the drug or the test. The global search does not use those guesses, because a
+press there places the order. The tab's own name is not matched, so "lab" does not list the
+whole of Labs/Imaging.
+
+Interventions is now called Actions and Investigations is called Labs/Imaging, in the rail,
+the search results and the debrief's scores. The tab ids, and every pack, are unchanged.
+
+On Actions the drug groups read "Cardiac Meds" rather than "Meds - Cardiac", with "Meds"
+smaller and grey ("Vasoactive Meds" for Vasoactive Agents, and Antibiotics on its own). Each group header has an icon on
+a pastel tile. A group that belongs to a body system takes that exam's colours: Cardiac and
+Vasoactive the heart's, Respiratory the lungs',
+Gastrointestinal the abdomen's, OB/GYN genitourinary, Allergy the skin's, Sedation/Analgesia
+neurological and Psych psychological. The groups now run Fluids, Resuscitation, then the
+systems in the exam's order, then Antibiotics, Tox, Miscellaneous, Blood Bank and Procedures.
+
+Fluids is now listed at the top of Actions as well as on Stabilization (`groupAlsoOn` in the
+shared build config). The buttons are the same actions, and a pick made on either tab is one
+pick: it shows as picked on both and Submit Order sends it once.
+
+---
+
 ## Exam buttons head to toe with icons, and lab units in their own column (13 October 2026, author instruction)
 
 The Examination buttons now run Neck, HEENT, Cardiovascular, Pulmonary, Abdominal,

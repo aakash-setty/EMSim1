@@ -68,8 +68,9 @@ CE = {x["id"]: x for x in catalog["entries"]}
 TAB_ORDER = ["stabilization", "history", "exam",
              "investigations", "interventions", "consultations", "handoff"]
 TAB_LABEL = {"history": "History", "exam": "Exam",
-             "investigations": "Investigations", "stabilization": "Stabilization",
-             "interventions": "Interventions", "consultations": "Consults",
+             # Renamed on the author's instruction, 14 October 2026. The ids are unchanged.
+             "investigations": "Labs/Imaging", "stabilization": "Stabilization",
+             "interventions": "Actions", "consultations": "Consults",
              "handoff": "Handoff"}
 
 
@@ -151,7 +152,21 @@ shared = {
     # in a single group each, where an accordion would add a click and hide nothing.
     "collapsibleTabs": ["interventions", "investigations", "stabilization"],
     "groupOrder": {"stabilization": ["Stabilization", "Nursing", "Vascular Access", "Oxygen",
-                                     "Intubation", "Fluids", "Pacer/Defib"]},
+                                     "Intubation", "Fluids", "Pacer/Defib"],
+                   # Author instruction, 14 October 2026: Fluids first, the code drugs, then
+                   # the drug groups in the order of the exam (heart, lungs, abdomen, GU,
+                   # skin, neuro, psych), then the groups that belong to no one system.
+                   "interventions": ["Fluids", "Meds - Resuscitation", "Meds - Cardiac", "Meds - Vasoactive Agents",
+                                     "Meds - Respiratory", "Meds - Gastrointestinal",
+                                     "Meds - OB/GYN", "Meds - Allergy",
+                                     "Meds - Sedation/Analgesia", "Meds - Psych",
+                                     "Meds - Antibiotics", "Meds - Tox",
+                                     "Meds - Miscellaneous", "Blood Bank", "Procedures"]},
+    # A group drawn on a second tab as well as its own (author instruction, 14 October
+    # 2026: fluids can be ordered from Actions as well as Stabilization). The buttons are
+    # the same actions, and a pick on either tab is one pick: it shows on both and is
+    # ordered once.
+    "groupAlsoOn": {"interventions": [["stabilization", "Fluids"]]},
     # v0.26. Order of the subgroups inside a group. Entries with no subgroup come first.
     # A group listed in subgroupTabs draws its subgroups as sub-tabs, one showing at a
     # time. Any other group draws them as headings inside the one folder.
@@ -168,6 +183,9 @@ shared = {
                        "Blood, light blue top (citrate)": "#8CC8EE",
                        "Blood, green top (lithium heparin)": "#4FAE6E"},
     "subgroupTabs": ["Imaging"],
+    # Temporary, for validating cases (author instruction, 14 October 2026): the Note button
+    # in the header and the notes at the bottom of the debrief. False removes both.
+    "authorNotes": True,
     # Author instruction, 13 October 2026. The buttons of these groups come in this order,
     # by catalog id, instead of alphabetically. Anything not named follows, alphabetically.
     "buttonOrder": {"Examination": ["exam_neck", "exam_heent", "exam_card", "exam_pulm",

@@ -70,13 +70,17 @@ function minimiseRecord(){
 const DM = () => PROTO.difficulty.modes[MODE].prompt_multiplier;
 const filterOf = t => FILTERS[t]||'';
 const basketOf = t => (BASKET[t]=BASKET[t]||new Set());
+/* A group can show on two tabs (PROTO.groupAlsoOn), so one action can be picked from either.
+   It is one pick wherever it was made: shown as picked on both, ordered once. */
+const pickedAnywhere = id => (PROTO.orderableTabs||[]).some(t=>basketOf(t).has(id));
 /* v0.26c, author instruction: Submit Order on any tab sends everything selected on every
    ordering tab. Each pick is numbered so the whole order goes out in the order it was
    picked, across tabs, exactly as it would have one tab at a time. */
 let PICKSEQ={}, PICKN=0;
 function allPicked(){
   const out=[];
-  for(const t of PROTO.orderableTabs) for(const id of basketOf(t)) out.push({id,t});
+  const seen=new Set();
+  for(const t of PROTO.orderableTabs) for(const id of basketOf(t)) if(!seen.has(id)){ seen.add(id); out.push({id,t}); }
   return out.sort((a,b)=>(PICKSEQ[a.id]||0)-(PICKSEQ[b.id]||0));
 }
 function clearAllBaskets(){ for(const t of PROTO.orderableTabs) basketOf(t).clear(); PICKSEQ={}; }
@@ -741,11 +745,17 @@ function renderPayload(v){
 /* ---------- action buttons ---------- */
 function actionsFor(tab){
   const f=filterOf(tab), out={};
+  const hits=f?filterHits(f):null;
+  const also=(PROTO.groupAlsoOn||{})[tab]||[];
   for(const id in ACT){
     const a=ACT[id];
-    if(a.tab!==tab||a.hidden||a.menu_hidden) continue;
-    if(f && !(a.name.toLowerCase().includes(f)||id.includes(f))) continue;
-    for(const g of (a.groups||[a.group])) (out[g]=out[g]||[]).push(id);
+    if(a.hidden||a.menu_hidden) continue;
+    const mine=a.groups||[a.group];
+    const gs=a.tab===tab?mine.slice():[];
+    for(const [t,g] of also) if(a.tab===t&&mine.includes(g)&&!gs.includes(g)) gs.push(g);
+    if(!gs.length) continue;
+    if(hits&&!hits.has(id)) continue;
+    for(const g of gs) (out[g]=out[g]||[]).push(id);
   }
   /* A group in PROTO.buttonOrder lists its buttons in that order, by catalog id (author
      instruction, 13 October 2026: the exams head to toe). Anything it does not name
@@ -756,6 +766,78 @@ function actionsFor(tab){
     out[g].sort((x,y)=>rank(x)-rank(y)||ACT[x].name.localeCompare(ACT[y].name));
   });
   return out;
+}
+/* The tab filter matches as the global search does (author instruction, 14 October 2026):
+   every word has to start or sit inside the name, the group or the id, in any order, and
+   the microphone's table adds the brand names, slang, abbreviations and misspellings no
+   display name carries. The tab's
+   own name is left out of the text, or "lab" would match everything on Labs/Imaging. */
+function filterHits(text){
+  const q=searchNorm(text).split(' ').filter(Boolean);
+  if(!q.length) return null;
+  const out=new Set();
+  for(const id in ACT){
+    const a=ACT[id];
+    if(a.hidden||a.menu_hidden) continue;
+    const groups=(a.groups||[a.group]).filter(Boolean);
+    const side=groups.join(' ')+' '+groups.map(groupLabel).join(' ')+' '+id.replace(/_/g,' ');
+    if(searchScore(q,a.name,side)>=0) out.add(id);
+  }
+  /* Then the microphone's table. Its exact parses are added always. Its close guesses
+     (a misspelling: "metroprolol", "troponn") are added only when nothing matched exactly.
+     The global search leaves the guesses out because a press there places the order; here
+     they only narrow the buttons, and the resident still chooses one. */
+  if(typeof VOICE!=='undefined'&&VOICE.parse){
+    const parses=VOICE.parse(text), guesses=[];
+    for(const r of parses){
+      const ids=r.kind==='ok'?[r.id]:(r.kind==='ambiguous'?r.ids:[]);
+      for(const id of ids) if(ACT[id]){ if(r.uncertain) guesses.push(id); else out.add(id); }
+    }
+    if(!out.size) guesses.forEach(id=>out.add(id));
+  }
+  return out;
+}
+/* A drug group reads with "Meds" after its system, smaller and greyer (author instruction,
+   14 October 2026): "Meds - Cardiac" is shown "Cardiac Meds". The group's name itself, which
+   the catalog and the cases use, is unchanged. */
+const GROUP_SHORT={'Vasoactive Agents':'Vasoactive'}, GROUP_NO_MEDS={'Antibiotics':1};
+function groupLabel(g){
+  const m=/^Meds - (.+)$/.exec(String(g||''));
+  if(!m) return String(g||'');
+  const n=GROUP_SHORT[m[1]]||m[1];
+  return GROUP_NO_MEDS[m[1]]?n:n+' Meds';
+}
+function groupLabelHTML(g){
+  const m=/^Meds - (.+)$/.exec(String(g||''));
+  if(!m) return esc(g);
+  const n=esc(GROUP_SHORT[m[1]]||m[1]);
+  return GROUP_NO_MEDS[m[1]]?n:`${n} <span class="gmeds">Meds</span>`;
+}
+/* Group icons on the Actions tab (author instruction, 14 October 2026). The same tiles as
+   the exam buttons. Where a group belongs to a body system it takes that exam's colours
+   (cardiac and vasoactive the heart's rose, respiratory the lungs' aqua, and so on); the
+   rest have colours of their own. Keyed by tab, then group. Display only. */
+const GROUP_ICON={interventions:{
+  'Fluids':{bg:'#D6EAF3',fg:'#3F88A6',d:'<path d="M12 3.5s-5.5 6.2-5.5 10.2a5.5 5.5 0 0 0 11 0C17.5 9.7 12 3.5 12 3.5z"/><path d="M9.6 14.2a2.6 2.6 0 0 0 2.4 2.4"/>'},
+  'Meds - Resuscitation':{bg:'#F7DAD3',fg:'#B65F4B',d:'<path d="M13.5 3 6 13.5h5.5L10.5 21 18 10.5h-5.5z"/>'},
+  'Meds - Intubation':{bg:'#E7E0F3',fg:'#7D6AAE',d:'<path d="M8 3.5v9a6 6 0 0 0 6 6h5"/><path d="M5.5 3.5h5"/><rect x="14.5" y="15.8" width="3.2" height="5.4" rx="1.4"/>'},
+  'Meds - Cardiac':{bg:'#F5DCE1',fg:'#B05D70',d:'<path d="M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.6 4.2 4.2 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/><path d="M7.5 12.5h2.3l1.2-2 2 4 1.2-2h2.3"/>'},
+  'Meds - Vasoactive Agents':{bg:'#F5DCE1',fg:'#B05D70',d:'<path d="M4 16a8 8 0 0 1 16 0"/><path d="M12 16l3.6-4.4"/><circle cx="12" cy="16" r="1.2"/><path d="M4 19.5h16"/>'},
+  'Meds - Respiratory':{bg:'#D5ECEE',fg:'#3F8C95',d:'<path d="M12 3.5v8M12 9.5l-2.6 2M12 9.5l2.6 2"/><path d="M9.2 7.5C6.4 7.5 4 11.6 4 16c0 2.2 1.1 3.5 2.9 3.5 1.8 0 2.8-1.1 2.8-3V9"/><path d="M14.8 7.5c2.8 0 5.2 4.1 5.2 8.5 0 2.2-1.1 3.5-2.9 3.5-1.8 0-2.8-1.1-2.8-3V9"/>'},
+  'Meds - Gastrointestinal':{bg:'#F8E3D4',fg:'#B5774B',d:'<path d="M7.2 3.5c0 4.2-2.2 6.2-2.2 10.2 0 3.9 3.1 6.8 7 6.8s7-2.9 7-6.8c0-4-2.2-6-2.2-10.2"/><circle cx="12" cy="13" r="1.1"/><path d="M7.5 8.5c1.4.7 2.9 1 4.5 1s3.1-.3 4.5-1"/>'},
+  'Meds - OB/GYN':{bg:'#F1DDEC',fg:'#9A5F8C',d:'<circle cx="12" cy="9" r="5"/><path d="M12 14v7M9 18h6"/>'},
+  'Meds - Allergy':{bg:'#F5EECF',fg:'#9C8634',d:'<circle cx="12" cy="12" r="2.2"/><path d="M12 3.5v4M12 16.5v4M3.5 12h4M16.5 12h4M6 6l2.8 2.8M15.2 15.2 18 18M18 6l-2.8 2.8M8.8 15.2 6 18"/>'},
+  'Meds - Sedation/Analgesia':{bg:'#D8EEDF',fg:'#4B8E62',d:'<path d="M18.5 14.5A7.5 7.5 0 0 1 9.5 5.5a7.5 7.5 0 1 0 9 9z"/><path d="M16 4.5h3l-3 3.5h3"/>'},
+  'Meds - Psych':{bg:'#DCE3F6',fg:'#5F72AE',d:'<path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 16.5h-8.5L6 20v-3.5H5A1.5 1.5 0 0 1 3.5 15V7A1.5 1.5 0 0 1 5 5.5z"/><path d="M9 11.5c.8 1.2 1.8 1.8 3 1.8s2.2-.6 3-1.8"/><path d="M9 9h.01M15 9h.01"/>'},
+  'Meds - Antibiotics':{bg:'#E9EBD2',fg:'#7D8442',d:'<rect x="5" y="8" width="14" height="8" rx="4"/><path d="M8.5 11.2h.01M12 12.8h.01M15.5 11.2h.01"/><path d="M5.5 8.5 3.5 6.5M18.5 8.5l2-2M5.5 15.5l-2 2M18.5 15.5l2 2"/>'},
+  'Meds - Tox':{bg:'#E9E2DC',fg:'#85705F',d:'<path d="M9.5 3.5h5M10.5 3.5v5L6 17.5a2 2 0 0 0 1.8 3h8.4a2 2 0 0 0 1.8-3l-4.5-9v-5"/><path d="M8 14h8"/>'},
+  'Meds - Miscellaneous':{bg:'#E7E8EA',fg:'#6F7780',d:'<rect x="3.8" y="8.5" width="16.4" height="7" rx="3.5" transform="rotate(-35 12 12)"/><path d="M9.9 9 14.1 15"/>'},
+  'Blood Bank':{bg:'#F2D7DC',fg:'#A2495C',d:'<path d="M12 3.5s-5.5 6.2-5.5 10.2a5.5 5.5 0 0 0 11 0C17.5 9.7 12 3.5 12 3.5z"/><path d="M12 10.5v6M9 13.5h6"/>'},
+  'Procedures':{bg:'#DFE4EA',fg:'#5E6F83',d:'<path d="M4 20 15.5 8.5"/><path d="M15.5 8.5l2-2a2.1 2.1 0 0 1 3 3l-2 2-3-3z"/><path d="M7 17l-1.5-1.5M9.5 14.5 8 13"/>'},
+}};
+function groupIconHTML(tab,g){
+  const ic=(GROUP_ICON[tab]||{})[g];
+  return ic?`<span class="abic gic" style="--icbg:${ic.bg};--icfg:${ic.fg}" aria-hidden="true"><svg viewBox="0 0 24 24">${ic.d}</svg></span>`:'';
 }
 /* The catalog id behind a button. A pack may bind a catalog entry to a case action with
    another id, so the order and the icons, which name catalog ids, look through it. */
@@ -811,7 +893,7 @@ function actionButton(id,tab,grp){
   } else if(ST.taken.has(id)) cls+=' done';
   if(a.orphan) cls+=' orphan';
   if(a.specimen) cls+=' spec-'+a.specimen;
-  if(tab&&basketOf(tab).has(id)) cls+=' picked';
+  if(tab&&pickedAnywhere(id)) cls+=' picked';
   /* v0.26b. A button in one of PROTO.immediateGroups acts on the click, like an exam. */
   const now=!!(grp&&((PROTO.immediateGroups||{})[tab]||[]).includes(grp));
   const ic=BUTTON_ICON[catIdOf(id)];
@@ -876,12 +958,12 @@ function renderActionTab(tab,intro){
   const forced=collapsible&&!!filterOf(tab);
   let html='';
   for(const g of names){
-    const picked=groups[g].filter(id=>basketOf(tab).has(id)).length;
+    const picked=groups[g].filter(id=>pickedAnywhere(id)).length;
     if(collapsible){
       const isOpen=forced||open.has(g);
       html+=`<button class="grouphdr" data-group="${esc(g)}" data-tabof="${tab}"
         aria-expanded="${isOpen}"><span class="chev">${isOpen?'\u25BC':'\u25B6'}</span>
-        <span>${esc(g)}</span>
+        ${groupIconHTML(tab,g)}<span>${groupLabelHTML(g)}</span>
         ${picked?`<span class="picks">${picked} selected</span>`:''}
         <span class="n">${groups[g].length}</span></button>`;
       if(!isOpen) continue;
@@ -974,7 +1056,7 @@ function renderTab(){
   if(keepId==='filterbox'||keepId==='dxbox'||keepId==='askbox'){
     const back=el(keepId);
     if(back){ back.focus(); try{ back.setSelectionRange(keepPos,keepPos); }catch(e){} }
-  } else if(TAB==='history'){
+  } else if(TAB==='history'&&!DEVNOTES.typing()){   /* never take the caret out of a note */
     const inp=el('askbox');
     if(inp&&document.activeElement!==inp){ inp.focus(); inp.setSelectionRange(inp.value.length,inp.value.length); }
   }
@@ -1860,7 +1942,8 @@ document.addEventListener('click',e=>{
     /* On an orderable tab a click selects; nothing is sent until Submit Order. */
     if(tabof&&PROTO.orderableTabs.includes(tabof)){
       const bag=basketOf(tabof);
-      if(bag.has(id)){ bag.delete(id); delete PICKSEQ[id]; } else { bag.add(id); PICKSEQ[id]=++PICKN; }
+      if(pickedAnywhere(id)){ PROTO.orderableTabs.forEach(x=>basketOf(x).delete(id)); delete PICKSEQ[id]; }
+      else { bag.add(id); PICKSEQ[id]=++PICKN; }
       renderTab(); return;
     }
     log({actionId:id}); render(); return;
@@ -2546,6 +2629,7 @@ function debriefHTML(){
     ${points.length>3?`<div class="dbsec">${dbFold('More points from this case',
       points.slice(3).map(pointItem).join(''))}</div>`:''}
 
+    ${DEVNOTES.debriefHTML()}
   </div>`;
 }
 
@@ -3205,9 +3289,10 @@ function searchHits(){
   for(const id in ACT){
     const a=ACT[id];
     if(!(PROTO.tabLabel||{})[a.tab]||a.hidden||a.menu_hidden) continue;
-    const groups=(a.groups||[a.group]).filter(Boolean).join(' ');
-    const sc=searchScore(q,a.name,groups+' '+id.replace(/_/g,' ')+' '+(PROTO.tabLabel[a.tab]||''));
-    if(sc>=0) acts.push({id,tab:a.tab,name:a.name,group:groups,score:sc});
+    const gl=(a.groups||[a.group]).filter(Boolean);
+    const groups=gl.join(' ');
+    const sc=searchScore(q,a.name,groups+' '+gl.map(groupLabel).join(' ')+' '+id.replace(/_/g,' ')+' '+(PROTO.tabLabel[a.tab]||''));
+    if(sc>=0) acts.push({id,tab:a.tab,name:a.name,group:gl.map(groupLabel).join(', '),score:sc});
   }
   acts.sort((x,y)=>y.score-x.score||x.name.localeCompare(y.name));
   /* Nothing matched by name. The microphone's table knows the brand names, the slang and
@@ -3223,7 +3308,7 @@ function searchHits(){
         if(seen.has(id)||!ACT[id]||r.uncertain) continue;
         seen.add(id);
         const a=ACT[id];
-        acts.push({id,tab:a.tab,name:a.name,group:(a.groups||[a.group]).filter(Boolean).join(' '),
+        acts.push({id,tab:a.tab,name:a.name,group:(a.groups||[a.group]).filter(Boolean).map(groupLabel).join(', '),
                    score:0,synonym:true});
       }
     }
@@ -3475,6 +3560,132 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&RIGHT_WIDE&&!ENDED&&el('leaveview').classList.contains('hidden'))
     minimiseRecord();
 });
+
+/* ---------- author notes (temporary, author instruction, 14 October 2026) ----------
+   For validating cases, not for learners, and meant to be taken out: SHARED.authorNotes
+   false hides it, and the rest is this module, #devnote in shell.html, the .devn styles and
+   one line each in debriefHTML and renderTab. The Note button sits beside Search. The case
+   clock is held while the box has the focus, so writing does not move the case on. Enter
+   saves, Shift and Enter is a new line, Escape closes. Each note keeps a snapshot of the
+   case at that moment: time, state, vitals, flags, everything done so far, what is pending
+   and the nurse's last line. Notes are kept in this browser, across replays and cases, until
+   cleared, and are listed at the bottom of every debrief with one Copy all button. */
+const DEVNOTES=(function(){
+  const KEY='emsim-author-notes';
+  const ON=!(typeof SHARED!=='undefined'&&SHARED.authorNotes===false);
+  let notes=[], held=false, clearArm=0;
+  const $=id=>document.getElementById(id);
+  try{ notes=JSON.parse(localStorage.getItem(KEY)||'[]')||[]; }catch(e){ notes=[]; }
+  function persist(){ try{ localStorage.setItem(KEY,JSON.stringify(notes)); }catch(e){} }
+  const isOpen=()=>{ const p=$('devnotepanel'); return !!p&&!p.hidden; };
+  function vitalsLine(){
+    const v=(typeof rampedVitals==='function'&&rampedVitals())||targetVitals()||{};
+    const f=(k,u)=>typeof v[k]==='number'?v[k]+(u||''):'?';
+    return 'HR '+f('heart_rate')+', BP '+f('systolic_bp')+'/'+f('diastolic_bp')+', SpO2 '+f('oxygen_saturation','%')
+      +', RR '+f('respiratory_rate')+', T '+f('temperature_c')+(ST.monitoring?'':' (monitor not attached)');
+  }
+  function snapshot(text){
+    const t=now(), ph=PHASE[ST.phase]||{};
+    const done=ST.timeline.filter(x=>x.t<=t+1e-6&&!String(x.id).startsWith('interview:'))
+      .map(x=>mmss(x.t)+' '+x.label);
+    const asked=ST.timeline.filter(x=>String(x.id).startsWith('interview:')).length;
+    const pend=(ST.pending||[]).map(p=>dispName(p.id)+' (due '+mmss(p.dueT)+')');
+    const nurse=((ST.nurse||[]).slice(-1)[0]||{}).text||'';
+    const title=(CASE.metadata&&CASE.metadata.working_title)||'';
+    const mode=((PROTO.difficulty||{}).modes||{})[MODE];
+    return [
+      PACK.prefix+(title?' ('+title+')':'')+' at '+mmss(t)+(mode?', '+mode.label.toLowerCase()+' mode':''),
+      'Note: '+text,
+      'State: '+(ph.label||ST.phase)+' ['+ST.phase+']',
+      'Vitals: '+vitalsLine(),
+      'Flags: '+([...(ST.flags||[])].join(', ')||'none'),
+      'Done so far: '+(done.join('; ')||'nothing')+(asked?'. Questions asked: '+asked:''),
+      'Pending: '+(pend.join('; ')||'nothing'),
+      'Nurse\'s last line: '+(nurse||'none')
+    ].join('\n');
+  }
+  function count(){ const n=$('devnoten'); if(n) n.textContent=notes.length?notes.length+' saved':''; }
+  function open(){
+    if(!ON||!inCase()) return;
+    if(typeof closeSearch==='function') closeSearch();
+    if(typeof VOICE!=='undefined'&&VOICE.collapse) VOICE.collapse();
+    $('devnotepanel').hidden=false; $('devnotebtn').setAttribute('aria-expanded','true');
+    count(); $('devnotemsg').textContent='';
+    const b=$('devnotebox'); b.focus(); b.setSelectionRange(b.value.length,b.value.length);
+  }
+  function close(){
+    if(!isOpen()) return;
+    $('devnotepanel').hidden=true; $('devnotebtn').setAttribute('aria-expanded','false');
+    const b=$('devnotebox'); if(document.activeElement===b) b.blur();
+    unhold();
+  }
+  function hold(){ if(!held&&inCase()&&!PAUSED){ holdClock(); held=CLOCK_HELD; } }
+  function unhold(){ if(held){ held=false; releaseClock(); } }
+  function saveNote(){
+    const b=$('devnotebox'), text=b.value.trim();
+    if(!text||!ST) return;
+    /* The snapshot is taken from a fresh fold, so it is the case as it stands now. */
+    refold();
+    notes.push({at:Date.now(), text:snapshot(text)});
+    persist();
+    b.value=''; count();
+    $('devnotemsg').textContent='Saved at '+mmss(now())+'. It is listed at the bottom of the debrief.';
+    b.focus();
+  }
+  function debriefHTML(){
+    if(!ON) return '';
+    const body=notes.length
+      ? notes.map((n,i)=>`<div class="devn-item"><b>Note ${i+1}.</b> ${esc(n.text)}</div>`).join('')
+      : '<p class="sub">No notes yet. Use the Note button beside Search during a case.</p>';
+    return `<div class="dbsec" id="devnotes"><h2>Author notes</h2>
+      <p class="sub">Temporary, for validating cases. Every note saved in this browser, oldest first,
+      each with the state of the case when it was written. They stay until cleared.</p>
+      <div class="devn-btns">${notes.length?`<button class="btn" id="devnotecopy" type="button">Copy all</button>
+        <button class="btn ghost" id="devnoteclear" type="button">Clear all notes</button>`:''}
+        <span class="devn-msg" id="devnotecopymsg"></span></div>
+      <div class="devn-list">${body}</div></div>`;
+  }
+  function allText(){ return notes.map((n,i)=>'Note '+(i+1)+'. '+n.text).join('\n\n'); }
+  function copyAll(){
+    const text=allText(), msg=$('devnotecopymsg');
+    const done=ok=>{ if(msg) msg.textContent=ok?'Copied '+notes.length+' note'+(notes.length===1?'':'s')+'.':'Copy failed. Select the notes and copy them by hand.'; };
+    const fallback=()=>{
+      const ta=document.createElement('textarea'); ta.value=text; ta.setAttribute('readonly','');
+      ta.style.cssText='position:fixed;left:-9999px;top:0'; document.body.appendChild(ta); ta.select();
+      let ok=false; try{ ok=document.execCommand('copy'); }catch(e){} ta.remove(); done(ok);
+    };
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(()=>done(true),fallback);
+    else fallback();
+  }
+  function bind(){
+    const root=$('devnote'); if(!root) return;
+    if(!ON){ root.remove(); return; }
+    root.hidden=false;
+    $('devnotebtn').addEventListener('click',()=>isOpen()?close():open());
+    $('devnoteclose').addEventListener('click',close);
+    $('devnotesave').addEventListener('click',saveNote);
+    const b=$('devnotebox');
+    b.addEventListener('focus',hold);
+    b.addEventListener('blur',unhold);
+    b.addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); saveNote(); }
+      else if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); close(); $('devnotebtn').focus(); }
+    });
+    document.addEventListener('click',e=>{
+      const t=e.target;
+      if(t&&t.id==='devnotecopy'){ copyAll(); return; }
+      if(t&&t.id==='devnoteclear'){
+        if(Date.now()-clearArm<4000){ notes=[]; persist(); clearArm=0; const s=$('devnotes'); if(s) s.outerHTML=debriefHTML(); return; }
+        clearArm=Date.now(); t.textContent='Click again to clear'; setTimeout(()=>{ if(t.isConnected) t.textContent='Clear all notes'; },4000); return;
+      }
+      if(isOpen()&&!$('devnote').contains(t)) close();
+    });
+    /* The button works only inside a case. */
+    setInterval(()=>{ const btn=$('devnotebtn'); if(!btn) return; const off=!inCase(); if(btn.disabled!==off) btn.disabled=off; if(off) close(); },400);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind); else bind();
+  return {debriefHTML, open, close, typing:()=>document.activeElement===$('devnotebox')};
+})();
 
 /* ---------- boot ----------
    Nothing is bound until a case is chosen, and the clock does not start until Begin.

@@ -174,6 +174,20 @@ button{font:inherit;color:inherit}
 .nintro-lab{font-size:12px;color:var(--voice);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:6px}
 .nintro-line{font-size:22px;line-height:1.4;color:var(--ink);letter-spacing:-.005em}
 .nintro.flying .nintro-face{transition:transform .75s cubic-bezier(.5,0,.2,1),border-width .75s ease,box-shadow .75s ease}
+/* ---------- author notes (temporary, author instruction, 14 October 2026) ---------- */
+.devnpanel{width:min(440px,92vw);padding:14px}
+.devn-head{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink3);margin-bottom:8px}
+.devn-n{font-family:var(--mono);letter-spacing:0;text-transform:none;font-weight:400;margin-left:6px}
+.devn-box{width:100%;box-sizing:border-box;resize:vertical;min-height:84px;font:inherit;font-size:14px;line-height:1.4;
+  padding:9px 10px;border:1px solid var(--rule2);border-radius:6px;background:#fff;color:var(--ink)}
+.devn-box:focus{outline:2px solid var(--actb);outline-offset:0}
+.devn-foot{display:flex;align-items:center;gap:8px;margin-top:10px}
+.devn-msg{flex:1;font-size:12.5px;color:var(--ok)}
+.devn-list{margin-top:10px}
+.devn-item{background:#f7f9fa;border:1px solid var(--rule);border-radius:6px;padding:10px 12px;margin:0 0 8px;
+  font-family:var(--mono);font-size:12px;line-height:1.45;white-space:pre-wrap;word-break:break-word;color:var(--ink2)}
+.devn-item b{font-family:inherit;color:var(--ink)}
+.devn-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 body.nintro-on .nurse .nurseface{visibility:hidden}
 @media (max-width:560px){
   .nintro-face{width:110px;height:110px;margin-top:-55px}
@@ -334,7 +348,7 @@ body.nintro-on .nurse .nurseface{visibility:hidden}
   transition:color .16s ease,background .16s ease}
 .tabbtn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.6;
   stroke-linecap:round;stroke-linejoin:round}
-/* 9px uppercase so the longest label, Investigations, clears the rail width
+/* 9px uppercase so the longest label (Investigations then, Labs/Imaging now) clears the rail width
    without abbreviating it. Abbreviations in a teaching tool cost more than
    two pixels of type do. */
 .tabbtn .lb{font-size:9px;letter-spacing:.02em;text-transform:uppercase;line-height:1.15;
@@ -1062,6 +1076,10 @@ p{margin:0 0 10px;max-width:72ch}
 .grouphdr .chev{font-family:var(--mono);font-size:13px;color:var(--ink3);width:14px}
 .grouphdr[aria-expanded="true"] .chev{color:var(--act)}
 .grouphdr .n{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:var(--ink3);font-weight:400}
+/* "Cardiac Meds": the system in the header's own type, "Meds" after it, smaller and greyer
+   (author instruction, 14 October 2026). The tile is the exam buttons' icon tile. */
+.grouphdr .gmeds{font-size:.74em;font-weight:500;color:var(--ink3);margin-left:.3em}
+.grouphdr .gic{margin:-3px 0}
 .grouphdr .picks{font-family:var(--mono);font-size:12.5px;color:var(--act);font-weight:600}
 .groupbody{margin:0 0 14px}
 /* v0.26. Subgroups inside one folder: sub-tabs (Imaging) or small headings (Intubation). */
@@ -2011,6 +2029,23 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
           <button class="srch-x" id="searchclose" title="Close the search" aria-label="Close the search">&#215;</button>
         </div>
         <div class="srch-body" id="searchresults"></div>
+      </div>
+    </div>
+    <!-- Author notes (temporary, author instruction, 14 October 2026). A note typed here is
+         kept with a snapshot of the case and listed at the bottom of the debrief. -->
+    <div class="voice" id="devnote" hidden>
+      <button class="voicebtn" id="devnotebtn" type="button" aria-expanded="false" aria-haspopup="true"
+              title="Write a note to yourself about this moment in the case" aria-label="Write a note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19.5h4l10-10a2.8 2.8 0 0 0-4-4l-10 10v4z"/><path d="M13.5 7l3.5 3.5"/></svg>
+      </button>
+      <span class="voicelab">Note</span>
+      <div class="voicepanel devnpanel" id="devnotepanel" role="dialog" aria-label="Write a note" hidden>
+        <div class="devn-head">Note to self <span class="devn-n" id="devnoten"></span></div>
+        <textarea id="devnotebox" class="devn-box" rows="4" spellcheck="true"
+                  placeholder="What is wrong or worth checking here? Enter saves, Shift and Enter for a new line. The case clock waits while you type."></textarea>
+        <div class="devn-foot"><span class="devn-msg" id="devnotemsg"></span>
+          <button class="btn ghost" id="devnoteclose" type="button">Close</button>
+          <button class="btn" id="devnotesave" type="button">Save note</button></div>
       </div>
     </div>
     <div class="monwrap">

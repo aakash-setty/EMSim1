@@ -1287,8 +1287,8 @@ function summaryScores(st){
              missed:keyEx.filter(id=>!(st.satisfied.has(id)||st.taken.has(id)))});
 
   // The four ordering tabs
-  const TABS=[['stabilization','Stabilization'],['interventions','Interventions'],
-              ['investigations','Investigations'],['consultations','Consults']];
+  const TABS=[['stabilization','Stabilization'],['interventions','Actions'],
+              ['investigations','Labs/Imaging'],['consultations','Consults']];
   for(const [tab,label] of TABS){
     const crit=[...st.expected].filter(id=>ACT[id]&&ACT[id].tab===tab);
     const rec=[...st.recommendedExpected].filter(id=>ACT[id]&&ACT[id].tab===tab&&!st.expected.has(id));
