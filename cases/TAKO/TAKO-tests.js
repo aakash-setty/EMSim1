@@ -134,7 +134,7 @@ chk('a murmur that changes with posture', /Louder with Valsalva, softer legs rai
 chk('clear lungs and flat neck veins', /Clear/.test(exam('exam_pulm', A0, 20)) && /flat/.test(exam('exam_neck', A0, 20)));
 st = F(A0.concat([[20.2, 'ultrasound_cardiac'], [20.3, 'troponin_t'], [20.4, 'ecg_12_lead']]), 40);
 chk('the echo describes and does not name', /Apex/.test(st.orders.ultrasound_cardiac[0].value.report) && !/takotsubo|obstruction/i.test(st.orders.ultrasound_cardiac[0].value.report));
-chk('the ECG describes and does not name', /ST elevation/.test(st.orders.ecg_12_lead[0].value.report) && !/takotsubo|infarct/i.test(st.orders.ecg_12_lead[0].value.report));
+chk('the ECG describes and does not name', /ST elevation/.test(st.orders.ecg_12_lead[0].value.comment) && !/takotsubo|infarct/i.test(st.orders.ecg_12_lead[0].value.comment + ' ' + st.orders.ecg_12_lead[0].value.caption));
 chk('troponin raised', st.orders.troponin_t[0].value.abnormal);
 chk('every authored study resolves from the case', AUTHORED_STUDIES.every(id => F([[1, 'insert_iv'], [2.5, id]], 30).orders[id][0].source === 'case'));
 
@@ -436,8 +436,11 @@ for (const t of [20, 190, 430]) for (const gasId of ['venous_blood_gas', 'arteri
 chk('the capillary glucose is the chemistry glucose', order1('fingerstick_blood_sugar', A0, 20.5).value.components[0].value ===
   order1('basic_chemistry_chem_7', A0, 20.5).value.components.find(x => x.label === 'Glucose').value);
 chk('the chest film is authored, with the mediastinum the notes cite', order1('xr_chest', A0, 20.5).source === 'case' && /Mediastinum not widened/.test(order1('xr_chest', A0, 20.5).value.report));
-chk('the ECG report quotes no rate', !/\d+\./.test(order1('ecg_12_lead', A0, 190.5).value.report.split('.')[0]) && /^Sinus tachycardia\./.test(order1('ecg_12_lead', A0, 190.5).value.report));
-chk('no report carries a comment', Object.values(CASE.content_keys.imaging).every(k => !k.rules || k.rules.every(x => !x.value.comment)));
+chk('the ECG read quotes no rate', !/\d+\./.test(order1('ecg_12_lead', A0, 190.5).value.comment.split('.')[0]) && /^Sinus tachycardia\./.test(order1('ecg_12_lead', A0, 190.5).value.comment));
+/* 13 October 2026. The ECG is a tracing per phase rate, with one read and no rate in the caption. */
+chk('every ECG rule is a tracing with the one read and no rate in its caption',
+  CASE.content_keys.imaging.ecg_12_lead.rules.every(r => r.value.kind === 'image' && r.value.comment === CASE.content_keys.imaging.ecg_12_lead.rules[0].value.comment && !/rate/i.test(r.value.caption)));
+chk('no report carries a comment', Object.values(CASE.content_keys.imaging).every(k => !k.rules || k.rules.every(x => !x.value.comment || x.value.kind === 'image')));
 chk('no comment names the diagnosis', Object.values(CASE.content_keys.labs).every(k => !k.rules || k.rules.every(x => !/takotsubo|infarct|obstruction/i.test(x.value.comment || ''))));
 chk('every authored study has a case action and a note', AUTHORED_STUDIES.every(id => CASE.case_actions.some(a => a.catalog_id === id && a.debrief_note)), AUTHORED_STUDIES.join());
 

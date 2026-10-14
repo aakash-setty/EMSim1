@@ -5569,33 +5569,41 @@
      {
       "when": "phase is frank_septic_shock",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia at 150. Normal axis. PR 128 ms, QRS 84 ms, QTc 468 ms. No ST elevation and no new ST depression. T waves are not peaked. No loss of P waves."
+       "image": "mgca-ecg-frank-septic-shock",
+       "caption": "Twelve-lead ECG. Ventricular rate 150, PR 128 ms, QRS 84 ms, QTc 468 ms",
+       "comment": "Sinus tachycardia at 150. Normal axis. PR 128 ms, QRS 84 ms, QTc 468 ms. No ST elevation and no new ST depression. T waves are not peaked. No loss of P waves."
       }
      },
      {
       "when": "phase is adrenal_crisis OR phase is progressive_meningococcemia",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia at 136 to 140. Normal axis. QRS 84 ms, QTc 458 ms. No ST elevation, no ST depression. T waves are not peaked and the QRS is not widened despite a potassium of 5.6 to 5.7. P waves present in every lead."
+       "image": "mgca-ecg-adrenal-crisis-or-progressive-rash",
+       "caption": "Twelve-lead ECG. Ventricular rate 138, PR 132 ms, QRS 84 ms, QTc 458 ms",
+       "comment": "Sinus tachycardia at 136 to 140. Normal axis. QRS 84 ms, QTc 458 ms. No ST elevation, no ST depression. T waves are not peaked and the QRS is not widened despite a potassium of 5.6 to 5.7. P waves present in every lead."
       }
      },
      {
       "when": "phase is improving OR phase is stabilized_shock",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia at 110 to 118. Normal axis. Normal intervals. No ST change. No peaked T waves."
+       "image": "mgca-ecg-improving-or-stabilized",
+       "caption": "Twelve-lead ECG. Ventricular rate 114, PR 132 ms, QRS 84 ms, QTc 448 ms",
+       "comment": "Sinus tachycardia at 110 to 118. Normal axis. Normal intervals. No ST change. No peaked T waves."
       }
      },
      {
       "when": null,
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia at 124. Normal axis. PR 132 ms, QRS 82 ms, QTc 448 ms. No ST elevation, no ST depression, no reciprocal change. T waves are of normal amplitude and morphology: no peaking, no QRS widening and no loss of P waves despite a potassium of 5.4. No arrhythmia. This is sinus tachycardia, not an arrhythmia."
+       "image": "mgca-ecg-arrival-default",
+       "caption": "Twelve-lead ECG. Ventricular rate 124, PR 132 ms, QRS 82 ms, QTc 448 ms",
+       "comment": "Sinus tachycardia at 124. Normal axis. PR 132 ms, QRS 82 ms, QTc 448 ms. No ST elevation, no ST depression, no reciprocal change. T waves are of normal amplitude and morphology: no peaking, no QRS widening and no loss of P waves despite a potassium of 5.4. No arrhythmia. This is sinus tachycardia, not an arrhythmia."
       }
      }
     ],

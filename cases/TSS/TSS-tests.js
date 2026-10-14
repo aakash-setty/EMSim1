@@ -472,7 +472,8 @@ const abgSat = p => CASE.content_keys.labs.arterial_blood_gas.rules.find(r => (r
 chk('the arterial saturation is the phase saturation in every phase',
   CASE.phases.filter(p => !p.terminal).every(p => +abgSat(p.id) === p.vitals.oxygen_saturation));
 chk('the monitor trace carries the PR interval the ECG report gives',
-  CASE.phases.every(p => p.ecg.pr_ms === 140) && /PR 140 ms/.test(CASE.content_keys.imaging.ecg_12_lead.rules[0].value.report));
+  CASE.phases.every(p => p.ecg.pr_ms === 140) && /PR 140 ms/.test(CASE.content_keys.imaging.ecg_12_lead.rules[0].value.comment) &&
+  CASE.content_keys.imaging.ecg_12_lead.rules.every(r => r.value.kind === 'image' && /PR 140 ms/.test(r.value.caption)));
 
 section('verification markers sit only where the interface strips them');
 const MARK = /\[(UNVERIFIED|PubMed|VERIFY|MODEL OUTPUT)/;

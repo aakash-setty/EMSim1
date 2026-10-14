@@ -5,6 +5,60 @@ is usable with learners.
 
 ---
 
+## Exam buttons head to toe with icons, and lab units in their own column (13 October 2026, author instruction)
+
+The Examination buttons now run Neck, HEENT, Cardiovascular, Pulmonary, Abdominal,
+Back/Flank, Genitourinary, Musculoskeletal, Skin, Neurological, Psychological, set by a new
+`buttonOrder` in the shared build config rather than by the alphabet. Each carries a small
+line icon on a muted pastel tile, one colour per exam. In the chart, a lab value and its unit
+are now separate columns: the values line up on their left edge, and the unit beside each is
+smaller and never bold, even when the value is flagged.
+
+---
+
+## Every twelve-lead is a tracing (13 October 2026, author instruction)
+
+Each case's ECG result is now a picture drawn by the ECG generator from the case's own
+read, 38 tracings in seven cases, as WebP in each pack's `media/` with a `README.md` that
+gives the source. DIPH's supplied arrival tracing is kept as it was, by instruction. The
+read moved to the result's `comment`, which the debrief prints under the tracing in "Your
+results, read", so a resident reads the tracing while the case runs (authoring section 23).
+The caption is the machine measurements in the case's own numbers: ventricular rate, PR,
+QRS and QTc. DIPH prints none, as its arrival tracing never has, and DKA and TAKO print no
+rate, because vital effects move it in those cases and their tests forbid quoting one.
+
+Two places needed more than a swap. TAKO had one read for every state, at monitor rates
+from 104 to 138, so it now has a tracing per phase rate (124, 138, 104, and 115 on arrival)
+with the same read. DKA's tracings after arrival are drawn at the phase rate with fluid (102,
+94, 108, 102), because those phases are reached only once treatment is under way, and the
+arrival ones at 112. MGCA's second and third tracings take their PR (132 ms) and the third
+its QTc (448 ms) from the case monitor, since the reads leave them open. Tests that read the
+report text now read the comment, and a shared engine test checks in every pack that each
+ECG rule is a tracing the build ships. The build grows by about 4.6 MB. Sign-off (section 23)
+needs a named person to look at each tracing beside its read, in its phase.
+
+---
+
+## DKA: potassium continues with the insulin (decided 7 October, installed 13 October 2026)
+
+One line per case, as the README asks: a second intravenous potassium order once the level
+is 3.5 or more is a critical action (potassium in the fluids, 20 to 30 mEq per liter, with
+the insulin), with its own nurse line, a prompt in the treated phase and an endocrinology
+tier that asks for it by name. Details in `cases/DKA/DKA-SEED.md` section 5c. Engine: a
+case action's `nurse_alert` may be a rule list resolved at the moment of the order
+(authoring section 7.1). The validator parses its conditions.
+
+---
+
+## Patient answers leave the chart (13 October 2026, author instruction)
+
+The patient's answers are no longer rows in the chart feed. The chart is the record of
+what was ordered, what came back and what the nurse said. The conversation stays on the
+History tab, which keeps every answer and shows which questions did not land. Until now a
+matched answer was a chart row and an unmatched one was not (v0.7). One line removed in
+`engine/ui.js` `feedItems`, and the shared engine test now asserts that no patient speech
+is added to the feed. Every pack rebuilt and every suite passes.
+
 ## The nurse introduces the case (13 October 2026, author instruction)
 
 When a case starts, a card in the middle of the screen shows the nurse's portrait with his

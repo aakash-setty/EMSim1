@@ -2974,41 +2974,51 @@
      {
       "when": "phase is intubated",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Atrial fibrillation, ventricular rate approximately 118. Irregularly irregular, no P waves. Narrow QRS at 92 ms. No ST elevation. QTc 444 ms."
+       "image": "afrvr-ecg-intubated",
+       "caption": "Twelve-lead ECG. Ventricular rate 118, QRS 92 ms, QTc 444 ms",
+       "comment": "Atrial fibrillation, ventricular rate approximately 118. Irregularly irregular, no P waves. Narrow QRS at 92 ms. No ST elevation. QTc 444 ms."
       }
      },
      {
       "when": "phase is respiratory_failure AND flag rate_control_adequate set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Atrial fibrillation, ventricular rate approximately 130. Irregularly irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V5 and V6. No ST elevation. QTc 446 ms."
+       "image": "afrvr-ecg-respiratory-failure-rate-controlled",
+       "caption": "Twelve-lead ECG. Ventricular rate 130, QRS 90 ms, QTc 446 ms",
+       "comment": "Atrial fibrillation, ventricular rate approximately 130. Irregularly irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V5 and V6. No ST elevation. QTc 446 ms."
       }
      },
      {
       "when": "flag rate_control_adequate set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Atrial fibrillation, ventricular rate approximately 105. Irregularly irregular, no P waves. Narrow QRS at 92 ms. Horizontal ST depression 0.5 mm in V5 and V6. No ST elevation. QTc 442 ms."
+       "image": "afrvr-ecg-rate-control-adequate",
+       "caption": "Twelve-lead ECG. Ventricular rate 105, QRS 92 ms, QTc 442 ms",
+       "comment": "Atrial fibrillation, ventricular rate approximately 105. Irregularly irregular, no P waves. Narrow QRS at 92 ms. Horizontal ST depression 0.5 mm in V5 and V6. No ST elevation. QTc 442 ms."
       }
      },
      {
       "when": "flag rate_control_given set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Atrial fibrillation, ventricular rate approximately 140. Irregularly irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V4 to V6. No ST elevation. QTc 446 ms."
+       "image": "afrvr-ecg-one-rate-control-dose",
+       "caption": "Twelve-lead ECG. Ventricular rate 140, QRS 90 ms, QTc 446 ms",
+       "comment": "Atrial fibrillation, ventricular rate approximately 140. Irregularly irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V4 to V6. No ST elevation. QTc 446 ms."
       }
      },
      {
       "when": null,
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Atrial fibrillation with rapid ventricular response, ventricular rate approximately 160. Irregularly irregular, no P waves. Narrow QRS at 88 ms, no delta wave. Horizontal ST depression up to 1.5 mm in V4 to V6. No ST elevation, no Q waves. QTc 448 ms."
+       "image": "afrvr-ecg-arrival-default",
+       "caption": "Twelve-lead ECG. Ventricular rate 160, QRS 88 ms, QTc 448 ms",
+       "comment": "Atrial fibrillation with rapid ventricular response, ventricular rate approximately 160. Irregularly irregular, no P waves. Narrow QRS at 88 ms, no delta wave. Horizontal ST depression up to 1.5 mm in V4 to V6. No ST elevation, no Q waves. QTc 448 ms."
       }
      }
     ]

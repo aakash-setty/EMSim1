@@ -438,13 +438,11 @@ function feedItems(){
   for(const r of ST.readouts){
     if(r.kind==='exam')    add({t:r.t,kind:'exam',name:r.title,payload:r.body});
     if(r.kind==='consult') add({t:r.t,kind:'consult',name:r.title,body:r.body});
-    /* An unmatched question is answered by the case's out_of_scope_fallback: the
-       patient says they do not understand. That is feedback on the phrasing, not a
-       finding, and a chart is a record of what was learned about the patient. It stays
-       on the History tab, where the resident can see which of their questions did not
-       land, and it does not go in the chart. r.matched is the topic the matcher chose,
-       and is null exactly when the fallback answered. */
-    if(r.kind==='speech'&&r.matched) add({t:r.t,kind:'speech',name:r.title,body:r.body});
+    /* The patient's answers are not chart entries (13 October 2026, author instruction).
+       The chart is the record of what was ordered, found and said by the nurse. The
+       conversation lives on the History tab, which keeps every answer and shows which
+       questions did not land. Until this date a matched answer was a chart row and an
+       unmatched one was not. */
   }
   /* What the nurse said, but not everything she said.
 
@@ -489,6 +487,8 @@ function feedItems(){
    A twelve-lead tracing is not prose and a case may author it as the image itself, with no
    report text at all: the reading is the skill, and a payload that hands the resident "QRS
    132 ms" beside the tracing has done the reading for them. DIPH authors three that way.
+   Since 13 October 2026 every case's twelve-lead is a tracing, its read kept as the comment
+   the debrief prints under it, and its caption at most the machine measurements.
 
    The media map is per case and lives on PROTO, keyed by the file stem, so a case that
    ships no images costs nothing here and a payload naming a missing one degrades to a line
@@ -521,7 +521,7 @@ function feedPayload(v){
   if(v.components&&v.components.length)
     return '<table>'+v.components.map(c=>
       `<tr><td class="lb">${esc(c.label)}</td>
-           <td class="vl${c.abnormal?' abn':''}">${esc(c.value)}${c.unit?' '+esc(c.unit):''}</td>
+           <td class="vl${c.abnormal?' abn':''}">${esc(c.value)}</td><td class="un">${esc(c.unit||'')}</td>
            <td class="rf">${esc(c.reference_range||'')}</td></tr>`
     ).join('')+'</table>';
   const txt=v.report||v.findings||v.value||'';
@@ -747,8 +747,22 @@ function actionsFor(tab){
     if(f && !(a.name.toLowerCase().includes(f)||id.includes(f))) continue;
     for(const g of (a.groups||[a.group])) (out[g]=out[g]||[]).push(id);
   }
-  Object.keys(out).forEach(g=>out[g].sort((x,y)=>ACT[x].name.localeCompare(ACT[y].name)));
+  /* A group in PROTO.buttonOrder lists its buttons in that order, by catalog id (author
+     instruction, 13 October 2026: the exams head to toe). Anything it does not name
+     follows, alphabetically, as every other group does. */
+  Object.keys(out).forEach(g=>{
+    const ord=(PROTO.buttonOrder||{})[g]||[];
+    const rank=id=>{ const i=ord.indexOf(catIdOf(id)); return i<0?500:i; };
+    out[g].sort((x,y)=>rank(x)-rank(y)||ACT[x].name.localeCompare(ACT[y].name));
+  });
   return out;
+}
+/* The catalog id behind a button. A pack may bind a catalog entry to a case action with
+   another id, so the order and the icons, which name catalog ids, look through it. */
+function catIdOf(id){
+  const b=(PACK&&PACK.bindings)||{};
+  for(const c in b) if(b[c]===id) return c;
+  return id;
 }
 function groupNames(tab,groups){
   const fixed=(PROTO.groupOrder||{})[tab]||[];
@@ -769,6 +783,21 @@ function buttonLabel(n){
   const t=String(n||'').replace(/^(consult|perform)\s+/i,'');
   return t ? t.charAt(0).toUpperCase()+t.slice(1) : String(n||'');
 }
+/* Exam button icons (author instruction, 13 October 2026). 24-unit line drawings on a muted
+   pastel tile, one colour pair per exam. Display only. Keyed by catalog id. */
+const BUTTON_ICON={
+  exam_neck:{bg:'#E7E0F3',fg:'#7D6AAE',d:'<circle cx="12" cy="6.8" r="3.9"/><path d="M10.1 10.4v3.6M13.9 10.4v3.6"/><path d="M4.5 20.5c.8-3.6 3.8-5.6 7.5-5.6s6.7 2 7.5 5.6"/>'},
+  exam_heent:{bg:'#D9E8F5',fg:'#4F7FA8',d:'<path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.8"/>'},
+  exam_card:{bg:'#F5DCE1',fg:'#B05D70',d:'<path d="M12 20s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.6 4.2 4.2 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/><path d="M7.5 12.5h2.3l1.2-2 2 4 1.2-2h2.3"/>'},
+  exam_pulm:{bg:'#D5ECEE',fg:'#3F8C95',d:'<path d="M12 3.5v8M12 9.5l-2.6 2M12 9.5l2.6 2"/><path d="M9.2 7.5C6.4 7.5 4 11.6 4 16c0 2.2 1.1 3.5 2.9 3.5 1.8 0 2.8-1.1 2.8-3V9"/><path d="M14.8 7.5c2.8 0 5.2 4.1 5.2 8.5 0 2.2-1.1 3.5-2.9 3.5-1.8 0-2.8-1.1-2.8-3V9"/>'},
+  exam_abd:{bg:'#F8E3D4',fg:'#B5774B',d:'<path d="M7.2 3.5c0 4.2-2.2 6.2-2.2 10.2 0 3.9 3.1 6.8 7 6.8s7-2.9 7-6.8c0-4-2.2-6-2.2-10.2"/><circle cx="12" cy="13" r="1.1"/><path d="M7.5 8.5c1.4.7 2.9 1 4.5 1s3.1-.3 4.5-1"/>'},
+  exam_back:{bg:'#EFE7D2',fg:'#958046',d:'<rect x="8.5" y="2.8" width="7" height="3.6" rx="1.3"/><rect x="8.5" y="8" width="7" height="3.6" rx="1.3"/><rect x="8.5" y="13.2" width="7" height="3.6" rx="1.3"/><path d="M10 18.4l2 2.8 2-2.8"/>'},
+  exam_gu:{bg:'#F1DDEC',fg:'#9A5F8C',d:'<path d="M14.5 4c-4.3 0-8 3.4-8 8s3.7 8 8 8c1.9 0 3-1.1 3-2.8 0-1.9-1.9-2.6-1.9-5.2s1.9-3.3 1.9-5.2C17.5 5.1 16.4 4 14.5 4z"/><path d="M12 12h-3"/>'},
+  exam_msk:{bg:'#E2EAD7',fg:'#6A8650',d:'<path d="M8.2 15.8l7.6-7.6"/><circle cx="15.6" cy="5.6" r="2.2" style="fill:var(--icbg)"/><circle cx="18.4" cy="8.4" r="2.2" style="fill:var(--icbg)"/><circle cx="5.6" cy="15.6" r="2.2" style="fill:var(--icbg)"/><circle cx="8.4" cy="18.4" r="2.2" style="fill:var(--icbg)"/><path d="M14.2 7.4l2.4 2.4M7.4 14.2l2.4 2.4" style="stroke:var(--icbg);stroke-width:2.6"/>'},
+  exam_skin:{bg:'#F5EECF',fg:'#9C8634',d:'<rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="9" cy="9.5" r="1.1"/><circle cx="14.5" cy="8.5" r=".9"/><circle cx="13" cy="14" r="1.4"/><circle cx="8.5" cy="15" r=".8"/><circle cx="16.5" cy="15.5" r=".8"/>'},
+  exam_neuro:{bg:'#D8EEDF',fg:'#4B8E62',d:'<path d="M11.5 5.2C10.7 3.6 7.6 3.5 6.8 5.9 4.4 6.1 3.6 9 5 10.5c-1.6 1.6-.8 4.6 1.6 4.9.3 2.5 3.3 3.3 4.9 1.7V5.2z"/><path d="M12.5 5.2c.8-1.6 3.9-1.7 4.7.7 2.4.2 3.2 3.1 1.8 4.6 1.6 1.6.8 4.6-1.6 4.9-.3 2.5-3.3 3.3-4.9 1.7V5.2z"/><path d="M12 17.5v3"/>'},
+  exam_psych:{bg:'#DCE3F6',fg:'#5F72AE',d:'<path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 16.5h-8.5L6 20v-3.5H5A1.5 1.5 0 0 1 3.5 15V7A1.5 1.5 0 0 1 5 5.5z"/><path d="M9 11.5c.8 1.2 1.8 1.8 3 1.8s2.2-.6 3-1.8"/><path d="M9 9h.01M15 9h.01"/>'},
+};
 function actionButton(id,tab,grp){
   const a=ACT[id];
   const orders=ST.orders[id]||[];
@@ -785,7 +814,11 @@ function actionButton(id,tab,grp){
   if(tab&&basketOf(tab).has(id)) cls+=' picked';
   /* v0.26b. A button in one of PROTO.immediateGroups acts on the click, like an exam. */
   const now=!!(grp&&((PROTO.immediateGroups||{})[tab]||[]).includes(grp));
-  return `<button class="${cls}" data-act="${esc(id)}" data-tabof="${esc(tab||'')}"${now?' data-now="1"':''}>${esc(buttonLabel(a.name))}</button>`;
+  const ic=BUTTON_ICON[catIdOf(id)];
+  if(ic) cls+=' hasic';
+  const label=ic?`<span class="abic" style="--icbg:${ic.bg};--icfg:${ic.fg}" aria-hidden="true"><svg viewBox="0 0 24 24">${ic.d}</svg></span><span>${esc(buttonLabel(a.name))}</span>`
+               :esc(buttonLabel(a.name));
+  return `<button class="${cls}" data-act="${esc(id)}" data-tabof="${esc(tab||'')}"${now?' data-now="1"':''}>${label}</button>`;
 }
 /* v0.26. One group's buttons. Entries with no subgroup come first as a plain grid. The
    rest are split by subgroup, in PROTO.subgroupOrder, and drawn either as headings inside
@@ -2492,8 +2525,9 @@ function debriefHTML(){
     ${ho}
 
     ${read.length?`<div class="dbsec">${dbFold('Your results, read',`
-      <p class="sub">While the case ran you saw the numbers and nothing else. This is the
-      case's own reading of each panel you ordered, in the order they came back.</p>
+      <p class="sub">While the case ran you saw the numbers and the tracings and nothing else.
+      This is the case's own reading of each panel and tracing you ordered, in the order they
+      came back.</p>
       ${read.map(r=>`<div class="item"><div class="hd"><span class="nm">${esc(dispName(r.id))}</span>
         <span class="pill p-neu">${mmss(r.o.dueT)}</span></div>
         ${renderPayload(r.o.value)}

@@ -354,21 +354,21 @@ chk('a repeat after replacement reads corrected',
 st=fold(mk([[1,'insert_iv'],[2,'ecg_12_lead'],[3,'non_invasive_positive_pressure_ventilation'],
             [4,'digoxin_bolus']]),120);
 chk('a tracing taken before rate control still reads 160 when it is read afterwards',
-    /rate approximately 160/.test(st.orders.ecg_12_lead[0].value.report));
+    /rate approximately 160/.test(st.orders.ecg_12_lead[0].value.comment));
 st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
             [3,'digoxin_bolus'],[100,'ecg_12_lead']]),140);
 chk('a tracing after ONE dose reads about 140, not 105',
-    /rate approximately 140/.test(st.orders.ecg_12_lead[0].value.report),
-    st.orders.ecg_12_lead[0].value.report.slice(0,60));
+    /rate approximately 140/.test(st.orders.ecg_12_lead[0].value.comment),
+    st.orders.ecg_12_lead[0].value.comment.slice(0,60));
 st=fold(mk([[1,'insert_iv'],[2,'non_invasive_positive_pressure_ventilation'],
             [3,'digoxin_bolus'],[40,'digoxin_bolus'],[100,'ecg_12_lead']]),140);
 chk('a repeat tracing after the second dose reads about 105',
-    /rate approximately 105/.test(st.orders.ecg_12_lead[0].value.report));
+    /rate approximately 105/.test(st.orders.ecg_12_lead[0].value.comment));
 chk('the ventilated phase has a tracing of its own',
     /rate approximately 118/.test(
       fold(mk([[1,'insert_iv'],[2,'etomidate_bolus'],[3,'rocuronium_bolus'],
                [4,'intubate_rapid_sequence'],[6,'ecg_12_lead']]),40)
-        .orders.ecg_12_lead[0].value.report));
+        .orders.ecg_12_lead[0].value.comment));
 
 section('the consultants do not discuss studies that have not come back');
 st=fold(mk([[1,'insert_iv'],[2,'consult_cardiology']]),10);

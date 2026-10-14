@@ -221,6 +221,16 @@
    "unmatched_narration": "Noted."
   },
   {
+   "case_id": "potassium_maintenance",
+   "catalog_id": null,
+   "note": "Hidden target. Credited through also_satisfies when intravenous potassium is ordered again once the level is 3.5 or more. Critical in those phases, and it carries the prompt for potassium in the fluids. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
+  },
+  {
    "case_id": "handoff_submit",
    "catalog_id": null,
    "note": "The catalog has no handoff action; listed in its own known_gaps.",

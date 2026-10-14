@@ -25,10 +25,10 @@
    "That ondansetron adds 5 ms to the QTc on a repeat ECG, and that the wait for potassium raises the ketones from 4.2 to 4.6.",
    "That magnesium is recommended and is not required for the potassium to correct.",
    "That nothing is harmful, including an insulin bolus at a potassium of 3.1.",
-   "Every clinical tag, including the critical tag on restarting insulin in the recovering phase and the neutral tags on the two crystalloid infusions, the central lines and the intraosseous line.",
+   "Every clinical tag, including the critical tag on restarting insulin in the recovering phase, the critical tag on potassium continued with the insulin (a second potassium order once the level is 3.5 or more, decided by the directing physician on 7 October 2026) and the neutral tags on the two crystalloid infusions, the central lines and the intraosseous line.",
    "That a crystalloid infusion earns the same credit as a bolus.",
    "The two vital effects of fluid: heart rate down 10 and systolic pressure up 6, with no end. Teaching choices, not measurements.",
-   "Every prompt deadline (20, 25, 40, 45, 70, 75, 100, 110 and the escalation at 170 seconds) and both follow-up deadlines (50 and 60 seconds).",
+   "Every prompt deadline (20, 25, 40, 45, 70, 75, 100, 110 and the escalation at 170 seconds, and 45 seconds for potassium in the fluids once treated) and both follow-up deadlines (50 and 60 seconds).",
    "The one case prerequisite (a line before intravenous potassium), and that the monitor is not required first.",
    "Both follow-ups, what triggers each and what discharges each.",
    "Everything the endocrinologist and the intensivist say.",
@@ -128,7 +128,7 @@
    "Read the potassium before giving insulin. Under 3.5 mEq/L, replace potassium first and hold insulin until a repeat level is 3.5 or more.",
    "Give fluid first, and know what fluid alone does and does not fix.",
    "Start insulin without a bolus once the potassium allows, by infusion or by subcutaneous rapid-acting insulin in mild ketoacidosis.",
-   "Plan what follows insulin: dextrose in the fluids when the glucose falls under 250 mg/dL, potassium continued, and insulin not stopped because the glucose looks better."
+   "Plan what follows insulin: potassium in the fluids at 20 to 30 mEq per liter with the insulin, dextrose when the glucose falls under 250 mg/dL, and insulin not stopped because the glucose looks better."
   ],
   "teaching_frame": "The reflex in ketoacidosis is insulin. In about one patient in ten or twenty the potassium is already low on arrival, and insulin drives it lower. This patient looks well enough that nothing feels urgent, which is what makes the reflex easy to follow. The case lets the learner give insulin early, shows what it does, and lets them undo it.",
   "care_setting": {
@@ -462,7 +462,7 @@
   ],
   "note": "Harmful is not used. Nothing halts this case."
  },
- "flag_namespace_note": "Flags are permanent. insulin_given is set by any rapid insulin, insulin_running by an infusion or a subcutaneous dose, and insulin_stopped by the hold action. No flag says when. Three hidden case actions carry that, each credited through also_satisfies on the phase at the moment of the order: early_insulin, insulin_restart and repeat_potassium_level. The repeat-granted flags of v0.23 (insulin_restarted and chem_repeated) are gone. fluids_given is set by a crystalloid bolus or infusion.",
+ "flag_namespace_note": "Flags are permanent. insulin_given is set by any rapid insulin, insulin_running by an infusion or a subcutaneous dose, and insulin_stopped by the hold action. No flag says when. Four hidden case actions carry that, each credited through also_satisfies on the phase at the moment of the order: early_insulin, insulin_restart and repeat_potassium_level. The repeat-granted flags of v0.23 (insulin_restarted and chem_repeated) are gone. fluids_given is set by a crystalloid bolus or infusion.",
  "case_actions": [
   {
    "catalog_id": "attach_monitor",
@@ -899,7 +899,22 @@
    "follow_ups_triggered": [
     "repeat_potassium_after_replacement"
    ],
-   "nurse_alert": "It's on the pump. It takes a while to run in.",
+   "also_satisfies": [
+    {
+     "id": "potassium_maintenance",
+     "when": "phase is potassium_replaced OR phase is recovering OR phase is treated"
+    }
+   ],
+   "nurse_alert": [
+    {
+     "when": "phase is potassium_replaced OR phase is recovering OR phase is treated",
+     "value": "Twenty to thirty in each liter from here. I'll keep it running with the insulin."
+    },
+    {
+     "when": null,
+     "value": "It's on the pump. It takes a while to run in."
+    }
+   ],
    "prompt": {
     "deadline_seconds": 110,
     "guard": "(phase is presentation AND study basic_chemistry_chem_7 resulted AND NOT flag potassium_iv_given set) OR (phase is potassium_falling AND NOT flag potassium_iv_given set)",
@@ -978,7 +993,7 @@
     "guard": "phase is potassium_replaced",
     "text": "The potassium has gone in. Do you want a repeat level, and insulin if it's 3.5 or more?"
    },
-   "debrief_note": "Insulin is the treatment for ketoacidosis and its timing is the lesson here.\n\nGiven once a repeat level was 3.5 or more, it was right. Given while the potassium was 3.1, or before the result was back, it drove the level down to 2.6 and made her weak. Under 3.5, insulin is held and the potassium is replaced first. Insulin starts once the level is 3.5 or more, and between 3.5 and 5.5 it runs with potassium in the fluids.\n\nThe report recommends a fixed-rate infusion of 0.1 units per kg per hour, and accepts subcutaneous rapid-acting insulin every one to two hours for uncomplicated mild or moderate ketoacidosis. Either route counts in this case.\n\nPotassium that has been started is not potassium that has been replaced. In the simulator, insulin waits for a repeat level of 3.5 or more, and rapid insulin ordered at any point before the potassium infusion has finished drops her potassium. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool] [Potassium rule from the reference table supplied by the directing physician, 7 October 2026]"
+   "debrief_note": "Insulin is the treatment for ketoacidosis and its timing is the lesson here.\n\nGiven once a repeat level was 3.5 or more, it was right. Given while the potassium was 3.1, or before the result was back, it drove the level down to 2.6 and made her weak. Under 3.5, insulin is held and the potassium is replaced first. Insulin starts once the level is 3.5 or more, and between 3.5 and 5.5 it runs with potassium in the fluids, 20 to 30 mEq in each liter. The two orders go together. Insulin without the potassium is the first mistake of this case made a second time, more slowly.\n\nThe report recommends a fixed-rate infusion of 0.1 units per kg per hour, and accepts subcutaneous rapid-acting insulin every one to two hours for uncomplicated mild or moderate ketoacidosis. Either route counts in this case.\n\nPotassium that has been started is not potassium that has been replaced. In the simulator, insulin waits for a repeat level of 3.5 or more, and rapid insulin ordered at any point before the potassium infusion has finished drops her potassium. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool] [Potassium rule from the reference table supplied by the directing physician, 7 October 2026]"
   },
   {
    "catalog_id": "insulin_subcutaneous",
@@ -1014,7 +1029,7 @@
    "follow_ups_triggered": [
     "dextrose_plan_after_insulin"
    ],
-   "debrief_note": "Insulin is the treatment for ketoacidosis and its timing is the lesson here.\n\nGiven once a repeat level was 3.5 or more, it was right. Given while the potassium was 3.1, or before the result was back, it drove the level down to 2.6 and made her weak. Under 3.5, insulin is held and the potassium is replaced first. Insulin starts once the level is 3.5 or more, and between 3.5 and 5.5 it runs with potassium in the fluids.\n\nThe report recommends a fixed-rate infusion of 0.1 units per kg per hour, and accepts subcutaneous rapid-acting insulin every one to two hours for uncomplicated mild or moderate ketoacidosis. Either route counts in this case.\n\nPotassium that has been started is not potassium that has been replaced. In the simulator, insulin waits for a repeat level of 3.5 or more, and rapid insulin ordered at any point before the potassium infusion has finished drops her potassium. [Potassium rule from the reference table supplied by the directing physician, 7 October 2026]\n\nSubcutaneous insulin cannot be turned off once it is in. That is one more reason to be sure of the potassium first. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
+   "debrief_note": "Insulin is the treatment for ketoacidosis and its timing is the lesson here.\n\nGiven once a repeat level was 3.5 or more, it was right. Given while the potassium was 3.1, or before the result was back, it drove the level down to 2.6 and made her weak. Under 3.5, insulin is held and the potassium is replaced first. Insulin starts once the level is 3.5 or more, and between 3.5 and 5.5 it runs with potassium in the fluids, 20 to 30 mEq in each liter. The two orders go together. Insulin without the potassium is the first mistake of this case made a second time, more slowly.\n\nThe report recommends a fixed-rate infusion of 0.1 units per kg per hour, and accepts subcutaneous rapid-acting insulin every one to two hours for uncomplicated mild or moderate ketoacidosis. Either route counts in this case.\n\nPotassium that has been started is not potassium that has been replaced. In the simulator, insulin waits for a repeat level of 3.5 or more, and rapid insulin ordered at any point before the potassium infusion has finished drops her potassium. [Potassium rule from the reference table supplied by the directing physician, 7 October 2026]\n\nSubcutaneous insulin cannot be turned off once it is in. That is one more reason to be sure of the potassium first. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]"
   },
   {
    "catalog_id": "insulin_bolus",
@@ -1238,6 +1253,28 @@
    "hidden": true,
    "display_name": "Repeat potassium after replacement",
    "debrief_note": "Not an order. The simulator credits this when a chemistry is sent once the potassium has run in, and the repeat-level follow-up reads it. A learner never sees it."
+  },
+  {
+   "catalog_id": "potassium_maintenance",
+   "tag": [
+    {
+     "when": "phase is potassium_replaced OR phase is recovering OR phase is treated",
+     "value": "critical"
+    },
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "hidden": true,
+   "display_name": "Potassium continued with the insulin",
+   "expectation_label": "Potassium in the fluids, 20 to 30 mEq per liter, with the insulin",
+   "prompt": {
+    "deadline_seconds": 45,
+    "guard": "phase is treated",
+    "text": "She's on insulin now. Do you want potassium in her fluids?"
+   },
+   "debrief_note": "Not an order of its own. The simulator credits this when intravenous potassium is ordered again once the level is 3.5 or more, in the fluids with the insulin.\n\nThe table's middle row: with the potassium between 3.5 and 5.5, insulin runs and potassium runs with it, 20 to 30 mEq in each liter, with a level every one to two hours. Insulin keeps moving potassium into cells for as long as it runs, so a level that was 3.6 when insulin started falls again without it. The first potassium order got her to 3.5. This one keeps her there. [Potassium rule from the reference table supplied by the directing physician, 7 October 2026]"
   },
   {
    "catalog_id": "handoff_submit",
@@ -3551,97 +3588,117 @@
    }
   },
   "imaging": {
-   "authoring_note": "Section 9.4. The chest film and the abdominal CT are left to the catalog defaults, which are normal, and that is intended. The ECG report is findings only and quotes no rate. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc as its report here, without the ondansetron increment.",
+   "authoring_note": "Section 9.4. The chest film and the abdominal CT are left to the catalog defaults, which are normal, and that is intended. The ECG is a tracing whose caption quotes no rate, and its read, findings only, is the debrief comment. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc as its report here, without the ondansetron increment.",
    "ecg_12_lead": {
     "changes_with_state": true,
     "rules": [
      {
       "when": "phase is potassium_replaced AND flag ondansetron_given set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia. T waves fuller than before. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 455 ms.",
+       "image": "dka-ecg-potassium-replaced-ondansetron",
+       "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 455 ms",
+       "comment": "Sinus tachycardia. T waves fuller than before. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 455 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
       "when": "phase is potassium_replaced",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia. T waves fuller than before. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 450 ms.",
+       "image": "dka-ecg-potassium-replaced",
+       "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 450 ms",
+       "comment": "Sinus tachycardia. T waves fuller than before. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 450 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
       "when": "phase is treated AND flag ondansetron_given set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus rhythm. T waves normal. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 450 ms.",
+       "image": "dka-ecg-treated-ondansetron",
+       "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 450 ms",
+       "comment": "Sinus rhythm. T waves normal. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 450 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
       "when": "phase is treated",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus rhythm. T waves normal. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 445 ms.",
+       "image": "dka-ecg-treated",
+       "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 445 ms",
+       "comment": "Sinus rhythm. T waves normal. Small U waves in V2 and V3. No ST change. QRS 88 ms, QTc 445 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
       "when": "phase is potassium_falling AND flag ondansetron_given set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia with occasional ventricular ectopic beats. T waves flat. Prominent U waves in V2 to V5, taller than the T waves. ST depression 0.5 mm in the lateral leads. QRS 88 ms, QTc about 525 ms.",
+       "image": "dka-ecg-potassium-falling-ondansetron",
+       "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 525 ms",
+       "comment": "Sinus tachycardia with occasional ventricular ectopic beats. T waves flat. Prominent U waves in V2 to V5, taller than the T waves. ST depression 0.5 mm in the lateral leads. QRS 88 ms, QTc about 525 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
       "when": "phase is potassium_falling",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia with occasional ventricular ectopic beats. T waves flat. Prominent U waves in V2 to V5, taller than the T waves. ST depression 0.5 mm in the lateral leads. QRS 88 ms, QTc about 520 ms.",
+       "image": "dka-ecg-potassium-falling",
+       "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 520 ms",
+       "comment": "Sinus tachycardia with occasional ventricular ectopic beats. T waves flat. Prominent U waves in V2 to V5, taller than the T waves. ST depression 0.5 mm in the lateral leads. QRS 88 ms, QTc about 520 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
       "when": "phase is recovering AND flag ondansetron_given set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia. No ectopic beats. T waves fuller. Small U waves in V2 and V3. QRS 88 ms, QTc 455 ms.",
+       "image": "dka-ecg-recovering-ondansetron",
+       "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 455 ms",
+       "comment": "Sinus tachycardia. No ectopic beats. T waves fuller. Small U waves in V2 and V3. QRS 88 ms, QTc 455 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
       "when": "phase is recovering",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia. No ectopic beats. T waves fuller. Small U waves in V2 and V3. QRS 88 ms, QTc 450 ms.",
+       "image": "dka-ecg-recovering",
+       "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 450 ms",
+       "comment": "Sinus tachycardia. No ectopic beats. T waves fuller. Small U waves in V2 and V3. QRS 88 ms, QTc 450 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
       "when": "flag ondansetron_given set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia. Subtle T wave flattening in the chest leads. Small U waves in V2 and V3. No ST elevation or depression. QRS 88 ms, QTc about 465 ms.",
+       "image": "dka-ecg-ondansetron-other-states",
+       "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 465 ms",
+       "comment": "Sinus tachycardia. Subtle T wave flattening in the chest leads. Small U waves in V2 and V3. No ST elevation or depression. QRS 88 ms, QTc about 465 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      },
      {
       "when": null,
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia. Subtle T wave flattening in the chest leads. Small U waves in V2 and V3. No ST elevation or depression. QRS 88 ms, QTc about 460 ms.",
+       "image": "dka-ecg-arrival-default",
+       "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 460 ms",
+       "comment": "Sinus tachycardia. Subtle T wave flattening in the chest leads. Small U waves in V2 and V3. No ST elevation or depression. QRS 88 ms, QTc about 460 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }
@@ -3668,6 +3725,10 @@
     {
      "when": "phase is potassium_falling",
      "value": "Endocrinologist: Hold the insulin now. Weakness and palpitations after insulin mean a falling potassium until proven otherwise. Give intravenous potassium and magnesium on the monitor. Get a twelve-lead and a chemistry. Restart insulin when potassium is 3.5 or more."
+    },
+    {
+     "when": "phase is treated AND NOT action potassium_maintenance taken",
+     "value": "Endocrinologist: Good that insulin is running. Now potassium in her fluids, 20 to 30 in every liter, and a level every one to two hours. Insulin keeps pushing it down."
     },
     {
      "when": "phase is treated AND flag basal_given set",
@@ -5937,9 +5998,10 @@
    },
    {
     "id": "potassium_first",
-    "label": "Potassium before insulin",
+    "label": "Potassium before insulin, and with it",
     "actions": [
      "potassium_chloride_kcl",
+     "potassium_maintenance",
      "potassium_chloride_oral",
      "magnesium_level",
      "magnesium_sulfate",
@@ -5995,7 +6057,7 @@
    "treated",
    "case_complete"
   ],
-  "intended_path_note": "Fluid, the chemistry, potassium, a repeat level, then insulin. A learner who gives rapid insulin at any point before the potassium has run in passes through potassium_falling and recovering and reaches the same end.",
+  "intended_path_note": "Fluid, the chemistry, potassium, a repeat level, then insulin with potassium in the fluids. A learner who gives rapid insulin at any point before the potassium has run in passes through potassium_falling and recovering and reaches the same end.",
   "trap_actions": [
    "insulin_bolus",
    "na_bicarbonate_bolus",

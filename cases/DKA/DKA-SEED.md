@@ -378,6 +378,31 @@ phase and nowhere else, so nothing a learner does in potassium_replaced can star
 
 ## 5a. Changed on 7 October 2026 after the audit, and why
 
+### 5c. Potassium with the insulin (decided 7 October 2026, installed 13 October 2026)
+
+Aakash Setty, 7 October 2026: "When the potassium goes up to 3.6, insulin should be started
+but potassium should also be ordered again as in the middle row." Decided: critical. The
+change was built that day and did not reach the Mac (the link dropped at the install
+step). It was re-applied to the current sources and installed on 13 October 2026.
+
+- A hidden target `potassium_maintenance`, critical in potassium_replaced, recovering and
+  treated, credited when intravenous potassium is ordered again in one of those phases
+  (judged on the phase at the moment of the order). The first order, and the rescue order
+  in the falling phase, do not credit it. Handed over on insulin without it, it is listed
+  as missed.
+- The potassium order's nurse line is a rule list (engine, 13 October 2026: `nurse_alert`
+  may be a list of rules). On arrival and in the falling phase: "It's on the pump. It takes
+  a while to run in." Once the level is 3.5 or more: "Twenty to thirty in each liter from
+  here. I'll keep it running with the insulin."
+- A prompt at 45 seconds in the treated phase: "She's on insulin now. Do you want
+  potassium in her fluids?" (135 seconds in the default mode).
+- An endocrinology tier for the treated phase with no second order, asking for it by
+  name, under the 40-word rule of 11 October. The existing treated tiers sit behind it.
+- The intended path, the learning objectives, the debrief domain and the review packet
+  name the second order.
+- A model choice to confirm: a second potassium order placed in potassium_replaced before
+  insulin starts also earns the credit, because "keep potassium going" is right either way.
+
 ### 5b. Changed on 7 October 2026 after the medical re-read, and why
 
 A model re-read the whole pack against the potassium table in section 0. Changes:

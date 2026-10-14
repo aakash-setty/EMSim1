@@ -10,8 +10,8 @@ Three learning goals drive the structure:
   1. Recognize ketoacidosis in a patient who looks like a stomach bug, and grade it.
   2. Know the potassium before giving insulin, and when it is under 3.5 replace it first
      and start insulin only once a repeat level is 3.5 or more.
-  3. Once insulin is running, plan what follows: dextrose when the glucose falls, and
-     insulin continued until the ketones clear.
+  3. Once insulin is running, plan what follows: potassium in the fluids with the insulin,
+     dextrose when the glucose falls, and insulin continued until the ketones clear.
 
 The case has no clock that harms her and she cannot die. Every phase change is the
 delayed consequence of something the learner did.
@@ -33,7 +33,7 @@ META = {
    "Read the potassium before giving insulin. Under 3.5 mEq/L, replace potassium first and hold insulin until a repeat level is 3.5 or more.",
    "Give fluid first, and know what fluid alone does and does not fix.",
    "Start insulin without a bolus once the potassium allows, by infusion or by subcutaneous rapid-acting insulin in mild ketoacidosis.",
-   "Plan what follows insulin: dextrose in the fluids when the glucose falls under 250 mg/dL, potassium continued, and insulin not stopped because the glucose looks better.",
+   "Plan what follows insulin: potassium in the fluids at 20 to 30 mEq per liter with the insulin, dextrose when the glucose falls under 250 mg/dL, and insulin not stopped because the glucose looks better.",
  ],
  "teaching_frame": (
    "The reflex in ketoacidosis is insulin. In about one patient in ten or twenty the "

@@ -910,7 +910,9 @@ function fold(log, now, difficultyMultiplier){
        unaffected by it and so the interface can colour it and file it in the chart. Said
        once per administration, which is right: a resident who redoses should hear it
        again. */
-    if(a.nurse_alert) narrate(t,a.nurse_alert,'alert');
+    /* 13 October 2026. A string, or a rule list resolved against the state at the moment
+       of the order, so a second order of the same drug can carry a different line. */
+    { const al=resolveText(a.nurse_alert,st); if(al) narrate(t,al,'alert'); }
 
     (a.flags_set||[]).forEach(f=>grantFlag(f,t,null));
     for(const fr of (a.flags_set_repeat||[])){

@@ -667,12 +667,12 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_responsive | rule 0 (phase is fluid_responsive) &rarr; ABNORMAL: Sinus tachycardia at 114. Normal axis. PR 140 ms, QRS 84 ms, QTc 430 m... | plausible |
-| hypotensive | rule 1 (phase is hypotensive) &rarr; ABNORMAL: Sinus tachycardia at 138. Normal axis. PR 140 ms, QRS 84 ms, QTc 430 m... | plausible |
-| profound_shock | rule 3 (phase is profound_shock) &rarr; ABNORMAL: Sinus tachycardia at 148. Normal axis. PR 140 ms, QRS 84 ms, QTc 430 m... | plausible |
-| stabilizing | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Sinus tachycardia at 116. Normal axis. PR 140 ms, QRS 84 ms, QTc 430 m... | plausible |
-| supported | rule 2 (phase is supported) &rarr; ABNORMAL: Sinus tachycardia at 124. Normal axis. PR 140 ms, QRS 84 ms, QTc 430 m... | plausible |
-| «any other phase» | rule 5 (default) &rarr; ABNORMAL: Sinus tachycardia at 128. Normal axis. PR 140 ms, QRS 84 ms, QTc 430 m... | plausible |
+| fluid_responsive | rule 0 (phase is fluid_responsive) &rarr;  | plausible |
+| hypotensive | rule 1 (phase is hypotensive) &rarr;  | plausible |
+| profound_shock | rule 3 (phase is profound_shock) &rarr;  | plausible |
+| stabilizing | rule 4 (phase is stabilizing) &rarr;  | plausible |
+| supported | rule 2 (phase is supported) &rarr;  | plausible |
+| «any other phase» | rule 5 (default) &rarr;  | plausible |
 
 
 ### `imaging/ultrasound_cardiac`

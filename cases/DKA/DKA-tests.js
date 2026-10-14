@@ -25,7 +25,7 @@ const FLUTTER = /arms and legs feel heavy and her heart is fluttering/;
 
 section('intended path');
 let st = F(A0.concat([[12.5, 'normal_saline_1l_bolus'], [20.5, 'potassium_chloride_kcl'], [21.5, 'magnesium_sulfate'],
-  [45.5, 'basic_chemistry_chem_7'], [52.5, 'insulin_drip'], [70.5, 'd5_1_2_ns_infusion']]), 80);
+  [45.5, 'basic_chemistry_chem_7'], [52.5, 'insulin_drip'], [53.5, 'potassium_chloride_kcl'], [70.5, 'd5_1_2_ns_infusion']]), 80);
 chk('reaches treated', st.phase === 'treated', st.phase);
 chk('through potassium_replaced', seq(st) === 'presentation > potassium_replaced > treated', seq(st));
 chk('every critical action expected on the path was done',
@@ -33,8 +33,9 @@ chk('every critical action expected on the path was done',
 chk('nothing halted, failed or completed', !st.halted && !st.failed && !st.complete);
 chk('no follow-up left open', st.fuOutstanding.size === 0, [...st.fuOutstanding].join());
 chk('the restart is not expected of a learner who never needed it', !st.expected.has('insulin_restart'));
-chk('and no hidden target was credited except the repeat level',
-  !st.satisfied.has('early_insulin') && !st.satisfied.has('insulin_restart') && st.satisfied.has('repeat_potassium_level'));
+chk('and no hidden target was credited except the repeat level and the potassium with the insulin',
+  !st.satisfied.has('early_insulin') && !st.satisfied.has('insulin_restart') && st.satisfied.has('repeat_potassium_level')
+  && st.satisfied.has('potassium_maintenance'));
 
 section('nothing happens on the clock');
 chk('untouched for ten minutes she is as she arrived', seq(F([], 600)) === 'presentation');
@@ -78,7 +79,7 @@ chk('the nurse says she is weak', said(st, FLUTTER));
 chk('rate 118 without fluid', st.vitals.heart_rate === 118);
 st = F(A0.concat([[20.5, 'insulin_drip'], [40.5, 'basic_chemistry_chem_7'], [41.5, 'ecg_12_lead']]), 60);
 chk('a repeat chemistry shows 2.6', K(st) === '2.6', K(st));
-chk('the ECG shows prominent U waves and a QTc of 520', /Prominent U waves/.test(last(st, 'ecg_12_lead').body.report) && /520/.test(last(st, 'ecg_12_lead').body.report));
+chk('the ECG shows prominent U waves and a QTc of 520', /Prominent U waves/.test(last(st, 'ecg_12_lead').body.comment) && /520/.test(last(st, 'ecg_12_lead').body.comment));
 st = F(A0.concat([[20.5, 'insulin_drip']]), 60);
 chk('the nurse suggests holding it at 25 seconds', st.promptFires.some(p => p.id === 'stop_insulin'));
 chk('in US usage', said(st, /She's weaker since the insulin/));
@@ -359,9 +360,9 @@ chk('magnesium 1.5', last(st, 'magnesium_level').body.components[0].value === '1
 st = F(A0.concat([[20.5, 'magnesium_sulfate_bolus'], [22.5, 'magnesium_level']]), 40);
 chk('2.1 after replacement by either entry', last(st, 'magnesium_level').body.components[0].value === '2.1');
 st = F(A0.concat([[20.5, 'ecg_12_lead']]), 30);
-chk('arrival ECG: small U waves, QTc 460', /U waves/.test(last(st, 'ecg_12_lead').body.report) && /460/.test(last(st, 'ecg_12_lead').body.report));
+chk('arrival ECG: small U waves, QTc 460', /U waves/.test(last(st, 'ecg_12_lead').body.comment) && /460/.test(last(st, 'ecg_12_lead').body.comment));
 st = F(A0.concat([[20.5, 'ondansetron'], [22.5, 'ecg_12_lead']]), 35);
-chk('after ondansetron the QTc reads 465', /465/.test(last(st, 'ecg_12_lead').body.report));
+chk('after ondansetron the QTc reads 465', /465/.test(last(st, 'ecg_12_lead').body.comment));
 st = F(A0.concat([[20.5, 'beta_hydroxybutyrate']]), 30);
 chk('ketones 4.2', last(st, 'beta_hydroxybutyrate').body.components[0].value === '4.2');
 st = F(A0.concat([[20.5, 'arterial_blood_gas']]), 30);
@@ -379,12 +380,16 @@ const eachPayload = fn => {
   }
 };
 let comments = new Set(), reportComments = 0, rated = [];
-eachPayload((k, p) => { if (p.comment) { comments.add(p.comment); if (p.kind === 'report') reportComments++; }
-  if (p.report && /\bat \d{2,3}\b|\b\d{2,3} (beats|bpm|a minute)/.test(p.report)) rated.push(k); });
+eachPayload((k, p) => { if (p.comment && p.kind !== 'image') { comments.add(p.comment); if (p.kind === 'report') reportComments++; }
+  const words = [p.report, p.kind === 'image' ? p.comment : '', p.kind === 'image' ? p.caption : ''].join(' ');
+  if (/\bat \d{2,3}\b|\b\d{2,3} (beats|bpm|a minute)|\brate \d/.test(words)) rated.push(k); });
 chk('the only result comment is the anion gap caption', comments.size === 1 && [...comments][0] === 'Anion gap calculated without potassium.', [...comments].join(' | '));
 chk('no report carries a comment, since the interface never shows one', reportComments === 0);
-chk('no report quotes a heart rate', rated.length === 0, rated.join());
-const ecgIn = (log, t) => last(F(log.concat([[t - 6, 'ecg_12_lead']]), t), 'ecg_12_lead').body.report;
+chk('no report, tracing read or tracing caption quotes a heart rate', rated.length === 0, rated.join());
+/* 13 October 2026. The twelve-lead is a generated tracing whose read is its comment. */
+chk('every ECG rule is a tracing with its read kept for the debrief',
+  CASE.content_keys.imaging.ecg_12_lead.rules.every(r => r.value.kind === 'image' && /QRS 88 ms/.test(r.value.comment) && /QRS 88 ms/.test(r.value.caption)));
+const ecgIn = (log, t) => last(F(log.concat([[t - 6, 'ecg_12_lead']]), t), 'ecg_12_lead').body.comment;
 chk('the treated ECG says sinus rhythm, true at 104 and at 94', /^Sinus rhythm\./.test(ecgIn(ready.concat([[50.5, 'insulin_drip']]), 75)));
 chk('the falling ECG says QRS 88 ms, as the monitor draws', /QRS 88 ms/.test(ecgIn(early, 45)) &&
   CASE.phases.every(p => p.ecg.qrs_ms === 88) && !JSON.stringify(CASE.content_keys.imaging).includes('QRS 90'));
@@ -517,6 +522,33 @@ chk('and neither is credited, because the sodium corrects to normal and the crea
   /4 of 4 additional/.test(hs.detail) && !/missed/.test(hs.detail), hs.detail);
 hs = summaryScores(handed(DX)).find(r => r.id === 'handoff');
 chk('and leaving them out is still 4 of 4 additional diagnoses', /4 of 4 additional/.test(hs.detail), hs.detail);
+
+section('potassium continues with the insulin (the table\'s middle row, owner decision of 7 October 2026)');
+const treatedNoK = A0.concat([[20.5, 'potassium_chloride_kcl'], [45.5, 'basic_chemistry_chem_7'], [52.5, 'insulin_drip']]);
+st = F(treatedNoK, 70);
+chk('once treated, potassium with the insulin is a critical action', st.phase === 'treated' && st.expected.has('potassium_maintenance') && !st.satisfied.has('potassium_maintenance'));
+chk('it is not expected on arrival', !F(A0, 10).expected.has('potassium_maintenance'));
+chk('the first potassium order does not credit it', !F(ready, 45).satisfied.has('potassium_maintenance'));
+chk('the first order says it takes a while', said(F(ready, 25), /It takes a while to run in/) && !said(F(ready, 25), /Twenty to thirty/));
+st = F(treatedNoK, 110.5);
+chk('the nurse asks for potassium in her fluids at 45 seconds into treated', st.promptFires.some(p => p.id === 'potassium_maintenance') && said(st, /Do you want potassium in her fluids\?/), JSON.stringify(st.promptFires.map(p => p.id)));
+chk('and not before', !F(treatedNoK, 105).promptFires.some(p => p.id === 'potassium_maintenance'));
+chk('in the default mode it comes at 135 seconds', F(treatedNoK, 200, 3).promptFires.some(p => p.id === 'potassium_maintenance') && !F(treatedNoK, 195, 3).promptFires.some(p => p.id === 'potassium_maintenance'));
+st = F(treatedNoK.concat([[80.5, 'potassium_chloride_kcl']]), 120);
+chk('a second potassium order once treated credits it', st.satisfied.has('potassium_maintenance'));
+chk('with the second nurse line', said(st, /Twenty to thirty in each liter from here/));
+chk('and then no prompt', !st.promptFires.some(p => p.id === 'potassium_maintenance'));
+chk('the phase does not change', st.phase === 'treated');
+st = F(ready.concat([[45.5, 'basic_chemistry_chem_7'], [47.5, 'potassium_chloride_kcl'], [52.5, 'insulin_drip']]), 70);
+chk('a second order placed after the level, before the insulin, counts too', st.satisfied.has('potassium_maintenance') && st.phase === 'treated');
+st = F(rescue([[20.5, 'insulin_drip']]), 70);
+chk('the rescue potassium in the falling phase is not the maintenance order', !st.satisfied.has('potassium_maintenance') && st.phase === 'recovering');
+st = F(rescue([[20.5, 'insulin_drip']]).concat([[80.5, 'insulin_drip'], [82.5, 'potassium_chloride_kcl']]), 100);
+chk('after the restart, potassium again is', st.satisfied.has('potassium_maintenance') && st.phase === 'treated');
+st = F(treatedNoK.concat([[75.5, 'handoff_submit']]), 80);
+chk('handed over on insulin with no potassium in the fluids, it is listed as missed', st.complete && st.expected.has('potassium_maintenance') && !st.satisfied.has('potassium_maintenance'));
+chk('the endocrinologist asks for it by name once treated', /potassium in her fluids, 20 to 30 in every liter/.test(endo(treatedNoK, 70)));
+chk('and not once it is ordered', !/Now potassium in her fluids/.test(endo(treatedNoK.concat([[80.5, 'potassium_chloride_kcl']]), 90)) && /Good\./.test(endo(treatedNoK.concat([[80.5, 'potassium_chloride_kcl']]), 90)));
 
 section('markers sit only where the interface strips them');
 const MARK = /\[(UNVERIFIED|PubMed|VERIFY|MODEL OUTPUT)/;

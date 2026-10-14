@@ -1001,17 +1001,17 @@ Single unconditional rule; nothing to enumerate.
 | phase | bicarb_given | resolves to | reachable? |
 |---|---|---|---|
 | presentation | no | rule 6 (default) &rarr;  | plausible |
-| presentation | yes | rule 5 (phase is presentation AND flag bicarb_given set) &rarr; ABNORMAL: Sinus tachycardia at approximately 135 per minute. QRS duration 116 ms... | plausible |
-| pulseless_vt | no | rule 0 (phase is pulseless_vt) &rarr; ABNORMAL: Wide-complex tachycardia at approximately 190 per minute. No organized... | plausible |
-| pulseless_vt | yes | rule 0 (phase is pulseless_vt) &rarr; ABNORMAL: Wide-complex tachycardia at approximately 190 per minute. No organized... | plausible |
-| seizing | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 150 per minute. QRS duration 148 ms... | plausible |
-| seizing | yes | rule 2 (phase is seizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 150 per minute. QRS duration 148 ms... | plausible |
-| stabilized | no | rule 3 (phase is stabilized) &rarr; ABNORMAL: Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms.... | plausible |
-| stabilized | yes | rule 3 (phase is stabilized) &rarr; ABNORMAL: Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms.... | plausible |
-| stabilizing | no | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms... | plausible |
-| stabilizing | yes | rule 4 (phase is stabilizing) &rarr; ABNORMAL: Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms... | plausible |
-| wide_complex_tachycardia | no | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Monomorphic wide-complex tachycardia at approximately 180 per minute. ... | plausible |
-| wide_complex_tachycardia | yes | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Monomorphic wide-complex tachycardia at approximately 180 per minute. ... | plausible |
+| presentation | yes | rule 5 (phase is presentation AND flag bicarb_given set) &rarr;  | plausible |
+| pulseless_vt | no | rule 0 (phase is pulseless_vt) &rarr;  | plausible |
+| pulseless_vt | yes | rule 0 (phase is pulseless_vt) &rarr;  | plausible |
+| seizing | no | rule 2 (phase is seizing) &rarr;  | plausible |
+| seizing | yes | rule 2 (phase is seizing) &rarr;  | plausible |
+| stabilized | no | rule 3 (phase is stabilized) &rarr;  | plausible |
+| stabilized | yes | rule 3 (phase is stabilized) &rarr;  | plausible |
+| stabilizing | no | rule 4 (phase is stabilizing) &rarr;  | plausible |
+| stabilizing | yes | rule 4 (phase is stabilizing) &rarr;  | plausible |
+| wide_complex_tachycardia | no | rule 1 (phase is wide_complex_tachycardia) &rarr;  | plausible |
+| wide_complex_tachycardia | yes | rule 1 (phase is wide_complex_tachycardia) &rarr;  | plausible |
 | «any other phase» | no | rule 6 (default) &rarr;  | plausible |
 | «any other phase» | yes | rule 6 (default) &rarr;  | plausible |
 

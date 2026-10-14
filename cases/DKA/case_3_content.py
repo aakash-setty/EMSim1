@@ -70,6 +70,16 @@ def report(text, abnormal=True, comment=None):
     return d
 
 
+def ecg_image(image_id, caption, read, abnormal=True):
+    """13 October 2026, author instruction. The twelve-lead is shown as the tracing
+    (authoring section 23), drawn by the ECG generator from `read` (media/README.md). The
+    caption is the machine measurements a real tracing prints. `read` is the case's own
+    reading, kept as the comment: the debrief prints it under the tracing, and nothing
+    shows it while the case runs."""
+    return {"kind": "image", "abnormal": abnormal, "image": image_id, "caption": caption,
+            "comment": read, "verify": VERIFY}
+
+
 def always(v):
     return [{"when": None, "value": v}]
 
@@ -306,9 +316,24 @@ ECG_TEXT = {
 }
 
 
+# 13 October 2026, author instruction: each tracing is a picture drawn from its read
+# (ecg_image above). The caption leaves out the rate, which fluid moves. The arrival
+# tracings are drawn at 112, without fluid, since the first ECG is often taken before the
+# first bolus. Every later phase is reached only once treatment is under way, so its
+# tracing is drawn at the phase rate with fluid: 102, 94, 108 and 102.
+ECG_IMAGE = {"replaced": "potassium-replaced", "treated": "treated",
+             "falling": "potassium-falling", "recovering": "recovering"}
+
+
 def ecg(s, ondansetron=False):
     q = QTC[s] + (5 if ondansetron else 0)
-    return report(ECG_TEXT[s] % q, abnormal=True)
+    if s == "pres":
+        stem = "ondansetron-other-states" if ondansetron else "arrival-default"
+    else:
+        stem = ECG_IMAGE[s] + ("-ondansetron" if ondansetron else "")
+    return ecg_image("dka-ecg-" + stem,
+                     "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc %d ms" % q,
+                     ECG_TEXT[s] % q)
 
 
 ECG_RULES = []
@@ -321,8 +346,8 @@ ECG_RULES.append({"when": None, "value": ecg("pres")})
 IMAGING = {
  "authoring_note": (
    "Section 9.4. The chest film and the abdominal CT are left to the catalog defaults, "
-   "which are normal, and that is intended. The ECG report is findings only and quotes "
-   "no rate. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc "
+   "which are normal, and that is intended. The ECG is a tracing whose caption quotes "
+   "no rate, and its read, findings only, is the debrief comment. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc "
    "as its report here, without the ondansetron increment."),
  "ecg_12_lead": {"changes_with_state": True, "rules": ECG_RULES},
 
@@ -367,6 +392,10 @@ CONSULTANTS = {
               "mean a falling potassium until proven otherwise. Give intravenous potassium and "
               "magnesium on the monitor. Get a twelve-lead and a chemistry. Restart insulin "
               "when potassium is 3.5 or more.")},
+   {"when": TREATED + " AND NOT action potassium_maintenance taken",
+    "value": ("Endocrinologist: Good that insulin is running. Now potassium in her fluids, 20 "
+              "to 30 in every liter, and a level every one to two hours. Insulin keeps "
+              "pushing it down.")},
    {"when": TREATED + " AND flag basal_given set",
     "value": ("Endocrinologist: Good, and I'm glad the glargine is back in. Hourly glucose, "
               "potassium every one to two hours, and potassium in every liter. When glucose is "

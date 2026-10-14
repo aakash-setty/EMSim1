@@ -71,7 +71,7 @@ CASE = {
  "flag_namespace_note": (
    "Flags are permanent. insulin_given is set by any rapid insulin, insulin_running by "
    "an infusion or a subcutaneous dose, and insulin_stopped by the hold action. No flag "
-   "says when. Three hidden case actions carry that, each credited through "
+   "says when. Four hidden case actions carry that, each credited through "
    "also_satisfies on the phase at the moment of the order: early_insulin, "
    "insulin_restart and repeat_potassium_level. The repeat-granted flags of v0.23 "
    "(insulin_restarted and chem_repeated) are gone. fluids_given is set by a crystalloid "
@@ -138,6 +138,10 @@ HIDDEN_TARGETS = {
  "repeat_potassium_level": (
    "Hidden target. Credited through also_satisfies when a chemistry is sent once the "
    "potassium has run in. Read by the repeat-level follow-up. Not a button."),
+ "potassium_maintenance": (
+   "Hidden target. Credited through also_satisfies when intravenous potassium is ordered "
+   "again once the level is 3.5 or more. Critical in those phases, and it carries the "
+   "prompt for potassium in the fluids. Not a button."),
 }
 
 BINDING_ROWS = []

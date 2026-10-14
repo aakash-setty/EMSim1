@@ -270,11 +270,12 @@ section('the arrival tracing is a picture, and carries no reading');
    resident. The consequence to hold onto is that the arrival QRS duration is now absent
    from the interface until the debrief, except in what a consultant says.
 
-   The narrowing phase was briefly a second image and is text again: the second supplied
+   The narrowing phase was briefly a second image and went back to text: the second supplied
    tracing is as broad as the first, so it contradicted the nurse line about the complexes
-   narrowing. The assertions below hold that reversion in place, because the failure it
-   guards against is silent. Nothing in the interface would complain about a wide tracing
-   under a narrowing line; only a person looking at both would. */
+   narrowing. Since 13 October 2026 (author instruction) it is a picture again, generated from
+   its own read, so the read and the picture agree. The assertions below hold the read in
+   place as the picture's comment, because a wide tracing under a narrowing line is a silent
+   failure that only a person looking at both would see. */
 const val = (s, id) => (s.orders[id] || []).slice(-1)[0].value;
 const arrivalEcg = val(fold(mk([[1, 'insert_iv'], [2, 'ecg_12_lead']]), 40), 'ecg_12_lead');
 chk('the arrival tracing is an image', arrivalEcg.kind === 'image', arrivalEcg.kind);
@@ -289,16 +290,18 @@ chk('the caption is a label rather than a reading',
 const laterEcg = val(fold(mk([[1, 'insert_iv'], [2, 'ecg_12_lead'], [20, 'lorazepam_bolus'],
                               [22, 'na_bicarbonate_bolus'], [40, 'ecg_12_lead']]), 60),
                      'ecg_12_lead');
-chk('the narrowing phase reports in words rather than showing a picture',
-    laterEcg.kind === 'report', laterEcg.kind);
-chk('and it says the tracing is narrower, which is the claim an image contradicted',
-    /narrower/.test(laterEcg.report), laterEcg.report);
+chk('the narrowing phase shows its generated tracing',
+    laterEcg.kind === 'image' && laterEcg.image === 'diph-ecg-stabilizing' && !!PROTO.media[laterEcg.image],
+    laterEcg.kind + ' ' + laterEcg.image);
+chk('with the same bare caption as the arrival tracing', laterEcg.caption === arrivalEcg.caption, laterEcg.caption);
+chk('and its read says the tracing is narrower, which is the claim the supplied image contradicted',
+    /narrower/.test(laterEcg.comment), laterEcg.comment);
 chk('and its QRS agrees with what cardiology reads on the repeat',
-    /104 ms/.test(laterEcg.report), laterEcg.report);
+    /104 ms/.test(laterEcg.comment), laterEcg.comment);
 chk('and its rate agrees with the phase it belongs to',
-    /115 per minute/.test(laterEcg.report), laterEcg.report);
+    /115 per minute/.test(laterEcg.comment), laterEcg.comment);
 chk('and it still reports findings rather than the conclusion',
-    !/sodium.channel|blockade|toxic/i.test(laterEcg.report), laterEcg.report);
+    !/sodium.channel|blockade|toxic/i.test(laterEcg.comment), laterEcg.comment);
 const film = val(fold(mk([[1, 'xr_chest']]), 30), 'xr_chest');
 chk('the chest film is an image and is flagged normal',
     film.kind === 'image' && film.abnormal === false, film.kind + '/' + film.abnormal);
@@ -324,15 +327,17 @@ chk('every image the case names exists, and every image it ships is used',
 chk('every image payload is a data URI rather than a path',
     Object.values(PROTO.media).every(u => /^data:image\/(jpeg|png|webp|gif);base64,/.test(u)));
 
-section('the tracings the case still describes in words');
-/* Every ECG but the arrival one keeps its text. That asymmetry is the thing to see rather
-   than smooth over: the one tracing a resident has to read for themselves is the first one,
-   and everything after it reports itself. */
+section('every tracing is a picture, and the reading waits for the debrief');
+/* Until 13 October 2026 every ECG but the arrival one reported itself in words. Since then
+   each is a tracing generated from its read (author instruction), with the bare caption the
+   arrival tracing has and the read as the comment the debrief prints. */
 const vtEcg = val(fold(mk([[1, 'insert_iv'], [370, 'ecg_12_lead']]), 400), 'ecg_12_lead');
-chk('the wide-complex phase still reports in words',
-    vtEcg.kind === 'report' && /wide-complex tachycardia/.test(vtEcg.report), vtEcg.kind);
-chk('and it still reports findings rather than the conclusion',
-    !/sodium.channel|blockade|toxic/i.test(vtEcg.report), vtEcg.report);
+chk('the wide-complex phase shows its generated tracing',
+    vtEcg.kind === 'image' && vtEcg.image === 'diph-ecg-wide-complex-tachycardia' && /wide-complex tachycardia/.test(vtEcg.comment), vtEcg.kind);
+chk('and its read still reports findings rather than the conclusion',
+    !/sodium.channel|blockade|toxic/i.test(vtEcg.comment), vtEcg.comment);
+chk('no tracing caption carries a measurement',
+    CASE.content_keys.imaging.ecg_12_lead.rules.every(r => r.value.kind === 'image' && !/QRS|ms\b|aVR|\d/.test(r.value.caption)));
 chk('the intubated chest film still reports in words, because no image shows a tube',
     val(fold(mk([[1, 'insert_iv'], [2, 'etomidate_bolus'], [3, 'rocuronium_bolus'],
                  [4, 'intubate_rapid_sequence'], [5, 'xr_chest']]), 40), 'xr_chest')

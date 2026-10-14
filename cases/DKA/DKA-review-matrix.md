@@ -274,6 +274,16 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `action_tag/potassium_maintenance`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| potassium_replaced | rule 0 (phase is potassium_replaced OR phase is recovering OR phase is treated) | plausible |
+| recovering | rule 0 (phase is potassium_replaced OR phase is recovering OR phase is treated) | plausible |
+| treated | rule 0 (phase is potassium_replaced OR phase is recovering OR phase is treated) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
 ### `action_tag/handoff_submit`
 
 Single unconditional rule; nothing to enumerate.
@@ -635,16 +645,16 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | ondansetron_given | resolves to | reachable? |
 |---|---|---|---|
-| potassium_falling | no | rule 5 (phase is potassium_falling) &rarr; ABNORMAL: Sinus tachycardia with occasional ventricular ectopic beats. T waves f... | plausible |
-| potassium_falling | yes | rule 4 (phase is potassium_falling AND flag ondansetron_given set) &rarr; ABNORMAL: Sinus tachycardia with occasional ventricular ectopic beats. T waves f... | plausible |
-| potassium_replaced | no | rule 1 (phase is potassium_replaced) &rarr; ABNORMAL: Sinus tachycardia. T waves fuller than before. Small U waves in V2 and... | plausible |
-| potassium_replaced | yes | rule 0 (phase is potassium_replaced AND flag ondansetron_given set) &rarr; ABNORMAL: Sinus tachycardia. T waves fuller than before. Small U waves in V2 and... | plausible |
-| recovering | no | rule 7 (phase is recovering) &rarr; ABNORMAL: Sinus tachycardia. No ectopic beats. T waves fuller. Small U waves in ... | plausible |
-| recovering | yes | rule 6 (phase is recovering AND flag ondansetron_given set) &rarr; ABNORMAL: Sinus tachycardia. No ectopic beats. T waves fuller. Small U waves in ... | plausible |
-| treated | no | rule 3 (phase is treated) &rarr; ABNORMAL: Sinus rhythm. T waves normal. Small U waves in V2 and V3. No ST change... | plausible |
-| treated | yes | rule 2 (phase is treated AND flag ondansetron_given set) &rarr; ABNORMAL: Sinus rhythm. T waves normal. Small U waves in V2 and V3. No ST change... | plausible |
-| «any other phase» | no | rule 9 (default) &rarr; ABNORMAL: Sinus tachycardia. Subtle T wave flattening in the chest leads. Small ... | plausible |
-| «any other phase» | yes | rule 8 (flag ondansetron_given set) &rarr; ABNORMAL: Sinus tachycardia. Subtle T wave flattening in the chest leads. Small ... | plausible |
+| potassium_falling | no | rule 5 (phase is potassium_falling) &rarr;  | plausible |
+| potassium_falling | yes | rule 4 (phase is potassium_falling AND flag ondansetron_given set) &rarr;  | plausible |
+| potassium_replaced | no | rule 1 (phase is potassium_replaced) &rarr;  | plausible |
+| potassium_replaced | yes | rule 0 (phase is potassium_replaced AND flag ondansetron_given set) &rarr;  | plausible |
+| recovering | no | rule 7 (phase is recovering) &rarr;  | plausible |
+| recovering | yes | rule 6 (phase is recovering AND flag ondansetron_given set) &rarr;  | plausible |
+| treated | no | rule 3 (phase is treated) &rarr;  | plausible |
+| treated | yes | rule 2 (phase is treated AND flag ondansetron_given set) &rarr;  | plausible |
+| «any other phase» | no | rule 9 (default) &rarr;  | plausible |
+| «any other phase» | yes | rule 8 (flag ondansetron_given set) &rarr;  | plausible |
 
 
 ### `imaging/ultrasound_cardiac`
@@ -654,106 +664,106 @@ Single unconditional rule; nothing to enumerate.
 
 ### `consultant/consult_endocrinology`
 
-_270 combinations, exceeds the 96-row display cap. Axes: phases=['potassium_falling', 'potassium_replaced', 'recovering', 'treated', '«any other phase»'], flags=['basal_given'], studies=['arterial_blood_gas', 'basic_chemistry_chem_7', 'venous_blood_gas'], actions=[]._
+_540 combinations, exceeds the 96-row display cap. Axes: phases=['potassium_falling', 'potassium_replaced', 'recovering', 'treated', '«any other phase»'], flags=['basal_given'], studies=['arterial_blood_gas', 'basic_chemistry_chem_7', 'venous_blood_gas'], actions=['potassium_maintenance']._
 
-| phase | basal_given | arterial_blood_gas | basic_chemistry_chem_7 | venous_blood_gas | resolves to | reachable? |
-|---|---|---|---|---|---|---|
-| potassium_falling | no | not_ordered | not_ordered | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | not_ordered | not_ordered | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | not_ordered | not_ordered | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | not_ordered | pending | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | not_ordered | pending | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | not_ordered | pending | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | not_ordered | resulted | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | not_ordered | resulted | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | not_ordered | resulted | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | pending | not_ordered | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | pending | not_ordered | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | pending | not_ordered | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | pending | pending | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | pending | pending | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | pending | pending | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | pending | resulted | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | pending | resulted | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | pending | resulted | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | resulted | not_ordered | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | resulted | not_ordered | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | resulted | not_ordered | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | resulted | pending | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | resulted | pending | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | resulted | pending | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | resulted | resulted | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | resulted | resulted | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | no | resulted | resulted | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | not_ordered | not_ordered | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | not_ordered | not_ordered | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | not_ordered | not_ordered | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | not_ordered | pending | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | not_ordered | pending | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | not_ordered | pending | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | not_ordered | resulted | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | not_ordered | resulted | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | not_ordered | resulted | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | pending | not_ordered | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | pending | not_ordered | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | pending | not_ordered | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | pending | pending | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | pending | pending | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | pending | pending | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | pending | resulted | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | pending | resulted | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | pending | resulted | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | resulted | not_ordered | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | resulted | not_ordered | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | resulted | not_ordered | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | resulted | pending | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | resulted | pending | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | resulted | pending | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | resulted | resulted | not_ordered | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | resulted | resulted | pending | rule 0 (phase is potassium_falling) | plausible |
-| potassium_falling | yes | resulted | resulted | resulted | rule 0 (phase is potassium_falling) | plausible |
-| potassium_replaced | no | not_ordered | not_ordered | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | not_ordered | not_ordered | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | not_ordered | not_ordered | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | not_ordered | pending | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | not_ordered | pending | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | not_ordered | pending | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | not_ordered | resulted | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | not_ordered | resulted | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | not_ordered | resulted | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | pending | not_ordered | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | pending | not_ordered | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | pending | not_ordered | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | pending | pending | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | pending | pending | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | pending | pending | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | pending | resulted | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | pending | resulted | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | pending | resulted | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | resulted | not_ordered | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | resulted | not_ordered | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | resulted | not_ordered | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | resulted | pending | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | resulted | pending | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | resulted | pending | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | resulted | resulted | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | resulted | resulted | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | no | resulted | resulted | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | not_ordered | not_ordered | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | not_ordered | not_ordered | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | not_ordered | not_ordered | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | not_ordered | pending | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | not_ordered | pending | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | not_ordered | pending | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | not_ordered | resulted | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | not_ordered | resulted | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | not_ordered | resulted | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | pending | not_ordered | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | pending | not_ordered | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | pending | not_ordered | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | pending | pending | not_ordered | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | pending | pending | pending | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
-| potassium_replaced | yes | pending | pending | resulted | rule 3 (phase is potassium_replaced OR phase is recovering) | plausible |
+| phase | basal_given | arterial_blood_gas | basic_chemistry_chem_7 | venous_blood_gas | potassium_maintenance | resolves to | reachable? |
+|---|---|---|---|---|---|---|---|
+| potassium_falling | no | not_ordered | not_ordered | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | not_ordered | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | not_ordered | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | not_ordered | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | not_ordered | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | not_ordered | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | pending | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | pending | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | pending | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | pending | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | pending | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | pending | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | resulted | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | resulted | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | resulted | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | resulted | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | resulted | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | not_ordered | resulted | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | not_ordered | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | not_ordered | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | not_ordered | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | not_ordered | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | not_ordered | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | not_ordered | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | pending | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | pending | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | pending | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | pending | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | pending | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | pending | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | resulted | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | resulted | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | resulted | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | resulted | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | resulted | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | pending | resulted | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | not_ordered | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | not_ordered | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | not_ordered | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | not_ordered | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | not_ordered | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | not_ordered | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | pending | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | pending | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | pending | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | pending | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | pending | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | pending | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | resulted | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | resulted | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | resulted | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | resulted | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | resulted | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | no | resulted | resulted | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | not_ordered | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | not_ordered | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | not_ordered | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | not_ordered | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | not_ordered | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | not_ordered | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | pending | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | pending | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | pending | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | pending | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | pending | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | pending | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | resulted | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | resulted | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | resulted | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | resulted | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | resulted | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | not_ordered | resulted | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | not_ordered | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | not_ordered | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | not_ordered | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | not_ordered | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | not_ordered | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | not_ordered | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | pending | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | pending | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | pending | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | pending | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | pending | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | pending | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | resulted | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | resulted | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | resulted | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | resulted | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | resulted | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | pending | resulted | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | resulted | not_ordered | not_ordered | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | resulted | not_ordered | not_ordered | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | resulted | not_ordered | pending | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | resulted | not_ordered | pending | yes | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | resulted | not_ordered | resulted | no | rule 0 (phase is potassium_falling) | plausible |
+| potassium_falling | yes | resulted | not_ordered | resulted | yes | rule 0 (phase is potassium_falling) | plausible |
 
 
 ### `consultant/consult_critical_care`

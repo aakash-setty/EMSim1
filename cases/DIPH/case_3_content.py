@@ -67,6 +67,13 @@ def val(label, value, unit, ref, abnormal, comment=None, **kw):
 # arrival tracing rather than the repeat, which the source document does not establish, and
 # that the arrival tracing is compatible with what the case says about it, which is a sinus
 # tachycardia at 135 with a QRS of 132 ms.
+#
+# 13 October 2026, author instruction: every other tracing is now a picture too, drawn by
+# the ECG generator from the case's own read (media/README.md), so unlike the supplied
+# repeat it shows what the read says. The arrival tracing stays the supplied image, also
+# by instruction. The generated ones carry the same bare caption as the arrival one, since
+# this case prints no measurement beside a tracing (v0.12), and each keeps its read as the
+# comment, which the debrief prints under it.
 ECG_ARRIVAL = "diph-ecg-arrival"
 CXR = "diph-cxr"
 
@@ -559,33 +566,34 @@ IMAGING = {
    "changes_with_state": True,
    "result_shape": "structured",
    "rules": [
-     {"when": "phase is pulseless_vt", "value": report(
+     {"when": "phase is pulseless_vt", "value": image("diph-ecg-pulseless-vt", "Twelve-lead ECG", comment=
        "Wide-complex tachycardia at approximately 190 per minute. No organized mechanical "
        "activity. QRS duration approximately 200 ms.")},
-     {"when": WIDE, "value": report(
+     {"when": WIDE, "value": image("diph-ecg-wide-complex-tachycardia", "Twelve-lead ECG", comment=
        "Monomorphic wide-complex tachycardia at approximately 180 per minute. QRS duration "
        "approximately 180 ms. No discernible P waves. Terminal R wave in aVR of 7 mm with an "
        "R to S ratio in aVR greater than 0.7. Rightward terminal QRS axis. No ST elevation.")},
-     {"when": SEIZ, "value": report(
+     {"when": SEIZ, "value": image("diph-ecg-seizing", "Twelve-lead ECG", comment=
        "Sinus tachycardia at approximately 150 per minute. QRS duration 148 ms, wider than on "
        "the previous tracing. Terminal R wave in aVR of 6 mm. Rightward terminal QRS axis. QTc "
        "512 ms. Frequent ventricular ectopics. Baseline heavily obscured by movement artifact.")},
-     {"when": "phase is stabilized", "value": report(
+     {"when": "phase is stabilized", "value": image("diph-ecg-stabilized", "Twelve-lead ECG", comment=
        "Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms. Terminal R wave "
        "in aVR now 1 mm with an R to S ratio below 0.7. Normal QRS axis. QTc 445 ms. No ST "
        "elevation.")},
-     # Text, not a picture. Both supplied tracings are wide-complex; neither is narrow, so
+     # A generated picture since 13 October 2026 (see the images note above). Before that,
+     # text, not a picture. Both supplied tracings are wide-complex; neither is narrow, so
      # showing one here put a broad tracing under the nurse's line about the complexes
      # narrowing. Reverted on Aakash Setty's instruction, 5 September 2026. The numbers are
      # the ones consult_cardiology already reads aloud on the repeat tracing, and the rate is
      # this phase's own authored heart rate.
-     {"when": "phase is stabilizing", "value": report(
+     {"when": "phase is stabilizing", "value": image("diph-ecg-stabilizing", "Twelve-lead ECG", comment=
        "Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms, narrower than "
        "on the arrival tracing. Terminal R wave in aVR now 2 mm with an R to S ratio below "
        "0.7. QTc 470 ms, still prolonged. No ST elevation.")},
      # v0.18a: bicarbonate given before the seizure narrows the QRS in the arrival phase too,
      # so a repeat tracing does not tell the resident that the drug failed.
-     {"when": "phase is presentation AND flag bicarb_given set", "value": report(
+     {"when": "phase is presentation AND flag bicarb_given set", "value": image("diph-ecg-arrival-after-bicarbonate", "Twelve-lead ECG", comment=
        "Sinus tachycardia at approximately 135 per minute. QRS duration 116 ms, narrower than "
        "on the arrival tracing. Terminal R wave in aVR of 3 mm. QTc 480 ms. No ST elevation.")},
      {"when": None, "value": image(ECG_ARRIVAL, "Twelve-lead ECG")}],

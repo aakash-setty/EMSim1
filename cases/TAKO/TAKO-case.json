@@ -2039,16 +2039,51 @@
    }
   },
   "imaging": {
-   "authoring_note": "Section 9.4. Findings only: no report names takotsubo or obstruction. No report carries a comment, because the interface never shows a comment on a report. The interpretation is in each study's debrief note. The ECG report quotes no rate, because three vital effects on the heart rate have no end (authoring 9.4).",
+   "authoring_note": "Section 9.4. Findings only: no report names takotsubo or obstruction. No report carries a comment, because the interface never shows a comment on a report. The interpretation is in each study's debrief note. The ECG report quotes no rate, because three vital effects on the heart rate have no end (authoring 9.4). Since 13 October 2026 the ECG is a tracing, one per phase rate, whose read is its comment, printed in the debrief, and whose caption quotes no rate.",
    "ecg_12_lead": {
-    "changes_with_state": false,
+    "changes_with_state": true,
     "rules": [
+     {
+      "when": "phase is obstructed",
+      "value": {
+       "kind": "image",
+       "abnormal": true,
+       "image": "tako-ecg-obstructed",
+       "caption": "Twelve-lead ECG. PR 160 ms, QRS 92 ms, QTc 470 ms",
+       "comment": "Sinus tachycardia. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+      }
+     },
+     {
+      "when": "(phase is shock_worse OR phase is shock_untreated)",
+      "value": {
+       "kind": "image",
+       "abnormal": true,
+       "image": "tako-ecg-shock",
+       "caption": "Twelve-lead ECG. PR 160 ms, QRS 92 ms, QTc 470 ms",
+       "comment": "Sinus tachycardia. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+      }
+     },
+     {
+      "when": "phase is steadied OR phase is case_complete",
+      "value": {
+       "kind": "image",
+       "abnormal": true,
+       "image": "tako-ecg-steadied",
+       "caption": "Twelve-lead ECG. PR 160 ms, QRS 92 ms, QTc 470 ms",
+       "comment": "Sinus tachycardia. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+      }
+     },
      {
       "when": null,
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
+       "image": "tako-ecg-arrival-default",
+       "caption": "Twelve-lead ECG. PR 160 ms, QRS 92 ms, QTc 470 ms",
+       "comment": "Sinus tachycardia. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, QTc 470 ms.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }

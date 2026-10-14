@@ -47,7 +47,8 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `case_actions[].hidden` | generic | no | 20 | Removes the action from global search only. It is still drawn, and reachable by voice, on any tab that draws action buttons (the ordering tabs, exam and consultations). A hidden target needs a placement on `handoff` or `history` to have no button and no voice phrase |
 | `case_actions[].narration_override` | engine | nurse | 7.1 | Replaces the catalog's acknowledgement line for this action in this case. Borrowed by covered siblings |
 | `case_actions[].no_vital_effect_note` | none | never |  | Reviewer note. Nothing reads it |
-| `case_actions[].nurse_alert` | engine+validator | nurse+chart | 7.1 | A second line after the catalog's own, filed in the chart, said again on a repeat. Borrowed by covered siblings. Not a prompt: no slot, no trill |
+| `case_actions[].nurse_alert[].value` | generic | nurse+chart | 7.1 | A second line after the catalog's own, filed in the chart, said again on a repeat. A string, or a rule list resolved at the moment of the order so a repeat in a later phase can say something else. Borrowed by covered siblings. Not a prompt: no slot, no trill |
+| `case_actions[].nurse_alert[].when` | generic | nurse+chart | 7.1 | A second line after the catalog's own, filed in the chart, said again on a repeat. A string, or a rule list resolved at the moment of the order so a repeat in a later phase can say something else. Borrowed by covered siblings. Not a prompt: no slot, no trill |
 | `case_actions[].prerequisite_overrides[].author_rationale` | engine+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `case_actions[].prerequisite_overrides[].source` | generic | never |  | Reviewer note. Nothing reads it |
 | `case_actions[].prerequisite_overrides[].waived` | engine+validator+tools | no | 22.1 | The exact text of a catalog default prerequisite to drop. Matched by string equality |
@@ -95,13 +96,14 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `content_keys.imaging.<id>.changes_with_state` | none | never |  | Reviewer note. Nothing reads it |
 | `content_keys.imaging.<id>.result_shape` | none | never |  | Reviewer note. Nothing reads it |
 | `content_keys.imaging.<id>.rules[].prose` | validator | never |  | Reviewer note. Nothing reads it |
-| `content_keys.imaging.<id>.rules[].value.abnormal` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
-| `content_keys.imaging.<id>.rules[].value.caption` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
-| `content_keys.imaging.<id>.rules[].value.image` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
-| `content_keys.imaging.<id>.rules[].value.kind` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
-| `content_keys.imaging.<id>.rules[].value.report` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
+| `content_keys.imaging.<id>.rules[].value.abnormal` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
+| `content_keys.imaging.<id>.rules[].value.caption` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
+| `content_keys.imaging.<id>.rules[].value.comment` | engine+tools | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
+| `content_keys.imaging.<id>.rules[].value.image` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
+| `content_keys.imaging.<id>.rules[].value.kind` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
+| `content_keys.imaging.<id>.rules[].value.report` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
 | `content_keys.imaging.<id>.rules[].value.verify` | generic | never |  | Reviewer note. Nothing reads it |
-| `content_keys.imaging.<id>.rules[].when` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption} |
+| `content_keys.imaging.<id>.rules[].when` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
 | `content_keys.imaging.<id>.verify` | generic | never |  | Reviewer note. Nothing reads it |
 | `content_keys.labs.<id>.author_note` | validator | never |  | Reviewer note. Nothing reads it |
 | `content_keys.labs.<id>.changes_with_state` | none | never |  | Reviewer note. Nothing reads it |
@@ -109,7 +111,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `content_keys.labs.<id>.result_shape` | none | never |  | Reviewer note. Nothing reads it |
 | `content_keys.labs.<id>.rules[].prose` | validator | never | 9.4 | Legacy (CHFE, MGCA): the result as prose before payloads were structured. Not read. Do not author it |
 | `content_keys.labs.<id>.rules[].value.abnormal` | generic | chart | 9.4 | Authored, not computed. Must equal the OR of the components |
-| `content_keys.labs.<id>.rules[].value.comment` | engine | debrief | 9.4 | HIDDEN during play. Printed once in the debrief under 'Your results, read', and never for a report payload |
+| `content_keys.labs.<id>.rules[].value.comment` | engine+tools | debrief | 9.4 | HIDDEN during play. Printed once in the debrief under 'Your results, read', and never for a report payload |
 | `content_keys.labs.<id>.rules[].value.components[].abnormal` | generic | chart | 9.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
 | `content_keys.labs.<id>.rules[].value.components[].label` | generic | chart | 9.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
 | `content_keys.labs.<id>.rules[].value.components[].reference_range` | generic | chart | 9.4 | label, value, unit, reference_range, abnormal. Abnormal is red; the range shows when the chart is expanded |
@@ -375,4 +377,4 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `tag_vocabulary.values` | engine+build+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `tag_vocabulary.values_used_by_this_case` | none | never |  | Reviewer note. Nothing reads it |
 
-352 fields across 7 packs, as of the last generation.
+354 fields across 7 packs, as of the last generation.

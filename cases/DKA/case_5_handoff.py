@@ -168,9 +168,9 @@ DEBRIEF = {
    {"id": "fluid", "label": "Fluid",
     "actions": ["insert_iv", "normal_saline_1l_bolus", "normal_saline_infusion",
                 "lactated_ringer_s_infusion"]},
-   {"id": "potassium_first", "label": "Potassium before insulin",
-    "actions": ["potassium_chloride_kcl", "potassium_chloride_oral", "magnesium_level",
-                "magnesium_sulfate", "ecg_12_lead", "stop_insulin"]},
+   {"id": "potassium_first", "label": "Potassium before insulin, and with it",
+    "actions": ["potassium_chloride_kcl", "potassium_maintenance", "potassium_chloride_oral",
+                "magnesium_level", "magnesium_sulfate", "ecg_12_lead", "stop_insulin"]},
    {"id": "insulin", "label": "Insulin and what follows it",
     "actions": ["insulin_drip", "insulin_subcutaneous", "insulin_bolus", "insulin_restart",
                 "insulin_glargine_subcutaneous",
@@ -187,7 +187,8 @@ DEBRIEF = {
    "judgment."),
  "intended_path": ["presentation", "potassium_replaced", "treated", "case_complete"],
  "intended_path_note": (
-   "Fluid, the chemistry, potassium, a repeat level, then insulin. A learner who gives "
+   "Fluid, the chemistry, potassium, a repeat level, then insulin with potassium in the "
+   "fluids. A learner who gives "
    "rapid insulin at any point before the potassium has run in passes through "
    "potassium_falling and recovering and reaches the same end."),
  "trap_actions": ["insulin_bolus", "na_bicarbonate_bolus", "d50_bolus", "ct_abdomen"],
@@ -238,10 +239,10 @@ PROVENANCE = {
    "That ondansetron adds 5 ms to the QTc on a repeat ECG, and that the wait for potassium raises the ketones from 4.2 to 4.6.",
    "That magnesium is recommended and is not required for the potassium to correct.",
    "That nothing is harmful, including an insulin bolus at a potassium of 3.1.",
-   "Every clinical tag, including the critical tag on restarting insulin in the recovering phase and the neutral tags on the two crystalloid infusions, the central lines and the intraosseous line.",
+   "Every clinical tag, including the critical tag on restarting insulin in the recovering phase, the critical tag on potassium continued with the insulin (a second potassium order once the level is 3.5 or more, decided by the directing physician on 7 October 2026) and the neutral tags on the two crystalloid infusions, the central lines and the intraosseous line.",
    "That a crystalloid infusion earns the same credit as a bolus.",
    "The two vital effects of fluid: heart rate down 10 and systolic pressure up 6, with no end. Teaching choices, not measurements.",
-   "Every prompt deadline (20, 25, 40, 45, 70, 75, 100, 110 and the escalation at 170 seconds) and both follow-up deadlines (50 and 60 seconds).",
+   "Every prompt deadline (20, 25, 40, 45, 70, 75, 100, 110 and the escalation at 170 seconds, and 45 seconds for potassium in the fluids once treated) and both follow-up deadlines (50 and 60 seconds).",
    "The one case prerequisite (a line before intravenous potassium), and that the monitor is not required first.",
    "Both follow-ups, what triggers each and what discharges each.",
    "Everything the endocrinologist and the intensivist say.",

@@ -536,7 +536,15 @@ body[data-right="wide"] .labt th:not(.lb),body[data-right="wide"] .labt td:not(.
 .fitem table{border-collapse:collapse;width:100%;margin-top:2px}
 .fitem td{font-size:11.5px;padding:1px 0;vertical-align:top}
 .fitem td.lb{color:var(--ink2);padding-right:6px}
-.fitem td.vl{font-family:var(--mono);text-align:right;white-space:nowrap}
+/* Value and unit in their own columns (author instruction, 13 October 2026): the values
+   line up on their left edge, and the unit beside each is smaller and never bold. The
+   label column takes the spare width, so the values sit in one column on the right.
+   Each panel is its own table, so the two columns have fixed widths (a minimum, in the
+   cell's own font) to line up from one panel to the next. */
+.fitem td.lb,.fitem td.vl,.fitem td.un{vertical-align:baseline}
+.fitem td.vl{font-family:var(--mono);text-align:left;white-space:nowrap;width:5.6em;padding-left:8px}
+.fitem td.un{font-family:var(--mono);font-size:10px;font-weight:400;color:var(--ink3);
+  text-align:left;white-space:nowrap;width:5.6em;padding-left:4px}
 /* The reference range: shown when the record is expanded, which is the reading
    gesture, and hidden while docked, where the width holds a label and a number. */
 .fitem td.rf{font-family:var(--mono);font-size:10.5px;color:var(--ink3);text-align:right;
@@ -1013,6 +1021,13 @@ p{margin:0 0 10px;max-width:72ch}
 .ab:disabled:hover{background:rgba(255,255,255,.78);border-color:var(--rule);
   border-left-color:var(--rule);box-shadow:none}
 .ab .sm{display:block;font-size:11.5px;color:var(--ink3);font-family:var(--mono);margin-top:2px}
+/* An icon on a muted pastel tile beside the name (exam buttons, author instruction,
+   13 October 2026). Display only. The colours are per button, in BUTTON_ICON (ui.js). */
+.ab.hasic{display:flex;align-items:center;gap:10px;padding-top:6px;padding-bottom:6px;padding-left:9px}
+.abic{flex:none;width:26px;height:26px;border-radius:7px;background:var(--icbg);
+  display:grid;place-items:center}
+.abic svg{width:17px;height:17px;fill:none;stroke:var(--icfg);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
 .ab.done{border-left-color:var(--ok);background:var(--okl)}
 .ab.pend{border-left-color:var(--warn);background:var(--warnl)}
 .ab.blocked{border-left-color:var(--harm)}

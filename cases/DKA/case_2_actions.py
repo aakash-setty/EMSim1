@@ -259,7 +259,15 @@ act("potassium_chloride_kcl",
     flags_set=["potassium_iv_given"],
     prerequisites=IV_LINE,
     follow_ups_triggered=["repeat_potassium_after_replacement"],
-    nurse_alert="It's on the pump. It takes a while to run in.",
+    # A potassium order placed once the level is 3.5 or more is the maintenance order of
+    # the table's middle row (20 to 30 mEq per liter with the insulin). It is credited to a
+    # hidden target, judged on the phase at the moment of the order, and the nurse's second
+    # line is different (nurse_alert as a rule list, 13 October 2026).
+    also_satisfies=[{"id": "potassium_maintenance", "when": READY + " OR " + TREATED}],
+    nurse_alert=[
+      {"when": READY + " OR " + TREATED,
+       "value": "Twenty to thirty in each liter from here. I'll keep it running with the insulin."},
+      {"when": None, "value": "It's on the pump. It takes a while to run in."}],
     # The guard is read once, at the deadline. The nurse asks for the chemistry at 75
     # seconds, so the first potassium prompt comes after a learner who needed that prompt
     # can have the result (authoring 7.3 rule 4). The escalation reads as a first warning
@@ -323,7 +331,8 @@ INSULIN_NOTE = (
   "3.1, or before the result was back, it drove the level down to 2.6 and made her weak. "
   "Under 3.5, insulin is held and the potassium is replaced first. Insulin starts once "
   "the level is 3.5 or more, and between 3.5 and 5.5 it runs with potassium in the "
-  "fluids.\n\n"
+  "fluids, 20 to 30 mEq in each liter. The two orders go together. Insulin without the "
+  "potassium is the first mistake of this case made a second time, more slowly.\n\n"
   "The report recommends a fixed-rate infusion of 0.1 units per kg per hour, and accepts "
   "subcutaneous rapid-acting insulin every one to two hours for uncomplicated mild or "
   "moderate ketoacidosis. Either route counts in this case.\n\n"
@@ -513,6 +522,24 @@ act("repeat_potassium_level", ALWAYS("neutral"),
       "Not an order. The simulator credits this when a chemistry is sent once the "
       "potassium has run in, and the repeat-level follow-up reads it. A learner never "
       "sees it."))
+
+act("potassium_maintenance",
+    [{"when": READY + " OR " + TREATED, "value": "critical"}, {"when": None, "value": "neutral"}],
+    hidden=True, display_name="Potassium continued with the insulin",
+    expectation_label="Potassium in the fluids, 20 to 30 mEq per liter, with the insulin",
+    # Owner decision of 7 October 2026 ("Critical"), installed 13 October 2026. Spoken in
+    # the treated phase only, where insulin is running by definition. A done action never
+    # prompts, so it stops once the order is placed.
+    prompt={"deadline_seconds": 45, "guard": TREATED,
+            "text": "She's on insulin now. Do you want potassium in her fluids?"},
+    debrief_note=(
+      "Not an order of its own. The simulator credits this when intravenous potassium is "
+      "ordered again once the level is 3.5 or more, in the fluids with the insulin.\n\n"
+      "The table's middle row: with the potassium between 3.5 and 5.5, insulin runs and "
+      "potassium runs with it, 20 to 30 mEq in each liter, with a level every one to two "
+      "hours. Insulin keeps moving potassium into cells for as long as it runs, so a level "
+      "that was 3.6 when insulin started falls again without it. The first potassium "
+      "order got her to 3.5. This one keeps her there." + TABLE))
 
 act("handoff_submit", ALWAYS("neutral"),
     display_name="Submit handoff",

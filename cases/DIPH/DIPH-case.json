@@ -3439,49 +3439,61 @@
      {
       "when": "phase is pulseless_vt",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Wide-complex tachycardia at approximately 190 per minute. No organized mechanical activity. QRS duration approximately 200 ms."
+       "image": "diph-ecg-pulseless-vt",
+       "caption": "Twelve-lead ECG",
+       "comment": "Wide-complex tachycardia at approximately 190 per minute. No organized mechanical activity. QRS duration approximately 200 ms."
       }
      },
      {
       "when": "phase is wide_complex_tachycardia",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Monomorphic wide-complex tachycardia at approximately 180 per minute. QRS duration approximately 180 ms. No discernible P waves. Terminal R wave in aVR of 7 mm with an R to S ratio in aVR greater than 0.7. Rightward terminal QRS axis. No ST elevation."
+       "image": "diph-ecg-wide-complex-tachycardia",
+       "caption": "Twelve-lead ECG",
+       "comment": "Monomorphic wide-complex tachycardia at approximately 180 per minute. QRS duration approximately 180 ms. No discernible P waves. Terminal R wave in aVR of 7 mm with an R to S ratio in aVR greater than 0.7. Rightward terminal QRS axis. No ST elevation."
       }
      },
      {
       "when": "phase is seizing",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia at approximately 150 per minute. QRS duration 148 ms, wider than on the previous tracing. Terminal R wave in aVR of 6 mm. Rightward terminal QRS axis. QTc 512 ms. Frequent ventricular ectopics. Baseline heavily obscured by movement artifact."
+       "image": "diph-ecg-seizing",
+       "caption": "Twelve-lead ECG",
+       "comment": "Sinus tachycardia at approximately 150 per minute. QRS duration 148 ms, wider than on the previous tracing. Terminal R wave in aVR of 6 mm. Rightward terminal QRS axis. QTc 512 ms. Frequent ventricular ectopics. Baseline heavily obscured by movement artifact."
       }
      },
      {
       "when": "phase is stabilized",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms. Terminal R wave in aVR now 1 mm with an R to S ratio below 0.7. Normal QRS axis. QTc 445 ms. No ST elevation."
+       "image": "diph-ecg-stabilized",
+       "caption": "Twelve-lead ECG",
+       "comment": "Sinus tachycardia at approximately 100 per minute. QRS duration 96 ms. Terminal R wave in aVR now 1 mm with an R to S ratio below 0.7. Normal QRS axis. QTc 445 ms. No ST elevation."
       }
      },
      {
       "when": "phase is stabilizing",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms, narrower than on the arrival tracing. Terminal R wave in aVR now 2 mm with an R to S ratio below 0.7. QTc 470 ms, still prolonged. No ST elevation."
+       "image": "diph-ecg-stabilizing",
+       "caption": "Twelve-lead ECG",
+       "comment": "Sinus tachycardia at approximately 115 per minute. QRS duration 104 ms, narrower than on the arrival tracing. Terminal R wave in aVR now 2 mm with an R to S ratio below 0.7. QTc 470 ms, still prolonged. No ST elevation."
       }
      },
      {
       "when": "phase is presentation AND flag bicarb_given set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia at approximately 135 per minute. QRS duration 116 ms, narrower than on the arrival tracing. Terminal R wave in aVR of 3 mm. QTc 480 ms. No ST elevation."
+       "image": "diph-ecg-arrival-after-bicarbonate",
+       "caption": "Twelve-lead ECG",
+       "comment": "Sinus tachycardia at approximately 135 per minute. QRS duration 116 ms, narrower than on the arrival tracing. Terminal R wave in aVR of 3 mm. QTc 480 ms. No ST elevation."
       }
      },
      {

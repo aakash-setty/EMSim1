@@ -487,10 +487,11 @@ section('interview readouts');
   chk('the unmatched answer is the case fallback',
       sp[1].body === resolve((CASE.interview.global_answer_rules || [])
                              .concat(CASE.interview.out_of_scope_fallback), asked));
-  /* The filter itself lives in ui.js, outside the engine block this harness evaluates,
-     so it is asserted against the built file rather than executed. */
-  chk('the chart feed filters on matched',
-      /r\.kind===\'speech\'&&r\.matched/.test(html.replace(/\s+/g, '')),
+  /* The chart feed lives in ui.js, outside the engine block this harness evaluates, so
+     it is asserted against the built file rather than executed. Since 13 October 2026 no
+     patient answer, matched or not, is a chart row. */
+  chk('the chart feed adds no patient speech',
+      !/kind:'speech',name:/.test(html.replace(/\s+/g, '')),
       'ui.js feedItems');
 }
 
@@ -1881,6 +1882,19 @@ else {
       const got = shown([[1, eff(cid)]]);
       chk(PACK.prefix + ': ' + cid + ' puts ' + dev[cid] + ' on the figure, and nothing else',
           got.length === 1 && got[0] === dev[cid], got.join('+'));
+    }
+    /* 13 October 2026. Every case shows its twelve-lead as a tracing: each picture an ECG rule
+       names is in this build and has a caption, and every generated one keeps its read for
+       the debrief as its comment (DIPH's supplied arrival tracing has none, by design). */
+    {
+      const er = (((CASE.content_keys || {}).imaging || {}).ecg_12_lead || {}).rules || [];
+      const imgs = er.map(r => r.value).filter(v => v && v.kind === 'image');
+      chk(PACK.prefix + ': every twelve-lead rule is a tracing', er.length > 0 && imgs.length === er.length,
+          er.length + ' rules, ' + imgs.length + ' tracings');
+      chk(PACK.prefix + ': each tracing is in the build and has a caption',
+          imgs.every(v => !!(PACK.media || {})[v.image] && !!v.caption), imgs.map(v => v.image).join());
+      chk(PACK.prefix + ': each generated tracing keeps its read for the debrief',
+          imgs.every(v => v.image === 'diph-ecg-arrival' || !!v.comment));
     }
     /* 11 October 2026. The pads follow the button in every case, not a rule the case authored. */
     const worn = (SHARED.patient || {}).wornActions || {};

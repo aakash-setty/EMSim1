@@ -6,6 +6,14 @@ def gs(findings, abnormal=True):
     return {"kind": "general_status", "abnormal": abnormal, "findings": findings}
 def rep(text, abnormal=True):
     return {"kind": "report", "abnormal": abnormal, "report": text}
+def ecg_image(image_id, caption, read, abnormal=True):
+    # 13 October 2026, author instruction. The twelve-lead is shown as the tracing
+    # (authoring section 23), drawn by the ECG generator from `read` (media/README.md).
+    # The caption is the machine measurements a real tracing prints. `read` is the case's
+    # own reading, kept as the comment: the debrief prints it under the tracing, and
+    # nothing shows it while the case runs.
+    return {"kind": "image", "abnormal": abnormal, "image": image_id, "caption": caption,
+            "comment": read}
 def c(label, value, unit, ref, abn):
     return {"label": label, "value": value, "unit": unit, "reference_range": ref, "abnormal": abn}
 def panel(comps, comment=None, kind="panel", verify=None):
@@ -359,28 +367,39 @@ IMAGING = {
    "management, and length in a report reads as importance, so a long report about a "
    "negative study is actively misleading."),
 
+ # Each tier is a generated tracing since 13 October 2026, its read kept for the debrief.
  # Five tiers, keyed on how much rate control is on board rather than on the phase,
  # because that is what decides the rate on the tracing. The two phase-guarded rules come
  # first, per the rule-ordering guidance: the ventilated phase carries its own rate, and
  # the respiratory-failure phase is the one place a rate-controlled patient is still fast.
  "ecg_12_lead": {"changes_with_state": True, "result_shape": "structured", "rules": [
    {"when": "phase is intubated",
-    "value": rep("Atrial fibrillation, ventricular rate approximately 118. Irregularly "
+    "value": ecg_image("afrvr-ecg-intubated",
+      "Twelve-lead ECG. Ventricular rate 118, QRS 92 ms, QTc 444 ms",
+      "Atrial fibrillation, ventricular rate approximately 118. Irregularly "
       "irregular, no P waves. Narrow QRS at 92 ms. No ST elevation. QTc 444 ms.")},
    {"when": "phase is respiratory_failure AND flag rate_control_adequate set",
-    "value": rep("Atrial fibrillation, ventricular rate approximately 130. Irregularly "
+    "value": ecg_image("afrvr-ecg-respiratory-failure-rate-controlled",
+      "Twelve-lead ECG. Ventricular rate 130, QRS 90 ms, QTc 446 ms",
+      "Atrial fibrillation, ventricular rate approximately 130. Irregularly "
       "irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V5 and "
       "V6. No ST elevation. QTc 446 ms.")},
    {"when": "flag rate_control_adequate set",
-    "value": rep("Atrial fibrillation, ventricular rate approximately 105. Irregularly "
+    "value": ecg_image("afrvr-ecg-rate-control-adequate",
+      "Twelve-lead ECG. Ventricular rate 105, QRS 92 ms, QTc 442 ms",
+      "Atrial fibrillation, ventricular rate approximately 105. Irregularly "
       "irregular, no P waves. Narrow QRS at 92 ms. Horizontal ST depression 0.5 mm in V5 "
       "and V6. No ST elevation. QTc 442 ms.")},
    {"when": "flag rate_control_given set",
-    "value": rep("Atrial fibrillation, ventricular rate approximately 140. Irregularly "
+    "value": ecg_image("afrvr-ecg-one-rate-control-dose",
+      "Twelve-lead ECG. Ventricular rate 140, QRS 90 ms, QTc 446 ms",
+      "Atrial fibrillation, ventricular rate approximately 140. Irregularly "
       "irregular, no P waves. Narrow QRS at 90 ms. Horizontal ST depression 1 mm in V4 to "
       "V6. No ST elevation. QTc 446 ms.")},
    {"when": None,
-    "value": rep("Atrial fibrillation with rapid ventricular response, ventricular rate "
+    "value": ecg_image("afrvr-ecg-arrival-default",
+      "Twelve-lead ECG. Ventricular rate 160, QRS 88 ms, QTc 448 ms",
+      "Atrial fibrillation with rapid ventricular response, ventricular rate "
       "approximately 160. Irregularly irregular, no P waves. Narrow QRS at 88 ms, no delta "
       "wave. Horizontal ST depression up to 1.5 mm in V4 to V6. No ST elevation, no Q "
       "waves. QTc 448 ms.")}]},

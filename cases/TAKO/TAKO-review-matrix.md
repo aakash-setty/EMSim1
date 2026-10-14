@@ -444,7 +444,14 @@ Single unconditional rule; nothing to enumerate.
 
 ### `imaging/ecg_12_lead`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| case_complete | rule 2 (phase is steadied OR phase is case_complete) &rarr;  | plausible |
+| obstructed | rule 0 (phase is obstructed) &rarr;  | plausible |
+| shock_untreated | rule 1 ((phase is shock_worse OR phase is shock_untreated)) &rarr;  | plausible |
+| shock_worse | rule 1 ((phase is shock_worse OR phase is shock_untreated)) &rarr;  | plausible |
+| steadied | rule 2 (phase is steadied OR phase is case_complete) &rarr;  | plausible |
+| «any other phase» | rule 3 (default) &rarr;  | plausible |
 
 
 ### `imaging/xr_chest`

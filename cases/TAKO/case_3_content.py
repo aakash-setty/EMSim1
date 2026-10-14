@@ -57,6 +57,23 @@ def report(text, abnormal=True, comment=None):
     return d
 
 
+# 13 October 2026, author instruction. The twelve-lead is shown as the tracing (authoring
+# section 23), drawn by the ECG generator from ECG_READ (media/README.md). The case has one
+# read for every state and it quotes no rate. A picture has a rate, so there is one per
+# phase rate (124 obstructed, 138 in shock, 104 steadied, 115 on arrival), all with this
+# read, which is kept as the comment the debrief prints. The caption is the machine
+# measurements without the rate.
+ECG_READ = ("Sinus tachycardia. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST "
+            "depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, "
+            "QTc 470 ms.")
+
+
+def tako_ecg(stem):
+    return {"kind": "image", "abnormal": True, "image": "tako-ecg-" + stem,
+            "caption": "Twelve-lead ECG. PR 160 ms, QRS 92 ms, QTc 470 ms",
+            "comment": ECG_READ, "verify": VERIFY}
+
+
 def always(v):
     return [{"when": None, "value": v}]
 
@@ -200,12 +217,15 @@ IMAGING = {
    "Section 9.4. Findings only: no report names takotsubo or obstruction. No report "
    "carries a comment, because the interface never shows a comment on a report. The "
    "interpretation is in each study's debrief note. The ECG report quotes no rate, because "
-   "three vital effects on the heart rate have no end (authoring 9.4)."),
+   "three vital effects on the heart rate have no end (authoring 9.4). Since 13 October 2026 "
+   "the ECG is a tracing, one per phase rate, whose read is its comment, printed in the "
+   "debrief, and whose caption quotes no rate."),
 
- "ecg_12_lead": {"changes_with_state": False, "rules": always(report(
-     "Sinus tachycardia. ST elevation 2 to 3 mm in V2 to V5 and 1 mm in II. ST "
-     "depression in aVR. No ST elevation in V1. No ST depression elsewhere. QRS 92 ms, "
-     "QTc 470 ms."))},
+ "ecg_12_lead": {"changes_with_state": True, "rules": [
+     {"when": OBS, "value": tako_ecg("obstructed")},
+     {"when": WORSE, "value": tako_ecg("shock")},
+     {"when": STEADY + " OR phase is case_complete", "value": tako_ecg("steadied")},
+     {"when": None, "value": tako_ecg("arrival-default")}]},
 
  # Authored from what this pack's own notes say about the film: clear lungs, a normal
  # mediastinum and a normal heart size. The catalog default did not mention the mediastinum.

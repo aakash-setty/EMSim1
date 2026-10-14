@@ -6,7 +6,7 @@
  "counts": {
   "exact": 57,
   "mapped": 0,
-  "unmatched": 4
+  "unmatched": 5
  },
  "group_coverage": {
   "normal_saline_1l_bolus": [
@@ -309,6 +309,12 @@
    "catalog_id": null,
    "status": "unmatched",
    "note": "Hidden target. Credited through also_satisfies when a chemistry is sent once the potassium has run in. Read by the repeat-level follow-up. Not a button."
+  },
+  {
+   "case_id": "potassium_maintenance",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited through also_satisfies when intravenous potassium is ordered again once the level is 3.5 or more. Critical in those phases, and it carries the prompt for potassium in the fluids. Not a button."
   },
   {
    "case_id": "handoff_submit",

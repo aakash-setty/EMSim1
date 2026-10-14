@@ -723,10 +723,10 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| improving | rule 1 (phase is improving OR phase is intubated_stabilized) &rarr; ABNORMAL: Sinus rhythm at 94. Left ventricular hypertrophy by voltage criteria. ... | plausible |
-| intubated_stabilized | rule 1 (phase is improving OR phase is intubated_stabilized) &rarr; ABNORMAL: Sinus rhythm at 94. Left ventricular hypertrophy by voltage criteria. ... | plausible |
-| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; ABNORMAL: Sinus tachycardia at 128. Left ventricular hypertrophy by voltage crit... | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Sinus tachycardia at 116. Left ventricular hypertrophy by voltage crit... | plausible |
+| improving | rule 1 (phase is improving OR phase is intubated_stabilized) &rarr;  | plausible |
+| intubated_stabilized | rule 1 (phase is improving OR phase is intubated_stabilized) &rarr;  | plausible |
+| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr;  | plausible |
+| «any other phase» | rule 2 (default) &rarr;  | plausible |
 
 
 ### `imaging/pocus_lung_cardiac`

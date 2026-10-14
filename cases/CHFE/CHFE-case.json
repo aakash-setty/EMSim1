@@ -3150,25 +3150,31 @@
      {
       "when": "phase is post_intubation_hypotension",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia at 128. Left ventricular hypertrophy by voltage criteria. Q waves in V1 to V4 with associated T wave inversion, unchanged in morphology from the earlier tracing. No acute ST elevation and no new ST depression. QTc 456 ms."
+       "image": "chfe-ecg-post-intubation-hypotension",
+       "caption": "Twelve-lead ECG. Ventricular rate 128, PR 160 ms, QRS 90 ms, QTc 456 ms",
+       "comment": "Sinus tachycardia at 128. Left ventricular hypertrophy by voltage criteria. Q waves in V1 to V4 with associated T wave inversion, unchanged in morphology from the earlier tracing. No acute ST elevation and no new ST depression. QTc 456 ms."
       }
      },
      {
       "when": "phase is improving OR phase is intubated_stabilized",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus rhythm at 94. Left ventricular hypertrophy by voltage criteria. Q waves in V1 to V4 with T wave inversion, unchanged. No acute ST elevation. QTc 448 ms."
+       "image": "chfe-ecg-improving-or-intubated-stable",
+       "caption": "Twelve-lead ECG. Ventricular rate 94, PR 160 ms, QRS 90 ms, QTc 448 ms",
+       "comment": "Sinus rhythm at 94. Left ventricular hypertrophy by voltage criteria. Q waves in V1 to V4 with T wave inversion, unchanged. No acute ST elevation. QTc 448 ms."
       }
      },
      {
       "when": null,
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Sinus tachycardia at 116. Left ventricular hypertrophy by voltage criteria. Q waves in V1 to V4 with associated T wave inversion, consistent with an established anterior infarct. No acute ST elevation, no new ST depression, no reciprocal change. No atrial fibrillation or flutter. QTc 452 ms."
+       "image": "chfe-ecg-arrival-default",
+       "caption": "Twelve-lead ECG. Ventricular rate 116, PR 160 ms, QRS 90 ms, QTc 452 ms",
+       "comment": "Sinus tachycardia at 116. Left ventricular hypertrophy by voltage criteria. Q waves in V1 to V4 with associated T wave inversion, consistent with an established anterior infarct. No acute ST elevation, no new ST depression, no reciprocal change. No atrial fibrillation or flutter. QTc 452 ms."
       }
      }
     ],

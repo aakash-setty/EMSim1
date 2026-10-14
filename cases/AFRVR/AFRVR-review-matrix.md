@@ -722,18 +722,18 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | rate_control_adequate | rate_control_given | resolves to | reachable? |
 |---|---|---|---|---|
-| intubated | no | no | rule 0 (phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 118. Irregularly i... | plausible |
-| intubated | no | yes | rule 0 (phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 118. Irregularly i... | plausible |
-| intubated | yes | no | rule 0 (phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 118. Irregularly i... | plausible |
-| intubated | yes | yes | rule 0 (phase is intubated) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 118. Irregularly i... | plausible |
-| respiratory_failure | no | no | rule 4 (default) &rarr; ABNORMAL: Atrial fibrillation with rapid ventricular response, ventricular rate ... | plausible |
-| respiratory_failure | no | yes | rule 3 (flag rate_control_given set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 140. Irregularly i... | plausible |
-| respiratory_failure | yes | no | rule 1 (phase is respiratory_failure AND flag rate_control_adequate set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 130. Irregularly i... | plausible |
-| respiratory_failure | yes | yes | rule 1 (phase is respiratory_failure AND flag rate_control_adequate set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 130. Irregularly i... | plausible |
-| «any other phase» | no | no | rule 4 (default) &rarr; ABNORMAL: Atrial fibrillation with rapid ventricular response, ventricular rate ... | plausible |
-| «any other phase» | no | yes | rule 3 (flag rate_control_given set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 140. Irregularly i... | plausible |
-| «any other phase» | yes | no | rule 2 (flag rate_control_adequate set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 105. Irregularly i... | plausible |
-| «any other phase» | yes | yes | rule 2 (flag rate_control_adequate set) &rarr; ABNORMAL: Atrial fibrillation, ventricular rate approximately 105. Irregularly i... | plausible |
+| intubated | no | no | rule 0 (phase is intubated) &rarr;  | plausible |
+| intubated | no | yes | rule 0 (phase is intubated) &rarr;  | plausible |
+| intubated | yes | no | rule 0 (phase is intubated) &rarr;  | plausible |
+| intubated | yes | yes | rule 0 (phase is intubated) &rarr;  | plausible |
+| respiratory_failure | no | no | rule 4 (default) &rarr;  | plausible |
+| respiratory_failure | no | yes | rule 3 (flag rate_control_given set) &rarr;  | plausible |
+| respiratory_failure | yes | no | rule 1 (phase is respiratory_failure AND flag rate_control_adequate set) &rarr;  | plausible |
+| respiratory_failure | yes | yes | rule 1 (phase is respiratory_failure AND flag rate_control_adequate set) &rarr;  | plausible |
+| «any other phase» | no | no | rule 4 (default) &rarr;  | plausible |
+| «any other phase» | no | yes | rule 3 (flag rate_control_given set) &rarr;  | plausible |
+| «any other phase» | yes | no | rule 2 (flag rate_control_adequate set) &rarr;  | plausible |
+| «any other phase» | yes | yes | rule 2 (flag rate_control_adequate set) &rarr;  | plausible |
 
 
 ### `imaging/ultrasound_cardiac`

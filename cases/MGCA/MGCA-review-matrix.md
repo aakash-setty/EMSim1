@@ -1104,12 +1104,12 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Sinus tachycardia at 136 to 140. Normal axis. QRS 84 ms, QTc 458 ms. N... | plausible |
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Sinus tachycardia at 150. Normal axis. PR 128 ms, QRS 84 ms, QTc 468 m... | plausible |
-| improving | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Sinus tachycardia at 110 to 118. Normal axis. Normal intervals. No ST ... | plausible |
-| progressive_meningococcemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Sinus tachycardia at 136 to 140. Normal axis. QRS 84 ms, QTc 458 ms. N... | plausible |
-| stabilized_shock | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; ABNORMAL: Sinus tachycardia at 110 to 118. Normal axis. Normal intervals. No ST ... | plausible |
-| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Sinus tachycardia at 124. Normal axis. PR 132 ms, QRS 82 ms, QTc 448 m... | plausible |
+| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr;  | plausible |
+| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr;  | plausible |
+| improving | rule 2 (phase is improving OR phase is stabilized_shock) &rarr;  | plausible |
+| progressive_meningococcemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr;  | plausible |
+| stabilized_shock | rule 2 (phase is improving OR phase is stabilized_shock) &rarr;  | plausible |
+| «any other phase» | rule 3 (default) &rarr;  | plausible |
 
 
 ### `imaging/xr_chest`

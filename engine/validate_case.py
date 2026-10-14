@@ -269,6 +269,12 @@ def collect_all_conditions(case):
         pr = a.get("prompt")
         if pr and pr.get("guard"):
             conds.append((f"prompt_guard/{a['catalog_id']}", pr["guard"]))
+        # A nurse_alert may be a rule list (13 October 2026).
+        na = a.get("nurse_alert")
+        if isinstance(na, list):
+            for i, r in enumerate(na):
+                if r.get("when"):
+                    conds.append((f"nurse_alert/{a['catalog_id']}[{i}]", r["when"]))
 
     for f in case["follow_ups"]:
         if f.get("applies_when"):

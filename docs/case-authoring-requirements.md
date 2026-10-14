@@ -319,7 +319,7 @@ The catalog template narrates each order ("Giving {name}."). Exams and interview
 | Field | What it does |
 |---|---|
 | `narration_override` | Replaces the catalog line. **Default.** Only where the standard line would be wrong or confusing |
-| `nurse_alert` | A second line, said straight after the catalog's own, colored and filed in the running chart, said again on a repeat dose, never a prompt and never counted against the cap |
+| `nurse_alert` | A second line, said straight after the catalog's own, colored and filed in the running chart, said again on a repeat dose, never a prompt and never counted against the cap. A string, or a rule list (`[{"when": <condition>, "value": "..."}, {"when": null, "value": "..."}]`) resolved against the state at the moment of the order, so a repeat of the same drug in a later phase can carry a different line. DKA's potassium says "it takes a while to run in" on arrival and "twenty to thirty in each liter" once the level is 3.5 or more |
 
 **Default.** Reach for `nurse_alert` where the learner will need the words again after they have scrolled away: a drug that takes time, a repeat that is expected, a consequence that is coming.
 
@@ -855,6 +855,9 @@ The third is "do it again after". Author a case action whose only job is to be t
 - **Truth. A caption is a caption, not a reading.** "Twelve-lead ECG", or the machine measurements a real tracing prints, which a learner would have at the bedside. "Wide-complex tachycardia with a terminal R in aVR" is the answer.
 - **Truth.** Nothing in the tool chain can see what an image shows. It is the only authored content whose correctness rests entirely on a person having looked at it. Before using one, write down: that the picture matches the phase, that no number the case needs the learner to read has been lost from the interface (if so, it belongs in the caption), and that some studies showing themselves in text while others do not is a choice you can defend.
 - **Truth.** Do not put anything in `media/` whose source you cannot account for.
+
+- **Default (13 October 2026). A twelve-lead is a generated tracing.** Draw it with the ECG generator from the case's own read, as WebP 1800 pixels wide, and record in `media/README.md` the script, the date and anything the read left open that the drawing had to choose. Put the read in `comment`, which the debrief prints under the tracing. The caption is `Twelve-lead ECG.` followed by the machine measurements in the case's own numbers (ventricular rate, PR, QRS, QTc), with no closing period because the chart adds one, less any the case holds back: DIPH prints none, and DKA and TAKO print no rate because vital effects move it. Where the read leaves an interval open, take it from the phase's monitor block, so the caption and the monitor agree.
+- **Truth. A tracing has a rate, and a read need not.** Where one rule covers states with different heart rates, give each rate its own rule and picture (TAKO since 13 October 2026), or the picture contradicts the monitor. Where a vital effect moves the rate within a state, draw the rate on the likely path and say which in the README (DKA: with fluid after arrival).
 
 **Sign-off.** A named person has looked at each picture beside the sentences the case says about it, in the phase it is assigned to.
 

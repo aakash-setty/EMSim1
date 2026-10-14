@@ -33,6 +33,12 @@ potassium over 5.5) replaced the rate and the intervals read from the consensus 
 Hyponatremia and acute kidney injury are no longer credited diagnoses. DKA-SEED.md
 section 5b has the list and the reasoning.
 
+## Changed on 13 October 2026
+
+A second potassium order once the level is 3.5 or more (potassium in the fluids with the
+insulin) is a critical action with its own nurse line, a prompt and an endocrinology tier,
+by the owner's decision of 7 October. DKA-SEED.md section 5c.
+
 ## Most likely to be wrong
 
 1. The potassium in each state, and that insulin at 3.1 produces weakness and ectopy at 2.6.
@@ -54,17 +60,17 @@ section 5b has the list and the reasoning.
 |---|---|
 | Phases | 5 clinical and 1 terminal |
 | Timed transitions | 6, every one the delayed consequence of an action |
-| Case actions | 61: 43 orders, studies and consults, 14 exams, 3 hidden targets and the handoff |
-| Actions that can be critical | 11 |
-| Prompts | 9 actions prompt. One has an escalation |
+| Case actions | 62: 43 orders, studies and consults, 14 exams, 4 hidden targets and the handoff |
+| Actions that can be critical | 12 |
+| Prompts | 10 actions prompt. One has an escalation |
 | Follow-ups | 2 |
-| Case-only actions | 4: the handoff and the three hidden targets |
+| Case-only actions | 5: the handoff and the four hidden targets |
 | Interview topics | 35, with 439 hand-written phrasings and 1067 in all. 71 out-of-scope bank entries. 6 topics carry facts |
-| Additional diagnoses | 6 |
-| Scenarios | 36 of 36 pass |
-| Engine checks | 823 pass. 540 are case-agnostic and 283 are this pack's |
+| Additional diagnoses | 4 |
+| Scenarios | 37 of 37 pass |
+| Engine checks | 767 pass on the one-pack build of 13 October 2026 |
 | Validator tests | 76 pass |
-| Validator | 0 errors and 1 warning. The warning names the four case-only actions and stays for good |
+| Validator | 0 errors and 1 warning. The warning names the five case-only actions and stays for good |
 
 ## Vital effects are teaching choices
 

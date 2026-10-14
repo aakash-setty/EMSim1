@@ -4,7 +4,7 @@
  "note": "End-to-end paths. Steps cost eight seconds each on the runner's clock, and waits are whole seconds, so the runner cannot express a gap shorter than eight seconds. The runner does not implement also_satisfies. Where a route depends on a hidden target (early_insulin, insulin_restart), the scenario names the target as a step straight after the order that earns it in the engine, and its note says so. DKA-tests.js folds the real routes through the engine with fractional times and is the authority.",
  "scenarios": [
   {
-   "name": "Intended path: glucose, gas and chemistry, fluid, potassium, a repeat level, insulin, the dextrose plan, handoff",
+   "name": "Intended path: glucose, gas and chemistry, fluid, potassium, a repeat level, insulin with potassium in the fluids, the dextrose plan, handoff",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -22,6 +22,7 @@
     },
     "basic_chemistry_chem_7",
     "insulin_drip",
+    "potassium_chloride_kcl",
     {
      "wait": 12
     },
@@ -596,6 +597,29 @@
    ],
    "expect_phase": "presentation",
    "note": "The follow-up side of this is in DKA-tests.js. The runner does not model follow-ups."
+  },
+  {
+   "name": "Potassium with the insulin changes no phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "basic_chemistry_chem_7",
+    "potassium_chloride_kcl",
+    {
+     "wait": 24
+    },
+    "basic_chemistry_chem_7",
+    "insulin_drip",
+    {
+     "wait": 12
+    },
+    "potassium_chloride_kcl",
+    {
+     "wait": 30
+    }
+   ],
+   "expect_phase": "treated",
+   "note": "The second potassium order credits the hidden potassium_maintenance target. The runner cannot see that credit. The engine tests do."
   }
  ]
 }

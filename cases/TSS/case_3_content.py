@@ -57,6 +57,16 @@ def report(text, abnormal=True, comment=None, verify=None):
     return d
 
 
+def ecg_image(image_id, caption, read, abnormal=True):
+    """13 October 2026, author instruction. The twelve-lead is shown as the tracing
+    (authoring section 23), drawn by the ECG generator from `read` (media/README.md). The
+    caption is the machine measurements a real tracing prints. `read` is the case's own
+    reading, kept as the comment: the debrief prints it under the tracing, and nothing
+    shows it while the case runs."""
+    return {"kind": "image", "abnormal": abnormal, "image": image_id, "caption": caption,
+            "comment": read, "verify": VERIFY}
+
+
 def always(v):
     return [{"when": None, "value": v}]
 
@@ -327,8 +337,16 @@ HR = {"presentation": 128, "fluid_responsive": 114, "hypotensive": 138, "support
       "profound_shock": 148, "stabilizing": 116}
 
 
+# 13 October 2026: one generated tracing per phase (ecg_image above).
+ECG_IMAGE = {"presentation": "arrival-default", "fluid_responsive": "fluid-responsive",
+             "hypotensive": "hypotensive", "supported": "supported",
+             "profound_shock": "profound-shock", "stabilizing": "stabilizing"}
+
+
 def ecg(p):
-    return report(
+    return ecg_image(
+      "tss-ecg-" + ECG_IMAGE[p],
+      "Twelve-lead ECG. Ventricular rate %d, PR 140 ms, QRS 84 ms, QTc 430 ms" % HR[p],
       "Sinus tachycardia at %d. Normal axis. PR 140 ms, QRS 84 ms, QTc 430 ms. No ST "
       "elevation or depression." % HR[p])
 
