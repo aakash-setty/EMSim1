@@ -175,6 +175,15 @@ button{font:inherit;color:inherit}
 .nintro-line{font-size:22px;line-height:1.4;color:var(--ink);letter-spacing:-.005em}
 .nintro.flying .nintro-face{transition:transform .75s cubic-bezier(.5,0,.2,1),border-width .75s ease,box-shadow .75s ease}
 /* ---------- author notes (temporary, author instruction, 14 October 2026) ---------- */
+/* Search's column holds the Note button above it, so the header keeps its four columns.
+   Note is small and unlabelled, and its panel opens under the whole column, like Search's.
+   The Note button floats above Search and takes no space, so Search sits exactly where it
+   did beside Voice Order. */
+.vstack{position:relative;align-self:center;display:flex;flex-direction:column;align-items:center}
+.vstack .devnote{position:static;gap:0}
+.devnote .voicebtn{position:absolute;bottom:calc(100% + 6px);left:50%;margin-left:-14px;
+  width:28px;height:28px;box-shadow:none}
+.devnote .voicebtn svg{width:14px;height:14px}
 .devnpanel{width:min(440px,92vw);padding:14px}
 .devn-head{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink3);margin-bottom:8px}
 .devn-n{font-family:var(--mono);letter-spacing:0;text-transform:none;font-weight:400;margin-left:6px}
@@ -2015,6 +2024,24 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
     <!-- Search, beside the microphone and built the same way. It searches every tab, so it
          belongs with the controls that act on the whole case rather than in the record's
          own header. It navigates and never acts. -->
+    <div class="vstack">
+      <!-- Author notes (temporary, author instruction, 14 October 2026). A note typed here is
+           kept with a snapshot of the case and listed at the bottom of the debrief. A small
+           button above Search, in Search's column, so the header grid is unchanged. -->
+      <div class="voice devnote" id="devnote" hidden>
+      <button class="voicebtn" id="devnotebtn" type="button" aria-expanded="false" aria-haspopup="true"
+              title="Note to self about this moment in the case" aria-label="Write a note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19.5h4l10-10a2.8 2.8 0 0 0-4-4l-10 10v4z"/><path d="M13.5 7l3.5 3.5"/></svg>
+      </button>
+      <div class="voicepanel devnpanel" id="devnotepanel" role="dialog" aria-label="Write a note" hidden>
+        <div class="devn-head">Note to self <span class="devn-n" id="devnoten"></span></div>
+        <textarea id="devnotebox" class="devn-box" rows="4" spellcheck="true"
+                  placeholder="What is wrong or worth checking here? Enter saves, Shift and Enter for a new line. The case clock waits while you type."></textarea>
+        <div class="devn-foot"><span class="devn-msg" id="devnotemsg"></span>
+          <button class="btn ghost" id="devnoteclose" type="button">Close</button>
+          <button class="btn" id="devnotesave" type="button">Save note</button></div>
+      </div>
+    </div>
     <div class="voice" id="search">
       <button class="voicebtn" id="searchbtn" type="button" aria-expanded="false" aria-haspopup="true"
               title="Search everything (Ctrl or Cmd and K)" aria-label="Search everything" disabled>
@@ -2031,22 +2058,6 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
         <div class="srch-body" id="searchresults"></div>
       </div>
     </div>
-    <!-- Author notes (temporary, author instruction, 14 October 2026). A note typed here is
-         kept with a snapshot of the case and listed at the bottom of the debrief. -->
-    <div class="voice" id="devnote" hidden>
-      <button class="voicebtn" id="devnotebtn" type="button" aria-expanded="false" aria-haspopup="true"
-              title="Write a note to yourself about this moment in the case" aria-label="Write a note">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19.5h4l10-10a2.8 2.8 0 0 0-4-4l-10 10v4z"/><path d="M13.5 7l3.5 3.5"/></svg>
-      </button>
-      <span class="voicelab">Note</span>
-      <div class="voicepanel devnpanel" id="devnotepanel" role="dialog" aria-label="Write a note" hidden>
-        <div class="devn-head">Note to self <span class="devn-n" id="devnoten"></span></div>
-        <textarea id="devnotebox" class="devn-box" rows="4" spellcheck="true"
-                  placeholder="What is wrong or worth checking here? Enter saves, Shift and Enter for a new line. The case clock waits while you type."></textarea>
-        <div class="devn-foot"><span class="devn-msg" id="devnotemsg"></span>
-          <button class="btn ghost" id="devnoteclose" type="button">Close</button>
-          <button class="btn" id="devnotesave" type="button">Save note</button></div>
-      </div>
     </div>
     <div class="monwrap">
       <div class="mon" id="monitor"></div>

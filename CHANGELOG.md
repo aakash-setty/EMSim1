@@ -7,7 +7,9 @@ is usable with learners.
 
 ## Author notes during a case (14 October 2026, author instruction, temporary)
 
-A Note button beside Search opens a box for a note to yourself at any moment in a case.
+A small Note button above Search opens a box for a note to yourself at any moment in a case.
+(It first went in as a third header button, which pushed the monitor onto its own row. It now
+shares Search's column and takes no space, so the header is laid out exactly as before.)
 Enter saves it (Shift and Enter for a new line) and the case clock waits while the box has
 the focus. Each note is kept with a snapshot of the case at that moment: the case, the time,
 the state, the vitals, the flags, every action so far with its time, what is pending and
