@@ -2032,8 +2032,10 @@ document.addEventListener('click',e=>{
     finish(); return;
   }
   if(t.id==='earlyexit'){ log({actionId:'early_exit',kind:'early_exit'}); finish(); return; }
-  if(t.id==='restart'){ askReplay(); return; }
-  if(t.id==='revealanswers'){ revealAnswers(); return; }
+  /* Replay starts the case again at once. Revealing the answers asks first, offering one
+     more try (author instruction, 14 October 2026; until then the question guarded Replay). */
+  if(t.id==='restart'){ restart(); return; }
+  if(t.id==='revealanswers'){ askReplay(); return; }
   if(t.id==='pickanother'){ toPickerFromDebrief(); return; }
 });
 document.addEventListener('keydown',e=>{
@@ -3403,7 +3405,7 @@ function releaseClock(){
 }
 
 el('reflectok').addEventListener('click',closeReflect);
-/* Replay this case asks first. */
+/* Reveal Case Answers asks first, and offers one more try instead. */
 function askReplay(){ el('replayview').classList.remove('hidden'); el('replayok').focus(); }
 function closeReplay(){ el('replayview').classList.add('hidden'); }
 /* The other choice is to read the answers instead (author instruction). */

@@ -5,6 +5,15 @@ is usable with learners.
 
 ---
 
+## "Are you sure?" moves from Replay to Reveal Case Answers (14 October 2026, author instruction)
+
+Replay this case now starts the case again at once, from the results screen and from the
+full debrief. Reveal Case Answers asks first: "Once you see the answers, you will know what
+the case was testing. You can try it one more time first, from the beginning." Reveal
+answers opens the debrief, and Try it one more time replays the case.
+
+---
+
 ## Author notes during a case (14 October 2026, author instruction, temporary)
 
 A small Note button above Search opens a box for a note to yourself at any moment in a case.
