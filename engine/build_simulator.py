@@ -166,7 +166,12 @@ shared = {
     # 2026: fluids can be ordered from Actions as well as Stabilization). The buttons are
     # the same actions, and a pick on either tab is one pick: it shows on both and is
     # ordered once.
-    "groupAlsoOn": {"interventions": [["stabilization", "Fluids"]]},
+    "groupAlsoOn": {"interventions": [["stabilization", "Fluids"]],
+                    # Author instruction, 14 October 2026: the ultrasounds also sit in Bedside
+                    # Tests, in their own closed drop-down (subgroupCollapsed below). They stay
+                    # under Imaging as well. A pick in either place is one pick.
+                    "investigations": [{"from": ["investigations", "Imaging", "Ultrasound"],
+                                        "into": "Bedside Tests"}]},
     # v0.26. Order of the subgroups inside a group. Entries with no subgroup come first.
     # A group listed in subgroupTabs draws its subgroups as sub-tabs, one showing at a
     # time. Any other group draws them as headings inside the one folder.
@@ -177,7 +182,14 @@ shared = {
                                    "Point of care", "Other"]},
     # Subgroups drawn as a closed drop-down inside their folder, opened on a click. A filter
     # opens them. Author instruction, 11 October 2026.
-    "subgroupCollapsed": {"Lab Work": ["CSF"]},
+    "subgroupCollapsed": {"Lab Work": ["CSF"], "Bedside Tests": ["Ultrasound"]},
+    # A subgroup's own closed drop-down for its less-used entries, by catalog id, drawn after
+    # the rest of the subgroup (author instruction, 14 October 2026).
+    "subgroupExtra": {"Blood, green top (lithium heparin)": {
+        "label": "Additional tests",
+        "ids": ["acetaminophen_level", "amylase", "beta_hydroxybutyrate", "c_reactive_protein_crp",
+                "creatine_kinase_ck", "lactate_dehydrogenase_ldh", "osmolality", "phosphate_level",
+                "plasma_procalcitonin", "salicylate_aspirin_level", "uric_acid"]}},
     # v0.26c. A colour chip beside a subgroup heading: the tube top. Display only.
     "subgroupSwatch": {"Blood, lavender or pink top (EDTA)": "#A98BD8",
                        "Blood, light blue top (citrate)": "#8CC8EE",
@@ -186,6 +198,9 @@ shared = {
     # Temporary, for validating cases (author instruction, 14 October 2026): the Note button
     # in the header and the notes at the bottom of the debrief. False removes both.
     "authorNotes": True,
+    # Drugs acting, drawn above the patient's head (author instruction, 14 October 2026):
+    # the cases it is switched on for. AFRVR first; the rest once it is approved.
+    "medOverlayCases": ["AFRVR"],
     # Author instruction, 13 October 2026. The buttons of these groups come in this order,
     # by catalog id, instead of alphabetically. Anything not named follows, alphabetically.
     "buttonOrder": {"Examination": ["exam_neck", "exam_heent", "exam_card", "exam_pulm",

@@ -750,9 +750,16 @@ function actionsFor(tab){
   for(const id in ACT){
     const a=ACT[id];
     if(a.hidden||a.menu_hidden) continue;
+    if(isStopOrder(id)) continue;                  /* a stop order is the cross on its drip's button */
     const mine=a.groups||[a.group];
     const gs=a.tab===tab?mine.slice():[];
-    for(const [t,g] of also) if(a.tab===t&&mine.includes(g)&&!gs.includes(g)) gs.push(g);
+    for(const x of also){
+      /* [tab, group]: the whole group, under its own name. {from:[tab, group, subgroup], into}:
+         one subgroup of it, inside another group, where it keeps its subgroup heading. */
+      if(Array.isArray(x)){ const [t,g]=x; if(a.tab===t&&mine.includes(g)&&!gs.includes(g)) gs.push(g); }
+      else if(x&&x.from&&a.tab===x.from[0]&&mine.includes(x.from[1])&&(!x.from[2]||a.subgroup===x.from[2])
+              &&!gs.includes(x.into)) gs.push(x.into);
+    }
     if(!gs.length) continue;
     if(hits&&!hits.has(id)) continue;
     for(const g of gs) (out[g]=out[g]||[]).push(id);
@@ -839,6 +846,37 @@ function groupIconHTML(tab,g){
   const ic=(GROUP_ICON[tab]||{})[g];
   return ic?`<span class="abic gic" style="--icbg:${ic.bg};--icfg:${ic.fg}" aria-hidden="true"><svg viewBox="0 0 24 24">${ic.d}</svg></span>`:'';
 }
+
+/* ---------- drips are stopped from their own button (author instruction, 14 October 2026) ----------
+   A catalog "Stop X" entry names the drip it stops (`stops`). Those entries leave the
+   menus, and a running drip's button carries a red cross that gives the stop order at once,
+   so it reaches the record as the drip stopping, exactly as the old button did. Voice and
+   the global search still know the stop orders by name. DRIP_STOP maps each drip, as this
+   pack names it (through its bindings), to its stop order. */
+let DRIP_STOP_FOR=null, DRIP_STOP={}, STOP_IDS=new Set();
+function dripStops(){
+  if(DRIP_STOP_FOR===PACK) return DRIP_STOP;
+  DRIP_STOP={}; STOP_IDS=new Set(); DRIP_STOP_FOR=PACK;
+  const eff=c=>((PACK&&PACK.bindings)||{})[c]||c, base=SHARED.actionsBase||{};
+  for(const cid in base){
+    const d=base[cid].stops; if(!d) continue;
+    const de=eff(d), se=eff(cid);
+    if(ACT[de]&&ACT[se]){ if(!DRIP_STOP[de]) DRIP_STOP[de]=se; STOP_IDS.add(se); }
+  }
+  return DRIP_STOP;
+}
+const isStopOrder=id=>{ dripStops(); return STOP_IDS.has(id); };
+/* Running: given, and not stopped since. Read off the run's timeline, the same events the
+   record shows, so the cross and the record cannot disagree. */
+function dripRunning(id){
+  const stop=dripStops()[id]; if(!stop||!ST) return false;
+  let on=false;
+  for(const x of ST.timeline){
+    if(x.type==='blocked') continue;
+    if(x.id===id) on=true; else if(x.id===stop) on=false;
+  }
+  return on;
+}
 /* The catalog id behind a button. A pack may bind a catalog entry to a case action with
    another id, so the order and the icons, which name catalog ids, look through it. */
 function catIdOf(id){
@@ -900,7 +938,13 @@ function actionButton(id,tab,grp){
   if(ic) cls+=' hasic';
   const label=ic?`<span class="abic" style="--icbg:${ic.bg};--icfg:${ic.fg}" aria-hidden="true"><svg viewBox="0 0 24 24">${ic.d}</svg></span><span>${esc(buttonLabel(a.name))}</span>`
                :esc(buttonLabel(a.name));
-  return `<button class="${cls}" data-act="${esc(id)}" data-tabof="${esc(tab||'')}"${now?' data-now="1"':''}>${label}</button>`;
+  /* The red cross, on a drip that is running: it stops the drip at once. */
+  const stopId=dripStops()[id];
+  const dripName=String(a.name).split(',')[0].trim().toLowerCase();   /* "Nitroglycerin infusion, start 50 ..." */
+  const cancel=stopId&&dripRunning(id)
+    ? `<span class="abstop" role="button" data-stop="${esc(stopId)}" data-tip="Cancel ${esc(dripName)}" aria-label="Cancel ${esc(dripName)}">\u00D7</span>`:'';
+  if(cancel) cls+=' hasstop';
+  return `<button class="${cls}" data-act="${esc(id)}" data-tabof="${esc(tab||'')}"${now?' data-now="1"':''}>${label}${cancel}</button>`;
 }
 /* v0.26. One group's buttons. Entries with no subgroup come first as a plain grid. The
    rest are split by subgroup, in PROTO.subgroupOrder, and drawn either as headings inside
@@ -935,7 +979,19 @@ function groupBody(tab,g,ids,filtering){
         html+=`<button class="subhead subfold" type="button" data-subfold="${esc(key)}" aria-expanded="${open}">${chip}${esc(s)}
           <span class="n">${by[s].length}</span><svg class="dbfold-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`;
         if(open) html+=grid(by[s]);
-      } else html+=`<div class="subhead">${chip}${esc(s)}</div>`+grid(by[s]);
+      } else {
+        /* A subgroup may keep its less-used entries in a closed drop-down of its own, after
+           the rest (PROTO.subgroupExtra; the green top's "Additional tests"). */
+        const ex=(PROTO.subgroupExtra||{})[s];
+        const extra=ex?by[s].filter(id=>ex.ids.includes(catIdOf(id))):[];
+        html+=`<div class="subhead">${chip}${esc(s)}</div>`+grid(extra.length?by[s].filter(id=>!extra.includes(id)):by[s]);
+        if(extra.length){
+          const key=tab+'|'+g+'|'+s+'|'+ex.label, open=filtering||SUBOPEN.has(key);
+          html+=`<button class="subhead subfold subextra" type="button" data-subfold="${esc(key)}" aria-expanded="${open}">${esc(ex.label)}
+            <span class="n">${extra.length}</span><svg class="dbfold-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`;
+          if(open) html+=grid(extra);
+        }
+      }
     }
   }
   return html;
@@ -1874,7 +1930,7 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
     +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,'
-    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart],[data-subtab],#askmic,[data-subfold],[data-cfilter]');
+    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart],[data-subtab],#askmic,[data-subfold],[data-cfilter],[data-stop]');
   if(t&&t.id==='soundbtn'){ AUDIO.toggle(); renderSound(); return; }
   AUDIO.unlock();
   /* Panel controls run before the ENDED guard and before the null check: the
@@ -1927,6 +1983,10 @@ document.addEventListener('click',e=>{
     render(); return;
   }
   if(ENDED&&!t.id) return;
+  /* The red cross on a running drip's button: the stop order, given at once rather than put
+     in the basket. It sits inside the drip's button and is matched first, so the click never
+     reaches the drip itself. */
+  if(t.dataset.stop){ log({actionId:t.dataset.stop}); render(); return; }
   if(t.dataset.act){
     const id=t.dataset.act, tabof=t.dataset.tabof;
     if(id.indexOf('interview_topic_')===0){
@@ -3687,6 +3747,152 @@ const DEVNOTES=(function(){
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind); else bind();
   return {debriefHTML, open, close, typing:()=>document.activeElement===$('devnotebox')};
+})();
+/* Syringe: a bolus, the label on the barrel and the plunger driven in as the drug takes
+   effect. Pump: an infusion, the labelled bag above it and the timer on its screen. */
+function mvSyringe(label,frac){
+  const p=Math.max(0,Math.min(1,frac));               // 0 = just given, 1 = fully pushed
+  const tx=3+p*19;                                    // the thumb rest slides toward the flange
+  const lx=26+p*58;                                   // the liquid drains toward the needle
+  const tl=Math.min(54,label.length*5.1);
+  return `<svg width="124" height="33" viewBox="0 0 104 28" aria-hidden="true">
+    <path d="M${tx} 14H40" stroke="#6f8798" stroke-width="2"/>
+    <rect x="${tx}" y="6.5" width="3" height="15" rx="1.2" fill="#6f8798"/>
+    <rect x="25" y="6" width="62" height="16" rx="3" fill="#fff"/>
+    <rect x="${lx}" y="7" width="${Math.max(0,86-lx)}" height="14" rx="2" fill="#d6eaf3"/>
+    <rect x="25" y="6" width="62" height="16" rx="3" fill="none" stroke="#6f8798" stroke-width="1.2"/>
+    <path d="M25 3.5v21" stroke="#6f8798" stroke-width="2" stroke-linecap="round"/>
+    <path d="M87 11h4v6h-4z" fill="#6f8798"/><path d="M91 14h12" stroke="#6f8798" stroke-width="1.1" stroke-linecap="round"/>
+    <text class="mvlab" x="56" y="17.3" text-anchor="middle" textLength="${tl}" lengthAdjust="spacingAndGlyphs">${label}</text>
+  </svg>`;
+}
+function mvPump(label,timer,fill){
+  return `<svg width="86" height="100" viewBox="0 0 74 86" aria-hidden="true">
+    <path d="M37 0v4" stroke="#6f8798" stroke-width="1.4"/>
+    <path d="M13 5h48a3 3 0 0 1 3 3v22a9 9 0 0 1-9 9H19a9 9 0 0 1-9-9V8a3 3 0 0 1 3-3z" fill="#fff"/>
+    <path d="M11 ${8+22*(1-fill)}h52v${Math.max(0,22*fill)}a8 8 0 0 1-8 8H19a8 8 0 0 1-8-8z" fill="#d6eaf3" opacity=".9"/>
+    <path d="M13 5h48a3 3 0 0 1 3 3v22a9 9 0 0 1-9 9H19a9 9 0 0 1-9-9V8a3 3 0 0 1 3-3z" fill="none" stroke="#6f8798" stroke-width="1.2"/>
+    <text class="mvlab" x="37" y="24" text-anchor="middle" textLength="${Math.min(48,label.length*5.1)}" lengthAdjust="spacingAndGlyphs">${label}</text>
+    <path d="M37 39v8" stroke="#6f8798" stroke-width="1.6"/>
+    <rect x="9" y="47" width="56" height="37" rx="6" fill="#eef2f5" stroke="#6f8798" stroke-width="1.2"/>
+    <rect class="mv-scrbg" x="15" y="53" width="44" height="17" rx="3" fill="#0f1a22"/>
+    <text class="mv-scr" x="37" y="65.5" text-anchor="middle">${timer}</text>
+    <circle cx="21" cy="77" r="2.2" fill="#38e07b"/><rect x="30" y="75" width="24" height="4" rx="2" fill="#c8d2da"/>
+  </svg>`;
+}
+
+/* ---------- drugs acting, above the patient's head (author instruction, 14 October 2026) ----------
+   A drug or fluid whose authored effect is delayed or timed, or that runs continuously, is
+   drawn above the patient while it acts. Drugs and fluids only: positive pressure has timed
+   effects too and is not a drug.
+
+   A bolus is a syringe with the drug's name on the barrel and a countdown under it to the
+   moment its effect is complete (the latest onset_seconds or duration_seconds among its
+   vital effects, or a timed flag's duration); the plunger is driven in as it counts down.
+   At zero the timer flashes green three times and the syringe shrinks away. A fluid bolus
+   is a labelled bag on a pump with the same countdown on the pump's screen.
+
+   A drip (a catalog entry marked persistent) is a labelled bag on a pump. Its screen counts
+   down to the drip's onset in the same way, flashes green three times at zero and then
+   reads ON, and the pump stays for as long as the drip runs (author instruction, 14 October
+   2026). A drip with no authored onset reads ON from the start. It shrinks away when its
+   stop order is given, which is the red cross on the drip's own button (dripStops).
+
+   Display only: it reads the run (ST.timeline, ACT, dripStops) and changes nothing. Timers
+   run on the case clock, so they stand still while the case is paused. Switched on per case
+   by SHARED.medOverlayCases; AFRVR first, by instruction. */
+const MEDVIS=(function(){
+  let host=null, els={}, done=new Set(), run=-1;
+  const on=()=>!!(PACK&&(SHARED.medOverlayCases||[]).includes(PACK.prefix));
+  function label(id){
+    let n=String(dispName(id)||id)
+      .replace(/^normal saline/i,'NS').replace(/^lactated ringer'?s/i,'LR')
+      .replace(/\b(bolus|drip|infusion|IV|IVP|PO|SL|sublingual|push)\b/gi,'')
+      .replace(/\s*\/\s*$/,'').replace(/\s+/g,' ').trim();
+    return n||String(id);
+  }
+  const isFluid=a=>a.group==='Fluids'||((a.groups||[]).includes('Fluids'));
+  const isDrug=a=>a.category==='medication'||isFluid(a);
+  function onsetOf(a){
+    let T=0;
+    for(const f of (a.vital_effects||[])) T=Math.max(T,+f.onset_seconds||0,+f.duration_seconds||0);
+    for(const f of (a.flags_set_timed||[])) T=Math.max(T,+f.duration_seconds||0);
+    return T;
+  }
+  function items(t){
+    const out=[], open={}, stops=dripStops(), stopped={};
+    for(const d in stops) (stopped[stops[d]]=stopped[stops[d]]||[]).push(d);
+    for(const x of ST.timeline){
+      if(x.type==='blocked'||x.type==='end'||x.t>t+1e-6) continue;
+      const id=x.id, a=ACT[id]; if(!a) continue;
+      if(stopped[id]){ for(const d of stopped[id]) if(open[d]){ open[d].end=x.t; open[d]=null; } continue; }
+      if(!isDrug(a)) continue;
+      const T=onsetOf(a);
+      if(a.persistent){
+        /* A second order for a running drip is the same drip. */
+        if(!open[id]){ const it={key:id+'@'+x.t,id,kind:'pump',drip:true,t0:x.t,onset:T>0?x.t+T:null,end:null}; out.push(it); open[id]=it; }
+        continue;
+      }
+      if(T>0) out.push({key:id+'@'+x.t,id,kind:isFluid(a)?'pump':'syringe',drip:false,t0:x.t,end:x.t+T,total:T});
+    }
+    return out;
+  }
+  function svgFor(it,t){
+    const lab=esc(label(it.id));
+    if(it.kind==='syringe') return mvSyringe(lab,(t-it.t0)/it.total);
+    if(it.drip){
+      const counting=it.onset!=null&&t<it.onset;
+      return mvPump(lab,counting?mmss(Math.max(0,Math.ceil(it.onset-t))):'ON',0.8);
+    }
+    return mvPump(lab,mmss(Math.max(0,Math.ceil(it.end-t))),Math.max(0.05,1-(t-it.t0)/it.total));
+  }
+  function clear(){ if(host) host.innerHTML=''; els={}; }
+  function place(){
+    const stage=el('patientstage'), fig=el('patientfig'); if(!stage||!fig||!host) return;
+    const s=stage.getBoundingClientRect(), f=fig.getBoundingClientRect();
+    /* Just above the hair: the drawing has a margin of empty space above the head, so the
+       row sits a little way into it. Never above the stage. */
+    const bottom=Math.max(0,Math.min(s.height-24,s.bottom-f.top-f.height*0.06));
+    host.style.bottom=bottom+'px';
+    host.style.maxHeight=Math.max(0,s.height-bottom-6)+'px';
+  }
+  function retire(n,key,flash){
+    n.dataset.finishing='1';
+    if(flash) n.classList.add('done');
+    setTimeout(()=>{ n.classList.add('gone'); },flash?1100:0);
+    setTimeout(()=>{ n.remove(); if(els[key]===n) delete els[key]; done.add(key); },flash?1550:450);
+  }
+  function update(){
+    if(!host){ const st=el('patientstage'); if(!st) return; host=document.createElement('div');
+      host.className='medvis'; host.setAttribute('aria-hidden','true'); st.appendChild(host); }
+    if(!ST||!inCase()||!on()){ if(Object.keys(els).length) clear(); return; }
+    if(run!==RUNID){ run=RUNID; done=new Set(); clear(); }
+    place();
+    const t=now(), live=new Set();
+    for(const it of items(t)){
+      if(done.has(it.key)) continue;
+      const finished=it.end!=null&&t>=it.end;
+      if(finished&&!els[it.key]&&t-it.end>3){ done.add(it.key); continue; }   /* long over, e.g. a skipped clock */
+      live.add(it.key);
+      let n=els[it.key];
+      if(!n){ n=document.createElement('div'); n.className='mv'; n.dataset.key=it.key; host.appendChild(n); els[it.key]=n;
+        /* A drip whose onset is already well past when it is first drawn does not flash. */
+        if(it.drip&&it.onset!=null&&t-it.onset>3) n.dataset.arrived='1'; }
+      if(n.dataset.finishing) continue;
+      n.innerHTML=svgFor(it,finished?it.end:t)+(it.kind==='syringe'
+        ?`<div class="mv-t">${mmss(finished?0:Math.max(0,Math.ceil(it.end-t)))}</div>`:'');
+      if(it.drip){
+        if(it.onset!=null&&t>=it.onset&&!n.dataset.arrived){
+          n.dataset.arrived='1'; n.classList.add('arrived');
+          setTimeout(()=>n.classList.remove('arrived'),1150);
+        }
+        if(finished) retire(n,it.key,false);       /* stopped: it shrinks away */
+      } else if(finished) retire(n,it.key,true);   /* acting: flash green, then go */
+    }
+    for(const k in els) if(!live.has(k)&&!els[k].dataset.finishing){ els[k].remove(); delete els[k]; }
+  }
+  setInterval(update,200);
+  return {update, items:()=>ST?items(now()):[]};
 })();
 
 /* ---------- boot ----------

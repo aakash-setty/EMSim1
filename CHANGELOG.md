@@ -5,6 +5,50 @@ is usable with learners.
 
 ---
 
+## Ultrasounds in Bedside Tests, and the green top's "Additional tests" (14 October 2026, author instruction)
+
+On Labs/Imaging, Bedside Tests now ends with a closed Ultrasound drop-down holding the eight
+ultrasounds, which are still under Imaging as well. They are the same orders in both places,
+so a pick shows in both and is sent once. The green-top labs keep their main list, and a
+closed "Additional tests" drop-down, in dark bold text, after it holds acetaminophen,
+amylase, beta-hydroxybutyrate, CRP, CK, LDH, osmolality, phosphate, procalcitonin, salicylate
+and uric acid. A filter opens both drop-downs, as it does every other.
+
+---
+
+## Drips stay until stopped, and are stopped from their own button (14 October 2026, author instruction)
+
+Every case: the "Stop ..." buttons (Stop Esmolol, Stop Norepinephrine and the rest) have
+left the menus. While a drip runs, its own button carries a red cross; hovering it
+highlights the cross and says "Cancel esmolol drip", and clicking it gives the stop order at
+once, so the record shows the drip stopping exactly as the old button did. Each drip is
+paired with its stop order through the catalog's `stops` link and the pack's bindings, so a
+case's own stop action (CHFE's "Stop the nitroglycerin infusion") is the one the cross
+gives. Voice and the global search still find the stop orders by name.
+
+AFRVR's overlay above the patient: a drip's pump now counts down to the drip's onset (10
+seconds for esmolol), flashes green three times at zero, then reads ON and stays until the
+drip is stopped, when it shrinks away. A drip with no authored onset reads ON from the start.
+Only drugs and fluids are drawn: positive pressure, whose saturation gain is authored over
+sixty seconds, no longer appears as a syringe.
+
+---
+
+## Drugs acting, drawn above the patient (14 October 2026, author instruction, AFRVR only)
+
+A drug whose authored effect is delayed or timed, or that runs continuously, is now drawn
+above the patient's head while it acts. A bolus is a syringe with the drug's name on the
+barrel, its plunger driven in as a countdown under it runs to the moment its effect is
+complete (the longest onset or duration among its effects). A fluid bolus is a labelled bag
+on a pump with the same countdown on the pump's screen. An infusion is a bag on a pump whose
+screen counts up how long it has run, until its Stop order. When one finishes, its timer
+flashes green three times and it shrinks away. In AFRVR that is the rate-control boluses
+(10 seconds), diltiazem's fall in pressure (15 seconds), the saline bolus (10 seconds) and
+every drip. Display only, on the case clock, and switched on per case by `medOverlayCases`
+in the shared build config, which names AFRVR alone until it is approved.
+
+---
+
 ## "Are you sure?" moves from Replay to Reveal Case Answers (14 October 2026, author instruction)
 
 Replay this case now starts the case again at once, from the results screen and from the

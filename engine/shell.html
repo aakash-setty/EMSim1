@@ -403,6 +403,33 @@ body[data-right="wide"] .ptstage{opacity:0}
   filter:drop-shadow(0 0 22px rgba(21,48,66,.20));animation:ptin .7s var(--ease) both}
 @keyframes ptin{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
 .pt-svg{display:block;width:100%;height:auto;overflow:visible;margin-bottom:-3%}
+/* ---------- drugs acting, above the patient's head (author instruction, 14 October 2026) ---------- */
+.medvis{position:absolute;left:0;right:0;display:flex;flex-wrap:wrap-reverse;justify-content:center;
+  align-items:flex-end;gap:10px 12px;padding:0 10px;pointer-events:none;z-index:2}
+.mv{display:flex;flex-direction:column;align-items:center;gap:4px;transform-origin:50% 100%;
+  padding:7px 9px 8px;border-radius:12px;background:rgba(255,255,255,.78);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  box-shadow:0 10px 24px -14px rgba(21,48,66,.55),0 0 0 1px rgba(29,58,74,.08);
+  animation:mvin .45s cubic-bezier(.2,.8,.3,1) both}
+@keyframes mvin{from{opacity:0;transform:translateY(8px) scale(.6)}to{opacity:1;transform:none}}
+.mv svg{display:block;overflow:visible}
+.mv .mvlab{font:600 9px/1 var(--sans,system-ui);fill:#1d3a4a}
+.mv-t{font:600 11px/1 var(--mono,monospace);color:#1d3a4a;background:rgba(255,255,255,.92);
+  border:1px solid rgba(29,58,74,.16);border-radius:9px;padding:3px 7px;font-variant-numeric:tabular-nums;
+  box-shadow:0 2px 6px -3px rgba(21,48,66,.35)}
+.mv-scr{font:600 10.5px/1 var(--mono,monospace);fill:#38e07b}
+/* Finished: the timer flashes green three times, then the drug shrinks away. */
+.mv.done .mv-t{animation:mvflash .36s ease-in-out 3}
+.mv.done .mv-scrbg{animation:mvflashbg .36s ease-in-out 3}
+.mv.done .mv-scr{fill:#fff}
+@keyframes mvflash{0%,100%{background:rgba(255,255,255,.92);color:#1d3a4a}50%{background:#2fb35f;color:#fff;border-color:#2fb35f}}
+@keyframes mvflashbg{0%,100%{fill:#0f1a22}50%{fill:#2fb35f}}
+/* A drip's onset: the screen flashes green three times, and the pump stays. */
+.mv.arrived .mv-scrbg{animation:mvflashbg .36s ease-in-out 3}
+.mv.gone{animation:mvout .42s cubic-bezier(.5,0,.75,0) forwards}
+@keyframes mvout{to{opacity:0;transform:scale(.15)}}
+@media (prefers-reduced-motion:reduce){ .mv{animation:none} .mv.gone{animation:mvfade .3s forwards} @keyframes mvfade{to{opacity:0}} }
+
 
 /* ============================================================
    LEFT PANEL: the workspace. Slides out from behind the rail.
@@ -1044,6 +1071,17 @@ p{margin:0 0 10px;max-width:72ch}
 .ab:disabled:hover{background:rgba(255,255,255,.78);border-color:var(--rule);
   border-left-color:var(--rule);box-shadow:none}
 .ab .sm{display:block;font-size:11.5px;color:var(--ink3);font-family:var(--mono);margin-top:2px}
+/* The red cross on a running drip (author instruction, 14 October 2026): stops it at once.
+   It highlights on hover, with its own tooltip, "Cancel esmolol drip". */
+.abstop{position:relative;display:inline-flex;align-items:center;justify-content:center;vertical-align:-3px;
+  width:19px;height:19px;margin-left:9px;border-radius:50%;border:1.5px solid #d4483f;color:#c0302a;
+  background:#fff;font-size:15px;line-height:1;font-weight:700;cursor:pointer;
+  transition:background .12s ease,color .12s ease,box-shadow .12s ease}
+.abstop:hover{background:#d4483f;color:#fff;box-shadow:0 0 0 3px rgba(212,72,63,.22)}
+.abstop::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  white-space:nowrap;font:500 12px/1.2 var(--sans,inherit);color:#fff;background:#1d2a33;padding:5px 8px;border-radius:5px;
+  box-shadow:0 6px 16px -8px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .12s ease;z-index:5}
+.abstop:hover::after{opacity:1}
 /* An icon on a muted pastel tile beside the name (exam buttons, author instruction,
    13 October 2026). Display only. The colours are per button, in BUTTON_ICON (ui.js). */
 .ab.hasic{display:flex;align-items:center;gap:10px;padding-top:6px;padding-bottom:6px;padding-left:9px}
@@ -1107,6 +1145,9 @@ p{margin:0 0 10px;max-width:72ch}
 .subhead.subfold .dbfold-arrow{width:18px;height:18px;margin-left:6px}
 .subhead.subfold[aria-expanded="true"] .dbfold-arrow{transform:rotate(180deg)}
 .subhead.subfold:hover{color:var(--act)}
+/* A subgroup's own drop-down ("Additional tests"): dark, bold, in sentence case. */
+.subhead.subextra{color:var(--ink);font-weight:700;font-size:13.5px;letter-spacing:0;text-transform:none;
+  border-top:0;padding-top:12px}
 .subhead .swatch{flex:0 0 auto;width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
 .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
 .basket{background:var(--actl);border:1px solid var(--actb);border-radius:3px;
