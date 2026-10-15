@@ -2095,9 +2095,11 @@
      {
       "when": null,
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": false,
-       "report": "Lungs clear. Mediastinum not widened. Heart size normal.",
+       "image": "tako-cxr-normal",
+       "caption": "Chest radiograph",
+       "comment": "Lungs clear. Mediastinum not widened. Heart size normal.",
        "verify": "Derived by a model from this pack's other values on 7 October 2026. No new clinical claim was intended. Not from a physician. [UNVERIFIED] Restates the chest film debrief note and the catalog default."
       }
      }

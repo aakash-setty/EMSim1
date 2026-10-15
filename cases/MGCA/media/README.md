@@ -15,3 +15,12 @@ release (authoring section 23).]
 | `mgca-ecg-adrenal-crisis-or-progressive-rash.webp` | `MGCA-02-adrenal-crisis-or-progressive-rash` | Twelve-lead ECG. Ventricular rate 138, PR 132 ms, QRS 84 ms, QTc 458 ms | 138 (the read) | moderate |
 | `mgca-ecg-improving-or-stabilized.webp` | `MGCA-03-improving-or-stabilized` | Twelve-lead ECG. Ventricular rate 114, PR 132 ms, QRS 84 ms, QTc 448 ms | 114 (the read) | moderate |
 | `mgca-ecg-arrival-default.webp` | `MGCA-04-arrival-default` | Twelve-lead ECG. Ventricular rate 124, PR 132 ms, QRS 82 ms, QTc 448 ms | 124 (the read) | moderate |
+
+## Chest film (added 14 October 2026)
+
+`mgca-cxr-normal.webp` is `Normal/Normal_Female.png` from the folder "Images Manual - Chest XRay" that Aakash Setty
+supplied on 14 October 2026, converted to WebP (quality 82, 1024 pixels, greyscale). It is
+shown captioned "Chest radiograph" with no read; the read is the comment the debrief prints.
+Its original source is not recorded here. [UNVERIFIED: record where the film came from and
+that it may be used, and have a named person look at it beside its read, in its state, before
+release (authoring section 23).]

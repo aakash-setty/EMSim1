@@ -345,11 +345,20 @@ ECG_RULES.append({"when": None, "value": ecg("pres")})
 
 IMAGING = {
  "authoring_note": (
-   "Section 9.4. The chest film and the abdominal CT are left to the catalog defaults, "
-   "which are normal, and that is intended. The ECG is a tracing whose caption quotes "
+   "Section 9.4. The abdominal CT is left to the catalog default, which is normal, and "
+   "that is intended. The chest film is a normal film whose read is the catalog's normal one. The ECG is a tracing whose caption quotes "
    "no rate, and its read, findings only, is the debrief comment. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc "
    "as its report here, without the ondansetron increment."),
  "ecg_12_lead": {"changes_with_state": True, "rules": ECG_RULES},
+
+ # 14 October 2026, author instruction: the chest film is shown as a normal female film
+ # (media/README.md), captioned only, with the catalog's own normal read as the comment the
+ # debrief prints. Until then the catalog default answered in words.
+ "xr_chest": {"changes_with_state": False, "rules": always({
+     "kind": "image", "abnormal": False, "image": "dka-cxr-normal", "caption": "Chest radiograph",
+     "comment": ("Lungs clear. No consolidation, effusion or pneumothorax. Cardiac silhouette "
+                 "normal in size. No acute bony abnormality."),
+     "verify": VERIFY})},
 
  # The catalog default says the vena cava is of normal caliber. This pack credits
  # hypovolemia and authors a dry mouth, reduced turgor, flat neck veins and a fast pulse,

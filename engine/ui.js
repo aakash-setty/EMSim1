@@ -1929,7 +1929,7 @@ SEM.onChange(()=>{ if(!ENDED && TAB==='history') renderTab(); });
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
-    +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,'
+    +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,#homebtn,'
     +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart],[data-subtab],#askmic,[data-subfold],[data-cfilter],[data-stop]');
   if(t&&t.id==='soundbtn'){ AUDIO.toggle(); renderSound(); return; }
   AUDIO.unlock();
@@ -2097,6 +2097,7 @@ document.addEventListener('click',e=>{
   if(t.id==='restart'){ restart(); return; }
   if(t.id==='revealanswers'){ askReplay(); return; }
   if(t.id==='pickanother'){ toPickerFromDebrief(); return; }
+  if(t.id==='homebtn'){ toPickerFromDebrief(); return; }
 });
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target.id==='askbox'&&e.target.value.trim()) ask(e.target.value.trim());
@@ -2285,11 +2286,22 @@ function dbFold(title,inner,sub){
     <svg class="dbfold-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
     <div class="dbfold-body">${inner}</div></details>`;
 }
+/* Case discussion, the left column of the debrief (author instruction, 14 October 2026).
+   A textbook-style chapter on the case: learning goals, the physiology, figures. It is
+   authored per case in cases/<P>/<P>-discussion.html and carried on the pack, so a locked
+   pack carries its own. Reviewer markers in square brackets are stripped as everywhere else.
+   A case without one shows the heading and a line saying so. */
+function discussionHTML(){
+  const body=learnerText(PACK.discussion||'');
+  return `<aside class="dbsec cdisc" aria-labelledby="cdisch"><h2 id="cdisch">Case discussion</h2>
+    ${body?`<div class="cdbody">${body}</div>`:'<p class="sub cdnone">Not written yet for this case.</p>'}</aside>`;
+}
 function revealAnswers(){
   REVEALED=true; AN.track('debrief_revealed',{case:PACK.prefix});
   const v=el('endview');
-  v.innerHTML='<div class="endwrap">'
-    +(ST.halted?haltCard():'')+(ST.failed?failCard():'')+debriefHTML()+'</div>';
+  /* Two columns: the case discussion on the left, the run's own debrief on the right. */
+  v.innerHTML='<div class="endwrap two"><div class="dbcols">'+discussionHTML()
+    +'<div class="dbmain">'+(ST.halted?haltCard():'')+(ST.failed?failCard():'')+debriefHTML()+'</div></div></div>';
   v.scrollTop=0;
 }
 

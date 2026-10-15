@@ -643,7 +643,24 @@ def build_pack(pack):
         "addlDx": addl_dx,
         "promptCap": case.get("prompt_cap_recommendation", {}).get("per_phase", 3),
         "buildNotes": notes,
+        # Case discussion, the left column of the debrief (author instruction, 14 October
+        # 2026): cases/<PREFIX>/<PREFIX>-discussion.html, an HTML fragment with its figures as
+        # inline SVG. Optional. It rides on the pack, so a locked case keeps its discussion
+        # in its private pack and the public stub carries none of it.
+        "discussion": load_discussion(pack),
     }
+
+
+def load_discussion(pack):
+    """The case discussion fragment, or "" when the case has none. No scripts: the page's
+    Content-Security-Policy allows inline scripts by hash only, and a discussion is reading."""
+    p = pack.path("discussion.html")
+    if not os.path.exists(p):
+        return ""
+    s = open(p, encoding="utf-8").read()
+    if "<script" in s.lower() or re.search(r"\son[a-z]+\s*=", s, re.I):
+        raise SystemExit(f"{pack.prefix}: {os.path.basename(p)} may not contain scripts or event handlers")
+    return s.strip()
 
 
 MEDIA_TYPES = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",

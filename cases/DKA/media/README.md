@@ -21,3 +21,12 @@ release (authoring section 23).]
 | `dka-ecg-recovering.webp` | `DKA-08-recovering` | Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 450 ms | 102 (phase vitals with fluid, 102 (112 less 10)) | moderate |
 | `dka-ecg-ondansetron-other-states.webp` | `DKA-09-ondansetron-other-states` | Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 465 ms | 112 (arrival vitals, 112) | moderate |
 | `dka-ecg-arrival-default.webp` | `DKA-10-arrival-default` | Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 460 ms | 112 (arrival vitals, 112) | moderate |
+
+## Chest film (added 14 October 2026)
+
+`dka-cxr-normal.webp` is `Normal/Normal_Female.png` from the folder "Images Manual - Chest XRay" that Aakash Setty
+supplied on 14 October 2026, converted to WebP (quality 82, 1024 pixels, greyscale). It is
+shown captioned "Chest radiograph" with no read; the read is the comment the debrief prints.
+Its original source is not recorded here. [UNVERIFIED: record where the film came from and
+that it may be used, and have a named person look at it beside its read, in its state, before
+release (authoring section 23).]

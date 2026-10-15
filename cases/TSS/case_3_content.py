@@ -353,11 +353,20 @@ def ecg(p):
 
 IMAGING = {
  "authoring_note": (
-   "Section 9.4. The chest film is left to the catalog default, which is normal, and that "
-   "is intended: her lungs are clear. The CT shows the tampon, so it is a second and slower "
+   "Section 9.4. The chest film is a normal film whose read is the catalog's normal one, and "
+   "that is intended: her lungs are clear. The CT shows the tampon, so it is a second and slower "
    "route to the source for a learner who did not examine her."),
 
  "ecg_12_lead": {"changes_with_state": True, "rules": by_phase(ecg)},
+
+ # 14 October 2026, author instruction: the chest film is shown as a normal female film
+ # (media/README.md), captioned only, with the catalog's own normal read as the comment the
+ # debrief prints. Until then the catalog default answered in words.
+ "xr_chest": {"changes_with_state": False, "rules": always({
+     "kind": "image", "abnormal": False, "image": "tss-cxr-normal", "caption": "Chest radiograph",
+     "comment": ("Lungs clear. No consolidation, effusion or pneumothorax. Cardiac silhouette "
+                 "normal in size. No acute bony abnormality."),
+     "verify": VERIFY})},
 
  "ultrasound_cardiac": {"changes_with_state": False, "rules": always(report(
      "Hyperdynamic left ventricle. No pericardial effusion. Right ventricle not dilated. "

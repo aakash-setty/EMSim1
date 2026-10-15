@@ -715,7 +715,7 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | intubated | resolves to | reachable? |
 |---|---|---|---|
-| «any phase» | no | rule 1 (default) &rarr; ABNORMAL: Portable AP chest. Cardiomegaly with a cardiothoracic ratio above 0.6.... | plausible |
+| «any phase» | no | rule 1 (default) &rarr;  | plausible |
 | «any phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Portable AP chest. Endotracheal tube tip approximately 4 cm above the ... | plausible |
 
 

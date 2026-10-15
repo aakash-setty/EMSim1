@@ -3588,7 +3588,7 @@
    }
   },
   "imaging": {
-   "authoring_note": "Section 9.4. The chest film and the abdominal CT are left to the catalog defaults, which are normal, and that is intended. The ECG is a tracing whose caption quotes no rate, and its read, findings only, is the debrief comment. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc as its report here, without the ondansetron increment.",
+   "authoring_note": "Section 9.4. The abdominal CT is left to the catalog default, which is normal, and that is intended. The chest film is a normal film whose read is the catalog's normal one. The ECG is a tracing whose caption quotes no rate, and its read, findings only, is the debrief comment. Each phase's monitor block in case_1_shell.py carries the same QRS and QTc as its report here, without the ondansetron increment.",
    "ecg_12_lead": {
     "changes_with_state": true,
     "rules": [
@@ -3699,6 +3699,22 @@
        "image": "dka-ecg-arrival-default",
        "caption": "Twelve-lead ECG. PR 140 ms, QRS 88 ms, QTc 460 ms",
        "comment": "Sinus tachycardia. Subtle T wave flattening in the chest leads. Small U waves in V2 and V3. No ST elevation or depression. QRS 88 ms, QTc about 460 ms.",
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+      }
+     }
+    ]
+   },
+   "xr_chest": {
+    "changes_with_state": false,
+    "rules": [
+     {
+      "when": null,
+      "value": {
+       "kind": "image",
+       "abnormal": false,
+       "image": "dka-cxr-normal",
+       "caption": "Chest radiograph",
+       "comment": "Lungs clear. No consolidation, effusion or pneumothorax. Cardiac silhouette normal in size. No acute bony abnormality.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }

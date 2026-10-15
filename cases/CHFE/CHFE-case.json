@@ -3136,9 +3136,11 @@
      {
       "when": null,
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Portable AP chest. Cardiomegaly with a cardiothoracic ratio above 0.6. Upper zone vascular redistribution, bilateral perihilar interstitial opacification with Kerley B lines at both bases. Small bilateral pleural effusions blunting both costophrenic angles. No pneumothorax. No focal consolidation. No endotracheal tube present."
+       "image": "chfe-cxr-edema",
+       "caption": "Chest radiograph",
+       "comment": "Portable AP chest. Cardiomegaly with a cardiothoracic ratio above 0.6. Upper zone vascular redistribution, bilateral perihilar interstitial opacification with Kerley B lines at both bases. Small bilateral pleural effusions blunting both costophrenic angles. No pneumothorax. No focal consolidation. No endotracheal tube present."
       }
      }
     ],

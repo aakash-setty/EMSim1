@@ -5624,9 +5624,11 @@
      {
       "when": null,
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": false,
-       "report": "Portable AP chest. Lungs clear. No focal consolidation, no effusion, no pneumothorax. Heart size and mediastinal contours normal. No endotracheal tube present."
+       "image": "mgca-cxr-normal",
+       "caption": "Chest radiograph",
+       "comment": "Portable AP chest. Lungs clear. No focal consolidation, no effusion, no pneumothorax. Heart size and mediastinal contours normal. No endotracheal tube present."
       }
      }
     ],

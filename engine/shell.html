@@ -886,6 +886,10 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
    a wide tracing on a narrow screen can be panned instead of being shrunk to illegibility. */
 .imgwrap{overflow:auto;padding:10px;flex:1 1 auto;background:#fff}
 .imgwrap img{display:block;max-width:100%;height:auto}
+/* A chest film is square, and at full width its bases, where the effusions and the Kerley B
+   lines are, fell below the card (14 October 2026). The picture is held to the card's height
+   as well, so a film shows whole; a wide tracing is limited by its width, as before. */
+.imgwrap img{width:auto;max-height:calc(92vh - 66px)}
 
 .imgthumb{appearance:none;padding:0;border:1px solid var(--rule);border-radius:4px;
   background:#fff;cursor:pointer;display:block;margin:4px 0 2px;overflow:hidden;
@@ -1438,6 +1442,46 @@ details.catfold[open] .dbfold-arrow{transform:rotate(180deg)}
 /* ---------- halt / debrief ---------- */
 .endview{position:fixed;top:var(--top);left:0;right:0;bottom:0;z-index:45;overflow-y:auto}
 .endwrap{max-width:1000px;margin:0 auto;padding:0 20px 70px}
+/* Debrief, two columns (author instruction, 14 October 2026): the case discussion on the
+   left, everything the debrief already showed on the right. One column below 1100px, with
+   the run's own debrief first. */
+.endwrap.two{max-width:1500px}
+.dbcols{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:16px;align-items:start;padding-top:22px}
+.dbcols .dbf{padding-top:0}
+.dbcols .dbmain>:first-child{margin-top:0}
+.cdisc{background:rgba(255,255,255,.95);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  border:1px solid var(--rule2);border-radius:5px;padding:18px 22px 22px;box-shadow:0 10px 34px -26px var(--shadow);
+  font-size:14.5px;line-height:1.55;color:var(--ink)}
+.cdisc h3{font-size:17px;font-weight:600;text-transform:none;letter-spacing:0;margin:24px 0 6px;color:var(--ink)}
+.cdisc p{margin:0 0 10px}
+.cdisc ol,.cdisc ul{margin:0 0 10px;padding-left:22px}
+.cdisc li{margin:0 0 4px}
+.cdisc .cd-goals{background:var(--actl);border:1px solid var(--actb);border-radius:5px;padding:4px 16px 8px;margin:4px 0 6px}
+.cdisc .cd-goals h3{margin-top:12px;color:var(--act)}
+.cd-fig{margin:14px 0 16px;padding:12px 12px 10px;background:#FBFCFD;border:1px solid var(--rule2);border-radius:5px}
+.cd-svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto;font-family:var(--sans)}
+.cd-fig figcaption{font-size:12.5px;color:var(--ink2);margin-top:8px;line-height:1.45}
+.cd-table{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0 14px}
+.cd-table th{text-align:left;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--rule);padding:6px 8px 6px 0}
+.cd-table td{vertical-align:top;border-bottom:1px solid var(--rule2);padding:7px 8px 7px 0}
+.cd-table td:first-child{font-weight:600;width:24%}
+.cd-refs{font-size:12.5px;color:var(--ink2);border-top:1px solid var(--rule2);margin-top:18px}
+.cdnone{margin:0}
+@media (max-width:1100px){.dbcols{grid-template-columns:minmax(0,1fr)}.dbcols .cdisc{order:2}}
+
+/* Return to Home. While the case is over (the end view is up) the nurse has nothing to say,
+   so her portrait and line give way to a home button in the same place. */
+.homebtn{display:none;align-items:center;gap:12px;border:0;background:none;padding:0;cursor:pointer;font:inherit}
+.homeic{width:62px;height:62px;border-radius:50%;background:var(--act);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px -5px rgba(31,111,178,.6);transition:background .15s,transform .15s}
+.homeic svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.homelab{font-size:17px;font-weight:600;color:var(--act)}
+.homebtn:hover .homeic{background:#185C95;transform:scale(1.04)}
+.homebtn:focus-visible{outline:2px solid var(--act);outline-offset:4px;border-radius:34px}
+body:has(#endview:not(.hidden)) .nurse>.nurseface,
+body:has(#endview:not(.hidden)) .nurse>.nursesays{display:none}
+body:has(#endview:not(.hidden)) .homebtn{display:flex}
+
 /* An opaque surface. It was the translucent harm tint alone, over the blurred room,
    and the one paragraph on the page that explains why the case ended was the hardest
    one to read. The same glass the other debrief sections stand on, with the tint over it. */
@@ -2026,6 +2070,11 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
     <div class="nurse">
       <!-- alt is empty on purpose: the portrait repeats the "Nurse" label beside it and
            carries nothing a screen reader needs said twice. -->
+      <!-- Return to Home. Shown in the portrait's place once the case is over (CSS, keyed on
+         the end view being up). Author instruction, 14 October 2026. -->
+      <button class="homebtn" id="homebtn" type="button">
+        <span class="homeic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 11.2 12 4l8.5 7.2"/><path d="M6 9.6V20h4.6v-5.6h2.8V20H18V9.6"/></svg></span>
+        <span class="homelab">Return to Home</span></button>
       <img class="nurseface" src="__NURSE_AVATAR__" alt="" draggable="false">
       <div class="nursesays">
         <div class="nurselab">Nurse</div>

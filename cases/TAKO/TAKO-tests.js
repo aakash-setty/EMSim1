@@ -435,7 +435,8 @@ for (const t of [20, 190, 430]) for (const gasId of ['venous_blood_gas', 'arteri
 }
 chk('the capillary glucose is the chemistry glucose', order1('fingerstick_blood_sugar', A0, 20.5).value.components[0].value ===
   order1('basic_chemistry_chem_7', A0, 20.5).value.components.find(x => x.label === 'Glucose').value);
-chk('the chest film is authored, with the mediastinum the notes cite', order1('xr_chest', A0, 20.5).source === 'case' && /Mediastinum not widened/.test(order1('xr_chest', A0, 20.5).value.report));
+chk('the chest film is authored, with the mediastinum the notes cite', order1('xr_chest', A0, 20.5).source === 'case' && /Mediastinum not widened/.test(order1('xr_chest', A0, 20.5).value.comment));
+chk('and it is shown as a film, the read kept for the debrief', order1('xr_chest', A0, 20.5).value.kind === 'image' && order1('xr_chest', A0, 20.5).value.image === 'tako-cxr-normal');
 chk('the ECG read quotes no rate', !/\d+\./.test(order1('ecg_12_lead', A0, 190.5).value.comment.split('.')[0]) && /^Sinus tachycardia\./.test(order1('ecg_12_lead', A0, 190.5).value.comment));
 /* 13 October 2026. The ECG is a tracing per phase rate, with one read and no rate in the caption. */
 chk('every ECG rule is a tracing with the one read and no rate in its caption',

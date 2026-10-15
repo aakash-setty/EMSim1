@@ -229,9 +229,12 @@ IMAGING = {
 
  # Authored from what this pack's own notes say about the film: clear lungs, a normal
  # mediastinum and a normal heart size. The catalog default did not mention the mediastinum.
- "xr_chest": {"changes_with_state": False, "rules": always(dict(
-     report("Lungs clear. Mediastinum not widened. Heart size normal.", abnormal=False),
-     verify=DERIVED + "Restates the chest film debrief note and the catalog default."))},
+ # 14 October 2026, author instruction: shown as a normal female film (media/README.md),
+ # captioned only, with this read as the comment the debrief prints.
+ "xr_chest": {"changes_with_state": False, "rules": always({
+     "kind": "image", "abnormal": False, "image": "tako-cxr-normal", "caption": "Chest radiograph",
+     "comment": "Lungs clear. Mediastinum not widened. Heart size normal.",
+     "verify": DERIVED + "Restates the chest film debrief note and the catalog default."})},
 
  "ultrasound_cardiac": {"changes_with_state": True, "rules": [
    {"when": STEADY, "value": report(

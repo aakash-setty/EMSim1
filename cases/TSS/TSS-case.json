@@ -3258,7 +3258,7 @@
    }
   },
   "imaging": {
-   "authoring_note": "Section 9.4. The chest film is left to the catalog default, which is normal, and that is intended: her lungs are clear. The CT shows the tampon, so it is a second and slower route to the source for a learner who did not examine her.",
+   "authoring_note": "Section 9.4. The chest film is a normal film whose read is the catalog's normal one, and that is intended: her lungs are clear. The CT shows the tampon, so it is a second and slower route to the source for a learner who did not examine her.",
    "ecg_12_lead": {
     "changes_with_state": true,
     "rules": [
@@ -3325,6 +3325,22 @@
        "image": "tss-ecg-arrival-default",
        "caption": "Twelve-lead ECG. Ventricular rate 128, PR 140 ms, QRS 84 ms, QTc 430 ms",
        "comment": "Sinus tachycardia at 128. Normal axis. PR 140 ms, QRS 84 ms, QTc 430 ms. No ST elevation or depression.",
+       "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
+      }
+     }
+    ]
+   },
+   "xr_chest": {
+    "changes_with_state": false,
+    "rules": [
+     {
+      "when": null,
+      "value": {
+       "kind": "image",
+       "abnormal": false,
+       "image": "tss-cxr-normal",
+       "caption": "Chest radiograph",
+       "comment": "Lungs clear. No consolidation, effusion or pneumothorax. Cardiac silhouette normal in size. No acute bony abnormality.",
        "verify": "Model output, not from a physician or a laboratory reference. [UNVERIFIED]"
       }
      }

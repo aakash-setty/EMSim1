@@ -5,6 +5,40 @@ is usable with learners.
 
 ---
 
+## Debrief: Return to Home, two columns, and a case discussion (14 October 2026, author instruction)
+
+Every case: once a case is over, the nurse's portrait and line at the top left give way to a
+blue home button reading "Return to Home", which goes back to the case list. The revealed
+debrief is now two columns. The right column is everything the debrief showed before, in the
+same order. The left column is "Case discussion", a textbook-style chapter on the case read
+from `cases/<PREFIX>/<PREFIX>-discussion.html` (optional, HTML with inline SVG figures, no
+scripts) and carried on the pack, so a locked case's discussion stays in its private pack.
+Below 1100 pixels the columns stack with the debrief first. Only AFRVR has a discussion so
+far: six learning goals, the physiology of a fast rate in a weak ventricle, sequencing, the
+choice of rate-control agent with a comparison table, cardioversion, anticoagulation,
+disposition, pitfalls and five references, with four figures (filling time at two rates, the
+cycle between the rate and the failing ventricle, time to effect of each treatment, and a
+decision chart). It is model-written from the case's own teaching notes and has not been read
+by a physician. Reviewer markers in square brackets are hidden from the learner as elsewhere.
+Sign-off (section 23): the guideline recommendation wording, the cardioversion duration
+thresholds, every reference, and the figures' illustrative numbers.
+
+---
+
+## Chest films from "Images Manual - Chest XRay" (14 October 2026, author instruction)
+
+The chest film is now a picture in five cases, shown like the ECGs: captioned "Chest
+radiograph" while the case runs, with the read as the comment the debrief prints. CHFE's
+non-intubated film is the edema film with Kerley B lines (male). TAKO, MGCA, DKA and TSS show
+the normal female film; DKA and TSS had no authored film and answered with the catalog's
+normal read, which is now the film's comment. Films read as showing an endotracheal tube
+(CHFE and MGCA when intubated) keep their text, since none of the supplied films shows a tube,
+and DIPH keeps its own film. AFRVR's film is read as edema and was not in the instruction, so
+it is still text. Each pack's `media/README.md` names the source file. Sign-off (section 23):
+the films' original source, and a named person looking at each film beside its read.
+
+---
+
 ## Ultrasounds in Bedside Tests, and the green top's "Additional tests" (14 October 2026, author instruction)
 
 On Labs/Imaging, Bedside Tests now ends with a closed Ultrasound drop-down holding the eight

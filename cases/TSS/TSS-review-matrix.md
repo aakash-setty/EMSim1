@@ -675,6 +675,11 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | rule 5 (default) &rarr;  | plausible |
 
 
+### `imaging/xr_chest`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `imaging/ultrasound_cardiac`
 
 Single unconditional rule; nothing to enumerate.

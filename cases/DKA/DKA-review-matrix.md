@@ -657,6 +657,11 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | yes | rule 8 (flag ondansetron_given set) &rarr;  | plausible |
 
 
+### `imaging/xr_chest`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `imaging/ultrasound_cardiac`
 
 Single unconditional rule; nothing to enumerate.
