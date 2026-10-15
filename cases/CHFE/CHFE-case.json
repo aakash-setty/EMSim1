@@ -3128,9 +3128,11 @@
      {
       "when": "flag intubated set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Portable AP chest. Endotracheal tube tip approximately 4 cm above the carina, satisfactory position. Cardiomegaly with a cardiothoracic ratio above 0.6. Upper zone vascular redistribution, bilateral perihilar interstitial opacification with Kerley B lines at both bases. Small bilateral pleural effusions blunting both costophrenic angles. No pneumothorax. No focal consolidation."
+       "image": "chfe-cxr-edema-ett",
+       "caption": "Chest radiograph",
+       "comment": "Portable AP chest. Endotracheal tube tip approximately 4 cm above the carina, satisfactory position. Cardiomegaly with a cardiothoracic ratio above 0.6. Upper zone vascular redistribution, bilateral perihilar interstitial opacification with Kerley B lines at both bases. Small bilateral pleural effusions blunting both costophrenic angles. No pneumothorax. No focal consolidation."
       }
      },
      {

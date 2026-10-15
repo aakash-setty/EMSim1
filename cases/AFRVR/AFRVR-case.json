@@ -3087,9 +3087,11 @@
      {
       "when": null,
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Portable semi-erect film. Cardiomegaly, cardiothoracic ratio about 0.58. Upper zone vascular redistribution. Perihilar interstitial and alveolar opacity with Kerley B lines at both bases. Small bilateral pleural effusions. No focal consolidation. No pneumothorax."
+       "image": "afrvr-cxr-edema",
+       "caption": "Chest radiograph",
+       "comment": "Portable semi-erect film. Cardiomegaly, cardiothoracic ratio about 0.58. Upper zone vascular redistribution. Perihilar interstitial and alveolar opacity with Kerley B lines at both bases. Small bilateral pleural effusions. No focal consolidation. No pneumothorax."
       }
      }
     ]

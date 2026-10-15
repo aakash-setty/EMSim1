@@ -5616,9 +5616,11 @@
      {
       "when": "flag intubated set",
       "value": {
-       "kind": "report",
+       "kind": "image",
        "abnormal": true,
-       "report": "Portable AP chest. Endotracheal tube tip approximately 4 cm above the carina, satisfactory position. Lungs clear with no focal consolidation, no effusion and no pneumothorax. Heart size normal. No pulmonary edema."
+       "image": "mgca-cxr-normal-ett",
+       "caption": "Chest radiograph",
+       "comment": "Portable AP chest. Endotracheal tube tip approximately 4 cm above the carina, satisfactory position. Lungs clear with no focal consolidation, no effusion and no pneumothorax. Heart size normal. No pulmonary edema."
       }
      },
      {

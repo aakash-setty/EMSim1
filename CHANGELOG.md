@@ -5,6 +5,26 @@ is usable with learners.
 
 ---
 
+## CHFE and MGCA intubated chest films (15 October 2026, author instruction)
+
+Once intubated, CHFE and MGCA now show a picture too: each case's own film with an
+endotracheal tube drawn in the trachea, tip about 1.5 tracheal widths above the estimated
+carina, captioned "Chest radiograph", with the existing read unchanged as the debrief comment.
+Every chest film state in every case is now a picture. Sign-off (section 23): the carina
+estimate, and the read's "approximately 4 cm above the carina" against what is drawn.
+
+---
+
+## AFRVR chest film (15 October 2026, author instruction)
+
+AFRVR's chest radiograph is now a picture, the supplied male film with cardiomegaly and edema
+("Edema + CardioMegaly_Male.png"), shown like the ECGs and the other chest films: captioned
+"Chest radiograph" while the case runs, with the existing read, unchanged, as the comment the
+debrief prints. Sign-off (section 23): the film's source, and whether the film shows the Kerley
+B lines, alveolar opacity and effusions the read describes.
+
+---
+
 ## Debrief: Return to Home, two columns, and a case discussion (14 October 2026, author instruction)
 
 Every case: once a case is over, the nurse's portrait and line at the top left give way to a

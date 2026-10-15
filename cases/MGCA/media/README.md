@@ -24,3 +24,15 @@ shown captioned "Chest radiograph" with no read; the read is the comment the deb
 Its original source is not recorded here. [UNVERIFIED: record where the film came from and
 that it may be used, and have a named person look at it beside its read, in its state, before
 release (authoring section 23).]
+
+## Intubated chest film (added 15 October 2026)
+
+`mgca-cxr-normal-ett.webp` is `mgca-cxr-normal.webp (Normal_Female.png)` with an endotracheal tube drawn in, on Aakash Setty's instruction, by
+`Claude outputs/ett_v1/cxr_ett_draw.py`: faint tube walls, a radiopaque line down one side and
+a bevelled tip, about 10 mm wide, down the tracheal air column, with the tip about 1.5
+tracheal widths above where the carina was estimated on the film. No cuff is drawn. Shown in
+the intubated state, captioned "Chest radiograph", with the existing read unchanged as the
+debrief comment. [UNVERIFIED: the carina position was estimated by eye and the film has no
+recorded pixel spacing. The read says the tip is about 4 cm above the carina, and 1.5
+tracheal widths is likely nearer 2 to 3 cm, so the read and the picture may disagree. A named
+person should look at it beside its read before release (authoring section 23).]

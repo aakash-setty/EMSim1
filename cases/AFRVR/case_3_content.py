@@ -431,12 +431,18 @@ IMAGING = {
      "Bilateral perihilar ground-glass opacity with smooth interlobular septal thickening and small "
      "bilateral pleural effusions. No consolidation, no mass.")}]},
 
+ # 15 October 2026, author instruction: shown as the supplied male film with cardiomegaly
+ # and edema (media/README.md), captioned only, with this read unchanged as the comment the
+ # debrief prints. The read was written before the film was chosen and has not been
+ # checked against it.
  "xr_chest": {"changes_with_state": False, "result_shape": "structured", "rules": [
    {"when": None,
-    "value": rep("Portable semi-erect film. Cardiomegaly, cardiothoracic ratio about 0.58. "
+    "value": {"kind": "image", "abnormal": True, "image": "afrvr-cxr-edema",
+      "caption": "Chest radiograph",
+      "comment": ("Portable semi-erect film. Cardiomegaly, cardiothoracic ratio about 0.58. "
       "Upper zone vascular redistribution. Perihilar interstitial and alveolar opacity with "
       "Kerley B lines at both bases. Small bilateral pleural effusions. No focal "
-      "consolidation. No pneumothorax.")}]},
+      "consolidation. No pneumothorax.")}}]},
 
  "ct_pulmonary_embolus": {"changes_with_state": False, "result_shape": "structured", "rules": [
    {"when": None,
