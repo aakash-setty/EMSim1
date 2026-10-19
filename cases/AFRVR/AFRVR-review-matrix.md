@@ -1028,6 +1028,14 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | rule 1 (default) | plausible |
 
 
+### `interview_topic/bleeding_risk_screen`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
 ### `interview_topic/medication_adherence`
 
 | phase | resolves to | reachable? |

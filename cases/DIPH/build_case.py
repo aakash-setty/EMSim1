@@ -16,7 +16,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from case_1_shell import META, PATIENT, PHASES
 from case_2_actions import ACTIONS, FOLLOW_UPS
-from case_3_content import EXAM, GENERAL_STATUS, PATIENT_VISUAL, LABS, IMAGING, CONSULTANTS
+from case_3_content import EXAM, GENERAL_STATUS, PATIENT_VISUAL, PUPILS, LABS, IMAGING, CONSULTANTS
 from case_4_interview import TOPICS, GLOBAL_RULES, OUT_OF_SCOPE, AUTHORING_NOTES, KEY_TOPICS
 try:
     from case_4_interview import VOLUNTEER_SETTINGS   # v0.18a, catalog/author_interview_volunteers.py
@@ -143,6 +143,7 @@ CASE = {
    "exam": EXAM,
    "general_status": GENERAL_STATUS,
    "patient_visual": PATIENT_VISUAL,
+   "pupils": PUPILS,
    "labs": LABS,
    "imaging": IMAGING,
    "consultants": CONSULTANTS,

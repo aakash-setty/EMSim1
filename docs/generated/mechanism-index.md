@@ -32,8 +32,8 @@ not another whole pack. Line numbers are recomputed each time this is generated.
 | Collateral historian | Someone other than the patient answering | 8.5 | `cases/DIPH/case_4_interview.py:454` (DIPH) |
 | Global answer rule for reduced alertness | The patient cannot give a history | 8.5 | `cases/DIPH/case_4_interview.py:424` (DIPH) |
 | Image payload | A study shown as a picture from media/ | 11.4 | `cases/DIPH/case_3_content.py:84` (DIPH) |
-| Consultant with a pending tier | Advice that depends on a study, with the window when it is ordered but not back | 11.5 | `cases/DIPH/case_3_content.py:717` (DIPH) |
-| Patient figure rules (patient_visual) | What is visible on the figure, by state | 6.0c | `cases/DIPH/case_3_content.py:235` (DIPH) |
+| Consultant with a pending tier | Advice that depends on a study, with the window when it is ordered but not back | 11.5 | `cases/DIPH/case_3_content.py:729` (DIPH) |
+| Patient figure rules (patient_visual) | What is visible on the figure, by state | 6.0c | `cases/DIPH/case_3_content.py:247` (DIPH) |
 | ECG trace block | What the monitor lead draws in a phase | 6.0b | `cases/DIPH/case_1_shell.py:164` (DIPH) |
 | Case-only action with voice phrases | A button the catalog lacks, placed by the binding map, reachable by voice | 7.1 | `cases/TAKO/case_2_actions.py:93` (TAKO) |
 | Additional diagnoses | What is also true of the patient and credited beside the primary | 12.1 | `cases/AFRVR/case_5_handoff.py:183` (AFRVR) |

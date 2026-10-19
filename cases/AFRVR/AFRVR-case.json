@@ -3210,7 +3210,6 @@
   ],
   "out_of_scope_bank": [
    "Have you ever had a colonoscopy?",
-   "Any blood when you open your bowels?",
    "Are you constipated?",
    "Any heartburn?",
    "Any indigestion after meals?",
@@ -3218,9 +3217,7 @@
    "Any diarrhea at all?",
    "Any pain in your tummy?",
    "Have you had piles?",
-   "Any black stools?",
    "Do you get up at night to pass water?",
-   "Any blood in your urine?",
    "Any trouble with your prostate?",
    "Any burning when you pass urine?",
    "Any kidney stones in the past?",
@@ -3232,7 +3229,6 @@
    "Any problems with your speech?",
    "Any trouble with your memory?",
    "Any double vision?",
-   "Have you ever had a stroke?",
    "Any migraines?",
    "Any pain in your hands?",
    "Any pain in your hips?",
@@ -4909,6 +4905,46 @@
       ]
      }
     ]
+   },
+   {
+    "topic": "bleeding_risk_screen",
+    "canonical": "Is there anything that would make a blood thinner unsafe for you?",
+    "variants": [
+     "Any reason you can't be on a blood thinner?",
+     "Any contraindications to anticoagulation?",
+     "Have you ever had a bleed in your brain?",
+     "Have you ever had a stroke?",
+     "Any mini-strokes or TIAs?",
+     "Have you hit your head recently?",
+     "Any head injuries?",
+     "Any blood when you open your bowels?",
+     "Any black stools?",
+     "Any black or tarry stools?",
+     "Any blood when you go to the toilet?",
+     "Any rectal bleeding?",
+     "Any bleeding from your back passage?",
+     "Have you vomited any blood?",
+     "Any blood in your urine?",
+     "Any nosebleeds that won't stop?",
+     "Do you bleed for a long time if you cut yourself?",
+     "Any bleeding or clotting disorder?",
+     "Any problems with your liver?",
+     "Any liver disease?",
+     "Any problems with your kidneys?",
+     "Do you take ibuprofen or other anti-inflammatories?",
+     "Any painkillers like ibuprofen or naproxen?"
+    ],
+    "answer": [
+     {
+      "when": "phase is respiratory_failure",
+      "value": "'No... none of that.'"
+     },
+     {
+      "when": null,
+      "value": "'No, none of that. I've never had a stroke or a bleed in my head, and I've not banged my head. No blood when I go to the toilet, it's not black, and there's no blood in my water. I've never brought any blood up and I don't get nosebleeds. Nobody's ever told me there's anything wrong with my liver or my kidneys, and I don't take ibuprofen or anything like that.'"
+     }
+    ],
+    "pertinent_negative": true
    },
    {
     "topic": "medication_adherence",

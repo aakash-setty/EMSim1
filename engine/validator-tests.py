@@ -410,6 +410,18 @@ if MEDIA_IDS:
 else:
     print("  --   this pack carries no media, so the passing case is not exercised here")
 
+# 19 October 2026. A CT series beside the still: both files, whole geometry, the right size.
+expect("an image naming a CT series the pack does not contain is rejected",
+       lambda c: img(c, image=(MEDIA_IDS or ["no_such_image"])[0], series="no_such_series"),
+       "needs no_such_series.series.json")
+SERIES_IDS = sorted(n[:-len(".series.json")] for n in (os.listdir(MEDIA_DIR) if os.path.isdir(MEDIA_DIR) else [])
+                    if n.endswith(".series.json"))
+if SERIES_IDS:
+    expect_clean("an image naming a CT series the pack does contain passes",
+                 lambda c: img(c, image=MEDIA_IDS[0], series=SERIES_IDS[0]), "series")
+else:
+    print("  --   this pack carries no CT series, so the passing case is not exercised here")
+
 print("\n-- the summary's inputs and the handoff's diagnoses (v0.9) --")
 expect("a key topic that is not a topic is rejected",
        lambda c: c["interview"].__setitem__("key_topics", ["no_such_topic"]),
@@ -588,6 +600,34 @@ expect_clean("a consultant line of 40 words does not warn",
 expect_clean("an empty global_answer_rules list is allowed",
              lambda c: c["interview"].__setitem__("global_answer_rules", []),
              "global_answer_rules: empty rule list")
+
+# 19 October 2026. The pupils, and the affected eye of a blown pupil drawn at its own size.
+def pupils(c, value):
+    c["content_keys"]["pupils"] = {"rules": [{"when": None, "value": value}]}
+
+
+expect("a pupil state outside the five is rejected",
+       lambda c: pupils(c, {"state": "oval"}), "state 'oval' is not one of")
+expect("a blown pupil with no side is rejected",
+       lambda c: pupils(c, {"state": "blown"}), "needs side")
+expect("affected_mm on a pupil that is not blown is rejected",
+       lambda c: pupils(c, {"state": "normal", "affected_mm": 6}), "affected_mm is only for a blown pupil")
+expect("an affected_reaction outside the three is rejected",
+       lambda c: pupils(c, {"state": "blown", "side": "right", "affected_reaction": "slow"}),
+       "affected_reaction 'slow' is not one of")
+expect("an affected_mm out of range is rejected",
+       lambda c: pupils(c, {"state": "blown", "side": "right", "affected_mm": 12}),
+       "affected_mm must be a number from 1 to 9")
+expect("an affected pupil no larger than the other warns",
+       lambda c: pupils(c, {"state": "blown", "side": "right", "size_mm": 4, "affected_mm": 4}),
+       "is not larger than the other", where="warnings")
+expect_clean("a blown pupil partly back, larger and sluggish, passes",
+             lambda c: pupils(c, {"state": "blown", "side": "right", "size_mm": 3,
+                                  "affected_mm": 4, "affected_reaction": "sluggish"}), "[pupils]")
+expect_clean("the same draws no pupil warning",
+             lambda c: pupils(c, {"state": "blown", "side": "right", "size_mm": 3,
+                                  "affected_mm": 4, "affected_reaction": "sluggish"}), "[pupils]",
+             where="warnings")
 
 print(f"\n  {COUNT} checks, " + (f"{len(FAILS)} FAILURES" if FAILS else "all passed"))
 sys.exit(1 if FAILS else 0)

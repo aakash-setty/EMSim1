@@ -486,6 +486,17 @@ payload refers to it. The result renders as a thumbnail wherever a result render
 chart and in the feed, and clicking it opens a viewer that closes on its cross, on a click
 outside it, or on Escape.
 
+**A series is a stack behind the still (19 October 2026).** An image payload may also name
+`series`, a CT stack in the pack's media as `<stem>.series.json` and `<stem>.series.gz`
+(authoring 23). The build carries it on the pack as `series`, the engine passes it to
+`PROTO.series`, and nothing in the fold reads it: the result is still the image payload, it
+still freezes at order and still auto-opens on arrival. What changes is the viewer. Opening a
+thumbnail whose payload names a series opens the CT viewer (`CTVIEW` in ui.js), which decodes
+the voxels once per page with `DecompressionStream`, draws one slice at a time through a
+window lookup table, and handles the wheel, drag, right-drag, the arrow and number keys, zoom
+and pan. It does not pause the clock. A build without the series, or a browser without
+`DecompressionStream`, falls back to the still.
+
 **An image payload may not also carry `report` or `components`**, and the validator errors
 when it does. The two shapes answer the same question differently and the interface would
 show one of them, so a payload holding both is an author who changed their mind halfway. The

@@ -87,7 +87,7 @@ function resolveText(v,st){
    copy of the catalog. Section 6.2: catalog defaults apply unless the case waives
    them, and case prerequisites are additional rather than a replacement. */
 let CASE=null, PROTO=null, PACK=null;
-let PHASE={}, ACT={}, FU={}, CK=null, CONTENT={}, GENERAL_STATUS=null, PATIENT_VISUAL=null, PATIENT_ALSO=[], DEVICE_BY_ID={}, WORN_BY_ID={};
+let PHASE={}, ACT={}, FU={}, CK=null, CONTENT={}, GENERAL_STATUS=null, PATIENT_VISUAL=null, PATIENT_ALSO=[], PUPILS=null, DEVICE_BY_ID={}, WORN_BY_ID={};
 
 function orphanCategory(eff){
   if(eff.indexOf('exam_')===0) return 'exam';
@@ -283,6 +283,10 @@ function selectCase(ref){
     /* v0.11. The pack's images, id to data URI, inlined at build time from
        cases/<PREFIX>/media/. Empty for a case that ships none. */
     media: PACK.media||{},
+    /* 19 October 2026. The pack's CT series, id to {geometry, windows, notice, data}, from
+       cases/<PREFIX>/media/<id>.series.*. Read only by the series viewer in ui.js. Empty for
+       a case that ships none. */
+    series: PACK.series||{},
     buildNotes: PACK.buildNotes
   });
   /* Substitute the patient's pronouns into every string this build shares between cases.
@@ -310,6 +314,7 @@ function selectCase(ref){
   GENERAL_STATUS = CK.general_status ? CK.general_status.rules : null;
   PATIENT_VISUAL = CK.patient_visual ? CK.patient_visual.rules : null;
   PATIENT_ALSO = (CK.patient_visual && CK.patient_visual.also) || [];
+  PUPILS = (CK.pupils && Array.isArray(CK.pupils.rules)) ? CK.pupils : null;
   /* v0.17p. The airway device on the figure follows the button pressed, in every case, and
      not a flag each case happened to author: AFRVR's cannula set a flag nothing drew, DIPH
      sent three devices to one flag, CHFE had no cannula action of its own and MGCA's
@@ -331,6 +336,14 @@ function selectCase(ref){
    first match wins and the value is the whole visible state. The engine resolves it and
    understands none of it; engine/patient.js draws it. A case that authors nothing gets the
    shared default, a patient with open eyes who is breathing and nothing else. */
+/* 19 October 2026. The pupils, for the magnified view of the figure's eyes (engine/pupils.js).
+   Optional: content_keys.pupils is a guarded rule list, first match wins, and a case without
+   it has no view. The value is {state, size_mm?, reaction?, side?}; iris is the block's. */
+function pupilState(st){
+  if(!PUPILS) return null;
+  const v=resolve(PUPILS.rules,st);
+  return v?{value:v,iris:PUPILS.iris||null}:null;
+}
 function patientVisual(st){
   /* `also` is the one place a content key is not first-match: every entry whose condition
      holds adds its add-ons to what the rules chose. Pads, a line and sweat are independent

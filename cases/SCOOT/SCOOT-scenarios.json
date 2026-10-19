@@ -1,0 +1,227 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "scoot-epidural-01",
+ "note": "End-to-end paths, one per story in SCOOT-SEED.md section 2.4 plus the rescue windows, the blocked prerequisite and the known gaps. Steps cost eight seconds each on the runner's clock. The runner does not implement also_satisfies, so a hidden target is named as a step straight after the order that earns it in the engine. SCOOT-tests.js folds the real routes and is the authority.",
+ "scenarios": [
+  {
+   "name": "Treated well: monitor, exam, CT, neurosurgery with the scan, then the decline: repeat exam, call back, antiemetic, handoff to the OR",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "exam_neuro",
+    "ct_head",
+    {
+     "wait": 12
+    },
+    "consult_neurosurgeon",
+    {
+     "wait": 220
+    },
+    "exam_neuro",
+    "neuro_reexamined",
+    "consult_neurosurgeon",
+    "neurosurgery_updated",
+    "ondansetron",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": "neuro_reexamined and neurosurgery_updated are hidden targets named as steps because the runner does not implement also_satisfies. SCOOT-tests.js folds the real route."
+  },
+  {
+   "name": "Treated well but late: the scan only after the decline, then the call, no herniation",
+   "steps": [
+    "attach_monitor",
+    {
+     "wait": 250
+    },
+    "ct_head",
+    {
+     "wait": 12
+    },
+    "consult_neurosurgeon",
+    {
+     "wait": 400
+    }
+   ],
+   "expect_phase": "decline",
+   "note": ""
+  },
+  {
+   "name": "Called it concussion: the scan is back and neurosurgery is never called, he herniates",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "exam_neuro",
+    "ct_head",
+    {
+     "wait": 520
+    }
+   ],
+   "expect_phase": "herniation",
+   "note": ""
+  },
+  {
+   "name": "Called it concussion, then rescued: osmotherapy in herniation, a tube, and the handoff",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "exam_neuro",
+    "ct_head",
+    {
+     "wait": 520
+    },
+    "mannitol_bolus",
+    "osmotherapy_for_herniation",
+    {
+     "wait": 20
+    },
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence",
+    "consult_neurosurgeon",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": "osmotherapy_for_herniation is named as a step for the same reason."
+  },
+  {
+   "name": "Rescue inside the last window: osmotherapy just before the terminal deadline",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "exam_neuro",
+    "ct_head",
+    {
+     "wait": 520
+    },
+    {
+     "wait": 262
+    },
+    "mannitol_bolus",
+    "osmotherapy_for_herniation",
+    {
+     "wait": 20
+    }
+   ],
+   "expect_phase": "temporized",
+   "note": "Herniation entered at 540. Osmotherapy credited at about 830, before the 840 deadline."
+  },
+  {
+   "name": "One action too late: osmotherapy after brainstem compression",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "exam_neuro",
+    "ct_head",
+    {
+     "wait": 520
+    },
+    {
+     "wait": 292
+    },
+    "mannitol_bolus"
+   ],
+   "expect_phase": "brainstem_compression",
+   "note": "Herniation entered at 540. The deadline at 840 passes before the order."
+  },
+  {
+   "name": "Left alone: decline, herniation, brainstem compression",
+   "steps": [
+    {
+     "wait": 300
+    },
+    {
+     "wait": 300
+    },
+    {
+     "wait": 300
+    }
+   ],
+   "expect_phase": "brainstem_compression",
+   "note": "Do-nothing trajectory. 240, 540 and 840 seconds."
+  },
+  {
+   "name": "Tubed for the number at GCS 15: nothing crashes, and the decline still comes",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence",
+    {
+     "wait": 240
+    }
+   ],
+   "expect_phase": "decline",
+   "note": ""
+  },
+  {
+   "name": "Mannitol in the decline does not count for the herniation that follows",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "exam_neuro",
+    "ct_head",
+    {
+     "wait": 220
+    },
+    "mannitol_bolus",
+    {
+     "wait": 310
+    },
+    {
+     "wait": 300
+    }
+   ],
+   "expect_phase": "brainstem_compression",
+   "note": "The exit from herniation needs osmotherapy given in herniation, not on the way in (authoring 15.2 rule 6)."
+  },
+  {
+   "name": "Blocked prerequisite: neurosurgery called before any CT does not count",
+   "steps": [
+    "attach_monitor",
+    "consult_neurosurgeon",
+    {
+     "wait": 560
+    }
+   ],
+   "expect_phase": "herniation",
+   "note": "The consult is blocked without a resulted head CT, so the herniation clock still runs."
+  },
+  {
+   "name": "Known gap: called with the scan and handed over before the decline, the learner never meets it",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "exam_neuro",
+    "ct_head",
+    {
+     "wait": 12
+    },
+    "consult_neurosurgeon",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": "SCOOT-SEED.md known gap 1."
+  },
+  {
+   "name": "Known gap: temporized has no clock",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "exam_neuro",
+    "ct_head",
+    {
+     "wait": 520
+    },
+    "mannitol_bolus",
+    "osmotherapy_for_herniation",
+    {
+     "wait": 1000
+    }
+   ],
+   "expect_phase": "temporized",
+   "note": "SCOOT-SEED.md known gap 3."
+  }
+ ]
+}

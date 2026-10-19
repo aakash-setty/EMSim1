@@ -5,6 +5,92 @@ is usable with learners.
 
 ---
 
+## SCOOT's pupils, and a blown pupil drawn at its own size (19 October 2026, author instruction)
+
+SCOOT now authors `content_keys.pupils`. The eye view shows what its exam text says: both
+3 mm and brisk on arrival and in the decline, the right 6 mm and fixed in herniation with the
+left still constricting to light in either eye, the right 4 mm and sluggish once osmotherapy
+has temporized him, and both 6 mm and fixed in brainstem compression. To draw the second and
+third, a blown pupil may now carry `affected_mm` and `affected_reaction`, the affected eye's
+size and response in place of 8 mm and none. A pack that leaves them out draws as before.
+Engine: `eyesFor` in pupils.js, validator checks (each key only on a blown pupil, in range,
+a warning if the affected pupil is not the larger) and eight validator tests (six that must fire, two that must not), the review matrix
+line, two field notes, authoring 5.3. SCOOT: the block, its wiring, four case tests, SEED 2.7
+and 2.13, the review packet. Model-written, not reviewed.
+
+---
+
+## A head CT the resident scrolls through, and SCOOT's scan (19 October 2026, author instruction)
+
+An image payload may name a `series`: a CT stack in Hounsfield units, kept in the pack's
+`media/` as `<stem>.series.json` and `<stem>.series.gz` (authoring 23). Its still is the
+thumbnail in the record, and opening it, or the result arriving, opens a new viewer: black
+stage, 31 slices by wheel, drag, slider or arrow keys, Brain, Subdural, Bone and Stroke
+windows (keys 1 to 4) and right-drag windowing, zoom and pan, a 5 cm bar, the HU under the
+pointer, and the image's notice under "About this image". Escape, the cross and the backdrop
+close it. The clock keeps running. Engine: `load_series` in build_simulator.py, `PROTO.series`
+in engine.js, `CTVIEW` and the thumbnail and queue changes in ui.js, `#ctview` in shell.html,
+validator and validator-test checks, a shared engine-test check, a field note, authoring 23,
+system design (image payloads).
+
+SCOOT uses it. Its head CT is now the EDH case (Case 3) from the owner's Head CT Teaching
+Cases artifact: synthetic images built on the Colin27 MRI phantom, whose copyright notice
+travels with them. The case's text was brought into line with the images: about 50 mL, about
+19 mm, about 6 mm of shift, a swirl sign and a temporal squamous fracture, in place of the
+32 mL the case was drafted with. The head CT is now read by the resident, as the twelve-lead
+is, and the read moved to the debrief. Air below -300 HU was flattened to -1000 to halve the
+file. SCOOT's pack grows from about 0.6 MB to about 4.6 MB. Model-written, not reviewed.
+
+---
+
+## Pupils: the eyes close up, with a penlight (19 October 2026, author instruction)
+
+A case may now author `content_keys.pupils`, and DIPH does. Hovering over the figure's eyes
+opens a small window with both eyes magnified, labelled with the patient's right and left. It
+closes two seconds after the pointer leaves unless the pointer moves into it. Inside, the
+pointer is a penlight: the window darkens around the beam, and a lit eye shows the light's
+reflection while every pupil that can respond constricts, after a short delay, and redilates
+more slowly when the light moves off. Light in either eye reaches both. Five states are drawn:
+normal, pinpoint, dilated, dilated and fixed, and blown (one pupil large and fixed, the other
+normal). A sluggish pupil is slower and moves less. Sizes and timings are teaching values
+chosen by the model. DIPH is 7 mm and sluggish throughout, and dilated and fixed in arrest;
+see its `verify` note. Keyboard: Tab reaches the eyes and focus shines the light; Escape
+closes. Nothing is logged or scored. Engine: `pupilState()`, `engine/pupils.js`, validator
+checks, field notes and authoring requirements 5.3.
+
+---
+
+## Critical Errors above the Summary, and AFRVR's bleeding-risk history (15 October 2026, author instruction)
+
+Every case: the debrief's discouraged actions now sit above the Summary under the heading
+"Critical Errors", with no explanatory paragraph. They still show only when there is one.
+
+AFRVR, from author note 3: the history now answers the questions that screen for a reason not
+to anticoagulate, all negative, as a new pertinent-negative topic (`bleeding_risk_screen`):
+stroke or bleeding in the head, head injury, blood in the stool, black stools, vomiting blood,
+blood in the urine, nosebleeds, a bleeding or clotting disorder, liver or kidney disease, and
+anti-inflammatory painkillers. Four of those questions had been in the out-of-scope bank, so
+the patient answered them "I don't know what you mean"; they leave the bank. The topic is not
+a key topic, so the History score is unchanged. Model-written, not physician-reviewed. The
+held-out matcher set (`AFRVR-matcher-eval-questions.json`) could not be written (the file
+refused the write), so its "Have you noticed any blood in your stool?" still expects no answer
+and now scores as answered anyway. Owner to decide.
+
+---
+
+## Checkboxes on the end-of-case summary (15 October 2026, author instruction)
+
+Every case: under "Critical actions you completed", each completed critical action now has a
+green tick through a rounded square box beside it, and below them comes one empty box for each
+critical action not completed, with the same blurred nonsense text beside each. The screen
+says how many were missed without saying which. Screen readers hear "Critical action not
+completed" for each empty box.
+
+The "Are you sure?" dialog before Reveal answers now reads "This gives away the whole case.
+You didn't strike me as a quitter!" (author wording).
+
+---
+
 ## CHFE and MGCA intubated chest films (15 October 2026, author instruction)
 
 Once intubated, CHFE and MGCA now show a picture too: each case's own film with an

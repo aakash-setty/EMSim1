@@ -304,6 +304,28 @@ T("anticoagulant_history_and_bleeding", "Are you on any blood thinners?",
  "never had a bleed, never had an ulcer, and I haven't had a fall.'",
  pertinent_negative=True),
 
+# Author note 3, 15 October 2026: the history should answer the questions that screen for a
+# contraindication to anticoagulation, and every answer is negative. Consistent with the
+# apixaban debrief note (no bleed, no ulcer, no fall, no antiplatelet, creatinine 1.0) and with
+# the exam (a tender congested liver edge, which he has never been told about). Model-written,
+# not physician-reviewed.
+T("bleeding_risk_screen", "Is there anything that would make a blood thinner unsafe for you?",
+ ["Any reason you can't be on a blood thinner?", "Any contraindications to anticoagulation?",
+  "Have you ever had a bleed in your brain?", "Have you ever had a stroke?",
+  "Any mini-strokes or TIAs?", "Have you hit your head recently?", "Any head injuries?",
+  "Any blood when you open your bowels?", "Any black stools?", "Any black or tarry stools?",
+  "Any blood when you go to the toilet?", "Any rectal bleeding?", "Any bleeding from your back passage?",
+  "Have you vomited any blood?", "Any blood in your urine?", "Any nosebleeds that won't stop?",
+  "Do you bleed for a long time if you cut yourself?", "Any bleeding or clotting disorder?",
+  "Any problems with your liver?", "Any liver disease?", "Any problems with your kidneys?",
+  "Do you take ibuprofen or other anti-inflammatories?", "Any painkillers like ibuprofen or naproxen?"],
+ "'No... none of that.'",
+ "'No, none of that. I've never had a stroke or a bleed in my head, and I've not banged my head. "
+ "No blood when I go to the toilet, it's not black, and there's no blood in my water. I've never "
+ "brought any blood up and I don't get nosebleeds. Nobody's ever told me there's anything wrong "
+ "with my liver or my kidneys, and I don't take ibuprofen or anything like that.'",
+ pertinent_negative=True),
+
 T("medication_adherence", "Have you been taking your tablets?",
  ["Are you taking your medications?", "Have you missed any doses?",
   "Do you take them regularly?", "Have you run out of anything?",
@@ -1899,3 +1921,9 @@ for _t in TOPICS:
     if _t['topic'] in ADJACENT: _t['adjacent'] = ADJACENT[_t['topic']]
     if _t['topic'] in VOLUNTEER: _t['volunteer'] = VOLUNTEER[_t['topic']]
 # ---- END VOLUNTEERED ANSWERS ----
+
+# Author note 3, 15 October 2026: bleeding_risk_screen answers these, so the out-of-scope bank
+# must not claim them. Kept outside the generated blocks so a --force re-expansion keeps it.
+_NOW_ANSWERED = {"Any blood when you open your bowels?", "Any black stools?",
+                 "Any blood in your urine?", "Have you ever had a stroke?"}
+OUT_OF_SCOPE_BANK = [q for q in OUT_OF_SCOPE_BANK if q not in _NOW_ANSWERED]

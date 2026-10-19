@@ -563,9 +563,10 @@
    "expect": null
   },
   {
-   "register": "out_of_scope_expansion",
+   "register": "expansion",
    "q": "Any nosebleeds?",
-   "expect": null
+   "expect": "bleeding_risk_screen",
+   "note": "Was out of scope until 15 October 2026, when the case began answering the anticoagulation screen."
   },
   {
    "register": "out_of_scope_expansion",

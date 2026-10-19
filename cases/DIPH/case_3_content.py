@@ -232,6 +232,18 @@ GENERAL_STATUS = {
 # Every value is the author's. Every reference interval is model output.
 # What the figure in the room is doing (engine/patient.js). A guarded rule list like
 # GENERAL_STATUS above, and kept consistent with it: both describe the same patient.
+# 19 October 2026, author instruction: the pupils, for the magnified view of the eyes over the
+# figure and the penlight (engine/pupils.js). Taken from this case's own HEENT findings,
+# "Pupils 7 mm, equal", sluggish when seizing and when stabilizing and "reactive" otherwise.
+PUPILS = {
+ "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drawn sizes and responses for the eye view. 7 mm and equal throughout, from exam_heent. Anticholinergic mydriasis is drawn with a sluggish response in every state, including the arrival state where exam_heent says 'reactive': a sluggish pupil still reacts, and a brisk one would constrict from 7 mm to about 4 mm, which this toxidrome does not do.",
+ "verify": "Two choices to check. (1) The arrival pupils are drawn sluggish where exam_heent says reactive; change either so the two agree. (2) In pulseless VT and the halted state the pupils are drawn dilated and fixed, 8 mm, which no text in this case states; it is the expected finding in a patient in arrest, not an authored one.",
+ "rules": [
+  {"when": "phase is pulseless_vt OR phase is halted", "value": {"state": "dilated_fixed", "size_mm": 8}},
+  {"when": None, "value": {"state": "dilated", "size_mm": 7, "reaction": "sluggish"}},
+ ],
+}
+
 PATIENT_VISUAL = {
  "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drives the figure in the room (engine/patient.js). Derived from this case's own phase descriptions, alertness levels, general status lines and action flags, and adds no clinical fact of its own: eyes closed where the phase is unresponsive, sedated or arrested; work of breathing where the phase description names it; the mask and the tube where the flag the resident's own action sets is set. The respiratory rate is not authored here, the figure breathes at the monitor's rate. Verify each rule against the phase and flag it names, as for any other content key.",
  "verify": "Three choices to check. (1) The convulsion is drawn with the eyes OPEN, on the understanding that the eyes are usually open in a generalized tonic-clonic seizure and that closed eyes during the event point toward a functional seizure; change it if that is not what should be taught. (2) Once airway_protected is set the figure is intubated, still and eyes closed even in the seizing phase, on the assumption of induction and paralysis; a paralyzed patient may still be seizing electrically and the figure cannot show that. (3) post_ictal has no rule of its own: it is alertness level 1 and is drawn drowsy, with heavy lids and a nodding head, by the figure itself. Agitation is drawn on arrival, from 'agitated ... plucking at the leads', until the airway is protected. She is 'hot and dry', so she is never drawn sweating.",

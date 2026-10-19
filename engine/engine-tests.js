@@ -1897,6 +1897,35 @@ else {
       chk(PACK.prefix + ': each generated tracing keeps its read for the debrief',
           imgs.every(v => v.image === 'diph-ecg-arrival' || !!v.comment));
     }
+    /* 19 October 2026. Every CT series a result names is in this build, its geometry is
+       whole, and its still is there for the thumbnail. */
+    {
+      const sr = [];
+      for (const grp of ['labs', 'imaging'])
+        for (const k in ((CASE.content_keys || {})[grp] || {})) {
+          const blk = CASE.content_keys[grp][k];
+          ((blk && blk.rules) || []).forEach(r => { if (r.value && r.value.series) sr.push(r.value); });
+        }
+      if (sr.length) {
+        chk(PACK.prefix + ': every CT series named is in the build with its still',
+          sr.every(v => !!(PACK.series || {})[v.series] && !!(PACK.media || {})[v.image]), sr.map(v => v.series).join());
+        chk(PACK.prefix + ': every CT series has whole geometry and data',
+          sr.every(v => { const m = (PACK.series || {})[v.series] || {};
+            return m.format === 'emsim-ct-1' && m.n > 0 && m.w > 0 && m.h > 0 && Array.isArray(m.z_mm) && m.z_mm.length === m.n
+              && Array.isArray(m.windows) && m.windows.length > 0 && typeof m.data === 'string' && m.data.length > 0; }));
+      }
+    }
+    /* 19 October 2026. A case that authors pupils draws a valid state in every phase. */
+    if (CASE.content_keys.pupils) {
+      const states = ['normal', 'pinpoint', 'dilated', 'dilated_fixed', 'blown'];
+      const bad = CASE.phases.map(ph => ph.id).filter(id => {
+        const p = pupilState({ phase: id, flags: new Set(), ordered: new Set(), resulted: new Set(), taken: new Set() });
+        return !p || states.indexOf(p.value.state) < 0;
+      });
+      chk(PACK.prefix + ': the pupils resolve in every phase', bad.length === 0, bad.join());
+    } else {
+      chk(PACK.prefix + ': no pupils authored, so no eye view', pupilState(fold(mk([]), 1)) === null);
+    }
     /* 11 October 2026. The pads follow the button in every case, not a rule the case authored. */
     const worn = (SHARED.patient || {}).wornActions || {};
     for (const cid in worn) {

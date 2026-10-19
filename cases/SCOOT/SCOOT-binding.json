@@ -1,0 +1,430 @@
+{
+ "binding_version": "0.1",
+ "case_id": "scoot-epidural-01",
+ "catalog_version": "0.3-draft",
+ "status": "DRAFT. Every mapped row is an author judgement and needs review.",
+ "counts": {
+  "exact": 59,
+  "mapped": 0,
+  "unmatched": 5
+ },
+ "group_coverage": {
+  "labetalol_bolus": [
+   "esmolol_drip",
+   "labetalol_drip",
+   "metoprolol_bolus",
+   "nicardipine_drip",
+   "nitroglycerin",
+   "nitroglycerin_drip",
+   "nitroglycerin_sublingual",
+   "nitroprusside_drip"
+  ],
+  "normal_saline_1l_bolus": [
+   "lactated_ringer_s_1l_bolus",
+   "lactated_ringer_s_500ml_bolus",
+   "normal_saline_500ml_bolus"
+  ]
+ },
+ "blocking": [],
+ "rows": [
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "central_venous_catheter_triple_lumen",
+   "catalog_id": "central_venous_catheter_triple_lumen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "central_venous_catheter_cordis",
+   "catalog_id": "central_venous_catheter_cordis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intraosseous_line",
+   "catalog_id": "intraosseous_line",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "c_collar",
+   "catalog_id": "c_collar",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ct_c_spine",
+   "catalog_id": "ct_c_spine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ct_head",
+   "catalog_id": "ct_head",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ct_cta_head_and_neck",
+   "catalog_id": "ct_cta_head_and_neck",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "mri_mra_head_and_neck",
+   "catalog_id": "mri_mra_head_and_neck",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "complete_blood_count_cbc",
+   "catalog_id": "complete_blood_count_cbc",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "coagulation_panel",
+   "catalog_id": "coagulation_panel",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "blood_type_and_screen",
+   "catalog_id": "blood_type_and_screen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fingerstick_blood_sugar",
+   "catalog_id": "fingerstick_blood_sugar",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intubate_rapid_sequence",
+   "catalog_id": "intubate_rapid_sequence",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "etomidate_bolus",
+   "catalog_id": "etomidate_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_bolus",
+   "catalog_id": "ketamine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propofol_bolus",
+   "catalog_id": "propofol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "midazolam_bolus",
+   "catalog_id": "midazolam_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "rocuronium_bolus",
+   "catalog_id": "rocuronium_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "succinylcholine_bolus",
+   "catalog_id": "succinylcholine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "propofol_infusion",
+   "catalog_id": "propofol_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_infusion",
+   "catalog_id": "ketamine_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "post_intubation_sedation",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by sedation or analgesia once intubated. Discharges the follow-up. Not a button."
+  },
+  {
+   "case_id": "consult_neurosurgeon",
+   "catalog_id": "consult_neurosurgeon",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "neurosurgery_updated",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by a neurosurgery call in any phase after arrival. Not a button."
+  },
+  {
+   "case_id": "neuro_reexamined",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by a neuro exam in the decline phase. Not a button."
+  },
+  {
+   "case_id": "mannitol_bolus",
+   "catalog_id": "mannitol_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "hypertonic_saline_25_bolus",
+   "catalog_id": "hypertonic_saline_25_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "hypertonic_saline_3_infusion",
+   "catalog_id": "hypertonic_saline_3_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "osmotherapy_for_herniation",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by mannitol or hypertonic saline in the herniation phase. Guards the exit and the terminal clock there. Not a button."
+  },
+  {
+   "case_id": "labetalol_bolus",
+   "catalog_id": "labetalol_bolus",
+   "status": "exact",
+   "note": "Every catalog route to lowering his blood pressure. A claim about the act, not an agent. The shared note says 'the pressure', not one drug.",
+   "also_covers": [
+    "esmolol_drip",
+    "labetalol_drip",
+    "metoprolol_bolus",
+    "nicardipine_drip",
+    "nitroglycerin",
+    "nitroglycerin_drip",
+    "nitroglycerin_sublingual",
+    "nitroprusside_drip"
+   ]
+  },
+  {
+   "case_id": "atropine_bolus",
+   "catalog_id": "atropine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lower_head_of_bed",
+   "catalog_id": "lower_head_of_bed",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d5_1_2_ns_infusion",
+   "catalog_id": "d5_1_2_ns_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "status": "exact",
+   "note": "Isotonic saline or a balanced crystalloid, either volume.",
+   "also_covers": [
+    "lactated_ringer_s_1l_bolus",
+    "lactated_ringer_s_500ml_bolus",
+    "normal_saline_500ml_bolus"
+   ]
+  },
+  {
+   "case_id": "ibuprofen",
+   "catalog_id": "ibuprofen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "acetaminophen",
+   "catalog_id": "acetaminophen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fentanyl_bolus",
+   "catalog_id": "fentanyl_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "morphine_bolus",
+   "catalog_id": "morphine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ondansetron",
+   "catalog_id": "ondansetron",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "metoclopramide",
+   "catalog_id": "metoclopramide",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "tranexamic_acid",
+   "catalog_id": "tranexamic_acid",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "levetiracetam_bolus",
+   "catalog_id": "levetiracetam_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fos_phenytoin",
+   "catalog_id": "fos_phenytoin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_general_surgery",
+   "catalog_id": "consult_general_surgery",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_neurology",
+   "catalog_id": "consult_neurology",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "The catalog has no handoff action; listed in its own known_gaps."
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_abd",
+   "catalog_id": "exam_abd",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_gu",
+   "catalog_id": "exam_gu",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_back",
+   "catalog_id": "exam_back",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych",
+   "status": "exact",
+   "note": null
+  }
+ ]
+}

@@ -1,0 +1,442 @@
+{
+ "case_prefix": "SCOOT",
+ "status": "HELD OUT. This set is quoted, never tuned against. Nothing here may appear in a variant bank or an out-of-scope bank.",
+ "authoring_note": "Written by a language model on 19 October 2026, before the first build and after the hand-written variants, in the registers section 8.6 asks for. The same author wrote the variants, which section 8.6 warns against. The expected topic on each row is a drafting judgment. 'Are you hungry right now?' is expected null although it is near last_oral_intake, to test the out-of-scope neighborhood.",
+ "management_changing": [
+  "mechanism_of_injury",
+  "loss_of_consciousness",
+  "memory_of_event",
+  "headache",
+  "nausea_vomiting",
+  "seizure",
+  "neck_pain",
+  "anticoagulants",
+  "current_medications",
+  "past_medical_history",
+  "allergies",
+  "social_history",
+  "last_oral_intake"
+ ],
+ "questions": [
+  {
+   "register": "paraphrase",
+   "q": "So what happened out there tonight?",
+   "expect": "mechanism_of_injury"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Walk me through how you came off the scooter",
+   "expect": "mechanism_of_injury"
+  },
+  {
+   "register": "shorthand",
+   "q": "mech?",
+   "expect": "mechanism_of_injury"
+  },
+  {
+   "register": "typo",
+   "q": "how did you crahs",
+   "expect": "mechanism_of_injury"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Were you wearing anything on your head?",
+   "expect": "helmet"
+  },
+  {
+   "register": "shorthand",
+   "q": "helmet on?",
+   "expect": "helmet"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you get knocked unconscious when you landed?",
+   "expect": "loss_of_consciousness"
+  },
+  {
+   "register": "shorthand",
+   "q": "positive loss of consciousness?",
+   "expect": "loss_of_consciousness"
+  },
+  {
+   "register": "conversational",
+   "q": "Your friend said you went out for a bit, is that right?",
+   "expect": "loss_of_consciousness"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Can you remember the moments before you came off?",
+   "expect": "memory_of_event"
+  },
+  {
+   "register": "shorthand",
+   "q": "retrograde amnesia?",
+   "expect": "memory_of_event"
+  },
+  {
+   "register": "typo",
+   "q": "do you remeber the acident",
+   "expect": "memory_of_event"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Who brought you to the hospital?",
+   "expect": "how_he_got_here"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Tell me your full name",
+   "expect": "orientation"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Where do you think you are right now?",
+   "expect": "orientation"
+  },
+  {
+   "register": "shorthand",
+   "q": "A&Ox3?",
+   "expect": "orientation"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How bad is your head hurting?",
+   "expect": "headache"
+  },
+  {
+   "register": "typo",
+   "q": "any headahce",
+   "expect": "headache"
+  },
+  {
+   "register": "paraphrase",
+   "q": "On a scale of one to ten how bad is it?",
+   "expect": "severity"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you thrown up since the crash?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "shorthand",
+   "q": "nausea or vomiting since?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is the pain getting better or worse since you got here?",
+   "expect": "timing_progression"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is anything wrong with your eyesight?",
+   "expect": "vision_changes"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you feel numb or weak on one side?",
+   "expect": "weakness_numbness"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you have any shaking or jerking after the fall?",
+   "expect": "seizure"
+  },
+  {
+   "register": "shorthand",
+   "q": "sz?",
+   "expect": "seizure"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is your neck sore at all?",
+   "expect": "neck_pain"
+  },
+  {
+   "register": "shorthand",
+   "q": "neck pain at all",
+   "expect": "neck_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you hurt yourself anywhere besides your head?",
+   "expect": "other_injuries"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any chest discomfort since the crash?",
+   "expect": "chest_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any trouble catching your breath?",
+   "expect": "breathing"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any pain in your belly?",
+   "expect": "abdominal_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you have any medical conditions?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "shorthand",
+   "q": "pmhx?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Ever had surgery on anything?",
+   "expect": "past_surgical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you take any medicines regularly?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "shorthand",
+   "q": "home meds?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you take anything like aspirin or a blood thinner?",
+   "expect": "anticoagulants"
+  },
+  {
+   "register": "shorthand",
+   "q": "AC/AP?",
+   "expect": "anticoagulants"
+  },
+  {
+   "register": "typo",
+   "q": "any blod thinners",
+   "expect": "anticoagulants"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are you allergic to any medicines?",
+   "expect": "allergies"
+  },
+  {
+   "register": "shorthand",
+   "q": "drug allergies at all?",
+   "expect": "allergies"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you drink any alcohol before riding?",
+   "expect": "social_history"
+  },
+  {
+   "register": "conversational",
+   "q": "Be honest with me, any drinking or drugs tonight?",
+   "expect": "social_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "When did you last eat something?",
+   "expect": "last_oral_intake"
+  },
+  {
+   "register": "shorthand",
+   "q": "Roughly when did you eat last?",
+   "expect": "last_oral_intake"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any family history of bleeding disorders?",
+   "expect": "family_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are your tetanus shots current?",
+   "expect": "tetanus"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did anyone come with you?",
+   "expect": "companion"
+  },
+  {
+   "register": "compound",
+   "q": "Did you black out and do you remember the crash?",
+   "expect": "loss_of_consciousness"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are you feeling dizzy at all?",
+   "expect": "dizziness"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any trouble hearing out of your right ear?",
+   "expect": "hearing"
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you ever had a heart attack?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you have asthma?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any swelling in your ankles?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you get chest tightness when you exercise?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you ever had a blood clot in your leg?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any recent weight loss?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you have any rashes?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any joint pain in your knees?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had a cough recently?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any burning when you pee?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you traveled abroad lately?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you have diabetes?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any thyroid problems?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you had a colonoscopy recently?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Do you snore at night?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any fevers this week?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Have you ever had kidney stones?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_clinical",
+   "q": "Any palpitations?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What's your favorite sports team?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you have a dog?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Is the parking expensive here?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you like your job?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What music do you listen to?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you want the TV on?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Would you like a pillow?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Where did you grow up?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Have you seen the new Marvel movie?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you play video games?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Are you hungry right now?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you have insurance?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What's the weather like outside?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you have a girlfriend?",
+   "expect": null
+  }
+ ]
+}

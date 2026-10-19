@@ -611,6 +611,13 @@ def build_pack(pack):
         # ECGs are JPEG at quality 80 and 1446 pixels wide, which is enough to measure a
         # QRS on screen and not enough to print.
         "media": load_media(pack),
+        # 19 October 2026 (author instruction). A scan the resident scrolls through: a stack
+        # of CT images as Hounsfield units, read by the series viewer in ui.js. On disk it is
+        # `media/<stem>.series.json` (the geometry, the windows and the notice) beside
+        # `media/<stem>.series.gz` (the voxels). An image payload names it as `series`, and
+        # its `image` is the still the record shows as the thumbnail. Watch the size: SCOOT's
+        # head CT is about 2.9 MB on disk and about 3.9 MB once base64 has added its third.
+        "series": load_series(pack),
         # everything the picker needs, so it does not have to open the case file
         "card": {
             "title": m.get("working_title", case["case_id"]),
@@ -687,6 +694,37 @@ def load_media(pack):
             raise SystemExit(f"{pack.prefix}: two media files share the id {stem!r}")
         with open(os.path.join(d, name), "rb") as f:
             out[stem] = "data:%s;base64,%s" % (mime, base64.b64encode(f.read()).decode())
+    return out
+
+
+SERIES_FORMAT = "emsim-ct-1"
+
+
+def load_series(pack):
+    """Every CT series in `cases/<PREFIX>/media/`, as {stem: geometry plus base64 voxels}.
+
+    A series is two files that share a stem: `<stem>.series.json` and `<stem>.series.gz`.
+    One without the other is refused here, as is a format this build does not read, so a
+    half-copied series stops the build instead of shipping a viewer that cannot open. The
+    voxel count is checked by the validator, which decompresses it; the build only carries
+    the bytes."""
+    d = os.path.join(pack.dir, "media")
+    if not os.path.isdir(d):
+        return {}
+    names = os.listdir(d)
+    stems = sorted({n[:-len(".series.json")] for n in names if n.endswith(".series.json")} |
+                   {n[:-len(".series.gz")] for n in names if n.endswith(".series.gz")})
+    out = {}
+    for stem in stems:
+        jp, gp = os.path.join(d, stem + ".series.json"), os.path.join(d, stem + ".series.gz")
+        if not (os.path.exists(jp) and os.path.exists(gp)):
+            raise SystemExit(f"{pack.prefix}: series {stem!r} needs both {stem}.series.json and {stem}.series.gz")
+        meta = json.load(open(jp, encoding="utf-8"))
+        if meta.get("format") != SERIES_FORMAT:
+            raise SystemExit(f"{pack.prefix}: series {stem!r} is format {meta.get('format')!r}, not {SERIES_FORMAT!r}")
+        with open(gp, "rb") as f:
+            meta["data"] = base64.b64encode(f.read()).decode()
+        out[stem] = meta
     return out
 
 
@@ -900,6 +938,9 @@ def main():
               "\n/*__ACCESS_START__*/\n" + open(os.path.join(HERE, "access.js"), encoding="utf-8").read() +
               "\n/*__ACCESS_END__*/\n" +
               "\n" + open(os.path.join(HERE, "ui.js"), encoding="utf-8").read() + "\n" +
+              # pupils.js (19 October 2026) declares `const PUPILVIEW` and reads ST, PT and
+              # pupilState at run time, so it comes after ui.js and engine.js.
+              "\n" + open(os.path.join(HERE, "pupils.js"), encoding="utf-8").read() + "\n" +
               # v0.18a. Review tools (a clock speed control) go into the local build only.
               # page() fills this marker with review.js there and with nothing in the site.
               "/*__REVIEW_TOOLS__*/\n")

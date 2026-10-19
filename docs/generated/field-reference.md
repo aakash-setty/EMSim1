@@ -102,6 +102,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `content_keys.imaging.<id>.rules[].value.image` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
 | `content_keys.imaging.<id>.rules[].value.kind` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
 | `content_keys.imaging.<id>.rules[].value.report` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
+| `content_keys.imaging.<id>.rules[].value.series` | engine+build+validator+tools | chart | 23 | Optional on an image payload: the stem of a CT series in media/ (<stem>.series.json and .series.gz). The image is its thumbnail and clicking opens the scrollable CT viewer |
 | `content_keys.imaging.<id>.rules[].value.verify` | generic | never |  | Reviewer note. Nothing reads it |
 | `content_keys.imaging.<id>.rules[].when` | generic | chart | 9.4 | As labs. Images: {kind: image, image: <file stem in media/>, caption, comment (debrief only)} |
 | `content_keys.imaging.<id>.verify` | generic | never |  | Reviewer note. Nothing reads it |
@@ -130,6 +131,15 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `content_keys.patient_visual.rules[].value.work_of_breathing` | engine+build+validator+tools | figure | 5.3 | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
 | `content_keys.patient_visual.rules[].when` | generic | figure | 5.3 | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
 | `content_keys.patient_visual.verify` | generic | never |  | Reviewer note. Nothing reads it |
+| `content_keys.pupils.authoring_note` | engine+validator+tools | never |  | Reviewer note. Nothing reads it |
+| `content_keys.pupils.rules[].value.affected_mm` | engine+validator | figure | 5.3 | For blown only: the affected pupil's diameter, in place of 8 mm |
+| `content_keys.pupils.rules[].value.affected_reaction` | engine+validator | figure | 5.3 | For blown only: the affected pupil's reaction, in place of none |
+| `content_keys.pupils.rules[].value.reaction` | engine+validator | figure | 5.3 | Optional: brisk, sluggish or none, overriding the state's |
+| `content_keys.pupils.rules[].value.side` | engine+validator+tools | figure | 5.3 | For blown only: the patient's left or right |
+| `content_keys.pupils.rules[].value.size_mm` | engine+validator | figure | 5.3 | Optional resting diameter in millimetres, overriding the state's |
+| `content_keys.pupils.rules[].value.state` | engine+build+validator+tools | figure | 5.3 | normal, pinpoint, dilated, dilated_fixed or blown. Sets the drawn size and the response to light |
+| `content_keys.pupils.rules[].when` | generic | figure | 5.3 | Optional first-match rule list for the magnified eyes over the figure and the penlight. A case without it has no eye view |
+| `content_keys.pupils.verify` | generic | never |  | Reviewer note. Nothing reads it |
 | `debrief_configuration.attempt_history_note` | none | never |  | Reviewer note. Nothing reads it |
 | `debrief_configuration.clinical_domains[].actions` | generic | never | 10.4 | id, label, actions |
 | `debrief_configuration.clinical_domains[].id` | generic | never | 10.4 | id, label, actions |
@@ -184,6 +194,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `handoff.early_exit.note` | generic | never |  | Reviewer note. Nothing reads it |
 | `handoff.early_exit.produces` | generic | never | 10.1 | Not read |
 | `handoff.pending_result_warning` | none | never | 10.1 | Not read. Pending results at handoff are recorded automatically |
+| `interview.authoring_notes.added` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.added_denials` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.alertness_gating` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.breathlessness_gating` | none | never |  | Reviewer note. Nothing reads it |
@@ -195,6 +206,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `interview.authoring_notes.diagnosis_disclosure` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.drowsiness_gating` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.facts` | generic | never |  | Reviewer note. Nothing reads it |
+| `interview.authoring_notes.facts_not_used` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.interview_during_niv` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.near_the_10_4_line` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.no_global_rule` | none | never |  | Reviewer note. Nothing reads it |
@@ -203,7 +215,9 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `interview.authoring_notes.precipitant_note` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.required_coverage` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.speech_gating` | none | never |  | Reviewer note. Nothing reads it |
+| `interview.authoring_notes.the_crash` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.the_daughter` | none | never |  | Reviewer note. Nothing reads it |
+| `interview.authoring_notes.the_decline` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.the_diabetes` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.the_disclosure` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.the_insulin` | none | never |  | Reviewer note. Nothing reads it |
@@ -377,4 +391,4 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `tag_vocabulary.values` | engine+build+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `tag_vocabulary.values_used_by_this_case` | none | never |  | Reviewer note. Nothing reads it |
 
-354 fields across 7 packs, as of the last generation.
+368 fields across 8 packs, as of the last generation.

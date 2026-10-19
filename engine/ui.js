@@ -506,12 +506,15 @@ function imageSrc(id){ const s=(PROTO.media||{})[id]; return typeof s==='string'
 function imageThumb(v){
   const src=imageSrc(v.image);
   const cap=v.caption||'Image';
+  /* 19 October 2026. A payload that names a series opens the CT viewer; its still is the
+     thumbnail. A series missing from the build falls back to the still. */
+  const ser=v.series&&PROTO.series&&PROTO.series[v.series]?v.series:'';
   if(!src) return `<div class="fb">${esc(cap)} (image ${esc(v.image||'?')} is not in this build)</div>`;
   /* A button rather than a div, so it is reachable by keyboard and announces itself. The
      data attributes are read by the delegated click handler; the src is inlined because
      every image in the build is already a data URI. */
   return `<button type="button" class="imgthumb" data-img="${esc(v.image)}"
-            data-cap="${esc(cap)}" title="${esc(cap)} - click to open">
+            data-cap="${esc(cap)}" data-series="${esc(ser)}" title="${esc(cap)} - click to open">
             <img src="${src}" alt="${esc(cap)}" loading="lazy">
           </button><p class="imgcap">${esc(cap)}. Click to open.</p>`;
 }
@@ -2265,10 +2268,20 @@ function gateHTML(){
       </div>
       <div class="gateright">
       <h3 class="gatesub">Critical actions you completed</h3>
-      ${done.length
-        ? `<div class="gatelist">${done.map(id=>
-            `<div class="gitem">${esc(dispExp(id))}</div>`).join('')}</div>`
-        : `<p class="sub">None of this case's critical actions were completed.</p>`}
+      ${(()=>{
+        /* Author instruction, 15 October 2026: a checked box per critical action done, then
+           an empty box per one missed. The missed ones are counted, not named: their text is
+           the same blurred nonsense every time, because this screen is not the answer key.
+           Screen readers hear "Critical action not completed" instead of the nonsense. */
+        const missed=Math.max(0,ST.expected.size-done.length);
+        if(!done.length&&!missed) return `<p class="sub">This case has no critical actions.</p>`;
+        const on=`<span class="gbox on" aria-hidden="true"><svg viewBox="0 0 26 26"><rect x="2" y="6" width="18" height="18" rx="4.5"/><path d="M6.5 14.5l4.4 4.6L23.5 3.5"/></svg></span>`;
+        const off=`<span class="gbox" aria-hidden="true"><svg viewBox="0 0 26 26"><rect x="2" y="6" width="18" height="18" rx="4.5"/></svg></span>`;
+        return `<div class="gatelist">${done.map(id=>
+            `<div class="gitem">${on}<span>${esc(dispExp(id))}</span></div>`).join('')}${
+          Array.from({length:missed},()=>
+            `<div class="gitem gmiss">${off}<span class="gblur" aria-hidden="true">Vorelt quandish ambrel tosk nemura</span><span class="gsr">Critical action not completed</span></div>`).join('')}</div>`;
+      })()}
       </div>
       </div>
       <div class="gatebtns">
@@ -2653,6 +2666,11 @@ function debriefHTML(){
       <div class="gatebtns"><button class="btn" id="restart">Replay this case</button>
       ${CASES.length>1?'<button class="btn ghost" id="pickanother">Choose a different case</button>':''}</div></div>
 
+    <!-- Author instruction, 15 October 2026: above the Summary, headed "Critical Errors", no
+         explanatory paragraph. Shown only when there is something in it. -->
+    ${dis.length?`<div class="dbsec"><h2>Critical Errors</h2>
+      ${dis.map(id=>item(id,'discouraged','p-warn')).join('')}</div>`:''}
+
     <div class="dbsec"><h2>Summary</h2>
       <p class="sub">${ST.halted?'Halted':(ST.failed?(ST.failed.byClock?'Ended by the clock':'Ended by an action'):(ST.earlyExit?'Ended early, incomplete':'Completed'))} at ${mmss(ST.now)},
       in ${esc(PROTO.difficulty.modes[MODE].label.toLowerCase())} mode${DM()===1&&MODE!==PROTO.difficulty.default?`, so the nurse prompted at the deadlines the case authored rather than waiting past them`:''}.
@@ -2668,12 +2686,7 @@ function debriefHTML(){
     <!-- "Other actions worth doing" removed on author instruction, 11 October 2026.
          Missed recommended actions are still listed under each category in the Summary. -->
 
-    ${dis.length?`<div class="dbsec"><h2>Wrong here, and worth understanding why</h2>
-      <p class="sub">These did not stop the case and some of them will have moved a number
-      in the direction you wanted. Being wrong is not the same as being dangerous, and a
-      drug that produces the effect you asked for can still be the wrong drug for the
-      disease underneath it.</p>
-      ${dis.map(id=>item(id,'discouraged','p-warn')).join('')}</div>`:''}
+    <!-- The discouraged actions moved above the Summary as "Critical Errors" (15 October 2026). -->
 
     ${traps.length?`<div class="dbsec"><h2>Things that looked reasonable and were not</h2>
       ${traps.map(x=>item(x.id,'no benefit here','p-neu')).join('')}
@@ -3525,7 +3538,8 @@ el('leaveok').addEventListener('click',()=>{
    stopped can still switch away from the window, which pauses on visibilitychange as it
    always did. */
 let IMG_RETURN=null;
-function openImage(id,cap){
+function openImage(id,cap,series){
+  if(series&&CTVIEW.has(series)){ CTVIEW.open(series,cap); return; }
   const src=imageSrc(id);
   if(!src) return;
   IMG_RETURN=document.activeElement;
@@ -3554,6 +3568,255 @@ function closeImage(){
   if(IMG_QUEUE.length) setTimeout(drainImageQueue,450);
 }
 
+/* ---------- the CT series viewer (19 October 2026, author instruction) ----------
+   A head CT is a stack of images, and the skill is scrolling through it: finding the
+   collection, judging its shape against the skull, seeing the fracture on the bone window.
+   An image payload that names a `series` keeps its still as the thumbnail in the record, and
+   opening it opens this viewer instead of the still. Nothing here names a case: the
+   geometry, the windows and the notice come from the series file.
+
+   The voxels are Hounsfield units, gzipped as two byte planes (all the low bytes, then all
+   the high bytes, of HU + 1024), so the build can carry them as one base64 string. They are
+   decoded once per series per page with the browser's DecompressionStream, which needs no
+   network request, and held for reopening. Reading the scan does not pause the clock, for
+   the same reason the image viewer never has. Nothing here is logged or scored. */
+const CTVIEW=(function(){
+  const cache={};                       // series id -> {meta, hu:Int16Array}
+  const S={id:null, meta:null, hu:null, i:0, w:80, l:40, win:'Brain', zoom:1, panX:0, panY:0,
+           hover:null, token:0, ret:null};
+  let off=null, offCtx=null, offImg=null, dpr=1, cw=0, ch=0;
+  const lut=new Uint8ClampedArray(4096);
+  const stage=()=>el('ctstage'), cvs=()=>el('ctcanvas');
+  const isOpen=()=>!el('ctview').classList.contains('hidden');
+  const has=id=>!!(id&&PROTO&&PROTO.series&&PROTO.series[id]&&PROTO.series[id].data);
+
+  async function decode(id){
+    const key=(PROTO.prefix||'')+'/'+id;
+    if(cache[key]) return cache[key];
+    if(typeof DecompressionStream==='undefined')
+      throw new Error('This browser cannot open the scan. Use a current Chrome, Edge, Firefox or Safari.');
+    const m=PROTO.series[id], n=m.n*m.w*m.h;
+    const bin=atob(m.data), bytes=new Uint8Array(bin.length);
+    for(let k=0;k<bin.length;k++) bytes[k]=bin.charCodeAt(k);
+    const buf=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+    const u8=new Uint8Array(buf);
+    if(u8.length!==2*n) throw new Error('The scan file is damaged (expected '+2*n+' bytes, found '+u8.length+').');
+    const hu=new Int16Array(n);
+    for(let k=0;k<n;k++) hu[k]=(u8[k]|(u8[n+k]<<8))-1024;
+    return (cache[key]={meta:m, hu});
+  }
+
+  function buildLut(){
+    const lo=S.l-S.w/2, w=Math.max(1,S.w);
+    for(let k=0;k<4096;k++) lut[k]=((k-1024-lo)/w)*255;
+  }
+  function renderSlice(){
+    if(!S.hu) return;
+    const m=S.meta, n=m.w*m.h, base=S.i*n, d=offImg.data, hu=S.hu;
+    for(let p=0,q=0;p<n;p++,q+=4){
+      let v=hu[base+p]+1024; v=v<0?0:v>4095?4095:v;
+      const g=lut[v]; d[q]=g; d[q+1]=g; d[q+2]=g; d[q+3]=255;
+    }
+    offCtx.putImageData(offImg,0,0);
+    draw();
+  }
+  function scale(){ return S.meta?Math.min(cw/S.meta.w,ch/S.meta.h)*S.zoom:1; }
+  function resize(){
+    if(!isOpen()) return;
+    dpr=window.devicePixelRatio||1; cw=stage().clientWidth; ch=stage().clientHeight;
+    cvs().width=Math.max(1,Math.round(cw*dpr)); cvs().height=Math.max(1,Math.round(ch*dpr));
+    draw();
+  }
+  function toImage(cx,cy){
+    const s=scale(), m=S.meta;
+    return {x:(cx-cw/2-S.panX)/s+m.w/2, y:(cy-ch/2-S.panY)/s+m.h/2};
+  }
+  function draw(){
+    const c=cvs(), ctx=c.getContext('2d');
+    ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle='#000'; ctx.fillRect(0,0,c.width,c.height);
+    if(!S.hu) return;
+    const m=S.meta, s=scale();
+    ctx.setTransform(dpr*s,0,0,dpr*s,dpr*(cw/2+S.panX-(m.w/2)*s),dpr*(ch/2+S.panY-(m.h/2)*s));
+    ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+    ctx.drawImage(off,0,0);
+    /* A 5 cm bar, so a size can be judged the way it is on a workstation. */
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const len=(50/m.pixel_mm)*s, x0=12, y0=ch-40;
+    ctx.strokeStyle='#e9eef2'; ctx.lineWidth=1.5; ctx.beginPath();
+    ctx.moveTo(x0,y0); ctx.lineTo(x0+len,y0);
+    for(let t=0;t<=5;t++){ const xx=x0+len*t/5; ctx.moveTo(xx,y0); ctx.lineTo(xx,y0-(t%5===0?7:4)); }
+    ctx.stroke();
+    ctx.fillStyle='#e9eef2'; ctx.font='11px ui-monospace,Menlo,monospace'; ctx.fillText('5 cm',x0+len+6,y0+4);
+    text();
+  }
+  function text(){
+    const m=S.meta; if(!m) return;
+    el('ct-tl').innerHTML=esc(m.label||'CT')+'\nIm '+(S.i+1)+' / '+m.n
+      +'\n<span class="dim">Z '+Number(m.z_mm[S.i]).toFixed(1)+' mm · '+m.thickness_mm+' mm</span>';
+    el('ct-tr').textContent='W '+Math.round(S.w)+'  L '+Math.round(S.l)+'\n'+S.win+(S.zoom!==1?'\nZoom '+S.zoom.toFixed(1)+'x':'');
+    el('ct-bl').innerHTML=m.synthetic?'\n<span class="dim">Synthetic image</span>':'';
+    el('ct-br').innerHTML=S.hover!=null?'HU '+S.hover:'<span class="dim">HU ·</span>';
+    el('ctcount').textContent=(S.i+1)+' / '+m.n;
+    el('ctslider').value=S.i+1;
+    stage().setAttribute('aria-label','Axial CT image '+(S.i+1)+' of '+m.n+', window '+S.win
+      +'. Scroll or use the arrow keys to change image.');
+  }
+  function setSlice(i){
+    if(!S.meta) return;
+    i=Math.max(0,Math.min(S.meta.n-1,i)); if(i===S.i) return;
+    S.i=i; hoverAt(); renderSlice();
+  }
+  function setWindow(w,l,name){
+    S.w=Math.max(1,Math.min(4000,w)); S.l=Math.max(-1000,Math.min(3000,l)); S.win=name||'Custom';
+    el('ctwins').querySelectorAll('.ctbtn').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.win===S.win)));
+    buildLut(); renderSlice();
+  }
+  function setZoom(z,cx,cy){
+    const before=(cx!=null)?toImage(cx,cy):null;
+    S.zoom=Math.max(1,Math.min(8,z));
+    if(S.zoom===1){ S.panX=0; S.panY=0; }
+    else if(before){ const s=scale(), m=S.meta; S.panX=cx-cw/2-(before.x-m.w/2)*s; S.panY=cy-ch/2-(before.y-m.h/2)*s; }
+    draw();
+  }
+  let lastPtr=null;
+  function hoverAt(cx,cy){
+    if(cx!==undefined) lastPtr={cx,cy};
+    if(!lastPtr||!S.hu){ S.hover=null; return; }
+    const m=S.meta, p=toImage(lastPtr.cx,lastPtr.cy), x=Math.floor(p.x), y=Math.floor(p.y);
+    S.hover=(x>=0&&y>=0&&x<m.w&&y<m.h)?S.hu[S.i*m.w*m.h+y*m.w+x]:null;
+  }
+
+  async function open(id,cap){
+    if(!has(id)) return false;
+    const tok=++S.token;
+    S.ret=document.activeElement;
+    el('ctview-title').textContent=cap||'CT';
+    el('ctview').classList.remove('hidden');
+    el('ctmsg').textContent='Loading images'; el('ctmsg').classList.remove('hidden');
+    const m=PROTO.series[id];
+    el('ctnotice').textContent=m.notice||'';
+    el('ctnotice-sum').parentElement.hidden=!m.notice;
+    el('ctwins').innerHTML=(m.windows||[]).map((w,k)=>
+      `<button type="button" class="ctbtn" data-win="${esc(w.name)}" data-w="${w.w}" data-l="${w.l}"`
+      +` title="W ${w.w} L ${w.l} (key ${k+1})">${esc(w.name)}</button>`).join('');
+    el('ctslider').max=m.n;
+    /* Focus moves to the stage so the arrow keys scroll at once, except while the resident
+       is writing a question to the patient or a note: a scan that opens itself mid-sentence
+       must not take the caret. A filter or search box is not writing, and leaving the focus
+       there would send the arrow keys to a box behind the dialog. */
+    const a=document.activeElement;
+    const typing=a&&(a.id==='askbox'||a.tagName==='TEXTAREA'||a.isContentEditable);
+    if(!typing) stage().focus({preventScroll:true});
+    S.hu=null; resize();
+    try{
+      const data=await decode(id);
+      if(tok!==S.token||!isOpen()) return true;
+      S.id=id; S.meta=data.meta; S.hu=data.hu;
+      off=document.createElement('canvas'); off.width=m.w; off.height=m.h;
+      offCtx=off.getContext('2d'); offImg=offCtx.createImageData(m.w,m.h);
+      S.i=Math.max(0,Math.min(m.n-1,(m.start_image||1)-1));
+      S.zoom=1; S.panX=0; S.panY=0; S.hover=null; lastPtr=null;
+      el('ctmsg').classList.add('hidden');
+      const w0=(m.windows||[])[0]||{name:'Brain',w:80,l:40};
+      resize(); setWindow(w0.w,w0.l,w0.name);
+    }catch(err){
+      if(tok===S.token) el('ctmsg').textContent=String(err&&err.message?err.message:err);
+    }
+    return true;
+  }
+  function close(){
+    if(!isOpen()) return;
+    S.token++;
+    el('ctview').classList.add('hidden');
+    S.hu=null; off=null; offCtx=null; offImg=null;   // the decoded stack stays in the cache
+    try{ if(S.ret&&S.ret.focus) S.ret.focus(); }catch(err){}
+    S.ret=null;
+    if(IMG_QUEUE.length) setTimeout(drainImageQueue,450);
+  }
+
+  /* ---- pointer: drag scrolls, right-drag windows, shift-drag or middle-drag pans ---- */
+  let drag=null, acc=0, wheelAcc=0;
+  el('ctstage').addEventListener('contextmenu',e=>e.preventDefault());
+  el('ctstage').addEventListener('pointerdown',e=>{
+    if(!S.hu) return;
+    stage().focus({preventScroll:true});
+    stage().setPointerCapture(e.pointerId);
+    const mode=e.button===2?'window':(e.button===1||e.shiftKey)?'pan':'scroll';
+    drag={mode, x:e.clientX, y:e.clientY, lastY:e.clientY, w:S.w, l:S.l, panX:S.panX, panY:S.panY};
+    acc=0;
+  });
+  el('ctstage').addEventListener('pointermove',e=>{
+    if(!S.hu) return;
+    const r=stage().getBoundingClientRect(), cx=e.clientX-r.left, cy=e.clientY-r.top;
+    if(drag){
+      const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+      if(drag.mode==='scroll'){
+        acc+=e.clientY-drag.lastY; drag.lastY=e.clientY;
+        while(acc>=8){ acc-=8; setSlice(S.i+1); }
+        while(acc<=-8){ acc+=8; setSlice(S.i-1); }
+      }else if(drag.mode==='window'){
+        const k=Math.max(0.5,drag.w/160);
+        setWindow(drag.w+dx*k,drag.l+dy*k*0.5,'Custom');
+      }else if(drag.mode==='pan'){
+        S.panX=drag.panX+dx; S.panY=drag.panY+dy; draw();
+      }
+    }
+    hoverAt(cx,cy); text();
+  });
+  const endDrag=e=>{ drag=null; acc=0; try{ stage().releasePointerCapture(e.pointerId); }catch(err){} };
+  el('ctstage').addEventListener('pointerup',endDrag);
+  el('ctstage').addEventListener('pointercancel',endDrag);
+  el('ctstage').addEventListener('pointerleave',()=>{ if(!drag){ lastPtr=null; S.hover=null; text(); } });
+  el('ctstage').addEventListener('wheel',e=>{
+    if(!S.hu) return;
+    e.preventDefault();
+    const r=stage().getBoundingClientRect(), cx=e.clientX-r.left, cy=e.clientY-r.top;
+    if(e.ctrlKey||e.metaKey){ setZoom(S.zoom*Math.exp(-e.deltaY*0.01),cx,cy); hoverAt(cx,cy); text(); return; }
+    wheelAcc+=e.deltaMode===1?e.deltaY*30:e.deltaY;
+    /* One image per notch of a mouse wheel (100 to 120 per notch), and smooth on a trackpad,
+       whose small deltas add up here. */
+    while(wheelAcc>=100){ wheelAcc-=100; setSlice(S.i+1); }
+    while(wheelAcc<=-100){ wheelAcc+=100; setSlice(S.i-1); }
+    hoverAt(cx,cy); text();
+  },{passive:false});
+
+  el('ctslider').addEventListener('input',e=>setSlice(+e.target.value-1));
+  el('ctwins').addEventListener('click',e=>{
+    const b=e.target.closest('.ctbtn'); if(!b) return;
+    setWindow(+b.dataset.w,+b.dataset.l,b.dataset.win);
+  });
+  el('ctzoomin').addEventListener('click',()=>setZoom(S.zoom*1.25));
+  el('ctzoomout').addEventListener('click',()=>setZoom(S.zoom/1.25));
+  el('ctreset').addEventListener('click',()=>{ S.zoom=1; S.panX=0; S.panY=0; draw(); });
+  el('ctclose').addEventListener('click',close);
+  el('ctview').addEventListener('click',e=>{ if(e.target===el('ctview')) close(); });
+  window.addEventListener('resize',resize);
+
+  /* Keys, in the capture phase so that nothing behind the viewer also acts on them (Escape
+     must not also shrink the record). Arrows and the number keys are left alone while the
+     resident is typing in a box. */
+  document.addEventListener('keydown',e=>{
+    if(!isOpen()) return;
+    if(e.key==='Escape'){ e.preventDefault(); e.stopImmediatePropagation(); close(); return; }
+    const t=e.target, typing=/^(INPUT|TEXTAREA|SELECT)$/.test((t&&t.tagName)||'')&&t.id!=='ctslider';
+    if(typing||e.altKey||e.metaKey||e.ctrlKey||!S.hu) return;
+    const k=e.key, wins=S.meta.windows||[];
+    let done=true;
+    if(k==='ArrowUp'||k==='ArrowLeft'||k==='PageUp') setSlice(S.i-1);
+    else if(k==='ArrowDown'||k==='ArrowRight'||k==='PageDown') setSlice(S.i+1);
+    else if(k==='Home') setSlice(0);
+    else if(k==='End') setSlice(S.meta.n-1);
+    else if(k>='1'&&k<='9'&&wins[+k-1]) setWindow(wins[+k-1].w,wins[+k-1].l,wins[+k-1].name);
+    else if(k==='+'||k==='=') setZoom(S.zoom*1.25);
+    else if(k==='-') setZoom(S.zoom/1.25);
+    else if(k==='0'){ S.zoom=1; S.panX=0; S.panY=0; draw(); }
+    else done=false;
+    if(done){ e.preventDefault(); e.stopImmediatePropagation(); }
+  },true);
+
+  return {open, close, isOpen, has, state:()=>({id:S.id, i:S.i, w:S.w, l:S.l, win:S.win, zoom:S.zoom, loaded:!!S.hu})};
+})();
+
 /* ---------- a picture opens itself ----------
    A result that is a tracing or a film opens full size the moment it comes back, without
    the resident having to find the thumbnail on the chart. Two reasons this is not just a
@@ -3579,21 +3842,21 @@ function autoOpenImages(){
     if(IMG_SEEN.has(key)) return;
     IMG_SEEN.add(key);
     if(!imageSrc(v.image)) return;              /* degrades to the chart line, as elsewhere */
-    IMG_QUEUE.push({img:v.image,cap:v.caption||dispName(id)});
+    IMG_QUEUE.push({img:v.image,cap:v.caption||dispName(id),series:v.series});
   }));
   drainImageQueue();
 }
 function drainImageQueue(){
   if(!IMG_QUEUE.length||ENDED||PAUSED||LEAVING||imageOpen()) return;
   const n=IMG_QUEUE.shift();
-  openImage(n.img,n.cap);
+  openImage(n.img,n.cap,n.series);
 }
-function imageOpen(){ return !el('imgview').classList.contains('hidden'); }
+function imageOpen(){ return !el('imgview').classList.contains('hidden')||CTVIEW.isOpen(); }
 
 document.addEventListener('click',e=>{
   const t=e.target.closest?e.target.closest('.imgthumb'):null;
-  if(t){ e.preventDefault(); openImage(t.dataset.img,t.dataset.cap); return; }
-  if(!imageOpen()) return;
+  if(t){ e.preventDefault(); openImage(t.dataset.img,t.dataset.cap,t.dataset.series); return; }
+  if(el('imgview').classList.contains('hidden')) return;
   /* The backdrop is the overlay itself; anything inside the card is not it. */
   if(e.target===el('imgview')) closeImage();
 });

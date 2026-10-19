@@ -2489,6 +2489,27 @@
     }
    ]
   },
+  "pupils": {
+   "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drawn sizes and responses for the eye view. 7 mm and equal throughout, from exam_heent. Anticholinergic mydriasis is drawn with a sluggish response in every state, including the arrival state where exam_heent says 'reactive': a sluggish pupil still reacts, and a brisk one would constrict from 7 mm to about 4 mm, which this toxidrome does not do.",
+   "verify": "Two choices to check. (1) The arrival pupils are drawn sluggish where exam_heent says reactive; change either so the two agree. (2) In pulseless VT and the halted state the pupils are drawn dilated and fixed, 8 mm, which no text in this case states; it is the expected finding in a patient in arrest, not an authored one.",
+   "rules": [
+    {
+     "when": "phase is pulseless_vt OR phase is halted",
+     "value": {
+      "state": "dilated_fixed",
+      "size_mm": 8
+     }
+    },
+    {
+     "when": null,
+     "value": {
+      "state": "dilated",
+      "size_mm": 7,
+      "reaction": "sluggish"
+     }
+    }
+   ]
+  },
   "labs": {
    "authoring_note": "Section 9.4. Structured payloads with abnormal flags set by the author of the case file and not computed by the renderer. The numbers are Dr Medwid's, from her admitting form and her scenario flow. Not one reference interval appears in her document, so every one below is model output awaiting a physician's signature. Where the catalog carries a default for the same analyte, the catalog's interval is used so that the two agree.\n\nOne value is corrected rather than transcribed. The source's chemistry panel gives CO2 as 34 mEq/L and its blood gas gives HCO3 as 13 mEq/L; with a sodium of 135 and a chloride of 109 the second is consistent with the pH of 7.28 and the first gives an anion gap of negative 8. The panel below carries 13. See DIPH-SEED.md section 3.6.",
    "fingerstick_blood_sugar": {

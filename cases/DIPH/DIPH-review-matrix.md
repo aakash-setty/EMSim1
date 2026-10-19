@@ -876,6 +876,15 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
 
 
+### `pupils`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| halted | rule 0 (phase is pulseless_vt OR phase is halted) &rarr; pupils dilated fixed, 8 mm | plausible |
+| pulseless_vt | rule 0 (phase is pulseless_vt OR phase is halted) &rarr; pupils dilated fixed, 8 mm | plausible |
+| «any other phase» | rule 1 (default) &rarr; pupils dilated, 7 mm, sluggish | plausible |
+
+
 ### `labs/fingerstick_blood_sugar`
 
 Single unconditional rule; nothing to enumerate.

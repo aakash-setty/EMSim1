@@ -229,6 +229,8 @@ def collect_rule_lists(case):
         out.append(("general_status", ck["general_status"]["rules"], True))
     if isinstance(ck.get("patient_visual"), dict) and isinstance(ck["patient_visual"].get("rules"), list):
         out.append(("patient_visual", ck["patient_visual"]["rules"], True))
+    if isinstance(ck.get("pupils"), dict) and isinstance(ck["pupils"].get("rules"), list):
+        out.append(("pupils", ck["pupils"]["rules"], True))
     for group in ("labs", "imaging"):
         for k, v in ck[group].items():
             if k == "authoring_note":
@@ -312,6 +314,10 @@ PATIENT_ADDONS = {"gaze_left", "gaze_right", "nystagmus", "nasal_cannula", "nonr
                   "bag_valve_mask", "defib_pads", "central_line", "jaundice", "sweating", "agitation",
                   "hospital_bed", "hospital_bed_flat"}
 PATIENT_VISUAL_KEYS = {"eyes", "seizure", "work_of_breathing", "expression", "addons"}
+# 19 October 2026. content_keys.pupils, read by engine/pupils.js.
+PUPIL_STATES = {"normal", "pinpoint", "dilated", "dilated_fixed", "blown"}
+PUPIL_REACTIONS = {"brisk", "sluggish", "none"}
+PUPIL_KEYS = {"state", "size_mm", "reaction", "side", "affected_mm", "affected_reaction", "note"}
 PATIENT_AVATAR_PARTS = {"topType": "top", "accessoriesType": "accessories", "facialHairType": "facialHair",
                         "clotheType": "clothes", "graphicType": "graphic", "eyeType": "eyes",
                         "eyebrowType": "eyebrow", "mouthType": "mouth"}
@@ -333,6 +339,64 @@ def _check_expression(where, e, art, errors):
             errors.append(f"[patient] {where}: expression has unknown key {k!r}")
         elif art and v not in art["options"][PATIENT_AVATAR_PARTS[k]]:
             errors.append(f"[patient] {where}: expression.{k} {v!r} is not an option")
+
+
+def check_pupils(case, errors, warnings):
+    """content_keys.pupils (19 October 2026): optional. A guarded rule list, first match
+    wins, read by engine/pupils.js to draw the magnified eyes and their response to light."""
+    pu = case["content_keys"].get("pupils")
+    if pu is None:
+        return
+    if not isinstance(pu, dict) or not isinstance(pu.get("rules"), list) or not pu["rules"]:
+        errors.append("[pupils] content_keys.pupils needs a non-empty rules list"); return
+    for k in pu:
+        if k not in {"rules", "iris", "authoring_note", "verify"}:
+            errors.append(f"[pupils] unknown key {k!r}")
+    if "iris" in pu and not (isinstance(pu["iris"], str) and _HEX.match(pu["iris"])):
+        errors.append(f"[pupils] iris {pu['iris']!r} must be a hex colour")
+    if not any(r.get("when") in (None, "") for r in pu["rules"]):
+        warnings.append("[pupils] no unconditional rule: a state no rule matches draws no eyes")
+    for i, r in enumerate(pu["rules"]):
+        where = f"pupils[{i}]"
+        v = r.get("value")
+        if not isinstance(v, dict):
+            errors.append(f"[pupils] {where}: value must be an object"); continue
+        for k in v:
+            if k not in PUPIL_KEYS:
+                errors.append(f"[pupils] {where}: unknown key {k!r}")
+        st = v.get("state")
+        if st not in PUPIL_STATES:
+            errors.append(f"[pupils] {where}: state {st!r} is not one of {sorted(PUPIL_STATES)}"); continue
+        if "reaction" in v and v["reaction"] not in PUPIL_REACTIONS:
+            errors.append(f"[pupils] {where}: reaction {v['reaction']!r} is not one of {sorted(PUPIL_REACTIONS)}")
+        if "size_mm" in v and not (isinstance(v["size_mm"], (int, float)) and 1 <= v["size_mm"] <= 9):
+            errors.append(f"[pupils] {where}: size_mm must be a number from 1 to 9")
+        if st == "blown":
+            if v.get("side") not in ("left", "right"):
+                errors.append(f"[pupils] {where}: a blown pupil needs side, left or right (the patient's)")
+        elif "side" in v:
+            errors.append(f"[pupils] {where}: side is only for a blown pupil")
+        for k in ("affected_mm", "affected_reaction"):
+            if k in v and st != "blown":
+                errors.append(f"[pupils] {where}: {k} is only for a blown pupil")
+        if st == "blown":
+            if "affected_reaction" in v and v["affected_reaction"] not in PUPIL_REACTIONS:
+                errors.append(f"[pupils] {where}: affected_reaction {v['affected_reaction']!r} is not one of {sorted(PUPIL_REACTIONS)}")
+            am = v.get("affected_mm")
+            if "affected_mm" in v and not (isinstance(am, (int, float)) and 1 <= am <= 9):
+                errors.append(f"[pupils] {where}: affected_mm must be a number from 1 to 9")
+            elif isinstance(am, (int, float)):
+                other = v["size_mm"] if isinstance(v.get("size_mm"), (int, float)) else 4
+                if am <= other:
+                    warnings.append(f"[pupils] {where}: the affected pupil ({am} mm) is not larger than the other ({other} mm)")
+        if st == "dilated_fixed" and v.get("reaction", "none") != "none":
+            errors.append(f"[pupils] {where}: a fixed pupil cannot have reaction {v['reaction']!r}")
+        sz = v.get("size_mm")
+        if isinstance(sz, (int, float)):
+            if st == "pinpoint" and sz > 2.5:
+                warnings.append(f"[pupils] {where}: pinpoint at {sz} mm")
+            if st in ("dilated", "dilated_fixed") and sz < 5:
+                warnings.append(f"[pupils] {where}: {st} at {sz} mm")
 
 
 def check_patient(case, errors, warnings):
@@ -1304,6 +1368,44 @@ def run_checks(case):
         notes.append(f"media: {len(media_ids)} image(s) in the pack "
                      f"({', '.join(sorted(media_ids))})")
 
+    series_checked = {}
+
+    def check_series(sid):
+        """None when media/<sid>.series.json and .series.gz form a readable series."""
+        if sid in series_checked:
+            return series_checked[sid]
+        prob = None
+        jp = os.path.join(media_dir, f"{sid}.series.json")
+        gp = os.path.join(media_dir, f"{sid}.series.gz")
+        if not isinstance(sid, str) or not sid:
+            prob = "names no series"
+        elif not (os.path.exists(jp) and os.path.exists(gp)):
+            prob = f"needs {sid}.series.json and {sid}.series.gz in {media_dir}"
+        else:
+            try:
+                import gzip as _gz
+                m = json.load(open(jp, encoding="utf-8"))
+                need = ("format", "n", "w", "h", "pixel_mm", "thickness_mm", "z_mm", "windows")
+                miss = [k for k in need if k not in m]
+                if miss:
+                    prob = "series.json lacks " + ", ".join(miss)
+                elif m["format"] != "emsim-ct-1":
+                    prob = f"format {m['format']!r} is not emsim-ct-1"
+                elif len(m["z_mm"]) != m["n"]:
+                    prob = f"z_mm has {len(m['z_mm'])} entries for {m['n']} images"
+                elif not m["windows"] or not all({"name", "w", "l"} <= set(w) for w in m["windows"]):
+                    prob = "windows must be a list of {name, w, l}"
+                elif not (1 <= m.get("start_image", 1) <= m["n"]):
+                    prob = "start_image is outside the stack"
+                else:
+                    got = len(_gz.decompress(open(gp, "rb").read()))
+                    if got != 2 * m["n"] * m["w"] * m["h"]:
+                        prob = f"voxel data is {got} bytes, expected {2 * m['n'] * m['w'] * m['h']}"
+            except Exception as ex:   # an unreadable series is one error, not a traceback
+                prob = f"could not be read ({ex})"
+        series_checked[sid] = prob
+        return prob
+
     def check_payload(where, v):
         if isinstance(v, str):
             errors.append(f"{where}: result is a prose string; authored results must be "
@@ -1352,6 +1454,14 @@ def run_checks(case):
             if not v.get("caption"):
                 warnings.append(f"{where}: image payload has no caption, so the viewer "
                                 f"has nothing to title it with")
+            # 19 October 2026. A series is a CT stack the resident scrolls through; the image
+            # above is its still. Both files must be there, the geometry must be whole, and
+            # the voxels must be the size the geometry says, or the viewer opens on an error.
+            sid = v.get("series")
+            if sid is not None:
+                prob = check_series(sid)
+                if prob:
+                    errors.append(f"{where}: series {sid!r}: {prob}")
         else:
             errors.append(f"{where}: unknown payload kind {v['kind']!r}")
 
@@ -1390,6 +1500,7 @@ def run_checks(case):
             check_finding(f"general_status[{i}]", r["value"], "general_status")
 
     check_patient(case, errors, warnings)
+    check_pupils(case, errors, warnings)
 
     # numeric plausibility of the abnormal flags. The renderer must not recompute,
     # but the validator can, and a mis-set flag is invisible everywhere else.
@@ -1804,6 +1915,18 @@ MAX_ROWS = 96
 
 def payload_summary(v):
     """One-line rendering of a structured result payload for the review matrix."""
+    if "kind" not in v and "state" in v and set(v) <= PUPIL_KEYS:
+        bits = ["pupils " + v["state"].replace("_", " ")]
+        if "size_mm" in v:
+            bits.append(f"{v['size_mm']} mm")
+        if "reaction" in v:
+            bits.append(v["reaction"])
+        if "side" in v:
+            bits.append(v["side"])
+        if "affected_mm" in v or "affected_reaction" in v:
+            bits.append("affected eye " + " ".join(str(x) for x in (
+                f"{v['affected_mm']} mm" if "affected_mm" in v else None, v.get("affected_reaction")) if x))
+        return ", ".join(bits)
     if "kind" not in v and set(v) <= PATIENT_VISUAL_KEYS:
         bits = ["eyes " + v.get("eyes", "open")]
         if v.get("seizure"):
