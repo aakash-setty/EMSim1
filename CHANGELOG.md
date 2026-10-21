@@ -5,6 +5,60 @@ is usable with learners.
 
 ---
 
+## CT buttons head to foot, and two named CTA (20 October 2026, author instruction)
+
+Labs/Imaging, CT: CT - Head, CT/CTA - Head and Neck, CT - C-spine, CT - Chest, CTA - Pulmonary
+Embolus, CT - Abdomen, CTA - Aorta. "CT - Pulmonary Embolus" and "CT - Aorta" are renamed
+"CTA - ...". The ids are unchanged (`ct_pulmonary_embolus`, `ct_aorta`), so no case, binding
+or score changes. A case that names its own action keeps its own name.
+
+---
+
+## The case list scrolls again, and a bigger Main menu (20 October 2026, author instruction)
+
+The case list stopped scrolling once there were more cases than fit: the welcome screen's
+grid row grew to the list's full height, the screen clips anything taller than the window,
+and so the list never had an overflow to scroll. The row is now bounded by the window and the
+list scrolls inside it, on wide and narrow screens. On the case card, Main menu is now a
+larger button at the card's left edge with the home icon the debrief's Return to Home uses.
+
+---
+
+## The CT viewer shows how to scroll, and SCOOT's prompts on arrival thin out (20 October 2026, author instruction)
+
+The CT viewer has a small floating box on the left of the images: arrow keys and a two-finger
+trackpad swipe, drawn and animated, with a line for the mouse wheel and dragging. The cross
+hides it and a question mark brings it back for the rest of the session. It is hidden on
+narrow screens, and still with reduced motion. Engine: `#cthelp` in shell.html, its handlers
+in `CTVIEW` in ui.js, authoring 23. The footer under the viewer (the controls line and "About
+this image") is gone. A series' `notice` is no longer printed and still ships in the pack.
+
+SCOOT's windows are renamed Brain, Bleed, Bone and Ischemia, with the same widths and levels.
+
+The image slider is now vertical, in a rail on the right of the images with the image number
+above it, image 1 at the top. The header reads "Interactive PACS Viewer: " and the series'
+new optional `title` ("CT Head without contrast" for SCOOT), or the result's caption when a
+series has no title. The validator checks `title` when present. The window and zoom buttons
+float on the image's bottom right corner, with the HU readout above them, and the bar under
+the image is gone.
+
+SCOOT: no CT prompt on arrival (it came at 2:30 in the default mode), the neuro exam prompt
+at 3:00 instead of 1:45, and the scan opens on image 1, the skull base, instead of image 16.
+Model-written, not reviewed.
+
+---
+
+## SCOOT: no 3:30 nudge, the pupil blows at 6:00, and his eyes close at GCS 12 (19 October 2026, author instruction)
+
+The nurse no longer says "Neurosurgery hasn't heard about him yet" on arrival. In the default
+mode it came at 3:30, too soon. Calling with the scan on arrival is now the learner's own
+decision. Herniation comes 120 s into the decline, at 6:00, not 9:00, and brainstem
+compression at 11:00. The neurosurgery prompt was shortened to 25 s (escalation 35 s) so that
+in the default mode it still comes first: 5:15, then 5:45. The figure's eyes are closed in the
+decline, where he opens them only to voice. Case files only. Model-written, not reviewed.
+
+---
+
 ## SCOOT's pupils, and a blown pupil drawn at its own size (19 October 2026, author instruction)
 
 SCOOT now authors `content_keys.pupils`. The eye view shows what its exam text says: both

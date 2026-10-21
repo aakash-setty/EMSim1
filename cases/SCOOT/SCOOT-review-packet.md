@@ -30,9 +30,10 @@ The review matrix does not show prompts, prerequisites, the follow-up, transitio
 
 ## Most likely to be wrong
 
-1. **The three clocks** (240 s, 300 s, 300 s). Teaching choices. The decline cannot be
-   prevented by design. Ask whether 300 s to herniation in the decline and 300 s to
-   brainstem compression feel right against each other.
+1. **The three clocks** (240 s, 120 s, 300 s). The decline cannot be prevented by design.
+   The 120 s to herniation (pupil at 6:00) is the owner's choice after play. Ask whether
+   300 s to brainstem compression feels right against it, and whether two minutes of
+   warning in the decline is enough (SEED 2.14).
 2. **The terminal clock in herniation.** A model default the owner did not choose. Remove the
    one transition if the case should never kill him.
 3. **Osmotherapy tags.** Discouraged at GCS 15, neutral (accepted) in the decline, required
@@ -50,6 +51,10 @@ The review matrix does not show prompts, prerequisites, the follow-up, transitio
    herniation, right 4 mm and sluggish after osmotherapy, both 6 mm and fixed in brainstem
    compression, 3 mm and brisk otherwise. Check that a pupil coming back that far within 15 s
    is what should be taught (SEED 2.13).
+9. **No CT or neurosurgery prompt on arrival** (owner, 19 and 20 October). On arrival the
+   nurse prompts only the monitor and the neuro exam (3:00 in the default mode). A learner who
+   never scans him first hears about it at 5:15 (SEED 2.15). Check that this is the help a
+   junior learner should get.
 
 ## Counts, from the run of 19 October 2026
 

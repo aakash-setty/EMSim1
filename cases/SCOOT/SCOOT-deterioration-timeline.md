@@ -20,8 +20,7 @@ Vitals in this phase: HR 88, BP 138/82, RR 16, SpO2 99%, T 36.8
 All prompts schedulable in this phase, in firing order (per-phase cap is 5, so only the first 5 first warnings are heard; escalations are exempt):
 
 1. 20s `attach_monitor` (first)
-2. 35s `exam_neuro` (first)
-3. 50s `ct_head` (first)
+2. 60s `exam_neuro` (first)
 
 **Rule 2: at 240s (measured from phase_entry) → `decline`**
 
@@ -33,31 +32,30 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 5, so o
 All prompts schedulable in this phase, in firing order (per-phase cap is 5, so only the first 5 first warnings are heard; escalations are exempt):
 
 1. 20s `attach_monitor` (first)
-2. 35s `exam_neuro` (first)
-3. 50s `ct_head` (first)
+2. 60s `exam_neuro` (first)
 
 ### `decline`: Drowsy and vomiting, GCS 12, pupils equal
 
 Vitals in this phase: HR 96, BP 145/84, RR 18, SpO2 98%, T 36.8
 
-**Rule 1: at 300s (measured from phase_entry) → `herniation`**
+**Rule 1: at 120s (measured from phase_entry) → `herniation`**
 
 - guard: `NOT flag neurosurgery_called set`
 - destination vitals: HR 56, BP 178/94, RR 10, SpO2 95%, T 36.9
 - narration: “His right pupil has gone big and it isn't reacting, and his heart rate has dropped. He's not answering me.”
-- author rationale: Deterioration on inaction. An untreated expanding temporal epidural hematoma progresses to uncal herniation. Guarded on the flag the neurosurgery consult sets. The consult cannot be made until a head CT has resulted (a prerequisite, authoring 9.5), so a learner who called with the scan before or during the decline never herniates. 300 seconds is a teaching choice. The prompt for that call lands at 70 seconds (210 in the default mode) with an escalation at 90 (270), and a CT prompt at 50 (150) for a learner without one. Model output.
+- author rationale: Deterioration on inaction. An untreated expanding temporal epidural hematoma progresses to uncal herniation. Guarded on the flag the neurosurgery consult sets. The consult cannot be made until a head CT has resulted (a prerequisite, authoring 9.5), so a learner who called with the scan before or during the decline never herniates. 120 seconds is the owner's choice (Aakash Setty, 19 October 2026: the pupil blows at 6:00). The prompt for that call lands at 25 seconds (75 in the default mode) with an escalation at 35 (105), after the repeat-exam prompt at 15 (45). The CT prompt at 50 (150) lands here only in easy mode, and there is none on arrival. In the default mode a learner with no scan hears the neurosurgery prompt and is sent for the scan by its prerequisite. Model output.
 
 Prompts in this phase that set neurosurgery_called, which is what the fairness rule requires:
 
-- `consult_neurosurgeon` first at 70s, 230s of lead
-- `consult_neurosurgeon` escalation at 90s, 210s of lead
+- `consult_neurosurgeon` first at 25s, 95s of lead
+- `consult_neurosurgeon` escalation at 35s, 85s of lead
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 5, so only the first 5 first warnings are heard; escalations are exempt):
 
 1. 15s `neuro_reexamined` (first)
-2. 50s `ct_head` (first)
-3. 70s `consult_neurosurgeon` (first)
-4. 90s `consult_neurosurgeon` (escalation)
+2. 25s `consult_neurosurgeon` (first)
+3. 35s `consult_neurosurgeon` (escalation)
+4. 50s `ct_head` (first)
 
 ### `herniation`: Uncal herniation, GCS 7, right pupil fixed
 
@@ -73,11 +71,11 @@ Vitals in this phase: HR 56, BP 178/94, RR 10, SpO2 95%, T 36.9
 All prompts schedulable in this phase, in firing order (per-phase cap is 5, so only the first 5 first warnings are heard; escalations are exempt):
 
 1. 20s `osmotherapy_for_herniation` (first)
-2. 30s `intubate_rapid_sequence` (first)
-3. 50s `ct_head` (first)
-4. 60s `osmotherapy_for_herniation` (escalation)
-5. 70s `consult_neurosurgeon` (first)
-6. 90s `consult_neurosurgeon` (escalation)
+2. 25s `consult_neurosurgeon` (first)
+3. 30s `intubate_rapid_sequence` (first)
+4. 35s `consult_neurosurgeon` (escalation)
+5. 50s `ct_head` (first)
+6. 60s `osmotherapy_for_herniation` (escalation)
 
 **Rule 2: at 300s (measured from phase_entry) → `brainstem_compression`  (TERMINAL)**
 
@@ -90,11 +88,11 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 5, so o
 All prompts schedulable in this phase, in firing order (per-phase cap is 5, so only the first 5 first warnings are heard; escalations are exempt):
 
 1. 20s `osmotherapy_for_herniation` (first)
-2. 30s `intubate_rapid_sequence` (first)
-3. 50s `ct_head` (first)
-4. 60s `osmotherapy_for_herniation` (escalation)
-5. 70s `consult_neurosurgeon` (first)
-6. 90s `consult_neurosurgeon` (escalation)
+2. 25s `consult_neurosurgeon` (first)
+3. 30s `intubate_rapid_sequence` (first)
+4. 35s `consult_neurosurgeon` (escalation)
+5. 50s `ct_head` (first)
+6. 60s `osmotherapy_for_herniation` (escalation)
 
 ## 2. The do-nothing trajectory
 
@@ -104,8 +102,8 @@ What a resident who performs no state-changing action at all sees, from arrival 
 |---|---|---|---|
 | 0:00 | `presentation` | HR 88, BP 138/82, RR 16, SpO2 99%, T 36.8 | arrival |
 | 4:00 | `decline` | HR 96, BP 145/84, RR 18, SpO2 98%, T 36.8 | rule 2 fired at 240s |
-| 9:00 | `herniation` | HR 56, BP 178/94, RR 10, SpO2 95%, T 36.9 | rule 1 fired at 300s |
-| 14:00 | `brainstem_compression` | HR 44, BP 196/108, RR 6, SpO2 86%, T 36.9 | rule 2 fired at 300s |
+| 6:00 | `herniation` | HR 56, BP 178/94, RR 10, SpO2 95%, T 36.9 | rule 1 fired at 120s |
+| 11:00 | `brainstem_compression` | HR 44, BP 196/108, RR 6, SpO2 86%, T 36.9 | rule 2 fired at 300s |
 
 **The last row is a terminal phase.** This case can end without the resident touching the patient. That should be a decision the author remembers making.
 
@@ -117,7 +115,7 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 |---|---|---|---|---|
 | `presentation` | 240s | `decline` | HR 96, BP 145/84, RR 18, SpO2 98%, T 36.8 | “He's sedated on the ventilator, so we can't follow how he's talking. His pupils are still equal.” |
 | `presentation` | 240s | `decline` | HR 96, BP 145/84, RR 18, SpO2 98%, T 36.8 | “He just vomited, and he's hard to keep awake now. He keeps drifting off in the middle of a sentence.” |
-| `decline` | 300s | `herniation` | HR 56, BP 178/94, RR 10, SpO2 95%, T 36.9 | “His right pupil has gone big and it isn't reacting, and his heart rate has dropped. He's not answering me.” |
+| `decline` | 120s | `herniation` | HR 56, BP 178/94, RR 10, SpO2 95%, T 36.9 | “His right pupil has gone big and it isn't reacting, and his heart rate has dropped. He's not answering me.” |
 | `herniation` | 15s | `temporized` | HR 70, BP 160/88, RR 14, SpO2 98%, T 36.9 | “His right pupil is a little smaller and it's reacting again. His heart rate is coming up.” |
 | `herniation` | 300s | `brainstem_compression` | HR 44, BP 196/108, RR 6, SpO2 86%, T 36.9 | “He's barely breathing and his heart rate is in the forties. Both pupils are big now.” |
 

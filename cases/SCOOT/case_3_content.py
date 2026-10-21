@@ -157,10 +157,12 @@ PUPILS = {
 
 PATIENT_VISUAL = {
  "authoring_note": (
-   "MODEL-AUTHORED. Nothing beyond the phase's own distress and alertness is drawn. The "
-   "airway device follows the last airway button pressed."),
- "verify": "Check that the drawn drowsiness in the decline and the obtunded face in herniation read as intended.",
- "rules": [{"when": None, "value": {}}],
+   "MODEL-AUTHORED. Beyond the phase's own distress and alertness, one rule: his eyes are "
+   "closed in the decline (owner, 19 October 2026). At GCS 12 he opens them only to voice "
+   "(E3), so at rest they are shut. The airway device follows the last airway button pressed."),
+ "verify": "Check that the closed eyes in the decline and the obtunded face in herniation read as intended.",
+ "rules": [{"when": DECL, "value": {"eyes": "closed"}},
+           {"when": None, "value": {}}],
 }
 
 LABS = {

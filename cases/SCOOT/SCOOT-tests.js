@@ -1,6 +1,6 @@
 /* Case assertions for SCOOT (epidural hematoma with deterioration).
  *
- * Three clocks: the decline at 240 s whatever is done, herniation 300 s after the decline
+ * Three clocks: the decline at 240 s whatever is done, herniation 120 s after the decline
  * unless neurosurgery has been called, and brainstem compression 300 s after herniation
  * unless osmotherapy is given there. Times are fractional on purpose.
  */
@@ -17,7 +17,7 @@ const WORK = LINE.concat([[3.4, 'exam_neuro'], [5.2, 'ct_head']]);   // CT back 
 const CALLED = WORK.concat([[20.5, 'consult_neurosurgeon']]);
 const RSI = t => [[t, 'etomidate_bolus'], [t + 0.5, 'rocuronium_bolus'], [t + 1, 'intubate_rapid_sequence']];
 // Into herniation with nothing called: the workup is done, the call never made.
-const HERNIATE = WORK;   // decline at 240, herniation at 540
+const HERNIATE = WORK;   // decline at 240, herniation at 360
 
 section('intended path');
 let st = F(CALLED.concat([[245.5, 'exam_neuro'], [250.5, 'consult_neurosurgeon'], [255.5, 'ondansetron'],
@@ -62,60 +62,60 @@ chk('and in the decline knows his GCS is falling',
   /A big collection with shift, and now his GCS is falling/.test(last(F(CALLED.concat([[250.5, 'consult_neurosurgeon']]), 251), 'consult_neurosurgeon').body));
 
 section('herniation is a deterioration on inaction');
-st = F(HERNIATE, 539.9);
-chk('in the decline at 539.9 s', st.phase === 'decline');
-st = F(HERNIATE, 540.1);
-chk('herniated at 540.1 s', st.phase === 'herniation' && Math.abs(enteredAt(st, 'herniation') - 540) < 1e-6, seq(st));
+st = F(HERNIATE, 359.9);
+chk('in the decline at 359.9 s', st.phase === 'decline');
+st = F(HERNIATE, 360.1);
+chk('herniated at 360.1 s', st.phase === 'herniation' && Math.abs(enteredAt(st, 'herniation') - 360) < 1e-6, seq(st));
 chk('the nurse says the right pupil is big', said(st, /His right pupil has gone big/));
 chk('Cushing: 178 over 94, pulse 56', st.vitals.systolic_bp === 178 && st.vitals.heart_rate === 56);
-st = F(LINE, 541);
+st = F(LINE, 361);
 chk('no CT ever ordered: herniated too', st.phase === 'herniation');
 st = F(CALLED, 900);
 chk('called with the scan on arrival: never herniates', st.phase === 'decline' && !st.phaseSeq.some(p => p.id === 'herniation'), seq(st));
-st = F(WORK.concat([[539.5, 'consult_neurosurgeon']]), 600);
+st = F(WORK.concat([[359.5, 'consult_neurosurgeon']]), 600);
 chk('called in the decline half a second before: never herniates', st.phase === 'decline', seq(st));
-st = F(WORK.concat([[540, 'consult_neurosurgeon']]), 600);
+st = F(WORK.concat([[360, 'consult_neurosurgeon']]), 600);
 chk('called at the deadline itself: the call is applied first', st.phase === 'decline', seq(st));
-st = F(WORK.concat([[540.5, 'consult_neurosurgeon']]), 600);
+st = F(WORK.concat([[360.5, 'consult_neurosurgeon']]), 600);
 chk('called half a second after: herniated', st.phaseSeq.some(p => p.id === 'herniation'), seq(st));
 st = F(LINE.concat([[250.5, 'ct_head'], [261.5, 'consult_neurosurgeon']]), 900);
 chk('the scan ordered only after the decline, then the call: no herniation', st.phase === 'decline', seq(st));
 
 section('the rescue in herniation, and the terminal clock');
-st = F(HERNIATE.concat([[545.5, 'mannitol_bolus']]), 561);
-chk('mannitol in herniation: temporized 15 s later', seq(st).endsWith('herniation > temporized') && Math.abs(enteredAt(st, 'temporized') - 560.5) < 1e-6, seq(st));
+st = F(HERNIATE.concat([[365.5, 'mannitol_bolus']]), 381);
+chk('mannitol in herniation: temporized 15 s later', seq(st).endsWith('herniation > temporized') && Math.abs(enteredAt(st, 'temporized') - 380.5) < 1e-6, seq(st));
 chk('the nurse says the pupil is reacting again', said(st, /His right pupil is a little smaller/));
-st = F(HERNIATE.concat([[545.5, 'hypertonic_saline_3_infusion']]), 561);
+st = F(HERNIATE.concat([[365.5, 'hypertonic_saline_3_infusion']]), 381);
 chk('3 percent saline does the same', st.phase === 'temporized');
-st = F(HERNIATE.concat([[545.5, 'hypertonic_saline_25_bolus']]), 600);
+st = F(HERNIATE.concat([[365.5, 'hypertonic_saline_25_bolus']]), 600);
 chk('concentrated saline without a central line is blocked', st.blocked.some(b => b.id === 'hypertonic_saline_25_bolus') && st.phase === 'herniation');
-st = F(HERNIATE.concat([[541.5, 'central_venous_catheter_triple_lumen'], [545.5, 'hypertonic_saline_25_bolus']]), 561);
+st = F(HERNIATE.concat([[361.5, 'central_venous_catheter_triple_lumen'], [365.5, 'hypertonic_saline_25_bolus']]), 381);
 chk('and goes in through one', st.phase === 'temporized');
 st = F(WORK.concat([[300.5, 'mannitol_bolus']]), 600);
 chk('mannitol in the decline does not count for the herniation that follows', st.phase === 'herniation' && !st.satisfied.has('osmotherapy_for_herniation'), seq(st));
 chk('mannitol in the decline is accepted, not discouraged', !st.discouragedTaken.has('mannitol_bolus'));
-st = F(HERNIATE, 839.9);
-chk('untreated: still herniating at 839.9 s', st.phase === 'herniation');
-st = F(HERNIATE, 845.5);
-chk('brainstem compression at 840 s, and the run fails', st.phase === 'brainstem_compression' && st.failed, seq(st));
+st = F(HERNIATE, 659.9);
+chk('untreated: still herniating at 659.9 s', st.phase === 'herniation');
+st = F(HERNIATE, 665.5);
+chk('brainstem compression at 660 s, and the run fails', st.phase === 'brainstem_compression' && st.failed, seq(st));
 chk('the nurse says both pupils are big', said(st, /Both pupils are big now/));
 chk('the eye view: both 6 mm and fixed in brainstem compression',
   JSON.stringify(pupilState(st).value) === JSON.stringify({ state: 'dilated_fixed', size_mm: 6 }), JSON.stringify(pupilState(st)));
-st = F(HERNIATE.concat([[839.5, 'mannitol_bolus']]), 860);
+st = F(HERNIATE.concat([[659.5, 'mannitol_bolus']]), 680);
 chk('osmotherapy half a second before the deadline: temporized', st.phase === 'temporized', seq(st));
-st = F(HERNIATE.concat([[840, 'mannitol_bolus']]), 860);
+st = F(HERNIATE.concat([[660, 'mannitol_bolus']]), 680);
 chk('at the deadline itself: the order is applied first', st.phase === 'temporized', seq(st));
-st = F(HERNIATE.concat([[840.5, 'mannitol_bolus']]), 860);
+st = F(HERNIATE.concat([[660.5, 'mannitol_bolus']]), 680);
 chk('half a second after: too late', st.phase === 'brainstem_compression', seq(st));
-st = F(HERNIATE.concat([[545.5, 'mannitol_bolus']]), 1500);
+st = F(HERNIATE.concat([[365.5, 'mannitol_bolus']]), 1500);
 chk('temporized has no clock', st.phase === 'temporized');
 
 section('intubate for a reason');
 const tubeTag = st => tagOf('intubate_rapid_sequence', st);
 chk('discouraged on arrival', tubeTag(F(LINE, 10)) === 'discouraged');
 chk('discouraged in the decline', tubeTag(F(LINE, 250)) === 'discouraged');
-chk('critical in herniation', tubeTag(F(LINE, 545)) === 'critical');
-chk('critical in temporized', tubeTag(F(LINE.concat([[545.5, 'mannitol_bolus']]), 570)) === 'critical');
+chk('critical in herniation', tubeTag(F(LINE, 365)) === 'critical');
+chk('critical in temporized', tubeTag(F(LINE.concat([[365.5, 'mannitol_bolus']]), 390)) === 'critical');
 st = F(WORK.concat(RSI(30.5)), 40);
 chk('the tube goes in on arrival', st.flags.has('intubated') && st.discouragedTaken.has('intubate_rapid_sequence'));
 st = F(WORK.concat(RSI(30.5), [[35.5, 'exam_neuro']]), 36);
@@ -123,12 +123,12 @@ chk('and then the neuro exam cannot be assessed', /GCS cannot be assessed/.test(
 chk('nor the history', /intubated and sedated/.test(F(WORK.concat(RSI(30.5), [{ t: 36.5, kind: 'interview', topic: 'headache', q: '?' }]), 37).readouts.pop().body));
 st = F(WORK.concat(RSI(30.5)), 241);
 chk('the decline still comes, with the intubated narration', st.phase === 'decline' && said(st, /He's sedated on the ventilator/) && !said(st, /He just vomited/));
-st = F(WORK.concat(RSI(30.5)), 545);
+st = F(WORK.concat(RSI(30.5)), 365);
 chk('the tube does not stop herniation without the call', st.phase === 'herniation');
-chk('and in herniation the pupils still show it', /Right pupil 6 mm and fixed/.test(last(F(WORK.concat(RSI(30.5), [[545.5, 'exam_neuro']]), 546), 'exam_neuro').body.findings));
+chk('and in herniation the pupils still show it', /Right pupil 6 mm and fixed/.test(last(F(WORK.concat(RSI(30.5), [[365.5, 'exam_neuro']]), 366), 'exam_neuro').body.findings));
 st = F(WORK.concat(RSI(30.5)), 600);
 chk('an early tube already counts in herniation, and does not prompt again',
-  st.satisfied.has('intubate_rapid_sequence') && !st.promptFires.some(p => p.id === 'intubate_rapid_sequence' && p.t > 540));
+  st.satisfied.has('intubate_rapid_sequence') && !st.promptFires.some(p => p.id === 'intubate_rapid_sequence' && p.t > 360));
 
 section('the sedation follow-up');
 st = F(WORK.concat([[10.5, 'fentanyl_bolus']], RSI(30.5)), 100);
@@ -152,35 +152,52 @@ chk('the first call made in the decline credits both', (st = F(WORK.concat([[250
 
 section('the warnings come first, in both modes');
 st = F(WORK, 560);
-chk('easy: the neurosurgery prompt at 70 s into the decline, escalation at 90',
-  st.promptFires.some(p => p.id === 'consult_neurosurgeon' && Math.abs(p.t - 310) < 1e-6) &&
-  st.promptFires.some(p => p.id === 'consult_neurosurgeon' && p.level === 2 && Math.abs(p.t - 330) < 1e-6),
+chk('easy: the neurosurgery prompt at 25 s into the decline, escalation at 35',
+  st.promptFires.some(p => p.id === 'consult_neurosurgeon' && Math.abs(p.t - 265) < 1e-6) &&
+  st.promptFires.some(p => p.id === 'consult_neurosurgeon' && p.level === 2 && Math.abs(p.t - 275) < 1e-6),
   st.promptFires.map(p => p.id + '@' + p.t).join());
 st = F(WORK, 560, 3);
-chk('default: the neurosurgery prompt at 210 and escalation at 270, both before herniation at 300',
-  st.promptFires.some(p => p.id === 'consult_neurosurgeon' && Math.abs(p.t - 450) < 1e-6) &&
-  st.promptFires.some(p => p.id === 'consult_neurosurgeon' && p.level === 2 && Math.abs(p.t - 510) < 1e-6) &&
-  st.phase === 'herniation', st.promptFires.map(p => p.id + '@' + p.t).join());
+chk('default: the neurosurgery prompt at 75 (5:15) and escalation at 105 (5:45), both before herniation at 120 (6:00)',
+  st.promptFires.some(p => p.id === 'consult_neurosurgeon' && Math.abs(p.t - 315) < 1e-6) &&
+  st.promptFires.some(p => p.id === 'consult_neurosurgeon' && p.level === 2 && Math.abs(p.t - 345) < 1e-6) &&
+  st.phase === 'herniation' && Math.abs(enteredAt(st, 'herniation') - 360) < 1e-6, st.promptFires.map(p => p.id + '@' + p.t).join());
+chk('default: the repeat-exam prompt in the decline comes first, at 45 s (4:45)',
+  st.promptFires.some(p => p.id === 'neuro_reexamined' && Math.abs(p.t - 285) < 1e-6), st.promptFires.map(p => p.id + '@' + p.t).join());
 st = F(LINE, 560, 3);
-chk('default, no CT ever: the CT prompt in the decline at 150 s, before the neurosurgery prompt',
-  st.promptFires.some(p => p.id === 'ct_head' && Math.abs(p.t - 390) < 1e-6));
-st = F(HERNIATE, 860, 3);
-chk('default: the osmotherapy prompt at 60 and escalation at 180, before the terminal at 300',
-  st.promptFires.some(p => p.id === 'osmotherapy_for_herniation' && Math.abs(p.t - 600) < 1e-6) &&
-  st.promptFires.some(p => p.id === 'osmotherapy_for_herniation' && p.level === 2 && Math.abs(p.t - 720) < 1e-6),
+chk('default, no CT ever: no CT prompt on arrival, and in the decline the neurosurgery prompt at 5:15 (its prerequisite sends him for the scan)',
+  !st.promptFires.some(p => p.id === 'ct_head' && p.t < 240) &&
+  st.promptFires.some(p => p.id === 'consult_neurosurgeon' && Math.abs(p.t - 315) < 1e-6), st.promptFires.map(p => p.id + '@' + p.t).join());
+chk('default, no CT ever: the decline CT prompt (150 s after entry) is overtaken by herniation and never fires',
+  !st.promptFires.some(p => p.id === 'ct_head' && p.t > 240 && p.t < 360), st.promptFires.map(p => p.id + '@' + p.t).join());
+st = F(LINE, 330, 1);
+chk('easy, no CT ever: the CT prompt in the decline at 50 s', st.promptFires.some(p => p.id === 'ct_head' && Math.abs(p.t - 290) < 1e-6),
   st.promptFires.map(p => p.id + '@' + p.t).join());
-st = F([], 120);
-chk('on arrival with nothing done: monitor, neuro exam, CT, in that order, and no neurosurgery prompt',
-  st.promptFires.map(p => p.id).join() === 'attach_monitor,exam_neuro,ct_head', st.promptFires.map(p => p.id).join());
+st = F(HERNIATE, 680, 3);
+chk('default: the osmotherapy prompt at 60 and escalation at 180, before the terminal at 300',
+  st.promptFires.some(p => p.id === 'osmotherapy_for_herniation' && Math.abs(p.t - 420) < 1e-6) &&
+  st.promptFires.some(p => p.id === 'osmotherapy_for_herniation' && p.level === 2 && Math.abs(p.t - 540) < 1e-6),
+  st.promptFires.map(p => p.id + '@' + p.t).join());
+st = F([], 239.9);
+chk('on arrival with nothing done, easy: the monitor at 20 and the neuro exam at 60, and no CT or neurosurgery prompt',
+  st.promptFires.map(p => p.id + '@' + p.t).join() === 'attach_monitor@20,exam_neuro@60', st.promptFires.map(p => p.id + '@' + p.t).join());
+st = F([], 239.9, 3);
+chk('on arrival with nothing done, default: the monitor at 1:00 and the neuro exam at 3:00, nothing else',
+  st.promptFires.map(p => p.id + '@' + p.t).join() === 'attach_monitor@60,exam_neuro@180', st.promptFires.map(p => p.id + '@' + p.t).join());
 st = F(WORK, 120);
-chk('on arrival with the CT back, the neurosurgery prompt at 70 s', st.promptFires.some(p => p.id === 'consult_neurosurgeon' && Math.abs(p.t - 70) < 1e-6));
+st = F(WORK, 239.9, 3);
+chk('on arrival with the CT back, no neurosurgery prompt in either mode (the call is the learner\'s)',
+  !st.promptFires.some(p => p.id === 'consult_neurosurgeon') && !F(WORK, 239.9).promptFires.some(p => p.id === 'consult_neurosurgeon'),
+  st.promptFires.map(p => p.id + '@' + p.t).join());
+chk('his eyes are closed in the decline and open on arrival',
+  patientVisual(F(WORK, 300)).value.eyes === 'closed' && patientVisual(F(WORK, 100)).value.eyes !== 'closed',
+  JSON.stringify(patientVisual(F(WORK, 300))));
 chk('the do-nothing path ends in brainstem compression in the default mode too', seq(F([], 900, 3)) === 'presentation > decline > herniation > brainstem_compression');
 
 section('what not to fix');
-chk('lowering his pressure is discouraged in herniation', tagOf('labetalol_bolus', F(LINE, 545)) === 'discouraged');
-st = F(HERNIATE.concat([[545.5, 'nicardipine_drip']]), 546);
+chk('lowering his pressure is discouraged in herniation', tagOf('labetalol_bolus', F(LINE, 365)) === 'discouraged');
+st = F(HERNIATE.concat([[365.5, 'nicardipine_drip']]), 366);
 chk('a nicardipine drip is the same act', st.discouragedTaken.has('labetalol_bolus') || st.discouragedTaken.has('nicardipine_drip'), [...st.discouragedTaken].join());
-chk('atropine is discouraged in herniation, neutral on arrival', tagOf('atropine_bolus', F(LINE, 545)) === 'discouraged' && tagOf('atropine_bolus', F(LINE, 10)) === 'neutral');
+chk('atropine is discouraged in herniation, neutral on arrival', tagOf('atropine_bolus', F(LINE, 365)) === 'discouraged' && tagOf('atropine_bolus', F(LINE, 10)) === 'neutral');
 chk('osmotherapy is discouraged at GCS 15 and neutral after', tagOf('mannitol_bolus', F(LINE, 10)) === 'discouraged' && tagOf('mannitol_bolus', F(LINE, 250)) === 'neutral');
 
 section('results and the chart');
@@ -191,11 +208,12 @@ chk('the head CT is the image stack: a still, a series and a caption, and no rep
 chk('the series and its still are in the build', !!(PROTO.series || {})['scoot-ct-head'] && !!(PROTO.media || {})['scoot-ct-head']);
 const SM = (PROTO.series || {})['scoot-ct-head'] || {};
 chk('31 images of 389 by 486, 5 mm, starting in the middle of the stack',
-  SM.n === 31 && SM.w === 389 && SM.h === 486 && SM.thickness_mm === 5 && SM.start_image === 16 && SM.z_mm.length === 31);
-chk('brain window first, then subdural, bone and stroke', SM.windows.map(w => w.name).join() === 'Brain,Subdural,Bone,Stroke');
+  SM.n === 31 && SM.w === 389 && SM.h === 486 && SM.thickness_mm === 5 && SM.start_image === 1 && SM.z_mm.length === 31);
+chk('the viewer is titled from the series', SM.title === 'CT Head without contrast');
+chk('brain window first, then bleed, bone and ischemia', SM.windows.map(w => w.name).join() === 'Brain,Bleed,Bone,Ischemia');
 chk('the Colin27 notice travels with the images', /Colin27/.test(SM.notice) && /Louis Collins/.test(SM.notice));
 chk('the read is kept for the debrief and names no diagnosis', /about 50 mL/.test(cb.comment) && /about 6 mm/.test(cb.comment) && !/epidural|subdural hematoma/i.test(cb.comment));
-chk('a scan sent in herniation is the same series', ct(HERNIATE.concat([[541.5, 'ct_head']]), 553).series === 'scoot-ct-head');
+chk('a scan sent in herniation is the same series', ct(HERNIATE.concat([[361.5, 'ct_head']]), 373).series === 'scoot-ct-head');
 const cta = last(F(LINE.concat([[3.5, 'ct_cta_head_and_neck']]), 20), 'ct_cta_head_and_neck').body;
 chk('the CT/CTA stays a report with the same findings', cta.kind === 'report' && /about 50 mL/.test(cta.report) && /No arterial injury/.test(cta.report));
 chk('no imaging text a learner reads names the diagnosis', !/epidural|subdural hematoma|\bEDH\b/i.test(
@@ -206,12 +224,12 @@ chk('every consultant line is 40 words or fewer',
 
 section('the twelve-lead follows the monitor');
 const ecgAt = (log, t) => last(F(log.concat([[t, 'ecg_12_lead']]), t + 6), 'ecg_12_lead').body;
-for (const [t, rate, stem] of [[10.5, 88, 'arrival'], [250.5, 96, 'decline'], [545.5, 56, 'herniation']]) {
+for (const [t, rate, stem] of [[10.5, 88, 'arrival'], [250.5, 96, 'decline'], [365.5, 56, 'herniation']]) {
   const b = ecgAt(LINE, t);
   chk('at ' + t + ' s the tracing is ' + stem + ' and its caption and read say ' + rate,
     b.image === 'scoot-ecg-' + stem && b.caption.includes('Ventricular rate ' + rate) && b.comment.includes(' at ' + rate + '.') && F(LINE, t + 6).vitals.heart_rate === rate);
 }
-const tb = last(F(HERNIATE.concat([[545.5, 'mannitol_bolus'], [565.5, 'ecg_12_lead']]), 572), 'ecg_12_lead').body;
+const tb = last(F(HERNIATE.concat([[365.5, 'mannitol_bolus'], [385.5, 'ecg_12_lead']]), 392), 'ecg_12_lead').body;
 chk('after osmotherapy the tracing is at 70', tb.image === 'scoot-ecg-temporized' && tb.caption.includes('70'));
 
 section('prompts');
@@ -259,7 +277,7 @@ chk('in herniation: the right is blown at 6 mm, the left 3 mm and brisk, as the 
   st.phase === 'herniation' && PV(st).state === 'blown' && PV(st).side === 'right' && PV(st).affected_mm === 6 &&
   !PV(st).affected_reaction && PV(st).size_mm === 3 && PV(st).reaction === 'brisk' &&
   /Right pupil 6 mm and fixed\. Left 3 mm and reactive/.test(HEENT(st)), JSON.stringify(PV(st)));
-st = F(HERNIATE.concat([[545.5, 'mannitol_bolus']]), 600);
+st = F(HERNIATE.concat([[365.5, 'mannitol_bolus']]), 600);
 chk('temporized: the right 4 mm and sluggish, the left 3 mm and brisk, as the text says',
   st.phase === 'temporized' && PV(st).affected_mm === 4 && PV(st).affected_reaction === 'sluggish' && PV(st).size_mm === 3 &&
   /Right pupil 4 mm and sluggish\. Left 3 mm and reactive/.test(HEENT(st)), JSON.stringify(PV(st)));

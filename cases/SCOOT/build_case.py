@@ -70,12 +70,13 @@ CASE = {
  "prompt_cap_recommendation": {
    "per_phase": 5,
    "rationale": (
-     "Five. On arrival: the monitor at 20, a neuro exam at 35, a head CT at 50 and "
-     "neurosurgery at 70 once the CT is back. In the decline: the repeat exam at 15, the "
-     "call back at 40, the CT at 50 and neurosurgery at 70 with an escalation at 90. In "
-     "herniation: osmotherapy at 20 with an escalation at 60, a tube at 30, the call back at "
-     "40, the CT at 50 and neurosurgery at 70. The herniation and the brainstem clocks rest on "
-     "the neurosurgery and osmotherapy prompts, and a cap of five never suppresses them."),
+     "Five. On arrival: the monitor at 20 and a neuro exam at 60. No neurosurgery or CT "
+     "prompt on arrival (owner, 19 and 20 October 2026). In the decline: the repeat "
+     "exam at 15, neurosurgery at 25 with an escalation at 35, the call back at 40 and the CT "
+     "at 50. In herniation: osmotherapy at 20 with an escalation at 60, neurosurgery at 25, a "
+     "tube at 30, the call back at 40 and the CT at 50. The herniation and the brainstem "
+     "clocks rest on the neurosurgery and osmotherapy prompts, which come first or second in "
+     "their phase, so a cap of five never suppresses them."),
  },
  "prerequisite_semantics_note": (
    "One case prerequisite: the neurosurgery consult needs a resulted head CT or CT/CTA, with "

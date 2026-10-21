@@ -205,12 +205,12 @@ stop action for an infusion, and whether a default result exists (D).
 | `ecg_12_lead` | ECG | investigations / Bedside Tests | investigation | ecg |  | 0 |  |  | D |
 | `peak_expiratory_flow_meter` | Peak Expiratory Flow Meter | investigations / Bedside Tests | investigation | bedside |  | 0 |  |  | D |
 | `ct_abdomen` | CT - Abdomen | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
-| `ct_aorta` | CT - Aorta | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
+| `ct_aorta` | CTA - Aorta | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `ct_c_spine` | CT - C-spine | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `ct_chest` | CT - Chest | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `ct_cta_head_and_neck` | CT/CTA - Head and Neck | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `ct_head` | CT - Head | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
-| `ct_pulmonary_embolus` | CT - Pulmonary Embolus | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
+| `ct_pulmonary_embolus` | CTA - Pulmonary Embolus | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `mri_c_spine` | MRI - C-spine | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `mri_lumbar_spine` | MRI - Lumbar Spine | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `mri_mra_head_and_neck` | MRI/MRA - Head and Neck | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |

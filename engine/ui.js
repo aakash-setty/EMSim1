@@ -3641,7 +3641,11 @@ const CTVIEW=(function(){
     ctx.drawImage(off,0,0);
     /* A 5 cm bar, so a size can be judged the way it is on a workstation. */
     ctx.setTransform(dpr,0,0,dpr,0,0);
-    const len=(50/m.pixel_mm)*s, x0=12, y0=ch-40;
+    /* On a narrow stage the window and zoom buttons span the bottom, so the bar and the
+       bottom left text sit above them. */
+    const tb=el('cttools'), lift=(cw<520&&tb)?tb.offsetHeight+8:0;
+    el('ct-bl').style.bottom=(8+lift)+'px';
+    const len=(50/m.pixel_mm)*s, x0=12, y0=ch-40-lift;
     ctx.strokeStyle='#e9eef2'; ctx.lineWidth=1.5; ctx.beginPath();
     ctx.moveTo(x0,y0); ctx.lineTo(x0+len,y0);
     for(let t=0;t<=5;t++){ const xx=x0+len*t/5; ctx.moveTo(xx,y0); ctx.lineTo(xx,y0-(t%5===0?7:4)); }
@@ -3690,16 +3694,20 @@ const CTVIEW=(function(){
     if(!has(id)) return false;
     const tok=++S.token;
     S.ret=document.activeElement;
-    el('ctview-title').textContent=cap||'CT';
+    /* The header is "Interactive PACS Viewer: " and the study, from the series' own title,
+       else the result's caption (owner, 20 October 2026). */
+    const t0=PROTO.series[id].title;
+    el('ctview-title').textContent='Interactive PACS Viewer: '+(t0||cap||'CT');
     el('ctview').classList.remove('hidden');
     el('ctmsg').textContent='Loading images'; el('ctmsg').classList.remove('hidden');
     const m=PROTO.series[id];
-    el('ctnotice').textContent=m.notice||'';
-    el('ctnotice-sum').parentElement.hidden=!m.notice;
+    /* The footer with the controls line and the image's notice was removed on the owner's
+       instruction (20 October 2026). The notice still travels in the pack's series data. */
     el('ctwins').innerHTML=(m.windows||[]).map((w,k)=>
       `<button type="button" class="ctbtn" data-win="${esc(w.name)}" data-w="${w.w}" data-l="${w.l}"`
       +` title="W ${w.w} L ${w.l} (key ${k+1})">${esc(w.name)}</button>`).join('');
     el('ctslider').max=m.n;
+    syncHelp();
     /* Focus moves to the stage so the arrow keys scroll at once, except while the resident
        is writing a question to the patient or a note: a scan that opens itself mid-sentence
        must not take the caret. A filter or search box is not writing, and leaving the focus
@@ -3790,6 +3798,15 @@ const CTVIEW=(function(){
   el('ctreset').addEventListener('click',()=>{ S.zoom=1; S.panX=0; S.panY=0; draw(); });
   el('ctclose').addEventListener('click',close);
   el('ctview').addEventListener('click',e=>{ if(e.target===el('ctview')) close(); });
+
+  /* How to scroll (20 October 2026). Hidden by its cross for the rest of the page's life and
+     brought back by the question mark. Nothing is stored: a new session shows it again. A
+     press on it is not a drag on the image, but the wheel over it still scrolls. */
+  let helpOff=false;
+  function syncHelp(){ el('cthelp').classList.toggle('off',helpOff); el('cthelp-show').classList.toggle('off',!helpOff); }
+  el('cthelp-x').addEventListener('click',()=>{ helpOff=true; syncHelp(); stage().focus({preventScroll:true}); });
+  el('cthelp-show').addEventListener('click',()=>{ helpOff=false; syncHelp(); stage().focus({preventScroll:true}); });
+  ['cthelp','cthelp-show','cttools'].forEach(id=>el(id).addEventListener('pointerdown',e=>e.stopPropagation()));
   window.addEventListener('resize',resize);
 
   /* Keys, in the capture phase so that nothing behind the viewer also acts on them (Escape

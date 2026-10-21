@@ -475,7 +475,10 @@ Single unconditional rule; nothing to enumerate.
 
 ### `patient_visual`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| decline | rule 0 (phase is decline) &rarr; figure: eyes closed | plausible |
+| «any other phase» | rule 1 (default) &rarr; figure: eyes open | plausible |
 
 
 ### `pupils`

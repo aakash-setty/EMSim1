@@ -14,7 +14,7 @@
   "warning": "A person decided the things listed in SCOOT-SEED.md section 0. Everything else is model output and awaits sign-off: every vital sign, finding, delay, tag, prompt, debrief note, interview answer and diagnosis explanation.",
   "author_only_fields_pending_signoff": [
    "Every vital sign in every phase, including that presentation and decline differ by only a few points on purpose.",
-   "The three clocks: the decline at 240 seconds whatever is done, herniation 300 seconds after the decline without a call to neurosurgery with the scan, and brainstem compression 300 seconds after herniation without osmotherapy. The 15 seconds from osmotherapy to the temporized phase.",
+   "The three clocks: the decline at 240 seconds whatever is done, herniation 120 seconds after the decline (the owner's choice, 19 October 2026) without a call to neurosurgery with the scan, and brainstem compression 300 seconds after herniation without osmotherapy. The 15 seconds from osmotherapy to the temporized phase.",
    "The terminal clock in herniation, a model default the owner did not choose.",
    "Every exam finding and its routing, including the left-sided weakness in herniation and the road rash.",
    "The head CT images (the EDH case of the Head CT Teaching Cases artifact, synthetic), their read (about 19 mm, about 50 mL, about 6 mm of shift, swirl sign, temporal squamous fracture), the CTA and MRI reports, and that one series answers in every phase.",
@@ -222,12 +222,12 @@
     },
     {
      "when": "NOT flag neurosurgery_called set",
-     "after_seconds": 300,
+     "after_seconds": 120,
      "measured_from": "phase_entry",
      "to": "herniation",
      "narration": "His right pupil has gone big and it isn't reacting, and his heart rate has dropped. He's not answering me.",
-     "debrief_note": "His brain herniated. The hematoma kept growing, pushed the right temporal lobe inward against the nerve that works the right pupil and against the brainstem, and the blown pupil and the slow pulse are what that looks like.\n\nNeurosurgery had not been called with his scan in the five minutes since he dropped his GCS. The scan was the step, or the call once the scan was back. An epidural hematoma over 30 mL is evacuated whatever the GCS, and the decision to operate belongs to the neurosurgeon. The emergency physician's decision is to call them, and the moment to call is when the CT is back, not when a pupil changes. [UNVERIFIED: Bullock et al. 2006, read through a summarizing tool]",
-     "author_rationale": "Deterioration on inaction. An untreated expanding temporal epidural hematoma progresses to uncal herniation. Guarded on the flag the neurosurgery consult sets. The consult cannot be made until a head CT has resulted (a prerequisite, authoring 9.5), so a learner who called with the scan before or during the decline never herniates. 300 seconds is a teaching choice. The prompt for that call lands at 70 seconds (210 in the default mode) with an escalation at 90 (270), and a CT prompt at 50 (150) for a learner without one. Model output."
+     "debrief_note": "His brain herniated. The hematoma kept growing, pushed the right temporal lobe inward against the nerve that works the right pupil and against the brainstem, and the blown pupil and the slow pulse are what that looks like.\n\nNeurosurgery had not been called with his scan in the two minutes since he dropped his GCS. The scan was the step, or the call once the scan was back. An epidural hematoma over 30 mL is evacuated whatever the GCS, and the decision to operate belongs to the neurosurgeon. The emergency physician's decision is to call them, and the moment to call is when the CT is back, not when a pupil changes. [UNVERIFIED: Bullock et al. 2006, read through a summarizing tool]",
+     "author_rationale": "Deterioration on inaction. An untreated expanding temporal epidural hematoma progresses to uncal herniation. Guarded on the flag the neurosurgery consult sets. The consult cannot be made until a head CT has resulted (a prerequisite, authoring 9.5), so a learner who called with the scan before or during the decline never herniates. 120 seconds is the owner's choice (Aakash Setty, 19 October 2026: the pupil blows at 6:00). The prompt for that call lands at 25 seconds (75 in the default mode) with an escalation at 35 (105), after the repeat-exam prompt at 15 (45). The CT prompt at 50 (150) lands here only in easy mode, and there is none on arrival. In the default mode a learner with no scan hears the neurosurgery prompt and is sent for the scan by its prerequisite. Model output."
     }
    ]
   },
@@ -498,7 +498,7 @@
    ],
    "prompt": {
     "deadline_seconds": 50,
-    "guard": "NOT study ct_head ordered AND NOT study ct_cta_head_and_neck ordered",
+    "guard": "NOT phase is presentation AND NOT study ct_head ordered AND NOT study ct_cta_head_and_neck ordered",
     "text": "He hit his head hard and he hasn't had a CT of his head yet."
    },
    "debrief_note": "This is the scan that shows the problem, and he needed it from the door. A loss of consciousness, amnesia for the crash, a headache and a scalp hematoma each justify a head CT by any decision rule, and the scooter, the speed and the missing helmet add to it.\n\nThe scan is yours to read. Scroll from the skull base to the vertex on the brain window, then look again on the bone window. His shows a biconvex collection over the right temporoparietal convexity that stops at the sutures, with a linear fracture of the temporal squama beneath it. That shape is an epidural hematoma: arterial blood, usually from the middle meningeal artery, stripping the dura off the skull. A crescent that crosses the sutures would be a subdural.\n\nThe darker pockets inside the clot are the swirl sign: unclotted blood, which means it is still bleeding. That is why he declined while you watched.\n\nThe size matters to the neurosurgeon. The guideline says an epidural over 30 mL should be evacuated whatever the GCS, and his was about 50 mL, about 19 mm thick, with about 6 mm of shift. Your decision is simpler than that: any traumatic epidural hematoma is a call to neurosurgery now. [UNVERIFIED: Bullock et al. 2006, read through a summarizing tool]"
@@ -747,11 +747,11 @@
     }
    ],
    "prompt": {
-    "deadline_seconds": 70,
-    "guard": "NOT phase is presentation OR (study ct_head resulted OR study ct_cta_head_and_neck resulted)",
+    "deadline_seconds": 25,
+    "guard": "NOT phase is presentation",
     "text": "Neurosurgery hasn't heard about him yet.",
     "escalation": {
-     "deadline_seconds": 90,
+     "deadline_seconds": 35,
      "text": "Nobody has called neurosurgery about him."
     }
    },
@@ -1168,7 +1168,7 @@
     }
    ],
    "prompt": {
-    "deadline_seconds": 35,
+    "deadline_seconds": 60,
     "guard": "phase is presentation",
     "text": "He's talking, but nobody has done a neuro exam on him yet."
    },
@@ -1272,7 +1272,7 @@
  ],
  "prompt_cap_recommendation": {
   "per_phase": 5,
-  "rationale": "Five. On arrival: the monitor at 20, a neuro exam at 35, a head CT at 50 and neurosurgery at 70 once the CT is back. In the decline: the repeat exam at 15, the call back at 40, the CT at 50 and neurosurgery at 70 with an escalation at 90. In herniation: osmotherapy at 20 with an escalation at 60, a tube at 30, the call back at 40, the CT at 50 and neurosurgery at 70. The herniation and the brainstem clocks rest on the neurosurgery and osmotherapy prompts, and a cap of five never suppresses them."
+  "rationale": "Five. On arrival: the monitor at 20 and a neuro exam at 60. No neurosurgery or CT prompt on arrival (owner, 19 and 20 October 2026). In the decline: the repeat exam at 15, neurosurgery at 25 with an escalation at 35, the call back at 40 and the CT at 50. In herniation: osmotherapy at 20 with an escalation at 60, neurosurgery at 25, a tube at 30, the call back at 40 and the CT at 50. The herniation and the brainstem clocks rest on the neurosurgery and osmotherapy prompts, which come first or second in their phase, so a cap of five never suppresses them."
  },
  "prerequisite_semantics_note": "One case prerequisite: the neurosurgery consult needs a resulted head CT or CT/CTA, with the neurosurgeon's request as the failure message (authoring 9.5). The catalog's are kept: a line before every intravenous drug, central access for concentrated saline, sedation and a paralytic before the tube.",
  "content_keys": {
@@ -1647,9 +1647,15 @@
    ]
   },
   "patient_visual": {
-   "authoring_note": "MODEL-AUTHORED. Nothing beyond the phase's own distress and alertness is drawn. The airway device follows the last airway button pressed.",
-   "verify": "Check that the drawn drowsiness in the decline and the obtunded face in herniation read as intended.",
+   "authoring_note": "MODEL-AUTHORED. Beyond the phase's own distress and alertness, one rule: his eyes are closed in the decline (owner, 19 October 2026). At GCS 12 he opens them only to voice (E3), so at rest they are shut. The airway device follows the last airway button pressed.",
+   "verify": "Check that the closed eyes in the decline and the obtunded face in herniation read as intended.",
    "rules": [
+    {
+     "when": "phase is decline",
+     "value": {
+      "eyes": "closed"
+     }
+    },
     {
      "when": null,
      "value": {}
@@ -3811,7 +3817,7 @@
    "Intubate for a reason, not a number. A tube in a talking patient takes away the exam that tells you he is getting worse.",
    "Before you fix a number, ask whether the body made it on purpose. A high pressure and a slow pulse in a herniating brain are the body defending its blood supply. [UNVERIFIED: written by a model from memory]",
    "A plan made on an old exam is out of date when the exam changes. Tell the consultant what changed, in numbers: GCS 15 to 12, pupils equal, vomited.",
-   "The simulator compresses time. The decline at four minutes, the herniation five minutes later and the brainstem five minutes after that are teaching choices, not measured intervals."
+   "The simulator compresses time. The decline at four minutes, the herniation two minutes later and the brainstem five minutes after that are teaching choices, not measured intervals."
   ],
   "attempt_history_note": "Blocked attempts are surfaced and not penalized."
  }

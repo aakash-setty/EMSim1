@@ -27,7 +27,7 @@ block.
 
 `scoot-ct-head.series.json` and `scoot-ct-head.series.gz` are a 31-image axial head CT, and
 `scoot-ct-head.webp` is its still (image 16 of 31, brain window W 80 L 40), the thumbnail in
-the record. They are the EDH case (Case 3, `cases/edh.js`) of Aakash Setty's artifact "Head CT
+the record. The viewer opens on image 1, the skull base (`start_image`, owner, 20 October 2026). They are the EDH case (Case 3, `cases/edh.js`) of Aakash Setty's artifact "Head CT
 Teaching Cases" (https://claude.ai/artifact/225E69mr6M4psdgX9EjMbj), version 1792432464-742b,
 read on 19 October 2026. That artifact says the images are computer generated from the Colin27
 head MRI, converted to CT densities, with the lesion built in and a scanner simulated, and that

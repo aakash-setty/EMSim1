@@ -146,7 +146,7 @@ DEBRIEF = {
     "[UNVERIFIED: written by a model from memory]"),
    ("A plan made on an old exam is out of date when the exam changes. Tell the consultant "
     "what changed, in numbers: GCS 15 to 12, pupils equal, vomited."),
-   ("The simulator compresses time. The decline at four minutes, the herniation five minutes "
+   ("The simulator compresses time. The decline at four minutes, the herniation two minutes "
     "later and the brainstem five minutes after that are teaching choices, not measured "
     "intervals."),
  ],
@@ -166,7 +166,7 @@ PROVENANCE = {
    "note, interview answer and diagnosis explanation."),
  "author_only_fields_pending_signoff": [
    "Every vital sign in every phase, including that presentation and decline differ by only a few points on purpose.",
-   "The three clocks: the decline at 240 seconds whatever is done, herniation 300 seconds after the decline without a call to neurosurgery with the scan, and brainstem compression 300 seconds after herniation without osmotherapy. The 15 seconds from osmotherapy to the temporized phase.",
+   "The three clocks: the decline at 240 seconds whatever is done, herniation 120 seconds after the decline (the owner's choice, 19 October 2026) without a call to neurosurgery with the scan, and brainstem compression 300 seconds after herniation without osmotherapy. The 15 seconds from osmotherapy to the temporized phase.",
    "The terminal clock in herniation, a model default the owner did not choose.",
    "Every exam finding and its routing, including the left-sided weakness in herniation and the road rash.",
    "The head CT images (the EDH case of the Head CT Teaching Cases artifact, synthetic), their read (about 19 mm, about 50 mL, about 6 mm of shift, swirl sign, temporal squamous fracture), the CTA and MRI reports, and that one series answers in every phase.",

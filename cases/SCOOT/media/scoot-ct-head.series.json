@@ -39,8 +39,9 @@
   81.0,
   86.0
  ],
- "start_image": 16,
+ "start_image": 1,
  "label": "CT HEAD W/O CONTRAST",
+ "title": "CT Head without contrast",
  "orientation": "axial, viewed from the feet: the patient's right on the viewer's left, anterior up",
  "windows": [
   {
@@ -49,7 +50,7 @@
    "l": 40
   },
   {
-   "name": "Subdural",
+   "name": "Bleed",
    "w": 200,
    "l": 75
   },
@@ -59,7 +60,7 @@
    "l": 600
   },
   {
-   "name": "Stroke",
+   "name": "Ischemia",
    "w": 40,
    "l": 40
   }

@@ -84,7 +84,9 @@ act("ct_c_spine", ALWAYS("recommended"),
       "a few seconds in the same scanner." + MEMORY))
 
 act("ct_head", ALWAYS("critical"),
-    prompt={"deadline_seconds": 50, "guard": NO_CT,
+    # No prompt on arrival (owner, 20 October 2026: "eliminate the CT head prompt at 2:30").
+    # Getting the scan on arrival is the learner's own decision.
+    prompt={"deadline_seconds": 50, "guard": "NOT " + PRES + " AND " + NO_CT,
             "text": "He hit his head hard and he hasn't had a CT of his head yet."},
     debrief_note=(
       "This is the scan that shows the problem, and he needed it from the door. A loss of "
@@ -203,12 +205,15 @@ act("consult_neurosurgeon", ALWAYS("critical"),
                     "failure_message": ("Neurosurgery will want to see his head CT first. Call "
                                         "them as soon as it's back.")}],
     also_satisfies=[{"id": "neurosurgery_updated", "when": AFTER_ARRIVAL}],
-    # Guarded off the arrival phase until a scan is back, so a GCS 15 patient with no
-    # imaging is not pointed at a neurosurgeon. After arrival it fires with or without a
-    # scan: a learner without one is sent for it by the prerequisite's message.
-    prompt={"deadline_seconds": 70, "guard": "NOT " + PRES + " OR " + CT_R,
+    # No prompt on arrival (owner, 19 October 2026: a nudge at 3:30 in the default mode
+    # came too soon). Calling with the scan is the learner's decision there, which is goal
+    # G2. After arrival it fires with or without a scan: a learner without one is sent for
+    # it by the prerequisite's message.
+    # 25 s and 35 s (75 s and 105 s in the default mode) so both land inside the 120 s
+    # decline (owner, 19 October 2026: herniation at 6:00).
+    prompt={"deadline_seconds": 25, "guard": "NOT " + PRES,
             "text": "Neurosurgery hasn't heard about him yet.",
-            "escalation": {"deadline_seconds": 90,
+            "escalation": {"deadline_seconds": 35,
                            "text": "Nobody has called neurosurgery about him."}},
     debrief_note=(
       "The call that decides how this goes. Any traumatic epidural hematoma is a call to "
@@ -419,7 +424,8 @@ for cid, note in EXAM_NOTES.items():
     if cid == "exam_neuro":
         act(cid, ALWAYS("critical"),
             also_satisfies=[{"id": "neuro_reexamined", "when": DECL}],
-            prompt={"deadline_seconds": 35, "guard": PRES,
+            # 60 s, so 3:00 in the default mode (owner, 20 October 2026).
+            prompt={"deadline_seconds": 60, "guard": PRES,
                     "text": "He's talking, but nobody has done a neuro exam on him yet."},
             debrief_note=note + MEMORY)
     else:

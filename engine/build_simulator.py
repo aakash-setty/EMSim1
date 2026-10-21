@@ -205,7 +205,11 @@ shared = {
     # by catalog id, instead of alphabetically. Anything not named follows, alphabetically.
     "buttonOrder": {"Examination": ["exam_neck", "exam_heent", "exam_card", "exam_pulm",
                                     "exam_abd", "exam_back", "exam_gu", "exam_msk",
-                                    "exam_skin", "exam_neuro", "exam_psych"]},
+                                    "exam_skin", "exam_neuro", "exam_psych"],
+                    # 20 October 2026: the CTs head to foot. MRI, plain films and the
+                    # ultrasounds are in their own subgroups and keep alphabetical order.
+                    "Imaging": ["ct_head", "ct_cta_head_and_neck", "ct_c_spine", "ct_chest",
+                                "ct_pulmonary_embolus", "ct_abdomen", "ct_aorta"]},
     # v0.26b. Groups on an ordering tab whose buttons act on the click, with no basket and
     # no Submit Order: the first acts of any resuscitation. Author instruction.
     "immediateGroups": {"stabilization": ["Stabilization"]},

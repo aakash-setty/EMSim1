@@ -1397,6 +1397,8 @@ def run_checks(case):
                     prob = "windows must be a list of {name, w, l}"
                 elif not (1 <= m.get("start_image", 1) <= m["n"]):
                     prob = "start_image is outside the stack"
+                elif "title" in m and not (isinstance(m["title"], str) and m["title"].strip()):
+                    prob = "title must be a non-empty string"
                 else:
                     got = len(_gz.decompress(open(gp, "rb").read()))
                     if got != 2 * m["n"] * m["w"] * m["h"]:

@@ -3608,7 +3608,7 @@
     },
     {
       "id": "ct_aorta",
-      "display_name": "CT - Aorta",
+      "display_name": "CTA - Aorta",
       "placements": [
         {
           "tab": "investigations",
@@ -3624,6 +3624,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "source": "renamed on author instruction (20 October 2026); was 'CT - Aorta'",
       "default_result": {
         "kind": "report",
         "abnormal": false,
@@ -3704,7 +3705,7 @@
     },
     {
       "id": "ct_pulmonary_embolus",
-      "display_name": "CT - Pulmonary Embolus",
+      "display_name": "CTA - Pulmonary Embolus",
       "placements": [
         {
           "tab": "investigations",
@@ -3720,6 +3721,7 @@
       "default_prerequisites": [],
       "flags_set_default": [],
       "repeatable": true,
+      "source": "renamed on author instruction (20 October 2026); was 'CT - Pulmonary Embolus'",
       "default_result": {
         "kind": "report",
         "abnormal": false,

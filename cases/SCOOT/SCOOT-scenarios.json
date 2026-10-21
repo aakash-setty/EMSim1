@@ -54,7 +54,7 @@
     "exam_neuro",
     "ct_head",
     {
-     "wait": 520
+     "wait": 340
     }
    ],
    "expect_phase": "herniation",
@@ -68,7 +68,7 @@
     "exam_neuro",
     "ct_head",
     {
-     "wait": 520
+     "wait": 340
     },
     "mannitol_bolus",
     "osmotherapy_for_herniation",
@@ -92,7 +92,7 @@
     "exam_neuro",
     "ct_head",
     {
-     "wait": 520
+     "wait": 340
     },
     {
      "wait": 262
@@ -104,7 +104,7 @@
     }
    ],
    "expect_phase": "temporized",
-   "note": "Herniation entered at 540. Osmotherapy credited at about 830, before the 840 deadline."
+   "note": "Herniation entered at 360. Osmotherapy credited at about 650, before the 660 deadline."
   },
   {
    "name": "One action too late: osmotherapy after brainstem compression",
@@ -114,7 +114,7 @@
     "exam_neuro",
     "ct_head",
     {
-     "wait": 520
+     "wait": 340
     },
     {
      "wait": 292
@@ -122,7 +122,7 @@
     "mannitol_bolus"
    ],
    "expect_phase": "brainstem_compression",
-   "note": "Herniation entered at 540. The deadline at 840 passes before the order."
+   "note": "Herniation entered at 360. The deadline at 660 passes before the order."
   },
   {
    "name": "Left alone: decline, herniation, brainstem compression",
@@ -138,7 +138,7 @@
     }
    ],
    "expect_phase": "brainstem_compression",
-   "note": "Do-nothing trajectory. 240, 540 and 840 seconds."
+   "note": "Do-nothing trajectory. 240, 360 and 660 seconds."
   },
   {
    "name": "Tubed for the number at GCS 15: nothing crashes, and the decline still comes",
@@ -212,7 +212,7 @@
     "exam_neuro",
     "ct_head",
     {
-     "wait": 520
+     "wait": 340
     },
     "mannitol_bolus",
     "osmotherapy_for_herniation",

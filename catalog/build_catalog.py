@@ -531,6 +531,13 @@ for e in ENTRIES:
         e["placements"] = [{"tab": "stabilization", "group": None},
                            {"tab": "stabilization", "group": "Pacer/Defib"}]
         e["source"] = "renamed and placed on author instruction (v0.26b); was 'Place Pads for Monitoring'"
+# Author instruction, 20 October 2026: the aorta and pulmonary embolus studies are angiograms
+# and are named so. Same ids, so no case and no binding changes.
+for e in ENTRIES:
+    if e["id"] in ("ct_aorta", "ct_pulmonary_embolus"):
+        was = e["display_name"]
+        e["display_name"] = was.replace("CT - ", "CTA - ", 1)
+        e["source"] = "renamed on author instruction (20 October 2026); was '" + was + "'"
 for e in ENTRIES:
     p = e["placements"][0]
     if p["tab"] == "stabilization" and p["group"] == "Intubation Drugs":

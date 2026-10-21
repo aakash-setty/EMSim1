@@ -124,7 +124,7 @@ antiemetic, leaves the airway alone and hands him to the OR.
 neurosurgery is called with it, and he goes to the OR at GCS 12.
 
 **Called it concussion.** The decline is put down to concussion and the scan sits unread, or
-neurosurgery is never called with it. Five minutes later his right pupil blows and his pulse
+neurosurgery is never called with it. Two minutes later his right pupil blows and his pulse
 slows while his pressure climbs. The learner who now gives osmotherapy sees the pupil come
 back a little and can still get him to the OR. The learner who also lowers the pressure or
 gives atropine is told why in the debrief.
@@ -132,13 +132,13 @@ gives atropine is told why in the debrief.
 **Tubed for the number.** The learner intubates at GCS 15 or 12. Nothing crashes. The exam
 now reads "GCS cannot be assessed", and the decline arrives with only the pupils to follow.
 
-**Left alone.** Declines at four minutes, herniates at nine, and dies of brainstem
-compression at fourteen.
+**Left alone.** Declines at four minutes, herniates at six, and dies of brainstem
+compression at eleven.
 
 | Phase | Short label | The patient | What now? | If nothing is done |
 |---|---|---|---|---|
 | `presentation` | on arrival | GCS 15, 138/82, HR 88, RR 16, SpO2 99, pupils equal | Monitor, primary survey, baseline neuro exam, CT head and C-spine, neurosurgery once the CT is back | Declines at 240 s whatever is done (scheduled natural history) |
-| `decline` | harder to wake | GCS 12 (E3 V4 M5), vomited, 145/84, HR 96, RR 18, pupils equal | Re-examine. CT now, or call neurosurgery with it, or call them back. Antiemetic. No tube | Herniation at 300 s unless neurosurgery has been called with the scan |
+| `decline` | harder to wake | GCS 12 (E3 V4 M5), vomited, 145/84, HR 96, RR 18, pupils equal | Re-examine. CT now, or call neurosurgery with it, or call them back. Antiemetic. No tube | Herniation at 120 s (6:00 on the clock) unless neurosurgery has been called with the scan. Owner's timing, section 2.14 |
 | `herniation` | right pupil big | GCS 7, 178/94, HR 56, RR 10, SpO2 95, right pupil fixed | Osmotherapy, intubate, neurosurgery now, leave the pressure alone | Terminal at 300 s without osmotherapy given in this phase |
 | `temporized` | pupil reacting | GCS 8, 160/88, HR 70, RR 14, right pupil sluggish | Secure the airway if not done, hand off to the OR | Indefinitely. Known gap 3 |
 | `brainstem_compression` | not responding | Terminal. 196/108, HR 44, RR 6, SpO2 86 | | |
@@ -188,9 +188,9 @@ from guard true.
 | Action | When | Time-sensitive |
 |---|---|---|
 | `attach_monitor` | presentation | prompt at 20 s |
-| `exam_neuro` | every phase (the baseline) | prompt at 35 s on arrival |
-| `ct_head` | every phase | prompt at 50 s while not ordered |
-| `consult_neurosurgeon` (needs a resulted head CT or CT/CTA, sets `neurosurgery_called`) | every live phase | prompt at 70 s, escalation at 90 s. On arrival only once a scan is back, so a GCS 15 patient with no imaging is not pointed at a surgeon. After arrival with or without a scan, and a learner without one is sent for it by the prerequisite |
+| `exam_neuro` | every phase (the baseline) | prompt at 60 s on arrival (3:00 in the default mode) |
+| `ct_head` | every phase | prompt at 50 s while not ordered, after arrival only (none on arrival since 20 October) |
+| `consult_neurosurgeon` (needs a resulted head CT or CT/CTA, sets `neurosurgery_called`) | every live phase | prompt at 70 s, escalation at 90 s, from the decline on. No prompt on arrival (owner, 19 October 2026: a nudge at 3:30 in the default mode came too soon), so the first call is the learner's own decision. After arrival with or without a scan, and a learner without one is sent for it by the prerequisite |
 | `neuro_reexamined` (hidden, credited by a neuro exam in the decline) | decline | prompt at 15 s |
 | `neurosurgery_updated` (hidden, credited by a neurosurgery call in any phase after arrival) | decline, herniation, temporized | prompt at 40 s, guarded on `neurosurgery_called` |
 | `osmotherapy_for_herniation` (hidden, credited by mannitol or hypertonic saline in herniation) | herniation | prompt at 20 s, escalation at 60 s |
@@ -320,8 +320,8 @@ No additional diagnoses: the catalog has no calvarial skull fracture and no mode
 1. The four model defaults in section 0: Level 1 setting, the terminal clock in herniation,
    the call back as critical, and no halts.
 2. Osmotherapy in the decline: neutral (accepted) as built, or discouraged, or recommended?
-3. Is 240 s for the decline, 300 s to herniation and 300 s to brainstem compression right
-   relative to each other?
+3. Is 240 s for the decline, 120 s to herniation (the owner's choice) and 300 s to brainstem
+   compression right relative to each other?
 4. Should a CT C-spine be recommended at GCS 15 with no midline tenderness? Built as
    recommended in every phase.
 5. Should tranexamic acid be recommended (CRASH-3 subgroup) or stay neutral?
@@ -383,9 +383,12 @@ authoring 23), and SCOOT's head CT now uses the artifact's EDH case (Case 3).
 - The CT/CTA stays a text report, because the series is a non-contrast study.
 - Air below -300 HU was flattened to -1000 HU to make the file a third smaller. Nothing inside
   the head changed. The HU readout over air shows -1000.
-- The images open on image 16 of 31, the middle of the stack, by a rule that does not point at
-  the lesion. The thumbnail is the same image. The hematoma is visible on it.
-- The Colin27 copyright notice travels with the images and is printed under "About this image".
+- The images opened on image 16 of 31, the middle of the stack, by a rule that does not point
+  at the lesion. Since 20 October they open on image 1, the skull base (section 2.15). The
+  thumbnail is still image 16, and the hematoma is visible on it.
+- The Colin27 copyright notice travels with the images in the series data. It was printed under
+  "About this image" until 20 October 2026, when the owner asked for the viewer's footer to go
+  (section 2.15).
 
 ## 2.13 The pupils drawn (19 October 2026, owner instruction)
 
@@ -413,6 +416,59 @@ already prints:
   is a teaching choice, the same one section 2.4 already names.
 
 Model-written, not reviewed.
+
+## 2.14 Owner corrections after play (19 October 2026)
+
+Aakash Setty played the case and asked for two changes.
+
+- "3:30 is too soon for it to say neuro hasn't heard yet." and "eliminate the 3:30 nudge."
+  The neurosurgery prompt no longer fires on arrival in either mode. Any arrival-phase prompt
+  has to land before the decline at 240 s, so a later one was not possible there. The
+  trade-off: a learner who has the scan back on arrival and does not call gets no reminder
+  until the decline.
+- "Make the pupil blowing sooner at 6:00." Herniation now comes 120 s into the decline, at
+  360 s (6:00), not 300 s in (9:00). Brainstem compression follows 300 s later, at 660 s
+  (11:00). To keep the warning ahead of the pupil in the default mode (authoring 7, the
+  deadline times three must land first), the neurosurgery prompt was shortened from 70 s to
+  25 s and its escalation from 90 s to 35 s. In the default mode the decline now runs: 4:00
+  vomits, 4:45 the nurse asks for a repeat exam, 5:15 "Neurosurgery hasn't heard about him
+  yet", 5:45 "Nobody has called neurosurgery about him", 6:00 the right pupil blows. In
+  easy mode: 4:15, 4:25, 4:35. The same 25 s applies to the prompt in herniation (75 s into
+  it in the default mode). The CT prompt in the decline (150 s after entry in the default
+  mode) no longer lands before herniation. A learner with no scan by 4:00 had the arrival CT
+  prompt at 2:30, and at 5:15 the neurosurgery prompt's prerequisite sends him for the scan.
+  Two minutes is tight for a scan and a call, which is the point of the change.
+- "When it's GCS 12, the character's eyes should be closed." The figure's eyes are closed in
+  the decline (patient_visual). At GCS 12 (E3) he opens them only to voice. The eye view says
+  "Lids held open" there.
+
+## 2.15 Owner corrections, 20 October 2026
+
+Aakash Setty asked for four changes.
+
+- "Eliminate the CT head prompt at 2:30." The CT prompt no longer fires on arrival, in either
+  mode (it came at 0:50 in easy, 2:30 in the default mode). Getting the scan is now the
+  learner's own decision on arrival, as the neurosurgery call already was. The prompt still
+  fires in later phases while no head CT or CT/CTA is ordered: 4:50 in easy, and in the
+  default mode only in herniation (8:30), since the decline is 120 s long. A learner who never
+  orders the scan now hears about it first at 5:15, when the neurosurgery prompt's
+  prerequisite asks for it. On arrival the nurse now prompts only the monitor (1:00) and the
+  neuro exam (3:00).
+- "Move the neuro exam prompt to 3 minute." Its deadline is 60 s, so 3:00 in the default
+  mode and 1:00 in easy.
+- "Have the CT head display start from slice 1." `start_image` is 1, the skull base. The
+  thumbnail is unchanged (image 16).
+- A visual tutorial for scrolling in the CT viewer, on the left of the images. An engine
+  change, for every case with a series (CHANGELOG).
+- The viewer's footer went (the controls line and "About this image", which printed the
+  Colin27 notice). The notice stays in the series data, which ships in every copy of the pack.
+  The Colin27 permission asks that its copyright notice "appear in all copies". Whether a
+  notice in the data and not on screen meets that is a question for the owner, not settled
+  here.
+- The viewer's header reads "Interactive PACS Viewer: CT Head without contrast", from a new
+  `title` in the series data, and the image slider is vertical on the right.
+- The windows are renamed Brain, Bleed, Bone and Ischemia (were Brain, Subdural, Bone and
+  Stroke). Widths and levels unchanged: W 80 L 40, W 200 L 75, W 2800 L 600, W 40 L 40.
 
 ## 3. Catalog change requests
 

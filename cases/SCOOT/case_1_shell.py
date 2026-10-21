@@ -190,14 +190,14 @@ PHASES = [
    96, 145, 84, 18, 98, 36.8, 1, 1, "normal", "reactive",
    [HANDOFF_T,
     {"when": "NOT " + HAS_SCAN,
-     "after_seconds": 300, "measured_from": "phase_entry", "to": "herniation",
+     "after_seconds": 120, "measured_from": "phase_entry", "to": "herniation",
      "narration": ("His right pupil has gone big and it isn't reacting, and his heart rate "
                    "has dropped. He's not answering me."),
      "debrief_note": (
        "His brain herniated. The hematoma kept growing, pushed the right temporal lobe "
        "inward against the nerve that works the right pupil and against the brainstem, and "
        "the blown pupil and the slow pulse are what that looks like.\n\n"
-       "Neurosurgery had not been called with his scan in the five minutes since he "
+       "Neurosurgery had not been called with his scan in the two minutes since he "
        "dropped his GCS. The scan was the step, or the call once the scan was back. An "
        "epidural hematoma over 30 mL is evacuated whatever the GCS, and the decision to "
        "operate belongs to the neurosurgeon. The emergency physician's decision is to call "
@@ -208,10 +208,13 @@ PHASES = [
        "progresses to uncal herniation. Guarded on the flag the neurosurgery consult sets. "
        "The consult cannot be made until a head CT has resulted (a prerequisite, authoring "
        "9.5), so a learner who called with the scan before or during the decline never "
-       "herniates. 300 seconds is a teaching "
-       "choice. The prompt for that call lands at 70 seconds (210 in the default mode) with "
-       "an escalation at 90 (270), and a CT prompt at 50 (150) for a learner without one. "
-       "Model output.")}],
+       "herniates. 120 seconds is the owner's choice (Aakash Setty, 19 October 2026: the "
+       "pupil blows at 6:00). The prompt for that call lands at 25 seconds (75 in the "
+       "default mode) with an escalation at 35 (105), after the repeat-exam prompt at 15 "
+       "(45). The CT prompt at 50 (150) lands here only in easy mode, and there is none on "
+       "arrival. In the default mode a "
+       "learner with no scan hears the neurosurgery prompt and is sent for the scan by its "
+       "prerequisite. Model output.")}],
    410,
    "Sinus rhythm at the phase rate, as the phase's ECG report says. Model output.",
    ),
