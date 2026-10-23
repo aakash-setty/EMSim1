@@ -70,7 +70,13 @@ HANDOFF = {
     "explanation": (
       "The finding that changed the order of treatment. The receiving team needs to know "
       "it was 3.1 on arrival, because insulin will keep pushing it down and it needs "
-      "checking every one to two hours while it is being replaced.")},
+      "checking every one to two hours while it is being replaced.")}],
+
+ # 23 October 2026, case author's instruction: the handover is scored on one or two major
+ # diagnoses. The primary is one and the additional diagnosis above is the other. These are
+ # also true of her or him, credited if named and never penalized if left out. Which one
+ # stayed scored was a model's pick, accepted by the author the same day. Not physician reviewed.
+ "minor_diagnoses": [
    {"catalog_id": "dx_hypomagnesemia", "label": "Hypomagnesemia",
     "explanation": "A low magnesium makes a low potassium harder to correct. Worth naming so it is replaced and rechecked."},
    {"catalog_id": "dx_viral_gastroenteritis", "label": "Viral gastroenteritis",
@@ -78,8 +84,7 @@ HANDOFF = {
       "The trigger. Naming it tells the next team that the search for a cause was made "
       "and that no other source was found on examination or in the urine.")},
    {"catalog_id": "dx_hypovolemia", "label": "Hypovolemia",
-    "explanation": "She was dry from vomiting, diarrhea and the glucose in her urine. True, and treated with the first fluid."},
-   ],
+    "explanation": "She was dry from vomiting, diarrhea and the glucose in her urine. True, and treated with the first fluid."}],
  # Hyponatremia and acute kidney injury were additional diagnoses for one day (7 October
  # 2026). The medical re-read the same day moved them to defensible alternatives: a sodium
  # of 133 at a glucose of 348 corrects to normal, and a single creatinine of 1.2 with no

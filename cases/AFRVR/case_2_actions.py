@@ -159,9 +159,9 @@ for cid, fl, nm in [("etomidate_bolus", "sedation_given", None),
                     ("propofol_bolus", "sedation_given", None),
                     ("rocuronium_bolus", "paralytic_given", None),
                     ("succinylcholine_bolus", "paralytic_given", None)]:
-    # v0.18a: credited only where intubation is the right call, not counted as missed elsewhere.
-    add(A(cid, tag=[{"when": "phase is respiratory_failure", "value": "recommended"},
-                    {"when": None, "value": "neutral"}], flags=[fl],
+    # Intubation care is never graded (owner, 23 October 2026, authoring 6.3). It was
+    # recommended in respiratory_failure. The flags stay: they are the intubation prerequisite.
+    add(A(cid, tag=NEUTRAL, flags=[fl],
       debrief_note=(
         "Induction and paralysis are prerequisites of intubation in this simulator, which is the "
         "sequence teaching rather than a scoring opportunity. Agent choice matters in this patient: "
@@ -173,16 +173,16 @@ for cid, fl, nm in [("etomidate_bolus", "sedation_given", None),
         "signal, which is why post-intubation sedation is tracked as a follow-up.")))
 
 for cid in ("propofol_infusion", "ketamine_infusion", "fentanyl_bolus"):
-    add(A(cid, tag=RECOMMENDED, flags=["post_intubation_sedation_running"],
+    add(A(cid, tag=NEUTRAL, flags=["post_intubation_sedation_running"],   # ungraded, 23 Oct 2026
       debrief_note=(
         "Discharges the post-intubation sedation and analgesia obligation. Choose with the blood "
         "pressure in mind: this patient's cardiac output is rate and preload sensitive and a "
         "propofol infusion in particular will drop his pressure.")))
 
-add(A("preoxygenate_for_intubation", tag=RECOMMENDED, flags=["preoxygenated"],
+add(A("preoxygenate_for_intubation", tag=NEUTRAL, flags=["preoxygenated"],   # ungraded, 23 Oct 2026
   debrief_note=("Good practice, and in this patient the preoxygenation device of choice is the "
                 "positive pressure he should already be on.")))
-add(A("position_for_intubation", tag=RECOMMENDED, flags=[],
+add(A("position_for_intubation", tag=NEUTRAL, flags=[],   # ungraded, 23 Oct 2026
   debrief_note="Good practice. Sitting a patient in pulmonary edema flat is poorly tolerated."))
 
 # ------------------------------------------------------------------ electricity
@@ -779,6 +779,7 @@ add(A("handoff_submit", name="Submit handoff", tag=NEUTRAL, flags=["handoff_subm
 FOLLOW_UPS = [
  {"id": "post_intubation_sedation",
   "triggered_by": "intubate_rapid_sequence",
+  "graded": False,
   "applies_when": "flag intubated set",
   "deadline_seconds": 60,
   "satisfied_by": ["propofol_infusion", "ketamine_infusion", "fentanyl_bolus", "midazolam_bolus"],
@@ -791,6 +792,7 @@ FOLLOW_UPS = [
     "and rate sensitive and a propofol infusion will drop it.")},
  {"id": "post_intubation_cxr",
   "triggered_by": "intubate_rapid_sequence",
+  "graded": False,
   "applies_when": "flag intubated set",
   "deadline_seconds": 120,
   "satisfied_by": ["xr_chest"],

@@ -699,7 +699,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "debrief_note": "The better induction agent here if you are intubating. It has no effect on steroidogenesis and its indirect sympathomimetic action is usually helpful in shock. Two caveats worth teaching: that sympathomimetic effect depends on endogenous catecholamine reserve, and in a patient who cannot make cortisol the vascular response to her own catecholamines is already blunted, so reduce the dose and expect less benefit than usual.",
@@ -712,7 +712,7 @@
    "tag": [
     {
      "when": null,
-     "value": "discouraged"
+     "value": "neutral"
     }
    ],
    "debrief_note": "The least forgiving induction agent in this physiology. Dose-dependent vasodilation and myocardial depression in a patient who is vasoplegic, preload dependent and unable to mount a stress response. A substantially reduced dose with a vasopressor already running is defensible; a standard induction dose is how a mean arterial pressure of 70 becomes 40.",
@@ -725,7 +725,7 @@
    "tag": [
     {
      "when": null,
-     "value": "discouraged"
+     "value": "neutral"
     }
    ],
    "debrief_note": "Slow in onset, unpredictable in effect and hypotensive in shock. It is a poor induction agent generally and a worse one here.",
@@ -738,7 +738,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "debrief_note": "The appropriate paralytic in this patient, specifically because it avoids the potassium rise that succinylcholine causes. Her potassium is 5.4 before you start. The long duration is the trade, and it is why post-intubation sedation is enforced as a follow-up.",
@@ -751,7 +751,7 @@
    "tag": [
     {
      "when": null,
-     "value": "discouraged"
+     "value": "neutral"
     }
    ],
    "debrief_note": "Avoidable here. Succinylcholine raises serum potassium by roughly 0.5 mEq/L in normal physiology, and her potassium is already 5.4 and rising as the adrenal crisis progresses. That is not an absolute contraindication, which belongs to the up-regulated receptor states such as burns beyond 24 hours, denervation and prolonged immobility, but rocuronium removes the question entirely and there is no reason to take the risk.",
@@ -762,10 +762,6 @@
   {
    "catalog_id": "propofol_infusion",
    "tag": [
-    {
-     "when": "phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock",
-     "value": "discouraged"
-    },
     {
      "when": null,
      "value": "neutral"
@@ -788,7 +784,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "debrief_note": "A reasonable post-intubation sedative in shock, and it satisfies the sedation obligation without worsening the pressure.",
@@ -808,7 +804,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "debrief_note": "Analgesia is a separate requirement from sedation, and in this patient it has a second use: the myalgia is severe and it is one of the things she will remember. Fentanyl is hemodynamically the most forgiving of the opioids, and it does not fix the tube-related distress on its own, so it belongs alongside sedation rather than instead of it.",
@@ -2726,7 +2722,8 @@
     "midazolam_bolus"
    ],
    "nurse_prompt": "She's tubed and still paralyzed from the roc. Do you want something written up for sedation and pain?",
-   "debrief_note": "A paralyzed patient without sedation is awake, aware and unable to signal. This obligation is created by the intubation and cannot precede it, which is why it is a follow-up rather than a prerequisite. Choose the agent with the blood pressure in mind: propofol in a patient who is already hypotensive will make it worse."
+   "debrief_note": "A paralyzed patient without sedation is awake, aware and unable to signal. This obligation is created by the intubation and cannot precede it, which is why it is a follow-up rather than a prerequisite. Choose the agent with the blood pressure in mind: propofol in a patient who is already hypotensive will make it worse.",
+   "graded": false
   },
   {
    "id": "post_intubation_cxr",
@@ -2739,7 +2736,8 @@
     "xr_chest"
    ],
    "nurse_prompt": "Do you want a film to check the tube? Anything you ordered before we tubed her won't show it.",
-   "debrief_note": "Radiographic confirmation of tube depth is standard and does not replace waveform capnography, which is what confirms tracheal placement. The simulator detail matters: results freeze at the state in which they were ordered, so a film requested before intubation will not show the tube, and a repeat order is needed."
+   "debrief_note": "Radiographic confirmation of tube depth is standard and does not replace waveform capnography, which is what confirms tracheal placement. The simulator detail matters: results freeze at the state in which they were ordered, so a film requested before intubation will not show the tube, and a repeat order is needed.",
+   "graded": false
   }
  ],
  "prompt_cap_recommendation": {
@@ -8726,14 +8724,16 @@
   ],
   "additional_diagnoses": [
    {
-    "catalog_id": "dx_septic_shock",
-    "label": "Septic shock",
-    "explanation": "The syndrome the organism produced: cold peripheries, a raised lactate, and hypoperfusion that needed resuscitation. Named beside meningococcemia it is complete; named alone it leaves out the organism the antibiotic choice and the public health response both depend on."
-   },
-   {
     "catalog_id": "dx_adrenal_crisis",
     "label": "Adrenal crisis",
     "explanation": "A sodium of 128, a potassium of 5.4 and a glucose of 53 in a shocked patient, read as one pattern rather than three results, is bilateral adrenal hemorrhage complicating the septicemia. It is the reason hydrocortisone is a critical action here and not an adjunct, and a handover that does not name it is a handover in which the next dose gets missed."
+   }
+  ],
+  "minor_diagnoses": [
+   {
+    "catalog_id": "dx_septic_shock",
+    "label": "Septic shock",
+    "explanation": "The syndrome the organism produced: cold peripheries, a raised lactate, and hypoperfusion that needed resuscitation. Named beside meningococcemia it is complete; named alone it leaves out the organism the antibiotic choice and the public health response both depend on."
    },
    {
     "catalog_id": "dx_disseminated_intravascular_coagulation",
@@ -8751,7 +8751,7 @@
     "explanation": "A glucose of 53 is a finding rather than a diagnosis, and it is named here because at handover the receiving team needs to know it happened, what it was treated with, and that it recurs while the adrenal crisis is untreated."
    }
   ],
-  "additional_diagnoses_note": "v0.9. Diagnoses that are also true of this patient and appropriate to name at handover beside the primary. The learner lists as many diagnoses as apply; the first is scored as the primary against correct_diagnosis and alternative_diagnoses, and each of the rest earns credit if it is here. A diagnosis may appear both here and in alternative_diagnoses: the alternative's verdict and explanation apply when it is named as the primary, this entry's when it is named beside one. PROVENANCE: written by an AI assistant in September 2026 from the case's own findings. The list of diagnoses was reviewed and approved by the author (emergency medicine resident) on 5 September 2026; the explanations under them remain AI-written and unsigned.",
+  "additional_diagnoses_note": "Since 23 October 2026 (case author's instruction) the handover is scored on one or two major diagnoses: the primary and adrenal crisis. The rest moved to minor_diagnoses, credited if named and never penalized if left out. Which one stayed scored was a model's pick, accepted by the author the same day, and not physician reviewed.\n\nv0.9. Diagnoses that are also true of this patient and appropriate to name at handover beside the primary. The learner lists as many diagnoses as apply; the first is scored as the primary against correct_diagnosis and alternative_diagnoses, and each of the rest earns credit if it is here. A diagnosis may appear both here and in alternative_diagnoses: the alternative's verdict and explanation apply when it is named as the primary, this entry's when it is named beside one. PROVENANCE: written by an AI assistant in September 2026 from the case's own findings. The list of diagnoses was reviewed and approved by the author (emergency medicine resident) on 5 September 2026; the explanations under them remain AI-written and unsigned.",
   "diagnosis_entry_method": "Search against the global diagnosis catalog. The alternatives above are authored for debrief explanation only and are not shown as a shortlist.",
   "pending_result_warning": "Standard confirmation dialogue. Note that blood cultures and CSF culture will always be pending at handoff in this case, because the five-second laboratory turnaround cannot represent a 24 to 48 hour culture; the debrief will flag them as unviewed pending results and that is an artifact rather than an error by the resident.",
   "early_exit": {
@@ -8989,7 +8989,6 @@
   ],
   "attempt_history_note": "This case is built to be replayed. The two deterioration branches are mutually exclusive within a single run: a resident who reaches the adrenal branch sees the meningococcemia branch only if hydrocortisone then goes in without an antibiotic, and one who gives hydrocortisone first never sees the adrenal branch. Seeing both requires two runs, and that is the intended use.",
   "trap_actions": [
-   "etomidate_bolus",
    "dexamethasone",
    "prednisone",
    "ct_head",
@@ -9004,8 +9003,6 @@
    "vancomycin",
    "rifampin",
    "nasal_cannula_oxygen",
-   "succinylcholine_bolus",
-   "propofol_bolus",
    "dopamine_drip",
    "phenylephrine_drip",
    "place_nasogastric_tube",

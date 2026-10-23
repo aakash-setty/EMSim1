@@ -61,13 +61,28 @@ def fact(fid, asks, value, restate=False):
 
 
 # --------------------------------------------------------------- the event
+# 23 October 2026, case author's instruction: a greeting or an open question ("Hi", "What's
+# going on?", "What happened?", "What brings you in today?") gets a brief history of the
+# present illness. It stops short of the bottle, which stays behind its own question.
+topic("presenting_story", "What happened?",
+  ["Hi", "Hello", "Hi there", "Hey", "Hi, I'm one of the doctors.", "Hello, I'm the doctor.",
+   "What's going on?", "What is going on?", "What's been going on?", "What happened?",
+   "What happened today?", "What brings you in?", "What brings you in today?",
+   "What brings her in today?", "What brought her in?", "What's wrong?", "What's the matter?",
+   "What seems to be the problem?", "Tell me what happened.", "Can you tell me what happened?",
+   "What's the story?", "How can I help?", "Why is she here?", "Why did you call the ambulance?"],
+  ("'I got home from work at four and found her on her bedroom floor. She didn't know who I "
+   "was. She was fine last night. In the ambulance she got worse, grabbing at things that "
+   "aren't there, and she's burning up.'"),
+  "what happened")
+
 topic("onset", "When did this start?",
   ["When did this start?", "How long has she been like this?", "When did you first notice?",
    "What time did this begin?", "How long has this been going on?",
    "When did she start acting strangely?", "When did it come on?", "How long ago?",
    "When did you realize something was wrong?"],
-  ("'I got in from work at about four and she was already like this. So an hour and a bit? "
-   "I don't know how long she'd been that way before I found her. I was at work all day.'"),
+  ("'I got in from work at about four and she was already like this. I don't know how long "
+   "before that.'"),
   "when I found her",
   facts=[
     fact("time", ["what time", "what time exactly", "when exactly", "roughly what time",

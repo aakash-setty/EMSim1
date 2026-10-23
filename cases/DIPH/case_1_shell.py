@@ -222,7 +222,7 @@ SEIZURE_RATIONALE = (
   "departs from a sentence the case author wrote in her own words.")
 
 SEIZURE_NARRATION = (
-  "She's stiffened up and she's fitting. I'm putting her on her side and I've got the suction. "
+  "She's stiffened up and she's seizing. I'm putting her on her side and I've got the suction. "
   "Her sats are dropping.")
 
 SEIZURE_NOTE = (
@@ -320,7 +320,7 @@ PHASES = [
      "after_seconds": 120,
      "measured_from": "phase_entry",
      "to": "wide_complex_tachycardia",
-     "narration": "She's still fitting and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.",
+     "narration": "She's still seizing and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.",
      "debrief_note": (
        "Two minutes of untreated convulsion took her into a wide-complex tachycardia. The chain "
        "is the one the seizure note describes: the convulsion produces a lactic and respiratory "
@@ -439,7 +439,7 @@ PHASES = [
      "measured_from": "guard_true",
      "to": "seizing",
      "narration": ("The complexes have narrowed and the rate's come down since the bicarb. "
-                   "She's still fitting, though."),
+                   "She's still seizing, though."),
      "debrief_note": (
        "Sodium bicarbonate narrowed the complexes and ended the wide-complex rhythm, but it is "
        "not an anticonvulsant and she kept seizing. The convulsion goes on producing heat and "

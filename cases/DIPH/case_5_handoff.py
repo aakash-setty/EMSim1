@@ -121,7 +121,13 @@ HANDOFF = {
       "is that the patient looks better long before the channel does.\n\n"
       "The catalog entry is deliberately a mechanism rather than an agent, because that is "
       "how it is handed over and because the same sentence and the same treatment serve "
-      "tricyclic, cocaine and flecainide poisoning.")},
+      "tricyclic, cocaine and flecainide poisoning.")}],
+
+ # 23 October 2026, case author's instruction: the handover is scored on one or two major
+ # diagnoses. The primary is one and the additional diagnosis above is the other. These are
+ # also true of her or him, credited if named and never penalized if left out. Which one
+ # stayed scored was a model's pick, accepted by the author the same day. Not physician reviewed.
+ "minor_diagnoses": [
    {"catalog_id": "dx_anticholinergic_toxidrome", "label": "Anticholinergic toxidrome",
     "explanation": (
       "True, and worth naming beside the agent because it is what the nursing staff will be "
@@ -153,7 +159,10 @@ HANDOFF = {
       "asks what else is in the house before she goes home. Leaving it out because the "
       "medical problem is more urgent is the commonest way it gets lost.")}],
  "additional_diagnoses_note": (
-   "Five, and the first of them used to be unsayable. Before 5 September 2026 the diagnosis "
+   "Since 23 October 2026 (case author's instruction) only the cardiotoxicity is scored beside "
+   "the agent. The toxidrome, the rhabdomyolysis, the seizure and the suicide attempt moved to "
+   "minor_diagnoses: credited if named, never penalized if left out.\n\n"
+   "Five until then, and the first of them used to be unsayable. Before 5 September 2026 the diagnosis "
    "catalog had no entry for the agent, for sodium-channel blockade or for a drug-induced "
    "seizure, so this list read rhabdomyolysis, status epilepticus (which claims something "
    "about duration that a single toxic convulsion does not) and delirium, with the "
@@ -336,9 +345,10 @@ DEBRIEF = {
  "trap_actions": ["physostigmine", "fos_phenytoin", "haloperidol", "olanzapine", "ziprasidone",
                   "acetaminophen", "ibuprofen", "flumazenil", "diphenhydramine",
                   "procainamide_drip", "amiodarone_bolus_infusion", "naloxone_bolus",
-                  "lumbar_puncture", "defibrillate", "succinylcholine_bolus", "d50_bolus"],
+                  "lumbar_puncture", "defibrillate", "d50_bolus"],
+ # succinylcholine_bolus left the list on 23 October 2026: intubation care is never graded.
  "trap_actions_note": (
-   "Sixteen, which is more than any other pack, and that is what a toxicology case is: the "
+   "Fifteen, which is more than any other pack, and that is what a toxicology case is: the "
    "differential is a list of drugs and most of the wrong answers are things you give rather "
    "than things you fail to give. Four of them halt the case and the rest cost a point and a "
    "note. The three that matter most are physostigmine, which is the case's central question; "

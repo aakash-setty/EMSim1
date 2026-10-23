@@ -73,6 +73,21 @@ HANDOFF = {
      "is out, clindamycin belongs in the regimen, and this can recur with tampon use.")},
 
  "additional_diagnoses": [
+   {"catalog_id": "dx_retained_vaginal_foreign_body", "label": "Retained vaginal foreign body",
+    "explanation": (
+      "The retained tampon found on the pelvic examination. It is the source, and the "
+      "next team needs to hear whether it is out.")}],
+
+ # 23 October 2026, case author's instruction: the handover is scored on one or two major
+ # diagnoses. The primary is one and the additional diagnosis above is the other. These are
+ # also true of her or him, credited if named and never penalized if left out. Which one
+ # stayed scored was a model's pick, accepted by the author the same day. Not physician reviewed.
+ # v0.24 audit, finding 22 and catalog finding 4.1. The five below were added on
+ # 7 October 2026. Two of them are diagnosis entries this pack asked the catalog for. The
+ # other three were true of her chemistry and cost five points each to name. Each
+ # explanation only restates values the pack already authors. A model wrote them and a
+ # physician has not read them.
+ "minor_diagnoses": [
    {"catalog_id": "dx_septic_shock", "label": "Septic shock",
     "explanation": (
       "She needed a vasopressor to hold a mean pressure of 65 after fluid, with a raised "
@@ -90,15 +105,6 @@ HANDOFF = {
     "explanation": (
       "Her creatine kinase is 2,140 with muscle pain and tenderness. Muscle involvement is "
       "part of toxic shock, and with an injured kidney it needs watching.")},
-   # v0.24 audit, finding 22 and catalog finding 4.1. The five below were added on
-   # 7 October 2026. Two of them are diagnosis entries this pack asked the catalog for. The
-   # other three were true of her chemistry and cost five points each to name. Each
-   # explanation only restates values the pack already authors. A model wrote them and a
-   # physician has not read them.
-   {"catalog_id": "dx_retained_vaginal_foreign_body", "label": "Retained vaginal foreign body",
-    "explanation": (
-      "The retained tampon found on the pelvic examination. It is the source, and the "
-      "next team needs to hear whether it is out.")},
    {"catalog_id": "dx_thrombocytopenia", "label": "Thrombocytopenia",
     "explanation": (
       "Her platelet count is 98, against a lower limit of 150. It is one of the organ "

@@ -790,7 +790,7 @@
    "tag": [
     {
      "when": null,
-     "value": "discouraged"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -803,7 +803,7 @@
    "tag": [
     {
      "when": null,
-     "value": "discouraged"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -1696,6 +1696,7 @@
   {
    "id": "post_intubation_sedation",
    "triggered_by": "intubate_rapid_sequence",
+   "graded": false,
    "applies_when": "flag intubated set",
    "deadline_seconds": 90,
    "satisfied_by": [
@@ -6142,6 +6143,13 @@
   },
   "additional_diagnoses": [
    {
+    "catalog_id": "dx_retained_vaginal_foreign_body",
+    "label": "Retained vaginal foreign body",
+    "explanation": "The retained tampon found on the pelvic examination. It is the source, and the next team needs to hear whether it is out."
+   }
+  ],
+  "minor_diagnoses": [
+   {
     "catalog_id": "dx_septic_shock",
     "label": "Septic shock",
     "explanation": "She needed a vasopressor to hold a mean pressure of 65 after fluid, with a raised lactate. Saying so tells the receiving team how sick she is in the terms they use."
@@ -6160,11 +6168,6 @@
     "catalog_id": "dx_rhabdomyolysis",
     "label": "Rhabdomyolysis",
     "explanation": "Her creatine kinase is 2,140 with muscle pain and tenderness. Muscle involvement is part of toxic shock, and with an injured kidney it needs watching."
-   },
-   {
-    "catalog_id": "dx_retained_vaginal_foreign_body",
-    "label": "Retained vaginal foreign body",
-    "explanation": "The retained tampon found on the pelvic examination. It is the source, and the next team needs to hear whether it is out."
    },
    {
     "catalog_id": "dx_thrombocytopenia",

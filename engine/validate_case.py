@@ -399,6 +399,53 @@ def check_pupils(case, errors, warnings):
                 warnings.append(f"[pupils] {where}: {st} at {sz} mm")
 
 
+def check_ungraded(case, errors, warnings):
+    """Intubation care is never graded (owner, 23 October 2026, authoring 6.3 and 22.2). The
+    list of catalog ids is data in catalog/ungraded-intubation-care.json, so this file names
+    no drug. A case-only action that is intubation care carries "ungraded": true."""
+    ug, _ = _load(catalog_path("ungraded-intubation-care.json"))
+    if not ug:
+        return
+    binding, _ = load_binding()
+    bound = {r["case_id"]: (r.get("catalog_id") or r["case_id"]) for r in (binding or {}).get("rows", [])}
+    cat_ug = set(ug.get("ungraded", []))
+    intub = set(ug.get("intubation_actions", []))
+    acts = case.get("case_actions", [])
+    def is_ug(a):
+        return bound.get(a["catalog_id"], a["catalog_id"]) in cat_ug or a.get("ungraded") is True
+    def is_intub(cid):
+        return bound.get(cid, cid) in intub
+    for a in acts:
+        cid = a["catalog_id"]
+        if "ungraded" in a and not isinstance(a["ungraded"], bool):
+            errors.append(f"[ungraded] {cid}: ungraded must be true or false")
+        if is_ug(a) and any(r.get("value") != "neutral" for r in a.get("tag", [])):
+            vals = sorted({r.get("value") for r in a.get("tag", [])} - {"neutral"})
+            errors.append(f"[ungraded] {cid}: intubation care is never graded (authoring 6.3), "
+                          f"tag it neutral, not {', '.join(vals)}. Its effects may stay")
+    # a hidden target credited only by intubation care is intubation care too
+    by_id = {a["catalog_id"]: a for a in acts}
+    for a in acts:
+        if not a.get("hidden"):
+            continue
+        sat = [b for b in acts if any(s.get("id") == a["catalog_id"] for s in b.get("also_satisfies", []))]
+        if sat and all(is_ug(b) or b.get("hidden") for b in sat) and any(is_ug(b) for b in sat) and not is_ug(a):
+            errors.append(f"[ungraded] {a['catalog_id']}: a target credited only by intubation care "
+                          f"is intubation care, mark it \"ungraded\": true and tag it neutral")
+    traps = (case.get("debrief_configuration") or {}).get("trap_actions", []) or []
+    for t in traps:
+        if t in by_id and is_ug(by_id[t]) or bound.get(t, t) in cat_ug:
+            errors.append(f"[ungraded] trap_actions lists {t}, which is intubation care and never graded")
+    for f in case.get("follow_ups", []) or []:
+        if "graded" in f and not isinstance(f["graded"], bool):
+            errors.append(f"[ungraded] follow-up {f.get('id')}: graded must be true or false")
+        trig = f.get("triggered_by") or []
+        trig = [trig] if isinstance(trig, str) else trig
+        if any(is_intub(x) for x in trig) and f.get("graded") is not False:
+            errors.append(f"[ungraded] follow-up {f.get('id')} is triggered by intubation, so it is "
+                          f"post-intubation care: set \"graded\": false (authoring 22.2)")
+
+
 def check_patient(case, errors, warnings):
     art = _patient_art()
     av = (case.get("patient") or {}).get("avatar")
@@ -1503,6 +1550,7 @@ def run_checks(case):
 
     check_patient(case, errors, warnings)
     check_pupils(case, errors, warnings)
+    check_ungraded(case, errors, warnings)
 
     # numeric plausibility of the abnormal flags. The renderer must not recompute,
     # but the validator can, and a mis-set flag is invisible everywhere else.
@@ -1692,6 +1740,11 @@ def run_checks(case):
     notes.append(f"interview topics: {len(iv['topics'])}; total paraphrase variants: "
                  f"{sum(len(t['variants']) for t in iv['topics'])}")
 
+    # 23 October 2026, authoring 8.2: a greeting or an open question gets a brief HPI.
+    if not any(t.get("topic") == "presenting_story" for t in iv["topics"]):
+        warnings.append("[interview] no presenting_story topic; a greeting or \"What brings you "
+                        "in today?\" gets the fallback instead of a brief history (authoring 8.2)")
+
     # -- M2: the summary's inputs (v0.9) ------------------------------------
     # key_topics, key_exams and additional_diagnoses are all optional; when present
     # they must name things that exist, because a misspelt id scores silently as
@@ -1739,6 +1792,30 @@ def run_checks(case):
                             f"the debrief will print the name and nothing under it")
     if ho.get("additional_diagnoses"):
         notes.append(f"additional diagnoses: {len(ho['additional_diagnoses'])}")
+    # 23 October 2026, author instruction: the handover is scored on the one or two major
+    # diagnoses only. The primary is one, so at most one additional diagnosis. Everything
+    # else true of the patient goes in minor_diagnoses, which is never scored (10.2).
+    if len(ho.get("additional_diagnoses") or []) > 1:
+        errors.append(f"[handoff] {len(ho['additional_diagnoses'])} additional diagnoses; the handover "
+                      f"is scored on one or two major diagnoses, so list at most one here and move "
+                      f"the rest to minor_diagnoses (authoring 10.2)")
+    seen_minor = set()
+    for a in ho.get("minor_diagnoses") or []:
+        cid, lab = a.get("catalog_id"), a.get("label", "")
+        if dx_ids and cid not in dx_ids and lab.lower() not in dx_names:
+            errors.append(f"[handoff] minor diagnosis {cid or lab!r} is not in the diagnosis catalog")
+        if cid and cid == correct:
+            errors.append(f"[handoff] minor diagnosis {cid!r} is the correct diagnosis; list it once")
+        if cid and cid in seen_addl:
+            errors.append(f"[handoff] minor diagnosis {cid!r} is also an additional diagnosis; list it once")
+        if cid in seen_minor:
+            errors.append(f"[handoff] minor diagnosis {cid!r} is listed twice")
+        seen_minor.add(cid)
+        if not a.get("explanation"):
+            warnings.append(f"[handoff] minor diagnosis {cid or lab!r} has no explanation; "
+                            f"the debrief will print the name and nothing under it")
+    if ho.get("minor_diagnoses"):
+        notes.append(f"minor diagnoses: {len(ho['minor_diagnoses'])}")
 
     # -- disposition intercepts (v0.21) ------------------------------------
     # A disposition that, chosen in a named state, logs a case action instead of ending

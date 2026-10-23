@@ -443,6 +443,23 @@ expect("the correct diagnosis repeated as an additional one is rejected",
        lambda c: c["handoff"].__setitem__("additional_diagnoses",
            [{"catalog_id": c["handoff"]["correct_diagnosis"]["catalog_id"], "explanation": "x"}]),
        "list it once")
+expect("more than one additional diagnosis is rejected",
+       lambda c: c["handoff"].__setitem__("additional_diagnoses",
+           [{"catalog_id": "dx_hypokalemia", "explanation": "x"},
+            {"catalog_id": "dx_hypomagnesemia", "explanation": "x"}]),
+       "at most one")
+expect("a minor diagnosis outside the diagnosis catalog is rejected",
+       lambda c: c["handoff"].__setitem__("minor_diagnoses",
+                                          [{"catalog_id": "dx_made_up", "explanation": "x"}]),
+       "minor diagnosis 'dx_made_up' is not in the diagnosis catalog")
+expect("the correct diagnosis repeated as a minor one is rejected",
+       lambda c: c["handoff"].__setitem__("minor_diagnoses",
+           [{"catalog_id": c["handoff"]["correct_diagnosis"]["catalog_id"], "explanation": "x"}]),
+       "list it once")
+expect("a minor diagnosis with no explanation warns",
+       lambda c: c["handoff"].__setitem__("minor_diagnoses",
+                                          [{"catalog_id": "dx_hypomagnesemia"}]),
+       "minor diagnosis 'dx_hypomagnesemia' has no explanation", where="warnings")
 expect("an additional diagnosis with no explanation warns",
        lambda c: c["handoff"].__setitem__("additional_diagnoses",
                                           [{"catalog_id": "dx_hypokalemia"}]),
@@ -628,6 +645,37 @@ expect_clean("the same draws no pupil warning",
              lambda c: pupils(c, {"state": "blown", "side": "right", "size_mm": 3,
                                   "affected_mm": 4, "affected_reaction": "sluggish"}), "[pupils]",
              where="warnings")
+
+# 23 October 2026. Intubation care is never graded.
+def ug_act(c, cid, value):
+    c["case_actions"][:] = [a for a in c["case_actions"] if a["catalog_id"] != cid]
+    c["case_actions"].append({"catalog_id": cid, "tag": [{"when": None, "value": value}],
+                              "debrief_note": "x", "flags_set": []})
+
+
+def tube_fu(c, graded):
+    f = {"id": "tube_check_x", "triggered_by": ["intubate_rapid_sequence"], "applies_when": None,
+         "deadline_seconds": 60, "satisfied_by": ["xr_chest"], "nurse_prompt": "x", "debrief_note": "x"}
+    if graded is not None:
+        f["graded"] = graded
+    c.setdefault("follow_ups", []).append(f)
+
+
+expect("a recommended tag on an RSI drug is rejected",
+       lambda c: ug_act(c, "rocuronium_bolus", "recommended"), "rocuronium_bolus: intubation care is never graded")
+expect_clean("a neutral tag on an RSI drug passes",
+             lambda c: ug_act(c, "rocuronium_bolus", "neutral"), "rocuronium_bolus: intubation care")
+expect("a case-only action marked ungraded with a critical tag is rejected",
+       lambda c: c["case_actions"].append({"catalog_id": "vent_check_x", "ungraded": True,
+                                           "tag": [{"when": None, "value": "critical"}], "debrief_note": "x"}),
+       "vent_check_x: intubation care is never graded")
+expect("an RSI drug in trap_actions is rejected",
+       lambda c: c.setdefault("debrief_configuration", {}).setdefault("trap_actions", []).append("succinylcholine_bolus"),
+       "trap_actions lists succinylcholine_bolus")
+expect("a follow-up triggered by intubation without graded false is rejected",
+       lambda c: tube_fu(c, None), "follow-up tube_check_x is triggered by intubation")
+expect_clean("the same follow-up with graded false passes",
+             lambda c: tube_fu(c, False), "tube_check_x is triggered by intubation")
 
 print(f"\n  {COUNT} checks, " + (f"{len(FAILS)} FAILURES" if FAILS else "all passed"))
 sys.exit(1 if FAILS else 0)

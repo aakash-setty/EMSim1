@@ -148,7 +148,7 @@
      "after_seconds": 240,
      "measured_from": "phase_entry",
      "to": "seizing",
-     "narration": "She's stiffened up and she's fitting. I'm putting her on her side and I've got the suction. Her sats are dropping.",
+     "narration": "She's stiffened up and she's seizing. I'm putting her on her side and I've got the suction. Her sats are dropping.",
      "debrief_note": "She seized. The case schedules this at four minutes as the natural history of the ingestion, and only a run that gave both a benzodiazepine and sodium bicarbonate before then avoids it: it is written into the case as the natural history of the ingestion rather than as a consequence of anything done or not done, and it fires at four minutes whatever the resident has achieved by then. What the four minutes before it were for was the monitor, the line, the glucose and above all the ECG, because the seizure is far easier to manage in a patient whose conduction you already understand.\n\nThe physiology worth carrying away: the seizure is not an isolated neurological event here. Convulsion produces lactate and carbon dioxide, and acidemia increases the fraction of the drug that is ionized, which is the charged form that binds the cardiac sodium channel. A seizure in a sodium-channel-blocker overdose therefore makes the cardiotoxicity worse while it is happening, which is why it is terminated with a benzodiazepine at once and why ventilation matters as much as the anticonvulsant does.",
      "author_rationale": "The author writes, of the seizure: 'A seizure will occur as part of the natural process, regardless of how well the examinee is doing.' That is a scheduled natural history in the sense of authoring section 15.1, and the rule carries no guard, exactly as she wrote it. The clinical claim behind it is hers: a patient four hours into a diphenhydramine ingestion large enough to widen the QRS is going to seize. The deadline is her own four minutes, carried at its authored value.\n\n**The rule is unguarded and it is no longer unavoidable, and the difference matters.** Since 5 September 2026 the rule above it moves a patient who has received both sodium bicarbonate and a benzodiazepine out of this phase after ten seconds, so a resident who treats the conduction before four minutes never reaches this rule at all. Nothing about this rule changed; it was given an escape. Whether that escape should exist is the open question in the rationale on the rule above, and it is the one place in this pack where the conversion departs from a sentence the case author wrote in her own words.",
      "unguarded_rationale": "The author writes, of the seizure: 'A seizure will occur as part of the natural process, regardless of how well the examinee is doing.' That is a scheduled natural history in the sense of authoring section 15.1, and the rule carries no guard, exactly as she wrote it. The clinical claim behind it is hers: a patient four hours into a diphenhydramine ingestion large enough to widen the QRS is going to seize. The deadline is her own four minutes, carried at its authored value.\n\n**The rule is unguarded and it is no longer unavoidable, and the difference matters.** Since 5 September 2026 the rule above it moves a patient who has received both sodium bicarbonate and a benzodiazepine out of this phase after ten seconds, so a resident who treats the conduction before four minutes never reaches this rule at all. Nothing about this rule changed; it was given an escape. Whether that escape should exist is the open question in the rationale on the rule above, and it is the one place in this pack where the conversion departs from a sentence the case author wrote in her own words."
@@ -198,7 +198,7 @@
      "after_seconds": 120,
      "measured_from": "phase_entry",
      "to": "wide_complex_tachycardia",
-     "narration": "She's still fitting and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.",
+     "narration": "She's still seizing and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.",
      "debrief_note": "Two minutes of untreated convulsion took her into a wide-complex tachycardia. The chain is the one the seizure note describes: the convulsion produces a lactic and respiratory acidosis, the acidemia increases the ionized fraction of the drug, the form that binds the cardiac sodium channel, and conduction that was already slowed slows further until the ventricle takes over.\n\nThe action that would have prevented this is a benzodiazepine, and the nurse asked for one twice. Once the wide-complex rhythm is established the treatment is sodium bicarbonate, and the benzodiazepine is still needed.",
      "author_rationale": "Two minutes of continuous convulsion in a patient who is already acidemic at pH 7.28 with a QRS of 132 milliseconds. The number is a drafting judgment and not the author's: she specifies that the seizure happens and that lorazepam and bicarbonate are given, and does not say how long an untreated seizure is tolerated. It is set at the shorter end of what is defensible because the case has already established the acidemia. Needs the author's signature."
     }
@@ -308,7 +308,7 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "seizing",
-     "narration": "The complexes have narrowed and the rate's come down since the bicarb. She's still fitting, though.",
+     "narration": "The complexes have narrowed and the rate's come down since the bicarb. She's still seizing, though.",
      "debrief_note": "Sodium bicarbonate narrowed the complexes and ended the wide-complex rhythm, but it is not an anticonvulsant and she kept seizing. The convulsion goes on producing heat and acid, and both will widen the QRS again. A benzodiazepine is what ends it, with propofol as the next step if it does not.",
      "author_rationale": "Added in the v0.18a review. Without it a resident who gave bicarbonate but no anticonvulsant stayed in the wide-complex phase with no exit except the handoff, showing a rate of 180 after the drug that treats it. Returning to the seizing phase keeps the rhythm and the seizure consistent with what was given. Ten seconds matches the other bicarbonate transitions. A resident who gives the anticonvulsant a few seconds after the bicarbonate passes through the seizing phase on the way and still reaches stabilizing, ten seconds later. Needs the author's signature."
     },
@@ -626,10 +626,6 @@
    "catalog_id": "bag_valve_mask",
    "tag": [
     {
-     "when": "phase is seizing",
-     "value": "recommended"
-    },
-    {
      "when": null,
      "value": "neutral"
     }
@@ -705,7 +701,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "debrief_note": "Reasonable induction agent here. Hemodynamically neutral in a patient whose pressure is adequate but whose myocardium is poisoned.",
@@ -718,7 +714,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "debrief_note": "Reasonable, and it has a second job: propofol is an anticonvulsant, which matters in a patient whose seizure may recur. The cost is vasodilatation and negative inotropy in a myocardium with sodium channels already blocked, so watch the pressure after it.",
@@ -744,7 +740,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "debrief_note": "The paralytic to prefer in this patient. See the note on succinylcholine.",
@@ -757,7 +753,7 @@
    "tag": [
     {
      "when": null,
-     "value": "discouraged"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -912,7 +908,7 @@
    "prompt": {
     "deadline_seconds": 15,
     "guard": "(phase is seizing OR phase is wide_complex_tachycardia) AND NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)",
-    "text": "She's fitting. What do you want for it?",
+    "text": "She's seizing. What do you want for it?",
     "escalation": {
      "deadline_seconds": 60,
      "text": "She's still going. I've got lorazepam and midazolam drawn up. Which one?"
@@ -1086,10 +1082,6 @@
   {
    "catalog_id": "propofol_infusion",
    "tag": [
-    {
-     "when": "flag airway_protected set",
-     "value": "recommended"
-    },
     {
      "when": null,
      "value": "neutral"
@@ -2036,6 +2028,7 @@
   {
    "id": "post_intubation_sedation",
    "triggered_by": "intubate_rapid_sequence",
+   "graded": false,
    "applies_when": "flag airway_protected set",
    "deadline_seconds": 90,
    "satisfied_by": [
@@ -3789,6 +3782,43 @@
   "out_of_scope_bank_note": "Questions this case has no authored answer to, generated into case_4_interview.py by catalog/expand_interview_variants.py from catalog/interview_out_of_scope.py, filtered to the concepts this case does not cover. The matcher embeds them beside the topic bank.",
   "topics": [
    {
+    "topic": "presenting_story",
+    "canonical": "What happened?",
+    "variants": [
+     "Hi",
+     "Hello",
+     "Hi there",
+     "Hey",
+     "Hi, I'm one of the doctors.",
+     "Hello, I'm the doctor.",
+     "What's going on?",
+     "What is going on?",
+     "What's been going on?",
+     "What happened?",
+     "What happened today?",
+     "What brings you in?",
+     "What brings you in today?",
+     "What brings her in today?",
+     "What brought her in?",
+     "What's wrong?",
+     "What's the matter?",
+     "What seems to be the problem?",
+     "Tell me what happened.",
+     "Can you tell me what happened?",
+     "What's the story?",
+     "How can I help?",
+     "Why is she here?",
+     "Why did you call the ambulance?"
+    ],
+    "answer": [
+     {
+      "when": null,
+      "value": "'I got home from work at four and found her on her bedroom floor. She didn't know who I was. She was fine last night. In the ambulance she got worse, grabbing at things that aren't there, and she's burning up.'"
+     }
+    ],
+    "echo": "what happened"
+   },
+   {
     "topic": "onset",
     "canonical": "When did this start?",
     "variants": [
@@ -3817,7 +3847,7 @@
     "answer": [
      {
       "when": null,
-      "value": "'I got in from work at about four and she was already like this. So an hour and a bit? I don't know how long she'd been that way before I found her. I was at work all day.'"
+      "value": "'I got in from work at about four and she was already like this. I don't know how long before that.'"
      }
     ],
     "echo": "when I found her",
@@ -5962,7 +5992,9 @@
     "catalog_id": "dx_sodium_channel_blocker_cardiotoxicity",
     "label": "Sodium channel blocker cardiotoxicity",
     "explanation": "The most important thing about this patient and the one to say out loud. Her QRS was 132 milliseconds with a terminal R wave in aVR, which is cardiac sodium-channel blockade, and it is the reason she is on bicarbonate rather than being watched. A handover that says antihistamine overdose and stops leaves the receiving team to discover the conduction abnormality themselves, and the thing about this poisoning is that the patient looks better long before the channel does.\n\nThe catalog entry is deliberately a mechanism rather than an agent, because that is how it is handed over and because the same sentence and the same treatment serve tricyclic, cocaine and flecainide poisoning."
-   },
+   }
+  ],
+  "minor_diagnoses": [
    {
     "catalog_id": "dx_anticholinergic_toxidrome",
     "label": "Anticholinergic toxidrome",
@@ -5984,7 +6016,7 @@
     "explanation": "This was a deliberate ingestion of an entire bottle, taken alone in the house after months of low mood and social withdrawal, and the handover has to say so. It is what determines that she needs continuous observation on the ward rather than a side room, that psychiatry sees her before any discussion of discharge, and that somebody asks what else is in the house before she goes home. Leaving it out because the medical problem is more urgent is the commonest way it gets lost."
    }
   ],
-  "additional_diagnoses_note": "Five, and the first of them used to be unsayable. Before 5 September 2026 the diagnosis catalog had no entry for the agent, for sodium-channel blockade or for a drug-induced seizure, so this list read rhabdomyolysis, status epilepticus (which claims something about duration that a single toxic convulsion does not) and delirium, with the cardiotoxicity carried nowhere at all.\n\nThe list was drafted by an AI assistant from the case's own findings and is unsigned. Delirium came out of it when the toxidrome moved in, because the two were saying the same thing twice.",
+  "additional_diagnoses_note": "Since 23 October 2026 (case author's instruction) only the cardiotoxicity is scored beside the agent. The toxidrome, the rhabdomyolysis, the seizure and the suicide attempt moved to minor_diagnoses: credited if named, never penalized if left out.\n\nFive until then, and the first of them used to be unsayable. Before 5 September 2026 the diagnosis catalog had no entry for the agent, for sodium-channel blockade or for a drug-induced seizure, so this list read rhabdomyolysis, status epilepticus (which claims something about duration that a single toxic convulsion does not) and delirium, with the cardiotoxicity carried nowhere at all.\n\nThe list was drafted by an AI assistant from the case's own findings and is unsigned. Delirium came out of it when the toxidrome moved in, because the two were saying the same thing twice.",
   "alternative_diagnoses": [
    {
     "catalog_id": "dx_anticholinergic_toxidrome",
@@ -6237,10 +6269,9 @@
    "naloxone_bolus",
    "lumbar_puncture",
    "defibrillate",
-   "succinylcholine_bolus",
    "d50_bolus"
   ],
-  "trap_actions_note": "Sixteen, which is more than any other pack, and that is what a toxicology case is: the differential is a list of drugs and most of the wrong answers are things you give rather than things you fail to give. Four of them halt the case and the rest cost a point and a note. The three that matter most are physostigmine, which is the case's central question; phenytoin, because it is the reflex for a seizure and it is the wrong reflex here; and the antipsychotics, because the agitation is the loudest thing in the room and haloperidol is what an agitated patient usually gets.",
+  "trap_actions_note": "Fifteen, which is more than any other pack, and that is what a toxicology case is: the differential is a list of drugs and most of the wrong answers are things you give rather than things you fail to give. Four of them halt the case and the rest cost a point and a note. The three that matter most are physostigmine, which is the case's central question; phenytoin, because it is the reflex for a seizure and it is the wrong reflex here; and the antipsychotics, because the agitation is the loudest thing in the room and haloperidol is what an agitated patient usually gets.",
   "cross_cutting_teaching_points": [
    "Treat the ECG, not the ingestion history. A new QRS over 100 milliseconds with a terminal R in aVR in a poisoned patient is an indication for sodium bicarbonate, and you do not need to know what was taken to give it. Waiting to find out is what the arrest branch of this case is made of.",
    "The satisfying diagnosis arrives before the dangerous one. The toxidrome is visible on examination in ninety seconds. The conduction abnormality is on a tracing nobody has ordered. Any case where the easy answer is also the incomplete one rewards asking what else is true.",

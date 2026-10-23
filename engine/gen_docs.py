@@ -328,7 +328,7 @@ MECHANISMS = [
      r'qrs_ms', ["DIPH", "DKA", "TAKO", "AFRVR"], {"file": r"case_1_shell|case\.json"}),
     ("Case-only action with voice phrases", "A button the catalog lacks, placed by the binding map, reachable by voice", "7.1",
      r'voice_phrases\s*[=:]', ["TAKO"], {}),
-    ("Additional diagnoses", "What is also true of the patient and credited beside the primary", "12.1",
+    ("Additional and minor diagnoses", "The one other major diagnosis, scored, and the minor ones, never scored", "12.1",
      r'additional_diagnoses|ADDITIONAL', ["AFRVR", "DKA", "TSS", "TAKO", "MGCA"], {"file": r"case_5_handoff|case\.json"}),
 ]
 

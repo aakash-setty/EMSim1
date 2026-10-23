@@ -197,6 +197,7 @@ def skeleton(prefix, title):
             # many diagnoses as apply; each of these earns credit when named beside the
             # primary and is printed in the debrief when it is not. Authoring 10.2.
             "additional_diagnoses": [],
+            "minor_diagnoses": [],
         },
         "debrief_configuration": {
             "intended_path": ["presentation", "improving", "case_complete"],

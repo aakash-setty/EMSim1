@@ -149,7 +149,7 @@ The history as a list of facts, with the pertinent negatives named (section 8).
 
 ### 2.9 Disposition and diagnosis
 
-The correct level of care and the correct diagnosis, with the plausible wrong answers for each and why each is wrong. Diagnoses are catalog ids (10.1).
+The correct level of care and the correct diagnosis, with the plausible wrong answers for each and why each is wrong. Diagnoses are catalog ids (10.1). The handover is scored on one or two major diagnoses and nothing minor (10.2).
 
 ### 2.10 Known gaps and open questions
 
@@ -308,6 +308,8 @@ The catalog defines every drug, maneuver, study, consultant and procedure, with 
 
 **Default.** Tag the traps the goals need. Tag `recommended` what you would want said in the debrief, because forty recommended tags dilute the critical ones in the score (10.4).
 
+**Engine. Intubation care is never graded** (owner, 23 October 2026). The RSI drugs (induction agents and paralytics), the steps before the tube (preoxygenation, positioning, bag-valve-mask) and the care after it (sedation and analgesia infusions, ventilator settings) are tagged `neutral` in every phase and never appear in the debrief summary, its critical actions, its Critical Errors or its traps. The decision to intubate is not on the list: tag it where the case teaches it. The catalog ids are data, in `catalog/ungraded-intubation-care.json`. The build marks those catalog entries `ungraded`, and the engine never scores an `ungraded` action whatever its tag says. A case-only action that is intubation care (a hidden sedation target, a ventilator-settings action) carries `"ungraded": true`. What these actions do stays: their flags, vital effects, prerequisites and phase changes are authored as before, and their debrief notes still teach the choice. The validator refuses a non-neutral tag or a trap entry on an ungraded action, and a hidden target credited only by intubation care that is not marked ungraded.
+
 **Engine.** An action whose tag can resolve to `harmful` needs a `halt_reason`: one sentence saying what was done and the physiological consequence. Every tagged action needs a `debrief_note` (10.3). The validator warns on a missing note.
 
 ---
@@ -379,6 +381,8 @@ Each topic carries `topic`, `canonical`, `variants`, `answer` (an ordered rule l
 - **Default.** Variants for a topic every case shares may be copied from an existing pack. They are questions, not facts, and need no sign-off. Say so in the topic's `authoring_note` (`variants_provenance` is overwritten by the build).
 
 ### 8.2 Topic coverage
+
+**Truth. Every case opens with `presenting_story`.** A greeting or an open question ("Hi", "Hello", "What's going on?", "What happened?", "What brings you in today?") gets a brief history of the present illness: two to four sentences in the voice of whoever is answering, saying what happened, when, and the main complaint. It never gives away a disclosure the case holds behind its own question. Without it the first thing a resident types is answered by the fallback or by the wrong topic. Map it to the shared concept `presenting_story` in `TOPIC_MAP`, and add greetings to its variants, which the shared library does not carry. The validator warns when the topic is missing.
 
 **Truth. Author every topic a resident would plausibly ask.** That usually means: onset, timing and progression, character, location, radiation, severity, aggravating and relieving factors, each associated symptom as its own topic, past medical and surgical history, medications, allergies, social history with substance use, family history, last oral intake, pregnancy where applicable, and code status where the presentation makes it live. Author a topic even where it is clinically irrelevant here, because the denial is the teaching and the fallback reads as the software failing. This is the one list in the document whose cost of omission is friction.
 
@@ -467,7 +471,7 @@ One workable order, an example and not a template: deteriorated-phase advice, th
 
 ### 10.1 Handoff
 
-The case completes when the learner submits the handoff, one click. Supply the correct disposition and level of care, plausible alternative dispositions each with an explanation (or marked defensible with qualification), the correct diagnosis as a catalog id, plausible alternative diagnoses as catalog ids with explanations, and `disposition_display_order`.
+The case completes when the learner submits the handoff, one click. Supply the correct disposition and level of care, plausible alternative dispositions each with an explanation (or marked defensible with qualification), the correct diagnosis as a catalog id, at most one additional major diagnosis, the minor diagnoses that are also true, plausible alternative diagnoses as catalog ids with explanations, and `disposition_display_order`.
 
 - **Engine.** Diagnosis ids resolve against the diagnosis catalog. The validator reports one that does not. `python3 engine/lookup.py diagnosis <word>` finds them. A common misdiagnosis that is not in the catalog is a catalog change request.
 - **Default.** Disposition ids are the case's own strings. No catalog holds them. Reuse the ids the newest pack uses (`icu`, `stepdown_telemetry`, `medical_floor_telemetry`, `observation_unit`, `discharge_home`, `transfer_tertiary`) and add one only for a disposition the case needs.
@@ -478,7 +482,11 @@ Results still pending at handoff are recorded automatically. An early exit produ
 
 ### 10.2 Several diagnoses
 
-The learner lists as many diagnoses as apply, in order, and the first is the primary. `additional_diagnoses` is a list of `{catalog_id, label, explanation}`: what is also true of this patient and appropriate to name beside the primary. Each earns credit when listed, and each one not named is printed under "Also true of this patient, and not named" with the explanation. **Engine.** The validator refuses an additional diagnosis that is not in the catalog or repeats the correct one, and warns on one with no explanation. `correct_diagnosis` scores the primary. `alternative_diagnoses` carry the verdicts for a primary that is not it (`acceptable_with_qualification` is defensible, anything else incorrect). A diagnosis may sit in both lists. For a poisoning, name the agent as the primary, the mechanism among the additional diagnoses and the syndrome as a defensible alternative, so a learner who names any level is credited.
+The learner lists as many diagnoses as apply, in order, and the first is the primary.
+
+**Truth. The handover is scored on the one or two major diagnoses only** (case author's instruction, 23 October 2026). The primary is one. `additional_diagnoses` holds at most one more, `{catalog_id, label, explanation}`: a second diagnosis that changes what the receiving team does. It earns credit when listed, and when not named it is printed under "Also true of this patient, and not named". Everything else true of the patient goes in `minor_diagnoses`, the same shape: an electrolyte value (hypomagnesemia, hyponatremia), a complication the primary implies (lactic acidosis, AKI), the trigger, the syndrome around the agent. A minor diagnosis is never scored. Named, it is marked "also true" and costs nothing. Left out, it costs nothing and is printed under "Also true of this patient, not scored". Test: would a senior correct a handover that left it out? If not, it is minor.
+
+**Engine.** The validator refuses a second additional diagnosis, and an additional or minor diagnosis that is not in the catalog or repeats the correct one or each other. It warns on one with no explanation. `correct_diagnosis` scores the primary. `alternative_diagnoses` carry the verdicts for a primary that is not it (`acceptable_with_qualification` is defensible, anything else incorrect). A diagnosis may sit in both lists. For a poisoning, name the agent as the primary, the mechanism among the additional diagnoses and the syndrome as a defensible alternative, so a learner who names any level is credited.
 
 ### 10.3 Debrief notes
 
@@ -494,7 +502,7 @@ The debrief is where the words go. The patient's response is the first feedback 
 
 ### 10.4 The seven scores
 
-The Summary prints one score per category and the arithmetic beside it. **Engine.** History is key topics asked over `interview.key_topics`: author it, or every topic counts and a thorough learner scores 40 percent. Physical is regions examined over the exams tagged critical or recommended, or `debrief_configuration.key_exams` where none is, or every authored exam failing that. The four ordering tabs score critical at two points and recommended at one over what was expected in the phases visited, a discouraged action costs one, a harmful halt zeroes its tab. A recommended line or monitor is left out of the debrief's recommended lists on purpose and still counts in the score. Handoff is level of care (40), the primary diagnosis (40, or 60 with no additional diagnoses) and additional diagnoses (20, pro rata), a defensible answer earns half, and a wrong primary or an unsupported diagnosis costs five. The validator checks that `key_topics` and `key_exams` name things in the case. Nothing here is a claim about how residents should be ranked.
+The Summary prints one score per category and the arithmetic beside it. **Engine.** History is key topics asked over `interview.key_topics`: author it, or every topic counts and a thorough learner scores 40 percent. Physical is regions examined over the exams tagged critical or recommended, or `debrief_configuration.key_exams` where none is, or every authored exam failing that. The four ordering tabs score critical at two points and recommended at one over what was expected in the phases visited, a discouraged action costs one, a harmful halt zeroes its tab. A recommended line or monitor is left out of the debrief's recommended lists on purpose and still counts in the score. Handoff is level of care (40), the primary diagnosis (40, or 60 with no additional diagnosis) and the additional diagnosis (20), a defensible answer earns half, and a wrong primary or an unsupported diagnosis costs five. Minor diagnoses add and cost nothing. The validator checks that `key_topics` and `key_exams` name things in the case. Nothing here is a claim about how residents should be ranked.
 
 ---
 
@@ -515,7 +523,7 @@ The Summary prints one score per category and the arithmetic beside it. **Engine
 - Every case action has a binding row. Unmatched rows warn, `BLOCKING` rows error, two case actions on one catalog entry warn. No exam outside the fourteen. `general_status` exists. Every alertness-gated non-terminal phase is covered by a global rule.
 - A study named in a condition or tagged critical but unauthored warns, naming the default.
 - Arrival: `mode` and `location` values, the handover present and not the scaffold text, a note on its sentence and word count, a warning above two sentences, a warning when a quoted saturation disagrees with the first phase.
-- Handoff: the correct and alternative diagnosis ids resolve, additional diagnoses resolve and do not repeat the correct one, intercepts name a disposition the case offers and a case action other than `handoff_submit`.
+- Handoff: the correct and alternative diagnosis ids resolve, at most one additional diagnosis, additional and minor diagnoses resolve and repeat neither the correct one nor each other, intercepts name a disposition the case offers and a case action other than `handoff_submit`.
 - Mechanisms: `also_satisfies` targets a case action other than itself, `inherit_vitals` sits on a terminal phase only, `flags_set_repeat` needs at least 2 and its flag is not in `flags_set`, a flag nothing reads warns, `voice_phrases` are non-empty strings and a duplicate warns.
 - A consultant line over 40 words warns (9.5).
 - A shape fault the checks cannot read (a missing required key) prints one `[crash]` error naming the line instead of a traceback. Fix it and run again: the list is not complete until the validator runs through.
@@ -835,6 +843,7 @@ Different mechanisms. Conflating them is the most consequential authoring error 
 
 **Engine.** Each follow-up carries `applies_when`, `deadline_seconds`, `nurse_prompt`, `debrief_note`, `triggered_by`, and one of `satisfied_by` (a list of case actions) or `satisfied_when` (a condition). It is scheduled from the triggering action's `follow_ups_triggered` list, one check per administration, the deadline multiplied by the mode. `applies_when`, `satisfied_by` and `satisfied_when` are read at the deadline, not at the trigger, so `applies_when` may name a phase the action leads to. `satisfied_by` asks whether a listed action has ever been satisfied in the run. `triggered_by` must list the actions that trigger it, and the validator checks that something fires each follow-up.
 
+- **Engine. Post-intubation follow-ups are not graded.** A follow-up triggered by the intubation action (the catalog's `intubation_actions`, in `catalog/ungraded-intubation-care.json`) carries `"graded": false`. The nurse still asks at the deadline. The debrief does not list it as an obligation left open. The validator refuses one without it. `graded` defaults to true for every other follow-up.
 - **Truth. List every satisfier.** If sedation may be propofol or ketamine and you name only propofol, a learner who chose ketamine is told they left a paralyzed patient unsedated. A covered entry satisfies its covering action, so name that once.
 - **Truth. `satisfied_by` cannot say "again" or "after".** An act done before the trigger discharges the follow-up before it exists. For each id, ask whether a learner could reasonably have done it first. If so, use one of the three below.
 

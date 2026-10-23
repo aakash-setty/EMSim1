@@ -49,50 +49,32 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/etomidate_bolus`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/ketamine_bolus`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/midazolam_bolus`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/propofol_bolus`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/rocuronium_bolus`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/succinylcholine_bolus`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/propofol_infusion`

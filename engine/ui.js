@@ -481,7 +481,7 @@ function feedItems(){
   Object.keys(ST.orders).forEach(id=>ST.orders[id].forEach(o=>{
     if(o.value===null) return;                      /* still pending, lives in the rail above */
     add({t:o.dueT,kind:catOf(id)==='investigation'?'lab':'imaging',
-         name:dispName(id),payload:o.value});
+         name:dispName(id),payload:o.value,id});
   }));
   out.sort((a,b)=>b.t-a.t||b.seq-a.seq);
   return out;
@@ -539,15 +539,26 @@ function feedPayload(v){
    Labs Only and Nurse Only, one at a time. Labs Only replaces the running list with one
    table of every lab result. Nurse Only keeps the running list and shows what the nurse
    said: her prompts, her alerts and the reasons she gave when an order could not go
-   ahead. The filter changes what is shown and nothing else: feedItems(), the search and
-   the decision to open the record all read the whole chart. */
-let CHART_FILTER=null;                     // null, 'labs' or 'nurse'
+   ahead. Exam Only (author instruction, 23 October 2026) keeps the running list and shows
+   the examination findings. Image/ECG Only (author instruction, 23 October 2026) keeps the
+   running list and shows the imaging and twelve-lead results. The filter changes what is
+   shown and nothing else: feedItems(), the search and the decision to open the record all
+   read the whole chart. */
+let CHART_FILTER=null;                     // null, 'labs', 'exam', 'imaging' or 'nurse'
 const NURSE_KINDS={nurse:1,nursealert:1,blocked:1};
+const EXAM_KINDS={exam:1};
 /* A lab is an investigation drawn from a specimen. Imaging and the ECG are investigations
    too and are not labs. The last two tests catch a case-only lab with no catalog entry. */
 function isLabId(id){
   const a=ACT[id]||{};
   return catOf(id)==='investigation' && (!!a.specimen || a.group==='Lab Work' || /^labs_/.test(id));
+}
+/* Imaging and the ECG: the catalog's Imaging group, the twelve-lead, and a case-only study
+   named like one. Bedside tests that are neither (a Doppler, a peak flow) are left out. */
+function isImagingId(id){
+  const a=ACT[id]||{};
+  return catOf(id)==='investigation' && !isLabId(id)
+    && (a.group==='Imaging' || /(^|_)(ecg|ekg)(_|$)/.test(id) || /^(echo_|cxr|ct_|pocus|ultrasound_|xr_|mri_)/.test(id));
 }
 function chartFilterHTML(){
   const b=(k,label)=>{
@@ -556,7 +567,7 @@ function chartFilterHTML(){
       +`${off?' disabled':''} title="${on?'Show the whole chart':'Show '+label.toLowerCase()}">`
       +`${label}${on?'<span class="cfx" aria-hidden="true">\u00d7</span>':''}</button>`;
   };
-  return b('labs','Labs Only')+b('nurse','Nurse Only');
+  return b('labs','Labs Only')+b('imaging','Image/ECG Only')+b('exam','Exam Only')+b('nurse','Nurse Only');
 }
 /* One table of every lab result that is back. Pending ones are in the Pending box above.
 
@@ -632,6 +643,8 @@ function renderFeed(){
   if(CHART_FILTER==='labs'){ const L=labTable(); html=L.html; n=L.n; }
   else {
     if(CHART_FILTER==='nurse') items=all.filter(i=>NURSE_KINDS[i.kind]);
+    if(CHART_FILTER==='exam') items=all.filter(i=>EXAM_KINDS[i.kind]);
+    if(CHART_FILTER==='imaging') items=all.filter(i=>i.id&&i.payload!==undefined&&isImagingId(i.id));
     n=items.length;
   }
   el('feedcount').textContent = n ? n : '';
@@ -641,6 +654,8 @@ function renderFeed(){
        ${i.payload!==undefined?feedPayload(i.payload):(i.body?`<div class="fb">${esc(i.body)}</div>`:'')}
      </div>`).join('')
     : (CHART_FILTER==='nurse'?'<div class="emptyline">Nothing from the nurse yet.</div>'
+      :CHART_FILTER==='exam'?'<div class="emptyline">No examination yet.</div>'
+      :CHART_FILTER==='imaging'?'<div class="emptyline">No imaging or ECG results yet.</div>'
                              :'<div class="emptyline">Nothing yet.</div>');
   /* Written only when it differs. This runs from the frame loop, and assigning the same
      markup sixty times a second replaced every node in the chart between one mouse
@@ -1929,6 +1944,27 @@ function bindCase(){
 SEM.onChange(()=>{ if(!ENDED && TAB==='history') renderTab(); });
 
 /* ---------- events ---------- */
+/* A stray text selection (23 October 2026, author report). Most of what a learner presses is
+   a button, and the browser does not clear a selection when a button is pressed. The places
+   that would clear it are controls themselves (the room closes the panels, the docked record
+   expands), and the record and monitor are rewritten many times a second, so a selection made
+   by accident stayed for the rest of the case. Any press now clears an existing selection
+   first. The press's own default still runs after this, so a new drag still selects text,
+   Shift and a press still extends a selection, and text inside a field is left alone. Escape
+   clears it as well. */
+function clearStraySelection(e){
+  const sel=window.getSelection&&window.getSelection();
+  if(!sel||sel.isCollapsed||e.shiftKey) return;
+  const t=e.target;
+  if(t&&t.closest&&t.closest('input,textarea,[contenteditable="true"]')) return;
+  sel.removeAllRanges();
+}
+document.addEventListener('mousedown',clearStraySelection,true);
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape') return;
+  const sel=window.getSelection&&window.getSelection();
+  if(sel&&!sel.isCollapsed) sel.removeAllRanges();
+},true);
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
@@ -2501,7 +2537,7 @@ function debriefHTML(){
     const dx=scoreDiagnoses(ST);
     const PILL={primary_correct:['correct','p-ok'],primary_defensible:['defensible','p-warn'],
                 primary_incorrect:['incorrect','p-harm'],main_not_primary:['the main diagnosis, not listed first','p-warn'],
-                appropriate:['appropriate','p-ok'],defensible:['defensible','p-warn'],unsupported:['not supported','p-harm']};
+                appropriate:['appropriate','p-ok'],also_true:['also true','p-ok'],defensible:['defensible','p-warn'],unsupported:['not supported','p-harm']};
     const dxItem=(label,pill,why)=>`<div class="item"><div class="hd"><span class="nm">${esc(label)}</span>
         <span class="pill ${pill[1]}">${esc(pill[0])}</span></div>
         ${why?`<div class="note" style="background:none;border:0;padding:0;margin:4px 0 0">${esc(why)}</div>`:''}</div>`;
@@ -2515,6 +2551,8 @@ function debriefHTML(){
       ${dx.rows.map((r,i)=>dxItem((i?'':'Primary: ')+dxLabel(r.id),PILL[r.verdict]||['','p-neu'],r.why)).join('')}
       ${dx.missed.length?dbFold('Also true of this patient, and not named',
         dx.missed.map(m=>dxItem(dxLabel(m.id),['not named','p-warn'],m.why)).join(''),true):''}
+      ${dx.optional.length?dbFold('Also true of this patient, not scored',
+        dx.optional.map(m=>dxItem(dxLabel(m.id),['not scored','p-neu'],m.why)).join(''),true):''}
       ${named?'':dxItem('The case\'s diagnosis: '+dxLabel(PROTO.correctDxId),['answer','p-neu'],PROTO.correctDxExplanation)}
       </div>`;
   } else if(ST.earlyExit){
@@ -3499,6 +3537,17 @@ el('replayok').addEventListener('click',e=>{ e.stopPropagation(); closeReplay();
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!el('replayview').classList.contains('hidden')){ e.preventDefault(); closeReplay(); }
 });
+/* A press anywhere outside the search control closes it (author instruction, 23 October 2026).
+   Until then only its cross and its own button did, so after ordering from it the panel stayed
+   over the monitor and the record for the rest of the case. The press still does what it
+   normally does: closing is all this adds. The button and the panel are both inside #search,
+   so the button keeps toggling. */
+document.addEventListener('pointerdown',e=>{
+  if(!SEARCH_OPEN) return;
+  const box=el('search');
+  if(box&&e.target&&box.contains(e.target)) return;
+  closeSearch();
+},true);
 el('searchbox').addEventListener('input',e=>{ SEARCH_Q=e.target.value; renderSearch(); });
 el('searchbox').addEventListener('keydown',e=>{
   if(e.key==='Escape'){ closeSearch(); el('searchbtn').focus(); return; }

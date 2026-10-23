@@ -68,6 +68,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `case_actions[].tag[].when` | generic | no | 6.3 | Section 4 condition, or null for the default |
 | `case_actions[].turnaround_override_rationale` | none | never |  | Reviewer note. Nothing reads it |
 | `case_actions[].turnaround_override_seconds` | engine | no | 9.4 | Result delay for this study in this case, instead of the catalog class |
+| `case_actions[].ungraded` | engine+build+validator+tools | no | 6.3 | True on a case-only action that is intubation care. Never scored, whatever its tag. Catalog intubation care is marked from catalog/ungraded-intubation-care.json at build |
 | `case_actions[].vital_effects[].delta` | generic | monitor | 16 | Added to the phase baseline while the effect acts. Terminal phases ignore it |
 | `case_actions[].vital_effects[].duration_seconds` | engine+validator+tools | no | 16 | From the administration, so it must outlast onset |
 | `case_actions[].vital_effects[].key` | generic | no | 16 | Effects sharing a key do not stack. Two routes to one drug must share one key |
@@ -149,20 +150,21 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `debrief_configuration.intended_path_note` | none | never |  | Reviewer note. Nothing reads it |
 | `debrief_configuration.key_exams` | engine+validator+tools | no | 10.4 | Physical score denominator, used only when no exam is tagged critical or recommended |
 | `debrief_configuration.key_exams_note` | none | never |  | Reviewer note. Nothing reads it |
-| `debrief_configuration.trap_actions` | build+tools | debrief | 10.3 | Action ids listed under 'looked reasonable and were not', only when the press was tagged neutral at the time |
+| `debrief_configuration.trap_actions` | build+validator+tools | debrief | 10.3 | Action ids listed under 'looked reasonable and were not', only when the press was tagged neutral at the time |
 | `debrief_configuration.trap_actions_note` | none | never |  | Reviewer note. Nothing reads it |
 | `flag_namespace_note` | none | never |  | Reviewer note. Nothing reads it |
 | `follow_up_condition_note` | none | never |  | Reviewer note. Nothing reads it |
 | `follow_ups[].applies_when` | engine+validator+tools | no | 22.2 | Tested at the deadline |
 | `follow_ups[].deadline_seconds` | engine+validator+tools | no | 22.2 | From the triggering press, multiplied by difficulty |
 | `follow_ups[].debrief_note` | engine+validator+tools | debrief | 22.2 | Printed under the open obligation. Not marker-stripped |
+| `follow_ups[].graded` | engine+validator+tools | debrief | 22.2 | False on post-intubation care: still asked, never listed as an obligation left open. Required false when triggered by intubation |
 | `follow_ups[].id` | generic | debrief | 22.2 | Printed, underscores removed, as the heading of an open obligation in the debrief. Name it as a learner would read it |
 | `follow_ups[].nurse_prompt` | engine+validator | nurse+chart+sound | 22.2 | Spoken at the deadline. Never capped, but it takes a slot in the current phase |
 | `follow_ups[].satisfied_by` | engine+validator+tools | no | 22.2 | Ids that discharge it, meaning taken EVER in the run, before or after the trigger |
 | `follow_ups[].satisfied_by_note` | none | never |  | Reviewer note. Nothing reads it |
 | `follow_ups[].satisfied_when` | engine+validator+tools | no | 22.2 | Condition that discharges it. Use for 'again' and 'unless' |
-| `follow_ups[].triggered_by` | validator | no | 22.2 | Read by the validator. The engine fires from case_actions[].follow_ups_triggered. Author both and keep them equal |
-| `handoff.additional_diagnoses[].catalog_id` | engine+build+validator+tools | no | 10.2 | Catalog id of something also true of the patient. Credited beside the primary |
+| `follow_ups[].triggered_by` | engine+validator+tools | no | 22.2 | Read by the validator. The engine fires from case_actions[].follow_ups_triggered. Author both and keep them equal |
+| `handoff.additional_diagnoses[].catalog_id` | engine+build+validator+tools | no | 10.2 | Catalog id of the one other major diagnosis, at most one. Scored beside the primary |
 | `handoff.additional_diagnoses[].explanation` | generic | debrief | 10.2 | The sentence you would say at the bedside about why it belongs in the handover |
 | `handoff.additional_diagnoses[].label` | generic | no | 10.2 | Fallback for resolving the catalog id. The debrief prints the catalog's display name |
 | `handoff.additional_diagnoses_note` | none | never |  | Reviewer note. Nothing reads it |
@@ -193,6 +195,9 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `handoff.early_exit.available` | generic | never | 10.1 | Not read |
 | `handoff.early_exit.note` | generic | never |  | Reviewer note. Nothing reads it |
 | `handoff.early_exit.produces` | generic | never | 10.1 | Not read |
+| `handoff.minor_diagnoses[].catalog_id` | engine+build+validator+tools | no | 10.2 | Catalog id of something minor also true of the patient. Never scored: credited as true if named, no cost if left out |
+| `handoff.minor_diagnoses[].explanation` | generic | debrief | 10.2 | Why it is true here and why the handover can do without it |
+| `handoff.minor_diagnoses[].label` | generic | no | 10.2 | Fallback for resolving the catalog id |
 | `handoff.pending_result_warning` | none | never | 10.1 | Not read. Pending results at handoff are recorded automatically |
 | `interview.authoring_notes.added` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.added_denials` | none | never |  | Reviewer note. Nothing reads it |
@@ -391,4 +396,4 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `tag_vocabulary.values` | engine+build+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `tag_vocabulary.values_used_by_this_case` | none | never |  | Reviewer note. Nothing reads it |
 
-368 fields across 8 packs, as of the last generation.
+373 fields across 8 packs, as of the last generation.

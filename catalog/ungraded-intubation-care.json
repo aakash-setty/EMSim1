@@ -1,0 +1,13 @@
+{
+ "decided": "Owner (Aakash Setty), 23 October 2026: intubation medications and steps are not graded in the debrief summary. The decision to intubate stays graded where a case teaches it. What these actions do to the patient (flags, vital effects, phase changes, prerequisites) is unchanged. docs/case-authoring-requirements.md 6.3 and 22.2.",
+ "ungraded": [
+  "etomidate_bolus", "ketamine_bolus", "propofol_bolus", "midazolam_bolus",
+  "rocuronium_bolus", "succinylcholine_bolus",
+  "preoxygenate_for_intubation", "position_for_intubation", "bag_valve_mask",
+  "propofol_infusion", "ketamine_infusion", "fentanyl_bolus",
+  "stop_propofol", "stop_ketamine"
+ ],
+ "ungraded_note": "Catalog ids. RSI drugs, the steps before the tube and the care after it. A case-only action that is intubation care (a hidden sedation target, a ventilator-settings action) carries \"ungraded\": true in the case instead.",
+ "intubation_actions": ["intubate_rapid_sequence"],
+ "intubation_actions_note": "The decision to intubate. Graded where the case tags it. A follow-up triggered by one of these is post-intubation care and must carry \"graded\": false."
+}

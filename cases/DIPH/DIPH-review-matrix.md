@@ -56,10 +56,7 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/bag_valve_mask`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| seizing | rule 0 (phase is seizing) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/suction`
@@ -246,10 +243,7 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/propofol_infusion`
 
-| phase | airway_protected | resolves to | reachable? |
-|---|---|---|---|
-| «any phase» | no | rule 1 (default) | plausible |
-| «any phase» | yes | rule 0 (flag airway_protected set) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/ketamine_infusion`
@@ -1139,6 +1133,11 @@ Single unconditional rule; nothing to enumerate.
 | stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) | plausible |
 | wide_complex_tachycardia | rule 0 (phase is seizing OR phase is wide_complex_tachycardia OR phase is pulseless_vt OR phase is halted) | plausible |
 | «any other phase» | rule 2 (default) | plausible |
+
+
+### `interview_topic/presenting_story`
+
+Single unconditional rule; nothing to enumerate.
 
 
 ### `interview_topic/onset`

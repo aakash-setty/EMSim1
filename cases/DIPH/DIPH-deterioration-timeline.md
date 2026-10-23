@@ -38,7 +38,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 - guard: `(none: fires regardless)`
 - destination vitals: HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4
-- narration: “She's stiffened up and she's fitting. I'm putting her on her side and I've got the suction. Her sats are dropping.”
+- narration: “She's stiffened up and she's seizing. I'm putting her on her side and I've got the suction. Her sats are dropping.”
 - author rationale: The author writes, of the seizure: 'A seizure will occur as part of the natural process, regardless of how well the examinee is doing.' That is a scheduled natural history in the sense of authoring section 15.1, and the rule carries no guard, exactly as she wrote it. The clinical claim behind it is hers: a patient four hours into a diphenhydramine ingestion large enough to widen the QRS is going to seize. The deadline is her own four minutes, carried at its authored value.
 
 **The rule is unguarded and it is no longer unavoidable, and the difference matters.** Since 5 September 2026 the rule above it moves a patient who has received both sodium bicarbonate and a benzodiazepine out of this phase after ten seconds, so a resident who treats the conduction before four minutes never reaches this rule at all. Nothing about this rule changed; it was given an escape. Whether that escape should exist is the open question in the rationale on the rule above, and it is the one place in this pack where the conversion departs from a sentence the case author wrote in her own words.
@@ -60,7 +60,7 @@ Vitals in this phase: HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4
 
 - guard: `NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken) AND NOT flag bicarb_given set`
 - destination vitals: HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0
-- narration: “She's still fitting and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.”
+- narration: “She's still seizing and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.”
 - author rationale: Two minutes of continuous convulsion in a patient who is already acidemic at pH 7.28 with a QRS of 132 milliseconds. The number is a drafting judgment and not the author's: she specifies that the seizure happens and that lorazepam and bicarbonate are given, and does not say how long an untreated seizure is tolerated. It is set at the shorter end of what is defensible because the case has already established the acidemia. Needs the author's signature.
 
 Prompts in this phase that set benzo_given, bicarb_given, which is what the fairness rule requires:
@@ -142,7 +142,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 - guard: `flag bicarb_given set`
 - destination vitals: HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4
-- narration: “The complexes have narrowed and the rate's come down since the bicarb. She's still fitting, though.”
+- narration: “The complexes have narrowed and the rate's come down since the bicarb. She's still seizing, though.”
 - author rationale: Added in the v0.18a review. Without it a resident who gave bicarbonate but no anticonvulsant stayed in the wide-complex phase with no exit except the handoff, showing a rate of 180 after the drug that treats it. Returning to the seizing phase keeps the rhythm and the seizure consistent with what was given. Ten seconds matches the other bicarbonate transitions. A resident who gives the anticonvulsant a few seconds after the bicarbonate passes through the seizing phase on the way and still reaches stabilizing, ten seconds later. Needs the author's signature.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
@@ -188,12 +188,12 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 | from | at | to | vitals immediately after | the line |
 |---|---|---|---|---|
 | `presentation` | 10s | `stabilizing` | HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6 | “The complexes have narrowed and her rate's coming down. That's since the bicarb went in.” |
-| `presentation` | 240s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “She's stiffened up and she's fitting. I'm putting her on her side and I've got the suction. Her sats are dropping.” |
-| `seizing` | 120s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “She's still fitting and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.” |
+| `presentation` | 240s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “She's stiffened up and she's seizing. I'm putting her on her side and I've got the suction. Her sats are dropping.” |
+| `seizing` | 120s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “She's still seizing and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.” |
 | `post_ictal` | 10s | `stabilizing` | HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6 | “The complexes are getting narrower. That's since the bicarb went in.” |
 | `post_ictal` | 180s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “Her rate's gone up and the complexes have gone broad. She's still got a pressure but it's down.” |
 | `wide_complex_tachycardia` | 10s | `stabilizing` | HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6 | “The complexes have narrowed and the rate's come down. That's the bicarb.” |
-| `wide_complex_tachycardia` | 10s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “The complexes have narrowed and the rate's come down since the bicarb. She's still fitting, though.” |
+| `wide_complex_tachycardia` | 10s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “The complexes have narrowed and the rate's come down since the bicarb. She's still seizing, though.” |
 | `wide_complex_tachycardia` | 120s | `pulseless_vt` | HR 190, BP 0/0, RR 4, SpO2 52%, T 39.8 | “I've lost the pulse. Same rhythm on the monitor and there's no output. I'm starting compressions.” |
 
 Compare each line with the row before it in section 2, not only with the destination: a line saying a number has fallen must be preceded by a phase in which it was higher.

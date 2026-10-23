@@ -401,6 +401,14 @@ shared = {
     },
 }
 
+# Intubation care is never graded (owner, 23 October 2026). The list is catalog data, so the
+# engine names no drug: it reads the generic `ungraded` field. Authoring 6.3.
+_ug_path = catalog_path("ungraded-intubation-care.json")
+UNGRADED = json.load(open(_ug_path, encoding="utf-8")) if os.path.exists(_ug_path) else {"ungraded": []}
+for _id in UNGRADED.get("ungraded", []):
+    if _id in shared["actionsBase"]:
+        shared["actionsBase"][_id]["ungraded"] = True
+
 # The figure in the room. What a case may say about what is visible, and nothing about why.
 # The part and colour options are not restated here: engine/patient-art.json is their one
 # vocabulary, and both the renderer and the validator read it. The add-on list IS restated,
@@ -587,6 +595,21 @@ def build_pack(pack):
         else:
             addl_dx[hit] = a.get("explanation", "")
 
+    # 23 October 2026, author instruction. minor_diagnoses: also true of the patient, but
+    # not one of the one or two diagnoses the handover is scored on. Naming one is credited
+    # as true and costs nothing; leaving it out costs nothing either. Resolved the same way;
+    # an id that is already the primary or an additional diagnosis is dropped with a note.
+    minor_dx = {}
+    for a in h.get("minor_diagnoses", []) or []:
+        hit = resolve_dx(a.get("catalog_id")) or resolve_dx(a.get("label"))
+        if not hit:
+            notes.append("minor diagnosis %r does not resolve to a catalog id"
+                         % a.get("label", a.get("catalog_id")))
+        elif hit == correct_dx or hit in addl_dx:
+            notes.append("minor diagnosis %r is already scored; ignored" % hit)
+        else:
+            minor_dx[hit] = a.get("explanation", "")
+
     disp_labels = {h["correct_disposition"]["id"]: h["correct_disposition"]["label"]}
     for d in h.get("alternative_dispositions", []):
         disp_labels[d["id"]] = d["label"]
@@ -652,6 +675,7 @@ def build_pack(pack):
         "altDx": alt_dx,
         "altDxDefensible": alt_dx_defensible,
         "addlDx": addl_dx,
+        "minorDx": minor_dx,
         "promptCap": case.get("prompt_cap_recommendation", {}).get("per_phase", 3),
         "buildNotes": notes,
         # Case discussion, the left column of the debrief (author instruction, 14 October

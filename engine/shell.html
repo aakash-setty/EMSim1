@@ -304,7 +304,7 @@ body.nintro-on .nurse .nurseface{visibility:hidden}
 @media (max-width:1100px){ .voicepanel{width:min(400px,calc(100vw - 32px))} }
 
 /* the one dark object on the page */
-.monwrap{background:var(--screen);border:1px solid rgba(255,255,255,.07);border-radius:7px;
+.monwrap{-webkit-user-select:none;user-select:none;background:var(--screen);border:1px solid rgba(255,255,255,.07);border-radius:7px;
   padding:11px 18px 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 20px -14px var(--shadow)}
 .mon{display:flex;gap:18px;align-items:flex-end}
 .vit{text-align:right;min-width:78px}
@@ -334,7 +334,7 @@ body.nintro-on .nurse .nurseface{visibility:hidden}
    panel slides out from behind it and tucks back under it, so the rail
    itself never moves and the eight destinations are always one click away.
    ============================================================ */
-.tabdock{position:fixed;top:var(--top);left:0;bottom:0;width:var(--rail);z-index:50;
+.tabdock{-webkit-user-select:none;user-select:none;position:fixed;top:var(--top);left:0;bottom:0;width:var(--rail);z-index:50;
   background:rgba(255,255,255,.86);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
   border-right:1px solid var(--rule);
   display:flex;flex-direction:column;gap:2px;padding:10px 0 64px;overflow-y:auto;overflow-x:hidden}
@@ -564,14 +564,14 @@ body[data-right="wide"] .rp-body{padding:16px 22px 30px}
    greyed out and cannot be pressed, so there is only ever one filter to undo. */
 .chart-h{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .chart-h .feedcount{float:none;margin-left:auto}
-.cfilters{display:inline-flex;gap:5px;margin-left:4px}
-.cfbtn{font:inherit;font-size:11px;font-weight:500;text-transform:none;letter-spacing:0;line-height:1;
-  padding:4px 8px;border:1px solid var(--rule);border-radius:999px;background:var(--pane2);
+.cfilters{display:inline-flex;flex-wrap:wrap;gap:5px;margin-left:4px;flex:1 1 auto;min-width:0}
+.cfbtn{font:inherit;font-size:12.5px;font-weight:500;text-transform:none;letter-spacing:0;line-height:1;
+  padding:6px 11px;border:1px solid var(--rule);border-radius:999px;background:var(--pane2);
   color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
   transition:background .15s ease,border-color .15s ease,color .15s ease,opacity .15s ease}
 .cfbtn:hover{border-color:var(--actb);color:var(--act)}
 .cfbtn.on{background:var(--actl);border-color:var(--act);color:var(--act);font-weight:600}
-.cfbtn .cfx{font-size:13px;line-height:1;opacity:.7;margin-right:-1px}
+.cfbtn .cfx{font-size:14px;line-height:1;opacity:.7;margin-right:-1px}
 .cfbtn.on:hover .cfx{opacity:1}
 .cfbtn:disabled,.cfbtn:disabled:hover{opacity:.4;cursor:default;background:transparent;
   border-color:var(--rule2);color:var(--ink3)}
@@ -947,9 +947,10 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 
 .imgthumb{appearance:none;padding:0;border:1px solid var(--rule);border-radius:4px;
   background:#fff;cursor:pointer;display:block;margin:4px 0 2px;overflow:hidden;
-  position:relative;line-height:0;width:100%;max-width:260px}
-/* Wider in the expanded record, where there is room to read a tracing. */
-body[data-right="wide"] .fitem .imgthumb{max-width:520px}
+  position:relative;line-height:0;width:100%;max-width:200px}
+/* Wider in the expanded record, where there is room to read a tracing. Both chart sizes were
+   made smaller on 23 October 2026 (author instruction): 260 and 520 px before. */
+body[data-right="wide"] .fitem .imgthumb{max-width:420px}
 .imgthumb img{display:block;width:100%;height:auto}
 .imgthumb:hover{border-color:var(--accent)}
 .imgthumb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -1612,6 +1613,13 @@ details.catfold[open] .dbfold-arrow{transform:rotate(180deg)}
 .cd-table td{vertical-align:top;border-bottom:1px solid var(--rule2);padding:7px 8px 7px 0}
 .cd-table td:first-child{font-weight:600;width:24%}
 .cd-refs{font-size:12.5px;color:var(--ink2);border-top:1px solid var(--rule2);margin-top:18px}
+/* The point of a section and of a figure, in bold (23 October 2026, author instruction: built
+   for a short attention span, the point readable before the drawing). */
+.cdisc .cd-key{font-weight:600;font-size:15.5px;line-height:1.45;margin:0 0 8px}
+.cd-point{font-weight:700;font-size:16.5px;line-height:1.35;color:var(--ink);margin:2px 0 12px}
+.cdisc details.cd-refs{padding-top:12px}
+.cdisc details.cd-refs summary{cursor:pointer;font-weight:600;color:var(--ink2)}
+.cdisc ul li b{color:var(--ink)}
 .cdnone{margin:0}
 @media (max-width:1100px){.dbcols{grid-template-columns:minmax(0,1fr)}.dbcols .cdisc{order:2}}
 
@@ -1749,28 +1757,78 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 @media (min-width:1001px) and (max-width:1600px){
   :root{--lwidth:44vw;--rdock:max(31vw,320px)}
 }
+/* ---------- narrow windows (23 October 2026) ----------
+   Below about 1000 px the old rule gave the workspace the whole width and left the record
+   underneath it, out of sight, while the header kept its one-row layout and squeezed the
+   nurse's line into a column a word wide. Three things change here instead:
+
+   1. The header stacks. The nurse and the two round buttons share the top row, and the
+      monitor drops to a row of its own under them, full width, with smaller numbers. The
+      header is measured by the JS (--top), so the panels below move down with it.
+   2. The two panels split the width. The record keeps a docked width that is readable,
+      the workspace takes what is left, and neither covers the other. Expanding the record
+      still covers the workspace, as at any width. With the record empty (its docked width
+      is already 0) the workspace stops at --lwidth and the figure keeps the rest.
+   3. The figure has no gap to stand in while both panels are up, so it is only drawn when
+      the workspace is closed. */
 @media (max-width:1000px){
-  :root{--rdock:max(34vw,320px)}
-  /* the workspace covers the room at this width, so the figure shows only when it is closed */
-  .ptstage{left:var(--rail);opacity:0}
-  body[data-left="closed"] .ptstage{opacity:1}
-  body[data-left="closed"][data-right="wide"] .ptstage{opacity:0}
-  .lpanel{width:calc(100vw - var(--rail) - 12px);z-index:44}
+  :root{--lwidth:58vw;--rdock:max(32vw,280px)}
+  .bayin{grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"nurse voice search" "mon mon mon";
+    gap:10px 14px;padding:10px 16px 9px}
+  .nurse{grid-area:nurse;gap:11px}
+  /* the search column is the .vstack wrapper, which also carries the note pencil. Both
+     button columns sit on the row's bottom edge so the pencil above Search stays inside
+     the header now that the row is shorter than the full-width one. */
+  #voice{grid-area:voice;align-self:end} .vstack{grid-area:search;align-self:end}
+  .devnote .voicebtn{bottom:calc(100% + 2px)}
+  /* the monitor is as wide as its six cells need and no wider, so it reads as a bedside
+     screen under the nurse rather than as a dark band across the whole header */
+  .monwrap{grid-area:mon;justify-self:start;width:fit-content;max-width:100%;padding:6px 12px 5px;border-radius:6px}
+  .nurseface{width:48px;height:48px}
+  .nurse.speaking .nursesays{transform:translateX(24px)}
+  .homeic{width:48px;height:48px} .homeic svg{width:24px;height:24px} .homelab{font-size:15px}
+  .nurseline{font-size:14px;min-height:2.2em}
+  .nursemeta{font-size:10.5px}
+  .soundrow{margin-top:5px}
+  .soundbtn{font-size:11.5px;padding:2px 8px}
+  .voicebtn{width:42px;height:42px} .voicebtn svg{width:20px;height:20px}
+  .mon{justify-content:flex-start;gap:14px;align-items:flex-end}
+  .vit{min-width:0;flex:0 0 auto;text-align:center}
+  .vitlab{font-size:8.5px;letter-spacing:.06em}
+  .vitval{font-size:18px}
+  .vitunit{font-size:9.5px}
+  .clockbox{flex:0 0 auto;padding-left:12px}
+  .clock{font-size:17px}
+  .phasechip{font-size:9.5px;max-width:120px;margin-top:1px}
+  .tracebox{height:26px;margin-top:4px}
+  /* the panels */
+  body:not([data-record="empty"]) .lpanel{width:calc(100vw - var(--rail) - var(--rdock))}
+  body:not([data-record="empty"]) .ptstage{left:var(--rail);opacity:0}
+  body:not([data-record="empty"])[data-left="closed"] .ptstage{opacity:1}
+  body[data-right="wide"] .ptstage{opacity:0}
+  .lp-scroll{padding:16px 16px 40px}
+  .rp-body{padding:10px 10px 24px}
+  .railbox{padding:10px 11px}
 }
 @media (max-width:760px){
-  :root{--rail:72px;--rdock:calc(100vw - var(--rail));--rwide:calc(100vw - var(--rail))}
-  .bayin{grid-template-columns:1fr;gap:12px;padding:10px 14px}
-  .nurse{gap:10px}
-  .nurseface{width:44px;height:44px}
-  .monwrap{padding:9px 12px 7px}
-  .mon{flex-wrap:wrap;justify-content:flex-start;gap:14px}
-  .vit{text-align:left;min-width:62px}
-  .vitval{font-size:23px}
-  .clockbox{border-left:0;padding-left:0;text-align:left}
-  .phasechip{margin-left:0}
-  .tabbtn .lb{font-size:8.5px}
-  .lpanel{width:calc(100vw - var(--rail))}
-  .lp-scroll{padding:14px 14px 40px}
+  :root{--rail:80px;--rdock:max(42vw,240px);--rwide:calc(100vw - var(--rail))}
+  .bayin{gap:8px 10px;padding:8px 12px 8px}
+  .nurse{gap:9px}
+  .nurseface{width:42px;height:42px}
+  .nurse.speaking .nursesays{transform:translateX(21px)}
+  .nurseline{font-size:13.5px}
+  .monwrap{padding:6px 10px 4px}
+  .mon{flex-wrap:wrap;gap:6px 10px}
+  .vit{flex:1 1 44px}
+  .vitval{font-size:16px}
+  .clock{font-size:15px}
+  .clockbox{padding-left:10px}
+  .phasechip{max-width:110px}
+  /* the longest tab name has to fit the rail on one line, so no tracking and no mid-word break */
+  .tabbtn{padding:9px 2px 8px}
+  .tabbtn .lb{font-size:8px;letter-spacing:0}
+  .lp-scroll{padding:14px 12px 40px}
+  .rp-body{padding:8px 8px 24px}
 }
 
 /* ---------- v0.19 welcome page (engine/landing.js) ----------

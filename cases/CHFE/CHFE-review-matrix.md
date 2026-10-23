@@ -153,28 +153,17 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/post_intubation_sedation_infusion`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/propofol_infusion`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/vent_settings_lung_protective`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/peep_reduce`

@@ -1467,6 +1467,18 @@ section('several diagnoses at handover (v0.9)');
   }
   dx = scoreDiagnoses(ho([correct, 'dx_nowhere']));
   chk('an unknown diagnosis beside the primary is unsupported', dx.rows[1].verdict === 'unsupported');
+  /* 23 October 2026: minor diagnoses are never scored. Named, they are also true; left out,
+     they are optional and never missed. */
+  const minor = Object.keys(PROTO.minorDx || {});
+  chk('at most one additional diagnosis is scored', addl.length <= 1, String(addl.length));
+  dx = scoreDiagnoses(ho([correct]));
+  chk('a minor diagnosis left out is optional, not missed',
+      dx.optional.length === minor.length && dx.missed.every(m => !minor.includes(m.id)));
+  if (minor.length) {
+    dx = scoreDiagnoses(ho([correct].concat(minor)));
+    chk('every minor diagnosis named beside the primary is also_true',
+        dx.rows.slice(1).every(r => r.verdict === 'also_true') && dx.optional.length === 0);
+  }
   chk('duplicates collapse', ho([correct, correct]).handoff.diagnoses.length === 1);
 }
 
@@ -1517,6 +1529,15 @@ section('the seven-category summary (v0.9)');
                diagnoses: [PROTO.correctDxId, 'dx_nowhere'] } }]), 60);
   chk('an unsupported extra diagnosis costs five',
       summaryScores(bad)[6].points === summaryScores(done)[6].points - 5);
+  const minorIds = Object.keys(PROTO.minorDx || {});
+  if (minorIds.length) {
+    const withMinor = fold(mk([[1, 'insert_iv'], { t: 30, actionId: 'handoff_submit',
+      payload: { disposition: CASE.handoff.correct_disposition.id,
+                 diagnoses: [PROTO.correctDxId].concat(minorIds) } }]), 60);
+    chk('naming minor diagnoses neither adds nor costs anything',
+        summaryScores(withMinor)[6].points === summaryScores(done)[6].points,
+        summaryScores(withMinor)[6].points + ' vs ' + summaryScores(done)[6].points);
+  }
   chk('scores are deterministic',
       JSON.stringify(summaryScores(fold([], 10))) === JSON.stringify(rows));
 }
@@ -1970,6 +1991,49 @@ else {
     } else chk(PACK.prefix + ': intubation can be reached for the device check', false, JSON.stringify(induce));
   }
   bind(packIdx);
+}
+
+/* 23 October 2026. Intubation care is never graded, whatever a tag says. The engine is
+   checked directly: an ungraded action is given each scoring tag in turn and taken, and it
+   enters no scored set. A follow-up marked graded false is asked and never left open. */
+section('intubation care is never graded');
+{
+  const UG = Object.keys(A).filter(id => A[id].ungraded && !A[id].covered_by);
+  chk(PACK.prefix + ': the build marked intubation care ungraded', UG.length > 0, String(UG.length));
+  const reqs = (id, seen) => {
+    if (seen.includes(id) || !A[id]) return seen;
+    for (const p of (A[id].prerequisites || [])) {
+      const w = p.when.replace(/NOT (flag \w+ set|action \w+ taken)/g, '');
+      for (const m of (w.match(/flag \w+ set/g) || [])) {
+        const f = m.split(' ')[1], setters = Object.keys(A).filter(k => (A[k].flags_set || []).includes(f));
+        const by = setters.find(k => !(A[k].tag || []).some(r => r.value === 'harmful')) || setters[0];
+        if (by) seen = reqs(by, seen);
+      }
+      for (const m of (w.match(/action \w+ taken/g) || [])) seen = reqs(m.split(' ')[1], seen);
+    }
+    return seen.includes(id) ? seen : seen.concat([id]);
+  };
+  const leaks = [];
+  for (const id of UG) {
+    const saved = A[id].tag;
+    for (const v of ['critical', 'recommended', 'discouraged']) {
+      A[id].tag = [{ when: null, value: v }];
+      const log = reqs(id, []).map((x, k) => [k + 1, x]);
+      const st = fold(mk(log), log.length + 2, 1);
+      if (st.expected.has(id) || st.recommendedExpected.has(id) || st.recommendedTaken.has(id) || st.discouragedTaken.has(id))
+        leaks.push(id + ' as ' + v);
+    }
+    A[id].tag = saved;
+  }
+  chk(PACK.prefix + ': an ungraded action given a scoring tag enters no scored set', leaks.length === 0, leaks.join());
+  for (const f of (CASE.follow_ups || []).filter(f => f.graded === false)) {
+    const trig = [].concat(f.triggered_by || [])[0];
+    const log = reqs(trig, []).map((x, k) => [k + 1, x]);
+    const st = fold(mk(log), log.length + 3 + 3 * f.deadline_seconds, 3);
+    const asked = st.fuFires.some(x => x.fid === f.id);
+    chk(PACK.prefix + ': ' + f.id + ' (graded false) is never an open obligation' + (asked ? ', and was asked' : ''),
+        !st.fuOutstanding.has(f.id));
+  }
 }
 
 /* ================= case pack assertions ================= */

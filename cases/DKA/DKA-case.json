@@ -5885,7 +5885,9 @@
     "catalog_id": "dx_hypokalemia",
     "label": "Hypokalemia",
     "explanation": "The finding that changed the order of treatment. The receiving team needs to know it was 3.1 on arrival, because insulin will keep pushing it down and it needs checking every one to two hours while it is being replaced."
-   },
+   }
+  ],
+  "minor_diagnoses": [
    {
     "catalog_id": "dx_hypomagnesemia",
     "label": "Hypomagnesemia",

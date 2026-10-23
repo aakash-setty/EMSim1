@@ -433,6 +433,7 @@ for cid, note in EXAM_NOTES.items():
 
 FOLLOW_UPS = [
  {"id": "sedation_after_intubation",
+  "graded": False,   # post-intubation care, never graded (owner, 23 October 2026)
   "triggered_by": ["intubate_rapid_sequence"],
   "applies_when": TUBED,
   "deadline_seconds": 60,

@@ -163,10 +163,12 @@ INDUCTION = {
   "ketamine_bolus": (["sedation_given"], "neutral",
     "A reasonable induction agent in shock. Use a reduced dose: a patient with no reserve can "
     "drop her pressure with any induction agent."),
-  "propofol_bolus": (["sedation_given"], "discouraged",
+  # propofol and midazolam were discouraged. Intubation care is never graded (owner,
+  # 23 October 2026, authoring 6.3). The notes stay and say why.
+  "propofol_bolus": (["sedation_given"], "neutral",
     "Propofol dilates vessels and depresses the heart. In a patient whose pressure depends "
     "on a vasopressor it is the induction agent most likely to cause collapse."),
-  "midazolam_bolus": (["sedation_given"], "discouraged",
+  "midazolam_bolus": (["sedation_given"], "neutral",
     "Slow in onset and it lowers the pressure. Etomidate or ketamine asks less of her."),
   "rocuronium_bolus": (["paralytic_given"], "neutral", "A standard paralytic."),
   "succinylcholine_bolus": (["paralytic_given"], "neutral",
@@ -656,6 +658,7 @@ FOLLOW_UPS = [
 
  {"id": "post_intubation_sedation",
   "triggered_by": "intubate_rapid_sequence",
+  "graded": False,
   "applies_when": "flag intubated set",
   "deadline_seconds": 90,
   "satisfied_by": ["propofol_infusion", "ketamine_infusion", "sedation_after_tube"],

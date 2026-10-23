@@ -70,6 +70,18 @@ HANDOFF = {
    "_note": "The scoring of the two diagnoses was decided by the directing physician, 6 October 2026."},
 
  "additional_diagnoses": [
+   {"catalog_id": "dx_left_ventricular_outflow_tract_obstruction",
+    "label": "Left ventricular outflow tract obstruction",
+    "explanation": (
+      "Her low pressure came from the base of the ventricle squeezing the outflow tract "
+      "shut. Naming it tells the next team why fluid and a vasoconstrictor helped, and "
+      "why a nitrate or an inotrope would make her worse.")}],
+
+ # 23 October 2026, case author's instruction: the handover is scored on one or two major
+ # diagnoses. The primary is one and the additional diagnosis above is the other. These are
+ # also true of her or him, credited if named and never penalized if left out. Which one
+ # stayed scored was a model's pick, accepted by the author the same day. Not physician reviewed.
+ "minor_diagnoses": [
    {"catalog_id": "dx_cardiogenic_shock", "label": "Cardiogenic shock",
     "explanation": (
       "Her pressure fell with cold hands, a rising lactate and an ejection fraction of 30 "
@@ -80,13 +92,7 @@ HANDOFF = {
     "explanation": (
       "Worth naming as a possibility beside the infarct. The trigger, the echo and the "
       "murmur all suggest it, and a team that has it in mind will do a ventriculogram and "
-      "will not be surprised by clean arteries.")},
-   {"catalog_id": "dx_left_ventricular_outflow_tract_obstruction",
-    "label": "Left ventricular outflow tract obstruction",
-    "explanation": (
-      "Her low pressure came from the base of the ventricle squeezing the outflow tract "
-      "shut. Naming it tells the next team why fluid and a vasoconstrictor helped, and "
-      "why a nitrate or an inotrope would make her worse.")}],
+      "will not be surprised by clean arteries.")}],
 
  "alternative_diagnoses": [
    {"catalog_id": "dx_takotsubo_cardiomyopathy", "label": "Takotsubo cardiomyopathy",

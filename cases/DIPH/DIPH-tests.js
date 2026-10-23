@@ -188,7 +188,7 @@ chk('bicarbonate alone returns her to the seizing phase', bicarbOnly.phase === '
 chk('ten seconds after the bicarbonate, with a nurse line that says why',
     bicarbOnly.timeFires.some(f => f.from === 'wide_complex_tachycardia' && f.to === 'seizing'
                                   && f.after === 10) &&
-    bicarbOnly.nurse.some(n => n.kind === 'deterioration' && /still fitting/.test(n.text)),
+    bicarbOnly.nurse.some(n => n.kind === 'deterioration' && /still seizing/.test(n.text)),
     JSON.stringify(bicarbOnly.timeFires.map(f => f.from + '>' + f.to + '@' + f.after)));
 chk('and she does not go back into the wide-complex rhythm on the clock',
     fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus']]), 900).phase === 'seizing',
@@ -535,23 +535,25 @@ chk('a tricyclic overdose is defensible rather than wrong',
 chk('the primary diagnosis names the agent rather than the syndrome',
     CASE.handoff.correct_diagnosis.catalog_id === 'dx_diphenhydramine_overdose',
     CASE.handoff.correct_diagnosis.catalog_id);
-chk('five additional diagnoses are authored, each with an explanation',
-    CASE.handoff.additional_diagnoses.length === 5 &&
-    CASE.handoff.additional_diagnoses.every(d => (d.explanation || '').length > 100),
-    String(CASE.handoff.additional_diagnoses.length));
+/* 23 October 2026, case author's instruction: one or two major diagnoses are scored. */
+chk('one additional diagnosis and four minor ones are authored, each with an explanation',
+    CASE.handoff.additional_diagnoses.length === 1 && CASE.handoff.minor_diagnoses.length === 4 &&
+    CASE.handoff.additional_diagnoses.concat(CASE.handoff.minor_diagnoses)
+      .every(d => (d.explanation || '').length > 100),
+    CASE.handoff.additional_diagnoses.length + ' + ' + (CASE.handoff.minor_diagnoses || []).length);
 chk('the cardiotoxicity is the first of them, because it is the thing that decides management',
     CASE.handoff.additional_diagnoses[0].catalog_id ===
       'dx_sodium_channel_blocker_cardiotoxicity',
     CASE.handoff.additional_diagnoses[0].catalog_id);
-chk('the deliberate nature of the ingestion is named in the handover',
-    CASE.handoff.additional_diagnoses.some(d => d.catalog_id === 'dx_suicide_attempt'));
+chk('the deliberate nature of the ingestion is credited when named in the handover',
+    CASE.handoff.minor_diagnoses.some(d => d.catalog_id === 'dx_suicide_attempt'));
 /* The whole case in one assertion. Naming the toxidrome is right and incomplete, so it has
    to be scored twice: credit when it is listed beside the agent, and a defensible verdict
    when it is offered as the primary instead. Authoring 10.2 allows exactly this, and
    before the catalog gained an id for the agent the case could not express it, because the
    toxidrome WAS the correct answer. */
-chk('the toxidrome earns credit as an additional diagnosis',
-    CASE.handoff.additional_diagnoses.some(d => d.catalog_id === 'dx_anticholinergic_toxidrome'));
+chk('the toxidrome is credited as also true beside the agent',
+    CASE.handoff.minor_diagnoses.some(d => d.catalog_id === 'dx_anticholinergic_toxidrome'));
 chk('and is defensible rather than wrong when offered as the primary',
     CASE.handoff.alternative_diagnoses.some(
       d => d.catalog_id === 'dx_anticholinergic_toxidrome' &&

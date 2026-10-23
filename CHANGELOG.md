@@ -5,6 +5,111 @@ is usable with learners.
 
 ---
 
+## AFRVR's case discussion, shorter and built to be read at a glance (23 October 2026, author instruction)
+
+The discussion beside the debrief is about half its former length. Each section opens with
+its point in one line and keeps to a few short bullets. Each of the four figures now carries
+its point in bold above the drawing, with fewer elements and larger labels: filling time at 70
+and 160, the loop and what breaks it, time to effect for positive pressure, rate control and a
+diuretic, and choosing the rate drug once the ventricle has been seen. The agent table was
+folded into the last figure and the references fold away. The clinical claims and their
+unverified markers are unchanged. Engine: `.cd-key`, `.cd-point` and a folding `.cd-refs` in
+shell.html. Source: Claude outputs/dbv2/afrvr_discussion_v2.py, version 1 kept beside it.
+
+## Intubation care is never graded (23 October 2026, author instruction)
+
+The RSI drugs, the steps before the tube and the care after it are no longer scored in any
+case: not in the summary, the critical actions, Critical Errors or the traps. The decision to
+intubate is still graded where a case teaches it (critical in SCOOT's herniation, for example).
+What the drugs do is unchanged: their flags, vital effects and phase changes stand, and their
+debrief notes still explain the choice. Post-intubation follow-ups are still asked by the nurse
+and are no longer listed as obligations left open.
+
+System: `catalog/ungraded-intubation-care.json` lists the catalog ids (etomidate, ketamine,
+propofol and midazolam boluses, rocuronium, succinylcholine, preoxygenate, position,
+bag-valve-mask, propofol and ketamine infusions, fentanyl bolus, stopping propofol or ketamine)
+and the intubation action. The build marks those entries `ungraded`. The engine never scores
+an `ungraded` action (a covered sibling is graded as its covering action), and a follow-up with
+`graded: false` never enters the open obligations. A case-only action may carry
+`"ungraded": true`. The validator refuses a non-neutral tag or a trap on intubation care, an
+unmarked hidden target credited only by it, and a follow-up triggered by intubation without
+`graded: false`. Authoring 6.3 and 22.2, two field notes, six validator tests.
+
+Cases: AFRVR (eleven tags, two follow-ups), CHFE (propofol infusion, the sedation infusion that
+was critical after the tube, lung-protective ventilator settings, two follow-ups), DIPH
+(bag-valve-mask, etomidate, propofol, rocuronium, succinylcholine, propofol infusion, one trap,
+one follow-up), MGCA (eight tags, three traps, two follow-ups), SCOOT (one follow-up), TSS
+(propofol and midazolam, one follow-up). DKA and TAKO were already clear.
+
+## Image/ECG Only in the chart, larger filter buttons, smaller thumbnails (23 October 2026, author instruction)
+
+The chart has a fourth filter, Image/ECG Only, beside Labs Only, Exam Only and Nurse Only. It
+keeps the running list and shows the imaging results and the twelve-leads: the catalog's
+Imaging group, the ECG, and a case-only study named like one. Bedside tests that are neither
+(a Doppler, a peak flow) are left out. The filter buttons are larger (12.5 px text, more
+padding). Thumbnails in the chart are smaller: 200 px wide docked and 420 px in the expanded
+record, from 260 and 520. The results panel and the debrief keep their size. Engine:
+`isImagingId` and the filter in ui.js, `.cfbtn` and `.imgthumb` in shell.html.
+
+## One or two diagnoses are scored, an opening question gets a history, and DIPH fixes (23 October 2026, author instruction)
+
+Diagnoses. The handover is now scored on one or two major diagnoses: the primary and at most
+one `additional_diagnoses` entry. Everything else true of the patient moves to the new
+`handoff.minor_diagnoses`, the same shape. A minor diagnosis is never scored: named, it is
+marked "also true" and costs nothing, and left out it costs nothing and is listed in the
+debrief under "Also true of this patient, not scored". Engine: `minorDx` in the build,
+`scoreDiagnoses` gains the `also_true` verdict and an `optional` list, the debrief fold in
+ui.js. The validator refuses a second additional diagnosis and checks minor ones the way it
+checks additional ones. Authoring 2.9, 10.1, 10.2 and 10.4, and system design, updated. Every
+pack except SCOOT (already primary only) moved its list, with the one kept as a model's pick
+the author accepted: AFRVR heart failure, CHFE hypertensive emergency, DIPH sodium-channel
+cardiotoxicity, DKA hypokalemia, MGCA adrenal crisis, TAKO outflow obstruction, TSS the
+retained tampon. Recorded in each SEED. Not physician reviewed.
+
+Opening question. Authoring 8.2 now requires a `presenting_story` topic: a greeting or an
+open question ("Hi", "What's going on?", "What happened?", "What brings you in today?") gets a
+brief history of the present illness that holds back the case's disclosures. The shared
+library has the concept (`catalog/interview_phrasings.py`, no pack maps it yet, so no bank
+changed), and the validator warns on a case without the topic. Only DIPH has it so far.
+
+Chart and search. The record's chart has an Exam Only filter beside Labs Only and Nurse Only.
+A press anywhere outside the search control now closes it, ordered from or not, and the press
+still does what it normally does.
+
+DIPH, from the author's validation notes. The nurse says "seizing", not "fitting" (four
+lines). The new `presenting_story` topic answers in her mother's voice and stops short of the
+bottle. The answer to "When did this start?" is two sentences. Pack tests updated to match.
+
+---
+
+## A stray text selection no longer sticks (23 October 2026, author report)
+
+Text selected by accident during a case stayed selected for the rest of it. The browser does
+not clear a selection when a button is pressed, nearly everything in a case is a button, and
+the empty areas are controls (the room closes the panels, the docked record expands). Any
+press now clears an existing selection before it does anything else, and so does Escape. A
+new drag still selects text, Shift and a press still extends a selection, and text fields
+are untouched. The monitor and the tab rail can no longer be selected at all. Engine:
+`clearStraySelection` in ui.js, `user-select` on `.monwrap` and `.tabdock` in shell.html.
+
+---
+
+## Narrow windows: the header stacks and the two panels share the width (23 October 2026, author instruction)
+
+Below 1000 px the workspace took the whole width, the record sat underneath it out of sight,
+and the header kept its one-row layout, which squeezed the nurse's line into a column one
+word wide beside a monitor that did not shrink. Now, at that width, the header stacks: the
+nurse and the two round buttons share the top row and the monitor drops to a full-width row
+under them, with smaller numbers and a shorter trace. The workspace and the record split the
+width (the record keeps a docked width of at least 280 px) and neither covers the other.
+Expanding the record still covers the workspace, as at any width. With the record empty the
+workspace stops at 58% of the width and the patient keeps the rest. The patient is otherwise
+drawn only with the workspace closed, as before. Below 760 px the rail is 80 px wide with
+smaller one-line labels, and the record docks at 42% of the width. Shell CSS only
+(`engine/shell.html`, the two narrow-window media queries). Nothing above 1000 px changes.
+
+---
+
 ## CT buttons head to foot, and two named CTA (20 October 2026, author instruction)
 
 Labs/Imaging, CT: CT - Head, CT/CTA - Head and Neck, CT - C-spine, CT - Chest, CTA - Pulmonary

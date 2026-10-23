@@ -157,7 +157,9 @@ chk('the lab with an infarct first and all three other diagnoses beside it score
 st = F(A0.concat([{ t: 30.5, actionId: 'handoff_submit', payload: { disposition: 'cath_lab',
   diagnoses: ['dx_st_elevation_myocardial_infarction', 'dx_left_ventricular_outflow_tract_obstruction'] } }]), 40);
 hs = summaryScores(st).find(r => r.id === 'handoff');
-chk('outflow obstruction is credited as an additional diagnosis', /1 of 3 additional/.test(hs.detail), hs.detail);
+/* 23 October 2026: outflow obstruction is the one scored additional diagnosis, so naming it
+   with the infarct completes the handoff. Shock and takotsubo are minor and cost nothing. */
+chk('outflow obstruction is credited as the additional diagnosis', /1 of 1 additional/.test(hs.detail) && hs.points === 100, hs.detail);
 st = F(A0.concat([{ t: 30.5, actionId: 'handoff_submit', payload: { disposition: 'cath_lab', diagnoses: ['dx_takotsubo_cardiomyopathy'] } }]), 40);
 hs = summaryScores(st).find(r => r.id === 'handoff');
 chk('takotsubo named first is defensible, not correct', /primary diagnosis defensible/.test(hs.detail), hs.detail);

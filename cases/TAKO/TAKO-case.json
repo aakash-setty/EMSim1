@@ -4135,6 +4135,13 @@
   },
   "additional_diagnoses": [
    {
+    "catalog_id": "dx_left_ventricular_outflow_tract_obstruction",
+    "label": "Left ventricular outflow tract obstruction",
+    "explanation": "Her low pressure came from the base of the ventricle squeezing the outflow tract shut. Naming it tells the next team why fluid and a vasoconstrictor helped, and why a nitrate or an inotrope would make her worse."
+   }
+  ],
+  "minor_diagnoses": [
+   {
     "catalog_id": "dx_cardiogenic_shock",
     "label": "Cardiogenic shock",
     "explanation": "Her pressure fell with cold hands, a rising lactate and an ejection fraction of 30 percent. Saying so tells the laboratory to expect an unstable patient. Say with it that the shock was from outflow obstruction, which inotropes make worse, because that changes what they reach for."
@@ -4143,11 +4150,6 @@
     "catalog_id": "dx_takotsubo_cardiomyopathy",
     "label": "Takotsubo cardiomyopathy",
     "explanation": "Worth naming as a possibility beside the infarct. The trigger, the echo and the murmur all suggest it, and a team that has it in mind will do a ventriculogram and will not be surprised by clean arteries."
-   },
-   {
-    "catalog_id": "dx_left_ventricular_outflow_tract_obstruction",
-    "label": "Left ventricular outflow tract obstruction",
-    "explanation": "Her low pressure came from the base of the ventricle squeezing the outflow tract shut. Naming it tells the next team why fluid and a vasoconstrictor helped, and why a nitrate or an inotrope would make her worse."
    }
   ],
   "alternative_diagnoses": [

@@ -519,9 +519,12 @@ const handed = dx => F(ready.concat([[50.5, 'insulin_drip'], { t: 70.5, actionId
 let hs = summaryScores(handed(DX.concat(['dx_hyponatremia', 'dx_acute_kidney_injury']))).find(r => r.id === 'handoff');
 chk('naming the low sodium and the raised creatinine costs nothing', hs.points === 100 && !/unsupported/.test(hs.detail), JSON.stringify(hs));
 chk('and neither is credited, because the sodium corrects to normal and the creatinine has no baseline',
-  /4 of 4 additional/.test(hs.detail) && !/missed/.test(hs.detail), hs.detail);
+  /1 of 1 additional/.test(hs.detail) && !/missed/.test(hs.detail), hs.detail);
 hs = summaryScores(handed(DX)).find(r => r.id === 'handoff');
-chk('and leaving them out is still 4 of 4 additional diagnoses', /4 of 4 additional/.test(hs.detail), hs.detail);
+chk('and leaving them out is still 1 of 1 additional diagnoses', /1 of 1 additional/.test(hs.detail), hs.detail);
+/* 23 October 2026: the magnesium, the trigger and the volume are minor diagnoses. */
+hs = summaryScores(handed(['dx_diabetic_ketoacidosis', 'dx_hypokalemia'])).find(r => r.id === 'handoff');
+chk('leaving out hypomagnesemia, the gastroenteritis and hypovolemia costs nothing', hs.points === 100, hs.detail);
 
 section('potassium continues with the insulin (the table\'s middle row, owner decision of 7 October 2026)');
 const treatedNoK = A0.concat([[20.5, 'potassium_chloride_kcl'], [45.5, 'basic_chemistry_chem_7'], [52.5, 'insulin_drip']]);

@@ -609,10 +609,6 @@
    "catalog_id": "etomidate_bolus",
    "tag": [
     {
-     "when": "phase is respiratory_failure",
-     "value": "recommended"
-    },
-    {
      "when": null,
      "value": "neutral"
     }
@@ -625,10 +621,6 @@
   {
    "catalog_id": "ketamine_bolus",
    "tag": [
-    {
-     "when": "phase is respiratory_failure",
-     "value": "recommended"
-    },
     {
      "when": null,
      "value": "neutral"
@@ -643,10 +635,6 @@
    "catalog_id": "midazolam_bolus",
    "tag": [
     {
-     "when": "phase is respiratory_failure",
-     "value": "recommended"
-    },
-    {
      "when": null,
      "value": "neutral"
     }
@@ -659,10 +647,6 @@
   {
    "catalog_id": "propofol_bolus",
    "tag": [
-    {
-     "when": "phase is respiratory_failure",
-     "value": "recommended"
-    },
     {
      "when": null,
      "value": "neutral"
@@ -677,10 +661,6 @@
    "catalog_id": "rocuronium_bolus",
    "tag": [
     {
-     "when": "phase is respiratory_failure",
-     "value": "recommended"
-    },
-    {
      "when": null,
      "value": "neutral"
     }
@@ -693,10 +673,6 @@
   {
    "catalog_id": "succinylcholine_bolus",
    "tag": [
-    {
-     "when": "phase is respiratory_failure",
-     "value": "recommended"
-    },
     {
      "when": null,
      "value": "neutral"
@@ -712,7 +688,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -725,7 +701,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -738,7 +714,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -751,7 +727,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -764,7 +740,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [],
@@ -1975,6 +1951,7 @@
   {
    "id": "post_intubation_sedation",
    "triggered_by": "intubate_rapid_sequence",
+   "graded": false,
    "applies_when": "flag intubated set",
    "deadline_seconds": 60,
    "satisfied_by": [
@@ -1989,6 +1966,7 @@
   {
    "id": "post_intubation_cxr",
    "triggered_by": "intubate_rapid_sequence",
+   "graded": false,
    "applies_when": "flag intubated set",
    "deadline_seconds": 120,
    "satisfied_by": [
@@ -5905,7 +5883,9 @@
     "catalog_id": "dx_acute_decompensated_heart_failure_with_reduced_ejection_fraction",
     "label": "Acute decompensated heart failure with reduced ejection fraction",
     "explanation": "The other half of the case, and naming it beside the arrhythmia is the complete formulation: an ejection fraction of 30 to 35 percent on the bedside scan, a flooded lung, a raised venous pressure and a congested liver. It is what makes diltiazem the wrong rate-control agent and what makes the diuretic and the positive pressure part of the plan rather than afterthoughts."
-   },
+   }
+  ],
+  "minor_diagnoses": [
    {
     "catalog_id": "dx_cardiogenic_pulmonary_edema",
     "label": "Cardiogenic pulmonary edema",

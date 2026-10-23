@@ -29,6 +29,18 @@ that collides with a held-out evaluation question.
 CONCEPTS = {
 
 # ------------------------------------------------------------------ history of the complaint
+# 23 October 2026, case author's instruction: the opening question gets a brief history of the
+# present illness (authoring 8.2). Greetings ("Hi", "Hello") are left to each pack's own
+# variants, because the shared expansion adds openers to phrasings and "Okay, hi" is noise.
+"presenting_story": [
+  "What's going on?", "What is going on today?", "What's been going on?", "What happened?",
+  "What happened today?", "What brings you in?", "What brings you in today?",
+  "What brought you here?", "What brings you to the emergency department?", "What's wrong?",
+  "What's the matter?", "What seems to be the problem?", "Tell me what happened.",
+  "Can you tell me what happened?", "Tell me what's going on.", "What's the story?",
+  "How can I help you today?", "Why are you here today?", "What's brought this on?",
+  "Talk me through what happened.",
+],
 "onset": [
   "When did this begin?", "What time did it start?", "How long ago did this come on?",
   "Onset?", "Time of onset?", "When did you first feel unwell?", "When did it come on?",

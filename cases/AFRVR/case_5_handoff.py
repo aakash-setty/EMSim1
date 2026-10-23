@@ -188,7 +188,13 @@ HANDOFF = {
       "formulation: an ejection fraction of 30 to 35 percent on the bedside scan, a flooded lung, "
       "a raised venous pressure and a congested liver. It is what makes diltiazem the wrong "
       "rate-control agent and what makes the diuretic and the positive pressure part of the "
-      "plan rather than afterthoughts.")},
+      "plan rather than afterthoughts.")}],
+
+ # 23 October 2026, case author's instruction: the handover is scored on one or two major
+ # diagnoses. The primary is one and the additional diagnosis above is the other. These are
+ # also true of her or him, credited if named and never penalized if left out. Which one
+ # stayed scored was a model's pick, accepted by the author the same day. Not physician reviewed.
+ "minor_diagnoses": [
    {"catalog_id": "dx_cardiogenic_pulmonary_edema",
     "label": "Cardiogenic pulmonary edema",
     "explanation": (
@@ -209,8 +215,7 @@ HANDOFF = {
       "A magnesium of 1.6 mg/dL. Small, correctable, and relevant to the rhythm: the potassium "
       "will not hold while it is low, and intravenous magnesium has been reported as a useful "
       "adjunct to nodal blockade in rapid atrial fibrillation. A handover that names it is a "
-      "handover in which the repletion does not get forgotten.")},
- ],
+      "handover in which the repletion does not get forgotten.")}],
  "diagnosis_entry_method": (
    "The learner searches the whole diagnosis catalog rather than choosing from a list this case "
    "supplies, because committing to a diagnosis from a wide field is the cognitive task being "

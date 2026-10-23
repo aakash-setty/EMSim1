@@ -105,7 +105,7 @@ act("non_rebreather_mask",
       "a patient who is not ventilating rather than of a lung problem."))
 
 act("bag_valve_mask",
-    [{"when": SEIZ, "value": "recommended"}, {"when": None, "value": "neutral"}],
+    ALWAYS("neutral"),   # intubation care, never graded (owner, 23 October 2026). Was recommended while seizing
     flags_set=["oxygen_applied"],
     vital_effects=[{"vital": "oxygen_saturation", "delta": 6, "key": O2_KEY,
                     "onset_seconds": 0,
@@ -154,10 +154,10 @@ INDUCTION_FLAGS = {"etomidate_bolus": ["sedation_given"], "propofol_bolus": ["se
                    "ketamine_bolus": ["sedation_given"], "rocuronium_bolus": ["paralytic_given"]}
 
 for drug, tag_v, note in [
-  ("etomidate_bolus", "recommended",
+  ("etomidate_bolus", "neutral",   # all four ungraded (owner, 23 October 2026)
    "Reasonable induction agent here. Hemodynamically neutral in a patient whose pressure is "
    "adequate but whose myocardium is poisoned."),
-  ("propofol_bolus", "recommended",
+  ("propofol_bolus", "neutral",
    "Reasonable, and it has a second job: propofol is an anticonvulsant, which matters in a "
    "patient whose seizure may recur. The cost is vasodilatation and negative inotropy in a "
    "myocardium with sodium channels already blocked, so watch the pressure after it."),
@@ -166,14 +166,14 @@ for drug, tag_v, note in [
    "tachycardic at 150 with a temperature of 40.4 and a drug on board that blocks cardiac "
    "sodium channels. Nothing here says it is dangerous, and the case does not penalize it; "
    "etomidate or propofol asks less of the same heart."),
-  ("rocuronium_bolus", "recommended",
+  ("rocuronium_bolus", "neutral",
    "The paralytic to prefer in this patient. See the note on succinylcholine."),
 ]:
     act(drug, ALWAYS(tag_v), debrief_note=note,
         flags_set=INDUCTION_FLAGS[drug])
 
 act("succinylcholine_bolus",
-    ALWAYS("discouraged"),
+    ALWAYS("neutral"),   # intubation care, never graded (owner, 23 October 2026). Was discouraged
     flags_set=["paralytic_given"],
     debrief_note=(
       "Discouraged rather than forbidden, and the reasoning is worth having rather than the "
@@ -282,7 +282,7 @@ act("lorazepam_bolus",
     flags_set=["benzo_given", "sedation_given"],
     display_name="Lorazepam (or midazolam)",
     prompt={"deadline_seconds": 15, "guard": "(" + SEIZ + " OR " + WIDE + ") AND NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)",
-            "text": "She's fitting. What do you want for it?",
+            "text": "She's seizing. What do you want for it?",
             "escalation": {"deadline_seconds": 60,
                            "text": "She's still going. I've got lorazepam and midazolam drawn up. Which one?"}},
     debrief_note=(
@@ -446,8 +446,7 @@ act("levetiracetam_bolus",
       "the first-line drug for a toxic seizure and going past it is the error."))
 
 act("propofol_infusion",
-    [{"when": "flag airway_protected set", "value": "recommended"},
-     {"when": None, "value": "neutral"}],
+    ALWAYS("neutral"),   # intubation care, never graded (owner, 23 October 2026). Was recommended once tubed
     debrief_note=(
       "Sedation for an intubated patient, and it does three jobs at once here: it keeps her "
       "asleep, it is an anticonvulsant in a patient whose seizure may recur, and it stops the "
@@ -1008,6 +1007,7 @@ act("handoff_submit", ALWAYS("neutral"),
 FOLLOW_UPS = [
  {"id": "post_intubation_sedation",
   "triggered_by": "intubate_rapid_sequence",
+  "graded": False,
   "applies_when": "flag airway_protected set",
   "deadline_seconds": 90,
   "satisfied_by": ["propofol_infusion", "ketamine_infusion", "propofol_bolus",

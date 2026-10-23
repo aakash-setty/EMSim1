@@ -1032,10 +1032,6 @@
    "display_name": "Post-intubation analgesia and sedation infusion",
    "tag": [
     {
-     "when": "phase is post_intubation_hypotension OR phase is intubated_stabilized",
-     "value": "critical"
-    },
-    {
      "when": null,
      "value": "neutral"
     }
@@ -1050,19 +1046,16 @@
      "source": "case"
     }
    ],
-   "debrief_note": "A paralyzed, unsedated patient is awake and unable to move or signal. This is the canonical follow-up requirement rather than a prerequisite, precisely because it cannot be satisfied before the intubation it follows. Choose the agent with the blood pressure in mind: a propofol infusion in a patient who is already hypotensive will make it worse, and an analgesia-first approach with fentanyl, or ketamine, is usually kinder to the haemodynamics."
+   "debrief_note": "A paralyzed, unsedated patient is awake and unable to move or signal. This is the canonical follow-up requirement rather than a prerequisite, precisely because it cannot be satisfied before the intubation it follows. Choose the agent with the blood pressure in mind: a propofol infusion in a patient who is already hypotensive will make it worse, and an analgesia-first approach with fentanyl, or ketamine, is usually kinder to the haemodynamics.",
+   "ungraded": true
   },
   {
    "catalog_id": "propofol_infusion",
    "display_name": "Propofol infusion",
    "tag": [
     {
-     "when": "phase is post_intubation_hypotension",
-     "value": "discouraged"
-    },
-    {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -1074,10 +1067,6 @@
    "catalog_id": "vent_settings_lung_protective",
    "display_name": "Set lung-protective ventilator settings",
    "tag": [
-    {
-     "when": "phase is post_intubation_hypotension OR phase is intubated_stabilized",
-     "value": "recommended"
-    },
     {
      "when": null,
      "value": "neutral"
@@ -1093,7 +1082,8 @@
      "source": "case"
     }
    ],
-   "debrief_note": "Six to eight milliliters per kilogram of predicted body weight, calculated from height rather than actual weight. In this patient, positive end-expiratory pressure is doing useful work against the pulmonary edema, so it should not be abandoned wholesale when the pressure falls; it is one contributor among several and reducing it is a lever, not the first move."
+   "debrief_note": "Six to eight milliliters per kilogram of predicted body weight, calculated from height rather than actual weight. In this patient, positive end-expiratory pressure is doing useful work against the pulmonary edema, so it should not be abandoned wholesale when the pressure falls; it is one contributor among several and reducing it is a lever, not the first move.",
+   "ungraded": true
   },
   {
    "catalog_id": "peep_reduce",
@@ -1114,7 +1104,8 @@
      "source": "case"
     }
    ],
-   "debrief_note": "A legitimate lever in post-intubation hypotension, since high intrathoracic pressure reduces venous return. It is a trade in this patient: the same positive pressure is treating his pulmonary edema. Reduce it thoughtfully and watch the saturation, rather than dropping it to zero reflexively."
+   "debrief_note": "A legitimate lever in post-intubation hypotension, since high intrathoracic pressure reduces venous return. It is a trade in this patient: the same positive pressure is treating his pulmonary edema. Reduce it thoughtfully and watch the saturation, rather than dropping it to zero reflexively.",
+   "ungraded": true
   },
   {
    "catalog_id": "norepinephrine_infusion",
@@ -1832,7 +1823,8 @@
     "post_intubation_sedation_infusion"
    ],
    "nurse_prompt": "He's tubed and he's still paralyzed from the rocuronium. Do you want to write him up for something for sedation and pain?",
-   "debrief_note": "A paralyzed patient without sedation is awake, aware, and unable to signal. This obligation is created by the intubation and cannot precede it, which is why it is modeled as a follow-up rather than a prerequisite. Choose an agent with the blood pressure in mind."
+   "debrief_note": "A paralyzed patient without sedation is awake, aware, and unable to signal. This obligation is created by the intubation and cannot precede it, which is why it is modeled as a follow-up rather than a prerequisite. Choose an agent with the blood pressure in mind.",
+   "graded": false
   },
   {
    "id": "post_intubation_cxr",
@@ -1843,7 +1835,8 @@
     "cxr_portable"
    ],
    "nurse_prompt": "Do you want a film to check the tube position? Any film you ordered before the tube went in won't show it.",
-   "debrief_note": "Radiographic confirmation of tube depth is standard after intubation and does not replace waveform capnography, which confirms tracheal placement. The engine detail matters here: results freeze at the state in which they were ordered, so a chest film requested before intubation will not show the tube even if it arrives afterwards. A repeat order is required."
+   "debrief_note": "Radiographic confirmation of tube depth is standard after intubation and does not replace waveform capnography, which confirms tracheal placement. The engine detail matters here: results freeze at the state in which they were ordered, so a chest film requested before intubation will not show the tube even if it arrives afterwards. A repeat order is required.",
+   "graded": false
   },
   {
    "id": "bp_cycling_after_nitrate",
@@ -6148,6 +6141,13 @@
   ],
   "additional_diagnoses": [
    {
+    "catalog_id": "dx_hypertensive_emergency",
+    "label": "Hypertensive emergency",
+    "explanation": "A systolic pressure of 188 with acute pulmonary edema is hypertensive emergency by definition: end-organ dysfunction attributable to the pressure. It is the reason nitrates are the pharmacological priority here, and a handover that names it explains the nitroglycerin infusion to whoever inherits it."
+   }
+  ],
+  "minor_diagnoses": [
+   {
     "catalog_id": "dx_cardiogenic_pulmonary_edema",
     "label": "Cardiogenic pulmonary edema",
     "explanation": "The presentation itself: bilateral B lines, bilateral crackles, a saturation of 85 percent and a respiratory rate of 32 in a man whose ventricle cannot cope with the afterload of a systolic pressure of 188. Named beside the heart failure it says what the heart failure did; named alone it leaves out why."
@@ -6158,17 +6158,12 @@
     "explanation": "A venous pH of 7.29 with a pCO2 of 54 in a patient breathing at 32 is a man who is moving air and not clearing carbon dioxide with it, which is the reason positive pressure rather than oxygen alone is the treatment, and the reason the receiving team needs to know how close he came to a tube."
    },
    {
-    "catalog_id": "dx_hypertensive_emergency",
-    "label": "Hypertensive emergency",
-    "explanation": "A systolic pressure of 188 with acute pulmonary edema is hypertensive emergency by definition: end-organ dysfunction attributable to the pressure. It is the reason nitrates are the pharmacological priority here, and a handover that names it explains the nitroglycerin infusion to whoever inherits it."
-   },
-   {
     "catalog_id": "dx_hyponatremia",
     "label": "Hyponatremia",
     "explanation": "A sodium of 133 is mild and dilutional, and it is worth naming at handover for what it is rather than what to do about it: an established marker of worse prognosis in heart failure, and a reason to watch the free water rather than to correct the number."
    }
   ],
-  "additional_diagnoses_note": "v0.9. Diagnoses that are also true of this patient and appropriate to name at handover beside the primary. The learner lists as many diagnoses as apply; the first is scored as the primary against correct_diagnosis and alternative_diagnoses, and each of the rest earns credit if it is here. A diagnosis may appear both here and in alternative_diagnoses: the alternative's verdict and explanation apply when it is named as the primary, this entry's when it is named beside one. PROVENANCE: written by an AI assistant in September 2026 from the case's own findings. The list of diagnoses was reviewed and approved by the author (emergency medicine resident) on 5 September 2026; the explanations under them remain AI-written and unsigned.",
+  "additional_diagnoses_note": "Since 23 October 2026 (case author's instruction) the handover is scored on one or two major diagnoses: the primary and hypertensive emergency. The rest moved to minor_diagnoses, credited if named and never penalized if left out. Which one stayed scored was a model's pick, accepted by the author the same day, and not physician reviewed.\n\nv0.9. Diagnoses that are also true of this patient and appropriate to name at handover beside the primary. The learner lists as many diagnoses as apply; the first is scored as the primary against correct_diagnosis and alternative_diagnoses, and each of the rest earns credit if it is here. A diagnosis may appear both here and in alternative_diagnoses: the alternative's verdict and explanation apply when it is named as the primary, this entry's when it is named beside one. PROVENANCE: written by an AI assistant in September 2026 from the case's own findings. The list of diagnoses was reviewed and approved by the author (emergency medicine resident) on 5 September 2026; the explanations under them remain AI-written and unsigned.",
   "diagnosis_entry_method": "Search against the global diagnosis catalog. The alternatives above are authored for debrief explanation only and are not shown as a shortlist, since committing to a diagnosis from a wide field is the cognitive task being trained.",
   "pending_result_warning": "Standard confirmation dialogue. Pending or unviewed results at the moment of handoff are recorded automatically and surfaced in the debrief; no case-level authoring required.",
   "early_exit": {

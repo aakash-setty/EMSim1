@@ -138,6 +138,9 @@ function mergeAction(eff, base, caseAct, extra){
     default_result:base.default_result||null,
     /* Catalog capability: this act is what puts numbers on the monitor. */
     reveals_vitals:!!base.reveals_vitals,
+    /* Never scored (owner, 23 October 2026): intubation care. Marked on the catalog entry at
+       build time from catalog data, or by the case on a case-only action. Its effects stand. */
+    ungraded:!!(base.ungraded||caseAct.ungraded),
     bound:!!caseAct.catalog_id,
     orphan:!!(extra&&extra.orphan),
     shadowed:(extra&&extra.shadowed)||[],
@@ -279,6 +282,9 @@ function selectCase(ref){
     /* v0.9: the case's additional diagnoses, id to explanation. Appropriate beside the
        primary, and credited when listed with it. */
     addlDx: PACK.addlDx||{},
+    /* 23 October 2026: the case's minor diagnoses, id to explanation. True of the patient
+       and never scored: naming one costs nothing and leaving it out costs nothing. */
+    minorDx: PACK.minorDx||{},
     promptCap: PACK.promptCap,
     /* v0.11. The pack's images, id to data URI, inlined at build time from
        cases/<PREFIX>/media/. Empty for a case that ships none. */
@@ -533,6 +539,7 @@ function fold(log, now, difficultyMultiplier){
          That defect suppressed the glucocorticoid prompt in MGCA and left a
          deterioration unwarned, which is the thing the cap must never do. */
       if(a.covered_by) continue;
+      if(a.ungraded) continue;
       if(a.tag&&tagOf(id,entrySt)==='critical'){
         st.expected.add(id);
         (st.expectedByPhase[phase]=st.expectedByPhase[phase]||new Set()).add(id);
@@ -916,8 +923,11 @@ function fold(log, now, difficultyMultiplier){
       narrate(t,a.halt_reason||'',"halt");
       return;
     }
-    if(tag==='recommended') st.recommendedTaken.add(id);
-    if(tag==='discouraged') st.discouragedTaken.add(id);
+    /* A covered sibling acts as its covering action, so it is graded as that action is:
+       midazolam standing in for a benzodiazepine for a seizure is graded with it. */
+    const ungraded=a.covered_by?!!(ACT[a.covered_by]&&ACT[a.covered_by].ungraded):a.ungraded;
+    if(tag==='recommended'&&!ungraded) st.recommendedTaken.add(id);
+    if(tag==='discouraged'&&!ungraded) st.discouragedTaken.add(id);
     narrate(t,narrationFor(id),'narration');
     /* On its own kind, so the assertion that no PROMPT describes a trajectory is
        unaffected by it and so the interface can colour it and file it in the chart. Said
@@ -1032,7 +1042,9 @@ function fold(log, now, difficultyMultiplier){
       promptCount[st.phase]=(promptCount[st.phase]||0)+1;
       narrate(t,f.nurse_prompt,'prompt');
       st.fuFires.push({t,fid:e.fid});
-      st.fuOutstanding.add(e.fid);
+      /* A follow-up with graded false (post-intubation care) is still asked, and never listed
+         in the debrief as an obligation left open. */
+      if(f.graded!==false) st.fuOutstanding.add(e.fid);
       return;
     }
   }
@@ -1221,15 +1233,18 @@ function handoffIntercept(st,disposition){
      primary_incorrect   anything else, first
      main_not_primary    the case's main diagnosis, listed but not first
      appropriate         one of the case's additional_diagnoses
+     also_true           one of the case's minor_diagnoses (23 October 2026). Not scored
      defensible          an acceptable_with_qualification alternative, not first
      unsupported         anything else
-   and `missed` for additional diagnoses that were authored and not listed. The main
-   diagnosis is never in `missed`: not naming it is the primary verdict's job to say. */
+   and `missed` for additional diagnoses that were authored and not listed, and `optional`
+   for minor diagnoses not listed, which the debrief shows without counting against anyone.
+   The main diagnosis is never in `missed`: not naming it is the primary verdict's job to say. */
 function scoreDiagnoses(st){
-  const out={rows:[],missed:[]};
+  const out={rows:[],missed:[],optional:[]};
   if(!st.handoff) return out;
   const list=st.handoff.diagnoses||[];
   const addl=PROTO.addlDx||{};
+  const minor=PROTO.minorDx||{};
   const alt=PROTO.altDx||{};
   const defensible=PROTO.altDxDefensible||[];
   list.forEach((id,i)=>{
@@ -1237,14 +1252,16 @@ function scoreDiagnoses(st){
     if(i===0){
       if(id===PROTO.correctDxId){ verdict='primary_correct'; why=PROTO.correctDxExplanation; }
       else if(defensible.includes(id)){ verdict='primary_defensible'; why=alt[id]; }
-      else { verdict='primary_incorrect'; why=alt[id]||addl[id]||PROTO.unlistedDxNote; }
+      else { verdict='primary_incorrect'; why=alt[id]||addl[id]||minor[id]||PROTO.unlistedDxNote; }
     } else if(id===PROTO.correctDxId){ verdict='main_not_primary'; why=PROTO.correctDxExplanation; }
     else if(addl[id]!==undefined){ verdict='appropriate'; why=addl[id]; }
+    else if(minor[id]!==undefined){ verdict='also_true'; why=minor[id]; }
     else if(defensible.includes(id)){ verdict='defensible'; why=alt[id]; }
     else { verdict='unsupported'; why=alt[id]||PROTO.unlistedDxNote; }
     out.rows.push({id,verdict,why:why||''});
   });
   for(const id in addl) if(!list.includes(id)) out.missed.push({id,why:addl[id]});
+  for(const id in minor) if(!list.includes(id)) out.optional.push({id,why:minor[id]});
   return out;
 }
 

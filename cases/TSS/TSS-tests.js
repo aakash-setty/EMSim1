@@ -680,10 +680,17 @@ section('the handover names what is true of her');
 st = fold(mk(START.concat([{ t: 20, actionId: 'handoff_submit',
   payload: { disposition: 'icu', diagnoses: ['dx_toxic_shock_syndrome', 'dx_hyponatremia', 'dx_hypokalemia',
     'dx_anion_gap_metabolic_acidosis', 'dx_thrombocytopenia', 'dx_retained_vaginal_foreign_body'] } }])), 30);
-chk('five more diagnoses are credited beside the primary',
-  ['dx_hyponatremia', 'dx_hypokalemia', 'dx_anion_gap_metabolic_acidosis', 'dx_thrombocytopenia', 'dx_retained_vaginal_foreign_body']
-    .every(id => CASE.handoff.additional_diagnoses.some(d => d.catalog_id === id && d.explanation)));
-chk('nine additional diagnoses in all', CASE.handoff.additional_diagnoses.length === 9);
+/* 23 October 2026, case author's instruction: the retained tampon is the one scored additional
+   diagnosis. The rest are minor: credited as also true if named, never penalized if left out. */
+chk('the retained tampon is the additional diagnosis, and the four chemistry findings are minor',
+  CASE.handoff.additional_diagnoses.length === 1 &&
+  CASE.handoff.additional_diagnoses[0].catalog_id === 'dx_retained_vaginal_foreign_body' &&
+  ['dx_hyponatremia', 'dx_hypokalemia', 'dx_anion_gap_metabolic_acidosis', 'dx_thrombocytopenia']
+    .every(id => CASE.handoff.minor_diagnoses.some(d => d.catalog_id === id && d.explanation)));
+chk('eight minor diagnoses in all', CASE.handoff.minor_diagnoses.length === 8);
+chk('naming them all beside the primary and the tampon scores the full handoff',
+  summaryScores(st).find(r => r.id === 'handoff').points === 100,
+  summaryScores(st).find(r => r.id === 'handoff').detail);
 chk('no prompt quotes a number, because each fires in more than one phase',
   Object.keys(ACT).every(id => !ACT[id].prompt || ACT[id].covered_by ||
     !/\d{2,3} over \d{2}|\b\d{2,3}\b(?! kilos| per kilo)/.test(ACT[id].prompt.text.replace(/65|MRSA/g, ''))),
