@@ -1,0 +1,37 @@
+{
+ "note": "Default vital effects (owner, 27 October 2026). A sandbox nicety: a pressor given in any case moves the monitor, whether or not the case authors it. These effects only change the numbers on the monitor. Vitals are never read by a condition, so no phase, tag, flag, prompt, score or debrief line changes. A case action that carries its own vital_effects replaces the whole default, and \"vital_effects\": [] means no effect. A drip's default lasts until its stop order is given after it, and starts again if the drip is restarted. Onset 20 s for drips and 10 s for boluses. The numbers are teaching defaults chosen by a model and accepted by the owner, not physiology claims, and not physician reviewed.",
+ "effects": {
+  "norepinephrine_drip": [
+   {"vital": "systolic_bp", "delta": 15, "onset_seconds": 20},
+   {"vital": "diastolic_bp", "delta": 8, "onset_seconds": 20}],
+  "epinephrine_drip": [
+   {"vital": "systolic_bp", "delta": 15, "onset_seconds": 20},
+   {"vital": "diastolic_bp", "delta": 6, "onset_seconds": 20},
+   {"vital": "heart_rate", "delta": 12, "onset_seconds": 20}],
+  "vasopressin_drip": [
+   {"vital": "systolic_bp", "delta": 12, "onset_seconds": 20},
+   {"vital": "diastolic_bp", "delta": 8, "onset_seconds": 20}],
+  "phenylephrine_drip": [
+   {"vital": "systolic_bp", "delta": 15, "onset_seconds": 20},
+   {"vital": "diastolic_bp", "delta": 10, "onset_seconds": 20},
+   {"vital": "heart_rate", "delta": -6, "onset_seconds": 20}],
+  "dopamine_drip": [
+   {"vital": "systolic_bp", "delta": 10, "onset_seconds": 20},
+   {"vital": "diastolic_bp", "delta": 5, "onset_seconds": 20},
+   {"vital": "heart_rate", "delta": 15, "onset_seconds": 20}],
+  "epinephrine_bolus": [
+   {"vital": "systolic_bp", "delta": 20, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "diastolic_bp", "delta": 8, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "heart_rate", "delta": 15, "onset_seconds": 10, "duration_seconds": 300}],
+  "phenylephrine_bolus": [
+   {"vital": "systolic_bp", "delta": 15, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "diastolic_bp", "delta": 8, "onset_seconds": 10, "duration_seconds": 300}],
+  "vasopressin_bolus": [
+   {"vital": "systolic_bp", "delta": 12, "onset_seconds": 10, "duration_seconds": 600},
+   {"vital": "diastolic_bp", "delta": 6, "onset_seconds": 10, "duration_seconds": 600}]
+ },
+ "not_included": {
+  "dobutamine_drip": "An inotrope, not a pressor. It often lowers the pressure, so a default rise would teach the wrong thing.",
+  "epinephrine_intramuscular": "The anaphylaxis dose, not a pressor dose."
+ }
+}

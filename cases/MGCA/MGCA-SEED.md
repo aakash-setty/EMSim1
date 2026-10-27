@@ -74,6 +74,8 @@ you should confirm you accept it for this case.
 
 ## What a person decided
 
+- 27 October 2026, Aakash Setty: pressors the case does not author now move the monitor by the catalog default (`catalog/default-vital-effects.json`, display only, no change to phases, tags or scoring). Here its five pressor drips (norepinephrine, epinephrine, vasopressin, dopamine, phenylephrine) carry `"vital_effects": []`, because each sets `pressor_running`, which moves the phase, and that phase's vitals already carry the rise. Push-dose epinephrine takes the default.
+
 - 11 October 2026, Aakash Setty: the skin biopsy of the rash is removed from the simulator.
   In this case that removed the recommended action and its debrief note, the Gram stain
   result, the infectious diseases answer that fired once the biopsy had resulted, and the

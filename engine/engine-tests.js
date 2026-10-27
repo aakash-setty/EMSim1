@@ -412,6 +412,10 @@ section('time-guarded transitions');
         .map(x => x.replace('flag ', '').replace(' set', ''));
       for (const f of flags) {
         const setters = Object.keys(A).filter(id => (A[id].flags_set || []).includes(f));
+        /* A flag only a transition grants (27 October 2026) is bookkeeping, not something
+           the resident can do or be warned about. The validator skips it the same way. */
+        if (!setters.length && CASE.phases.some(p => (p.transitions || [])
+              .some(x => (x.flags_set || []).includes(f)))) continue;
         const fired = idle.promptFires.some(p => setters.includes(p.id) &&
                                                  p.t < (idle.phaseEntry[phase] || 0) + t.after_seconds);
         if (!fired) unwarned.push(phase + ' deteriorates on ' + f + ' with no prompt seen');
@@ -1017,6 +1021,111 @@ section('expiring flags and delayed onset');
   chk('the harness left the case as it found it',
       JSON.stringify(PHASE[START].transitions) === JSON.stringify(savedTransitions) &&
       !A.__probe_drug);
+}
+
+section('a flag granted on a condition, and a flag a transition grants (27 October 2026)');
+{
+  /* Two generic mechanisms added for DIPH's one-time relapse (physician review DIPH-09).
+     flags_set_if grants a flag only if its condition holds as the act is taken, judged
+     before the act's own flags. A transition's flags_set is granted as it fires, before
+     the new phase is entered. Probes installed on the loaded case and removed after. */
+  const START = CASE.phases[0].id;
+  const P = PHASE[START];
+  const saved = P.transitions ? P.transitions.slice() : [];
+  const target = CASE.phases.find(p => p.id !== START && !p.terminal);
+  const probe = (id, extra) => Object.assign({ id, name: id, tab: 'interventions', group: 'Probe',
+    category: 'medication', state_changing: true, repeatable: true, prerequisites: [],
+    flags_set: [], flags_set_timed: [] }, extra);
+  A.__probe_mark = probe('__probe_mark', { flags_set: ['__probe_marked'] });
+  A.__probe_cond = probe('__probe_cond', { flags_set_if: [{ flag: '__probe_after', when: 'flag __probe_marked set' }] });
+  A.__probe_self = probe('__probe_self', { flags_set: ['__probe_self_given'],
+    flags_set_if: [{ flag: '__probe_second', when: 'flag __probe_self_given set' }] });
+
+  chk('a conditional flag is not granted while its condition is false',
+      !fold(mk([[1, '__probe_cond']]), 5).flags.has('__probe_after'));
+  chk('and is granted once the condition holds',
+      fold(mk([[1, '__probe_mark'], [2, '__probe_cond']]), 5).flags.has('__probe_after'));
+  chk('an earlier dose does not count: only a dose after the condition',
+      !fold(mk([[1, '__probe_cond'], [2, '__probe_mark']]), 5).flags.has('__probe_after'));
+  chk('the condition is judged before the act grants its own flags',
+      !fold(mk([[1, '__probe_self']]), 5).flags.has('__probe_second') &&
+      fold(mk([[1, '__probe_self'], [2, '__probe_self']]), 5).flags.has('__probe_second'));
+  chk('a conditional grant is permanent',
+      fold(mk([[1, '__probe_mark'], [2, '__probe_cond']]), 900).flags.has('__probe_after'));
+
+  if (target) {
+    P.transitions = [{ when: 'action __probe_mark taken', to: target.id, flags_set: ['__probe_moved'] }];
+    chk('a transition grants its flags as it fires',
+        fold(mk([[1, '__probe_mark']]), 5).flags.has('__probe_moved') &&
+        fold(mk([[1, '__probe_mark']]), 5).phase === target.id);
+    chk('and not when it does not fire', !fold(mk([[1, '__probe_cond']]), 5).flags.has('__probe_moved'));
+    /* Timed, so the flag must already be set when the new phase is entered: a guard there
+       that needs it unset never holds. */
+    P.transitions = [{ when: 'NOT flag __probe_moved set', after_seconds: 30, to: target.id,
+                       flags_set: ['__probe_moved'] }];
+    const once = fold(mk([]), 40);
+    chk('a timed transition that grants the flag its own guard needs unset fires once',
+        once.phase === target.id && once.flags.has('__probe_moved') &&
+        once.timeFires.filter(f => f.to === target.id).length === 1);
+  } else {
+    chk('this case has only terminal phases beyond the first, so the transition half is not exercised', true);
+  }
+  P.transitions = saved;
+  delete A.__probe_mark; delete A.__probe_cond; delete A.__probe_self;
+  chk('the harness left the case as it found it',
+      JSON.stringify(PHASE[START].transitions) === JSON.stringify(saved) && !A.__probe_mark);
+}
+
+section('default pressor effects move the monitor and nothing else (27 October 2026)');
+{
+  /* A pressor with no vital_effects of its own takes the catalog default
+     (catalog/default-vital-effects.json). Display only: the run must be identical with and
+     without the defaults in everything but the monitor numbers. */
+  const START = CASE.phases[0].id, P0 = PHASE[START];
+  const probe = (id, extra) => Object.assign({ id, name: id, tab: 'interventions', group: 'Probe',
+    category: 'medication', state_changing: true, repeatable: true, prerequisites: [], flags_set: [], flags_set_timed: [] }, extra);
+  const base = P0.vitals ? P0.vitals.systolic_bp : null;
+  A.__probe_pressor = probe('__probe_pressor', { persistent: true, vital_source: 'default', stopped_by: ['__probe_stop'],
+    vital_effects: [{ vital: 'systolic_bp', delta: 15, key: '__probe_pressor_sbp', onset_seconds: 20 }] });
+  A.__probe_stop = probe('__probe_stop', {});
+  if (typeof base === 'number' && base + 15 <= 300 && base > 0) {
+    const at = (log, t) => fold(mk(log), t).vitals.systolic_bp;
+    chk('a default drip effect has not started before its onset', at([[1, '__probe_pressor']], 15) === base);
+    chk('and raises the pressure after it', at([[1, '__probe_pressor']], 25) === base + 15);
+    chk('its stop order ends it', at([[1, '__probe_pressor'], [40, '__probe_stop']], 60) === base);
+    chk('restarting the drip brings it back', at([[1, '__probe_pressor'], [40, '__probe_stop'], [50, '__probe_pressor']], 80) === base + 15);
+    A.__probe_pressor.vital_source = 'case';
+    chk('a stop order does not end a case-authored effect', at([[1, '__probe_pressor'], [40, '__probe_stop']], 60) === base + 15);
+    A.__probe_pressor.vital_source = 'default';
+  } else chk('this case starts with no usable pressure, so the probe half is not exercised', true);
+  delete A.__probe_pressor; delete A.__probe_stop;
+
+  const DEF = SHARED.actionsBase || {};
+  const own = Object.keys(A).filter(id => A[id].vital_source === 'default');
+  chk('every action on the default carries exactly the catalog default',
+      own.every(id => { const c = A[id].catalog_id; return c && DEF[c] && JSON.stringify(DEF[c].vital_effects_default) === JSON.stringify(A[id].vital_effects); }),
+      own.join(', '));
+  chk('an action whose case authors vital_effects, even [], does not take the default',
+      CASE.case_actions.filter(a => a.vital_effects !== undefined).every(a => !A[a.catalog_id] || A[a.catalog_id].vital_source !== 'default'));
+  const pressors = Object.keys(A).filter(id => A[id].catalog_id && DEF[A[id].catalog_id] && DEF[A[id].catalog_id].vital_effects_default);
+  if (pressors.length) {
+    /* Give every pressor the case offers, with whatever their prerequisites need first. */
+    const needs = new Set();
+    pressors.forEach(id => (A[id].prerequisites || []).forEach(p => (p.when.match(/flag ([a-z0-9_]+)/g) || []).forEach(f => needs.add(f.slice(5)))));
+    const setters = Object.keys(A).filter(id => (A[id].flags_set || []).some(f => needs.has(f)) && !pressors.includes(id));
+    const log = mk(setters.map((id, i) => [1 + i, id]).concat(pressors.map((id, i) => [30 + 40 * i, id])));
+    const H = 30 + 40 * pressors.length + 120;
+    const withD = fold(log, H);
+    const saved = {}; pressors.forEach(id => { if (A[id].vital_source === 'default') { saved[id] = A[id].vital_effects; A[id].vital_effects = []; } });
+    const without = fold(log, H);
+    Object.keys(saved).forEach(id => { A[id].vital_effects = saved[id]; });
+    const pick = st => JSON.stringify({ phase: st.phase, seq: st.phaseSeq, flags: [...st.flags].sort(), taken: [...st.taken].sort(),
+      expected: [...st.expected].sort(), rec: [...st.recommendedTaken].sort(), disc: [...st.discouragedTaken].sort(),
+      nurse: st.nurse.map(n => n.t + n.kind + n.text), fires: st.timeFires, prompts: st.promptFires,
+      failed: !!st.failed, halted: !!st.halted, complete: !!st.complete, blocked: st.blocked.length });
+    chk('with every pressor given, the run is identical with and without the defaults, apart from the monitor',
+        pick(withD) === pick(without), pressors.join(', '));
+  } else chk('this case offers no pressor with a default', true);
 }
 
 section('the clock\'s ending');

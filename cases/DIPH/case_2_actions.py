@@ -22,6 +22,11 @@ POST = "phase is post_ictal"
 SEIZ = "phase is seizing"
 PRES = "phase is presentation"
 RESOLVING = "phase is stabilizing OR phase is stabilized"
+# Every phase in which the QRS is over 100 ms: all of them until stabilized (96 ms). The
+# narrowing phase is still 104 ms. Physician review DIPH-02 (Aakash Setty, 27 October 2026)
+# added it to physostigmine's harmful list, and DIPH-27 uses the same list for propranolol.
+QRS_WIDE = ("phase is presentation OR phase is seizing OR phase is post_ictal OR "
+            "phase is wide_complex_tachycardia OR phase is stabilizing")
 
 # Oxygen delivery shares one vital-effect key across the cannula, the mask and the tube,
 # so escalating replaces the previous device rather than adding to it. Effects sharing a
@@ -246,10 +251,12 @@ act("defibrillate",
       "not true."))
 
 act("synchronized_cardioversion",
-    [{"when": WIDE, "value": "discouraged"}, {"when": None, "value": "discouraged"}],
+    # Physician review DIPH-40 (Aakash Setty, 27 October 2026): neutral in the wide phase.
+    [{"when": WIDE, "value": "neutral"}, {"when": None, "value": "discouraged"}],
     debrief_note=(
-      "The synchronized version of the same reasoning, and a smaller error. This patient is "
-      "perfusing, so there is time for the drug that treats the mechanism. If she loses her "
+      "The synchronized version of the same reasoning, and scored neutral in the wide-complex "
+      "rhythm: it is a defensible move in a wide-complex tachycardia and it does not treat this "
+      "one. This patient is perfusing, so there is time for the drug that treats the mechanism. If she loses her "
       "pressure, cardioversion becomes appropriate and sodium bicarbonate is still indicated "
       "alongside it. She is also awake enough to need sedation first, so sedate her first."))
 
@@ -270,14 +277,16 @@ act("insert_foley_catheter", ALWAYS("recommended"),
       "She has a palpable bladder, which is the anticholinergic urinary retention and is one of "
       "the findings that makes the toxidrome. Two reasons to drain it: it is uncomfortable and "
       "it contributes to the agitation, and it gives you urine output, which is what you will be "
-      "following as the rhabdomyolysis declares itself. Send the sample: myoglobinuria produces "
-      "a urinalysis positive for blood with no red cells on microscopy."))
+      "following as the rhabdomyolysis declares itself. Send the sample. Hers is concentrated "
+      "and negative for blood: at a creatine kinase of 540 there is not yet enough myoglobin "
+      "to turn the dipstick positive."))
 
 # =====================================================================  MEDICATIONS
 
 act("lorazepam_bolus",
+    # Physician review DIPH-32 (Aakash Setty, 27 October 2026): recommended on arrival,
+    # critical only while she is seizing.
     [{"when": SEIZ, "value": "critical"},
-     {"when": PRES, "value": "critical"},
      {"when": None, "value": "recommended"}],
     flags_set=["benzo_given", "sedation_given"],
     display_name="Lorazepam (or midazolam)",
@@ -289,10 +298,9 @@ act("lorazepam_bolus",
       "First-line for all four of the things wrong with this patient that a drug can touch "
       "quickly: the agitation, the seizure, the sympathetic overactivity and, through the first "
       "of those, the hyperthermia. Titrate to effect and expect to need more than one dose.\n\n"
-      "The reason it earns a critical tag on arrival as well as during the convulsion is that "
-      "the agitation is not a behavioral problem here. It is generating the heat, it is "
-      "generating the lactate, and both of those are making the cardiac toxicity worse. Sedating "
-      "her is treating the heart.\n\n"
+      "It is critical while she is seizing and recommended on arrival. The agitation on arrival "
+      "is not a behavioral problem here: it is generating the heat and the lactate, and both of "
+      "those are making the cardiac toxicity worse. Sedating her is treating the heart.\n\n"
       "If seizures recur despite adequate benzodiazepine dosing, go to propofol or a "
       "barbiturate, secure the airway, and correct the hypoxia, the acidemia and the "
       "temperature. Do not reach for phenytoin: see its own note.\n\n"
@@ -306,15 +314,19 @@ act("na_bicarbonate_bolus",
      {"when": PRES, "value": "recommended"},
      {"when": None, "value": "recommended"}],
     flags_set=["bicarb_given"],
+    # DIPH-09: a dose given after the seizure has relapsed into the wide-complex rhythm.
+    flags_set_if=[{"flag": "bicarb_after_relapse", "when": "flag seizure_relapsed set"}],
     flags_set_repeat=[{"flag": "bicarb_titrated", "after_administrations": 2,
                        "counter": "bicarbonate_doses"}],
     follow_ups_triggered=["bicarbonate_reassessment", "repeat_ecg_after_bicarbonate"],
-    nurse_alert="It can take a minute or two before you see the complexes change.",
+    # Physician review DIPH-41 (Aakash Setty, 27 October 2026): the effect takes ten seconds.
+    nurse_alert="Give it a few seconds and watch the complexes.",
+    # The escalation "The QRS on the monitor is still wide. Do you want bicarb?" was removed
+    # on the owner's instruction, 27 October 2026: the nurse names the problem, not the drug.
+    # This prompt stays because it is the warning the three bicarbonate deteriorations need.
     prompt={"deadline_seconds": 25,
             "guard": SEIZ + " OR " + POST + " OR " + WIDE,
-            "text": "Her complexes look broad to me. Is there anything you want to give for that?",
-            "escalation": {"deadline_seconds": 90,
-                           "text": "The QRS on the monitor is still wide. Do you want bicarb?"}},
+            "text": "Her complexes look broad to me. Is there anything you want to give for that?"},
     debrief_note=(
       "The treatment this case exists for. Sodium bicarbonate is first-line for QRS widening, "
       "ventricular dysrhythmia and hypotension caused by sodium-channel blockade, whatever the "
@@ -340,6 +352,7 @@ act("na_bicarbonate_infusion",
      {"when": RESOLVING, "value": "recommended"},
      {"when": None, "value": "recommended"}],
     flags_set=["bicarb_given", "bicarb_infusion_running"],
+    flags_set_if=[{"flag": "bicarb_after_relapse", "when": "flag seizure_relapsed set"}],
     debrief_note=(
       "The right second step and the wrong first one. An infusion maintains the alkalinization "
       "and the sodium load after the boluses have narrowed the complex, and it is what stops the "
@@ -359,7 +372,7 @@ act("stop_na_bicarbonate", ALWAYS("discouraged"),
       "that is a reason to check a gas and replace the potassium rather than to stop."))
 
 act("physostigmine",
-    [{"when": "phase is presentation OR phase is seizing OR phase is post_ictal OR phase is wide_complex_tachycardia", "value": "harmful"},
+    [{"when": QRS_WIDE, "value": "harmful"},
      {"when": None, "value": "discouraged"}],
     flags_set=["physostigmine_given"],
     halt_reason=(
@@ -382,24 +395,29 @@ act("physostigmine",
       "QRS. Her urine screen is also positive for tricyclics, which is a false positive from the "
       "diphenhydramine and is not something you can know at the time. Given blind, you are "
       "giving it to a patient who may have taken a tricyclic.\n\n"
-      "What this case does with it. While her QRS is wide, which is every phase until bicarbonate has narrowed it, it halts the case, whether or not the ECG has been read: the tracing decides the risk, not whether you looked at it. Once she has stabilized it is discouraged rather than halting, because it is still the wrong drug in a patient who has just come through a sodium-channel crisis.\n\n"
+      "What this case does with it. While her QRS is over 100 milliseconds it halts the case, whether or not the ECG has been read: the tracing decides the risk, not whether you looked at it. That is every phase until the stabilized one, including the narrowing phase, where the QRS is still 104. In the stabilized phase it is discouraged rather than halting, because it is still the wrong drug in a patient who has just come through a sodium-channel crisis.\n\n"
       "If you do ever give it, in a patient with a genuinely normal QRS and isolated "
       "anticholinergic delirium: 0.5 to 1 milligram intravenously over at least five minutes, repeated after ten to fifteen minutes if needed, with "
       "atropine at the bedside."))
 
 act("atropine_bolus",
-    ALWAYS("neutral"),
+    # Physician review DIPH-22 (Aakash Setty, 27 October 2026), option C. The +15 and the
+    # five minutes are invented ("rises by about 15 for a while").
+    ALWAYS("discouraged"),
+    vital_effects=[{"vital": "heart_rate", "delta": 15, "key": "atropine_rate",
+                    "onset_seconds": 10, "duration_seconds": 300}],
     debrief_note=(
       "Not needed in this case: her heart rate stays high throughout, and atropine is for a bradycardia worth treating. Where physostigmine is given, standard teaching is to have atropine drawn up at the bedside before it goes in, because the cholinergic excess it can cause includes bradycardia.\n\n"
-      "It is scored neutral. This patient is tachycardic at 135 and atropine is an antimuscarinic, "
-      "which is the class of drug she has overdosed on."))
+      "It is scored discouraged. This patient is tachycardic at 135 and atropine is an "
+      "antimuscarinic, which is the class of drug she has overdosed on: it pushes her rate up "
+      "further and does nothing for her."))
 
 act("flumazenil", [{"when": "flag benzo_given set", "value": "harmful"}, {"when": None, "value": "discouraged"}],
     halt_reason=(
       "You gave flumazenil to a patient with an undifferentiated overdose who was already "
       "primed to seize. She had a prolonged seizure that would not respond to a benzodiazepine, "
-      "because you had just blocked the receptor it works at, and she arrested with a QRS that "
-      "had never been treated."),
+      "because you had just blocked the receptor it works at, and the acidosis of the seizure "
+      "widened her QRS until she arrested."),
     debrief_note=(
       "Flumazenil reverses benzodiazepine sedation and is a reasonable thought in an obtunded "
       "patient of unknown cause. It is dangerous in an undifferentiated overdose for two "
@@ -431,19 +449,23 @@ act("fos_phenytoin", ALWAYS("discouraged"),
       "sodium-channel-blocker poisoning is extrapolated from tricyclic antidepressant work and "
       "from animal data rather than established in humans, and authoring 6.3 says that halting a "
       "case is the strongest claim this system can make and should be reserved for genuine "
-      "lethality. The author wrote 'avoided', not 'kills'.\n\n"
+      "lethality. The author wrote 'avoided', not 'kills'. It does have a consequence here: "
+      "given on arrival or after the seizure, it widens her QRS into the wide-complex rhythm "
+      "ten seconds later.\n\n"
       "What to use instead if the seizure recurs after adequate benzodiazepine dosing: "
       "levetiracetam, propofol or a barbiturate, alongside airway control and correction of the "
       "acidemia, the hypoxia and the temperature. And remember that in this poisoning a "
       "recurrent seizure is also a reason to look at the QRS again."))
 
 act("levetiracetam_bolus",
-    ALWAYS("neutral"),
+    # Physician review DIPH-10 (Aakash Setty, 27 October 2026).
+    [{"when": "flag benzo_given set", "value": "neutral"}, {"when": None, "value": "discouraged"}],
     debrief_note=(
       "A reasonable second-line anticonvulsant after adequate benzodiazepine dosing, and the "
       "sensible alternative to phenytoin here because it does not act at the cardiac sodium "
-      "channel. Neutral before any benzodiazepine has been given, because a benzodiazepine is "
-      "the first-line drug for a toxic seizure and going past it is the error."))
+      "channel. Neutral after a benzodiazepine and discouraged before one, because a "
+      "benzodiazepine is the first-line drug for a toxic seizure and going past it is the "
+      "error."))
 
 act("propofol_infusion",
     ALWAYS("neutral"),   # intubation care, never graded (owner, 23 October 2026). Was recommended once tubed
@@ -495,16 +517,15 @@ act("ibuprofen", ALWAYS("discouraged"),
       "non-steroidal."))
 
 act("naloxone_bolus",
-    [{"when": "study fingerstick_blood_sugar resulted", "value": "discouraged"},
-     {"when": None, "value": "neutral"}],
+    # Physician review DIPH-37 (Aakash Setty, 27 October 2026).
+    ALWAYS("neutral"),
     debrief_note=(
       "A defensible reflex in undifferentiated altered mental status and the wrong answer here, "
       "and the examination tells you so before the drug does. Opioid toxicity is small pupils, a "
       "low respiratory rate and a sedated patient. She has large pupils, a respiratory rate of "
       "25 and is agitated rather than sedated. Every one of those points the other way.\n\n"
-      "Neutral before anything has come back, because an empirical dose in an unknown overdose "
-      "is a reasonable thing to have done. Discouraged once the case has given you information "
-      "and the information does not support it."))
+      "Scored neutral throughout: an empirical dose in an undifferentiated overdose is a "
+      "reasonable thing to have done, even when the examination already says it will not help."))
 
 act("thiamine", ALWAYS("neutral"),
     debrief_note=(
@@ -543,9 +564,15 @@ act("procainamide_drip",
 
 act("amiodarone_bolus_infusion", ALWAYS("discouraged"),
     flags_set=["amiodarone_given"],
+    # Physician review DIPH-12 (Aakash Setty, 27 October 2026): survivable harm instead of the
+    # arrest. The diastolic fall of 12 is a model choice to go with the reviewer's 20.
+    vital_effects=[{"vital": "systolic_bp", "delta": -20, "key": "amiodarone_hypotension",
+                    "onset_seconds": 10, "while": WIDE},
+                   {"vital": "diastolic_bp", "delta": -12, "key": "amiodarone_hypotension_dbp",
+                    "onset_seconds": 10, "while": WIDE}],
     debrief_note=(
       "The commonest wrong drug in a wide-complex tachycardia that is not sinus, and in this "
-      "case, given into that rhythm, it arrests her on the spot.\n\n"
+      "case, given into that rhythm, it drops her pressure within ten seconds.\n\n"
       "The reasoning that gets a resident here is the reasoning the case is testing. A "
       "wide-complex tachycardia at 180 with a pressure of 95 is, on a standard algorithm, an "
       "amiodarone rhythm. On that algorithm this is a correct move. What makes it wrong is "
@@ -564,7 +591,7 @@ act("amiodarone_bolus_infusion", ALWAYS("discouraged"),
       "A note on how firmly this case is making the claim. The evidence against amiodarone in "
       "sodium-channel-blocker poisoning is weaker than the evidence against procainamide: it "
       "is mechanistic reasoning and case experience rather than trial data, and amiodarone is "
-      "a mixed agent whose class III action is not the problem. Given into this rhythm it ends the case in an arrest, because that is what adding a sodium-channel blocker to a failing sodium channel does. The tag stays discouraged only so that the arrest, rather than the generic halt, is what the debrief reports.\n\n"
+      "a mixed agent whose class III action is not the problem. Given into this rhythm it lowers her systolic pressure by about 20, because it adds a sodium-channel blocker and a vasodilator to a poisoned myocardium. The case does not arrest her for it: the harm is real and survivable, and the drug that treats the rhythm is still bicarbonate.\n\n"
       "Outside the wide-complex phase it is discouraged and nothing happens, which is also "
       "arguable: amiodarone given to this patient at any point is adding a sodium-channel "
       "blocker to a sodium-channel blocker overdose."))
@@ -616,13 +643,12 @@ act("intralipid",
       "Discouraged if it is reached for before bicarbonate."))
 
 act("magnesium_sulfate",
-    [{"when": "study magnesium_level resulted", "value": "recommended"},
-     {"when": None, "value": "recommended"}],
+    # Physician review DIPH-18 (Aakash Setty, 27 October 2026): her magnesium is normal.
+    ALWAYS("neutral"),
     flags_set=["magnesium_given"],
     debrief_note=(
-      "Two separate reasons, and it is worth knowing which one you are acting on. Her magnesium "
-      "is 1.6, which is low, and correcting it is straightforward good care in a patient with a "
-      "QTc of 495 who has just seized.\n\n"
+      "Not needed here, and not wrong. Her magnesium is 2.0, which is normal, so there is nothing "
+      "to correct, and she has no torsades to treat.\n\n"
       "The second reason is torsades de pointes, which is uncommon while she is tachycardic, and whose QTc here is inflated by a QRS of 132 and by rate correction at 135 and is a "
       "different problem from the wide QRS. Diphenhydramine affects potassium channels as well "
       "as sodium ones, so QT prolongation and QRS widening coexist here. Magnesium is the "
@@ -665,7 +691,8 @@ act("normal_saline_1l_bolus", ALWAYS("recommended"),
       "for now."))
 
 act("activated_charcoal",
-    [{"when": "flag airway_protected set", "value": "recommended"},
+    # Physician review DIPH-39 (Aakash Setty, 27 October 2026).
+    [{"when": "flag airway_protected set", "value": "neutral"},
      {"when": None, "value": "discouraged"}],
     flags_set=["charcoal_given"],
     debrief_note=(
@@ -677,7 +704,7 @@ act("activated_charcoal",
       "a lung is a chemical pneumonitis that outlasts the poisoning. It should not be given to a "
       "severely agitated, seizing or obtunded patient without a protected airway, and it must "
       "never delay stabilization.\n\n"
-      "So: discouraged in an unintubated patient in this case, recommended once she has a tube. "
+      "So: discouraged in an unintubated patient in this case, neutral once she has a tube. "
       "Airway safety takes priority over decontamination. Hemodialysis, for completeness, does "
       "not remove diphenhydramine."))
 
@@ -702,13 +729,11 @@ for d, note in [
 # mentions sepsis. Both are right for the moment they describe, so these are tagged for the
 # moment rather than for the case: good practice in a febrile confused eighteen year old
 # before anything is known, and the wrong road to still be on once the toxidrome has
-# declared itself. The switch is the toxicology screen resulting, which is the first piece
-# of hard evidence the case gives, rather than a flag for "the resident has worked it out",
-# because the condition language cannot see what anybody has worked out.
+# declared itself. Physician review DIPH-08 (Aakash Setty, 27 October 2026) removed the switch
+# on the toxicology screen resulting: recommended on arrival, neutral afterwards.
 
 act("ceftriaxone",
-    [{"when": "study urine_tox_screen resulted", "value": "discouraged"},
-     {"when": PRES, "value": "recommended"},
+    [{"when": PRES, "value": "recommended"},
      {"when": None, "value": "neutral"}],
     flags_set=["abx_given"],
     display_name="Empirical antibiotics",
@@ -722,25 +747,24 @@ act("ceftriaxone",
       "are large, the bowel sounds are absent and the bladder is palpable. That combination is a "
       "toxidrome and not a meningitis, and every minute spent on the infectious workup after "
       "that point is a minute the ECG is not being looked at.\n\n"
-      "Tagged discouraged once the toxicology screen has resulted, which is the case saying that "
-      "continuing down this road after the evidence has arrived is the error, not starting down "
-      "it.\n\n"
+      "Recommended on arrival and neutral afterwards. Continuing down this road once the "
+      "toxidrome has declared itself earns nothing, and it is not penalized, because covering "
+      "for meningitis is never wrong in itself.\n\n"
       "Vancomycin and cefepime are scored the same way, because the point is empirical antimicrobial cover rather than a particular regimen. It is not making "
       "a claim about which regimen is right for suspected bacterial meningitis in this age "
       "group."))
 
 act("acyclovir",
-    [{"when": "study urine_tox_screen resulted", "value": "discouraged"},
-     {"when": PRES, "value": "recommended"},
+    [{"when": PRES, "value": "recommended"},
      {"when": None, "value": "neutral"}],
     debrief_note=(
       "The same reasoning as the antibiotics. Herpes encephalitis belongs on the differential "
       "for a febrile confused young person and empirical acyclovir before the picture is clear "
-      "is defensible. It stops being defensible once the toxidrome is established."))
+      "is defensible. Recommended on arrival and neutral afterwards, once the toxidrome is "
+      "established."))
 
 act("lumbar_puncture",
-    [{"when": "study urine_tox_screen resulted", "value": "discouraged"},
-     {"when": SEIZ + " OR " + WIDE, "value": "discouraged"},
+    [{"when": SEIZ + " OR " + WIDE, "value": "discouraged"},
      {"when": None, "value": "neutral"}],
     debrief_note=(
       "Reasonable to have considered at time zero and a poor idea by the time it can be done. "
@@ -810,12 +834,12 @@ for cid, tag_v, note in [
    "540, and rising. Prolonged agitation, hyperthermia and a convulsion produce rhabdomyolysis, "
    "and this is the beginning of it rather than established disease. What follows from it is "
    "practical: serial creatine kinase, creatinine and electrolytes, volume with crystalloid, "
-   "urine output measured, and a urinalysis that is positive for blood with no red cells on "
-   "microscopy if myoglobin is there. Sedating her and cooling her are also treatments for it, "
+   "urine output measured, and a urinalysis, which turns positive for blood with no red cells "
+   "only once enough myoglobin is there. Hers is not positive yet. Sedating her and cooling her are also treatments for it, "
    "because they stop the muscle activity producing it."),
   ("arterial_blood_gas", "recommended",
-   "pH 7.28, pCO2 34, pO2 94, bicarbonate 13, lactate 3.1 on room air. A partly compensated "
-   "metabolic acidosis from the agitation and the muscle activity. It matters more here than it "
+   "pH 7.28, pCO2 28, pO2 94, bicarbonate 13, lactate 3.1 on room air. An appropriately "
+   "compensated metabolic acidosis from the agitation and the muscle activity. It matters more here than it "
    "would elsewhere: acidemia increases the ionized fraction of a sodium-channel blocker, the form that binds the channel, so the pH is part of the cardiac problem rather than a separate "
    "observation. It is also the measurement you titrate alkalinization against, taking the pH "
    "toward about 7.50 to 7.55 and not beyond."),
@@ -850,12 +874,14 @@ for cid, tag_v, note in [
    "Negative. Mandatory in a woman of reproductive age with an overdose."),
   ("serum_hcg_quantitative", "recommended", "Negative. Either route answers the question."),
   ("urinalysis", "recommended",
-   "Send it. In rhabdomyolysis the dipstick is positive for blood and the microscopy shows no "
-   "red cells, which is myoglobin. It also excludes the urinary source a febrile confused "
-   "patient might have."),
+   "Send it. Hers is concentrated, with a specific gravity of 1.030, and negative for blood. "
+   "That fits a patient who has been hot and not drinking for hours, and a creatine kinase of "
+   "540 is too early for myoglobin to show on the dipstick. In established rhabdomyolysis "
+   "the dipstick is positive for blood with no red cells on microscopy. It also excludes the "
+   "urinary source a febrile confused patient might have."),
   ("magnesium_level", "recommended",
-   "1.6, which is low. Correct it: hypomagnesemia prolongs the QT in a patient whose QTc is "
-   "already 495, and magnesium is the treatment for torsades if it comes."),
+   "2.0, normal. Worth having in a patient with a QTc of 495, because a low magnesium would "
+   "lengthen it further, and magnesium is the treatment for torsades if it comes."),
   ("calcium_ionized", "recommended",
    "Worth having before and during bicarbonate. Alkalinization lowers the ionized calcium, and "
    "a falling ionized calcium is one of the complications of the treatment rather than of the "
@@ -919,9 +945,9 @@ for cid, tag_v, note in [
             flags_set=["tox_consulted"],
             prompt={"deadline_seconds": 100,
                     "guard": POST + " OR " + RESOLVING,
-                    "text": ("Her mom's back in. She got her son to look round the bedroom and he's "
-                             "found an empty Benadryl bottle by the bed. Do you want me to get "
-                             "anyone on the phone about it?"),
+                    # Physician review DIPH-43 (Aakash Setty, 27 October 2026): the bottle
+                    # sentences are removed. Her mother still tells a resident who asks.
+                    "text": "Do you want me to get anyone on the phone about her?",
                     "escalation": {"deadline_seconds": 160,
                                    "text": "Nobody's spoken to toxicology or the poison center yet. Do you want me to call them?"}},
             debrief_note=note)
@@ -929,15 +955,16 @@ for cid, tag_v, note in [
         act(cid, ALWAYS(tag_v), debrief_note=note)
 
 act("consult_psychiatry",
+    # Physician review DIPH-31 (Aakash Setty, 27 October 2026): neutral through the post-ictal phase.
     [{"when": RESOLVING, "value": "recommended"},
-     {"when": PRES + " OR " + SEIZ + " OR " + WIDE, "value": "neutral"},
+     {"when": PRES + " OR " + SEIZ + " OR " + WIDE + " OR " + POST, "value": "neutral"},
      {"when": None, "value": "recommended"}],
     debrief_note=(
       "She needs psychiatry, and she does not need it yet. This is a deliberate ingestion in a "
       "depressed eighteen year old who has been bullied and has withdrawn from her friends, and "
       "a psychiatric assessment and a safety plan are part of her care.\n\n"
-      "The reason it is discouraged early is the thing this case most wants said about "
-      "disposition. Medical clearance is not a form and it is not a phase you enter by "
+      "It is neutral until she is stabilizing and recommended after, and the reason is the thing "
+      "this case most wants said about disposition. Medical clearance is not a form and it is not a phase you enter by "
       "recognizing that the overdose was intentional. A patient with an unresolved wide QRS, a "
       "temperature of 40 degrees and a recent seizure is not medically cleared, and a psychiatric "
       "unit cannot monitor her rhythm. Consult when the medical problem is treated, and hand her "
@@ -1062,6 +1089,17 @@ for _cid, _note in [
   ("metoprolol_bolus", "Her tachycardia is antimuscarinic and compensatory, not a rhythm to slow, and beta blockade drops the pressure of a poisoned myocardium."),
   ("esmolol_drip", "Her tachycardia is antimuscarinic and compensatory, not a rhythm to slow, and beta blockade drops the pressure of a poisoned myocardium."),
   ("labetalol_bolus", "Her tachycardia is antimuscarinic and compensatory, not a rhythm to slow, and beta blockade drops the pressure of a poisoned myocardium."),
-  ("propranolol_bolus", "Her tachycardia is antimuscarinic and compensatory, not a rhythm to slow. Propranolol also blocks sodium channels."),
   ("epinephrine_bolus", "She has a pulse and a pressure of 95. An epinephrine bolus drives a tachycardia and an irritable myocardium toward a ventricular rhythm; if she needs pressure support after bicarbonate, an infusion is titratable.")]:
     act(_cid, ALWAYS("discouraged"), debrief_note=_note)
+
+# Physician review DIPH-27 (Aakash Setty, 27 October 2026), option B.
+act("propranolol_bolus",
+    [{"when": QRS_WIDE, "value": "harmful"}, {"when": None, "value": "discouraged"}],
+    halt_reason=(
+      "You gave propranolol to a patient whose QRS was wide from sodium-channel blockade. "
+      "Propranolol blocks the same sodium channel as well as the beta receptor. Her QRS widened "
+      "further, her pressure fell, and she arrested."),
+    debrief_note=(
+      "Her tachycardia is antimuscarinic and compensatory, not a rhythm to slow. Propranolol "
+      "also blocks cardiac sodium channels, which is why, unlike the other beta blockers, it "
+      "halts this case while her QRS is wide. Once she has stabilized it is discouraged."))

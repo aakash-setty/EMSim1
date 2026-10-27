@@ -11,7 +11,8 @@
  *      section 15.1's third pattern, a scheduled natural history. No pack used it before,
  *      and the Python scenario runner could not walk it until the same day this file was
  *      written, so the assertions below check it from both ends: it fires with nobody
- *      doing anything, and it fires just the same after a flawless four minutes.
+ *      doing anything, and it fires just the same after a flawless four minutes. From 5
+ *      September to 27 October 2026 it had an escape; physician review DIPH-01 deleted it.
  *
  *   2. Physostigmine, the drug the case is built around. Until v0.18a its tag was gated
  *      on `study S resulted`, which scored reading the tracing and then giving the drug it
@@ -47,9 +48,7 @@ chk('nothing has happened before four minutes',
 chk('it fires at 240 and not later',
     fold(mk([]), 240).phase === 'seizing', fold(mk([]), 240).phase);
 
-/* The author's sentence, in the only form it still holds. Until 5 September 2026 this ran
-   with bicarbonate in it and still seized, which was her stated intention. It now has an
-   escape, so what is tested is the sentence minus the one drug that buys it. */
+/* The author's sentence. Physician review DIPH-01 (27 October 2026) restored it in full. */
 const perfect = fold(mk([[1, 'attach_monitor'], [2, 'insert_iv'], [3, 'fingerstick_blood_sugar'],
                          [4, 'ecg_12_lead'], [30, 'cooling_measures'],
                          [40, 'consult_toxicology'], [50, 'normal_saline_1l_bolus']]), 300);
@@ -57,98 +56,62 @@ chk('a flawless first four minutes without bicarbonate reaches the seizure just 
     perfect.phaseSeq.some(p => p.id === 'seizing'),
     JSON.stringify(perfect.phaseSeq.map(p => p.id)));
 
-section('the escape from the seizure needs both drugs');
-/* Added on 5 September 2026 and narrowed the same day. The guard is a conjunction because
-   bicarbonate is not an anticonvulsant: it treats the conduction, and what prevents a
-   drug-induced seizure is the benzodiazepine. See the author_rationale on the rule. */
+section('there is no escape from the seizure (physician review DIPH-01)');
 const bothDrugs = [[1, 'insert_iv'], [2, 'ecg_12_lead'], [20, 'lorazepam_bolus'],
                    [22, 'na_bicarbonate_bolus']];
-const escaped = fold(mk(bothDrugs), 300);
-chk('both drugs before four minutes leave the arrival phase',
-    escaped.phase === 'stabilizing', escaped.phase);
-chk('and the patient never convulses',
-    !escaped.phaseSeq.some(p => p.id === 'seizing'),
-    JSON.stringify(escaped.phaseSeq.map(p => p.id)));
-chk('the guard is a conjunction of bicarbonate and an anticonvulsant',
-    (PHASE['presentation'].transitions.find(t => t.to === 'stabilizing') || {}).when ===
-      'flag bicarb_given set AND (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)',
-    (PHASE['presentation'].transitions.find(t => t.to === 'stabilizing') || {}).when);
-chk('bicarbonate alone does not escape',
-    fold(mk([[1, 'insert_iv'], [2, 'ecg_12_lead'], [20, 'na_bicarbonate_bolus']]), 300)
-      .phase !== 'stabilizing');
-chk('and the patient still convulses on the clock',
-    fold(mk([[1, 'insert_iv'], [2, 'ecg_12_lead'], [20, 'na_bicarbonate_bolus']]), 300)
-      .phaseSeq.some(p => p.id === 'seizing'));
-chk('a benzodiazepine alone does not escape either',
-    fold(mk([[1, 'insert_iv'], [20, 'lorazepam_bolus']]), 300).phase !== 'stabilizing');
-chk('the escape takes ten seconds, matching the other two bicarbonate transitions',
-    fold(mk(bothDrugs), 27).phase === 'presentation' &&
-    fold(mk(bothDrugs), 33).phase === 'stabilizing');
-chk('all three bicarbonate transitions use the same ten seconds',
+const both = fold(mk(bothDrugs), 300);
+chk('both drugs before four minutes still reach the seizure',
+    both.phaseSeq.some(p => p.id === 'seizing'), JSON.stringify(both.phaseSeq.map(p => p.id)));
+chk('and she stays in the arrival phase until then',
+    fold(mk(bothDrugs), 239).phase === 'presentation', fold(mk(bothDrugs), 239).phase);
+chk('no rule takes her from arrival to the narrowing phase',
+    !PHASE['presentation'].transitions.some(t => t.to === 'stabilizing'));
+chk('the seizure rule is still unguarded and fires at 240',
+    PHASE['presentation'].transitions.some(t => t.to === 'seizing' && t.when === null && t.after_seconds === 240));
+chk('the drugs are not wasted: she is in the narrowing phase soon after',
+    fold(mk(bothDrugs.concat([[250, 'urinalysis']])), 300).phase === 'stabilizing',
+    fold(mk(bothDrugs.concat([[250, 'urinalysis']])), 300).phase);
+chk('the intended path goes through the seizure again',
+    JSON.stringify(CASE.debrief_configuration.intended_path) ===
+    '["presentation","seizing","post_ictal","stabilizing","stabilized","case_complete"]');
+chk('the seizure note tells the resident it was scheduled, not caused',
+    /every run/.test(PHASE['presentation'].transitions.find(t => t.to === 'seizing').debrief_note));
+chk('the bicarbonate transitions into the narrowing phase all take ten seconds',
     CASE.phases.flatMap(p => p.transitions)
       .filter(t => t.to === 'stabilizing' && t.after_seconds !== undefined)
-      .every(t => t.after_seconds === 10 && t.measured_from === 'guard_true'),
-    JSON.stringify(CASE.phases.flatMap(p => p.transitions)
-      .filter(t => t.to === 'stabilizing').map(t => t.after_seconds)));
-/* The boundary is 230 seconds and not 240, because the escape has to mature. A resident who
-   completes the pair during the last ten seconds seizes anyway, and then leaves the
-   post-ictal phase on the flags they already set. */
-chk('the pair completed at 225 seconds escapes',
-    fold(mk([[1, 'insert_iv'], [2, 'lorazepam_bolus'], [225, 'na_bicarbonate_bolus']]), 260)
-      .phase === 'stabilizing',
-    fold(mk([[1, 'insert_iv'], [2, 'lorazepam_bolus'], [225, 'na_bicarbonate_bolus']]), 260).phase);
-chk('completed at 235 seconds it does not, and the seizure fires first',
-    fold(mk([[1, 'insert_iv'], [2, 'lorazepam_bolus'], [235, 'na_bicarbonate_bolus']]), 260)
-      .phaseSeq.some(p => p.id === 'seizing'));
-chk('but neither flag is wasted: she is out of the seizure and narrowing shortly after',
-    fold(mk([[1, 'insert_iv'], [2, 'lorazepam_bolus'], [235, 'na_bicarbonate_bolus'],
-             [255, 'urinalysis'], [270, 'magnesium_level']]), 300).phase === 'stabilizing',
-    fold(mk([[1, 'insert_iv'], [2, 'lorazepam_bolus'], [235, 'na_bicarbonate_bolus'],
-             [255, 'urinalysis'], [270, 'magnesium_level']]), 300).phase);
-chk('the stabilizing phase now runs at 39.6 rather than 39.0',
-    PHASE['stabilizing'].vitals.temperature_c === 39.6,
-    String(PHASE['stabilizing'].vitals.temperature_c));
+      .every(t => t.after_seconds === 10 && t.measured_from === 'guard_true'));
+const stabPath = [[1, 'insert_iv'], [2, 'ecg_12_lead'], [245, 'lorazepam_bolus'], [246, 'na_bicarbonate_bolus']];
+chk('the stabilizing phase runs at 39.6',
+    PHASE['stabilizing'].vitals.temperature_c === 39.6, String(PHASE['stabilizing'].vitals.temperature_c));
 chk('and active cooling still takes 0.9 off it',
-    Math.abs(fold(mk(bothDrugs.concat([[40, 'cooling_measures']])), 100).vitals.temperature_c
-             - 38.7) < 0.001,
-    String(fold(mk(bothDrugs.concat([[40, 'cooling_measures']])), 100).vitals.temperature_c));
-chk('the narration on the escape is true of the numbers it introduces: the rate falls',
-    PHASE['stabilizing'].vitals.heart_rate < PHASE['presentation'].vitals.heart_rate);
-/* v0.18a. This used to record a gap: physostigmine given just before the escape matured
-   was absorbed by it. The tag now depends on the phase, so it halts. */
-chk('physostigmine given just before the escape matures halts the case',
+    Math.abs(fold(mk(stabPath.concat([[262, 'cooling_measures']])), 300).vitals.temperature_c - 38.7) < 0.001,
+    String(fold(mk(stabPath.concat([[262, 'cooling_measures']])), 300).vitals.temperature_c));
+chk('physostigmine after both drugs on arrival halts the case',
     fold(mk(bothDrugs.concat([[24, 'physostigmine']])), 300).phase === 'halted');
 
-section('amiodarone into the wide-complex rhythm arrests her at once');
+section('amiodarone into the wide-complex rhythm drops her pressure (physician review DIPH-12)');
 const amio = fold(mk([[1, 'insert_iv'], [370, 'amiodarone_bolus_infusion']]), 400);
-chk('it reaches the arrest phase', amio.phase === 'pulseless_vt', amio.phase);
-chk('instantaneously, not on a clock',
-    !amio.timeFires.some(f => f.to === 'pulseless_vt'),
-    JSON.stringify(amio.timeFires.map(f => f.to)));
-chk('the run is recorded as failed rather than halted', !!amio.failed && !amio.halted);
-chk('and the debrief will say it was ended by an action rather than by the clock',
-    amio.failed.byClock === false, String(amio.failed.byClock));
+const noAmio = fold(mk([[1, 'insert_iv']]), 400);
+chk('she stays in the wide-complex rhythm', amio.phase === 'wide_complex_tachycardia', amio.phase);
+chk('the systolic falls by 20 and the diastolic by 12',
+    amio.vitals.systolic_bp === noAmio.vitals.systolic_bp - 20 &&
+    amio.vitals.diastolic_bp === noAmio.vitals.diastolic_bp - 12,
+    amio.vitals.systolic_bp + '/' + amio.vitals.diastolic_bp);
+chk('after ten seconds, not on the click',
+    fold(mk([[1, 'insert_iv'], [370, 'amiodarone_bolus_infusion']]), 375).vitals.systolic_bp === noAmio.vitals.systolic_bp);
+chk('no transition reads the amiodarone flag any more',
+    !CASE.phases.some(p => (p.transitions || []).some(t => /amiodarone/.test(t.when || ''))));
 chk('the clock route still reports itself as the clock',
     fold(mk([]), 600).failed.byClock === true);
-chk('the arrest reason is true of both routes',
-    /either because two minutes passed|or because an antiarrhythmic/.test(amio.failed.reason),
-    amio.failed.reason);
 chk('outside that rhythm amiodarone is discouraged and nothing happens',
-    fold(mk([[1, 'insert_iv'], [2, 'amiodarone_bolus_infusion']]), 60).phase === 'presentation');
+    fold(mk([[1, 'insert_iv'], [2, 'amiodarone_bolus_infusion']]), 60).phase === 'presentation' &&
+    fold(mk([[1, 'insert_iv'], [2, 'amiodarone_bolus_infusion']]), 60).vitals.systolic_bp === PHASE['presentation'].vitals.systolic_bp);
 chk('and it is scored as discouraged rather than ignored',
     fold(mk([[1, 'insert_iv'], [2, 'amiodarone_bolus_infusion']]), 60)
       .discouragedTaken.has('amiodarone_bolus_infusion'));
-chk('it beats the bicarbonate rescue when both are given together',
+chk('with bicarbonate in the same phase, the bicarbonate still works',
     fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus'],
-             [371, 'amiodarone_bolus_infusion']]), 400).phase === 'pulseless_vt');
-chk('the amiodarone rule is listed before the bicarbonate rescue in that phase',
-    PHASE['wide_complex_tachycardia'].transitions
-      .findIndex(t => t.when === 'flag amiodarone_given set') <
-    PHASE['wide_complex_tachycardia'].transitions
-      .findIndex(t => t.when === 'flag bicarb_given set'));
-chk('the tag stays discouraged, because a harmful tag would halt before the rule is reached',
-    A['amiodarone_bolus_infusion'].tag.every(r => r.value === 'discouraged'),
-    JSON.stringify(A['amiodarone_bolus_infusion'].tag.map(r => r.value)));
+             [371, 'amiodarone_bolus_infusion']]), 400).phase === 'seizing');
 
 section('the do-nothing trajectory ends in cardiac arrest');
 const dead = fold(mk([]), 600);
@@ -190,13 +153,33 @@ chk('ten seconds after the bicarbonate, with a nurse line that says why',
                                   && f.after === 10) &&
     bicarbOnly.nurse.some(n => n.kind === 'deterioration' && /still seizing/.test(n.text)),
     JSON.stringify(bicarbOnly.timeFires.map(f => f.from + '>' + f.to + '@' + f.after)));
-chk('and she does not go back into the wide-complex rhythm on the clock',
-    fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus']]), 900).phase === 'seizing',
-    fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus']]), 900).phase);
-chk('the nurse is still asking for an anticonvulsant',
-    fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus']]), 900).promptFires
+/* Physician review DIPH-09: a seizure treated with bicarbonate and no anticonvulsant relapses
+   once into the wide-complex rhythm, three minutes after the seizing phase is entered. */
+const relapsed = fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus']]), 900);
+chk('three minutes later she relapses once into the wide-complex rhythm',
+    relapsed.phase === 'wide_complex_tachycardia' &&
+    relapsed.timeFires.some(f => f.from === 'seizing' && f.to === 'wide_complex_tachycardia' && f.after === 180),
+    JSON.stringify(relapsed.timeFires.map(f => f.from + '>' + f.to + '@' + f.after)));
+chk('the relapse is announced', relapsed.nurse.some(n => n.kind === 'deterioration' && /broad and fast again/.test(n.text)));
+chk('and the earlier bicarbonate does not narrow it again', relapsed.flags.has('seizure_relapsed') &&
+    !relapsed.flags.has('bicarb_after_relapse'));
+chk('she does not arrest on the clock in the relapsed rhythm', !relapsed.failed);
+const fresh = fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus'], [600, 'na_bicarbonate_bolus']]), 1200);
+chk('a fresh dose narrows it, and she is still seizing', fresh.phase === 'seizing', fresh.phase);
+chk('and she does not relapse a second time',
+    fresh.timeFires.filter(f => f.from === 'seizing' && f.to === 'wide_complex_tachycardia' && f.after === 180).length === 1);
+chk('a fresh dose and a benzodiazepine reach the narrowing phase',
+    fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus'], [600, 'lorazepam_bolus'],
+             [601, 'na_bicarbonate_bolus']]), 650).phase === 'stabilizing');
+chk('a benzodiazepine alone does not narrow the relapsed rhythm',
+    fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus'], [600, 'lorazepam_bolus']]), 650).phase === 'wide_complex_tachycardia');
+chk('a relapse from the first seizure needs bicarbonate given while seizing',
+    fold(mk([[1, 'insert_iv'], [250, 'na_bicarbonate_bolus']]), 430).phase === 'wide_complex_tachycardia' &&
+    fold(mk([[1, 'insert_iv'], [250, 'na_bicarbonate_bolus']]), 410).phase === 'seizing');
+chk('the nurse is still asking for an anticonvulsant back in the seizing phase',
+    fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus']]), 500).promptFires
       .some(p => p.id === 'lorazepam_bolus' && p.t > 380),
-    JSON.stringify(fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus']]), 900).promptFires
+    JSON.stringify(fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus']]), 500).promptFires
       .map(p => p.id + '@' + p.t)));
 chk('a benzodiazepine then takes her to stabilizing',
     fold(mk([[1, 'insert_iv'], [370, 'na_bicarbonate_bolus'], [400, 'lorazepam_bolus']]), 440)
@@ -220,15 +203,24 @@ const seen = fold(mk([[1, 'insert_iv'], [2, 'ecg_12_lead'], [20, 'physostigmine'
 chk('once the tracing has resulted it still halts the case', !!seen.halted, seen.phase);
 chk('in the wide-complex phase it halts',
     fold(mk([[1, 'insert_iv'], [370, 'physostigmine']]), 400).phase === 'halted');
-const late = fold(mk(bothDrugs.concat([[60, 'physostigmine']])), 120);
-chk('after she has stabilized it does not halt', !late.halted && late.phase === 'stabilizing',
+const stabilizedLog = [[1, 'insert_iv'], [2, 'ecg_12_lead'], [245, 'lorazepam_bolus'],
+  [246, 'na_bicarbonate_bolus'], [262, 'cooling_measures'], [263, 'consult_toxicology'], [270, 'urinalysis']];
+chk('in the narrowing phase it halts (physician review DIPH-02)',
+    fold(mk([[1, 'insert_iv'], [245, 'lorazepam_bolus'], [246, 'na_bicarbonate_bolus'],
+             [265, 'physostigmine']]), 300).phase === 'halted');
+const late = fold(mk(stabilizedLog.concat([[300, 'physostigmine']])), 330);
+chk('once she has stabilized it does not halt', !late.halted && late.phase === 'stabilized',
     late.phase);
 chk('and it is recorded as discouraged', late.discouragedTaken.has('physostigmine'));
 chk('no transition in the case reads the physostigmine flag any more',
     !CASE.phases.some(p => (p.transitions || []).some(t => /physostigmine/.test(t.when || ''))));
-chk('atropine is neutral throughout',
-    A['atropine_bolus'].tag.length === 1 && A['atropine_bolus'].tag[0].value === 'neutral',
+chk('atropine is discouraged throughout (physician review DIPH-22)',
+    A['atropine_bolus'].tag.length === 1 && A['atropine_bolus'].tag[0].value === 'discouraged',
     JSON.stringify(A['atropine_bolus'].tag));
+chk('and it raises her heart rate by 15 after ten seconds, for five minutes',
+    fold(mk([[1, 'insert_iv'], [2, 'atropine_bolus']]), 30).vitals.heart_rate === PHASE['presentation'].vitals.heart_rate + 15 &&
+    fold(mk([[1, 'insert_iv'], [2, 'atropine_bolus']]), 8).vitals.heart_rate === PHASE['presentation'].vitals.heart_rate &&
+    fold(mk([[1, 'insert_iv'], [2, 'atropine_bolus']]), 239).vitals.heart_rate === PHASE['presentation'].vitals.heart_rate + 15);
 
 section('physostigmine is reachable rather than blocked, which is the point');
 chk('it authors no case prerequisite of its own',
@@ -241,7 +233,7 @@ chk('the blocked attempt is recorded', noLine.blocked.length === 1,
     JSON.stringify(noLine.blocked.map(b => b.id)));
 chk('and it set no flag', !noLine.flags.has('physostigmine_given'));
 
-section('the other three harmful actions');
+section('the other harmful actions');
 chk('flumazenil after a benzodiazepine halts',
     fold(mk([[1, 'insert_iv'], [2, 'lorazepam_bolus'], [3, 'flumazenil']]), 30).phase === 'halted');
 chk('flumazenil with nothing to reverse is discouraged and does not halt',
@@ -261,7 +253,14 @@ chk('it is discouraged only once she has stabilized',
     JSON.stringify(A['procainamide_drip'].tag));
 chk('every harmful action in this case carries a halt reason',
     HARMFUL.every(id => !!A[id].halt_reason), HARMFUL.join(', '));
-chk('four actions can be harmful here', HARMFUL.length === 4, HARMFUL.join(', '));
+chk('propranolol while the QRS is wide halts (physician review DIPH-27)',
+    fold(mk([[1, 'insert_iv'], [2, 'propranolol_bolus']]), 30).phase === 'halted');
+chk('and once she has stabilized it is discouraged and does not halt',
+    fold(mk(stabilizedLog.concat([[300, 'propranolol_bolus']])), 330).phase === 'stabilized' &&
+    fold(mk(stabilizedLog.concat([[300, 'propranolol_bolus']])), 330).discouragedTaken.has('propranolol_bolus'));
+chk('propranolol and physostigmine share the same harmful phases',
+    A['propranolol_bolus'].tag[0].when === A['physostigmine'].tag[0].when);
+chk('five actions can be harmful here', HARMFUL.length === 5, HARMFUL.join(', '));
 
 section('the arrival tracing is a picture, and carries no reading');
 /* v0.12. The arrival ECG and the chest film are authored as images with no report text at
@@ -287,8 +286,8 @@ chk('it has a caption to title the viewer with', !!arrivalEcg.caption, arrivalEc
 chk('the caption is a label rather than a reading',
     !/wide|narrow|blockade|sinus|QRS|aVR|ms\b|toxic/i.test(arrivalEcg.caption),
     arrivalEcg.caption);
-const laterEcg = val(fold(mk([[1, 'insert_iv'], [2, 'ecg_12_lead'], [20, 'lorazepam_bolus'],
-                              [22, 'na_bicarbonate_bolus'], [40, 'ecg_12_lead']]), 60),
+const laterEcg = val(fold(mk([[1, 'insert_iv'], [2, 'ecg_12_lead'], [245, 'lorazepam_bolus'],
+                              [246, 'na_bicarbonate_bolus'], [270, 'ecg_12_lead']]), 290),
                      'ecg_12_lead');
 chk('the narrowing phase shows its generated tracing',
     laterEcg.kind === 'image' && laterEcg.image === 'diph-ecg-stabilizing' && !!PROTO.media[laterEcg.image],
@@ -445,14 +444,16 @@ chk('one tracing does not set the repeat flag',
     !fold(mk([[1, 'ecg_12_lead']]), 40).flags.has('ecg_repeated'));
 chk('two tracings do',
     fold(mk([[1, 'ecg_12_lead'], [30, 'ecg_12_lead']]), 60).flags.has('ecg_repeated'));
-chk('the nurse says the delay out loud when the drug goes in',
-    one.nurse.some(n => /minute or two/.test(n.text || '')),
+chk('the nurse says the delay out loud when the drug goes in (physician review DIPH-41)',
+    one.nurse.some(n => /few seconds/.test(n.text || '')),
     JSON.stringify(one.nurse.map(n => n.kind)));
 
 section('the bicarbonate obligations open and close');
 chk('one bolus leaves the reassessment obligation open',
     one.fuOutstanding.has('bicarbonate_reassessment'), [...one.fuOutstanding].join(', '));
 chk('a second bolus discharges it', !two.fuOutstanding.has('bicarbonate_reassessment'));
+chk('the nurse no longer asks "Do you want bicarb?" (owner, 27 October 2026)',
+    !A['na_bicarbonate_bolus'].prompt.escalation && !/bicarb/i.test(A['na_bicarbonate_bolus'].prompt.text));
 chk('so does starting an infusion',
     !fold(mk([[1, 'insert_iv'], [2, 'na_bicarbonate_bolus'],
               [30, 'na_bicarbonate_infusion']]), 90).fuOutstanding.has('bicarbonate_reassessment'));
@@ -474,15 +475,17 @@ chk('vancomycin carries the antibiotic flag through the ceftriaxone coverage',
 chk('magnesium through the bolus entry sets the same flag',
     fold(mk([[1, 'insert_iv'], [2, 'magnesium_sulfate_bolus']]), 30).flags.has('magnesium_given'));
 
-section('the empirical sepsis road is right at time zero and wrong afterwards');
-chk('antibiotics on arrival are not discouraged',
-    !fold(mk([[1, 'insert_iv'], [2, 'ceftriaxone']]), 30).discouragedTaken.has('ceftriaxone'));
-chk('after the toxicology screen has resulted they are',
-    fold(mk([[1, 'insert_iv'], [2, 'urine_tox_screen'], [20, 'ceftriaxone']]), 40)
+section('the empirical sepsis road is right at time zero and neutral afterwards (DIPH-08)');
+chk('antibiotics on arrival are recommended',
+    fold(mk([[1, 'insert_iv'], [2, 'ceftriaxone']]), 30).recommendedTaken.has('ceftriaxone'));
+chk('after the toxicology screen has resulted they are not discouraged',
+    !fold(mk([[1, 'insert_iv'], [2, 'urine_tox_screen'], [20, 'ceftriaxone']]), 40)
       .discouragedTaken.has('ceftriaxone'));
-chk('the same switch applies to the lumbar puncture',
-    fold(mk([[1, 'insert_iv'], [2, 'urine_tox_screen'], [20, 'lumbar_puncture']]), 40)
+chk('nor is the lumbar puncture on arrival',
+    !fold(mk([[1, 'insert_iv'], [2, 'urine_tox_screen'], [20, 'lumbar_puncture']]), 40)
       .discouragedTaken.has('lumbar_puncture'));
+chk('no tag in the case reads the urine screen',
+    !CASE.case_actions.some(a => a.tag.some(r => /urine_tox_screen/.test(r.when || ''))));
 
 section('charcoal turns on the airway rather than on the drug');
 chk('discouraged in an unprotected airway',
@@ -495,6 +498,8 @@ chk('intubation actually proceeds once she is sedated and paralyzed',
     JSON.stringify(tubed.blocked.map(b => b.id)));
 chk('and charcoal is no longer discouraged',
     !tubed.discouragedTaken.has('activated_charcoal'));
+chk('nor recommended: it is neutral once she is intubated (DIPH-39)',
+    !tubed.recommendedTaken.has('activated_charcoal'));
 
 section('the rescue therapies are ordered behind bicarbonate');
 chk('lidocaine before bicarbonate in the wide-complex phase is discouraged',
@@ -584,8 +589,8 @@ chk('the bottle disclosure is an authored topic and names Benadryl',
 chk('no interview answer names a diagnosis',
     !/anticholinergic|toxidrome|sodium.channel/i.test(
       JSON.stringify(CASE.interview.topics.map(t => t.answer))));
-chk('the disclosure also reaches a resident who never asks, through the nurse',
-    /Benadryl/.test(JSON.stringify(A['consult_toxicology'].prompt)));
+chk('the nurse no longer discloses the bottle (physician review DIPH-43)',
+    !/Benadryl|bottle/.test(JSON.stringify(A['consult_toxicology'].prompt)));
 chk('every topic carries an echo phrase for the clarifying question',
     CASE.interview.topics.every(t => !!t.echo),
     CASE.interview.topics.filter(t => !t.echo).map(t => t.topic).join(', '));
@@ -605,3 +610,59 @@ section('volunteered answers (v0.18a)');
         .every(m => CASE.interview.must_ask.includes(m)
                  && !CASE.interview.topics.some(t => (t.adjacent || []).includes(m))));
 }
+
+section('physician review, 27 October 2026 (Aakash Setty)');
+chk('phenytoin on arrival moves her to the wide-complex rhythm after ten seconds (DIPH-23)',
+    fold(mk([[1, 'insert_iv'], [2, 'fos_phenytoin']]), 11).phase === 'presentation' &&
+    fold(mk([[1, 'insert_iv'], [2, 'fos_phenytoin']]), 13).phase === 'wide_complex_tachycardia');
+chk('and so does phenytoin after the seizure',
+    fold(mk([[1, 'insert_iv'], [245, 'lorazepam_bolus'], [250, 'fos_phenytoin']]), 270).phase === 'wide_complex_tachycardia');
+chk('phenytoin is still discouraged, not harmful',
+    A['fos_phenytoin'].tag.every(r => r.value === 'discouraged'));
+chk('after phenytoin on arrival, bicarbonate alone takes her to the seizing phase',
+    fold(mk([[1, 'insert_iv'], [2, 'fos_phenytoin'], [20, 'na_bicarbonate_bolus']]), 40).phase === 'seizing');
+chk('lorazepam is critical only while she is seizing (DIPH-32)',
+    A['lorazepam_bolus'].tag.length === 2 && A['lorazepam_bolus'].tag[0].when === 'phase is seizing' &&
+    A['lorazepam_bolus'].tag[0].value === 'critical' && A['lorazepam_bolus'].tag[1].value === 'recommended');
+chk('critical care consultation is recommended', A['consult_critical_care'].tag.every(r => r.value === 'recommended'));
+chk('levetiracetam is discouraged before a benzodiazepine and neutral after (DIPH-10)',
+    fold(mk([[1, 'insert_iv'], [2, 'levetiracetam_bolus']]), 20).discouragedTaken.has('levetiracetam_bolus') &&
+    !fold(mk([[1, 'insert_iv'], [2, 'lorazepam_bolus'], [3, 'levetiracetam_bolus']]), 20).discouragedTaken.has('levetiracetam_bolus'));
+chk('naloxone is neutral throughout (DIPH-37)', A['naloxone_bolus'].tag.every(r => r.value === 'neutral'));
+chk('synchronized cardioversion is neutral in the wide-complex rhythm (DIPH-40)',
+    !fold(mk([[1, 'insert_iv'], [370, 'synchronized_cardioversion']]), 380).discouragedTaken.has('synchronized_cardioversion') &&
+    fold(mk([[1, 'insert_iv'], [2, 'synchronized_cardioversion']]), 20).discouragedTaken.has('synchronized_cardioversion'));
+chk('psychiatry is not credited in the post-ictal phase (DIPH-31)',
+    !fold(mk([[1, 'insert_iv'], [245, 'lorazepam_bolus'], [250, 'consult_psychiatry']]), 260).recommendedTaken.has('consult_psychiatry'));
+chk('the magnesium is normal and magnesium sulfate is neutral (DIPH-18)',
+    fold(mk([[1, 'magnesium_level']]), 30).orders.magnesium_level[0].value.components[0].value === '2.0' &&
+    A['magnesium_sulfate'].tag.every(r => r.value === 'neutral'));
+const ua = fold(mk([[1, 'urinalysis']]), 30).orders.urinalysis[0].value.components;
+chk('the urinalysis is negative for blood and concentrated (DIPH-20)',
+    get(ua, 'Blood') === 'Negative' && get(ua, 'Specific gravity') === '1.030' &&
+    ua.find(c => c.label === 'Specific gravity').abnormal);
+chk('pregnancy is no longer a key topic (DIPH-34)',
+    !CASE.interview.key_topics.includes('pregnancy') && CASE.interview.key_topics.length === 11);
+chk('six learning objectives (DIPH-35)', CASE.metadata.learning_objectives.length === 6 &&
+    CASE.metadata.learning_objectives.some(o => /toxicology/.test(o) && /critical care/.test(o)));
+chk('flumazenil halt reason is true in every phase (DIPH-07)',
+    !/never been treated/.test(A['flumazenil'].halt_reason));
+const toxC = CASE.content_keys.consultants.consult_toxicology, ccC = CASE.content_keys.consultants.consult_critical_care;
+chk('toxicology and critical care answer by phase first (DIPH-30)',
+    toxC[0].when === 'phase is wide_complex_tachycardia' && toxC[1].when === 'phase is seizing' &&
+    ccC[0].when === 'phase is wide_complex_tachycardia' && ccC[1].when === 'phase is seizing' &&
+    ![toxC[0], toxC[1], ccC[0], ccC[1]].some(r => /132/.test(r.value)));
+chk('cardiology reads the repeat only once there is one',
+    CASE.content_keys.consultants.consult_cardiology[1].when.indexOf('flag ecg_repeated set') >= 0);
+const wctSeizing = fold(mk([[1, 'insert_iv']]), 370);
+const wctPost = fold(mk([[1, 'insert_iv'], [245, 'lorazepam_bolus']]), 440);
+chk('reached still seizing, the wide-complex phase draws and examines a seizing patient (DIPH-29)',
+    wctSeizing.phase === 'wide_complex_tachycardia' && patientVisual(wctSeizing).value.seizure === true &&
+    /seizing/i.test(resolve(CASE.content_keys.exam.exam_neuro, wctSeizing).findings));
+chk('reached from the post-ictal phase, eyes closed and obtunded',
+    wctPost.phase === 'wide_complex_tachycardia' && patientVisual(wctPost).value.eyes === 'closed' &&
+    !patientVisual(wctPost).value.seizure &&
+    /Obtunded/.test(resolve(CASE.content_keys.exam.exam_neuro, wctPost).findings));
+chk('and she is not talking in that phase',
+    !/Talking/.test(resolve(CASE.content_keys.exam.exam_airway, wctPost).findings) &&
+    /22/.test(resolve(CASE.content_keys.exam.exam_breath, wctPost).findings));

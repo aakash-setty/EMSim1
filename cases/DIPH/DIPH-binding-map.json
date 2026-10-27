@@ -470,12 +470,12 @@
    "catalog_id": "labetalol_bolus"
   },
   {
-   "case_id": "propranolol_bolus",
-   "catalog_id": "propranolol_bolus"
-  },
-  {
    "case_id": "epinephrine_bolus",
    "catalog_id": "epinephrine_bolus"
+  },
+  {
+   "case_id": "propranolol_bolus",
+   "catalog_id": "propranolol_bolus"
   }
  ]
 }

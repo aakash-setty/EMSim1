@@ -23,12 +23,15 @@ META = {
  "target_level": ["junior_resident", "senior_resident"],
  "estimated_runtime_seconds": 720,
  "learning_objectives": [
-   "Recognize the clinical features of diphenhydramine toxicity at the bedside: the delirium, the mydriasis, the dry hot skin, the absent bowel sounds, the retained urine and the temperature.",
-   "Obtain an early twelve-lead ECG in any significant overdose, and identify the findings of cardiac sodium-channel blockade on it: a QRS above 100 milliseconds, a terminal R wave in lead aVR, and a rightward terminal axis.",
-   "Separate uncomplicated anticholinergic delirium from life-threatening cardiotoxicity, and state what changes when the QRS is wide.",
-   "Give sodium bicarbonate for QRS widening or ventricular dysrhythmia, and titrate repeat boluses to the QRS and the blood pressure rather than to a fixed number of ampoules.",
-   "State why physostigmine is contraindicated in a patient with a wide QRS, and what the ECG has to show before it could be considered at all.",
-   "Treat the agitation, the seizure and the hyperthermia with benzodiazepines, sedation and active cooling rather than with antipsychotics and antipyretics.",
+   # Physician review DIPH-35 (Aakash Setty, 27 October 2026): rewritten as behaviors the
+   # case can observe, within six. Objectives 2 and 3 merged, 5 rewritten, and toxicology and
+   # critical care added. Model wording.
+   "Examine for and name the bedside features of diphenhydramine toxicity: the delirium, the large pupils, the dry hot skin, the absent bowel sounds, the full bladder and the temperature.",
+   "Order a twelve-lead ECG early in any significant overdose, and act on the signs of cardiac sodium-channel blockade: a QRS over 100 milliseconds, a terminal R wave in aVR and a rightward terminal axis.",
+   "Give sodium bicarbonate for a wide QRS or a wide-complex rhythm, and repeat it against the QRS and the blood pressure rather than a fixed number of ampoules.",
+   "Withhold physostigmine while the QRS is wide.",
+   "Treat the agitation, the seizure and the hyperthermia with benzodiazepines, sedation and active cooling, not with antipsychotics and antipyretics.",
+   "Call toxicology early and arrange a critical care bed for a poisoning with a wide QRS.",
  ],
  "teaching_frame": (
    "A resident who reaches the end of this case having recognized an anticholinergic toxidrome, "
@@ -214,28 +217,46 @@ SEIZURE_RATIONALE = (
   "The clinical claim behind it is hers: a patient four hours into a diphenhydramine "
   "ingestion large enough to widen the QRS is going to seize. The deadline is her own four "
   "minutes, carried at its authored value.\n\n"
-  "**The rule is unguarded and it is no longer unavoidable, and the difference matters.** "
-  "Since 5 September 2026 the rule above it moves a patient who has received both sodium bicarbonate and a benzodiazepine out of this phase after ten seconds, so a resident who treats the conduction "
-  "before four minutes never reaches this rule at all. Nothing about this rule changed; it "
-  "was given an escape. Whether that escape should exist is the open question in the "
-  "rationale on the rule above, and it is the one place in this pack where the conversion "
-  "departs from a sentence the case author wrote in her own words.")
+  "From 5 September to 27 October 2026 a rule above this one moved a patient who had received "
+  "both sodium bicarbonate and a benzodiazepine out of the arrival phase before four minutes, "
+  "so the seizure could be avoided. Physician review DIPH-01 (Aakash Setty, 27 October 2026) "
+  "deleted that escape and restored the author's sentence: every run that has not ended by "
+  "four minutes seizes.")
 
 SEIZURE_NARRATION = (
   "She's stiffened up and she's seizing. I'm putting her on her side and I've got the suction. "
   "Her sats are dropping.")
 
 SEIZURE_NOTE = (
-  "She seized. The case schedules this at four minutes as the natural history of the ingestion, and only a run that gave both a benzodiazepine and sodium bicarbonate before then avoids it: it is written into the case as the natural history of "
-  "the ingestion rather than as a consequence of anything done or not done, and it fires at four "
-  "minutes whatever the resident has achieved by then. What the four minutes before it were for "
-  "was the monitor, the line, the glucose and above all the ECG, because the seizure is far "
-  "easier to manage in a patient whose conduction you already understand.\n\n"
+  "She seized at four minutes. The case schedules this: the case author wrote it as the "
+  "natural history of the ingestion, and it happens in every run whatever was done before it. "
+  "It does not mean you did something wrong. What the four minutes before it were for was the "
+  "monitor, the line, the glucose and above all the ECG, because the seizure is far easier to "
+  "manage in a patient whose conduction you already understand. Bicarbonate given before it is "
+  "not wasted: it narrows the QRS once the convulsion has stopped.\n\n"
   "The physiology worth carrying away: the seizure is not an isolated neurological event here. "
   "Convulsion produces lactate and carbon dioxide, and acidemia increases the fraction of the drug that is ionized, which is the charged form that binds the cardiac sodium channel. A seizure in a "
   "sodium-channel-blocker overdose therefore makes the cardiotoxicity worse while it is "
   "happening, which is why it is terminated with a benzodiazepine at once and why ventilation "
   "matters as much as the anticonvulsant does.")
+
+# Physician review DIPH-23 (Aakash Setty, 27 October 2026): phenytoin stays discouraged and
+# now has a consequence, on arrival and after the seizure.
+PHENYTOIN_NARRATION = (
+  "Her rate's gone up and the complexes on the monitor have gone broad since the phenytoin. "
+  "She's still got a pressure but it's down.")
+PHENYTOIN_NOTE = (
+  "Phenytoin widened her QRS into a wide-complex tachycardia. It acts on the same cardiac "
+  "sodium channels the diphenhydramine is already blocking, so it added to a block that was "
+  "already 132 milliseconds wide. The treatment now is sodium bicarbonate.\n\n"
+  "For a seizure in this poisoning, give a benzodiazepine, then propofol or levetiracetam if "
+  "it recurs. Not phenytoin.")
+PHENYTOIN_RATIONALE = (
+  "Physician review DIPH-23 (Aakash Setty, 27 October 2026), option C: discouraged with a "
+  "consequence. The direction follows the author's warning that Dilantin 'should be avoided "
+  "since it also prolongs sodium channels'. The ten seconds is invented and matches the "
+  "case's other drug effects. The harm is extrapolated from tricyclic and animal data rather "
+  "than shown in humans, which is why the tag stays discouraged rather than harmful.")
 
 # v0.18a: the physostigmine seizure arrow and its narration were removed. Physostigmine is
 # harmful in every phase in which the QRS is wide, so the arrow could never fire.
@@ -249,57 +270,22 @@ PHASES = [
    "at it. She is perfusing and her saturation is normal.",
    135, 130, 75, 25, 98, 40.1, 3, 0,
    [HANDOFF_T,
-    {"when": "flag bicarb_given set AND " + SEIZURE_STOPPED,
+    # Physician review DIPH-01 (Aakash Setty, 27 October 2026): the escape that took a
+    # patient given bicarbonate and a benzodiazepine to the narrowing phase before four
+    # minutes is deleted. Every run that has not ended by 240 seconds seizes.
+    {"when": "action fos_phenytoin taken",
      "after_seconds": 10,
      "measured_from": "guard_true",
-     "to": "stabilizing",
-     "narration": ("The complexes have narrowed and her rate's coming down. That's since "
-                   "the bicarb went in."),
-     "debrief_note": (
-       "You found the conduction abnormality and treated it before anything else happened, "
-       "and the case gives you the credit for that: the QRS narrows and she does not "
-       "convulse.\n\n"
-       "What earned it was the order of the first two minutes. The toxidrome is visible on "
-       "examination and the sodium-channel blockade is only visible on a tracing, so a "
-       "resident who reaches this phase has ordered an ECG early, read the QRS rather than "
-       "the rate, and acted on it without waiting for a level, a screen or a history. "
-       "Bicarbonate here is given for the tracing and not for the ingestion, which is the "
-       "single most transferable thing in this case.\n\n"
-       "She is not well. She is still 39.6 degrees, still delirious, still mydriatic and "
-       "still absorbing drug from a gut her own antimuscarinic effect has slowed down. The "
-       "QRS can widen again when the bicarbonate stops. Cool her, sedate her, keep her on "
-       "the monitor, repeat the tracing, and call toxicology."),
-     "author_rationale": (
-       "A delayed consequence of the resident's own action, so the five-second floor "
-       "applies rather than the thirty-second one, and ten seconds matches the two other "
-       "bicarbonate transitions in this case rather than introducing a third number.\n\n"
-       "AUTHOR NOTE. This arrow was added on Aakash Setty's instruction of 5 September 2026 "
-       "and it is a departure from the case author's own sentence, quoted in the rule below: "
-       "'A seizure will occur as part of the natural process, regardless of how well the "
-       "examinee is doing.' With this rule in place that is no longer true. A resident who "
-       "gets both drugs in before about 230 seconds leaves the arrival phase and never "
-       "convulses, so the seizure has become preventable.\n\n"
-       "The guard requires BOTH drugs, and that is what makes the claim defensible. An "
-       "earlier draft required sodium bicarbonate alone, which was a weak claim dressed as a "
-       "mechanism: bicarbonate is not an anticonvulsant. It treats the cardiac sodium-channel "
-       "blockade and, by correcting the acidemia, reduces the ionized fraction of drug that binds that channel, which is an indirect argument at best, and the agent "
-       "lowering her seizure threshold is still on board and still being absorbed from a gut "
-       "its own antimuscarinic effect has slowed down. The drug that prevents a drug-induced "
-       "seizure is a benzodiazepine, and the guard now says so.\n\n"
-       "Requiring both also makes the rule say something this case wanted to teach anyway: "
-       "the two things that matter in the first four minutes are sedating the agitation, "
-       "which is generating the heat and the acid and is itself worsening the cardiotoxicity, "
-       "and treating the conduction. Neither alone is enough, and the escape is now a reward "
-       "for doing both rather than for reaching for one drug.\n\n"
-       "What remains a teaching choice rather than a physiological certainty is that the "
-       "combination PREVENTS the seizure rather than making it less likely. A patient who has "
-       "swallowed a gram of diphenhydramine may seize through an adequate benzodiazepine "
-       "dose. Deleting this rule restores the author's sentence exactly and nothing else in "
-       "the pack depends on it.")},
+     "to": "wide_complex_tachycardia",
+     "narration": PHENYTOIN_NARRATION,
+     "debrief_note": PHENYTOIN_NOTE,
+     "author_rationale": PHENYTOIN_RATIONALE},
     {"when": None,
      "after_seconds": 240,
      "measured_from": "phase_entry",
      "to": "seizing",
+     # She has now seized, which the wide-complex phase reads (DIPH-29 and the phenytoin route).
+     "flags_set": ["seized"],
      "narration": SEIZURE_NARRATION,
      "debrief_note": SEIZURE_NOTE,
      "author_rationale": SEIZURE_RATIONALE,
@@ -335,7 +321,29 @@ PHASES = [
        "author's: she specifies that the seizure happens and that lorazepam and bicarbonate "
        "are given, and does not say how long an untreated seizure is tolerated. It is set at "
        "the shorter end of what is defensible because the case has already established the "
-       "acidemia. Needs the author's signature.")}],
+       "acidemia. Needs the author's signature.")},
+    # Physician review DIPH-09 (Aakash Setty, 27 October 2026), option B: a one-time relapse.
+    {"when": "NOT " + SEIZURE_STOPPED + " AND flag bicarb_given set AND NOT flag seizure_relapsed set",
+     "after_seconds": 180,
+     "measured_from": "phase_entry",
+     "to": "wide_complex_tachycardia",
+     "flags_set": ["seizure_relapsed"],
+     "narration": "She's still seizing, and the complexes on the monitor have gone broad and fast again. Her pressure's down.",
+     "debrief_note": (
+       "Bicarbonate without an anticonvulsant bought time and did not end the problem. She kept "
+       "seizing for three minutes, the convulsion went on making heat and acid, and the QRS "
+       "widened back into a wide-complex tachycardia. The bicarbonate already given is used "
+       "up: the rhythm needs a fresh dose.\n\n"
+       "Bicarbonate treats the conduction. A benzodiazepine is what ends the seizure, and the "
+       "nurse asked for one."),
+     "author_rationale": (
+       "Physician review DIPH-09 (Aakash Setty, 27 October 2026), option B. A seizure treated "
+       "with bicarbonate and no anticonvulsant relapses once into the wide-complex rhythm, "
+       "three minutes after this phase is entered. It happens once: the transition grants "
+       "seizure_relapsed, and the guard needs it unset. In the wide-complex phase only a "
+       "bicarbonate dose given after the relapse (flag bicarb_after_relapse) narrows the rhythm "
+       "again. Three minutes is invented and needs a signature. No second arrest clock is "
+       "authored for the relapsed rhythm: she stays in it until fresh bicarbonate is given.")}],
    ),
 
  phase("post_ictal",
@@ -365,6 +373,14 @@ PHASES = [
      "author_rationale": (
        "A delayed consequence of the resident's own action, so the five-second floor applies. "
        "The size of the compression is a drafting judgment.")},
+    # After the bicarbonate rescue, so a resident who gives both at once is rescued.
+    {"when": "action fos_phenytoin taken",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "wide_complex_tachycardia",
+     "narration": PHENYTOIN_NARRATION,
+     "debrief_note": PHENYTOIN_NOTE,
+     "author_rationale": PHENYTOIN_RATIONALE},
     {"when": "NOT flag bicarb_given set",
      "after_seconds": 180,
      "measured_from": "phase_entry",
@@ -395,27 +411,14 @@ PHASES = [
    "is the last phase in which bicarbonate can still turn the case around.",
    180, 95, 60, 22, 90, 40.0, 3, 2, react="sluggish",
    transitions=[HANDOFF_T,
-    {"when": "flag amiodarone_given set",
-     "to": "pulseless_vt",
-     "author_note": (
-       "Instantaneous, and the only transition in this pack that reaches a terminal phase "
-       "without a clock. Added on instruction, 5 September 2026.\n\n"
-       "Why it is a transition rather than a harmful tag. A harmful tag halts the case into "
-       "the shared halted phase, which carries generic bradycardic peri-arrest numbers, and "
-       "those are wrong here: this patient does not slow down and stop, she degenerates into "
-       "a faster and wider rhythm and loses output. Reaching the arrest phase puts her on the "
-       "numbers and the tracing this case already authors for it.\n\n"
-       "Two costs of that choice, both real. Amiodarone stays tagged discouraged rather than "
-       "harmful, because a harmful tag would halt the case and this rule would never be "
-       "reached, so it costs one point on its tab rather than zeroing it; the run is still "
-       "recorded as failed, which is what the learner sees. And the arrest phase's "
-       "timeout_reason now has to be true of two routes rather than one, so it is rewritten "
-       "to name the outcome they share and both causes.\n\n"
-       "It is placed first among the clinical rules so that a resident who writes bicarbonate "
-       "and amiodarone in the same batch of orders gets the amiodarone consequence rather "
-       "than the rescue. That is deliberate: the amiodarone is the more instructive event, "
-       "and treating the mechanism does not undo an agent that adds to the block.")},
-    {"when": "flag bicarb_given set AND " + SEIZURE_STOPPED,
+    # Physician review DIPH-12 (Aakash Setty, 27 October 2026): the amiodarone arrest arrow
+    # is deleted. Amiodarone now drops her pressure through a vital effect on the action.
+    #
+    # Physician review DIPH-09: after a relapse (seizure_relapsed, granted by the seizing
+    # phase's relapse rule) only a dose given after it (bicarb_after_relapse) works, so each
+    # bicarbonate rule has a relapse twin. Separate rules rather than one OR, so each has its
+    # own guard_true clock.
+    {"when": "flag bicarb_given set AND NOT flag seizure_relapsed set AND " + SEIZURE_STOPPED,
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "stabilizing",
@@ -431,10 +434,41 @@ PHASES = [
        "the potassium, the ionized calcium and the pH, because the complications of the "
        "treatment are hypernatremia, hypokalemia and alkalemia."),
      "author_rationale": "As above. A delayed consequence of the resident's own action."},
-    # Placed after the rescue so that bicarbonate and an anticonvulsant together still
-    # reach stabilizing when both are due at once. Its guard names no negated flag, so it
-    # is a delayed consequence of the bicarbonate rather than a deterioration on inaction.
-    {"when": "flag bicarb_given set",
+    {"when": "flag bicarb_given set AND flag bicarb_after_relapse set AND " + SEIZURE_STOPPED,
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "stabilizing",
+     "narration": "The complexes have narrowed and the rate's come down. That's the fresh bicarb.",
+     "debrief_note": (
+       "Sodium bicarbonate terminated the wide-complex rhythm. This is the treatment for a "
+       "wide-complex tachycardia caused by sodium-channel blockade, and it is not the treatment "
+       "a standard wide-complex algorithm reaches for first. Amiodarone is at best unhelpful "
+       "here and a class IA or IC agent makes the block worse.\n\n"
+       "Give it as repeated boluses of 1 to 2 mEq/kg and reassess the QRS and the pressure "
+       "after each one, rather than deciding in advance how many ampoules the patient will "
+       "get. Follow it with an infusion once the complexes have narrowed, and watch the sodium, "
+       "the potassium, the ionized calcium and the pH, because the complications of the "
+       "treatment are hypernatremia, hypokalemia and alkalemia."),
+     "author_rationale": "The relapse twin of the rule above (DIPH-09). A fresh dose after the relapse."},
+    # Reached from arrival through phenytoin (DIPH-23), she has not yet had the scheduled
+    # seizure. Bicarbonate alone narrows the rhythm and the seizure comes now.
+    {"when": "flag bicarb_given set AND NOT flag seized set",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "seizing",
+     "flags_set": ["seized"],
+     "narration": ("The complexes have narrowed since the bicarb. Now she's stiffened up and "
+                   "she's seizing."),
+     "debrief_note": (
+       "Sodium bicarbonate narrowed the complexes and ended the wide-complex rhythm. She then "
+       "had the seizure this case schedules for every patient. Bicarbonate is not an "
+       "anticonvulsant: a benzodiazepine ends it."),
+     "author_rationale": (
+       "Only reachable after phenytoin on arrival (DIPH-23), the one route into the "
+       "wide-complex phase that has not been through the seizure. Returning her to the "
+       "seizing phase keeps the author's scheduled seizure in every run, which DIPH-01 asks "
+       "for. Model judgment, needs a signature.")},
+    {"when": "flag bicarb_given set AND NOT flag seizure_relapsed set",
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "seizing",
@@ -453,6 +487,20 @@ PHASES = [
        "the other bicarbonate transitions. A resident who gives the anticonvulsant a few "
        "seconds after the bicarbonate passes through the seizing phase on the way and still "
        "reaches stabilizing, ten seconds later. Needs the author's signature.")},
+    # bicarb_given is implied, and written out so the validator can see the loop through the
+    # untreated-seizure rule cannot repeat.
+    {"when": "flag bicarb_given set AND flag bicarb_after_relapse set",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "seizing",
+     "narration": ("The complexes have narrowed again since the bicarb. She's still seizing, "
+                   "though."),
+     "debrief_note": (
+       "Sodium bicarbonate narrowed the complexes and ended the wide-complex rhythm, but it is "
+       "not an anticonvulsant and she kept seizing. The convulsion goes on producing heat and "
+       "acid, and both will widen the QRS again. A benzodiazepine is what ends it, with "
+       "propofol as the next step if it does not."),
+     "author_rationale": "The relapse twin of the rule above (DIPH-09). She does not relapse a second time."},
     {"when": "NOT flag bicarb_given set",
      "after_seconds": 120,
      "measured_from": "phase_entry",
@@ -477,10 +525,11 @@ PHASES = [
        "Death by clock is forbidden by the validator unless a case opts in explicitly. It is "
        "authored here because the author states the progression to pulseless VT in her own "
        "narrative description of the case, because untreated sodium-channel-blocker "
-       "cardiotoxicity genuinely does this, and because bicarbonate has been prompted for by "
-       "the nurse in this phase at 20 seconds and again at 70, and in the phase before this "
-       "one at 25 and at 90. A resident reaching this transition has been asked for "
-       "bicarbonate four times.")}],
+       "cardiotoxicity genuinely does this, and because the nurse has said the complexes look "
+       "broad and asked what the resident wants to give for them, at 25 seconds in this phase "
+       "and at 25 seconds in the phase before it (authored times, multiplied by the difficulty "
+       "setting). The escalation that named bicarbonate was removed on the owner's instruction "
+       "of 27 October 2026, so the warning names the problem and not the drug.")}],
    ),
 
  phase("stabilizing",
@@ -488,9 +537,9 @@ PHASES = [
    "narrowing",
    "The complexes are narrowing and the rate is falling. Still hot at 39.6 and still "
    "delirious or post-ictal. The ingestion may or may not have been established by this "
-   "point; the conduction has been treated either way. Reachable from three places: "
-   "directly from arrival if the bicarbonate went in before she seized, from the post-ictal "
-   "phase, and from the wide-complex rhythm.",
+   "point; the conduction has been treated either way. Reachable from two places: the "
+   "post-ictal phase and the wide-complex rhythm. Since physician review DIPH-01 there is no "
+   "route from arrival.",
    115, 115, 70, 18, 96, 39.6, 1, 1,
    transitions=[HANDOFF_T,
     {"when": "flag cooling_started set AND flag tox_consulted set", "to": "stabilized",
@@ -522,19 +571,15 @@ PHASES = [
    transitions=[],
    timeout_reason=(
      "She lost mechanical output in a wide-complex tachycardia. Conduction through a sodium "
-     "channel that was already blocked failed completely, either because two minutes passed "
-     "with no sodium bicarbonate given, or because an antiarrhythmic that blocks the same "
-     "channel was given into the rhythm."),
-   entered_by="time, or an antiarrhythmic given into the wide-complex rhythm",
+     "channel that was already blocked failed completely, because two minutes passed with no "
+     "sodium bicarbonate given."),
+   entered_by="time",
    authoring_note=(
-     "Reachable two ways since 5 September 2026: on the clock after two minutes of untreated "
-     "blockade, and instantaneously when amiodarone is given into the wide-complex rhythm. "
-     "The timeout_reason above therefore names the outcome the two share and both causes, "
-     "because the engine reads that one field whichever route was taken; the route-specific "
-     "teaching is in the amiodarone action's own debrief note, which is always shown for an "
-     "action the resident took. The engine gained a byClock flag on the failed record at the "
-     "same time, because the debrief used to assert that any run ending in a terminal phase "
-     "had been ended by the clock, which is now false for one of the two routes.\n\n"
+     "Reachable one way: on the clock after two minutes of untreated blockade. From 5 "
+     "September to 27 October 2026 amiodarone given into the wide-complex rhythm also led here "
+     "instantaneously. Physician review DIPH-12 (Aakash Setty, 27 October 2026) replaced that "
+     "arrest with a fall in blood pressure, so the timeout_reason names the clock route only. "
+     "The engine's byClock flag on the failed record, added for the amiodarone route, stays.\n\n"
      "A terminal phase of its own rather than the shared 'halted' phase, because 'halted' "
      "carries a harmful action's halt reason and nothing harmful was done here. Attributing an "
      "omission to a commission would tell the resident something false about their own run. "
@@ -555,10 +600,10 @@ PHASES = [
    36, 58, 32, 5, 74, 39.6, 0, 3, react="fixed", terminal=True,
    transitions=[],
    schema_gap_note=(
-     "Generic peri-arrest numbers, as in the reference case. This case has four halting "
+     "Generic peri-arrest numbers, as in the reference case. This case has five halting "
      "actions and they do not share a physiology: physostigmine while the QRS is wide produces cholinergic bradycardia, flumazenil produces refractory seizure, a further dose of "
-     "diphenhydramine deepens the block, and procainamide widens it into a pulseless rhythm. "
-     "One block of numbers cannot be all four, and the bradycardia these carry fits the first "
+     "diphenhydramine deepens the block, and procainamide and propranolol widen it into a pulseless rhythm. "
+     "One block of numbers cannot be all five, and the bradycardia these carry fits the first "
      "and fits the others less well. The halt reason on each action carries the physiology; "
      "these numbers carry none of it. In practice the beat stops the moment the case ends, so "
      "few learners will read them."),

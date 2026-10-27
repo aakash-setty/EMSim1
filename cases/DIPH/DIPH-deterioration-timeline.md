@@ -10,20 +10,12 @@ Two questions per row. Would this patient really deteriorate in that time if tha
 
 Vitals in this phase: HR 135, BP 130/75, RR 25, SpO2 98%, T 40.1
 
-**Rule 1: at 10s (measured from guard_true) → `stabilizing`**
+**Rule 1: at 10s (measured from guard_true) → `wide_complex_tachycardia`**
 
-- guard: `flag bicarb_given set AND (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)`
-- destination vitals: HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6
-- narration: “The complexes have narrowed and her rate's coming down. That's since the bicarb went in.”
-- author rationale: A delayed consequence of the resident's own action, so the five-second floor applies rather than the thirty-second one, and ten seconds matches the two other bicarbonate transitions in this case rather than introducing a third number.
-
-AUTHOR NOTE. This arrow was added on Aakash Setty's instruction of 5 September 2026 and it is a departure from the case author's own sentence, quoted in the rule below: 'A seizure will occur as part of the natural process, regardless of how well the examinee is doing.' With this rule in place that is no longer true. A resident who gets both drugs in before about 230 seconds leaves the arrival phase and never convulses, so the seizure has become preventable.
-
-The guard requires BOTH drugs, and that is what makes the claim defensible. An earlier draft required sodium bicarbonate alone, which was a weak claim dressed as a mechanism: bicarbonate is not an anticonvulsant. It treats the cardiac sodium-channel blockade and, by correcting the acidemia, reduces the ionized fraction of drug that binds that channel, which is an indirect argument at best, and the agent lowering her seizure threshold is still on board and still being absorbed from a gut its own antimuscarinic effect has slowed down. The drug that prevents a drug-induced seizure is a benzodiazepine, and the guard now says so.
-
-Requiring both also makes the rule say something this case wanted to teach anyway: the two things that matter in the first four minutes are sedating the agitation, which is generating the heat and the acid and is itself worsening the cardiotoxicity, and treating the conduction. Neither alone is enough, and the escape is now a reward for doing both rather than for reaching for one drug.
-
-What remains a teaching choice rather than a physiological certainty is that the combination PREVENTS the seizure rather than making it less likely. A patient who has swallowed a gram of diphenhydramine may seize through an adequate benzodiazepine dose. Deleting this rule restores the author's sentence exactly and nothing else in the pack depends on it.
+- guard: `action fos_phenytoin taken`
+- destination vitals: HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0
+- narration: “Her rate's gone up and the complexes on the monitor have gone broad since the phenytoin. She's still got a pressure but it's down.”
+- author rationale: Physician review DIPH-23 (Aakash Setty, 27 October 2026), option C: discouraged with a consequence. The direction follows the author's warning that Dilantin 'should be avoided since it also prolongs sodium channels'. The ten seconds is invented and matches the case's other drug effects. The harm is extrapolated from tricyclic and animal data rather than shown in humans, which is why the tag stays discouraged rather than harmful.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
@@ -41,7 +33,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 - narration: “She's stiffened up and she's seizing. I'm putting her on her side and I've got the suction. Her sats are dropping.”
 - author rationale: The author writes, of the seizure: 'A seizure will occur as part of the natural process, regardless of how well the examinee is doing.' That is a scheduled natural history in the sense of authoring section 15.1, and the rule carries no guard, exactly as she wrote it. The clinical claim behind it is hers: a patient four hours into a diphenhydramine ingestion large enough to widen the QRS is going to seize. The deadline is her own four minutes, carried at its authored value.
 
-**The rule is unguarded and it is no longer unavoidable, and the difference matters.** Since 5 September 2026 the rule above it moves a patient who has received both sodium bicarbonate and a benzodiazepine out of this phase after ten seconds, so a resident who treats the conduction before four minutes never reaches this rule at all. Nothing about this rule changed; it was given an escape. Whether that escape should exist is the open question in the rationale on the rule above, and it is the one place in this pack where the conversion departs from a sentence the case author wrote in her own words.
+From 5 September to 27 October 2026 a rule above this one moved a patient who had received both sodium bicarbonate and a benzodiazepine out of the arrival phase before four minutes, so the seizure could be avoided. Physician review DIPH-01 (Aakash Setty, 27 October 2026) deleted that escape and restored the author's sentence: every run that has not ended by four minutes seizes.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
@@ -68,14 +60,31 @@ Prompts in this phase that set benzo_given, bicarb_given, which is what the fair
 - `lorazepam_bolus` first at 15s, 105s of lead
 - `na_bicarbonate_bolus` first at 25s, 95s of lead
 - `lorazepam_bolus` escalation at 60s, 60s of lead
-- `na_bicarbonate_bolus` escalation at 90s, 30s of lead
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 1. 15s `lorazepam_bolus` (first)
 2. 25s `na_bicarbonate_bolus` (first)
 3. 60s `lorazepam_bolus` (escalation)
-4. 90s `na_bicarbonate_bolus` (escalation)
+
+**Rule 3: at 180s (measured from phase_entry) → `wide_complex_tachycardia`**
+
+- guard: `NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken) AND flag bicarb_given set AND NOT flag seizure_relapsed set`
+- destination vitals: HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0
+- narration: “She's still seizing, and the complexes on the monitor have gone broad and fast again. Her pressure's down.”
+- author rationale: Physician review DIPH-09 (Aakash Setty, 27 October 2026), option B. A seizure treated with bicarbonate and no anticonvulsant relapses once into the wide-complex rhythm, three minutes after this phase is entered. It happens once: the transition grants seizure_relapsed, and the guard needs it unset. In the wide-complex phase only a bicarbonate dose given after the relapse (flag bicarb_after_relapse) narrows the rhythm again. Three minutes is invented and needs a signature. No second arrest clock is authored for the relapsed rhythm: she stays in it until fresh bicarbonate is given.
+
+Prompts in this phase that set benzo_given, bicarb_given, seizure_relapsed, which is what the fairness rule requires:
+
+- `lorazepam_bolus` first at 15s, 165s of lead
+- `na_bicarbonate_bolus` first at 25s, 155s of lead
+- `lorazepam_bolus` escalation at 60s, 120s of lead
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 15s `lorazepam_bolus` (first)
+2. 25s `na_bicarbonate_bolus` (first)
+3. 60s `lorazepam_bolus` (escalation)
 
 ### `post_ictal`: Post-ictal, still hyperthermic, QRS still wide
 
@@ -92,14 +101,30 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 1. 25s `na_bicarbonate_bolus` (first)
 2. 75s `ecg_12_lead` (first)
-3. 90s `na_bicarbonate_bolus` (escalation)
-4. 100s `consult_toxicology` (first)
-5. 140s `cooling_measures` (first)
-6. 150s `ecg_12_lead` (escalation)
-7. 160s `consult_toxicology` (escalation)
-8. 170s `cooling_measures` (escalation)
+3. 100s `consult_toxicology` (first)
+4. 140s `cooling_measures` (first)
+5. 150s `ecg_12_lead` (escalation)
+6. 160s `consult_toxicology` (escalation)
+7. 170s `cooling_measures` (escalation)
 
-**Rule 2: at 180s (measured from phase_entry) → `wide_complex_tachycardia`**
+**Rule 2: at 10s (measured from guard_true) → `wide_complex_tachycardia`**
+
+- guard: `action fos_phenytoin taken`
+- destination vitals: HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0
+- narration: “Her rate's gone up and the complexes on the monitor have gone broad since the phenytoin. She's still got a pressure but it's down.”
+- author rationale: Physician review DIPH-23 (Aakash Setty, 27 October 2026), option C: discouraged with a consequence. The direction follows the author's warning that Dilantin 'should be avoided since it also prolongs sodium channels'. The ten seconds is invented and matches the case's other drug effects. The harm is extrapolated from tricyclic and animal data rather than shown in humans, which is why the tag stays discouraged rather than harmful.
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 25s `na_bicarbonate_bolus` (first)
+2. 75s `ecg_12_lead` (first)
+3. 100s `consult_toxicology` (first)
+4. 140s `cooling_measures` (first)
+5. 150s `ecg_12_lead` (escalation)
+6. 160s `consult_toxicology` (escalation)
+7. 170s `cooling_measures` (escalation)
+
+**Rule 3: at 180s (measured from phase_entry) → `wide_complex_tachycardia`**
 
 - guard: `NOT flag bicarb_given set`
 - destination vitals: HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0
@@ -109,48 +134,89 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 Prompts in this phase that set bicarb_given, which is what the fairness rule requires:
 
 - `na_bicarbonate_bolus` first at 25s, 155s of lead
-- `na_bicarbonate_bolus` escalation at 90s, 90s of lead
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 1. 25s `na_bicarbonate_bolus` (first)
 2. 75s `ecg_12_lead` (first)
-3. 90s `na_bicarbonate_bolus` (escalation)
-4. 100s `consult_toxicology` (first)
-5. 140s `cooling_measures` (first)
-6. 150s `ecg_12_lead` (escalation)
-7. 160s `consult_toxicology` (escalation)
-8. 170s `cooling_measures` (escalation)
+3. 100s `consult_toxicology` (first)
+4. 140s `cooling_measures` (first)
+5. 150s `ecg_12_lead` (escalation)
+6. 160s `consult_toxicology` (escalation)
+7. 170s `cooling_measures` (escalation)
 
 ### `wide_complex_tachycardia`: Hemodynamically stable wide-complex tachycardia
 
 Vitals in this phase: HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0
 
-**Rule 2: at 10s (measured from guard_true) → `stabilizing`**
+**Rule 1: at 10s (measured from guard_true) → `stabilizing`**
 
-- guard: `flag bicarb_given set AND (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)`
+- guard: `flag bicarb_given set AND NOT flag seizure_relapsed set AND (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)`
 - destination vitals: HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6
 - narration: “The complexes have narrowed and the rate's come down. That's the bicarb.”
 - author rationale: As above. A delayed consequence of the resident's own action.
 
+Prompts in this phase that set benzo_given, bicarb_given, seizure_relapsed, which is what the fairness rule requires:
+
+- `na_bicarbonate_bolus` first at 25s, -15s of lead  **UNDER THE 20s FLOOR**
+
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 1. 25s `na_bicarbonate_bolus` (first)
-2. 90s `na_bicarbonate_bolus` (escalation)
+
+**Rule 2: at 10s (measured from guard_true) → `stabilizing`**
+
+- guard: `flag bicarb_given set AND flag bicarb_after_relapse set AND (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)`
+- destination vitals: HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6
+- narration: “The complexes have narrowed and the rate's come down. That's the fresh bicarb.”
+- author rationale: The relapse twin of the rule above (DIPH-09). A fresh dose after the relapse.
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 25s `na_bicarbonate_bolus` (first)
 
 **Rule 3: at 10s (measured from guard_true) → `seizing`**
 
-- guard: `flag bicarb_given set`
+- guard: `flag bicarb_given set AND NOT flag seized set`
+- destination vitals: HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4
+- narration: “The complexes have narrowed since the bicarb. Now she's stiffened up and she's seizing.”
+- author rationale: Only reachable after phenytoin on arrival (DIPH-23), the one route into the wide-complex phase that has not been through the seizure. Returning her to the seizing phase keeps the author's scheduled seizure in every run, which DIPH-01 asks for. Model judgment, needs a signature.
+
+Prompts in this phase that set bicarb_given, seized, which is what the fairness rule requires:
+
+- `na_bicarbonate_bolus` first at 25s, -15s of lead  **UNDER THE 20s FLOOR**
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 25s `na_bicarbonate_bolus` (first)
+
+**Rule 4: at 10s (measured from guard_true) → `seizing`**
+
+- guard: `flag bicarb_given set AND NOT flag seizure_relapsed set`
 - destination vitals: HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4
 - narration: “The complexes have narrowed and the rate's come down since the bicarb. She's still seizing, though.”
 - author rationale: Added in the v0.18a review. Without it a resident who gave bicarbonate but no anticonvulsant stayed in the wide-complex phase with no exit except the handoff, showing a rate of 180 after the drug that treats it. Returning to the seizing phase keeps the rhythm and the seizure consistent with what was given. Ten seconds matches the other bicarbonate transitions. A resident who gives the anticonvulsant a few seconds after the bicarbonate passes through the seizing phase on the way and still reaches stabilizing, ten seconds later. Needs the author's signature.
 
+Prompts in this phase that set bicarb_given, seizure_relapsed, which is what the fairness rule requires:
+
+- `na_bicarbonate_bolus` first at 25s, -15s of lead  **UNDER THE 20s FLOOR**
+
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 1. 25s `na_bicarbonate_bolus` (first)
-2. 90s `na_bicarbonate_bolus` (escalation)
 
-**Rule 4: at 120s (measured from phase_entry) → `pulseless_vt`  (TERMINAL)**
+**Rule 5: at 10s (measured from guard_true) → `seizing`**
+
+- guard: `flag bicarb_given set AND flag bicarb_after_relapse set`
+- destination vitals: HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4
+- narration: “The complexes have narrowed again since the bicarb. She's still seizing, though.”
+- author rationale: The relapse twin of the rule above (DIPH-09). She does not relapse a second time.
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 25s `na_bicarbonate_bolus` (first)
+
+**Rule 6: at 120s (measured from phase_entry) → `pulseless_vt`  (TERMINAL)**
 
 - guard: `NOT flag bicarb_given set`
 - destination vitals: HR 190, BP 0/0, RR 4, SpO2 52%, T 39.8
@@ -161,12 +227,10 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 Prompts in this phase that set bicarb_given, which is what the fairness rule requires:
 
 - `na_bicarbonate_bolus` first at 25s, 95s of lead
-- `na_bicarbonate_bolus` escalation at 90s, 30s of lead
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 1. 25s `na_bicarbonate_bolus` (first)
-2. 90s `na_bicarbonate_bolus` (escalation)
 
 ## 2. The do-nothing trajectory
 
@@ -177,7 +241,7 @@ What a resident who performs no state-changing action at all sees, from arrival 
 | 0:00 | `presentation` | HR 135, BP 130/75, RR 25, SpO2 98%, T 40.1 | arrival |
 | 4:00 | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | rule 2 fired at 240s |
 | 6:00 | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | rule 2 fired at 120s |
-| 8:00 | `pulseless_vt` | HR 190, BP 0/0, RR 4, SpO2 52%, T 39.8 | rule 4 fired at 120s |
+| 8:00 | `pulseless_vt` | HR 190, BP 0/0, RR 4, SpO2 52%, T 39.8 | rule 6 fired at 120s |
 
 **The last row is a terminal phase.** This case can end without the resident touching the patient. That should be a decision the author remembers making.
 
@@ -187,13 +251,18 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 
 | from | at | to | vitals immediately after | the line |
 |---|---|---|---|---|
-| `presentation` | 10s | `stabilizing` | HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6 | “The complexes have narrowed and her rate's coming down. That's since the bicarb went in.” |
+| `presentation` | 10s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “Her rate's gone up and the complexes on the monitor have gone broad since the phenytoin. She's still got a pressure but it's down.” |
 | `presentation` | 240s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “She's stiffened up and she's seizing. I'm putting her on her side and I've got the suction. Her sats are dropping.” |
 | `seizing` | 120s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “She's still seizing and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.” |
+| `seizing` | 180s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “She's still seizing, and the complexes on the monitor have gone broad and fast again. Her pressure's down.” |
 | `post_ictal` | 10s | `stabilizing` | HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6 | “The complexes are getting narrower. That's since the bicarb went in.” |
+| `post_ictal` | 10s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “Her rate's gone up and the complexes on the monitor have gone broad since the phenytoin. She's still got a pressure but it's down.” |
 | `post_ictal` | 180s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “Her rate's gone up and the complexes have gone broad. She's still got a pressure but it's down.” |
 | `wide_complex_tachycardia` | 10s | `stabilizing` | HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6 | “The complexes have narrowed and the rate's come down. That's the bicarb.” |
+| `wide_complex_tachycardia` | 10s | `stabilizing` | HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6 | “The complexes have narrowed and the rate's come down. That's the fresh bicarb.” |
+| `wide_complex_tachycardia` | 10s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “The complexes have narrowed since the bicarb. Now she's stiffened up and she's seizing.” |
 | `wide_complex_tachycardia` | 10s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “The complexes have narrowed and the rate's come down since the bicarb. She's still seizing, though.” |
+| `wide_complex_tachycardia` | 10s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “The complexes have narrowed again since the bicarb. She's still seizing, though.” |
 | `wide_complex_tachycardia` | 120s | `pulseless_vt` | HR 190, BP 0/0, RR 4, SpO2 52%, T 39.8 | “I've lost the pulse. Same rhythm on the monitor and there's no output. I'm starting compressions.” |
 
 Compare each line with the row before it in section 2, not only with the destination: a line saying a number has fallen must be preceded by a phase in which it was higher.

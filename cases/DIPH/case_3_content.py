@@ -11,6 +11,10 @@ SEIZ = "phase is seizing"
 POST = "phase is post_ictal"
 WIDE = "phase is wide_complex_tachycardia"
 RESOLVING = "phase is stabilizing OR phase is stabilized"
+# Still convulsing in the wide-complex rhythm: she has seized and nothing has ended it. The
+# same definition as SEIZURE_STOPPED in case_1_shell.py. Physician review DIPH-29, option C.
+STILL_SEIZING = ("phase is wide_complex_tachycardia AND flag seized set AND NOT "
+                 "(flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)")
 
 
 def ex(findings, abnormal=True):
@@ -152,6 +156,10 @@ EXAM = {
      "Hot, flushed and completely dry, no sweat even in the axillae. No rash or needle marks.")}],
 
  "exam_neuro": [
+   {"when": STILL_SEIZING, "value": ex(
+     "Still seizing. Generalized jerking, eyes deviated, not rousable.")},
+   {"when": WIDE, "value": ex(
+     "Obtunded, responds only to pain. Pupils large. No focal deficit.")},
    {"when": SEIZ, "value": ex(
      "Generalized tonic-clonic seizure. Not rousable, eyes deviated, not protecting her airway.")},
    {"when": POST, "value": ex(
@@ -162,7 +170,7 @@ EXAM = {
      "Agitated, disoriented, inattentive. No focal deficit. Symmetric reflexes, no clonus or hyperreflexia. No meningism.")}],
 
  "exam_psych": [
-   {"when": SEIZ + " OR " + POST, "value": ex(
+   {"when": SEIZ + " OR " + POST + " OR " + WIDE, "value": ex(
      "Not assessable. Unable to converse.")},
    {"when": RESOLVING, "value": ex(
      "Drowsy and settled. Cannot give a reliable account yet.")},
@@ -176,6 +184,8 @@ EXAM = {
      "Not protecting her airway. Clenched teeth, secretions at the mouth.")},
    {"when": POST, "value": ex(
      "Patent with a jaw thrust. Reduced gag, intermittent snoring.")},
+   {"when": WIDE, "value": ex(
+     "Not protecting her airway well. Snoring respirations, secretions pooling.")},
    {"when": None, "value": ex(
      "Patent. Talking, though not sensibly. No stridor. Dry mucosa.", abnormal=False)}],
 
@@ -187,6 +197,8 @@ EXAM = {
      abnormal=False)},
    {"when": POST, "value": ex(
      "Spontaneous, normal rate but shallow. No increased work.")},
+   {"when": WIDE, "value": ex(
+     "Rate about 22, shallow. No increased work of breathing.")},
    {"when": None, "value": ex(
      "Rate about 25, no increased work of breathing. No accessory muscle use.")}],
 
@@ -209,8 +221,14 @@ GENERAL_STATUS = {
    "examination finding every learner sees. Kept consistent with the neurological and "
    "psychiatric examinations and with the appearance values of each phase."),
  "rules": [
+   {"when": "flag airway_protected set AND " + WIDE, "value": gs(
+     "Intubated and sedated. Gray, wide-complex rhythm on the monitor, thready pulse.")},
+   {"when": "flag airway_protected set AND phase is stabilized", "value": gs(
+     "Intubated and sedated. Warm, cooling under way. Narrow complexes on the monitor.")},
    {"when": "flag airway_protected set", "value": gs(
      "Intubated and sedated. Hot to touch.")},
+   {"when": STILL_SEIZING, "value": gs(
+     "Still seizing, gray and unresponsive. Wide-complex rhythm, thready pulse.")},
    {"when": SEIZ, "value": gs(
      "Generalized seizure. Unresponsive, not protecting her airway, cyanosed lips.")},
    {"when": WIDE, "value": gs(
@@ -246,7 +264,7 @@ PUPILS = {
 
 PATIENT_VISUAL = {
  "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drives the figure in the room (engine/patient.js). Derived from this case's own phase descriptions, alertness levels, general status lines and action flags, and adds no clinical fact of its own: eyes closed where the phase is unresponsive, sedated or arrested; work of breathing where the phase description names it; the mask and the tube where the flag the resident's own action sets is set. The respiratory rate is not authored here, the figure breathes at the monitor's rate. Verify each rule against the phase and flag it names, as for any other content key.",
- "verify": "Three choices to check. (1) The convulsion is drawn with the eyes OPEN, on the understanding that the eyes are usually open in a generalized tonic-clonic seizure and that closed eyes during the event point toward a functional seizure; change it if that is not what should be taught. (2) Once airway_protected is set the figure is intubated, still and eyes closed even in the seizing phase, on the assumption of induction and paralysis; a paralyzed patient may still be seizing electrically and the figure cannot show that. (3) post_ictal has no rule of its own: it is alertness level 1 and is drawn drowsy, with heavy lids and a nodding head, by the figure itself. Agitation is drawn on arrival, from 'agitated ... plucking at the leads', until the airway is protected. She is 'hot and dry', so she is never drawn sweating.",
+ "verify": "Three choices to check. (1) The convulsion is drawn with the eyes OPEN, on the understanding that the eyes are usually open in a generalized tonic-clonic seizure and that closed eyes during the event point toward a functional seizure; change it if that is not what should be taught. (2) Once airway_protected is set the figure is intubated, still and eyes closed even in the seizing phase, on the assumption of induction and paralysis; a paralyzed patient may still be seizing electrically and the figure cannot show that. (3) Since physician review DIPH-29 (27 October 2026) the wide-complex phase is drawn convulsing when she reached it still seizing (flag seized set, nothing has ended the seizure) and eyes closed, obtunded, otherwise. (4) post_ictal has no rule of its own: it is alertness level 1 and is drawn drowsy, with heavy lids and a nodding head, by the figure itself. Agitation is drawn on arrival, from 'agitated ... plucking at the leads', until the airway is protected. She is 'hot and dry', so she is never drawn sweating.",
  "rules": [
   {
    "when": "flag airway_protected set",
@@ -268,6 +286,19 @@ PATIENT_VISUAL = {
    "value": {
     "eyes": "open",
     "seizure": True
+   }
+  },
+  {
+   "when": STILL_SEIZING,
+   "value": {
+    "eyes": "open",
+    "seizure": True
+   }
+  },
+  {
+   "when": "phase is wide_complex_tachycardia",
+   "value": {
+    "eyes": "closed"
    }
   },
   {
@@ -385,7 +416,9 @@ LABS = {
         comp("Bicarbonate", "13", "mEq/L", "22-26", True),
         comp("Lactate", "3.1", "mmol/L", "0.5-2.0", True)],
         comment=("An appropriately compensated metabolic acidosis on room air. The pCO2 is revised from the source's 34 to 28 so that the three values agree."),
-        verify=("The five values are the author's. The reference intervals are not, and the "
+        verify=("Four values are the author's: pH 7.28, pO2 94, bicarbonate 13 and lactate 3.1. "
+                "The pCO2 is revised from her 34 to 28 (v0.18a), kept by physician review DIPH-06 "
+                "(Aakash Setty, 27 October 2026). The reference intervals are not hers, and the "
                 "catalog's own note applies: an ABG default assumes room air and nothing in "
                 "the schema knows when supplemental oxygen is running."))}]},
 
@@ -480,27 +513,27 @@ LABS = {
    "changes_with_state": False,
    "rules": always(panel([
      comp("Color", "Amber", "", "Yellow", True),
-     comp("Blood", "1+", "", "Negative", True),
+     comp("Specific gravity", "1.030", "", "1.005-1.025", True),
+     comp("Blood", "Negative", "", "Negative", False),
      comp("Red cells", "0-2", "/hpf", "0-2", False),
      comp("Protein", "Trace", "", "Negative", True),
      comp("Leukocyte esterase", "Negative", "", "Negative", False),
      comp("Nitrite", "Negative", "", "Negative", False),
      comp("Ketones", "1+", "", "Negative", True)],
-     comment=("Dipstick positive for blood with no red cells on microscopy."),
+     comment=("Concentrated urine. Negative for blood."),
      verify=("Model output. The author does not supply a urinalysis; she lists it among the "
-             "studies she expects to be ordered. The blood-positive, red-cell-negative pattern "
-             "is authored to be consistent with her creatine kinase of 540 and is a drafting "
-             "inference rather than her statement.")))},
+             "studies she expects to be ordered. Physician review DIPH-20 (Aakash Setty, 27 "
+             "October 2026) replaced the blood-positive, red-cell-negative pattern with negative "
+             "blood and concentrated urine, because a creatine kinase of 540 is early. The "
+             "reference interval for specific gravity is model output.")))},
 
  "magnesium_level": {
    "changes_with_state": False,
-   "rules": always(val("Magnesium", "1.6", "mg/dL", "1.7-2.4", True,
-     comment="Low. Replace it.",
-     verify=("Model output. The author does not supply a magnesium. It is authored low because "
-             "her case turns partly on QT prolongation and because magnesium is the treatment "
-             "for torsades, so a resident who checks it should find something to act on. This "
-             "is a value invented to make a teaching point and the author should decide whether "
-             "she wants it.")))},
+   "rules": always(val("Magnesium", "2.0", "mg/dL", "1.7-2.4", False,
+     comment="Normal.",
+     verify=("Model output. The author does not supply a magnesium. It was invented low (1.6) "
+             "to make a teaching point about torsades, and physician review DIPH-18 (Aakash "
+             "Setty, 27 October 2026) set it normal.")))},
 
  "calcium_ionized": {
    "changes_with_state": True,
@@ -657,6 +690,17 @@ CONSULTANTS = {
    "stabilized phase requires."),
 
  "consult_toxicology": [
+   # Physician review DIPH-30 (Aakash Setty, 27 October 2026): phase tiers first, so a
+   # consultant does not quote the arrival QRS during a seizure or a wide-complex rhythm.
+   {"when": WIDE,
+    "value": ("Toxicology fellow: a wide-complex rhythm in this poisoning is the sodium "
+              "channel. Sodium bicarbonate now, 1 to 2 mEq/kg, repeated until the complexes "
+              "narrow. No amiodarone, procainamide or physostigmine. A benzodiazepine if she is "
+              "still seizing.")},
+   {"when": SEIZ,
+    "value": ("Toxicology fellow: stop the seizure first, with a benzodiazepine, repeated if "
+              "she keeps going. The seizure is making her acid worse and her QRS wider, so if "
+              "the complexes look broad, sodium bicarbonate too. No phenytoin, no physostigmine.")},
    {"when": "study ecg_12_lead resulted AND flag bicarb_given set",
     "value": ("Toxicology fellow: good, keep going. Repeat the boluses until the QRS narrows, "
               "then start an infusion, aiming for a pH of about 7.50 to 7.55. Watch the sodium, "
@@ -675,6 +719,14 @@ CONSULTANTS = {
               "rather than antipsychotics, cool her, and send an acetaminophen level.")}],
 
  "consult_critical_care": [
+   {"when": WIDE,
+    "value": ("Intensivist: she is coming to us, but she is not safe to move in this rhythm. "
+              "Sodium bicarbonate now, a benzodiazepine if she is still seizing, pads on, and "
+              "call toxicology. Ring me when the complexes narrow.")},
+   {"when": SEIZ,
+    "value": ("Intensivist: she is coming to us. Stop the seizure first with a benzodiazepine, "
+              "protect her airway, and treat a wide QRS with sodium bicarbonate. Call me back "
+              "once she has stopped.")},
    {"when": "study ecg_12_lead resulted AND flag bicarb_given set",
     "value": ("Intensivist: yes, we will take her. Keep the bicarbonate going with continuous "
               "monitoring and serial ECGs. No psychiatric bed until the QRS has been normal for "
@@ -718,7 +770,7 @@ CONSULTANTS = {
     "value": ("Cardiology fellow, looking at the monitor: in a poisoning this is the sodium "
               "channel, and it is not mine. Bicarbonate, no amiodarone and no procainamide. If "
               "she loses her pressure, shock her. Call toxicology.")},
-   {"when": "study ecg_12_lead resulted AND flag bicarb_given set",
+   {"when": "study ecg_12_lead resulted AND flag bicarb_given set AND flag ecg_repeated set",
     "value": ("Cardiology fellow: the QRS was 132 milliseconds with a terminal R in aVR, and on "
               "the repeat it is about 104, so the bicarbonate is working. Keep going. This "
               "needs toxicology, not me.")},

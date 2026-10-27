@@ -5,6 +5,32 @@ is usable with learners.
 
 ---
 
+## Pressors move the monitor in every case (27 October 2026, author instruction)
+
+A pressor a case does not author now raises the pressure on the monitor by a catalog default, so the simulator answers a pressor the way a patient would. Display only: no phase, tag, flag, prompt, score or debrief line changes, and an engine test plays every pack with and without the defaults to show it. Defaults, in `catalog/default-vital-effects.json`: norepinephrine drip SBP +15/DBP +8, epinephrine drip +15/+6 and HR +12, vasopressin drip +12/+8, phenylephrine drip +15/+10 and HR −6, dopamine drip +10/+5 and HR +15, onset 20 s, until the drip is stopped; push-dose epinephrine +20/+8 and HR +15, phenylephrine bolus +15/+8, onset 10 s, for 5 minutes; vasopressin bolus +12/+6 for 10 minutes. Two different pressors add up, and the existing clamp keeps the numbers plausible. Dobutamine and IM epinephrine have no default. The numbers are teaching defaults the owner accepted, not physician reviewed.
+
+Engine: the build attaches each default to its catalog entry with one key per drug and vital. A case action's own `vital_effects` replaces the default whole, and `[]` means no effect. A default drip effect ends when its stop order (catalog `stops`) is given after it and resumes on a restart. Effects a case authors still stop only through their `while` guard. The validator names the actions on the default and warns when one also drives a phase change, which is where the monitor would count the rise twice. Authoring 16, the readme reference, system design 2.6 and the field notes are updated. Engine tests and four validator tests added.
+
+Cases: MGCA's five pressor drips, CHFE's norepinephrine infusion and TSS's dopamine carry `[]`, because their `pressor_running` flag moves the phase and the phase's vitals already carry the rise. TSS and TAKO keep their authored effects. Everything else uses the default. Recorded in each SEED.
+
+---
+
+## DIPH physician review applied, and two engine fields for a one-time event (27 October 2026)
+
+Physician review of bank 2026-10-05.1 by Aakash Setty, physician. The export names the reviewer "Tester", and he confirmed in session that the answers are his. DIPH only: the AFRVR answers in the same export are not applied. Of 46 DIPH questions, 45 were answered and DIPH-45 was flagged. Twenty-five answers changed the case, and the rest were signed as authored or recorded. DIPH-38 (keep succinylcholine discouraged) is not applied, because it conflicts with the rule of 23 October that intubation care is never graded. It is listed for resolution. Twelve answers changed after the model's recommendation was shown, so they are not independent agreement. Every item is in `cases/DIPH/DIPH-review-packet.md` under "Physician review", the decisions are in the SEED, and the review matrix carries a note at its top.
+
+What changed in play. The seizure at four minutes happens in every run again (DIPH-01): the escape that bicarbonate and a benzodiazepine bought is deleted, and the intended path goes through the seizure. A seizure treated with bicarbonate and no anticonvulsant relapses once into the wide-complex rhythm three minutes later, and only a fresh dose narrows it (DIPH-09). Amiodarone in the wide-complex rhythm lowers the pressure by 20/12 instead of arresting her (DIPH-12). Phenytoin on arrival or after the seizure widens her into the wide-complex rhythm after ten seconds (DIPH-23). Physostigmine and propranolol halt the case through the narrowing phase (DIPH-02, DIPH-27). The wide-complex phase has its own exam lines and figure, including a still-seizing state (DIPH-29). Toxicology and critical care answer by phase first (DIPH-30).
+
+Tags. Lorazepam is recommended on arrival and critical only while seizing (DIPH-32, from the reviewer's note, confirmed in session). Levetiracetam is discouraged before a benzodiazepine. Atropine is discouraged and raises the rate by 15 for five minutes. Naloxone is neutral. Charcoal is neutral once intubated. Synchronized cardioversion is neutral in the wide-complex rhythm. Psychiatry is neutral through the post-ictal phase. Antibiotics, acyclovir and the lumbar puncture lose the urine-screen switch. Magnesium sulfate is neutral.
+
+Content. Magnesium 2.0, normal. Urinalysis negative for blood, specific gravity 1.030. Pregnancy is no longer a key topic. The six objectives are rewritten as behaviors. Flumazenil's halt reason, the gas notes and the nurse's bicarbonate alert are corrected. The nurse no longer names the bottle when she offers to call toxicology.
+
+Owner instruction, the same day: the nurse's "Do you want bicarb?" escalation is removed. The first prompt about broad complexes stays, because the validator requires a warning before the three deteriorations that fire if no bicarbonate is given.
+
+Engine, case-agnostic. A transition may carry `flags_set`, granted for good as it fires. An action may carry `flags_set_if: [{flag, when}]`, granted only if the condition holds as the act is taken. The validator, the scenario runner and field notes know both. A flag only a transition grants counts as set after its edge in the loop check, and the fairness rules ask for no warning for it. `provenance.review_matrix_note` is printed at the top of the regenerated matrix. Authoring 15.1 and 18, engine tests and validator tests. All eight packs pass. kit_check 0 errors. The wording is a model's, and only the decisions are the reviewer's.
+
+---
+
 ## AFRVR's case discussion, shorter and built to be read at a glance (23 October 2026, author instruction)
 
 The discussion beside the debrief is about half its former length. Each section opens with

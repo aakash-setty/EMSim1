@@ -24,6 +24,8 @@ support is an invented fact and should be removed rather than reconciled.
 
 ## What a person decided
 
+- 27 October 2026, Aakash Setty: pressors the case does not author now move the monitor by the catalog default (`catalog/default-vital-effects.json`, display only, no change to phases, tags or scoring). Here `norepinephrine_infusion` carries `"vital_effects": []`, because it sets `pressor_running`, which moves the phase, and that phase's vitals already carry the rise. Push-dose epinephrine takes the default.
+
 - 11 October 2026, Aakash Setty: the formal transthoracic echocardiogram (`echo_formal`)
   is removed from the case: the action, its result (no sonographer available, booked for
   the morning) and its place in the debrief's domain list. A formal echo is not used in

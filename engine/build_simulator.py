@@ -409,6 +409,24 @@ for _id in UNGRADED.get("ungraded", []):
     if _id in shared["actionsBase"]:
         shared["actionsBase"][_id]["ungraded"] = True
 
+# Default vital effects (owner, 27 October 2026): a pressor moves the monitor in any case,
+# whether or not the case authors it. The drugs are named in catalog data, not here. Each
+# effect gets its own key per drug and vital, so a repeat dose refreshes rather than stacks
+# and two different pressors add up. A drip's default ends when one of its stop orders
+# (catalog `stops`) is given after it. A case action's own vital_effects, even [], wins.
+_dv_path = catalog_path("default-vital-effects.json")
+DEFAULT_FX = json.load(open(_dv_path, encoding="utf-8")) if os.path.exists(_dv_path) else {"effects": {}}
+_stops_for = {}
+for _cid, _rec in shared["actionsBase"].items():
+    if _rec.get("stops"):
+        _stops_for.setdefault(_rec["stops"], []).append(_cid)
+for _id, _fx in DEFAULT_FX.get("effects", {}).items():
+    if _id in shared["actionsBase"]:
+        shared["actionsBase"][_id]["vital_effects_default"] = [
+            dict(f, key="default_" + _id + "_" + f["vital"]) for f in _fx]
+        if _stops_for.get(_id):
+            shared["actionsBase"][_id]["stopped_by"] = sorted(_stops_for[_id])
+
 # The figure in the room. What a case may say about what is visible, and nothing about why.
 # The part and colour options are not restated here: engine/patient-art.json is their one
 # vocabulary, and both the renderer and the validator read it. The add-on list IS restated,

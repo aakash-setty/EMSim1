@@ -707,6 +707,8 @@ Shapes the library has used, each a teaching choice and not a measurement: anaph
 
 **How a `guard_true` clock runs.** It belongs to one rule in one phase. It starts at the first transition check in that phase that finds the guard true, or at entry if it already holds. It does not carry into the next phase: a rule with the same guard there starts from zero. If the delay must survive a phase change, record it as a known gap or put the consequence in one phase. **Engine, known limit.** If the run returns to a phase, a `guard_true` rule there keeps its first start time and can fire on arrival. Avoid a `guard_true` rule in any phase the case can re-enter, or record the gap.
 
+**Engine. A transition can grant flags** (owner, 27 October 2026). `flags_set` on a transition rule grants those flags for good as it fires, before the new phase is entered. Use it to make a timed event happen once: a rule whose guard needs the flag unset, and which grants it, fires at most once. A flag only a transition grants is bookkeeping, not an obligation, so the fairness rules in 15.2 ask for no warning for it, and the loop check counts it as set after the edge. Where a case can re-enter a phase, give the rules that apply after the event their own guards, so each has its own `guard_true` clock. DIPH's one-time relapse does this (`seizure_relapsed`).
+
 ### 15.2 The fairness rules
 
 **Engine.** The validator enforces each.
@@ -750,14 +752,15 @@ A phase holds until something moves the case out of it, which makes it the wrong
 - **Engine. Give two routes to the same drug the same key**, or a cannula, a mask and a bag stack into an improvement none would produce.
 - **Truth. Sizes are teaching choices.** No trial supports a specific figure. Put the reasoning in a `note` on the effect and say "teaching choice" in the review packet.
 - **Truth. An effect follows the patient into every phase its guard allows and makes text false there.** A report or finding that quotes a vital is false while an effect on it is acting, so where an effect has no end, quote no number for that vital anywhere ("Sinus tachycardia", "Pulse fast"). A `while` of `NOT phase is presentation` on a drug given in the presentation phase switches on the moment she leaves it, so if a phase already carries the change, guard the effect off in that phase by name. Check: for each effect, write down the phases its guard allows and how long it lasts, then read every narration into, and every report, finding and alert in, each of those phases.
-- **Engine. "Stop the drip" is a `while` guard** on a flag the stop action sets: `NOT flag <stop flag> set`. Nothing stops an effect on its own, and the catalog's `stops` field is not read.
+- **Engine. "Stop the drip" is a `while` guard** on a flag the stop action sets: `NOT flag <stop flag> set`. Nothing stops an effect you author on its own.
+- **Engine. Pressors have a default** (owner, 27 October 2026). A pressor with no `vital_effects` of its own takes the catalog default in `catalog/default-vital-effects.json` (norepinephrine, epinephrine, vasopressin, phenylephrine and dopamine drips, and push-dose epinephrine, phenylephrine and vasopressin boluses), so the monitor answers a pressor in any case. Display only: it changes no phase, tag, flag or score. A default drip ends when its stop order is given and resumes if restarted. Your own `vital_effects` replace the default whole. `"vital_effects": []` means none: use it where the pressor's flag moves the phase and that phase's vitals already carry the rise. The validator warns on exactly that pattern.
 - **Default.** Decide which vitals a treatment does not move. The thing that does not happen is usually the lesson, and a case where every treatment raises the number is a case where sequencing does not matter.
 
 ### 16.1 Delayed onset and a climbing number
 
 `onset_seconds` delays the start. Both it and `duration_seconds` are measured from the administration, so the effect acts over `[onset, duration)`. **Engine.** A duration that does not outlast its onset never acts and the validator refuses it. It prints every window as a note. To make a number climb rather than jump, author several small effects on one action with rising `onset_seconds` and a different `key` each.
 
-**Sign-off.** Every non-terminal phase's vitals are the unsupported baseline. You have played the case with each effect-bearing action alone and read the number off the monitor. Every route to a drug shares one key and no two keys name one act. Every delta and duration is labeled a teaching choice. The treatments that move nothing do so on purpose and the debrief says why. No report, finding or alert quotes a vital an endless effect can move. No `while` switches an effect on in a phase that already carries the change. Every window in the validator's note is the one you meant.
+**Sign-off.** Every non-terminal phase's vitals are the unsupported baseline. You have played the case with each effect-bearing action alone and read the number off the monitor. Every route to a drug shares one key and no two keys name one act. Every pressor whose flag moves a phase authors its effect or carries `[]`. Every delta and duration is labeled a teaching choice. The treatments that move nothing do so on purpose and the debrief says why. No report, finding or alert quotes a vital an endless effect can move. No `while` switches an effect on in a phase that already carries the change. Every window in the validator's note is the one you meant.
 
 ## 17. Expiring flags
 
@@ -791,6 +794,8 @@ For the case whose lesson is the redose, a restart, or a repeat study:
 - **Default.** Two flags: `flags_set` says an attempt was made and drives the effect and the follow-up, the repeat flag says enough attempts were made and drives the phase.
 - **Default.** The partial response is an effect, not a phase, guarded off the phases whose vitals already carry the controlled number, with a `nurse_alert` saying the drug takes time, or the learner reads a failed drug and reaches for another.
 - **Truth.** List every action that is the same act on one counter, and write a scenario for each first dose.
+
+**`flags_set_if`** (owner, 27 October 2026): a list of `{"flag": ..., "when": ...}` on a case action. Each flag is granted for good, but only if its condition holds as the act is taken, judged before the act's own flags are granted. It tells a dose given after some event from the doses before it, which neither a permanent flag nor a count can: DIPH's bicarbonate grants `bicarb_after_relapse` only once `seizure_relapsed` is set. **Engine.** A flag name and a condition are both required. An unconditional grant belongs in `flags_set`.
 
 **Sign-off.** A scenario for each first dose and each early repeat, and the limits in the SEED.
 

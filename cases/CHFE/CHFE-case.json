@@ -1154,7 +1154,8 @@
    "references": [
     "Levy B, Clere-Jehl R, Legras A, et al. Epinephrine versus norepinephrine for cardiogenic shock after acute myocardial infarction. J Am Coll Cardiol. 2018;72(2):173-82. [UNVERIFIED, confirm before release]",
     "Cardenas-Garcia J, Schaub KF, Belchikov YG, Narasimhan M, Koenig SJ, Mayo PH. Safety of peripheral intravenous administration of vasoactive medication. J Hosp Med. 2015;10(9):581-5. [UNVERIFIED, confirm before release]"
-   ]
+   ],
+   "vital_effects": []
   },
   {
    "catalog_id": "epinephrine_push_dose",

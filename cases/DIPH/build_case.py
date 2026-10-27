@@ -67,17 +67,17 @@ CASE = {
      "part of the natural process regardless of how well the examinee is doing, so it is "
      "authored as a scheduled natural history at her own four minutes. Section 15.1 requires an "
      "unguarded_rationale for exactly this construct, and hers is quoted in it.\n\n"
-     "It is unguarded and, since 5 September 2026, not unavoidable. The rule listed above it "
-     "moves a patient who has received both sodium bicarbonate and a benzodiazepine out of the arrival phase after ten "
-     "seconds, so a resident who treats the conduction before about 230 seconds never reaches "
-     "the seizure rule. Nothing about the seizure rule changed; it was given an escape, on "
-     "instruction, and the rationale on the escape sets out why the pharmacology behind it is "
-     "weak and what deleting it would restore."),
-   "three_ways_into_the_narrowing_phase": (
-     "The stabilizing phase is reached from the arrival phase, from the post-ictal phase and "
-     "from the wide-complex rhythm, on the same guard and the same ten seconds each time. Its "
-     "authored vitals therefore have to be true of a patient who never convulsed and of one "
-     "who came within two minutes of arresting, which is why the temperature sits at 39.6 "
+     "It is unguarded and unavoidable again. From 5 September to 27 October 2026 a rule above "
+     "it moved a patient who had received both sodium bicarbonate and a benzodiazepine out of "
+     "the arrival phase before four minutes. Physician review DIPH-01 (Aakash Setty, 27 "
+     "October 2026) deleted that escape and restored the author's sentence. The only other "
+     "arrow out of arrival is phenytoin (DIPH-23), which moves her into the wide-complex "
+     "rhythm."),
+   "ways_into_the_narrowing_phase": (
+     "The stabilizing phase is reached from the post-ictal phase and from the wide-complex "
+     "rhythm, with bicarbonate and ten seconds each time. Until physician review DIPH-01 it was "
+     "also reached from arrival. Its authored vitals have to be true of a patient who has just "
+     "stopped seizing and of one who came within two minutes of arresting, which is why the temperature sits at 39.6 "
      "rather than at a number that assumes a particular history: nothing in this case cools "
      "her except active cooling, which is a vital effect applied on top of this baseline."),
    "the_deterioration_path": (
@@ -88,7 +88,7 @@ CASE = {
      "case reaches cardiac arrest, and that is a decision the seed records rather than an "
      "oversight. Sodium bicarbonate is prompted for in every phase on that path."),
    "the_two_delayed_consequences": (
-     "Bicarbonate narrows the QRS ten seconds after it is given rather than on the click, in the arrival, post-ictal and wide-complex phases alike. These are delayed consequences of the resident's own action in the sense of section 15.1, so the five-second "
+     "Bicarbonate narrows the QRS ten seconds after it is given rather than on the click, in the post-ictal and wide-complex phases alike. These are delayed consequences of the resident's own action in the sense of section 15.1, so the five-second "
      "floor applies rather than the thirty-second one. The bicarbonate delay is paired with a "
      "nurse_alert said the instant the drug goes in, because a delay with no explanation reads "
      "as a drug that has failed."),
@@ -98,10 +98,11 @@ CASE = {
    "values": ["critical", "recommended", "discouraged", "harmful", "neutral"],
    "values_used_by_this_case": ["critical", "recommended", "discouraged", "harmful", "neutral"],
    "note": (
-     "All five. Harmful is used four times, which is more than any other pack, and each is a "
-     "drug: physostigmine given before the ECG, flumazenil, a further dose of diphenhydramine, "
-     "and procainamide in an established wide-complex rhythm. Discouraged carries the rest of "
-     "the weight and there are sixteen traps, because in a toxicology case most of the wrong "
+     "All five. Harmful is used five times, which is more than any other pack, and each is a "
+     "drug: physostigmine while the QRS is wide, flumazenil after a benzodiazepine, a further "
+     "dose of diphenhydramine, procainamide before she has stabilized, and propranolol while "
+     "the QRS is wide (DIPH-27). Discouraged carries the rest of "
+     "the weight and there are fifteen traps, because in a toxicology case most of the wrong "
      "answers are things you give rather than things you omit."),
  },
  "flag_namespace_note": (
@@ -162,11 +163,13 @@ CASE = {
    "key_topics": KEY_TOPICS,
    "key_topics_note": (
      "Author judgment, unreviewed. Read by the summary's History score, asked over listed. "
-     "Twelve of forty-one, and they are the ones whose answers change what happens: what was "
+     "Eleven of forty-two, and they are the ones whose answers change what happens: what was "
      "found by the bed, what she took, what else is in the house, when she was last well, the "
      "absence of any medical history or medication that could explain this, the mental health "
-     "history that makes a deliberate ingestion likely, the absence of any prior seizure, and "
-     "the pregnancy question. Every other topic is answerable and charted and does not count."),
+     "history that makes a deliberate ingestion likely, and the absence of any prior seizure. "
+     "Pregnancy left the list on 27 October 2026 (physician review DIPH-34, Aakash Setty): it "
+     "is still answered and charted, and the hCG is still a recommended test. Every other topic "
+     "is answerable and charted and does not count."),
  },
  "handoff": HANDOFF,
  "debrief_configuration": DEBRIEF,
@@ -180,9 +183,10 @@ CASE = {
    "unverified": (
      "Every laboratory value in this case is Dr Medwid's. Not one reference interval is: the "
      "source document contains no intervals at all, so every one is model output, and the "
-     "abnormal flags follow from intervals nobody has signed. Three panels carry a verify note "
-     "naming a specific problem: the corrected bicarbonate, the female hemoglobin and "
-     "hematocrit, and the invented magnesium."),
+     "abnormal flags follow from intervals the source did not supply. Physician review DIPH-17 (Aakash "
+     "Setty, 27 October 2026) confirmed the intervals and flags as authored. Panels carry a "
+     "verify note naming a specific problem: the corrected bicarbonate and the female "
+     "hemoglobin and hematocrit. The magnesium is normal since DIPH-18."),
  },
  "phases_note": (
    "Read the transition lists in order, because first match wins. The handoff rule is first in "

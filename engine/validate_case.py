@@ -268,6 +268,9 @@ def collect_all_conditions(case):
         for i, p in enumerate(a.get("prerequisites", []) or []):
             if p.get("when"):
                 conds.append((f"prereq/{a['catalog_id']}[{i}]", p["when"]))
+        for i, fc in enumerate(a.get("flags_set_if") or []):
+            if isinstance(fc, dict) and isinstance(fc.get("when"), str) and fc["when"].strip():
+                conds.append((f"flags_set_if/{a['catalog_id']}[{i}]", fc["when"]))
         pr = a.get("prompt")
         if pr and pr.get("guard"):
             conds.append((f"prompt_guard/{a['catalog_id']}", pr["guard"]))
@@ -397,6 +400,44 @@ def check_pupils(case, errors, warnings):
                 warnings.append(f"[pupils] {where}: pinpoint at {sz} mm")
             if st in ("dilated", "dilated_fixed") and sz < 5:
                 warnings.append(f"[pupils] {where}: {st} at {sz} mm")
+
+
+def check_default_effects(case, errors, warnings, notes):
+    """Default vital effects (owner, 27 October 2026, authoring 16). A pressor with no
+    vital_effects of its own moves the monitor by the catalog default in
+    catalog/default-vital-effects.json. That is display only, so it cannot break a case. It
+    can make the numbers read wrong: where the action's flag also drives a phase change, the
+    phase's own vitals usually already carry the rise, and the default adds it a second time.
+    "vital_effects": [] says the phase carries it."""
+    dv, _ = _load(catalog_path("default-vital-effects.json"))
+    if not dv:
+        return
+    binding, _ = load_binding()
+    bound = {r["case_id"]: (r.get("catalog_id") or r["case_id"]) for r in (binding or {}).get("rows", [])}
+    has_default = set((dv.get("effects") or {}).keys())
+    whens = [t.get("when") or "" for p in case.get("phases", []) for t in (p.get("transitions") or [])]
+    on_default = []
+    for a in case.get("case_actions", []):
+        cid = a["catalog_id"]
+        if bound.get(cid, cid) not in has_default:
+            continue
+        ve = a.get("vital_effects")
+        if ve is not None and not isinstance(ve, list):
+            errors.append(f"[default effect] {cid}: vital_effects must be a list; [] means no effect")
+            continue
+        if ve is not None:
+            continue
+        on_default.append(cid)
+        drives = [f for f in (a.get("flags_set") or []) if any(f"flag {f} set" in w for w in whens)]
+        if any(f"action {cid} taken" in w for w in whens):
+            drives.append("action " + cid)
+        if drives:
+            warnings.append(f"[default effect] {cid} moves the monitor by the catalog's default pressor "
+                            f"effect and also drives a phase change ({', '.join(drives)}). If the phase's "
+                            f"vitals already carry the rise, the monitor shows it twice: set "
+                            f"\"vital_effects\": [] or author the effect")
+    if on_default:
+        notes.append("default pressor effects (display only): " + ", ".join(on_default))
 
 
 def check_ungraded(case, errors, warnings):
@@ -650,6 +691,39 @@ def run_checks(case):
                 perm_flags.add(f)
                 repeat_flags.setdefault(f, []).append(
                     (a["catalog_id"], fr.get("after_administrations"), fr.get("counter")))
+        # 27 October 2026. Granted for good, but only if `when` holds as the act is taken.
+        fsi = a.get("flags_set_if")
+        if fsi is not None:
+            if not isinstance(fsi, list):
+                errors.append(f"[flags_set_if] {a['catalog_id']}: must be a list of {{flag, when}}")
+                fsi = []
+            for i, fc in enumerate(fsi):
+                f = fc.get("flag") if isinstance(fc, dict) else None
+                if not (isinstance(f, str) and f):
+                    errors.append(f"[flags_set_if] {a['catalog_id']}[{i}]: needs a flag name")
+                    continue
+                if not (isinstance(fc.get("when"), str) and fc["when"].strip()):
+                    errors.append(f"[flags_set_if] {a['catalog_id']}[{i}]: needs a when condition; "
+                                  f"an unconditional grant belongs in flags_set")
+                settable_flags.add(f)
+                perm_flags.add(f)
+    # 27 October 2026. A transition may grant flags as it fires (engine.js checkTransitions).
+    # A flag only a transition grants is bookkeeping (it records that something happened
+    # once), not something the resident can do, so the fairness rules below ignore it.
+    action_flags = set(settable_flags)
+    transition_flags = set()
+    for ph in case["phases"]:
+        for i, tr in enumerate(ph.get("transitions", [])):
+            if "flags_set" not in tr:
+                continue
+            fl = tr["flags_set"]
+            if not (isinstance(fl, list) and all(isinstance(f, str) and f for f in fl)):
+                errors.append(f"[flags_set] {ph['id']}/transitions[{i}]: must be a list of flag names")
+                continue
+            settable_flags.update(fl)
+            perm_flags.update(fl)
+            transition_flags.update(fl)
+    transition_only_flags = transition_flags - action_flags
 
     # -- voice_phrases: other ways of saying a case action aloud, in this case only ------
     # Optional. A list of non-empty strings. The voice parser indexes them ahead of the
@@ -826,7 +900,8 @@ def run_checks(case):
         out = []
         for g in negated_groups(node):
             names = [("action:" + at.ident) if at.kind == "action" else at.ident
-                     for at in g if at.kind in ("flag", "action")]
+                     for at in g if at.kind in ("flag", "action")
+                     and not (at.kind == "flag" and at.ident in transition_only_flags)]
             if names:
                 out.append(names)
         return out
@@ -851,6 +926,8 @@ def run_checks(case):
             sets = set(a.get("flags_set") or [])
             sets.update(tf["flag"] for tf in (a.get("flags_set_timed") or [])
                         if isinstance(tf.get("flag"), str))
+            sets.update(fc["flag"] for fc in (a.get("flags_set_if") or [])
+                        if isinstance(fc, dict) and isinstance(fc.get("flag"), str))
             out.append((a["catalog_id"], sets, pr["deadline_seconds"],
                         (pr.get("escalation") or {}).get("deadline_seconds", pr["deadline_seconds"])))
         return out
@@ -952,6 +1029,10 @@ def run_checks(case):
                 lits = required_literals(parse_condition(tr["when"])[0]) if tr.get("when") else (set(), set())
             except ParseError:
                 lits = (set(), set())
+            # A flag the transition grants as it fires is set from then on, so a loop that
+            # comes back to an edge needing it unset is traversed at most once.
+            granted = {("flag", f) for f in (tr.get("flags_set") or []) if isinstance(f, str)}
+            lits = (lits[0] | granted, lits[1])
             time_edges.append((ph["id"], tr["to"], lits))
 
         # Only a deadline measured from PHASE ENTRY can strand a prompt, because prompt
@@ -1171,6 +1252,11 @@ def run_checks(case):
     VITAL_KEYS = set(RANGES)
     fx_keys = {}
     windows = []
+    for a in case["case_actions"]:
+        # A list, and [] means "no effect, not even a catalog default" (27 October 2026).
+        if a.get("vital_effects") is not None and not isinstance(a["vital_effects"], list):
+            errors.append(f"[vital_effect] {a['catalog_id']}: vital_effects must be a list; [] means no effect")
+            a["vital_effects"] = []
     for a in case["case_actions"]:
         for i, fx in enumerate(a.get("vital_effects") or []):
             loc = f"[vital_effect] {a['catalog_id']}[{i}]"
@@ -1551,6 +1637,7 @@ def run_checks(case):
     check_patient(case, errors, warnings)
     check_pupils(case, errors, warnings)
     check_ungraded(case, errors, warnings)
+    check_default_effects(case, errors, warnings, notes)
 
     # numeric plausibility of the abnormal flags. The renderer must not recompute,
     # but the validator can, and a mis-set flag is invisible everywhere else.
@@ -2142,6 +2229,9 @@ def main():
         print(f"  ERROR:   {e}")
     print(f"\n  {len(errors)} errors, {len(warnings)} warnings")
 
+    # A case may carry provenance.review_matrix_note (27 October 2026), printed under the
+    # title so a review recorded against this matrix survives its regeneration.
+    _rmn = (case.get("provenance") or {}).get("review_matrix_note")
     matrix = ("# Per-key review matrix\n\n"
               f"Generated by `engine/validate_case.py` from `{os.path.basename(PACK.case)}`, "
               "per section 11.2 of the authoring requirements.\n\n"
@@ -2157,6 +2247,9 @@ def main():
               "interface renders in red. A component that reads abnormal to you but is not bold "
               "is a display defect that no other check will catch.\n"
               + build_matrix(case))
+    if isinstance(_rmn, str) and _rmn.strip():
+        matrix = matrix.replace("# Per-key review matrix\n\n",
+                                f"# Per-key review matrix\n\n> **Review.** {_rmn}\n\n", 1)
     with open(PACK.matrix, "w") as f:
         f.write(matrix)
 

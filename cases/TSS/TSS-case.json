@@ -1040,6 +1040,7 @@
    "flags_set": [
     "pressor_running"
    ],
+   "vital_effects": [],
    "debrief_note": "Dopamine raises the pressure and the case treats it as a running vasopressor. It is discouraged because it causes more arrhythmias than norepinephrine in shock, and she already has a heart rate over 120. Norepinephrine is first line. [UNVERIFIED: De Backer et al., NEJM 2010, the SOAP II trial]"
   },
   {

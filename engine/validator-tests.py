@@ -677,5 +677,84 @@ expect("a follow-up triggered by intubation without graded false is rejected",
 expect_clean("the same follow-up with graded false passes",
              lambda c: tube_fu(c, False), "tube_check_x is triggered by intubation")
 
+print("\n-- a flag granted on a condition, and a flag a transition grants (27 October 2026) --")
+
+
+def cond_flag(c, spec):
+    a = act(c)
+    a["flags_set_if"] = spec
+    return a
+
+
+def reads_flag(c, flag):
+    """A tag rule that reads the flag, so a reference check has something to check."""
+    a = act(c)
+    a["tag"] = [{"when": f"flag {flag} set", "value": "neutral"}] + a["tag"]
+
+
+expect("flags_set_if that is not a list is rejected",
+       lambda c: cond_flag(c, {"flag": "x_after", "when": "phase is " + FIRST_PHASE}),
+       "must be a list")
+expect("flags_set_if without a condition is rejected",
+       lambda c: cond_flag(c, [{"flag": "x_after"}]),
+       "needs a when condition")
+expect("flags_set_if without a flag name is rejected",
+       lambda c: cond_flag(c, [{"when": "phase is " + FIRST_PHASE}]),
+       "needs a flag name")
+expect("an unparseable flags_set_if condition is rejected",
+       lambda c: cond_flag(c, [{"flag": "x_after", "when": "phase is"}]),
+       "flags_set_if/")
+expect_clean("a flag granted on a condition counts as settable",
+             lambda c: (cond_flag(c, [{"flag": "x_after", "when": "phase is " + FIRST_PHASE}]),
+                        reads_flag(c, "x_after")),
+             "flag 'x_after' is not set by any action")
+
+
+def second_phase(c):
+    return next(p for p in c["phases"][1:] if not p.get("terminal"))
+
+
+def tr_flags(c, flags, when="NOT flag x_once set"):
+    c["phases"][0]["transitions"].append({
+        "when": when, "after_seconds": 120, "to": second_phase(c)["id"], "flags_set": flags,
+        "narration": "x", "debrief_note": "x", "author_rationale": "x"})
+
+
+expect("a transition flags_set that is not a list of names is rejected",
+       lambda c: tr_flags(c, "x_once"), "[flags_set]")
+expect_clean("a flag a transition grants counts as settable",
+             lambda c: tr_flags(c, ["x_once"]), "flag 'x_once' is not set by any action")
+# The fairness rule asks for a warning before a deterioration on inaction. A flag only a
+# transition grants is not something the resident can do, so it needs no warning.
+expect_clean("a guard on a flag only a transition grants needs no warning prompt",
+             lambda c: tr_flags(c, ["x_once"]), "on 'x_once'")
+
+print("\n-- default pressor effects (27 October 2026) --")
+
+
+def pressor(c, effects=None, drives=True):
+    """Norepinephrine as a case action, setting a flag a transition reads."""
+    a = next((x for x in c["case_actions"] if x["catalog_id"] == "norepinephrine_drip"), None)
+    if a is None:
+        a = {"catalog_id": "norepinephrine_drip", "tag": [{"when": None, "value": "neutral"}], "debrief_note": "x"}
+        c["case_actions"].append(a)
+    a["flags_set"] = ["x_pressor_on"]
+    a.pop("vital_effects", None)
+    if effects is not None:
+        a["vital_effects"] = effects
+    if drives:
+        to = next(p for p in c["phases"][1:] if not p.get("terminal"))["id"]
+        c["phases"][0]["transitions"].append({"when": "flag x_pressor_on set", "to": to})
+
+
+expect("a pressor on the default that drives a phase change warns",
+       lambda c: pressor(c), "[default effect] norepinephrine_drip", "warnings")
+expect_clean("the same pressor with vital_effects [] does not",
+             lambda c: pressor(c, []), "[default effect] norepinephrine_drip", "warnings")
+expect_clean("a pressor on the default that drives nothing does not",
+             lambda c: pressor(c, drives=False), "[default effect] norepinephrine_drip", "warnings")
+expect("vital_effects that is not a list is rejected",
+       lambda c: pressor(c, {"vital": "systolic_bp"}), "vital_effects must be a list")
+
 print(f"\n  {COUNT} checks, " + (f"{len(FAILS)} FAILURES" if FAILS else "all passed"))
 sys.exit(1 if FAILS else 0)

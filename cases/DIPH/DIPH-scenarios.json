@@ -1,7 +1,7 @@
 {
  "scenarios_version": "0.1",
  "case_id": "diphenhydramine-overdose-qrs-01",
- "note": "End-to-end paths. The first group is the intended run. The second tests the author's instruction that a seizure occurs regardless of how well the case is being managed. The third walks the do-nothing trajectory to the arrest, which is the path a frozen learner sees. The fourth is every deterioration branch and its rescue, including a rescue that arrives too late. The fifth is physostigmine while the QRS is wide and after she has stabilized, which is the case. Then the other harmful actions, the prerequisites (including the one that must not halt), the coverage groups, the two-flag resolution requirement, and a handoff from three different phases.\n\nSince 5 September 2026 a sixth group tests the arrow that takes a patient who receives sodium bicarbonate in the arrival phase straight to the narrowing phase: the escape, the flawless run with and without the drug, the boundary at 230 seconds rather than 240, and how it interacts with physostigmine in both orders.\n\nA seventh group covers amiodarone into the wide-complex rhythm, which arrests her instantaneously, and the two orderings against the bicarbonate rescue.",
+ "note": "End-to-end paths. The first group is the intended run. The second tests the author's instruction that a seizure occurs regardless of how well the case is being managed. The third walks the do-nothing trajectory to the arrest, which is the path a frozen learner sees. The fourth is every deterioration branch and its rescue, including a rescue that arrives too late. The fifth is physostigmine while the QRS is wide and after she has stabilized, which is the case. Then the other harmful actions, the prerequisites (including the one that must not halt), the coverage groups, the two-flag resolution requirement, and a handoff from three different phases.\n\nSince 5 September 2026 a sixth group tests the arrow that takes a patient who receives sodium bicarbonate in the arrival phase straight to the narrowing phase: the escape, the flawless run with and without the drug, the boundary at 230 seconds rather than 240, and how it interacts with physostigmine in both orders.\n\nA seventh group covers amiodarone into the wide-complex rhythm, which arrests her instantaneously, and the two orderings against the bicarbonate rescue.\n\n27 October 2026, physician review (Aakash Setty): the escape group is inverted (DIPH-01), the amiodarone group now expects a fall in pressure rather than an arrest (DIPH-12), and new groups cover the one-time relapse (DIPH-09), phenytoin's consequence (DIPH-23) and propranolol (DIPH-27).",
  "scenarios": [
   {
    "name": "Intended path: monitor, access, glucose, ECG, benzodiazepine for the seizure, bicarbonate, cooling, toxicology, handoff",
@@ -59,7 +59,7 @@
    "note": "Bicarbonate narrows the QRS ten seconds after it is given, then cooling and toxicology are the two flags the stabilized phase requires.\n\nThe trailing laboratory order is load-bearing rather than decorative: the stabilizing-to-stabilized rule is instantaneous, an instantaneous rule is evaluated on a state-changing action or a clock event, and the action before it was the one that entered the phase. In play there is always a next event; in a scenario file there is not unless you write one."
   },
   {
-   "name": "A benzodiazepine and bicarbonate before the seizure prevent it",
+   "name": "A benzodiazepine and bicarbonate before the seizure no longer prevent it",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -70,11 +70,11 @@
     "lorazepam_bolus",
     "na_bicarbonate_bolus",
     {
-     "wait": 15
+     "wait": 240
     }
    ],
-   "expect_phase": "stabilizing",
-   "note": "The arrow added on 5 September 2026 and narrowed the same day to require both drugs. The benzodiazepine is what prevents a drug-induced seizure; the bicarbonate is what treats the conduction. See the author_rationale on the rule."
+   "expect_phase": "seizing",
+   "note": "Physician review DIPH-01 (Aakash Setty, 27 October 2026) deleted the escape. Both drugs before four minutes no longer prevent the seizure: it fires at 240 seconds in every run, as the case author wrote."
   },
   {
    "name": "Doing nothing at all reaches the seizure at four minutes",
@@ -101,7 +101,7 @@
     }
    ],
    "expect_phase": "seizing",
-   "note": "The author's instruction in the only form it still holds. Everything correct except the one drug that now buys an escape, and the seizure fires on the clock exactly as she wrote it."
+   "note": "The author's instruction. Everything correct, and the seizure fires on the clock exactly as she wrote it."
   },
   {
    "name": "Doing nothing at all: seizure, then wide complex, then arrest",
@@ -321,19 +321,23 @@
     "insert_iv",
     "ecg_12_lead",
     {
-     "wait": 15
+     "wait": 245
     },
     "lorazepam_bolus",
     "na_bicarbonate_bolus",
     {
      "wait": 15
     },
+    "cooling_measures",
+    "consult_toxicology",
+    "urinalysis",
     "physostigmine",
     {
      "wait": 15
     }
    ],
-   "expect_phase": "stabilizing"
+   "expect_phase": "stabilized",
+   "note": "Physician review DIPH-02: physostigmine is harmful through the narrowing phase and discouraged only once she has stabilized. This run reaches the stabilized phase first."
   },
   {
    "name": "Physostigmine one action after the ECG halts the case",
@@ -556,7 +560,7 @@
    "expect_phase": "case_complete"
   },
   {
-   "name": "A flawless first four minutes with both drugs avoids the seizure entirely",
+   "name": "A flawless first four minutes with both drugs still seizes at four minutes",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -570,16 +574,14 @@
     "cooling_measures",
     "consult_toxicology",
     {
-     "wait": 15
-    },
-    "urinalysis",
-    "magnesium_level"
+     "wait": 200
+    }
    ],
-   "expect_phase": "stabilized",
-   "note": "The best run in the case now ends without a convulsion. Before the 5 September arrow this same run seized at four minutes, which was the author's stated intention. The trailing laboratory order is not decoration: the stabilizing-to-stabilized rule is instantaneous rather than timed, and an instantaneous rule is evaluated on an action or a clock event, so a run whose last event is a wait sits in the phase it entered.\n\nThey are laboratory orders rather than examinations because an examination is never state-changing: the engine does not re-evaluate the transition list after one, so a phase cannot be advanced by palpating an abdomen. The scenario runner agreed with the engine about this only from 5 September 2026.\n\nThe two trailing laboratory orders are load-bearing: the first is the event on which the escape from the arrival phase fires and the second is the event on which the stabilized transition does. The general rule is load-bearing rather than decorative: the stabilizing-to-stabilized rule is instantaneous, an instantaneous rule is evaluated on a state-changing action or a clock event, and the action before it was the one that entered the phase. In play there is always a next event; in a scenario file there is not unless you write one."
+   "expect_phase": "seizing",
+   "note": "Physician review DIPH-01. Before 27 October 2026 this run escaped the seizure. The best run now convulses at four minutes, as the case author wrote, and recovers from the post-ictal phase on the flags already set."
   },
   {
-   "name": "Both drugs with time to spare escape the seizure",
+   "name": "Both drugs, then the seizure, then the narrowing phase from the post-ictal phase",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -590,14 +592,18 @@
     },
     "na_bicarbonate_bolus",
     {
-     "wait": 20
+     "wait": 30
+    },
+    "urinalysis",
+    {
+     "wait": 15
     }
    ],
    "expect_phase": "stabilizing",
-   "note": "The escape needs its ten seconds to mature before the 240-second deadline, so the real boundary is about 230 seconds rather than 240. Each action also advances the runner's clock by eight seconds, which is why the wait here is 180 and not 205."
+   "note": "Physician review DIPH-01. The seizure fires at 240 whatever was given. The benzodiazepine already on board ends it on the next event, and the bicarbonate then carries her out of the post-ictal phase ten seconds later. The laboratory order is the event an instantaneous rule needs."
   },
   {
-   "name": "Both drugs in the last ten seconds do not escape, and are not wasted either",
+   "name": "Both drugs just before the seizure are not wasted",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -617,16 +623,16 @@
     "magnesium_level"
    ],
    "expect_phase": "stabilizing",
-   "note": "The ten-second delay creates a dead zone at the end of the arrival phase: both drugs are in, the escape has not matured, and the seizure fires first. Nothing is lost beyond the convulsion itself, because the benzodiazepine flag ends the seizure and the bicarbonate flag then carries her out of the post-ictal phase. Same resident, ten seconds later, very different debrief.\n\nThe two laboratory orders at the end are load-bearing rather than decorative, and the reason is worth knowing: an instantaneous transition is evaluated on an action or a clock event and fires at most one hop per evaluation, so a patient who seizes with the benzodiazepine already given sits in the seizing phase until something next happens, then moves to post-ictal, then needs one more event to take the bicarbonate rescue. In play there is always a next event; in a scenario file there is not unless you write one.\n\nThey are laboratory orders rather than examinations because an examination is never state-changing: the engine does not re-evaluate the transition list after one, so a phase cannot be advanced by palpating an abdomen. The scenario runner agreed with the engine about this only from 5 September 2026."
+   "note": "Both drugs are in, the seizure fires on the clock, the benzodiazepine flag ends it and the bicarbonate flag carries her out of the post-ictal phase. Since DIPH-01 there is no escape in any timing. The two laboratory orders are the events the instantaneous rules need."
   },
   {
-   "name": "Physostigmine after the escape has fired does nothing, which is a gap",
+   "name": "Physostigmine in the narrowing phase halts the case",
    "steps": [
     "attach_monitor",
     "insert_iv",
     "ecg_12_lead",
     {
-     "wait": 15
+     "wait": 245
     },
     "lorazepam_bolus",
     "na_bicarbonate_bolus",
@@ -635,14 +641,14 @@
     },
     "physostigmine",
     {
-     "wait": 20
+     "wait": 15
     }
    ],
-   "expect_phase": "stabilizing",
-   "note": "Recording current behavior rather than endorsing it. The physostigmine seizure arrow exists only in the arrival phase, so once the patient has moved on, giving it is scored discouraged and produces no consequence. That hole predates the 5 September arrow (it was already true of the post-ictal, wide-complex and stabilized phases) and the new arrow makes it reachable sooner. Flagged in the review packet rather than fixed, because adding the arrow to four more phases is a decision about the case rather than a defect fix."
+   "expect_phase": "halted",
+   "note": "Physician review DIPH-02 closes the gap this scenario used to record: the narrowing phase still has a QRS of 104 ms, so physostigmine there halts the case."
   },
   {
-   "name": "Physostigmine given just before the escape matures halts the case",
+   "name": "Physostigmine after both drugs on arrival halts the case",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -658,7 +664,7 @@
     }
    ],
    "expect_phase": "halted",
-   "note": "v0.18a. This recorded a gap: a resident who gave bicarbonate and then physostigmine eight seconds later saw no consequence. Physostigmine is now harmful in the arrival phase whatever else has been given, so the gap is closed."
+   "note": "Both drugs on arrival do not change physostigmine's tag, which depends on the phase. The arrival QRS is 132 ms."
   },
   {
    "name": "Bicarbonate alone does not escape the seizure",
@@ -676,7 +682,7 @@
    ],
    "expect_phase": "seizing",
    "expect_phase_note": "",
-   "note": "The half of the guard added on 5 September 2026. Treating the conduction and leaving her agitated does not prevent a drug-induced seizure, because bicarbonate is not an anticonvulsant."
+   "note": "Since DIPH-01 nothing escapes the seizure. Kept as a check that the clock fires with one drug given."
   },
   {
    "name": "A benzodiazepine alone does not escape it either",
@@ -689,10 +695,10 @@
     }
    ],
    "expect_phase": "seizing",
-   "note": "The other half. Sedation without treating the QRS leaves the conduction where it was, and the case does not reward it with an escape."
+   "note": "Since DIPH-01 nothing escapes the seizure. Kept as a check that the clock fires with one drug given."
   },
   {
-   "name": "Amiodarone in the wide-complex rhythm arrests her at once",
+   "name": "Amiodarone in the wide-complex rhythm drops her pressure and does not arrest her",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -704,8 +710,8 @@
     },
     "amiodarone_bolus_infusion"
    ],
-   "expect_phase": "pulseless_vt",
-   "note": "Instantaneous, not on a clock. A class III agent that also blocks sodium channels, given into a rhythm caused by sodium-channel blockade."
+   "expect_phase": "wide_complex_tachycardia",
+   "note": "Physician review DIPH-12 (Aakash Setty, 27 October 2026): the instant arrest is replaced by a fall of 20 systolic and 12 diastolic ten seconds after the drug, while she is in this rhythm."
   },
   {
    "name": "Amiodarone outside that rhythm is discouraged and nothing happens",
@@ -715,10 +721,10 @@
     "amiodarone_bolus_infusion"
    ],
    "expect_phase": "presentation",
-   "note": "The tag is discouraged everywhere; only the wide-complex phase carries the arrow. Whether that is right is a question for the reviewer, since amiodarone at any point is a sodium-channel blocker added to a sodium-channel blocker overdose."
+   "note": "Discouraged everywhere, and its pressure effect acts only in the wide-complex rhythm. Signed as authored in physician review DIPH-26."
   },
   {
-   "name": "Amiodarone beats the bicarbonate rescue when both are ordered together",
+   "name": "Amiodarone with bicarbonate: the bicarbonate still works",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -729,10 +735,13 @@
      "wait": 125
     },
     "na_bicarbonate_bolus",
-    "amiodarone_bolus_infusion"
+    "amiodarone_bolus_infusion",
+    {
+     "wait": 15
+    }
    ],
-   "expect_phase": "pulseless_vt",
-   "note": "The amiodarone rule is listed first among the clinical rules in that phase, and it is instantaneous while the bicarbonate rescue takes ten seconds, so the arrest wins on both counts. Deliberate: treating the mechanism does not undo an agent that adds to the block."
+   "expect_phase": "seizing",
+   "note": "Physician review DIPH-12. With no arrest arrow, bicarbonate alone narrows the rhythm and returns her to the seizing phase, as it does without amiodarone."
   },
   {
    "name": "Amiodarone after the wide-complex rescue has fired does nothing",
@@ -753,7 +762,228 @@
     "amiodarone_bolus_infusion"
    ],
    "expect_phase": "stabilizing",
-   "note": "Recording current behavior. Once the rescue has fired she is out of the wide-complex phase, and the amiodarone arrow exists only there, so giving it afterwards is scored discouraged and does nothing."
+   "note": "Once she is out of the wide-complex phase, amiodarone is discouraged and its pressure effect does not act."
+  },
+  {
+   "name": "Bicarbonate during the seizure with no anticonvulsant relapses into the wide-complex rhythm",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 160
+    }
+   ],
+   "expect_phase": "wide_complex_tachycardia",
+   "note": "Physician review DIPH-09 (Aakash Setty, 27 October 2026), option B. The seizing phase is entered at 240 seconds and the relapse fires 180 seconds later."
+  },
+  {
+   "name": "After the relapse, the earlier bicarbonate does not narrow the rhythm again",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 160
+    },
+    {
+     "wait": 60
+    }
+   ],
+   "expect_phase": "wide_complex_tachycardia",
+   "note": "DIPH-09. The relapse needs a fresh dose. No second arrest clock is authored, so she stays in the rhythm."
+  },
+  {
+   "name": "A fresh dose after the relapse narrows it, and she is still seizing",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 160
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "seizing",
+   "note": "DIPH-09. The dose given after the relapse sets bicarb_after_relapse."
+  },
+  {
+   "name": "She does not relapse a second time",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 160
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    },
+    {
+     "wait": 200
+    }
+   ],
+   "expect_phase": "seizing",
+   "note": "DIPH-09. The relapse rule grants seizure_relapsed and needs it unset, so it fires once."
+  },
+  {
+   "name": "A fresh dose and a benzodiazepine after the relapse reach the narrowing phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 160
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "DIPH-09. The benzodiazepine alone does not narrow the relapsed rhythm. The fresh dose does."
+  },
+  {
+   "name": "Bicarbonate alone in the wide-complex phase, then three minutes still seizing, relapses once",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    {
+     "wait": 125
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    },
+    {
+     "wait": 190
+    }
+   ],
+   "expect_phase": "wide_complex_tachycardia",
+   "note": "DIPH-09. The relapse applies to every entry into the seizing phase with bicarbonate and no anticonvulsant."
+  },
+  {
+   "name": "Phenytoin on arrival widens her into the wide-complex rhythm",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fos_phenytoin",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "wide_complex_tachycardia",
+   "note": "Physician review DIPH-23 (Aakash Setty, 27 October 2026), option C. Ten seconds after the drug."
+  },
+  {
+   "name": "Phenytoin after the seizure widens her into the wide-complex rhythm",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 245
+    },
+    "lorazepam_bolus",
+    "fos_phenytoin",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "wide_complex_tachycardia",
+   "note": "DIPH-23, from the post-ictal phase."
+  },
+  {
+   "name": "After phenytoin on arrival, bicarbonate alone narrows the rhythm and the scheduled seizure comes",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fos_phenytoin",
+    {
+     "wait": 15
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "seizing",
+   "note": "She has not had the seizure yet, so bicarbonate alone takes her to the seizing phase rather than back to arrival. The case keeps the author's scheduled seizure in every run (DIPH-01)."
+  },
+  {
+   "name": "After phenytoin on arrival, bicarbonate and a benzodiazepine reach the narrowing phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fos_phenytoin",
+    {
+     "wait": 15
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": "The wide-complex rescue needs bicarbonate and an anticonvulsant, whatever the route in."
+  },
+  {
+   "name": "Propranolol while the QRS is wide halts the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "propranolol_bolus"
+   ],
+   "expect_phase": "halted",
+   "note": "Physician review DIPH-27 (Aakash Setty, 27 October 2026), option B. Propranolol also blocks cardiac sodium channels."
+  },
+  {
+   "name": "Propranolol once she has stabilized is discouraged and does not halt the case",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "ecg_12_lead",
+    {
+     "wait": 245
+    },
+    "lorazepam_bolus",
+    "na_bicarbonate_bolus",
+    {
+     "wait": 15
+    },
+    "cooling_measures",
+    "consult_toxicology",
+    "urinalysis",
+    "propranolol_bolus",
+    {
+     "wait": 15
+    }
+   ],
+   "expect_phase": "stabilized",
+   "note": "DIPH-27. Harmful in the same phases as physostigmine, discouraged once stabilized."
   }
  ]
 }

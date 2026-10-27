@@ -197,7 +197,12 @@ class Run:
             self.log.append(f"     halt reason: {act['halt_reason'][:90]}...")
             return "halted"
         self.taken.add(aid)
+        # flags_set_if: granted only if the condition holds as the act is taken, judged
+        # before the act's own flags, as the engine does.
+        cond_flags = [fc["flag"] for fc in (act.get("flags_set_if") or [])
+                      if holds(fc.get("when"), self.assign())]
         self.flags.update(effective_flags(aid, act))
+        self.flags.update(cond_flags)
         ta = turnaround_of(aid)
         if ta is not None:
             self.ordered.add(aid)
@@ -242,6 +247,8 @@ class Run:
             if not self.due(tr, i):
                 continue
             if tr["to"] != self.phase:
+                # A transition's own flags are granted as it fires (engine.js checkTransitions).
+                self.flags.update(tr.get("flags_set") or [])
                 self.phase = tr["to"]
                 self.entry_t = self.t
                 return tr

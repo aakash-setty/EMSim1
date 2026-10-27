@@ -11,10 +11,78 @@ converted for this platform with her permission at the request of Aakash Setty o
 **Nothing in this pack has been reviewed by a physician in this form.** The clinical
 source came from one. The case file did not.
 
+**Since 27 October 2026, 45 of the 46 DIPH review questions have answers from one physician reviewer, Aakash Setty, physician.** See "Physician review" below. Questions not in the bank are still unreviewed, and so is anything changed since.
+
 There is one thing to read before the rest of this packet, and it is
 **`DIPH-SEED.md` section 9**. The source document contradicts itself in seven places,
 including about the central teaching point of the case. Four of the seven were resolved on
 the author's instruction. Three are drafting assumptions and need a signature.
+
+---
+
+## Physician review (27 October 2026)
+
+**Reviewer:** Aakash Setty, physician. The export names the reviewer "Tester", role "Tester". In the session that applied it, Aakash Setty confirmed that the answers are his, as a physician, and asked for them to be recorded under his name. **Bank:** 2026-10-05.1, exported 2026-10-27 11:46. All 45 DIPH question hashes matched the bank.
+
+**The case had changed since the bank was written** (case JSON 563bb5c1a622 at bank time, 1898bd8ad3b6 when applied). The bank-time file was recovered from the repository history and each answer was checked against the case as it stood. The changes that touched answers were: Critical Care consult recommended (11 October), shorter consultant answers (11 October), every tracing a picture (13 October), one scored additional diagnosis plus minor ones (23 October), and intubation care ungraded (23 October). Where these matter, the row says so.
+
+**Scope:** DIPH only, on the owner's instruction. The AFRVR answers in the same export are not applied. DIPH-45 was flagged by the reviewer and not applied.
+
+**Same-day owner instruction, not a review item:** the nurse's escalation "The QRS on the monitor is still wide. Do you want bicarb?" is removed. The first prompt, "Her complexes look broad to me. Is there anything you want to give for that?", stays, because the validator requires a warning before the three deteriorations that fire if no bicarbonate is given. The redose question after the first dose stays.
+
+**Independence.** 12 of 45 answers changed after the model's recommendation was shown (DIPH-02, DIPH-04, DIPH-07, DIPH-08, DIPH-09, DIPH-12, DIPH-13, DIPH-18, DIPH-25, DIPH-30, DIPH-34, DIPH-42). Those are not independent agreement with the recommendation, whichever way they moved. In 12 items the final answer differs from the recommendation (DIPH-04, DIPH-14, DIPH-15, DIPH-16, DIPH-22, DIPH-23, DIPH-27, DIPH-28, DIPH-32, DIPH-37, DIPH-40, DIPH-43).
+
+**What changed:** 25 items changed the case. The rest were signed as authored or recorded, except DIPH-38, which is not applied because it conflicts with the owner's rule that intubation care is never graded. It is listed for resolution.
+
+| Item | Decision | Confidence | Comment | Changed after recommendation shown | Recommendation | Committed | What was done |
+|---|---|---|---|---|---|---|---|
+| DIPH-01 | B. Delete the escape and restore the scripted seizure | high | none | no | B. Delete the escape and restore the scripted seizure | 2026-10-27 11:08 | Escape from arrival deleted. Intended path goes through the seizure again. Seizure rationale and note, intended-path note and phase notes rewritten. Escape scenarios inverted or renamed. |
+| DIPH-02 | B. Harmful through stabilizing, discouraged when stabilized | not given | none | yes, first A. Keep the v0.18a line as authored | B. Harmful through stabilizing, discouraged when stabilized | 2026-10-27 11:11 | Physostigmine harmful through the narrowing phase, discouraged only once stabilized. Note and scenarios updated. The escape scenario it names no longer exists (DIPH-01), so a narrowing-phase halt scenario replaces it. |
+| DIPH-03 | A. Present at 5 mm, as authored | high | none | no | A. Present at 5 mm, as authored | 2026-10-27 11:12 | No change. Signed. |
+| DIPH-04 | Own answer (reviewer's text: "Allow for the discrepancy in HR between the actual and the EKG.") | high | none | yes, first B. Keep the image and change the case to match it | A. Return the arrival ECG to a text report | 2026-10-27 11:29 | No change. The tracing reads about 165/min against a monitor rate of 135, and the difference is accepted. Recorded in the SEED. |
+| DIPH-05 | A. Keep 13 and the author's chloride of 109 | high | none | no | A. Keep 13 and the author's chloride of 109 | 2026-10-27 11:13 | No change. Signed. |
+| DIPH-06 | A. Keep pCO2 28 | not given | none | no | A. Keep pCO2 28 | 2026-10-27 11:19 | Values kept. The gas debrief note now reads pCO2 28 and "appropriately compensated". The verify note says four values are the author's and the pCO2 was revised. |
+| DIPH-07 | A. Keep the split, fix the halt reason | not given | none | yes, first C. Discouraged always | A. Keep the split, fix the halt reason | 2026-10-27 11:19 | Halt reason reworded so it is true in every phase. |
+| DIPH-08 | B. Remove the screen rule (audit default) | not given | none | yes, first A. Keep the screen as the switch | B. Remove the screen rule (audit default) | 2026-10-27 11:19 | The urine-screen switch is removed from ceftriaxone, acyclovir and the lumbar puncture. Notes rewritten. |
+| DIPH-09 | B. Add a one-time relapse to the wide-complex rhythm | not given | none | yes, first C. Add a terminal outcome for prolonged untreated seizure | B. Add a one-time relapse to the wide-complex rhythm | 2026-10-27 11:19 | One-time relapse added: bicarbonate without an anticonvulsant returns her to the wide-complex rhythm 180 s after the seizing phase is entered, once. Only a fresh dose narrows it. Two generic engine fields were added for this: `flags_set` on a transition and `flags_set_if` on an action. No second arrest clock in the relapsed rhythm. |
+| DIPH-10 | A. Keep the set, levetiracetam discouraged before benzo | not given | none | no | A. Keep the set, levetiracetam discouraged before benzo | 2026-10-27 11:20 | Levetiracetam discouraged before a benzodiazepine, neutral after. |
+| DIPH-11 | A. Keep 120 seconds | not given | none | no | A. Keep 120 seconds | 2026-10-27 11:22 | 120 s kept. The terminal opt-in rationale is corrected and now names the 25 s prompts, because the 90 s escalation was removed by owner instruction the same day. |
+| DIPH-12 | B. Keep discouraged, replace arrest with survivable harm (reviewer's text: "Make giving bicarb allow rescue out of pulseless VT. Pt should be in pulseless VT for 30 seconds.") | not given | none | yes, first Own answer | B. Keep discouraged, replace arrest with survivable harm | 2026-10-27 11:28 | Amiodarone arrest arrow deleted. In the wide-complex rhythm amiodarone now lowers BP by 20/12 after 10 s. The diastolic 12 is a model choice. Arrest reason and notes rewritten. |
+| DIPH-13 | A. Use the narrative set only, as authored | not given | none | yes, first B. Narrative set, admitting-form rate in the handover | A. Use the narrative set only, as authored | 2026-10-27 11:28 | No change. Signed. |
+| DIPH-14 | A. I checked it: confirmed as authored | not given | none | no | C. Ask Claude to pre-check first, then I confirm | 2026-10-27 11:29 | No change. Signed. Since 13 October the later tracings are generated pictures. The answer covers the measurements in their reads. |
+| DIPH-15 | A. No words, as authored | not given | none | no | B. Caption with machine measurements | 2026-10-27 11:30 | No change. Signed. |
+| DIPH-16 | A. Mine: cleared for use | not given | none | no | C. Unsure: remove pending confirmation | 2026-10-27 11:30 | Recorded in provenance.unused_source_material and SEED sections 0 and 9.10. |
+| DIPH-17 | A. I checked it: confirmed as authored | not given | none | no | A. I checked it: confirmed as authored | 2026-10-27 11:31 | No change. Signed. |
+| DIPH-18 | B. Make it normal (about 2.0), magnesium neutral | not given | none | yes, first A. Keep 1.6 | B. Make it normal (about 2.0), magnesium neutral | 2026-10-27 11:33 | Magnesium 2.0, normal. Magnesium sulfate neutral. Notes rewritten. The cardiology line the implementation names was removed on 11 October, so there was nothing to edit there. |
+| DIPH-19 | A. I checked it: confirmed as authored | not given | none | no | A. I checked it: confirmed as authored | 2026-10-27 11:33 | No change. Signed. |
+| DIPH-20 | B. Negative blood, concentrated urine | not given | none | no | B. Negative blood, concentrated urine | 2026-10-27 11:34 | Urinalysis: blood negative, specific gravity 1.030 flagged (interval 1.005-1.025 is model output). Three notes rewritten. |
+| DIPH-21 | A. Keep discouraged | not given | none | no | A. Keep discouraged | 2026-10-27 11:34 | No change. Signed. |
+| DIPH-22 | C. Discouraged with a heart-rate effect | high | none | no | B. Discouraged | 2026-10-27 11:34 | Atropine discouraged. Heart rate +15 from 10 s for 300 s. The 300 s is a model reading of "for a while". |
+| DIPH-23 | C. Discouraged with a consequence | not given | none | no | A. Keep discouraged | 2026-10-27 11:35 | Phenytoin moves her to the wide-complex rhythm 10 s after it is given on arrival or after the seizure. From that arrival route, bicarbonate alone takes her to the seizing phase, so the scheduled seizure still happens (model judgment). |
+| DIPH-24 | A. Keep 120 s and 180 s | not given | none | no | A. Keep 120 s and 180 s | 2026-10-27 11:35 | No change. Signed. |
+| DIPH-25 | A. Keep: harmful until stabilized | not given | none | yes, first B. Harmful only in the wide-complex phase (seed) | A. Keep: harmful until stabilized | 2026-10-27 11:36 | No change. Signed. |
+| DIPH-26 | A. Keep: discouraged and inert | not given | none | no | A. Keep: discouraged and inert | 2026-10-27 11:36 | No change. Signed. |
+| DIPH-27 | B. Propranolol harmful while the QRS is wide | not given | none | no | A. Keep all six discouraged | 2026-10-27 11:36 | Propranolol harmful in the same phases as physostigmine, which since DIPH-02 includes the narrowing phase. Discouraged once stabilized. Halt reason added. |
+| DIPH-28 | A. Keep as authored | not given | none | no | B. Discouraged whenever no bicarbonate has been given | 2026-10-27 11:37 | No change. Signed. |
+| DIPH-29 | C. B plus a still-seizing state | high | none | no | C. B plus a still-seizing state | 2026-10-27 11:38 | Wide-complex exam lines (neuro, psych, airway, breathing), eyes closed, the intubated status line split by phase, and a still-seizing state for the figure, neuro exam and general status. |
+| DIPH-30 | B. Add phase tiers for seizing and wide-complex | not given | none | yes, first A. Keep as authored | B. Add phase tiers for seizing and wide-complex | 2026-10-27 11:38 | Phase tiers for seizing and wide-complex added at the top of toxicology and critical care (model wording, 40 words or fewer). Cardiology reads the repeat only once a second tracing exists. |
+| DIPH-31 | B. Neutral until stabilizing, recommended after, fix notes | not given | none | no | B. Neutral until stabilizing, recommended after, fix notes | 2026-10-27 11:39 | Psychiatry neutral through the post-ictal phase, recommended from the narrowing phase. Both notes rewritten. |
+| DIPH-32 | B. Make critical care consultation recommended (reviewer's text: "Make critical care consultation recommended Handoff disposition carries the level-of-care decision. Removes double scoring. But also make arrival benzodiazepine recommended not critical. Critical only during the") | not given | none | no | A. Keep all nine | 2026-10-27 11:40 | Critical care consult recommended (in the case since 11 October). Also applied, from the reviewer's note and confirmed in session: lorazepam recommended on arrival and critical only while seizing. |
+| DIPH-33 | A. Keep as authored | not given | none | no | A. Keep as authored | 2026-10-27 11:40 | No change. Answered against the bank-time lists (five additional diagnoses). The 23 October restructure, with one additional and four minor diagnoses, stands. |
+| DIPH-34 | B. Keep the mother, but make pregnancy not a key topic | not given | none | yes, first A. Keep as authored | B. Keep the mother, but make pregnancy not a key topic | 2026-10-27 11:41 | Pregnancy removed from key topics (eleven now). Note updated. |
+| DIPH-35 | B. Rewrite as behaviors within six | not given | none | no | B. Rewrite as behaviors within six | 2026-10-27 11:41 | Six objectives rewritten as behaviors. 2 and 3 are merged, 5 is rewritten, and toxicology and critical care are added. Model wording. |
+| DIPH-36 | A. I checked it: confirmed as authored | not given | none | no | A. I checked it: confirmed as authored | 2026-10-27 11:42 | No change. Signed. |
+| DIPH-37 | C. Neutral always | not given | none | no | B. Discouraged always (seed) | 2026-10-27 11:42 | Naloxone neutral throughout. It stays in the trap list, so the debrief shows it under "looked reasonable and were not". |
+| DIPH-38 | A. Keep discouraged | not given | none | no | A. Keep discouraged | 2026-10-27 11:42 | NOT APPLIED. It conflicts with the owner's rule of 23 October 2026 that intubation care is never graded. Succinylcholine stays neutral, and its note still says "discouraged". Listed for resolution. |
+| DIPH-39 | B. Charcoal neutral once intubated | not given | none | no | B. Charcoal neutral once intubated | 2026-10-27 11:42 | Charcoal neutral once intubated, discouraged before. Note updated. |
+| DIPH-40 | B. Synchronized cardioversion neutral in the wide phase | not given | none | no | A. Keep both discouraged | 2026-10-27 11:43 | Synchronized cardioversion neutral in the wide-complex rhythm. |
+| DIPH-41 | A. Keep both, fix the nurse alert | not given | none | no | A. Keep both, fix the nurse alert | 2026-10-27 11:43 | Nurse alert now "Give it a few seconds and watch the complexes." 39.6 C and the ten seconds signed. |
+| DIPH-42 | A. Keep as authored | not given | none | yes, first C. Step-down accepted if not intubated | A. Keep as authored | 2026-10-27 11:45 | No change. Signed. |
+| DIPH-43 | C. Remove the nurse disclosure | not given | none | no | A. Keep as authored | 2026-10-27 11:45 | The nurse's toxicology prompt no longer names the bottle. Her mother still discloses it when asked. This removes the author's bottle-disclosure mechanic from the nurse. |
+| DIPH-44 | A. I checked it: confirmed as authored | not given | none | no | A. I checked it: confirmed as authored | 2026-10-27 11:45 | No change. Signed. The answer confirms twelve key topics, and DIPH-34 then removed pregnancy, leaving eleven. The two answers disagree, and DIPH-34 is applied. |
+| DIPH-46 | A. Keep the combined wording | not given | none | no | A. Keep the combined wording | 2026-10-27 11:46 | No change. Signed. |
+
+**For resolution:** DIPH-38 (the reviewer kept succinylcholine discouraged, and the owner's rule of 23 October makes all intubation care neutral). DIPH-44 against DIPH-34 (twelve key topics confirmed, then pregnancy removed). DIPH-23 from arrival (after phenytoin on arrival, bicarbonate alone now brings the scheduled seizure early, which is a model judgment). DIPH-09 (no arrest clock in the relapsed rhythm).
 
 ---
 
@@ -551,80 +619,82 @@ a multi-term OR is ANDed with something, group it.
 
 ## 11. Sign-off checklist
 
+*Ticks of 27 October 2026 are the physician review recorded at the top of this packet. The review export calls this section 14.3.*
+
 **Clinical content**
 
-- [ ] The corrected chemistry bicarbonate of 13 is right and the source's 34 is the error
-- [ ] The terminal R wave in aVR is present rather than absent, and 5 mm is a reasonable value
-- [ ] The QRS of 132 ms, the QTc of 495 and the later tracings' numbers are reasonable
-- [ ] The invented magnesium of 1.6 belongs in the case
+- [x] The corrected chemistry bicarbonate of 13 is right and the source's 34 is the error *(DIPH-05. Aakash Setty, 27 October 2026)*
+- [x] The terminal R wave in aVR is present rather than absent, and 5 mm is a reasonable value *(DIPH-03. Aakash Setty, 27 October 2026)*
+- [x] The QRS of 132 ms, the QTc of 495 and the later tracings' numbers are reasonable *(DIPH-14. Aakash Setty, 27 October 2026)*
+- [x] The invented magnesium of 1.6 belongs in the case *(DIPH-18: no, replaced by a normal 2.0. Aakash Setty, 27 October 2026)*
 - [ ] The haemoglobin of 16.9 and haematocrit of 47.2 are intended, and haemoconcentration is the reading
-- [ ] Every reference interval in `content_keys.labs` is right for the assays you would be working to
-- [ ] The CK reference interval of 30 to 200 U/L is right for your laboratory
-- [ ] Every abnormal flag is right, and no normal value carries one
+- [x] Every reference interval in `content_keys.labs` is right for the assays you would be working to *(DIPH-17. Aakash Setty, 27 October 2026)*
+- [x] The CK reference interval of 30 to 200 U/L is right for your laboratory *(DIPH-17. Aakash Setty, 27 October 2026)*
+- [x] Every abnormal flag is right, and no normal value carries one *(DIPH-17. Aakash Setty, 27 October 2026)*
 
 **The action spine**
 
-- [ ] Physostigmine harmful before the ECG and discouraged after it is what you want, or it should halt in both cases
-- [ ] The physostigmine halt reason uses the bradycardia-and-seizure mechanism from your narrative rather than the arrest from your scenario flow, and that is the right choice
-- [ ] Flumazenil, a further dose of diphenhydramine, and procainamide in an established wide-complex rhythm are genuinely lethal here
-- [ ] Phenytoin is discouraged rather than harmful
-- [ ] Succinylcholine is discouraged rather than neutral
-- [ ] The antipsychotics, paracetamol, naloxone, amiodarone and charcoal-before-the-airway are discouraged rather than harmful
-- [ ] Antibiotics and acyclovir recommended on arrival and discouraged after the toxicology screen is the right switch, and the screen is the right proxy
-- [ ] Lidocaine, hypertonic saline and lipid emulsion are correctly placed behind bicarbonate
+- [x] Physostigmine harmful before the ECG and discouraged after it is what you want, or it should halt in both cases *(DIPH-02: harmful through the narrowing phase, discouraged once stabilized. Aakash Setty, 27 October 2026)*
+- [x] The physostigmine halt reason uses the bradycardia-and-seizure mechanism from your narrative rather than the arrest from your scenario flow, and that is the right choice *(DIPH-46. Aakash Setty, 27 October 2026)*
+- [ ] Flumazenil, a further dose of diphenhydramine, and procainamide in an established wide-complex rhythm are genuinely lethal here *(partly answered: DIPH-07 (flumazenil), DIPH-25 (procainamide). Diphenhydramine not asked)*
+- [x] Phenytoin is discouraged rather than harmful *(DIPH-23: discouraged, with a consequence. Aakash Setty, 27 October 2026)*
+- [ ] Succinylcholine is discouraged rather than neutral *(DIPH-38 answered "keep discouraged", not applied: intubation care is never graded (owner, 23 October 2026). For resolution)*
+- [ ] The antipsychotics, paracetamol, naloxone, amiodarone and charcoal-before-the-airway are discouraged rather than harmful *(partly answered: DIPH-21, 37, 12, 26, 39. Paracetamol not asked)*
+- [x] Antibiotics and acyclovir recommended on arrival and discouraged after the toxicology screen is the right switch, and the screen is the right proxy *(DIPH-08: the screen switch is removed. Aakash Setty, 27 October 2026)*
+- [x] Lidocaine, hypertonic saline and lipid emulsion are correctly placed behind bicarbonate *(DIPH-28. Aakash Setty, 27 October 2026)*
 
 **Timing**
 
-- [ ] **The escape from the arrival phase, which makes your seizure preventable.** Keep it, or delete it and restore the sentence you wrote
-- [ ] That requiring a benzodiazepine AND bicarbonate is the right pair, and that a benzodiazepine is the right thing to say prevents the seizure
-- [ ] **Amiodarone arresting her in the wide-complex phase**, which is not in your document, and whether the discouraged tag or the lethal consequence should move to meet the other
-- [ ] Whether amiodarone should also do something outside the wide-complex phase, where it is currently discouraged and inert
-- [ ] If the escape is kept: that the boundary is 230 seconds rather than 240, and that a resident ten seconds slower gets a materially different case
-- [ ] If it is kept: that the intended path no longer includes the seizure, and whether that is acceptable given how much of the teaching sits there
-- [ ] The seizure at 240 seconds is what you intended for every run that does not take the escape
-- [ ] The narrowing phase at 39.6 degrees, which has to be true of a patient who never seized and of one who nearly arrested
-- [ ] 120 seconds of untreated seizure to a wide-complex rhythm
-- [ ] 180 seconds of untreated blockade from the post-ictal phase
-- [ ] **120 seconds of untreated stable VT to cardiac arrest**, which is the deadline that lets this case kill the patient
-- [ ] Ten seconds for bicarbonate to narrow the QRS is an acceptable compression
-- [ ] Ten seconds for physostigmine to produce its seizure is an acceptable compression
+- [x] **The escape from the arrival phase, which makes your seizure preventable.** Keep it, or delete it and restore the sentence you wrote *(DIPH-01: deleted. Aakash Setty, 27 October 2026)*
+- [x] That requiring a benzodiazepine AND bicarbonate is the right pair, and that a benzodiazepine is the right thing to say prevents the seizure *(moot, the escape is deleted (DIPH-01). Aakash Setty, 27 October 2026)*
+- [x] **Amiodarone arresting her in the wide-complex phase**, which is not in your document, and whether the discouraged tag or the lethal consequence should move to meet the other *(DIPH-12: survivable fall in pressure instead. Aakash Setty, 27 October 2026)*
+- [x] Whether amiodarone should also do something outside the wide-complex phase, where it is currently discouraged and inert *(DIPH-26: no. Aakash Setty, 27 October 2026)*
+- [x] If the escape is kept: that the boundary is 230 seconds rather than 240, and that a resident ten seconds slower gets a materially different case *(moot (DIPH-01). Aakash Setty, 27 October 2026)*
+- [x] If it is kept: that the intended path no longer includes the seizure, and whether that is acceptable given how much of the teaching sits there *(moot (DIPH-01). Aakash Setty, 27 October 2026)*
+- [x] The seizure at 240 seconds is what you intended for every run that does not take the escape *(DIPH-01: every run. Aakash Setty, 27 October 2026)*
+- [x] The narrowing phase at 39.6 degrees, which has to be true of a patient who never seized and of one who nearly arrested *(DIPH-41. Aakash Setty, 27 October 2026)*
+- [x] 120 seconds of untreated seizure to a wide-complex rhythm *(DIPH-24. Aakash Setty, 27 October 2026)*
+- [x] 180 seconds of untreated blockade from the post-ictal phase *(DIPH-24. Aakash Setty, 27 October 2026)*
+- [x] **120 seconds of untreated stable VT to cardiac arrest**, which is the deadline that lets this case kill the patient *(DIPH-11. Aakash Setty, 27 October 2026)*
+- [x] Ten seconds for bicarbonate to narrow the QRS is an acceptable compression *(DIPH-41. Aakash Setty, 27 October 2026)*
+- [ ] Ten seconds for physostigmine to produce its seizure is an acceptable compression *(no longer in the case since v0.18a)*
 
 **The interview**
 
-- [ ] The mother answering in the patient's place is acceptable, and the answers sound like a mother rather than like a chart
-- [ ] The psychosocial history is handled the way you would want it handled with a learner
-- [ ] The disclosure reaching a resident who never asks, through the nurse at 100 seconds into the post-ictal phase, is the right compression of your five-minute rule
-- [ ] The twelve key topics are the right twelve
+- [x] The mother answering in the patient's place is acceptable, and the answers sound like a mother rather than like a chart *(DIPH-34, DIPH-44. Aakash Setty, 27 October 2026)*
+- [x] The psychosocial history is handled the way you would want it handled with a learner *(DIPH-34: pregnancy is no longer a key topic. Aakash Setty, 27 October 2026)*
+- [x] The disclosure reaching a resident who never asks, through the nurse at 100 seconds into the post-ictal phase, is the right compression of your five-minute rule *(DIPH-43: no, the nurse disclosure is removed. Aakash Setty, 27 October 2026)*
+- [x] The twelve key topics are the right twelve *(DIPH-44, then DIPH-34 removed pregnancy: eleven now. Aakash Setty, 27 October 2026)*
 
 **Disposition and diagnosis**
 
-- [ ] Critical care, and the psychiatric unit as the most instructive wrong answer
-- [ ] A tricyclic overdose as defensible rather than wrong
-- [ ] Diphenhydramine overdose as the primary, with the sodium-channel cardiotoxicity first among the additional diagnoses
-- [ ] The anticholinergic toxidrome scored as credit beside the agent and as defensible-but-incomplete when offered as the primary
-- [ ] The suicide attempt named in the handover, and the five additional diagnoses as a set
+- [x] Critical care, and the psychiatric unit as the most instructive wrong answer *(DIPH-42. Aakash Setty, 27 October 2026)*
+- [x] A tricyclic overdose as defensible rather than wrong *(DIPH-33. Aakash Setty, 27 October 2026)*
+- [x] Diphenhydramine overdose as the primary, with the sodium-channel cardiotoxicity first among the additional diagnoses *(DIPH-33. Aakash Setty, 27 October 2026)*
+- [x] The anticholinergic toxidrome scored as credit beside the agent and as defensible-but-incomplete when offered as the primary *(DIPH-33. Aakash Setty, 27 October 2026)*
+- [x] The suicide attempt named in the handover, and the five additional diagnoses as a set *(DIPH-33, answered against the bank-time list; since 23 October four of the five are minor. Aakash Setty, 27 October 2026)*
 - [ ] The three diagnosis-catalog entries added for this case, and whether "sodium channel blocker cardiotoxicity" is the right way to name that entry for every poisoning that will use it
 
 **Provenance**
 
 - [ ] Which parts of the source document are your own work, and which are compiled from the ACEP toxicology case file and the other cited sources
-- [ ] **Whether the arrival tracing and the radiograph are yours.** Both are now embedded in the distributed build, so this is no longer hypothetical
+- [x] **Whether the arrival tracing and the radiograph are yours.** Both are now embedded in the distributed build, so this is no longer hypothetical *(DIPH-16: cleared for use. Aakash Setty, 27 October 2026)*
 
 **The images (section 2.9)**
 
 - [ ] **That the remaining tracing is the arrival one rather than the repeat.** Your document does not label them and both are wide-complex
-- [ ] That the arrival tracing is compatible with what the case says about it, which is a sinus tachycardia at 135 with a QRS of 132 ms
-- [ ] That showing it with no words is what you want, and that losing the written QRS of 132 ms from the interface is acceptable
-- [ ] Whether it should carry a caption with the machine measurements, which is not interpretation and would put 132 ms back on the screen
+- [x] That the arrival tracing is compatible with what the case says about it, which is a sinus tachycardia at 135 with a QRS of 132 ms *(DIPH-04: the rate difference is accepted. Aakash Setty, 27 October 2026)*
+- [x] That showing it with no words is what you want, and that losing the written QRS of 132 ms from the interface is acceptable *(DIPH-15. Aakash Setty, 27 October 2026)*
+- [x] Whether it should carry a caption with the machine measurements, which is not interpretation and would put 132 ms back on the screen *(DIPH-15: no caption. Aakash Setty, 27 October 2026)*
 - [ ] **The narrowing phase's report is new text, not your original**, which was overwritten and not recoverable. Its numbers agree with what cardiology reads on the repeat tracing
-- [ ] That one tracing being a picture while every later one describes itself is a decision you accept
+- [ ] That one tracing being a picture while every later one describes itself is a decision you accept *(stale: every tracing is a picture since 13 October 2026)*
 - [ ] The chest radiograph is shown as a picture with no report, and the intubated-patient radiograph still reports in words
 - [ ] That a picture opening itself the moment it results is what you want, rather than a thumbnail the resident finds
 - [ ] **That the twelve-lead coming back in five seconds rather than ten is right**, and that halving the window in which physostigmine halts the case is an acceptable cost
 
 **Then**
 
-- [ ] Read `DIPH-review-matrix.md` in full
+- [ ] Read `DIPH-review-matrix.md` in full *(DIPH-45 flagged for later, not signed)*
 - [ ] Read `DIPH-deterioration-timeline.md` in full, particularly the do-nothing trajectory
 - [ ] Play the case from start to finish, at least once doing nothing at all
 

@@ -144,7 +144,13 @@ function mergeAction(eff, base, caseAct, extra){
     bound:!!caseAct.catalog_id,
     orphan:!!(extra&&extra.orphan),
     shadowed:(extra&&extra.shadowed)||[],
-    covered_by:(extra&&extra.coveredBy)||null
+    covered_by:(extra&&extra.coveredBy)||null,
+    /* Default vital effects (owner, 27 October 2026), from catalog data. Display only: they
+       move the monitor and nothing a condition reads. The case's own list, even [], replaces
+       them below. stopped_by names the catalog stop orders that end a default drip. */
+    vital_effects:base.vital_effects_default||undefined,
+    vital_source:base.vital_effects_default?'default':null,
+    stopped_by:base.vital_effects_default?(base.stopped_by||null):null
   };
   if(caseAct.catalog_id){
     rec.tag=caseAct.tag;
@@ -153,7 +159,11 @@ function mergeAction(eff, base, caseAct, extra){
     rec.references=caseAct.references;
     rec.halt_reason=caseAct.halt_reason;
     rec.follow_ups_triggered=caseAct.follow_ups_triggered;
-    rec.vital_effects=caseAct.vital_effects;
+    if(caseAct.vital_effects!==undefined){
+      rec.vital_effects=caseAct.vital_effects;
+      rec.vital_source=(caseAct.vital_effects||[]).length?'case':'none';
+      rec.stopped_by=null;
+    }
     /* Optional. Where a case action covers several catalog entries the debrief has to
        name the act rather than one of its routes, or a resident who gave amiodarone is
        told they completed 'Digoxin bolus'. The button keeps the catalog's own name;
@@ -183,6 +193,10 @@ function mergeAction(eff, base, caseAct, extra){
        each of two drugs are the same thing. */
     rec.flags_set_repeat=caseAct.flags_set_repeat;
     rec.flags_set_timed=caseAct.flags_set_timed;
+    /* 27 October 2026. A flag granted only if `when` holds at the moment the act is taken,
+       judged before the act's own flags are granted. It tells a dose given after some event
+       apart from the doses before it, which a permanent flag cannot. */
+    rec.flags_set_if=caseAct.flags_set_if;
     /* v0.20. Conditional credit. also_covers says two entries are always the same act.
        This says: taking this action also discharges another action's expectation, but
        only if `when` holds at the moment it is taken. It exists for an act that is right
@@ -458,6 +472,9 @@ function fold(log, now, difficultyMultiplier){
   const st={
     phase:CASE.phases[0].id, flags:new Set(), ordered:new Set(), resulted:new Set(), taken:new Set(),
     takenAt:{}, takenSeq:0,
+    /* The last time each action went through, on the case clock. A default drip effect
+       reads it to know whether its stop order has been given since it started. */
+    lastAt:{},
     /* Two sets, because they answer two different questions and conflating them put a
        pressed highlight on a button nobody had pressed.
 
@@ -649,6 +666,10 @@ function fold(log, now, difficultyMultiplier){
           st.timeFires.push({t,from:st.phase,to:tr.to,after:tr.after_seconds,
                              when:tr.when,note:tr.debrief_note||''});
         }
+        /* 27 October 2026. A transition may grant flags as it fires, permanently, before
+           the new phase is entered. It records that something has happened once (a relapse,
+           say) so that a guard can make it happen only once. */
+        (tr.flags_set||[]).forEach(f=>grantFlag(f,t,null));
         enterPhase(tr.to,t);
       }
       return;
@@ -875,6 +896,7 @@ function fold(log, now, difficultyMultiplier){
     }
 
     st.taken.add(id);
+    st.lastAt[id]=t;
     st.takenAt[id]=++st.takenSeq;   // order of the last press, for the airway device (v0.17p)
     st.satisfied.add(id);
     /* An entry covered through also_covers borrows the covering action's tag, flags and
@@ -937,7 +959,9 @@ function fold(log, now, difficultyMultiplier){
        of the order, so a second order of the same drug can carry a different line. */
     { const al=resolveText(a.nurse_alert,st); if(al) narrate(t,al,'alert'); }
 
+    const condFlags=(a.flags_set_if||[]).filter(fc=>test(fc.when,st)).map(fc=>fc.flag);
     (a.flags_set||[]).forEach(f=>grantFlag(f,t,null));
+    condFlags.forEach(f=>grantFlag(f,t,null));
     for(const fr of (a.flags_set_repeat||[])){
       /* The counter defaults to the act rather than to the button, so a sibling covered
          through also_covers counts toward the same total. */
@@ -955,7 +979,11 @@ function fold(log, now, difficultyMultiplier){
                        key:fx.key||id,
                        onset:fx.onset_seconds===undefined?null:fx.onset_seconds,
                        duration:fx.duration_seconds===undefined?null:fx.duration_seconds,
-                       guard:fx.while===undefined?null:fx.while});
+                       guard:fx.while===undefined?null:fx.while,
+                       /* Only a default effect is ended by a stop order. A case's own effect
+                          says when it stops through its while guard. */
+                       stop:(a.vital_source==='default'&&a.stopped_by)?
+                         a.stopped_by.map(c=>((PACK&&PACK.bindings)||{})[c]||c):null});
 
     if(IS_CONSULT(id)){
       st.readouts.push({t,kind:'consult',key:id,title:dispName(id),
@@ -1111,6 +1139,7 @@ function activeEffects(st, now){
        The active window is [t + onset, t + duration). */
     if(fx.onset!==null && now-fx.t < fx.onset) continue;
     if(fx.duration!==null && now-fx.t >= fx.duration) continue;
+    if(fx.stop && fx.stop.some(s=>st.lastAt&&st.lastAt[s]!==undefined&&st.lastAt[s]>=fx.t)) continue;
     if(fx.guard){
       let ok; try{ ok=test(fx.guard,st); }catch(e){ ok=true; }
       if(!ok) continue;

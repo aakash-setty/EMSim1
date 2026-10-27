@@ -414,6 +414,10 @@ so it cannot express thirty seconds, cannot express an effect that ends when the
 stopped, and cannot express a drug that changes the patient without changing the number
 being watched.
 
+Pressors have a default effect (owner, 27 October 2026). A pressor a case does not author
+moves the monitor by the catalog default in `catalog/default-vital-effects.json`, display
+only. A case's own `vital_effects`, or `[]`, replaces it.
+
 Vitals do not enter the condition language, for the same reason time does not. Effects
 are display and audio only, exactly as the phase-boundary ramp is.
 

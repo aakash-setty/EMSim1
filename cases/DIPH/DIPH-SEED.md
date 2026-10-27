@@ -10,6 +10,8 @@ Section numbers refer to `docs/case-authoring-requirements.md`.
 
 ## 0. What the source document is, and why that matters here
 
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-16: the arrival tracing and the chest radiograph are cleared for use (answer "Mine: cleared for use").
+
 The source is **two documents in one file**, written in different registers and against
 different evidence bases. This seed has to say which is authoritative wherever they
 disagree, because they disagree about the central teaching point of the case.
@@ -59,6 +61,8 @@ diphenhydramine overdose and QRS widening no longer has 'just' an anticholinergi
 toxidrome."
 
 ## 3.1 Case identity
+
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-35: the six learning objectives are rewritten as behaviors the case can observe, with toxicology and critical care added. Model wording.
 
 - **Working title:** eighteen year old woman, confusion and fever, brought in by EMS
 - **`metadata.complaint`:** Confusion and fever
@@ -199,6 +203,8 @@ numbers are provisional, per section 9.6.
 
 ## 3.4 The action spine
 
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-08: antibiotics and acyclovir are recommended on arrival and neutral afterwards, with no switch on the urine screen. The lumbar puncture loses the same switch. DIPH-02, 07, 10, 12, 18, 22, 23, 27, 31, 32, 37, 39 and 40 change other tags. See the packet.
+
 **Critical.** Attach a monitor. Obtain IV access. Obtain a point-of-care glucose (the
 author's value is 110, and the point of it is that it is normal). **Obtain a 12-lead ECG,
 which is the pivot of the case.** Terminate the seizure with a benzodiazepine. **Give
@@ -267,6 +273,8 @@ One follow-up: intubation creates an obligation to sedate, satisfied by propofol
 midazolam, ketamine or fentanyl.
 
 ## 3.6 Key findings
+
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-06: pCO2 28 is kept, and the gas is an appropriately compensated metabolic acidosis. DIPH-18: magnesium 2.0, normal. DIPH-20: urinalysis negative for blood, specific gravity 1.030. DIPH-17 and DIPH-19: intervals, flags and the model-authored follow-up results confirmed as authored.
 
 **Physical examination, the author's table verbatim in substance.** General: confused,
 agitated female lying in bed. HEENT: pupils equal and enlarged, with opsoclonus, dry
@@ -386,6 +394,8 @@ those, and the departure in 9.8, **need the author's signature before release**.
 
 ### 9.1 Physostigmine. RESOLVED BY THE AUTHOR, with one mechanical caveat.
 
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-02: harmful in every phase through the narrowing phase, discouraged only once stabilized. DIPH-46: the halt reason's combined mechanism is kept.
+
 Part 1: *"The use of physostigmine is warranted, however, the examinee needs to first
 discover that diphenhydramine was the causative agent and discuss with the poison center.
 If the learner administers physostigmine before either checking an ECG for the QRS
@@ -427,6 +437,8 @@ physostigmine. Flagged for signature.
 
 ### 9.2 The aVR finding. DRAFTING ASSUMPTION. NEEDS SIGNATURE.
 
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-03: present at 5 mm, as authored. Signed by the reviewer named here, not by the case author.
+
 Part 1's narrative: *"The examinee should recognize **the lack of** a significant R wave in
 lead aVR and should also note a wide complex rhythm."*
 
@@ -444,6 +456,8 @@ matters, because the whole ECG teaching rests on it.
 
 ### 9.3 The two sets of vital signs. DRAFTING ASSUMPTION.
 
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-13: the narrative set only, as authored. DIPH-04: the arrival tracing reads about 165/min against a monitor rate of 135, and the reviewer accepts the difference ("Allow for the discrepancy in HR between the actual and the EKG"). Nothing is changed.
+
 The narrative table and the initial-presentation table both give BP 130/75, HR 135, RR 25,
 SpO2 98 percent, T 104.2 F. The ABEM admitting form gives BP 134/74, P 120, R 21, O2 99
 percent, and no temperature at all. **The case uses the first set**, because it appears
@@ -453,6 +467,8 @@ moments. The admitting form's numbers appear nowhere in the pack.
 
 ### 9.4 The chemistry panel. DRAFTING ASSUMPTION. See section 3.6 note 1.
 
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-05: bicarbonate 13 and chloride 109 are kept. Signed by the reviewer named here, not by the case author.
+
 ### 9.5 Who gives the history. RESOLVED BY THE AUTHOR. See section 3.2.
 
 The admitting form says "Person giving information: Patient and EMS." The narrative and
@@ -460,6 +476,8 @@ the physical examination table say the patient is confused, agitated and combati
 that the mother is the historian. The mother answers.
 
 ### 9.6 The obligatory seizure. RESOLVED, from the author's own sentence.
+
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-01: the escape is deleted. Every run that has not ended by 240 seconds seizes, as the author wrote. DIPH-09: a seizure treated with bicarbonate and no anticonvulsant relapses once into the wide-complex rhythm.
 
 *"A seizure will occur as part of the natural process, regardless of how well the examinee
 is doing."* Authored as an unguarded time-guarded transition at 240 seconds, which is
@@ -469,9 +487,13 @@ the author's.
 
 ### 9.7 Sepsis and antibiotics. RESOLVED, by tagging for the moment rather than the case.
 
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-08: the urine-screen switch is removed.
+
 See section 3.4.
 
 ### 9.8 The seizure is escapable. NOT A CONTRADICTION IN THE SOURCE. A DEPARTURE FROM IT.
+
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** Superseded by DIPH-01: the escape is deleted. DIPH-36: the corrected ionization mechanism and the other v0.18a wording are confirmed.
 
 Recorded here because it belongs in the same list, though its origin is different from the
 other seven: the source does not contradict itself about this. It is unambiguous, and the
@@ -520,6 +542,8 @@ on it.
 
 ### 9.9 Amiodarone arrests her. NOT IN THE SOURCE AT ALL.
 
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-12: no longer. Amiodarone in the wide-complex rhythm lowers her pressure by 20/12 after ten seconds. DIPH-26: outside that rhythm it stays discouraged and inert.
+
 Added on Aakash Setty's instruction, 5 September 2026. The wide-complex phase carries an
 instantaneous transition to the arrest phase guarded on `flag amiodarone_given set`.
 
@@ -552,6 +576,8 @@ sodium-channel-blocker overdose whenever it is given. That is the same shape as 
 physostigmine gap in section 2.0 of the review packet and the same decision to make about it.
 
 ### 9.10 The images. RESOLVED, EXCEPT WHICH TRACING IS WHICH.
+
+> **Physician review, 27 October 2026 (Aakash Setty, physician):** DIPH-16: the arrival tracing and radiograph are cleared for use. DIPH-15: the arrival tracing keeps no caption. DIPH-04: its rate difference from the monitor is accepted.
 
 Added on Aakash Setty's instruction, 5 September 2026, after the engine gained a result
 payload that is a picture; narrowed the same day.
@@ -606,6 +632,9 @@ now five seconds after the order rather than ten. See review packet section 2.9 
 2.1.
 
 ## What a person decided
+
+- 27 October 2026, Aakash Setty, physician, physician review of bank 2026-10-05.1: 45 DIPH questions answered, and the decisions are recorded item by item in `DIPH-review-packet.md`, "Physician review". 12 answers changed after the model's recommendation was shown and are not independent agreement. DIPH-38 is not applied (it conflicts with the 23 October rule that intubation care is never graded). DIPH-45 is flagged. The new consultant tiers (DIPH-30), objectives (DIPH-35) and notes are model wording.
+- 27 October 2026, Aakash Setty: the nurse no longer asks "Do you want bicarb?". The escalation is removed, and the first prompt about broad complexes stays as the warning the validator requires.
 
 - 11 October 2026, Aakash Setty (not yet put to Dr Medwid): Consult Critical Care is
   recommended, not critical. The Benadryl is now hers, kept in her room for occasional

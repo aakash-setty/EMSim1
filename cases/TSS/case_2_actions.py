@@ -307,6 +307,9 @@ act("norepinephrine_drip",
 
 act("dopamine_drip", ALWAYS("discouraged"),
     flags_set=["pressor_running"],
+    # No default pressor effect (owner, 27 October 2026): pressor_running moves the phase,
+    # and the phase's vitals already carry the rise.
+    vital_effects=[],
     debrief_note=(
       "Dopamine raises the pressure and the case treats it as a running vasopressor. It is "
       "discouraged because it causes more arrhythmias than norepinephrine in shock, and she "

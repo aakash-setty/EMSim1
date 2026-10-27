@@ -38,7 +38,7 @@ HANDOFF = {
     "verdict": "incorrect",
     "explanation": (
       "The most instructive wrong answer available in this case, and the reason psychiatry is "
-      "tagged discouraged as an early consultation.\n\n"
+      "not credited as a consultation until she is stabilizing.\n\n"
       "Medical clearance is not a status conferred by recognizing that an overdose was "
       "deliberate. It means the medical problem has been treated and the patient can engage. "
       "This patient has a conduction abnormality that has not been normal for long, a "
@@ -325,22 +325,19 @@ DEBRIEF = {
    "mucosa, the silent abdomen and full bladder, the absence of clonus and focal signs, the "
    "delirium, and the supple neck. Author judgment, unreviewed."),
 
- "intended_path": ["presentation", "stabilizing", "stabilized", "case_complete"],
+ "intended_path": ["presentation", "seizing", "post_ictal", "stabilizing", "stabilized",
+                   "case_complete"],
  "intended_path_note": (
-   "Changed on 5 September 2026, and the change is the largest single departure from the "
-   "source in this pack.\n\n"
-   "It used to read presentation, seizing, post-ictal, stabilizing, stabilized: the intended "
-   "path went through the convulsion, because the case author writes that a seizure occurs "
-   "regardless of how well the examinee is doing, so there was no path that avoided it and a "
-   "resident who reached the post-ictal phase had not failed at anything. The arrival phase "
-   "now carries an arrow that takes a patient who has received both sodium bicarbonate and a benzodiazepine straight to "
-   "the narrowing phase, so the best run no longer convulses and the intended path is the one "
-   "that does not.\n\n"
-   "Two consequences for reading a debrief. A resident who seized has not necessarily done "
-   "anything wrong, because the escape needs the ECG ordered, resulted, read and acted on "
-   "inside about 230 seconds, and most runs will not manage it. And the seizure teaching, "
-   "which is a third of the clinical content of this case, is no longer on the intended path "
-   "at all, so a strong resident may never meet it."),
+   "Restored on 27 October 2026 by physician review DIPH-01 (Aakash Setty). The intended path "
+   "goes through the convulsion again, because the case author writes that a seizure occurs "
+   "regardless of how well the examinee is doing. Every run that has not ended by four minutes "
+   "seizes, so a resident who reached the seizing and post-ictal phases has not failed at "
+   "anything, and the debrief says so.\n\n"
+   "From 5 September to 27 October 2026 an arrow took a patient who had received both sodium "
+   "bicarbonate and a benzodiazepine from arrival straight to the narrowing phase, and the "
+   "intended path skipped the seizure. That arrow is deleted. Bicarbonate given before the "
+   "seizure still narrows the QRS, from the post-ictal phase, once the convulsion has been "
+   "stopped."),
 
  "trap_actions": ["physostigmine", "fos_phenytoin", "haloperidol", "olanzapine", "ziprasidone",
                   "acetaminophen", "ibuprofen", "flumazenil", "diphenhydramine",
@@ -416,7 +413,7 @@ PROVENANCE = {
    "source does not name. Nothing here has been reviewed by a physician."),
  "author_only_fields_pending_signoff": [
    "The physostigmine tag rule list. The author's instruction was that physostigmine is harmful "
-   "and leads back to a seizure requiring bicarbonate. The engine's harmful tag halts the case and cannot lead anywhere. Until v0.18a the instruction was split: harmful before the ECG had resulted, discouraged with a seizure ten seconds later once it had. That scored reading the tracing and then ignoring it more leniently than not reading it, so the v0.18a review made it harmful in every phase in which the QRS is wide and discouraged once she has stabilized. This is the most consequential unsigned decision in the pack. See DIPH-SEED.md section 9.1.",
+   "and leads back to a seizure requiring bicarbonate. The engine's harmful tag halts the case and cannot lead anywhere. Until v0.18a the instruction was split: harmful before the ECG had resulted, discouraged with a seizure ten seconds later once it had. That scored reading the tracing and then ignoring it more leniently than not reading it, so the v0.18a review made it harmful in every phase in which the QRS is wide. SIGNED 27 October 2026, physician review DIPH-02 (Aakash Setty): harmful through the narrowing phase, discouraged only once stabilized. See DIPH-SEED.md section 9.1.",
    "The terminal R wave in aVR, authored present at 5 mm. The author's narrative says the "
    "examinee should recognize 'the lack of' a significant R wave in aVR; her own teaching text "
    "and her debriefing guide both say the terminal R wave is the finding. See DIPH-SEED.md "
@@ -425,29 +422,29 @@ PROVENANCE = {
    "grounds that 34 gives an anion gap of negative 8. See DIPH-SEED.md section 9.4.",
    "Every reference interval in content_keys.labs. Not one appears in the source document.",
    "Every ECG measurement. The source gives no QRS duration, no QTc and no R wave amplitude.",
-   "The magnesium of 1.6, which is invented to make a teaching point about torsades and does not "
-   "appear in the source at all.",
+   "SIGNED 27 October 2026, physician review DIPH-18 (Aakash Setty): the invented magnesium of "
+   "1.6 is replaced by a normal 2.0, and magnesium sulfate is neutral.",
    "The three deterioration deadlines: 120 seconds of untreated seizure to a wide-complex "
    "rhythm, 180 seconds of untreated sodium-channel blockade from the post-ictal phase, and 120 "
    "seconds of untreated stable ventricular tachycardia to arrest. The last of these is the "
    "number that decides whether the case can kill the patient.",
    "The tag on phenytoin, authored discouraged where the author wrote 'avoided'. See its debrief "
    "note.",
-   "The tag on empirical antibiotics and acyclovir, which are recommended on arrival and "
-   "discouraged after the toxicology screen resulted. The author endorses a sepsis bundle at "
-   "time zero and her debriefing guide never mentions sepsis; the switch point is a drafting "
-   "judgment.",
+   "SIGNED 27 October 2026, physician review DIPH-08 (Aakash Setty): empirical antibiotics and "
+   "acyclovir are recommended on arrival and neutral afterwards. The switch on the toxicology "
+   "screen resulting is removed, and so is the lumbar puncture's.",
    "The additional and alternative diagnosis lists, drafted from the case's own findings.",
    "The interview, in full. The mother is the historian on the author's instruction, and every "
    "word she says is model output.",
  ],
+ "review_matrix_note": ("Physician review, 27 October 2026: Aakash Setty, physician, bank 2026-10-05.1, 45 of 46 DIPH questions answered, all applied on 27 October 2026 except DIPH-38 (not applied, conflicts with the ungraded-intubation rule). DIPH-45 flagged for later. 12 answers changed after the model's recommendation was shown and are not independent agreement. The matrix below was regenerated after the changes. Item by item: DIPH-review-packet.md, Physician review."),
  "source_fidelity_note": (
    "The source document contradicts itself in seven places. Four are resolved on the author's "
    "instruction and three are drafting assumptions. All seven, with what was done about each, "
    "are in DIPH-SEED.md section 9. Read that section before reading anything else in this pack."),
  "unused_source_material": (
    "The four images in the source document, the mannequin and supply lists, the confederate "
-   "staffing notes, and the Teaching Points essay as prose. Two of the images are now shown as results. The provenance of the two ECG tracings, the chest radiograph and the head "
+   "staffing notes, and the Teaching Points essay as prose. Two of the images are now shown as results. Physician review DIPH-16 (Aakash Setty, 27 October 2026): the arrival tracing and the chest radiograph are cleared for use (answer: 'Mine: cleared for use'). The provenance of the second ECG tracing and the head "
    "CT is not established in the document, which cites an ACEP toxicology case file and "
    "thepoisonreview.com in its reference list. At least one sentence of the source's teaching text is reproduced nearly word for word (the physostigmine note's 'Anticholinergic delirium plus a wide QRS is a bicarbonate case, not a physostigmine case', and the charcoal note). Whether those passages can be kept is part of the open provenance question."),
  "catalog_change_requests": [

@@ -10,6 +10,8 @@ changed and why. Sections 8 to 12 are new. Nothing added on that day has been re
 physician.
 ## 0. What a person decided
 
+- 27 October 2026, Aakash Setty: pressors the case does not author now move the monitor by the catalog default (`catalog/default-vital-effects.json`, display only, no change to phases, tags or scoring). Here `dopamine_drip` carries `"vital_effects": []`, because it sets `pressor_running`, which moves the phase, and that phase's vitals already carry the rise. Norepinephrine and the phenylephrine bolus keep their authored effects. The other pressors the case covers through norepinephrine use its effect.
+
 Aakash Setty, 6 October 2026, in answer to four questions asked before drafting:
 
 | Question | Decision |

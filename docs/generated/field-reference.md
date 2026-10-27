@@ -37,6 +37,8 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `case_actions[].display_name` | engine+build+validator+tools | button+chart+debrief | 6.1 | Overrides the catalog name everywhere. IGNORED on a sibling covered through also_covers, which keeps its own catalog name |
 | `case_actions[].expectation_label` | engine | end+debrief | 6.1 | The name used in the critical-action lists on the gate and in the debrief, where the button name would be wrong (a hidden target, a covering action) |
 | `case_actions[].flags_set` | engine+validator+tools | no | 6.1 | Permanent flags, merged with the catalog's flags_set_default. Granted by any state-changing action. Exams and interview topics never grant them. A consult grants them unless the case sets state_changing: false |
+| `case_actions[].flags_set_if[].flag` | generic | no | 18 | Granted permanently, but only if `when` holds as the act is taken (judged before the act's own flags). Tells a dose after an event from the doses before it |
+| `case_actions[].flags_set_if[].when` | generic | no | 18 | Section 4 condition, evaluated at the moment of the act |
 | `case_actions[].flags_set_repeat[].after_administrations` | engine+validator+tools | no | 18 | At least 2 |
 | `case_actions[].flags_set_repeat[].counter` | generic | no | 18 | The tally this administration adds to. Defaults to the act, so covered siblings share it |
 | `case_actions[].flags_set_repeat[].flag` | generic | no | 18 | Granted permanently on the Nth administration |
@@ -310,8 +312,8 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `phase_notes.the_scripted_drop` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.the_seizure` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.the_two_delayed_consequences` | none | never |  | Reviewer note. Nothing reads it |
-| `phase_notes.three_ways_into_the_narrowing_phase` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.time_guarded_transitions` | none | never |  | Reviewer note. Nothing reads it |
+| `phase_notes.ways_into_the_narrowing_phase` | none | never |  | Reviewer note. Nothing reads it |
 | `phases[].appearance.alertness_level` | engine+validator+tools | figure | 5 | 0 to 3. Lids, nodding, slack jaw. Also the levels the global interview rule must cover |
 | `phases[].appearance.distress_level` | engine+validator+tools | figure | 5 | 0 to 3. The resting face |
 | `phases[].appearance.pupil_reactivity` | validator+tools | never | 5 | Validated, drawn by nothing |
@@ -342,6 +344,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `phases[].transitions[].author_note` | validator | never |  | Reviewer note. Nothing reads it |
 | `phases[].transitions[].author_rationale` | engine+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `phases[].transitions[].debrief_note` | engine+validator+tools | debrief | 15.1 | Printed under the phase change ONLY for a timed rule. Marker-stripped |
+| `phases[].transitions[].flags_set` | engine+validator+tools | no | 15.1 | Flags granted for good as the transition fires, before the new phase is entered. Use it to make a timed event happen once |
 | `phases[].transitions[].measured_from` | engine+validator+tools | no | 15.1 | phase_entry (default) or guard_true |
 | `phases[].transitions[].narration` | engine+validator+tools | nurse+chart | 15.1 | Spoken ONLY on a timed rule. An instant transition says nothing; use nurse_alert on the action instead. Must be true of the vitals shown next, with effects included |
 | `phases[].transitions[].terminal_opt_in_rationale` | validator | never |  | Reviewer note. Nothing reads it |
@@ -377,6 +380,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `provenance.reference_status_note` | none | never |  | Reviewer note. Nothing reads it |
 | `provenance.reference_status_summary` | none | never |  | Reviewer note. Nothing reads it |
 | `provenance.reference_verification` | none | never |  | Reviewer note. Nothing reads it |
+| `provenance.review_matrix_note` | validator | never | 11.2 | Printed at the top of the regenerated review matrix. Record a physician review here so it survives regeneration |
 | `provenance.seed_fidelity_note` | none | never |  | Reviewer note. Nothing reads it |
 | `provenance.source_fidelity_note` | none | never |  | Reviewer note. Nothing reads it |
 | `provenance.status` | generic | never | 1 | Who wrote what and what awaits a physician. Free text; nothing reads it |
@@ -396,4 +400,4 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `tag_vocabulary.values` | engine+build+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `tag_vocabulary.values_used_by_this_case` | none | never |  | Reviewer note. Nothing reads it |
 
-373 fields across 8 packs, as of the last generation.
+377 fields across 8 packs, as of the last generation.

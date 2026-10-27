@@ -529,7 +529,8 @@ AUTHORING_NOTES = {
 KEY_TOPICS = ["bottle_or_pills_found", "what_she_took", "medicines_in_the_house",
               "onset", "last_seen_well", "past_medical_history", "current_medications",
               "mental_health_history", "alcohol_and_drugs", "seizure_history",
-              "previous_self_harm", "pregnancy"]
+              "previous_self_harm"]
+# "pregnancy" left key_topics on 27 October 2026, physician review DIPH-34 (Aakash Setty).
 
 
 # ---- further hand-written variants ----

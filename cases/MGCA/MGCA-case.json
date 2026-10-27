@@ -1288,7 +1288,8 @@
    },
    "references": [
     "Evans L, et al. Surviving Sepsis Campaign 2021. Intensive Care Med. 2021;47(11):1181-1247. [PubMed record checked]"
-   ]
+   ],
+   "vital_effects": []
   },
   {
    "catalog_id": "epinephrine_drip",
@@ -1312,7 +1313,8 @@
      "failure_message": "She hasn't got a line in yet. Do you want me to get IV access first?",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "vital_effects": []
   },
   {
    "catalog_id": "vasopressin_drip",
@@ -1336,7 +1338,8 @@
      "failure_message": "She hasn't got a line in yet. Do you want me to get IV access first?",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "vital_effects": []
   },
   {
    "catalog_id": "dopamine_drip",
@@ -1356,7 +1359,8 @@
      "failure_message": "She hasn't got a line in yet. Do you want me to get IV access first?",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "vital_effects": []
   },
   {
    "catalog_id": "phenylephrine_drip",
@@ -1376,7 +1380,8 @@
      "failure_message": "She hasn't got a line in yet. Do you want me to get IV access first?",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "vital_effects": []
   },
   {
    "catalog_id": "epinephrine_bolus",
