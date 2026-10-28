@@ -925,9 +925,9 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .home-on .db-body{padding-top:0}
 .home-on .wl-home{position:relative; z-index:2; margin-top:-64px}
 .db-play{margin:0 0 22px}
-.cx-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:16px}
-.cx-grid.one{grid-template-columns:minmax(0,640px)}
-.cx{position:relative; display:flex; gap:20px; align-items:center; padding:20px 22px; border-radius:20px;
+.cx-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px}
+.cx-grid.one{grid-template-columns:minmax(0,420px)}
+.cx{position:relative; display:flex; gap:14px; align-items:center; padding:14px 16px; border-radius:16px;
   background:var(--solid); border:1px solid var(--rule2); overflow:hidden;
   box-shadow:0 24px 50px -30px var(--shadow), 0 2px 6px -3px var(--shadow)}
 .cx::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:.9}
@@ -935,7 +935,7 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .cx-next::before{background:radial-gradient(120% 120% at 0% 0%, var(--okl), transparent 60%)}
 .cx>*{position:relative}
 .cx-art{flex:none}
-.cx-ringwrap{position:relative; display:block; width:108px; height:108px}
+.cx-ringwrap{position:relative; display:block; width:76px; height:76px}
 .cx-svg{position:absolute; inset:0; width:100%; height:100%}
 .cx-svg .t{fill:none; stroke:var(--rule2)}
 .cx-svg .f{fill:none; stroke-linecap:round}
@@ -943,22 +943,22 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .cx-next .cx-svg .f{stroke:var(--ink3)}
 .cx-next.t-tried .cx-svg .f{stroke:var(--warn)}
 .cx-next.t-passed .cx-svg .f{stroke:var(--act)}
-.cx-face.wl-face{position:absolute; inset:14px; width:auto; height:auto}
+.cx-face.wl-face{position:absolute; inset:10px; width:auto; height:auto}
 .cx-body{min-width:0; flex:1}
-.cx-kind{display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11px; font-weight:500;
-  letter-spacing:.09em; text-transform:uppercase; color:var(--act); margin-bottom:7px}
+.cx-kind{display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:10.5px; font-weight:500;
+  letter-spacing:.09em; text-transform:uppercase; color:var(--act); margin-bottom:5px}
 .cx-next .cx-kind{color:var(--ok)}
 .cx-kind .ic{width:13px; height:13px}
-.cx-title{margin:0; font-family:var(--sans); text-transform:none; font-size:clamp(17px,1.5vw,20px); font-weight:600; letter-spacing:-.01em; line-height:1.25; color:var(--ink)}
+.cx-title{margin:0; font-family:var(--sans); text-transform:none; font-size:16px; font-weight:600; letter-spacing:-.01em; line-height:1.25; color:var(--ink)}
 .cx-title .hm-no{font-size:12px}
-.cx-meta{margin-top:5px; font-size:12.5px; color:var(--ink2)}
-.cx-why{margin-top:8px; font-size:13px; color:var(--ink2)}
-.cx-time{display:flex; align-items:center; gap:12px; margin-top:12px; font-size:12px; color:var(--ink2)}
+.cx-meta{margin-top:3px; font-size:12px; color:var(--ink2)}
+.cx-why{margin-top:5px; font-size:12px; color:var(--ink2)}
+.cx-time{display:flex; align-items:center; gap:10px; margin-top:8px; font-size:11.5px; color:var(--ink2)}
 .cx-bar{flex:1; max-width:260px; height:6px; border-radius:3px; background:var(--rule2); overflow:hidden}
 .cx-bar i{display:block; height:100%; border-radius:3px; background:linear-gradient(90deg,var(--act),#5AA6E6)}
-.cx .hm-ca{margin-top:16px}
-.cx-btn{display:inline-flex; align-items:center; gap:8px; padding:10px 22px !important; font-size:14.5px !important;
-  border-radius:10px !important; box-shadow:0 10px 22px -12px rgba(31,111,178,.7)}
+.cx .hm-ca{margin-top:10px}
+.cx-btn{display:inline-flex; align-items:center; gap:8px; padding:7px 16px !important; font-size:13.5px !important;
+  border-radius:9px !important; box-shadow:0 10px 22px -12px rgba(31,111,178,.7)}
 .cx-btn .ic{width:12px; height:12px; fill:currentColor; stroke:none}
 .cx-btn.ghost{box-shadow:none}
 .cx-arr{transition:transform .15s ease}
@@ -1015,6 +1015,161 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
   .tr.on:hover .tr-disc{transform:rotate(-8deg) scale(1.05)}
 }
 
+/* ---- category colours (28 October 2026) ----
+   Eight hues, none of them the tier colours' green, amber or blue, so a category is never read
+   as a score. Night has lighter ones. Used by the case panels, the filter chips and the
+   category pill on the Continue and Next up cards. */
+.cat-0{--cat:#C23B5A} .cat-1{--cat:#7445C2} .cat-2{--cat:#0B7672} .cat-3{--cat:#B0307F}
+.cat-4{--cat:#A84F15} .cat-5{--cat:#56606E} .cat-6{--cat:#5F6F12} .cat-7{--cat:#8A4B3A}
+:root[data-theme="night"] .cat-0{--cat:#F28399} :root[data-theme="night"] .cat-1{--cat:#B497F2}
+:root[data-theme="night"] .cat-2{--cat:#4CC7BF} :root[data-theme="night"] .cat-3{--cat:#EC7CC4}
+:root[data-theme="night"] .cat-4{--cat:#F2A065} :root[data-theme="night"] .cat-5{--cat:#AEB8C6}
+:root[data-theme="night"] .cat-6{--cat:#BACB5E} :root[data-theme="night"] .cat-7{--cat:#D99A86}
+.wl-chip{display:inline-flex; align-items:center; gap:7px}
+.wl-cdot{flex:none; width:8px; height:8px; border-radius:50%; background:var(--cat)}
+.wl-chip[class*="cat-"]:hover{border-color:var(--cat); color:var(--cat)}
+.wl-chip[class*="cat-"][aria-pressed="true"],
+:root[data-theme="night"] .wl-chip[class*="cat-"][aria-pressed="true"]{background:var(--cat); border-color:var(--cat); color:#fff}
+:root[data-theme="night"] .wl-chip[class*="cat-"][aria-pressed="true"]{color:#0D1A22}
+.wl-chip[aria-pressed="true"] .wl-cdot{background:currentColor}
+.cx-cat{margin-left:auto; flex:none; max-width:55%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  font-family:var(--sans); font-size:11px; font-weight:650; letter-spacing:0; text-transform:none; color:var(--cat);
+  background:color-mix(in srgb,var(--cat) 12%,var(--solid)); border:1px solid color-mix(in srgb,var(--cat) 28%,transparent);
+  padding:1px 8px; border-radius:999px}
+
+/* ---- milestones: a floating badge, a drop-down and a dialog (28 October 2026) ---- */
+.home-on .wl-stamp{display:none}
+.ms-float{position:fixed; z-index:40; top:80px; right:clamp(14px,2vw,28px)}
+.ms-float[hidden]{display:none}
+.ms-badge{position:relative; display:grid; place-items:center; width:66px; height:66px; padding:0; border:0;
+  border-radius:50%; cursor:pointer; background:var(--solid); color:inherit; font:inherit;
+  box-shadow:0 16px 34px -14px rgba(10,30,45,.6), 0 0 0 1px var(--rule2);
+  transition:transform .25s cubic-bezier(.2,.9,.3,1.2), box-shadow .25s ease}
+.ms-float:hover .ms-badge,.ms-float.open .ms-badge,.ms-float:has(:focus-visible) .ms-badge{transform:translateY(-1px) scale(1.05);
+  box-shadow:0 20px 40px -14px rgba(10,30,45,.65), 0 0 0 1px rgba(217,154,30,.55)}
+.ms-badge:focus-visible{outline:2px solid var(--act); outline-offset:3px}
+.ms-svg{position:absolute; inset:0; width:100%; height:100%}
+.ms-svg .t{fill:none; stroke:var(--rule2)}
+.ms-svg .f{fill:none; stroke:#D99A1E; stroke-linecap:round}
+.ms-medal{position:relative; width:46px; height:46px; border-radius:50%; display:grid; place-items:center; color:#4A3000;
+  background:radial-gradient(circle at 32% 28%,#FFF1BF 0,#F6D06A 28%,#E0A52A 62%,#B7811A 100%);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.4), inset 0 -3px 6px rgba(120,70,0,.35)}
+.ms-medal .ic{width:23px; height:23px; stroke-width:1.9}
+.ms-count{position:absolute; bottom:-9px; left:50%; transform:translateX(-50%); font-family:var(--mono); font-size:11px;
+  font-weight:600; line-height:1.5; padding:0 8px; border-radius:999px; background:var(--ink); color:var(--solid);
+  white-space:nowrap; box-shadow:0 4px 10px -4px rgba(0,0,0,.45)}
+.ms-dot{position:absolute; top:3px; right:3px; width:13px; height:13px; border-radius:50%; background:var(--harm);
+  box-shadow:0 0 0 2.5px var(--solid)}
+.ms-drop{position:absolute; top:calc(100% + 18px); right:0; width:356px; max-width:calc(100vw - 28px);
+  padding:16px 16px 14px; border-radius:18px; background:var(--solid); border:1px solid var(--rule2);
+  box-shadow:0 34px 70px -26px rgba(10,30,45,.55), 0 2px 10px -4px var(--shadow);
+  opacity:0; visibility:hidden; transform:translateY(-10px) scale(.96); transform-origin:calc(100% - 33px) 0;
+  transition:opacity .18s ease .14s, transform .24s cubic-bezier(.2,.9,.3,1.1) .14s, visibility 0s linear .38s}
+.ms-drop::before{content:""; position:absolute; left:0; right:0; top:-20px; height:20px}
+.ms-drop::after{content:""; position:absolute; top:-7px; right:27px; width:12px; height:12px; background:var(--solid);
+  border-left:1px solid var(--rule2); border-top:1px solid var(--rule2); transform:rotate(45deg)}
+.ms-float:hover .ms-drop,.ms-float.open .ms-drop,.ms-float:has(:focus-visible) .ms-drop{opacity:1; visibility:visible;
+  transform:none; transition-delay:0s,0s,0s}
+.ms-float.calm:not(:hover):not(.open) .ms-drop{opacity:0; visibility:hidden; transform:translateY(-10px) scale(.96)}
+.ms-float.calm:not(:hover):not(.open) .ms-badge{transform:none}
+.ms-dh{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
+.ms-dt{font-family:var(--title); font-size:17px; font-weight:750; letter-spacing:-.01em; color:var(--ink)}
+.ms-dc{font-size:12.5px; color:var(--ink2)}
+.ms-dc b{font-family:var(--mono); font-size:14px; color:#B7811A}
+:root[data-theme="night"] .ms-dc b{color:#F2C46B}
+.ms-near{display:grid; grid-template-columns:auto 1fr; align-items:baseline; gap:2px 10px; margin-top:12px;
+  padding:10px 12px 11px; border-radius:12px; background:var(--actl); border:1px solid var(--actb)}
+.ms-near.done{display:block; background:rgba(246,208,106,.18); border-color:rgba(217,154,30,.4)}
+.ms-nl{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--act)}
+.ms-near b{font-size:14px; color:var(--ink)}
+.ms-nbar{grid-column:1/-1; height:6px; margin:6px 0 4px; border-radius:3px; background:var(--rule2); overflow:hidden}
+.ms-nbar i{display:block; height:100%; border-radius:3px; background:linear-gradient(90deg,var(--act),#5AA6E6)}
+.ms-nd{grid-column:1/-1; font-size:12px; color:var(--ink2)}
+.ms-list{list-style:none; margin:14px 0 0; padding:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px 6px}
+.ms-list .tr{padding:2px}
+.ms-list .tr-medal{width:56px; height:56px; margin-bottom:5px}
+.ms-list .tr-disc{inset:7px}
+.ms-list .tr-disc .ic{width:18px; height:18px}
+.ms-list .tr.on .tr-disc{inset:3px}
+.ms-list .tr.on .tr-disc .ic{width:21px; height:21px}
+.ms-list .tr.on .tr-medal::before{width:20px; height:14px; bottom:-5px}
+.ms-list .tr-t{font-size:11.5px}
+.ms-list .tr-s{font-size:10px}
+.ms-list .tr-newtag{right:-14px}
+.ms-more{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin-top:14px; padding:9px 12px;
+  border-radius:10px; border:1px solid var(--actb); background:none; color:var(--act); font:inherit; font-size:13px;
+  font-weight:600; cursor:pointer}
+.ms-more:hover{background:var(--actl)}
+.ms-more:hover .cx-arr{transform:translateX(3px)}
+.ms-more:focus-visible{outline:2px solid var(--act); outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){
+  .ms-list .tr{opacity:0; transform:translateY(-6px) scale(.94);
+    transition:opacity .2s ease, transform .3s cubic-bezier(.2,.9,.3,1.3)}
+  .ms-float:hover .ms-list .tr,.ms-float.open .ms-list .tr,.ms-float:has(:focus-visible) .ms-list .tr{opacity:1; transform:none;
+    transition-delay:calc(var(--i,0) * 45ms + 90ms)}
+  .ms-float.calm:not(:hover):not(.open) .ms-list .tr{opacity:0; transform:translateY(-6px) scale(.94)}
+  .ms-dot{animation:msdot 2s ease-out infinite}
+  @keyframes msdot{0%{box-shadow:0 0 0 2.5px var(--solid),0 0 0 2.5px rgba(192,48,42,.5)}
+    80%,100%{box-shadow:0 0 0 2.5px var(--solid),0 0 0 11px rgba(192,48,42,0)}}
+  .ms-back{animation:msfade .2s ease both}
+  .ms-card{animation:msin .3s cubic-bezier(.2,.9,.3,1.1) both}
+  @keyframes msfade{from{opacity:0}}
+  @keyframes msin{from{opacity:0; transform:translateY(14px) scale(.97)}}
+}
+.ms-modal{position:fixed; inset:0; z-index:120; display:grid; place-items:center; padding:20px}
+.ms-modal[hidden]{display:none}
+.ms-back{position:absolute; inset:0; background:rgba(8,20,30,.5); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px)}
+.ms-card{position:relative; width:min(900px,100%); max-height:calc(100vh - 40px); overflow:auto; border-radius:22px;
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.6)}
+.ms-card .db-trophy{margin:0; padding:24px 26px 26px; border-radius:22px}
+.ms-card .tr-head{padding-right:40px}
+.ms-card .tr-row{grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:22px 12px}
+.ms-x{position:absolute; top:14px; right:14px; z-index:3}
+.tr-d{margin-top:2px; font-size:11.5px; line-height:1.4; color:var(--ink3); max-width:24ch}
+@media (max-width:760px){
+  .ms-card .tr-row{display:grid; overflow:visible; grid-template-columns:repeat(2,minmax(0,1fr)); margin:0}
+  .ms-card .tr{flex:none}
+}
+@media (max-width:560px){
+  .ms-float{top:72px}
+  .ms-badge{width:54px; height:54px}
+  .ms-medal{width:38px; height:38px}
+  .ms-medal .ic{width:19px; height:19px}
+}
+
+/* ---- more runs in progress: the control on the Continue card and its dialog (28 October 2026) ---- */
+.cx .hm-ca{flex-wrap:wrap; gap:8px 14px}
+.cx-more{margin-left:auto; display:inline-flex; align-items:center; gap:6px; font:inherit; font-size:12px; font-weight:650;
+  color:var(--act); background:var(--actl); border:1px solid var(--actb); border-radius:999px; padding:4px 11px;
+  cursor:pointer; white-space:nowrap; transition:background .15s ease}
+.cx-more:hover{background:color-mix(in srgb,var(--act) 20%,var(--solid))}
+.cx-more .ic{width:13px; height:13px}
+.cx-more:focus-visible{outline:2px solid var(--act); outline-offset:2px}
+.rp-card{width:min(640px,100%); background:var(--solid); border:1px solid var(--rule2)}
+.rp{padding:22px 24px 20px}
+.rp h2{margin:0 44px 2px 0; font-family:var(--title); font-size:19px; font-weight:750; letter-spacing:-.01em; color:var(--ink)}
+.rp-sub{margin:0 0 14px; font-size:12.5px; color:var(--ink2)}
+.rp-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}
+.rp-row{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:14px; border:1px solid var(--rule2);
+  background:linear-gradient(120deg, var(--actl), transparent 55%)}
+.rp-art .cx-ringwrap{width:54px; height:54px}
+.rp-art .cx-face.wl-face{inset:7px}
+.rp-art .cx-svg .f{stroke:var(--act)}
+.rp-body{min-width:0; flex:1}
+.rp-t{font-size:14.5px; font-weight:650; line-height:1.3; color:var(--ink)}
+.rp-t .hm-no{font-size:11.5px}
+.rp-m{display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; margin-top:4px; font-size:12px; color:var(--ink2)}
+.rp-m .cx-cat{margin-left:0; max-width:none}
+.rp-a{flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:6px}
+.rp-go{display:inline-flex; align-items:center; gap:6px; padding:6px 13px !important; font-size:13px !important; border-radius:8px !important}
+.rp-go .ic{width:11px; height:11px; fill:currentColor; stroke:none}
+.rp-go:focus-visible{outline:2px solid var(--act); outline-offset:2px}
+@media (max-width:560px){
+  .rp{padding:18px 16px 16px}
+  .rp-row{flex-wrap:wrap}
+  .rp-a{flex-direction:row; align-items:center; width:100%; justify-content:flex-end; gap:14px}
+}
+
 /* ---- the logo in the bar ---- */
 .db-logo{display:flex; align-items:center}
 .db-logo .ld-logoimg{display:block; height:42px; width:auto}
@@ -1024,9 +1179,9 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 
 @media (max-width:560px){ .db-logo .ld-logoimg{height:32px} }
 @media (max-width:760px){
-  .cx{flex-direction:column; align-items:flex-start; padding:18px}
-  .cx-ringwrap{width:84px; height:84px}
-  .cx-face.wl-face{inset:11px}
+  .cx{padding:12px 14px}
+  .cx-ringwrap{width:64px; height:64px}
+  .cx-face.wl-face{inset:8px}
   .tr-next{margin-left:0; flex-basis:100%}
   .tr-row{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:4px; padding-bottom:6px; margin:0 -6px}
   .tr{flex:0 0 96px; scroll-snap-align:start}
@@ -1054,13 +1209,25 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .wl-chip[aria-pressed="true"]{background:var(--act); border-color:var(--act); color:#fff}
 
 /* ---- the case cards ---- */
-.wl-list{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; outline:none}
-.wl-group{grid-column:1/-1; display:flex; align-items:center; gap:9px; margin:8px 0 -2px; font-family:var(--mono);
-  font-size:10.5px; letter-spacing:.085em; text-transform:uppercase; color:var(--ink3)}
-.wl-group:first-child{margin-top:0}
-.wl-group::after{content:""; flex:1; height:1px; background:var(--rule2)}
-.wl-case{position:relative; display:flex; flex-direction:column; gap:12px; width:100%; text-align:left;
-  padding:14px 16px 13px; border-radius:14px; border:1px solid var(--rule2); border-top:3px solid var(--rule);
+/* Each category is a shaded panel in its own colour, with a coloured rule down its left edge
+   and its name as a heading (author instruction, 28 October 2026). The colours are set
+   below with the milestones, under "category colours". */
+.wl-list{display:flex; flex-direction:column; gap:16px; outline:none}
+.wl-sec{position:relative; padding:14px 16px 16px 22px; border-radius:18px;
+  background:linear-gradient(120deg, color-mix(in srgb,var(--cat) 11%,transparent),
+    color-mix(in srgb,var(--cat) 3%,transparent) 70%);
+  border:1px solid color-mix(in srgb,var(--cat) 20%,transparent)}
+.wl-sec::before{content:""; position:absolute; left:0; top:16px; bottom:16px; width:5px; border-radius:0 5px 5px 0;
+  background:var(--cat)}
+.wl-group{display:flex; align-items:center; gap:10px; margin:0 0 12px; font-family:var(--title); font-size:18px;
+  font-weight:750; letter-spacing:-.012em; text-transform:none; color:var(--cat); line-height:1.2}
+.wl-catmark{flex:none; width:12px; height:12px; border-radius:4px; background:var(--cat);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--cat) 20%,transparent)}
+.wl-catn{font-family:var(--mono); font-size:11.5px; font-weight:500; letter-spacing:.02em; color:var(--ink2);
+  background:var(--solid); border:1px solid color-mix(in srgb,var(--cat) 25%,transparent); padding:2px 9px; border-radius:999px}
+.wl-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px}
+.wl-case{position:relative; display:flex; flex-direction:column; gap:9px; width:100%; text-align:left;
+  padding:11px 13px 10px; border-radius:14px; border:1px solid var(--rule2); border-top:3px solid var(--rule);
   background:var(--solid); cursor:pointer; font:inherit; color:inherit;
   box-shadow:0 10px 24px -22px var(--shadow);
   transition:transform .16s var(--ease), box-shadow .16s ease, border-color .16s ease}
@@ -1080,7 +1247,7 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .wl-state{flex:none; width:7px; height:7px; border-radius:50%; background:#D9A441}
 .wl-state.ok{background:var(--ok)}
 .dc-main{display:flex; gap:12px; align-items:center}
-.wl-face{flex:none; width:44px; height:44px; border-radius:50%; background:rgba(21,48,66,.08);
+.wl-face{flex:none; width:40px; height:40px; border-radius:50%; background:rgba(21,48,66,.08);
   box-shadow:inset 0 0 0 1px var(--rule2); overflow:hidden; position:relative}
 /* mask rather than a coloured image, so the silhouette follows the theme */
 .wl-face i{position:absolute; inset:0; display:block; background:rgba(21,48,66,.46);
@@ -1095,15 +1262,15 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .wl-meta{display:flex; flex-wrap:wrap; align-items:baseline; gap:3px 10px; margin-top:4px; font-size:12px; color:var(--ink3)}
 .wl-meta .ag{font-family:var(--mono); font-size:11.5px; color:var(--ink2); font-variant-numeric:tabular-nums}
 .wl-meta .rt{font-family:var(--mono); font-size:11.5px}
-.dc-foot{display:flex; align-items:center; gap:10px; padding-top:11px; border-top:1px solid var(--rule2)}
-.dc-ring{position:relative; width:36px; height:36px; flex:none}
+.dc-foot{display:flex; align-items:center; gap:10px; padding-top:8px; border-top:1px solid var(--rule2)}
+.dc-ring{position:relative; width:32px; height:32px; flex:none}
 .dc-svg{display:block; width:100%; height:100%}
 .dc-svg .t{fill:none; stroke:var(--rule2)}
 .dc-svg .f{fill:none; stroke:var(--ink3); stroke-linecap:round}
 .t-tried .dc-svg .f{stroke:var(--warn)}
 .t-passed .dc-svg .f{stroke:var(--act)}
 .t-mastered .dc-svg .f{stroke:var(--ok)}
-.dc-star{position:absolute; left:9px; top:9px; width:18px; height:18px; fill:var(--ok); stroke:none}
+.dc-star{position:absolute; left:8px; top:8px; width:16px; height:16px; fill:var(--ok); stroke:none}
 .dc-st{min-width:0}
 .dc-st b{display:block; font-size:12.5px; font-weight:600; color:var(--ink3)}
 .t-tried .dc-st b{color:var(--warn)}
@@ -1208,7 +1375,8 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
   .ds-main{width:92px; height:92px}
   .ds-tiles{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 14px}
   .ds-tile b{font-size:18px}
-  .wl-list{grid-template-columns:minmax(0,1fr)}
+  .wl-grid{grid-template-columns:minmax(0,1fr)}
+  .wl-sec{padding:12px 10px 12px 16px}
   .hm-dials{gap:6px}
   .hm-dial{width:52px}
   .hm-ring{width:48px; height:48px}
@@ -2841,6 +3009,10 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       </div>
     </div>
   </header>
+
+  <!-- Milestones: a floating badge, its drop-down and its dialog (engine/progress.js). -->
+  <div class="ms-float" id="db-ms" hidden></div>
+  <div class="ms-modal" id="db-msmodal" hidden></div>
 
   <div class="db-scroll" id="db-scroll">
     <section class="wl-hero">
@@ -9136,10 +9308,18 @@ const PROGRESS = (function(){
   const OUTCOME={all:['All critical actions','ok'], missed:['Critical actions missed','warn'], failed:['Case failed','harm']};
   const ENDED_BY={completed:'Handed over', clock:'Ran out of time', action:'Ended by an action',
                   harmful_action:'Stopped by a harmful action', early_exit:'Ended early'};
-  let tab='cases', feedback=null;
+  /* modal: the dialog open over the dashboard, 'ms' (every milestone), 'runs' (the other runs
+     in progress) or null. */
+  let tab='cases', feedback=null, modal=null, msPinned=false;
+  const openRuns = () => runs.filter(r=>r.status==='in_progress')
+    .sort((a,b)=>String(b.updated_at||'').localeCompare(String(a.updated_at||'')));
 
   const caseNum = prefix => { const c=CASES[caseIndex(prefix)]; return (c&&c.card&&c.card.number)||null; };
   const caseCat = prefix => { const c=CASES[caseIndex(prefix)]; return (c&&c.card&&c.card.category)||'Cases'; };
+  /* A category's colour is its place in the sorted list of all categories (ui.js does the
+     same for the case list), so a case wears the same colour everywhere. */
+  const catIdx = prefix => { const all=[...new Set(CASES.map(c=>(c.card&&c.card.category)||'Cases'))].sort();
+    return Math.max(0,all.indexOf(caseCat(prefix)))%8; };
   const caseName = prefix => { const n=caseNum(prefix); return (n?'Case '+n+', ':'')+caseTitle(prefix); };
   const dayKey = d => { const x=new Date(d); return x.getFullYear()+'-'+(x.getMonth()+1)+'-'+x.getDate(); };
   const plural = (n,w) => n+' '+w+(n===1?'':'s');
@@ -9192,17 +9372,18 @@ const PROGRESS = (function(){
       {id:'ten',     icon:'stack',  title:'Ten cases',         desc:'Finish ten cases.',                               have:fin.length,  need:10},
       {id:'comeback',icon:'up',     title:'Comeback',          desc:'Raise your best score on a case by 20 points.',   have:comeback?1:0, need:1}
     ].map(m=>Object.assign(m,{earned:m.have>=m.need}));
-    /* Next up: a case to open now. A run in progress comes first (Continue shows it), then
-       the lowest-numbered case not yet passed, then the passed case furthest from mastery. */
+    /* Next up: two cases to open now (author instruction, 28 October 2026). A run in progress
+       comes first (Continue shows it). Then the lowest-numbered cases not yet passed, then the
+       passed cases furthest from mastery. next and nextWhy are the first of them. */
     const byNum=CASES.map(c=>c.prefix).sort((a,b)=>(caseNum(a)||1e9)-(caseNum(b)||1e9));
-    let next=byNum.find(p=>TIERS[per[p].tier].rank<2&&!per[p].open)||null, nextWhy='';
-    if(next) nextWhy=per[next].attempts?'Not passed yet':'Not started';
-    else {
-      const cand=byNum.filter(p=>per[p].tier==='passed'&&!per[p].open).sort((a,b)=>(per[a].best||0)-(per[b].best||0));
-      if(cand.length){ next=cand[0]; nextWhy='Passed. Mastery needs every critical action and '+MASTER_SCORE+'% in '+modeLabel(MASTER_MODE)+' mode'; }
-    }
+    const notPassed=byNum.filter(p=>TIERS[per[p].tier].rank<2&&!per[p].open)
+      .map(p=>({prefix:p, why:per[p].attempts?'Not passed yet':'Not started'}));
+    const toMaster=byNum.filter(p=>per[p].tier==='passed'&&!per[p].open).sort((a,b)=>(per[a].best||0)-(per[b].best||0))
+      .map(p=>({prefix:p, why:'Passed. Mastery is '+MASTER_SCORE+'% in '+modeLabel(MASTER_MODE)+' mode'}));
+    const nexts=notPassed.concat(toMaster).slice(0,2);
+    const next=nexts.length?nexts[0].prefix:null, nextWhy=nexts.length?nexts[0].why:'';
     return {per, N, passed, mastered, critDone, critTotal, finished:fin.length,
-            streak:{current, today, atRisk:!today&&current>0, longest}, milestones, next, nextWhy, fin};
+            streak:{current, today, atRisk:!today&&current>0, longest}, milestones, next, nextWhy, nexts, fin};
   }
 
   /* What changed with the case just finished. Said plainly, and said even when nothing
@@ -9237,6 +9418,7 @@ const PROGRESS = (function(){
     stack:'<path d="M4 8l8-4 8 4-8 4z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/>',
     up:'<path d="M5 17l5-5 3 3 6-6"/><path d="M14 9h5v5"/>',
     play:'<path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/>',
+    trophy:'<path d="M7.5 4h9v5.5a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 6.2H4.6a3 3 0 0 0 3.3 4M16.5 6.2h2.9a3 3 0 0 1-3.3 4"/><path d="M12 14v3.4M8.6 20.4h6.8M9.6 17.4h4.8"/>',
     x:'<path d="M6 6l12 12M18 6L6 18"/>'
   };
   const icon = (k,cls) => `<svg class="${cls||'ic'}" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]||''}</svg>`;
@@ -9307,18 +9489,34 @@ const PROGRESS = (function(){
     return [p.age!=null?p.age:'', ({male:'M',female:'F'})[String(p.sex||'').toLowerCase()]||''].filter(x=>x!=='').join(' ');
   }
   const runMins = prefix => { const c=CASES[caseIndex(prefix)]; const s=c&&c.card&&c.card.runtime_seconds; return s?Math.round(s/60):null; };
-  /* Continue and Next up, as the two things to do now (author instruction, 28 October 2026:
-     "more prominently and artfully displayed"). A run in progress is the lead card, with its
-     case time as a ring round the patient and as a bar. Next up stands beside it. */
+  /* Continue and Next up (author instructions, 28 October 2026): the things to do now, as
+     compact cards in one row of three. The most recently saved run leads, with its case time
+     as a ring round the patient and as a bar, and the page's only filled Resume button. Any
+     other runs in progress fold into "+N more in progress" on that card, which opens them as a
+     list in a dialog. Two Next up cards follow. Each card wears its category's colour. */
+  const catPill = pre => `<span class="cx-cat cat-${catIdx(pre)}">${escP(caseCat(pre))}</span>`;
+  function nextCard(n, D, primary){
+    const pre=n.prefix, p=D.per[pre], mins=runMins(pre);
+    return `<article class="cx cx-next t-${p.tier}">
+        <div class="cx-art"><span class="cx-ringwrap">${ringSvg(p.best!==null?p.best/100:0,44,5,'cx-svg')}${faceHTML(pre)}</span></div>
+        <div class="cx-body">
+          <div class="cx-kind">${icon('flag','ic')}Next up${catPill(pre)}</div>
+          <h3 class="cx-title">${caseNo(pre)}${escP(caseTitle(pre))}</h3>
+          <div class="cx-meta">${escP([whoLine(pre),mins?'about '+mins+' min':''].filter(Boolean).join(' · '))}</div>
+          <div class="cx-why">${escP(n.why)}${p.best!==null?' · best '+p.best+'%':''}</div>
+          <div class="hm-ca"><button class="btn cx-btn${primary?'':' ghost'}" type="button" data-hmopencase="${escP(pre)}">${p.attempts?'Try again':'Start'}<span class="cx-arr" aria-hidden="true">→</span></button></div>
+        </div>
+      </article>`;
+  }
   function continueHTML(D){
-    const open=runs.filter(r=>r.status==='in_progress');
-    const cards=open.map(r=>{
+    const open=openRuns(), more=open.length-1;
+    const cards=open.slice(0,1).map(r=>{
       const pre=r.case_prefix, stale=r.version_key!==KEYS[pre], gone=caseIndex(pre)<0;
       const mins=runMins(pre), frac=mins?Math.min(1,(r.sim_seconds||0)/(mins*60)):0;
       return `<article class="cx cx-go">
         <div class="cx-art"><span class="cx-ringwrap">${ringSvg(frac,44,5,'cx-svg')}${faceHTML(pre)}</span></div>
         <div class="cx-body">
-          <div class="cx-kind">${icon('play','ic')}Continue where you left off</div>
+          <div class="cx-kind">${icon('play','ic')}Continue${gone?'':catPill(pre)}</div>
           <h3 class="cx-title">${caseNo(pre)}${escP(caseTitle(pre))}</h3>
           <div class="cx-meta">${escP([whoLine(pre),modeLabel(r.mode),'saved '+when(r.updated_at)].filter(Boolean).join(' · '))}</div>
           <div class="cx-time"><span class="cx-bar"><i style="width:${Math.round(frac*100)}%"></i></span>
@@ -9327,48 +9525,124 @@ const PROGRESS = (function(){
           <div class="hm-ca">
             ${gone?'':`<button class="btn cx-btn" type="button" data-hmresume="${escP(pre)}">${icon('play','ic')}${stale?'Open':'Resume'}</button>`}
             <button class="hm-link" type="button" data-hmdel="${escP(r.id)}">Discard</button>
+            ${more>0?`<button class="cx-more" type="button" data-cxmore="1" aria-haspopup="dialog">${icon('stack','ic')}+${more} more in progress</button>`:''}
           </div>
           ${confirmDel===r.id?confirmHTML(r.id,'Discard this run? It cannot be resumed afterwards.'):''}
         </div>
       </article>`;
     });
-    if(D.next){
-      const pre=D.next, p=D.per[pre], mins=runMins(pre);
-      cards.push(`<article class="cx cx-next t-${p.tier}">
-        <div class="cx-art"><span class="cx-ringwrap">${ringSvg(p.best!==null?p.best/100:0,44,5,'cx-svg')}${faceHTML(pre)}</span></div>
-        <div class="cx-body">
-          <div class="cx-kind">${icon('flag','ic')}Next up</div>
-          <h3 class="cx-title">${caseNo(pre)}${escP(caseTitle(pre))}</h3>
-          <div class="cx-meta">${escP([whoLine(pre),caseCat(pre),mins?'about '+mins+' min':''].filter(Boolean).join(' · '))}</div>
-          <div class="cx-why">${escP(D.nextWhy)}${p.best!==null?' · best '+p.best+'%':''}</div>
-          <div class="hm-ca"><button class="btn cx-btn ${open.length?'ghost':''}" type="button" data-hmopencase="${escP(pre)}">${p.attempts?'Try again':'Start'}<span class="cx-arr" aria-hidden="true">→</span></button></div>
-        </div>
-      </article>`);
-    }
+    (D.nexts||[]).forEach((n,i)=>cards.push(nextCard(n, D, !open.length&&i===0)));
     if(!cards.length) return '<p class="hm-empty">Every case is mastered. Nothing is waiting for you.</p>';
     return `<div class="cx-grid${cards.length===1?' one':''}">${cards.join('')}</div>`+
       (open.length?'':'<p class="hm-empty sm">No case in progress. A case you leave before the end is saved and waits here.</p>');
   }
-  /* The milestones as a shelf of medals (author instruction, 28 October 2026). An earned one
-     is gold. One not yet earned is a dim disc with its progress as a ring round it, and the
-     nearest is lit, as the thing to aim at. One earned with the case just played says New. */
+  /* The milestones (author instruction, 28 October 2026): a badge that floats at the right of
+     the screen, with the count earned as a gold ring round it. Hovering it, reaching it with
+     the keyboard or tapping it drops down the nearest milestone and six medals. "Show all"
+     opens every milestone, with what each asks for, in a dialog. An earned medal is gold, one
+     not yet earned is a dim disc with its progress as a ring, and the nearest is lit. */
+  const isNewMs = id => !!(feedback&&feedback.items.some(i=>i.id===id));
+  function msNear(D){ return D.milestones.filter(m=>!m.earned).sort((a,b)=>(b.have/b.need)-(a.have/a.need))[0]||null; }
+  function medalHTML(m, near, i, full){
+    const cls=['tr', m.earned?'on':'', near&&near.id===m.id?'next':'', isNewMs(m.id)?'new':''].filter(Boolean).join(' ');
+    const state=m.earned?'Earned':(m.need>1?Math.min(m.have,m.need)+' of '+m.need:'Not yet');
+    return `<li class="${cls}"${i!==null?` style="--i:${i}"`:''} title="${escP(m.desc)}">
+          <span class="tr-medal">${m.earned?'':ringSvg(m.have/m.need,33,3,'tr-svg')}<span class="tr-disc">${icon(m.icon,'ic')}</span>${isNewMs(m.id)?'<span class="tr-newtag">New</span>':''}</span>
+          <b class="tr-t">${escP(m.title)}</b>
+          <span class="tr-s">${escP(state)}</span>${full?`
+          <span class="tr-d">${escP(m.desc)}</span>`:''}
+        </li>`;
+  }
+  /* Every milestone: the dialog's content. */
   function milestonesHTML(D){
-    const got=D.milestones.filter(m=>m.earned).length;
-    const near=D.milestones.filter(m=>!m.earned).sort((a,b)=>(b.have/b.need)-(a.have/a.need))[0];
-    const isNew=id=>!!(feedback&&feedback.items.some(i=>i.id===id));
+    const got=D.milestones.filter(m=>m.earned).length, near=msNear(D);
     return `<div class="tr-head">
         <h2 id="hm-h3">Milestones</h2>
         <span class="tr-count"><b>${got}</b> of ${D.milestones.length} earned</span>
         ${near?`<span class="tr-next">Next: <b>${escP(near.title)}</b>${near.need>1?', '+escP(Math.min(near.have,near.need)+' of '+near.need):''}. ${escP(near.desc)}</span>`:'<span class="tr-next">Every milestone earned.</span>'}
       </div>
-      <ul class="tr-row">${D.milestones.map(m=>{
-        const cls=['tr', m.earned?'on':'', near&&near.id===m.id?'next':'', isNew(m.id)?'new':''].filter(Boolean).join(' ');
-        const state=m.earned?'Earned':(m.need>1?Math.min(m.have,m.need)+' of '+m.need:'Not yet');
-        return `<li class="${cls}" title="${escP(m.desc)}">
-          <span class="tr-medal">${m.earned?'':ringSvg(m.have/m.need,33,3,'tr-svg')}<span class="tr-disc">${icon(m.icon,'ic')}</span>${isNew(m.id)?'<span class="tr-newtag">New</span>':''}</span>
-          <b class="tr-t">${escP(m.title)}</b>
-          <span class="tr-s">${escP(state)}</span>
-        </li>`; }).join('')}</ul>`;
+      <ul class="tr-row">${D.milestones.map(m=>medalHTML(m,near,null,true)).join('')}</ul>`;
+  }
+  /* The badge and its drop-down. The six medals: any just earned, the nearest, the others
+     earned, then the rest by how close they are. */
+  function msFloatHTML(D){
+    const ms=D.milestones, got=ms.filter(m=>m.earned).length, near=msNear(D);
+    const fresh=ms.some(m=>isNewMs(m.id));
+    const rank=m=>isNewMs(m.id)?0:(near&&m.id===near.id)?1:m.earned?2:3;
+    const six=ms.map((m,k)=>({m,k})).sort((a,b)=>rank(a.m)-rank(b.m)||
+      (rank(a.m)===3?(b.m.have/b.m.need)-(a.m.have/a.m.need):a.k-b.k)).slice(0,6).map(x=>x.m);
+    const pct=near?Math.round(100*Math.min(near.have,near.need)/near.need):100;
+    return `<button class="ms-badge" type="button" data-mstoggle="1" aria-expanded="${msPinned}" aria-controls="ms-drop"
+        aria-label="Milestones: ${got} of ${ms.length} earned${fresh?', one new':''}">
+        ${ringSvg(ms.length?got/ms.length:0,29,3,'ms-svg')}
+        <span class="ms-medal">${icon('trophy','ic')}</span>
+        <span class="ms-count">${got}/${ms.length}</span>
+        ${fresh?'<span class="ms-dot" aria-hidden="true"></span>':''}
+      </button>
+      <div class="ms-drop" id="ms-drop" role="group" aria-label="Milestones">
+        <div class="ms-dh"><b class="ms-dt">Milestones</b><span class="ms-dc"><b>${got}</b> of ${ms.length} earned</span></div>
+        ${near?`<div class="ms-near"><span class="ms-nl">Next</span><b>${escP(near.title)}</b>
+          <span class="ms-nbar"><i style="width:${pct}%"></i></span>
+          <span class="ms-nd">${escP(near.desc)}${near.need>1?' '+escP(Math.min(near.have,near.need)+' of '+near.need+'.'):''}</span></div>`
+          :'<div class="ms-near done"><b>Every milestone earned.</b></div>'}
+        <ul class="ms-list">${six.map((m,i)=>medalHTML(m,near,i,false)).join('')}</ul>
+        <button class="ms-more" type="button" data-msopen="1">Show all ${ms.length} milestones<span class="cx-arr" aria-hidden="true">→</span></button>
+      </div>`;
+  }
+  function msModalHTML(D){
+    return `<div class="ms-back" data-msclose="1"></div>
+      <div class="ms-card" role="dialog" aria-modal="true" aria-labelledby="hm-h3">
+        <button class="db-x ms-x" type="button" data-msclose="1" aria-label="Close">${icon('x','ic')}</button>
+        <div class="db-trophy">${milestonesHTML(D)}</div>
+      </div>`;
+  }
+  /* The other runs in progress, newest first, each with Resume and Discard. */
+  function runsModalHTML(){
+    const rest=openRuns().slice(1);
+    return `<div class="ms-back" data-msclose="1"></div>
+      <div class="ms-card rp-card" role="dialog" aria-modal="true" aria-labelledby="rp-h">
+        <button class="db-x ms-x" type="button" data-msclose="1" aria-label="Close">${icon('x','ic')}</button>
+        <div class="rp">
+          <h2 id="rp-h">${rest.length} more in progress</h2>
+          <p class="rp-sub">Newest first. Each case keeps one saved run, and Resume picks it up where you left it.</p>
+          <ul class="rp-list">${rest.map(r=>{
+            const pre=r.case_prefix, stale=r.version_key!==KEYS[pre], gone=caseIndex(pre)<0;
+            const mins=runMins(pre), frac=mins?Math.min(1,(r.sim_seconds||0)/(mins*60)):0;
+            return `<li class="rp-row">
+              <span class="rp-art"><span class="cx-ringwrap">${ringSvg(frac,44,5,'cx-svg')}${faceHTML(pre)}</span></span>
+              <div class="rp-body">
+                <div class="rp-t">${caseNo(pre)}${escP(caseTitle(pre))}</div>
+                <div class="rp-m">${gone?'':catPill(pre)}<span>${escP([modeLabel(r.mode), mmssP(r.sim_seconds)+(mins?' of about '+mins+' min':''), 'saved '+when(r.updated_at)].filter(Boolean).join(' · '))}</span></div>
+                ${stale?'<div class="hm-cw">This case has been improved since. It will start from the beginning.</div>':''}
+                ${confirmDel===r.id?confirmHTML(r.id,'Discard this run? It cannot be resumed afterwards.'):''}
+              </div>
+              <div class="rp-a">
+                ${gone?'':`<button class="btn ghost rp-go" type="button" data-hmresume="${escP(pre)}">${icon('play','ic')}${stale?'Open':'Resume'}</button>`}
+                <button class="hm-link" type="button" data-hmdel="${escP(r.id)}">Discard</button>
+              </div>
+            </li>`; }).join('')}</ul>
+        </div>
+      </div>`;
+  }
+  function openModal(kind){
+    modal=kind; msPinned=false; confirmDel=null; paintHome();
+    const x=document.querySelector('#db-msmodal .ms-x'); if(x) x.focus();
+  }
+  function openMs(){ openModal('ms'); }
+  /* Focus goes back to the badge, but the drop-down stays shut ("calm") until the badge
+     is left, hovered or opened again, so closing the dialog does not leave a panel open. */
+  function closeMs(){
+    const kind=modal; modal=null; confirmDel=null; paintHome();
+    if(kind==='runs'){ const m=document.querySelector('#wl-home [data-cxmore]'); if(m) m.focus({preventScroll:true}); return; }
+    const w=$('db-ms'), b=document.querySelector('#db-ms .ms-badge'); if(!b) return;
+    w.classList.add('calm');
+    b.addEventListener('blur',()=>w.classList.remove('calm'),{once:true});
+    b.focus({preventScroll:true});
+  }
+  function setPinned(v){
+    msPinned=v; const w=$('db-ms'); if(!w) return;
+    w.classList.toggle('open',v);
+    const b=w.querySelector('.ms-badge'); if(b) b.setAttribute('aria-expanded',String(v));
   }
   function confirmHTML(id,q){
     return `<div class="hm-confirm" role="group" aria-label="Confirm">
@@ -9462,29 +9736,36 @@ const PROGRESS = (function(){
   }
   function paintHome(){
     const box=$('wl-home'), pk=$('picker'), st=$('db-stats'), gr=$('db-greet'), hist=$('db-history');
+    const ms=$('db-ms'), mm=$('db-msmodal');
     if(!box||!pk) return;
+    const hideMs=()=>{ modal=null; msPinned=false;
+      if(ms){ ms.hidden=true; ms.innerHTML=''; ms.classList.remove('open'); }
+      if(mm){ mm.hidden=true; mm.innerHTML=''; } };
     const show=on();
     pk.classList.toggle('home-on',show);
     box.hidden=!show; if(st) st.hidden=!show; if(gr) gr.hidden=!show;
     paintTabs();
-    if(!show){ box.innerHTML=''; if(st) st.innerHTML=''; if(hist) hist.innerHTML=''; return; }
+    if(!show){ box.innerHTML=''; if(st) st.innerHTML=''; if(hist) hist.innerHTML=''; hideMs(); return; }
     if(gr) gr.textContent=greeting();
     if(listState==='loading'||listState==='idle'){
       if(st) st.innerHTML='<div class="ds-skel"></div><div class="ds-skel"></div><div class="ds-skel"></div>';
-      box.innerHTML='<p class="hm-empty">Loading your progress…</p>';
+      box.innerHTML='<p class="hm-empty">Loading your progress…</p>'; hideMs();
       if(hist) hist.innerHTML='';
       return;
     }
     if(listState==='error'){
       if(st) st.innerHTML='';
       box.innerHTML='<p class="hm-empty">Your progress could not be loaded. <button class="hm-link" type="button" data-hmretry="1">Try again</button></p>';
+      hideMs();
       return;
     }
     const D=derive();
     if(st) st.innerHTML=statsHTML(D);
     box.innerHTML=`${feedbackHTML()}
-      <section class="db-play" aria-label="Continue">${continueHTML(D)}</section>
-      <section class="db-trophy" aria-labelledby="hm-h3">${milestonesHTML(D)}</section>`;
+      <section class="db-play" aria-label="Continue and next up">${continueHTML(D)}</section>`;
+    if(ms){ ms.hidden=false; ms.innerHTML=msFloatHTML(D); ms.classList.toggle('open',msPinned); }
+    if(modal==='runs'&&openRuns().length<2) modal=null;   // the last other run was discarded
+    if(mm){ mm.hidden=!modal; mm.innerHTML=modal==='ms'?msModalHTML(D):modal==='runs'?runsModalHTML():''; }
     if(hist) hist.innerHTML=`${trendHTML(D)}
       <section class="hm-sec" aria-labelledby="hm-h2"><h2 id="hm-h2">Your attempts</h2>${attemptsHTML()}</section>
       <p class="hm-note">While a case is in progress, your account keeps what you did and asked in it, so that
@@ -9493,9 +9774,13 @@ const PROGRESS = (function(){
   }
   function bindHome(){
     const handle=e=>{
-      const t=e.target.closest('button'); if(!t) return;
+      const t=e.target.closest('button,[data-msclose]'); if(!t) return;
       if(t.dataset.dbtab){ e.stopPropagation(); tab=t.dataset.dbtab; paintTabs(); return; }
-      if(!t.closest('#wl-home,#db-history')) return;
+      if(t.dataset.msclose){ e.stopPropagation(); closeMs(); return; }
+      if(t.dataset.mstoggle){ e.stopPropagation(); setPinned(!msPinned); return; }
+      if(t.dataset.msopen){ e.stopPropagation(); openMs(); return; }
+      if(t.dataset.cxmore){ e.stopPropagation(); openModal('runs'); return; }
+      if(!t.closest('#wl-home,#db-history,#db-msmodal')) return;
       e.stopPropagation();
       if(t.dataset.fbclose){ feedback=null; paintHome(); return; }
       if(t.dataset.hmretry){ refresh(); return; }
@@ -9506,11 +9791,29 @@ const PROGRESS = (function(){
       if(t.dataset.hmopencase){ const i=caseIndex(t.dataset.hmopencase); if(i>=0) chooseCase(i); return; }
       if(t.dataset.hmresume){
         const i=caseIndex(t.dataset.hmresume); if(i<0) return;
+        if(modal){ modal=null; confirmDel=null; paintHome(); }
         want=t.dataset.hmresume;
         chooseCase(i);
       }
     };
-    ['wl-home','db-history','db-tabs'].forEach(id=>{ const n=$(id); if(n) n.addEventListener('click',handle); });
+    ['wl-home','db-history','db-tabs','db-ms','db-msmodal'].forEach(id=>{ const n=$(id); if(n) n.addEventListener('click',handle); });
+    /* The dialog (every milestone, or the other runs in progress) keeps the keys while it is
+       open: Escape closes it, Tab goes round its own buttons, and nothing reaches the case
+       list behind it (ui.js asks modalOpen).
+       A drop-down pinned open by a tap closes on Escape or a tap anywhere else. */
+    document.addEventListener('keydown',e=>{
+      if(modal){
+        if(e.key==='Escape'){ e.preventDefault(); e.stopImmediatePropagation(); closeMs(); return; }
+        if(e.key==='Tab'){   // round the dialog's own buttons, and no further
+          const f=[...document.querySelectorAll('#db-msmodal .ms-card button')]; if(!f.length) return;
+          const i=f.indexOf(document.activeElement); e.preventDefault();
+          f[i<0?0:(i+(e.shiftKey?f.length-1:1))%f.length].focus();
+        }
+        return;
+      }
+      if(e.key==='Escape'&&msPinned) setPinned(false);
+    },true);
+    document.addEventListener('click',e=>{ if(msPinned&&!e.target.closest('#db-ms')) setPinned(false); });
     /* Arrow keys move between the two tabs, as a tab list should. */
     const tabs=$('db-tabs');
     if(tabs) tabs.addEventListener('keydown',e=>{
@@ -9534,7 +9837,7 @@ const PROGRESS = (function(){
   }
 
   return {init, onSession, refresh, touch, start, detach, finish, flush, kept, onSplash, rowBadge, cardInfo,
-          active:()=>on()&&!!cur&&!cur.gone, enabled:on,
+          active:()=>on()&&!!cur&&!cur.gone, enabled:on, modalOpen:()=>!!modal,
           /* for the site check */ _state:()=>({uid, listState, runs:runs.length, cur:cur&&{...cur}, dirty, saveFailed, tab, feedback}),
           _derive:()=>derive()};
 })();
@@ -12419,7 +12722,7 @@ function wlChips(m){
   if(cats.length<2){ box.style.display='none'; return; }
   box.style.display='';
   box.innerHTML=[['all','All cases']].concat(cats.map(c=>[c,c]))
-    .map(([k,l])=>`<button class="wl-chip" type="button" data-wlchip="${esc(k)}" aria-pressed="${WL_FILTER===k}">${esc(l)}</button>`)
+    .map(([k,l],j)=>`<button class="wl-chip${j?' cat-'+((j-1)%8):''}" type="button" data-wlchip="${esc(k)}" aria-pressed="${WL_FILTER===k}">${j?'<i class="wl-cdot" aria-hidden="true"></i>':''}${esc(l)}</button>`)
     .join('');
 }
 
@@ -12450,12 +12753,17 @@ function renderPicker(){
       'Try a body system, an age, or clear the search to see everything.</div>';
     WL_SEL=-1; return;
   }
+  /* Each category is its own shaded panel in its own colour (author instruction, 28 October
+     2026: "way more visually clear"). The colour is the category's place in the sorted list
+     of all categories, so it stays put when a filter or a search hides the others, and the
+     filter chips and the Continue and Next up cards (engine/progress.js) use the same. */
   const groups=[...new Set(hits.map(c=>c.category))].sort();
-  const grouped=groups.length>1;
+  const allCats=wlCats(m);
   let html='';
   for(const g of groups){
-    if(grouped) html+=`<div class="wl-group">${esc(g)}</div>`;
-    for(const c of hits.filter(x=>x.category===g)){
+    const inG=hits.filter(x=>x.category===g);
+    let cards='', passed=0, tracked=false;
+    for(const c of inG){
       const face=WL_SHORT[c.sex]?`<i class="${c.sex}"></i>`:'';
       const prog=PROGRESS.cardInfo(c.prefix);
       const aria=[(c.num?'Case '+c.num+'. ':'')+c.complaint,
@@ -12468,7 +12776,7 @@ function renderPicker(){
                  ].filter(Boolean).join('. ');
       /* A card (28 October 2026): the number and the review dot, the patient and the
          complaint, then, signed in, the learner's own mastery of it (engine/progress.js). */
-      html+=`<button class="wl-case${prog.cls}${ACCESS_UI.loadingIndex()===c.i?' loading':''}" type="button" role="option" data-case="${c.i}"
+      cards+=`<button class="wl-case${prog.cls}${ACCESS_UI.loadingIndex()===c.i?' loading':''}" type="button" role="option" data-case="${c.i}"
         data-row="${WL_ROWS.indexOf(c)}" aria-label="${esc(aria)}">
         <span class="dc-head">${c.num?`<span class="wl-no">Case ${c.num}</span>`:''}<span class="dc-sp"></span>
           ${c.locked&&!ACCESS_UI.signedIn()?`<svg class="wl-lock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>`:''}
@@ -12485,7 +12793,13 @@ function renderPicker(){
           </span>
         </span>${prog.html}
       </button>`;
+      if(prog.cls){ tracked=true; if(/ t-(passed|mastered)/.test(prog.cls)) passed++; }
     }
+    const ci=Math.max(0,allCats.indexOf(g))%8;
+    const sub=(inG.length===1?'1 case':inG.length+' cases')+(tracked?' · '+passed+' passed':'');
+    html+=`<section class="wl-sec cat-${ci}" role="group" aria-label="${esc(g)}">
+      <h3 class="wl-group"><span class="wl-catmark" aria-hidden="true"></span><span class="wl-catname">${esc(g)}</span><span class="wl-catn">${esc(sub)}</span></h3>
+      <div class="wl-grid">${cards}</div></section>`;
   }
   el('pk-list').innerHTML=html;
   wlPaint();
@@ -12527,6 +12841,7 @@ function wlBind(){
   document.addEventListener('keydown',e=>{
     if(!wlVisible()) return;
     if(ACCESS_UI.modalOpen()) return;   // typing a password must not search or open a case
+    if(PROGRESS.modalOpen()) return;    // the milestones dialog is open
     if(CHARGE.isOpen()) return;         // a case is downloading behind the charging screen
     const q=el('wl-q');
     if(e.key==='/'&&document.activeElement!==q){ e.preventDefault(); q.focus(); q.select(); return; }

@@ -5,6 +5,14 @@ is usable with learners.
 
 ---
 
+## Dashboard: floating milestones, two Next up cards, colour-coded categories (28 October 2026, author's instructions)
+
+- Milestones are a badge that floats at the right of the screen: a gold medal with the count earned as a ring round it and as a number under it, and a red dot when the case just finished earned one. Hovering it, reaching it with the keyboard or tapping it drops down the nearest milestone with a progress bar and six medals (any just earned, the nearest, the others earned, then the rest by how close they are), each easing in a little after the last. "Show all 9 milestones" opens every milestone, with what each asks for, in a dialog. Escape, the cross or the backdrop closes it, Tab stays on its close button, and no key reaches the case list behind it. Focus then returns to the badge with the drop-down shut. The milestone shelf under Continue is gone.
+- Continue shows one card: the most recently saved run, with the page's only filled Resume button. Other runs in progress fold into "+N more in progress" on that card, which opens a dialog listing them newest first, each with its case time, mode, when it was saved, Resume and Discard. The row stays at three cards: Continue and two Next up.
+- Next up shows two cases: the two lowest-numbered not yet passed, then the passed ones furthest from mastery. A run in progress still comes first. The Continue and Next up cards are smaller (a 76 px ring, less padding, smaller type) and sit three to a row. Each carries a pill in its category's colour.
+- Each category in the case list is its own shaded panel in its own colour, with a coloured rule down its left edge and its name as an 18 px heading with a count ("3 cases · 1 passed" when signed in). The colour is the category's place in the sorted list of all categories, from eight hues chosen to avoid the tier colours (green, amber, blue): rose, violet, teal, fuchsia, rust, slate, olive, plum-brown, with lighter ones at night. The filter chips carry the same colours. The case cards have less padding and a slightly smaller face and ring.
+- Site check: new checks for the drop-down, the dialog, its keys, the two Next up cards and the category panels.
+
 ## New type: Atkinson Hyperlegible Next and Mono (28 October 2026, author's choice)
 
 - All text is Atkinson Hyperlegible Next: the interface, the titles (the same family at weight 750, slightly tighter), the debrief's headings, the case discussion, the Continue and Next up cards and the milestones heading. Its italic carries what people say: the patient's words on the splash, the paramedic or triage handover, the patient's line on the welcome page. Numbers (monitor, clock, timers, labs, small labels) are Atkinson Hyperlegible Mono.

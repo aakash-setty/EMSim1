@@ -286,10 +286,18 @@ const PROGRESS = (function(){
   const OUTCOME={all:['All critical actions','ok'], missed:['Critical actions missed','warn'], failed:['Case failed','harm']};
   const ENDED_BY={completed:'Handed over', clock:'Ran out of time', action:'Ended by an action',
                   harmful_action:'Stopped by a harmful action', early_exit:'Ended early'};
-  let tab='cases', feedback=null;
+  /* modal: the dialog open over the dashboard, 'ms' (every milestone), 'runs' (the other runs
+     in progress) or null. */
+  let tab='cases', feedback=null, modal=null, msPinned=false;
+  const openRuns = () => runs.filter(r=>r.status==='in_progress')
+    .sort((a,b)=>String(b.updated_at||'').localeCompare(String(a.updated_at||'')));
 
   const caseNum = prefix => { const c=CASES[caseIndex(prefix)]; return (c&&c.card&&c.card.number)||null; };
   const caseCat = prefix => { const c=CASES[caseIndex(prefix)]; return (c&&c.card&&c.card.category)||'Cases'; };
+  /* A category's colour is its place in the sorted list of all categories (ui.js does the
+     same for the case list), so a case wears the same colour everywhere. */
+  const catIdx = prefix => { const all=[...new Set(CASES.map(c=>(c.card&&c.card.category)||'Cases'))].sort();
+    return Math.max(0,all.indexOf(caseCat(prefix)))%8; };
   const caseName = prefix => { const n=caseNum(prefix); return (n?'Case '+n+', ':'')+caseTitle(prefix); };
   const dayKey = d => { const x=new Date(d); return x.getFullYear()+'-'+(x.getMonth()+1)+'-'+x.getDate(); };
   const plural = (n,w) => n+' '+w+(n===1?'':'s');
@@ -342,17 +350,18 @@ const PROGRESS = (function(){
       {id:'ten',     icon:'stack',  title:'Ten cases',         desc:'Finish ten cases.',                               have:fin.length,  need:10},
       {id:'comeback',icon:'up',     title:'Comeback',          desc:'Raise your best score on a case by 20 points.',   have:comeback?1:0, need:1}
     ].map(m=>Object.assign(m,{earned:m.have>=m.need}));
-    /* Next up: a case to open now. A run in progress comes first (Continue shows it), then
-       the lowest-numbered case not yet passed, then the passed case furthest from mastery. */
+    /* Next up: two cases to open now (author instruction, 28 October 2026). A run in progress
+       comes first (Continue shows it). Then the lowest-numbered cases not yet passed, then the
+       passed cases furthest from mastery. next and nextWhy are the first of them. */
     const byNum=CASES.map(c=>c.prefix).sort((a,b)=>(caseNum(a)||1e9)-(caseNum(b)||1e9));
-    let next=byNum.find(p=>TIERS[per[p].tier].rank<2&&!per[p].open)||null, nextWhy='';
-    if(next) nextWhy=per[next].attempts?'Not passed yet':'Not started';
-    else {
-      const cand=byNum.filter(p=>per[p].tier==='passed'&&!per[p].open).sort((a,b)=>(per[a].best||0)-(per[b].best||0));
-      if(cand.length){ next=cand[0]; nextWhy='Passed. Mastery needs every critical action and '+MASTER_SCORE+'% in '+modeLabel(MASTER_MODE)+' mode'; }
-    }
+    const notPassed=byNum.filter(p=>TIERS[per[p].tier].rank<2&&!per[p].open)
+      .map(p=>({prefix:p, why:per[p].attempts?'Not passed yet':'Not started'}));
+    const toMaster=byNum.filter(p=>per[p].tier==='passed'&&!per[p].open).sort((a,b)=>(per[a].best||0)-(per[b].best||0))
+      .map(p=>({prefix:p, why:'Passed. Mastery is '+MASTER_SCORE+'% in '+modeLabel(MASTER_MODE)+' mode'}));
+    const nexts=notPassed.concat(toMaster).slice(0,2);
+    const next=nexts.length?nexts[0].prefix:null, nextWhy=nexts.length?nexts[0].why:'';
     return {per, N, passed, mastered, critDone, critTotal, finished:fin.length,
-            streak:{current, today, atRisk:!today&&current>0, longest}, milestones, next, nextWhy, fin};
+            streak:{current, today, atRisk:!today&&current>0, longest}, milestones, next, nextWhy, nexts, fin};
   }
 
   /* What changed with the case just finished. Said plainly, and said even when nothing
@@ -387,6 +396,7 @@ const PROGRESS = (function(){
     stack:'<path d="M4 8l8-4 8 4-8 4z"/><path d="M4 12l8 4 8-4"/><path d="M4 16l8 4 8-4"/>',
     up:'<path d="M5 17l5-5 3 3 6-6"/><path d="M14 9h5v5"/>',
     play:'<path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/>',
+    trophy:'<path d="M7.5 4h9v5.5a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 6.2H4.6a3 3 0 0 0 3.3 4M16.5 6.2h2.9a3 3 0 0 1-3.3 4"/><path d="M12 14v3.4M8.6 20.4h6.8M9.6 17.4h4.8"/>',
     x:'<path d="M6 6l12 12M18 6L6 18"/>'
   };
   const icon = (k,cls) => `<svg class="${cls||'ic'}" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]||''}</svg>`;
@@ -457,18 +467,34 @@ const PROGRESS = (function(){
     return [p.age!=null?p.age:'', ({male:'M',female:'F'})[String(p.sex||'').toLowerCase()]||''].filter(x=>x!=='').join(' ');
   }
   const runMins = prefix => { const c=CASES[caseIndex(prefix)]; const s=c&&c.card&&c.card.runtime_seconds; return s?Math.round(s/60):null; };
-  /* Continue and Next up, as the two things to do now (author instruction, 28 October 2026:
-     "more prominently and artfully displayed"). A run in progress is the lead card, with its
-     case time as a ring round the patient and as a bar. Next up stands beside it. */
+  /* Continue and Next up (author instructions, 28 October 2026): the things to do now, as
+     compact cards in one row of three. The most recently saved run leads, with its case time
+     as a ring round the patient and as a bar, and the page's only filled Resume button. Any
+     other runs in progress fold into "+N more in progress" on that card, which opens them as a
+     list in a dialog. Two Next up cards follow. Each card wears its category's colour. */
+  const catPill = pre => `<span class="cx-cat cat-${catIdx(pre)}">${escP(caseCat(pre))}</span>`;
+  function nextCard(n, D, primary){
+    const pre=n.prefix, p=D.per[pre], mins=runMins(pre);
+    return `<article class="cx cx-next t-${p.tier}">
+        <div class="cx-art"><span class="cx-ringwrap">${ringSvg(p.best!==null?p.best/100:0,44,5,'cx-svg')}${faceHTML(pre)}</span></div>
+        <div class="cx-body">
+          <div class="cx-kind">${icon('flag','ic')}Next up${catPill(pre)}</div>
+          <h3 class="cx-title">${caseNo(pre)}${escP(caseTitle(pre))}</h3>
+          <div class="cx-meta">${escP([whoLine(pre),mins?'about '+mins+' min':''].filter(Boolean).join(' · '))}</div>
+          <div class="cx-why">${escP(n.why)}${p.best!==null?' · best '+p.best+'%':''}</div>
+          <div class="hm-ca"><button class="btn cx-btn${primary?'':' ghost'}" type="button" data-hmopencase="${escP(pre)}">${p.attempts?'Try again':'Start'}<span class="cx-arr" aria-hidden="true">→</span></button></div>
+        </div>
+      </article>`;
+  }
   function continueHTML(D){
-    const open=runs.filter(r=>r.status==='in_progress');
-    const cards=open.map(r=>{
+    const open=openRuns(), more=open.length-1;
+    const cards=open.slice(0,1).map(r=>{
       const pre=r.case_prefix, stale=r.version_key!==KEYS[pre], gone=caseIndex(pre)<0;
       const mins=runMins(pre), frac=mins?Math.min(1,(r.sim_seconds||0)/(mins*60)):0;
       return `<article class="cx cx-go">
         <div class="cx-art"><span class="cx-ringwrap">${ringSvg(frac,44,5,'cx-svg')}${faceHTML(pre)}</span></div>
         <div class="cx-body">
-          <div class="cx-kind">${icon('play','ic')}Continue where you left off</div>
+          <div class="cx-kind">${icon('play','ic')}Continue${gone?'':catPill(pre)}</div>
           <h3 class="cx-title">${caseNo(pre)}${escP(caseTitle(pre))}</h3>
           <div class="cx-meta">${escP([whoLine(pre),modeLabel(r.mode),'saved '+when(r.updated_at)].filter(Boolean).join(' · '))}</div>
           <div class="cx-time"><span class="cx-bar"><i style="width:${Math.round(frac*100)}%"></i></span>
@@ -477,48 +503,124 @@ const PROGRESS = (function(){
           <div class="hm-ca">
             ${gone?'':`<button class="btn cx-btn" type="button" data-hmresume="${escP(pre)}">${icon('play','ic')}${stale?'Open':'Resume'}</button>`}
             <button class="hm-link" type="button" data-hmdel="${escP(r.id)}">Discard</button>
+            ${more>0?`<button class="cx-more" type="button" data-cxmore="1" aria-haspopup="dialog">${icon('stack','ic')}+${more} more in progress</button>`:''}
           </div>
           ${confirmDel===r.id?confirmHTML(r.id,'Discard this run? It cannot be resumed afterwards.'):''}
         </div>
       </article>`;
     });
-    if(D.next){
-      const pre=D.next, p=D.per[pre], mins=runMins(pre);
-      cards.push(`<article class="cx cx-next t-${p.tier}">
-        <div class="cx-art"><span class="cx-ringwrap">${ringSvg(p.best!==null?p.best/100:0,44,5,'cx-svg')}${faceHTML(pre)}</span></div>
-        <div class="cx-body">
-          <div class="cx-kind">${icon('flag','ic')}Next up</div>
-          <h3 class="cx-title">${caseNo(pre)}${escP(caseTitle(pre))}</h3>
-          <div class="cx-meta">${escP([whoLine(pre),caseCat(pre),mins?'about '+mins+' min':''].filter(Boolean).join(' · '))}</div>
-          <div class="cx-why">${escP(D.nextWhy)}${p.best!==null?' · best '+p.best+'%':''}</div>
-          <div class="hm-ca"><button class="btn cx-btn ${open.length?'ghost':''}" type="button" data-hmopencase="${escP(pre)}">${p.attempts?'Try again':'Start'}<span class="cx-arr" aria-hidden="true">→</span></button></div>
-        </div>
-      </article>`);
-    }
+    (D.nexts||[]).forEach((n,i)=>cards.push(nextCard(n, D, !open.length&&i===0)));
     if(!cards.length) return '<p class="hm-empty">Every case is mastered. Nothing is waiting for you.</p>';
     return `<div class="cx-grid${cards.length===1?' one':''}">${cards.join('')}</div>`+
       (open.length?'':'<p class="hm-empty sm">No case in progress. A case you leave before the end is saved and waits here.</p>');
   }
-  /* The milestones as a shelf of medals (author instruction, 28 October 2026). An earned one
-     is gold. One not yet earned is a dim disc with its progress as a ring round it, and the
-     nearest is lit, as the thing to aim at. One earned with the case just played says New. */
+  /* The milestones (author instruction, 28 October 2026): a badge that floats at the right of
+     the screen, with the count earned as a gold ring round it. Hovering it, reaching it with
+     the keyboard or tapping it drops down the nearest milestone and six medals. "Show all"
+     opens every milestone, with what each asks for, in a dialog. An earned medal is gold, one
+     not yet earned is a dim disc with its progress as a ring, and the nearest is lit. */
+  const isNewMs = id => !!(feedback&&feedback.items.some(i=>i.id===id));
+  function msNear(D){ return D.milestones.filter(m=>!m.earned).sort((a,b)=>(b.have/b.need)-(a.have/a.need))[0]||null; }
+  function medalHTML(m, near, i, full){
+    const cls=['tr', m.earned?'on':'', near&&near.id===m.id?'next':'', isNewMs(m.id)?'new':''].filter(Boolean).join(' ');
+    const state=m.earned?'Earned':(m.need>1?Math.min(m.have,m.need)+' of '+m.need:'Not yet');
+    return `<li class="${cls}"${i!==null?` style="--i:${i}"`:''} title="${escP(m.desc)}">
+          <span class="tr-medal">${m.earned?'':ringSvg(m.have/m.need,33,3,'tr-svg')}<span class="tr-disc">${icon(m.icon,'ic')}</span>${isNewMs(m.id)?'<span class="tr-newtag">New</span>':''}</span>
+          <b class="tr-t">${escP(m.title)}</b>
+          <span class="tr-s">${escP(state)}</span>${full?`
+          <span class="tr-d">${escP(m.desc)}</span>`:''}
+        </li>`;
+  }
+  /* Every milestone: the dialog's content. */
   function milestonesHTML(D){
-    const got=D.milestones.filter(m=>m.earned).length;
-    const near=D.milestones.filter(m=>!m.earned).sort((a,b)=>(b.have/b.need)-(a.have/a.need))[0];
-    const isNew=id=>!!(feedback&&feedback.items.some(i=>i.id===id));
+    const got=D.milestones.filter(m=>m.earned).length, near=msNear(D);
     return `<div class="tr-head">
         <h2 id="hm-h3">Milestones</h2>
         <span class="tr-count"><b>${got}</b> of ${D.milestones.length} earned</span>
         ${near?`<span class="tr-next">Next: <b>${escP(near.title)}</b>${near.need>1?', '+escP(Math.min(near.have,near.need)+' of '+near.need):''}. ${escP(near.desc)}</span>`:'<span class="tr-next">Every milestone earned.</span>'}
       </div>
-      <ul class="tr-row">${D.milestones.map(m=>{
-        const cls=['tr', m.earned?'on':'', near&&near.id===m.id?'next':'', isNew(m.id)?'new':''].filter(Boolean).join(' ');
-        const state=m.earned?'Earned':(m.need>1?Math.min(m.have,m.need)+' of '+m.need:'Not yet');
-        return `<li class="${cls}" title="${escP(m.desc)}">
-          <span class="tr-medal">${m.earned?'':ringSvg(m.have/m.need,33,3,'tr-svg')}<span class="tr-disc">${icon(m.icon,'ic')}</span>${isNew(m.id)?'<span class="tr-newtag">New</span>':''}</span>
-          <b class="tr-t">${escP(m.title)}</b>
-          <span class="tr-s">${escP(state)}</span>
-        </li>`; }).join('')}</ul>`;
+      <ul class="tr-row">${D.milestones.map(m=>medalHTML(m,near,null,true)).join('')}</ul>`;
+  }
+  /* The badge and its drop-down. The six medals: any just earned, the nearest, the others
+     earned, then the rest by how close they are. */
+  function msFloatHTML(D){
+    const ms=D.milestones, got=ms.filter(m=>m.earned).length, near=msNear(D);
+    const fresh=ms.some(m=>isNewMs(m.id));
+    const rank=m=>isNewMs(m.id)?0:(near&&m.id===near.id)?1:m.earned?2:3;
+    const six=ms.map((m,k)=>({m,k})).sort((a,b)=>rank(a.m)-rank(b.m)||
+      (rank(a.m)===3?(b.m.have/b.m.need)-(a.m.have/a.m.need):a.k-b.k)).slice(0,6).map(x=>x.m);
+    const pct=near?Math.round(100*Math.min(near.have,near.need)/near.need):100;
+    return `<button class="ms-badge" type="button" data-mstoggle="1" aria-expanded="${msPinned}" aria-controls="ms-drop"
+        aria-label="Milestones: ${got} of ${ms.length} earned${fresh?', one new':''}">
+        ${ringSvg(ms.length?got/ms.length:0,29,3,'ms-svg')}
+        <span class="ms-medal">${icon('trophy','ic')}</span>
+        <span class="ms-count">${got}/${ms.length}</span>
+        ${fresh?'<span class="ms-dot" aria-hidden="true"></span>':''}
+      </button>
+      <div class="ms-drop" id="ms-drop" role="group" aria-label="Milestones">
+        <div class="ms-dh"><b class="ms-dt">Milestones</b><span class="ms-dc"><b>${got}</b> of ${ms.length} earned</span></div>
+        ${near?`<div class="ms-near"><span class="ms-nl">Next</span><b>${escP(near.title)}</b>
+          <span class="ms-nbar"><i style="width:${pct}%"></i></span>
+          <span class="ms-nd">${escP(near.desc)}${near.need>1?' '+escP(Math.min(near.have,near.need)+' of '+near.need+'.'):''}</span></div>`
+          :'<div class="ms-near done"><b>Every milestone earned.</b></div>'}
+        <ul class="ms-list">${six.map((m,i)=>medalHTML(m,near,i,false)).join('')}</ul>
+        <button class="ms-more" type="button" data-msopen="1">Show all ${ms.length} milestones<span class="cx-arr" aria-hidden="true">→</span></button>
+      </div>`;
+  }
+  function msModalHTML(D){
+    return `<div class="ms-back" data-msclose="1"></div>
+      <div class="ms-card" role="dialog" aria-modal="true" aria-labelledby="hm-h3">
+        <button class="db-x ms-x" type="button" data-msclose="1" aria-label="Close">${icon('x','ic')}</button>
+        <div class="db-trophy">${milestonesHTML(D)}</div>
+      </div>`;
+  }
+  /* The other runs in progress, newest first, each with Resume and Discard. */
+  function runsModalHTML(){
+    const rest=openRuns().slice(1);
+    return `<div class="ms-back" data-msclose="1"></div>
+      <div class="ms-card rp-card" role="dialog" aria-modal="true" aria-labelledby="rp-h">
+        <button class="db-x ms-x" type="button" data-msclose="1" aria-label="Close">${icon('x','ic')}</button>
+        <div class="rp">
+          <h2 id="rp-h">${rest.length} more in progress</h2>
+          <p class="rp-sub">Newest first. Each case keeps one saved run, and Resume picks it up where you left it.</p>
+          <ul class="rp-list">${rest.map(r=>{
+            const pre=r.case_prefix, stale=r.version_key!==KEYS[pre], gone=caseIndex(pre)<0;
+            const mins=runMins(pre), frac=mins?Math.min(1,(r.sim_seconds||0)/(mins*60)):0;
+            return `<li class="rp-row">
+              <span class="rp-art"><span class="cx-ringwrap">${ringSvg(frac,44,5,'cx-svg')}${faceHTML(pre)}</span></span>
+              <div class="rp-body">
+                <div class="rp-t">${caseNo(pre)}${escP(caseTitle(pre))}</div>
+                <div class="rp-m">${gone?'':catPill(pre)}<span>${escP([modeLabel(r.mode), mmssP(r.sim_seconds)+(mins?' of about '+mins+' min':''), 'saved '+when(r.updated_at)].filter(Boolean).join(' · '))}</span></div>
+                ${stale?'<div class="hm-cw">This case has been improved since. It will start from the beginning.</div>':''}
+                ${confirmDel===r.id?confirmHTML(r.id,'Discard this run? It cannot be resumed afterwards.'):''}
+              </div>
+              <div class="rp-a">
+                ${gone?'':`<button class="btn ghost rp-go" type="button" data-hmresume="${escP(pre)}">${icon('play','ic')}${stale?'Open':'Resume'}</button>`}
+                <button class="hm-link" type="button" data-hmdel="${escP(r.id)}">Discard</button>
+              </div>
+            </li>`; }).join('')}</ul>
+        </div>
+      </div>`;
+  }
+  function openModal(kind){
+    modal=kind; msPinned=false; confirmDel=null; paintHome();
+    const x=document.querySelector('#db-msmodal .ms-x'); if(x) x.focus();
+  }
+  function openMs(){ openModal('ms'); }
+  /* Focus goes back to the badge, but the drop-down stays shut ("calm") until the badge
+     is left, hovered or opened again, so closing the dialog does not leave a panel open. */
+  function closeMs(){
+    const kind=modal; modal=null; confirmDel=null; paintHome();
+    if(kind==='runs'){ const m=document.querySelector('#wl-home [data-cxmore]'); if(m) m.focus({preventScroll:true}); return; }
+    const w=$('db-ms'), b=document.querySelector('#db-ms .ms-badge'); if(!b) return;
+    w.classList.add('calm');
+    b.addEventListener('blur',()=>w.classList.remove('calm'),{once:true});
+    b.focus({preventScroll:true});
+  }
+  function setPinned(v){
+    msPinned=v; const w=$('db-ms'); if(!w) return;
+    w.classList.toggle('open',v);
+    const b=w.querySelector('.ms-badge'); if(b) b.setAttribute('aria-expanded',String(v));
   }
   function confirmHTML(id,q){
     return `<div class="hm-confirm" role="group" aria-label="Confirm">
@@ -612,29 +714,36 @@ const PROGRESS = (function(){
   }
   function paintHome(){
     const box=$('wl-home'), pk=$('picker'), st=$('db-stats'), gr=$('db-greet'), hist=$('db-history');
+    const ms=$('db-ms'), mm=$('db-msmodal');
     if(!box||!pk) return;
+    const hideMs=()=>{ modal=null; msPinned=false;
+      if(ms){ ms.hidden=true; ms.innerHTML=''; ms.classList.remove('open'); }
+      if(mm){ mm.hidden=true; mm.innerHTML=''; } };
     const show=on();
     pk.classList.toggle('home-on',show);
     box.hidden=!show; if(st) st.hidden=!show; if(gr) gr.hidden=!show;
     paintTabs();
-    if(!show){ box.innerHTML=''; if(st) st.innerHTML=''; if(hist) hist.innerHTML=''; return; }
+    if(!show){ box.innerHTML=''; if(st) st.innerHTML=''; if(hist) hist.innerHTML=''; hideMs(); return; }
     if(gr) gr.textContent=greeting();
     if(listState==='loading'||listState==='idle'){
       if(st) st.innerHTML='<div class="ds-skel"></div><div class="ds-skel"></div><div class="ds-skel"></div>';
-      box.innerHTML='<p class="hm-empty">Loading your progress…</p>';
+      box.innerHTML='<p class="hm-empty">Loading your progress…</p>'; hideMs();
       if(hist) hist.innerHTML='';
       return;
     }
     if(listState==='error'){
       if(st) st.innerHTML='';
       box.innerHTML='<p class="hm-empty">Your progress could not be loaded. <button class="hm-link" type="button" data-hmretry="1">Try again</button></p>';
+      hideMs();
       return;
     }
     const D=derive();
     if(st) st.innerHTML=statsHTML(D);
     box.innerHTML=`${feedbackHTML()}
-      <section class="db-play" aria-label="Continue">${continueHTML(D)}</section>
-      <section class="db-trophy" aria-labelledby="hm-h3">${milestonesHTML(D)}</section>`;
+      <section class="db-play" aria-label="Continue and next up">${continueHTML(D)}</section>`;
+    if(ms){ ms.hidden=false; ms.innerHTML=msFloatHTML(D); ms.classList.toggle('open',msPinned); }
+    if(modal==='runs'&&openRuns().length<2) modal=null;   // the last other run was discarded
+    if(mm){ mm.hidden=!modal; mm.innerHTML=modal==='ms'?msModalHTML(D):modal==='runs'?runsModalHTML():''; }
     if(hist) hist.innerHTML=`${trendHTML(D)}
       <section class="hm-sec" aria-labelledby="hm-h2"><h2 id="hm-h2">Your attempts</h2>${attemptsHTML()}</section>
       <p class="hm-note">While a case is in progress, your account keeps what you did and asked in it, so that
@@ -643,9 +752,13 @@ const PROGRESS = (function(){
   }
   function bindHome(){
     const handle=e=>{
-      const t=e.target.closest('button'); if(!t) return;
+      const t=e.target.closest('button,[data-msclose]'); if(!t) return;
       if(t.dataset.dbtab){ e.stopPropagation(); tab=t.dataset.dbtab; paintTabs(); return; }
-      if(!t.closest('#wl-home,#db-history')) return;
+      if(t.dataset.msclose){ e.stopPropagation(); closeMs(); return; }
+      if(t.dataset.mstoggle){ e.stopPropagation(); setPinned(!msPinned); return; }
+      if(t.dataset.msopen){ e.stopPropagation(); openMs(); return; }
+      if(t.dataset.cxmore){ e.stopPropagation(); openModal('runs'); return; }
+      if(!t.closest('#wl-home,#db-history,#db-msmodal')) return;
       e.stopPropagation();
       if(t.dataset.fbclose){ feedback=null; paintHome(); return; }
       if(t.dataset.hmretry){ refresh(); return; }
@@ -656,11 +769,29 @@ const PROGRESS = (function(){
       if(t.dataset.hmopencase){ const i=caseIndex(t.dataset.hmopencase); if(i>=0) chooseCase(i); return; }
       if(t.dataset.hmresume){
         const i=caseIndex(t.dataset.hmresume); if(i<0) return;
+        if(modal){ modal=null; confirmDel=null; paintHome(); }
         want=t.dataset.hmresume;
         chooseCase(i);
       }
     };
-    ['wl-home','db-history','db-tabs'].forEach(id=>{ const n=$(id); if(n) n.addEventListener('click',handle); });
+    ['wl-home','db-history','db-tabs','db-ms','db-msmodal'].forEach(id=>{ const n=$(id); if(n) n.addEventListener('click',handle); });
+    /* The dialog (every milestone, or the other runs in progress) keeps the keys while it is
+       open: Escape closes it, Tab goes round its own buttons, and nothing reaches the case
+       list behind it (ui.js asks modalOpen).
+       A drop-down pinned open by a tap closes on Escape or a tap anywhere else. */
+    document.addEventListener('keydown',e=>{
+      if(modal){
+        if(e.key==='Escape'){ e.preventDefault(); e.stopImmediatePropagation(); closeMs(); return; }
+        if(e.key==='Tab'){   // round the dialog's own buttons, and no further
+          const f=[...document.querySelectorAll('#db-msmodal .ms-card button')]; if(!f.length) return;
+          const i=f.indexOf(document.activeElement); e.preventDefault();
+          f[i<0?0:(i+(e.shiftKey?f.length-1:1))%f.length].focus();
+        }
+        return;
+      }
+      if(e.key==='Escape'&&msPinned) setPinned(false);
+    },true);
+    document.addEventListener('click',e=>{ if(msPinned&&!e.target.closest('#db-ms')) setPinned(false); });
     /* Arrow keys move between the two tabs, as a tab list should. */
     const tabs=$('db-tabs');
     if(tabs) tabs.addEventListener('keydown',e=>{
@@ -684,7 +815,7 @@ const PROGRESS = (function(){
   }
 
   return {init, onSession, refresh, touch, start, detach, finish, flush, kept, onSplash, rowBadge, cardInfo,
-          active:()=>on()&&!!cur&&!cur.gone, enabled:on,
+          active:()=>on()&&!!cur&&!cur.gone, enabled:on, modalOpen:()=>!!modal,
           /* for the site check */ _state:()=>({uid, listState, runs:runs.length, cur:cur&&{...cur}, dirty, saveFailed, tab, feedback}),
           _derive:()=>derive()};
 })();

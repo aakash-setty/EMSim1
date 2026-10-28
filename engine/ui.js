@@ -2877,7 +2877,7 @@ function wlChips(m){
   if(cats.length<2){ box.style.display='none'; return; }
   box.style.display='';
   box.innerHTML=[['all','All cases']].concat(cats.map(c=>[c,c]))
-    .map(([k,l])=>`<button class="wl-chip" type="button" data-wlchip="${esc(k)}" aria-pressed="${WL_FILTER===k}">${esc(l)}</button>`)
+    .map(([k,l],j)=>`<button class="wl-chip${j?' cat-'+((j-1)%8):''}" type="button" data-wlchip="${esc(k)}" aria-pressed="${WL_FILTER===k}">${j?'<i class="wl-cdot" aria-hidden="true"></i>':''}${esc(l)}</button>`)
     .join('');
 }
 
@@ -2908,12 +2908,17 @@ function renderPicker(){
       'Try a body system, an age, or clear the search to see everything.</div>';
     WL_SEL=-1; return;
   }
+  /* Each category is its own shaded panel in its own colour (author instruction, 28 October
+     2026: "way more visually clear"). The colour is the category's place in the sorted list
+     of all categories, so it stays put when a filter or a search hides the others, and the
+     filter chips and the Continue and Next up cards (engine/progress.js) use the same. */
   const groups=[...new Set(hits.map(c=>c.category))].sort();
-  const grouped=groups.length>1;
+  const allCats=wlCats(m);
   let html='';
   for(const g of groups){
-    if(grouped) html+=`<div class="wl-group">${esc(g)}</div>`;
-    for(const c of hits.filter(x=>x.category===g)){
+    const inG=hits.filter(x=>x.category===g);
+    let cards='', passed=0, tracked=false;
+    for(const c of inG){
       const face=WL_SHORT[c.sex]?`<i class="${c.sex}"></i>`:'';
       const prog=PROGRESS.cardInfo(c.prefix);
       const aria=[(c.num?'Case '+c.num+'. ':'')+c.complaint,
@@ -2926,7 +2931,7 @@ function renderPicker(){
                  ].filter(Boolean).join('. ');
       /* A card (28 October 2026): the number and the review dot, the patient and the
          complaint, then, signed in, the learner's own mastery of it (engine/progress.js). */
-      html+=`<button class="wl-case${prog.cls}${ACCESS_UI.loadingIndex()===c.i?' loading':''}" type="button" role="option" data-case="${c.i}"
+      cards+=`<button class="wl-case${prog.cls}${ACCESS_UI.loadingIndex()===c.i?' loading':''}" type="button" role="option" data-case="${c.i}"
         data-row="${WL_ROWS.indexOf(c)}" aria-label="${esc(aria)}">
         <span class="dc-head">${c.num?`<span class="wl-no">Case ${c.num}</span>`:''}<span class="dc-sp"></span>
           ${c.locked&&!ACCESS_UI.signedIn()?`<svg class="wl-lock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>`:''}
@@ -2943,7 +2948,13 @@ function renderPicker(){
           </span>
         </span>${prog.html}
       </button>`;
+      if(prog.cls){ tracked=true; if(/ t-(passed|mastered)/.test(prog.cls)) passed++; }
     }
+    const ci=Math.max(0,allCats.indexOf(g))%8;
+    const sub=(inG.length===1?'1 case':inG.length+' cases')+(tracked?' · '+passed+' passed':'');
+    html+=`<section class="wl-sec cat-${ci}" role="group" aria-label="${esc(g)}">
+      <h3 class="wl-group"><span class="wl-catmark" aria-hidden="true"></span><span class="wl-catname">${esc(g)}</span><span class="wl-catn">${esc(sub)}</span></h3>
+      <div class="wl-grid">${cards}</div></section>`;
   }
   el('pk-list').innerHTML=html;
   wlPaint();
@@ -2985,6 +2996,7 @@ function wlBind(){
   document.addEventListener('keydown',e=>{
     if(!wlVisible()) return;
     if(ACCESS_UI.modalOpen()) return;   // typing a password must not search or open a case
+    if(PROGRESS.modalOpen()) return;    // the milestones dialog is open
     if(CHARGE.isOpen()) return;         // a case is downloading behind the charging screen
     const q=el('wl-q');
     if(e.key==='/'&&document.activeElement!==q){ e.preventDefault(); q.focus(); q.select(); return; }

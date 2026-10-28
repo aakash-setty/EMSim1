@@ -101,12 +101,32 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
  ok('the stored score is the debrief\'s', f&&f.score_pct===pct, [f&&f.score_pct,pct]);
  await p.evaluate(()=>toPickerFromDebrief()); await wait(1200);
  const h2=await p.evaluate(()=>({home:document.getElementById('wl-home').innerText, hist:document.getElementById('db-history').innerText,
+   ms:document.getElementById('db-ms').textContent,
    stats:document.getElementById('db-stats').innerText, statsShown:!document.getElementById('db-stats').hidden, top:document.getElementById('db-scroll').scrollTop}));
  ok('back on the dashboard, at the top, nothing in progress', /No case in progress/.test(h2.home)&&h2.top===0, h2);
  ok('a note says what the case changed', /First score on Case \d+|Finished Case \d+/.test(h2.home)&&/Milestone earned: First case/.test(h2.home), h2.home.slice(0,300));
  ok('the hero shows the learner\'s numbers', h2.statsShown&&/cases passed/i.test(h2.stats)&&/cases finished/i.test(h2.stats)&&/day streak/i.test(h2.stats), h2.stats);
  ok('History lists the attempt', /Ended early|Critical|critical|failed/i.test(h2.hist), h2.hist.slice(0,300));
- ok('milestones count what was earned', /1 of 9/.test(h2.home), h2.home.slice(-200));
+ ok('milestones count what was earned', /1 of 9/.test(h2.ms), h2.ms.slice(0,200));
+ // The milestones float (28 October 2026): hovering drops six medals down, Show all opens all nine.
+ await p.hover('#db-ms .ms-badge'); await wait(500);
+ ok('hovering the milestone badge drops down six medals', await p.evaluate(()=>{ const d=document.querySelector('#db-ms .ms-drop');
+   return !!d&&getComputedStyle(d).visibility==='visible'&&document.querySelectorAll('#db-ms .ms-list .tr').length===6; }));
+ await p.click('#db-ms [data-msopen]'); await wait(400);
+ ok('Show all opens every milestone in a dialog, focus on its close button', await p.evaluate(()=>!document.getElementById('db-msmodal').hidden&&
+   document.querySelectorAll('#db-msmodal .tr').length===9&&document.activeElement&&document.activeElement.classList.contains('ms-x')));
+ await p.keyboard.press('ArrowDown'); await p.keyboard.press('Enter'); await wait(300);
+ ok('keys under the dialog do not reach the case list', await p.evaluate(()=>!document.getElementById('picker').classList.contains('hidden')&&document.getElementById('splash').classList.contains('hidden')));
+ await p.keyboard.press('Escape'); await wait(250);
+ ok('Escape closes the milestones dialog', await p.evaluate(()=>document.getElementById('db-msmodal').hidden&&!document.getElementById('picker').classList.contains('hidden')));
+ await p.mouse.move(20,820); await wait(500);
+ ok('focus is back on the badge and the drop-down is shut', await p.evaluate(()=>document.activeElement&&document.activeElement.classList.contains('ms-badge')&&
+   getComputedStyle(document.querySelector('#db-ms .ms-drop')).visibility==='hidden'));
+ await p.mouse.move(20,820); await wait(500);
+ ok('two Next up cards, two different cases', await p.evaluate(()=>{ const n=[...document.querySelectorAll('#wl-home .cx-next [data-hmopencase]')].map(b=>b.dataset.hmopencase);
+   return n.length===2&&new Set(n).size===2; }));
+ ok('each category is its own coloured panel, with a heading', await p.evaluate(()=>{ const s=[...document.querySelectorAll('#pk-list .wl-sec')];
+   return s.length>1&&s.every(x=>/\bcat-\d\b/.test(x.className)&&x.querySelector('h3.wl-group')&&getComputedStyle(x).getPropertyValue('--cat').trim()); }));
  await p.click('[data-fbclose]'); await wait(200);
  ok('the note can be dismissed', await p.evaluate(()=>!document.querySelector('.db-fb')));
  ok('the case card carries its tier', await p.evaluate(()=>{ const c=document.querySelector('.wl-case[data-case="'+CASES.findIndex(c=>c.prefix==='CHFE')+'"]'); return /t-(tried|passed|mastered)/.test(c.className)&&/Attempted|Passed|Mastered/.test(c.innerText); }));
@@ -164,6 +184,30 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
  await p.click('#leavecancel'); await ctl({runsFail:false}); await wait(6000);
  ok('saving recovers when the server does', (await table()).length===1);
  await p.evaluate(()=>askLeave('menu')); await wait(300); await p.click('#leaveok'); await wait(1500);
+
+ // Several runs in progress (28 October 2026): one Continue card, the newest, and the rest
+ // behind "+N more in progress" in a dialog with Resume and Discard for each.
+ const T0=await table(), older=d=>new Date(Date.now()-d*3600e3).toISOString();
+ const extra=(pre,h)=>Object.assign({},T0[0],{id:require('crypto').randomUUID(), case_prefix:pre, version_key:KEYS[pre],
+   state:{v:1,t:100,log:[]}, sim_seconds:100, started_at:older(h), updated_at:older(h)});
+ await setTable(T0.concat([extra('MGCA',2),extra('TSS',5)])); await p.evaluate(()=>PROGRESS.refresh()); await wait(700);
+ const mr=await p.evaluate(()=>({go:[...document.querySelectorAll('#wl-home .cx-go')].map(c=>(c.querySelector('[data-hmresume]')||{}).dataset.hmresume),
+   more:(document.querySelector('#wl-home [data-cxmore]')||{}).textContent||'', cards:document.querySelectorAll('#wl-home .cx').length,
+   filled:document.querySelectorAll('#wl-home [data-hmresume]:not(.ghost)').length}));
+ ok('three runs in progress: one Continue card, the newest, and +2 more', mr.go.length===1&&mr.go[0]==='CHFE'&&/\+2 more in progress/.test(mr.more)&&mr.cards===3&&mr.filled===1, mr);
+ await p.click('[data-cxmore]'); await wait(400);
+ const rp=await p.evaluate(()=>({open:!document.getElementById('db-msmodal').hidden, rows:[...document.querySelectorAll('#db-msmodal .rp-row [data-hmresume]')].map(b=>b.dataset.hmresume),
+   focus:document.activeElement&&document.activeElement.classList.contains('ms-x')}));
+ ok('the dialog lists the other two, newest first, focus on its close button', rp.open&&rp.rows.join()==='MGCA,TSS'&&rp.focus, rp);
+ for(let k=0;k<6;k++) await p.keyboard.press('Tab');
+ ok('Tab stays inside the dialog', await p.evaluate(()=>!!document.activeElement.closest('#db-msmodal')));
+ await p.click('#db-msmodal [data-hmdel]'); await wait(200); await p.click('#db-msmodal [data-hmdelok]'); await wait(700);
+ const after=await p.evaluate(()=>({rows:document.querySelectorAll('#db-msmodal .rp-row').length, more:(document.querySelector('#wl-home [data-cxmore]')||{}).textContent||''}));
+ ok('Discard in the dialog removes that run and the count follows', after.rows===1&&/\+1 more/.test(after.more)&&(await table()).filter(r=>r.status==='in_progress').length===2, after);
+ await p.keyboard.press('Escape'); await wait(250);
+ ok('Escape closes it, focus back on +1 more', await p.evaluate(()=>document.getElementById('db-msmodal').hidden&&document.activeElement&&document.activeElement.dataset.cxmore==='1'));
+ await setTable(T0); await p.evaluate(()=>PROGRESS.refresh()); await wait(600);
+ ok('one run in progress: no "more" control', await p.evaluate(()=>!document.querySelector('#wl-home [data-cxmore]')&&document.querySelectorAll('#wl-home .cx-go').length===1));
 
  // Phone width: the home panel and the list both fit, no sideways scroll.
  await p.setViewportSize({width:390,height:844}); await wait(400);
