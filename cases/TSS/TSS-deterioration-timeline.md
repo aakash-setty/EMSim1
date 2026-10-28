@@ -149,7 +149,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 - guard: `NOT flag pressor_running set OR NOT flag fluids_given set`
 - destination vitals: HR 148, BP 66/32, RR 30, SpO2 92%, T 39.8
 - narration: “I can barely rouse her. Her pressure has dropped again and her rate is higher.”
-- author rationale: Deterioration on inaction. The nurse asks for norepinephrine at 30 seconds and again at 120, and for fluid at 60 if none has been given. In the default mode those are 90, 360 and 180, so both first warnings come at least 60 seconds before this rule and the escalation is never heard. Four minutes is a drafting judgment and needs a physician's signature.
+- author rationale: Deterioration on inaction. The nurse says the mean pressure is under 65 at 30 seconds and again at 120, and for fluid at 60 if none has been given. In the default mode those are 90, 360 and 180, so both first warnings come at least 60 seconds before this rule and the escalation is never heard. Four minutes is a drafting judgment and needs a physician's signature.
 
 Prompts in this phase that set fluids_given, pressor_running, which is what the fairness rule requires:
 
@@ -189,7 +189,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 - guard: `NOT flag source_removed set`
 - destination vitals: HR 148, BP 66/32, RR 30, SpO2 92%, T 39.8
 - narration: “I've been going up and up on the vasopressor and it isn't enough any more. Her pressure has dropped, her rate is up, and I can barely rouse her.”
-- author rationale: Deterioration on inaction. The nurse asks whether anyone has examined her fully at 60 seconds and asks about her period at 180. In the default mode those are 180 and 540, so the first warning comes 90 seconds before this rule and the escalation is never heard. Four and a half minutes is longer than the other clocks on purpose: the directing physician asked that treated sepsis with a missed source decline more slowly. Needs a physician's signature.
+- author rationale: Deterioration on inaction. The nurse asks whether anyone has checked for pregnancy at 60 seconds and again at 180. In the default mode those are 180 and 540, so the first warning comes 90 seconds before this rule and the escalation is never heard. Four and a half minutes is longer than the other clocks on purpose: the directing physician asked that treated sepsis with a missed source decline more slowly. Needs a physician's signature.
 
 Prompts in this phase that set source_removed, which is what the fairness rule requires:
 

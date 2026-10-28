@@ -367,7 +367,7 @@ st = F(A0.concat([[20.5, 'beta_hydroxybutyrate']]), 30);
 chk('ketones 4.2', last(st, 'beta_hydroxybutyrate').body.components[0].value === '4.2');
 st = F(A0.concat([[20.5, 'arterial_blood_gas']]), 30);
 chk('an arterial gas satisfies the gas', st.satisfied.has('venous_blood_gas'));
-st = F(A0.concat([[20.5, 'ultrasound_cardiac']]), 30);
+st = F(A0.concat([[20.5, 'ultrasound_cardiac']]), 35);   // ultrasound 10 s since 28 October 2026
 chk('the cardiac ultrasound agrees with a dry patient', last(st, 'ultrasound_cardiac').body.abnormal === true &&
   /small and collapsing/.test(last(st, 'ultrasound_cardiac').body.report) && !st.defaultsServed.has('ultrasound_cardiac'));
 

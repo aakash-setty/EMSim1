@@ -209,7 +209,7 @@ Builders supply numbers. The sounds and the face are computed from them, and pos
 
 ### 5.1 Vitals and appearance
 
-**Engine.** Per phase: the six vitals, and in `appearance` a distress level (0 to 3), an alertness level (0 alert, 1 drowsy, 2 obtunded, 3 unresponsive), pupil size (`small`, `normal`, `large`) and pupil reactivity (`reactive`, `sluggish`, `fixed`). The validator refuses values outside physiological ranges. Saturation drives the pitch of the heartbeat and heart rate its tempo. The respiratory rate moves the figure's chest, and the distress and alertness levels draw its face. Nothing draws skin color or perfusion. A feature outside this set is a request to extend the renderer, not something to describe in prose.
+**Engine.** Per phase: the six vitals, and in `appearance` a distress level (0 to 3), an alertness level (0 alert, 1 drowsy, 2 obtunded, 3 unresponsive), pupil size (`small`, `normal`, `large`) and pupil reactivity (`reactive`, `sluggish`, `fixed`). The validator refuses values outside physiological ranges. The monitor prints a number in bold only when it is outside the adult normal range in `VITAL_NORMAL` (ui.js), so a phase value just inside a range reads as normal. Saturation drives the pitch of the heartbeat and heart rate its tempo. The respiratory rate moves the figure's chest, and the distress and alertness levels draw its face. Nothing draws skin color or perfusion. A feature outside this set is a request to extend the renderer, not something to describe in prose.
 
 **Truth. The number is heard as well as read.** A saturation chosen loosely because it was about right is heard.
 
@@ -262,7 +262,7 @@ Every cell reads a dash and there is no heartbeat until the learner takes the ac
 
 ### 6.1 Actions come from the catalog
 
-The catalog defines every drug, maneuver, study, consultant and procedure, with names, tab, turnaround, narration template, default prerequisites, default flags and default results. It holds no case-specific judgment. A case references entries and supplies what is case-specific: the tag, flags, prerequisites and waivers, follow-ups, prompt, nurse lines, halt reason, debrief note, and the optional mechanisms of Part Two. `docs/generated/field-reference.md` has the full list with who reads each.
+The catalog defines every drug, maneuver, study, consultant and procedure, with names, tab, turnaround, narration template, default prerequisites, default flags and default results. It holds no case-specific judgment. A case references entries and supplies what is case-specific: the tag, flags, prerequisites and waivers, follow-ups, prompt, nurse lines, halt reason, debrief note, and the optional mechanisms of Part Two. `docs/generated/field-reference.md` has the full list with who reads each. **Engine.** Search and the tab filters read "drip" and "infusion" as one word (28 October 2026), so a case display name needs only one of them to be found by either.
 
 **Engine. Fields the engine reads have exact names.** On an action, a phase or a topic, a field not in the reference is a reviewer note and changes nothing, including a misspelt one, so copy names from the reference. Inside `ecg`, `patient_visual` and `patient.avatar` an unknown key is a validator error. The validator does not check every spelling elsewhere.
 
@@ -297,7 +297,7 @@ The catalog defines every drug, maneuver, study, consultant and procedure, with 
 | Value | Meaning |
 |---|---|
 | `critical` | The patient does badly without it. Omission costs |
-| `recommended` | Good practice, not case-determining. One point on offer |
+| `recommended` | Good practice, not case-determining. One point on offer. **Default.** A consult is recommended only where the call changes care in the department. TSS's critical care consult is neutral because the disposition already scores the ICU (owner, 28 October 2026) |
 | `discouraged` | Wrong here but not lethal. One point lost, explained in the debrief |
 | `harmful` | Halts the case. Needs a halt reason and a `halted` phase (section 21) |
 | `neutral` | No effect |
@@ -337,7 +337,7 @@ A prompt is a `prompt` block on a case action: `deadline_seconds`, `text`, optio
 
 **Default. Not every critical action needs a prompt.** Prompt where delay carries real clinical cost. A prompt trills, so prompt for fewer things and mean it.
 
-**Default. The nurse names the problem, not the drug.** "Her pressure is still low and nothing is running" is the default form: the concern and what is visible. The prompt names the treatment only where the case decides a junior would be told it, and that is a per-prompt choice recorded in the SEED. Either way the prompt is a warning that comes before the consequence (section 15), never a lecture before the learner has acted.
+**Default. The nurse names the problem, not the drug.** "Her pressure is still low and nothing is running" is the default form: the concern and what is visible. End on an open question: "Her mean pressure is under 65. Should we do something?" (owner, 28 October 2026). Where the case hides a source or a disclosure, the prompt cues sideways with a question whose answer leads there, and names neither the source, the exam nor the drug. TSS asks "Did someone check if she's pregnant?", and her answer mentions her period. The prompt names the treatment only where the case decides a junior would be told it, and that is a per-prompt choice recorded in the SEED. Either way the prompt is a warning that comes before the consequence (section 15), never a lecture before the learner has acted.
 
 **Engine. The cap.** `prompt_cap_recommendation.per_phase` limits the prompts spoken per phase. It defaults to 3. An escalation is exempt. A follow-up prompt is never silenced by it but uses a slot. The prompts a deterioration rests on must be the earliest in the phase. The deterioration timeline marks the ones the cap would suppress, and the engine suite walks the do-nothing path. Put the reasoning in `rationale`.
 
@@ -384,7 +384,7 @@ Each topic carries `topic`, `canonical`, `variants`, `answer` (an ordered rule l
 
 **Truth. Every case opens with `presenting_story`.** A greeting or an open question ("Hi", "Hello", "What's going on?", "What happened?", "What brings you in today?") gets a brief history of the present illness: two to four sentences in the voice of whoever is answering, saying what happened, when, and the main complaint. It never gives away a disclosure the case holds behind its own question. Without it the first thing a resident types is answered by the fallback or by the wrong topic. Map it to the shared concept `presenting_story` in `TOPIC_MAP`, and add greetings to its variants, which the shared library does not carry. The validator warns when the topic is missing.
 
-**Truth. Author every topic a resident would plausibly ask.** That usually means: onset, timing and progression, character, location, radiation, severity, aggravating and relieving factors, each associated symptom as its own topic, past medical and surgical history, medications, allergies, social history with substance use, family history, last oral intake, pregnancy where applicable, and code status where the presentation makes it live. Author a topic even where it is clinically irrelevant here, because the denial is the teaching and the fallback reads as the software failing. This is the one list in the document whose cost of omission is friction.
+**Truth. Author every topic a resident would plausibly ask.** That usually means: onset, timing and progression, character, location, radiation, severity, aggravating and relieving factors, each associated symptom as its own topic, past medical and surgical history, medications, allergies, social history with substance use, family history, last oral intake, pregnancy where applicable, and code status where the presentation makes it live. Where breathlessness is the complaint, home oxygen too (owner, 28 October 2026). Author a topic even where it is clinically irrelevant here, because the denial is the teaching and the fallback reads as the software failing. This is the one list in the document whose cost of omission is friction.
 
 ### 8.3 Three response types
 
@@ -396,6 +396,7 @@ Each topic carries `topic`, `canonical`, `variants`, `answer` (an ordered rule l
 
 - **Truth.** The patient never states or implies the diagnosis, and never reports information they could not know: no lab value, imaging result or vital sign number. Attributing today's episode to a known history is naming the problem. A known past diagnosis in lay terms is fine ("my heart doesn't pump properly").
 - **Default.** Lay language. A patient who is a nurse may not.
+- **Default. One or two sentences.** An answer gives the fact asked for, not the speaker's reasoning about it. A follow-up `fact` holds the detail (owner, 23 October 2026: DIPH's onset answer was too long).
 - **Engine.** Answers change only through the authored rules, never through the matcher.
 - **Truth.** Do not author the scaffolding into answers. "Like I said", "Sorry, do you mean", "No, that's everything" come from `interviewDefaults` and may be overridden per case under `interview`.
 
@@ -449,6 +450,7 @@ Resolution is the case's content, then the catalog default, then an error. A stu
 - **Truth.** A report that quotes a vital sign is false while an effect on it is acting. Leave the rate out of an ECG report where an effect on it has no end.
 - **Truth. Author findings, not conclusions.** A report that ends "interpretation: cardiogenic pulmonary edema" has done the work the case was setting. The reasoning goes in the study's debrief note. Cut the views obtained and the secondary measures that merely agree.
 - **Truth. A culture cannot be the teaching point.** Results arrive in seconds and the catalog returns "Cultures pending".
+- **Engine. Turnaround by catalog class:** labs, plain films and the ECG 5 seconds, ultrasounds and cross-sectional imaging 10 (ultrasounds since 28 October 2026), other bedside tests at once. A scenario, test or prerequisite that waits on an ultrasound waits 10 seconds for it.
 
 **`comment`** is printed in the debrief only, under the numbers of a `panel`, `value` or `image`, and nowhere for a `report`. **Truth.** It holds what those numbers show and nothing else: not the diagnosis, nothing from another result or the history, nothing to the reviewer (that goes in `verify`, which is never shown). **Default.** Not the lesson either: that is the action's note. **Engine.** A study with an authored abnormal result needs a case action, or it has no note and no tag.
 
@@ -496,13 +498,27 @@ The debrief is where the words go. The patient's response is the first feedback 
 
 **Engine. Markers are stripped from four fields only**: an action's `debrief_note` and `references`, a timed transition's `debrief_note`, and `cross_cutting_teaching_points`. A marker is text in square brackets starting `UNVERIFIED`, `PubMed`, `VERIFY` or `MODEL OUTPUT`. Everywhere else it is printed to the learner as written: a follow-up's note, every handoff explanation, a `halt_reason`, a `timeout_reason`, a `comment`, and everything the nurse, the patient and a consultant say. Put no marker in those. If a sentence there rests on an unchecked source, record it in `provenance.reference_status` and keep the sentence to what you will print.
 
-**Truth.** References are optional and an unverified one is worse than none. Mark anything unchecked. Where the evidence is contested, say so in the note.
+**Engine.** An action's `references` are shown behind a "Sources" button at the end of its note. **Truth.** References are optional and an unverified one is worse than none. Mark anything unchecked. Where the evidence is contested, say so in the note.
 
-**Style, for everything a learner reads.** Plain, direct, short sentences. US spelling. No em dashes, no semicolons. Spoken text spells numbers out, titles and chart lines use numerals. Findings in results, interpretation in the debrief. The nurse and the debrief speak as one doctor to another.
+**Style, for everything a learner reads.** Plain, direct, short sentences. US spelling and US words: "seizing", not "fitting", and no "registrar", "trolley", "half seven" or "paracetamol" (owner, 23 October 2026). Interview variants may keep British forms so either matches. No em dashes, no semicolons. Spoken text spells numbers out, titles and chart lines use numerals. Findings in results, interpretation in the debrief. The nurse and the debrief speak as one doctor to another.
 
 ### 10.4 The seven scores
 
-The Summary prints one score per category and the arithmetic beside it. **Engine.** History is key topics asked over `interview.key_topics`: author it, or every topic counts and a thorough learner scores 40 percent. Physical is regions examined over the exams tagged critical or recommended, or `debrief_configuration.key_exams` where none is, or every authored exam failing that. The four ordering tabs score critical at two points and recommended at one over what was expected in the phases visited, a discouraged action costs one, a harmful halt zeroes its tab. A recommended line or monitor is left out of the debrief's recommended lists on purpose and still counts in the score. Handoff is level of care (40), the primary diagnosis (40, or 60 with no additional diagnosis) and the additional diagnosis (20), a defensible answer earns half, and a wrong primary or an unsupported diagnosis costs five. Minor diagnoses add and cost nothing. The validator checks that `key_topics` and `key_exams` name things in the case. Nothing here is a claim about how residents should be ranked.
+The Summary prints one score per category and the arithmetic beside it. **Engine.** History is key topics asked over `interview.key_topics`: author it, or every topic counts and a thorough learner scores 40 percent. Physical is regions examined over the exams tagged critical or recommended, or `debrief_configuration.key_exams` where none is, or every authored exam failing that. The four ordering tabs score critical at two points and recommended at one over what was expected in the phases visited, a discouraged action costs one, a harmful halt zeroes its tab. A recommended line or monitor is left out of the debrief's recommended lists on purpose and still counts in the score. Handoff is level of care (40), the primary diagnosis (40, or 60 with no additional diagnosis) and the additional diagnosis (20), a defensible answer earns half, and a wrong primary or an unsupported diagnosis costs five. Minor diagnoses add and cost nothing. **Engine.** The overall score on the second dial is critical actions (85) plus the recommended actions and the handoff (15 between them). The history and the examination keep their Summary rows and are not in it (owner, 28 October 2026). The validator checks that `key_topics` and `key_exams` name things in the case. Nothing here is a claim about how residents should be ranked.
+
+### 10.5 The case discussion
+
+The left column of the revealed debrief. **Engine.** `cases/<PREFIX>/<PREFIX>-discussion.html`, read at build time, with no scripts and no `on*` attributes. Markers are stripped as in 10.3. Generate it from a script in `Claude outputs/` and edit the script, not the HTML. AFRVR and TSS are the models (`Claude outputs/dbv2/afrvr_discussion_v2.py`, `dbv3/tss_discussion_v1.py`).
+
+**Default, the form the owner settled on (23 and 28 October 2026)**, for a reader short on attention:
+
+- A learning-goals box of up to six short lines, then "The patient" with one bold line and three or four sentences.
+- Four to seven numbered sections. Each opens with one bold line (`p.cd-key`) and then short bullets that lead with a bold phrase. A reader who reads only the bold lines gets the case.
+- Three or four figures. Each has its point in bold above it (`p.cd-point`), few elements, labels of 14 to 16 px, and numbers taken from the case's own phases and results. Say in the caption when a number is illustrative.
+- A "Traps" list, then the references folded away (`details.cd-refs`).
+- About 3,000 px tall at 620 px wide.
+
+**Truth.** The discussion agrees with the case's own debrief notes (the antibiotic regimen, which treatments score). A definition is read in its source, not recalled. Mark anything unchecked `[UNVERIFIED]` and list it for sign-off. Render it after ending a case and look at every figure before handing over.
 
 ---
 
@@ -657,7 +673,7 @@ Run the validator until it is clean or every remaining error is a catalog change
 
 **Step 9. Play.** The builder scripts a play-through with Playwright against `build/simulator.html` for anything a learner would see, and records what it saw. The local build's speed control (`[` and `]`, up to 16x) is for the long waits, and the debrief says when it was used. Then the physician plays it at 1x (11.5).
 
-**Step 10. Hand over.** Write the review packet: status line ("drafted by a language model, not reviewed, not for learners"), the files to read, the counts from the last run and not from memory, every vital effect labeled a teaching choice, the matcher results or "unmeasured", what was not run, and "sign-off: not started". Optional review questions for the physician go in `<PREFIX>-review-questions.json`, which the review page merges at build time. Record in the SEED every question these documents did not answer. Nothing outside `cases/<PREFIX>/` is edited for a case, and `engine/kit_check.py` checks that.
+**Step 10. Hand over.** Write the review packet: status line ("drafted by a language model, not reviewed, not for learners"), the files to read, the counts from the last run and not from memory, every vital effect labeled a teaching choice, the matcher results or "unmeasured", what was not run, and "sign-off: not started". Optional review questions for the physician go in `<PREFIX>-review-questions.json`, which the review page merges at build time. Record in the SEED every question these documents did not answer. Add the case to the Case Maps artifact with `Claude outputs/casemaps-gen/v2/` (a config of paths, each with the ending it must reach). Nothing outside `cases/<PREFIX>/` is edited for a case, and `engine/kit_check.py` checks that.
 
 ---
 
@@ -758,6 +774,8 @@ A phase holds until something moves the case out of it, which makes it the wrong
 
 ### 16.1 Delayed onset and a climbing number
 
+**Engine. The drug overlay.** In every case (`medOverlayCases` is `"all"` in `engine/build_simulator.py`, 28 October 2026), every drug and fluid is drawn above the patient with a countdown, and a drip as a pump until it is stopped. With a timed effect (an onset, a duration or a timed flag) the countdown ends when the effect is complete. With none, it is display only: 10 s for a syringe, 60 s for a fluid bag (`MEDVIS_DEFAULT` in ui.js). The overlay is not evidence of timing, so a drug whose timing matters needs its own timed effect.
+
 `onset_seconds` delays the start. Both it and `duration_seconds` are measured from the administration, so the effect acts over `[onset, duration)`. **Engine.** A duration that does not outlast its onset never acts and the validator refuses it. It prints every window as a note. To make a number climb rather than jump, author several small effects on one action with rising `onset_seconds` and a different `key` each.
 
 **Sign-off.** Every non-terminal phase's vitals are the unsupported baseline. You have played the case with each effect-bearing action alone and read the number off the monitor. Every route to a drug shares one key and no two keys name one act. Every pressor whose flag moves a phase authors its effect or carries `[]`. Every delta and duration is labeled a teaching choice. The treatments that move nothing do so on purpose and the debrief says why. No report, finding or alert quotes a vital an endless effect can move. No `while` switches an effect on in a phase that already carries the change. Every window in the validator's note is the one you meant.
@@ -774,11 +792,13 @@ A flag granted with a duration is removed when it lapses, and the case can react
 A transition guarded on `action nitroglycerin_sublingual taken AND NOT flag nitrate_acting set` fires on its own at the moment the flag lapses, with the learner sitting still, which is what `duration_seconds` on an effect cannot do.
 
 - **Engine. A permanent grant wins, in either order.** If the infusion sets the flag through `flags_set` and the bolus grants it for 300 seconds, once the drip is running the flag never expires. The validator warns so it is a decision. A repeat dose moves the deadline to the later of the two.
-- **Engine. A lapse is not an action.** It costs nothing, appears in no timeline, and the nurse says nothing. Put the words in the `narration` of the transition it fires.
+- **Engine. A lapse is not an action.** It costs nothing and appears in no timeline. If the lapse fires a transition, put the words in that transition's `narration`.
+- **Engine. A lapse can speak** (28 October 2026). `lapse_note` on the grant is what the nurse says, as an alert, when the flag lapses. The latest grant's line is said, once. Use it for a short-acting drug whose effect ends with no phase change: `{"flag": "nitrate_bolus_acting", "duration_seconds": 60, "lapse_note": "The nitro has worn off..."}` with a `vital_effects` entry guarded `while: flag nitrate_bolus_acting set`. If the duration is shortened for teaching, the line says so. No reviewer markers, since the nurse says it aloud. The validator refuses an empty note.
+- **Default. A bolus and an infusion of one drug need not do the same thing.** If only the infusion should move the phase, keep the shared phase flag off the bolus and give the bolus a timed effect instead (CHFE, 28 October 2026).
 - **Engine. Do not put an expiring flag in a tag.** The critical set of a phase is computed at entry, so an action that becomes critical on a lapse is never listed as missed. The validator warns.
 - **Engine. Every timed flag is read by something**: a transition, tag, prompt guard, prerequisite, content rule or an effect's `while`. The validator warns otherwise.
 
-**Sign-off.** Every expiring flag is read, and by a transition rather than a tag. A drug that both moves a number and changes the case holds its clock in one place. You have played the case doing nothing after the drug and watched the consequence arrive. Every duration is a claim you will defend. Where a drip and a bolus both grant the flag, you meant the drip to stop it expiring.
+**Sign-off.** Every expiring flag is read, and by a transition rather than a tag. Every effect that ends with no phase change has a `lapse_note` or a reason it has none. A drug that both moves a number and changes the case holds its clock in one place. You have played the case doing nothing after the drug and watched the consequence arrive. Every duration is a claim you will defend. Where a drip and a bolus both grant the flag, you meant the drip to stop it expiring.
 
 ## 18. Flags granted on the Nth administration
 

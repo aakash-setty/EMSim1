@@ -171,6 +171,9 @@ expect("granting the same flag permanently on the same action is rejected",
        "absorbs a timed one")
 expect("a timed flag on a non-state-changing action is rejected",
        lambda c: timed(c).__setitem__("state_changing", False), "never granted")
+expect("a lapse note with a reviewer marker is rejected",
+       lambda c: timed(c)["flags_set_timed"][0].__setitem__("lapse_note", "Gone. [UNVERIFIED]"),
+       "reviewer marker")
 expect("a timed flag nothing reads warns",
        lambda c: timed(c), "nothing in this case reads flag", "warnings")
 

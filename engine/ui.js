@@ -68,7 +68,15 @@ function minimiseRecord(){
   TAB='history'; setPanels(true,false); render();
 }
 const DM = () => PROTO.difficulty.modes[MODE].prompt_multiplier;
-const filterOf = t => FILTERS[t]||'';
+/* The debrief's Sources button opens and closes the reference list under its note. */
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('.srcbtn'); if(!b) return;
+  const refs=b.closest('details') && b.closest('details').querySelector('.refs'); if(!refs) return;
+  refs.hidden=!refs.hidden; b.setAttribute('aria-expanded',refs.hidden?'false':'true');
+});
+/* 28 October 2026: the box keeps what was typed and matching trims it. Storing the trimmed
+   text re-rendered the box without a trailing space, so a second word could not be typed. */
+const filterOf = t => (FILTERS[t]||'').trim();
 const basketOf = t => (BASKET[t]=BASKET[t]||new Set());
 /* A group can show on two tabs (PROTO.groupAlsoOn), so one action can be picked from either.
    It is one pick wherever it was made: shown as picked on both, ordered once. */
@@ -113,6 +121,7 @@ function log(e){
     return;
   }
   e.seq=SEQ++; e.t=now(); LOG.push(e); refold();
+  PROGRESS.touch();
 }
 function refold(){ ST=fold(LOG,now(),DM()); }
 
@@ -184,6 +193,8 @@ function rampedVitals(){
    paused: numbers wobbling behind a Paused overlay say the case is still going. */
 function jitter(v,amp){ return PAUSED ? v
   : v + Math.round((Math.sin(Date.now()/1300+v)+Math.sin(Date.now()/770+v*2))/2*amp); }
+/* Normal ranges for the monitor's bold or plain numbers, inclusive (28 October 2026). */
+const VITAL_NORMAL={hr:[60,100], sbp:[90,139], dbp:[60,89], spo2:[94,100], rr:[12,20], temp:[36.0,37.9]};
 function renderMonitor(){
   const p=PHASE[ST.phase];
   const v=rampedVitals()||targetVitals()||{};
@@ -211,9 +222,18 @@ function renderMonitor(){
   /* The header carries the full monitor at every panel state and no panel ever covers it,
      so the expanded record used to show a second copy of the same five numbers on the same
      screen. Removed in v0.17o on the author's instruction. */
+  /* A number outside its normal range is bold and one inside it is not (author instruction,
+     28 October 2026), judged on the number the monitor shows. The ranges are adult teaching
+     thresholds held here for every case, not clinical claims about any one patient. */
+  const outside=k=>{
+    if(!on) return false;
+    const n=parseFloat(cells.find(c=>c[3]===k)[1]);
+    if(k==='bp'){ const s=+v.systolic_bp, d=+v.diastolic_bp; return s<VITAL_NORMAL.sbp[0]||s>VITAL_NORMAL.sbp[1]||d<VITAL_NORMAL.dbp[0]||d>VITAL_NORMAL.dbp[1]; }
+    const r=VITAL_NORMAL[k]; return !!r&&!isNaN(n)&&(n<r[0]||n>r[1]);
+  };
   el('monitor').innerHTML = cells.map(c=>
     `<div class="vit"><div class="vitlab">${c[0]}</div>
-     <div class="vitval v-${c[3]}">${c[1]}</div><div class="vitunit">${c[2]}</div></div>`).join('')
+     <div class="vitval v-${c[3]}${outside(c[3])?' vabn':''}">${c[1]}</div><div class="vitunit">${c[2]}</div></div>`).join('')
     + `<div class="clockbox"><div class="vitlab">elapsed</div>
        <div class="clock">${mmss(ST.now)}</div>
        <div class="phasechip">${esc(PROTO.phaseShort[ST.phase]||ST.phase)}</div></div>`;
@@ -478,11 +498,22 @@ function feedItems(){
     if(!NURSE_IN_CHART[n.kind]) continue;
     add({t:n.t,kind:n.kind==='prompt'?'nurse':'nursealert',name:'Nurse',body:n.text});
   }
-  Object.keys(ST.orders).forEach(id=>ST.orders[id].forEach(o=>{
-    if(o.value===null) return;                      /* still pending, lives in the rail above */
-    add({t:o.dueT,kind:catOf(id)==='investigation'?'lab':'imaging',
-         name:dispName(id),payload:o.value,id});
-  }));
+  /* A lab is one entry, at its newest result, with every draw so far as a column (author
+     instruction, 28 October 2026), the way Labs Only shows them. Each repeat moves the entry
+     to the top of the chart with the new column on the left. Everything else that results
+     is one entry per result, as before. */
+  Object.keys(ST.orders).forEach(id=>{
+    const done=ST.orders[id].filter(o=>o.value!==null);   /* pending ones live in the rail */
+    if(!done.length) return;
+    if(isLabId(id)){
+      const last=done.reduce((a,b)=>b.dueT>a.dueT?b:a);
+      add({t:last.dueT,kind:'lab',name:dispName(id),id,
+           payload:{series:id,abnormal:!!(last.value&&last.value.abnormal)}});
+      return;
+    }
+    done.forEach(o=>add({t:o.dueT,kind:catOf(id)==='investigation'?'lab':'imaging',
+         name:dispName(id),payload:o.value,id}));
+  });
   out.sort((a,b)=>b.t-a.t||b.seq-a.seq);
   return out;
 }
@@ -519,7 +550,37 @@ function imageThumb(v){
           </button><p class="imgcap">${esc(cap)}. Click to open.</p>`;
 }
 
+/* One lab's draws side by side, newest on the left, each column headed by the time it was
+   drawn. Rows keep the chart's alternating shading; the range column shows when the record
+   is expanded, as elsewhere in the chart. */
+function labSeries(id){
+  const draws=ST.orders[id].filter(o=>o.value!==null).slice().sort((a,b)=>b.orderT-a.orderT||b.dueT-a.dueT);
+  const rows=[], by={};
+  let text=false;
+  draws.forEach((o,ci)=>{
+    const v=o.value, comps=(v&&typeof v==='object'&&Array.isArray(v.components))?v.components:null;
+    const put=(key,label,unit,ref,val,abn)=>{
+      let r=by[key]; if(!r){ r=by[key]={label,unit:unit||'',ref:ref||'',cells:{}}; rows.push(r); }
+      if(!r.cells[ci]) r.cells[ci]={val,abn};
+    };
+    if(comps&&comps.length) for(const c of comps) put('c:'+c.label,c.label,c.unit,c.reference_range,c.value,!!c.abnormal);
+    else { text=true; put('t','Result','','',(v&&typeof v==='object')?(v.report||v.findings||v.value||''):String(v==null?'':v),!!(v&&v.abnormal)); }
+  });
+  const N=draws.length;
+  let h='<table class="labser"><thead><tr><th class="lb"></th>'
+    +draws.map(o=>`<th class="v" title="Drawn ${mmss(o.orderT)}, resulted ${mmss(o.dueT)}">${mmss(o.orderT)}</th>`).join('')
+    +'<th class="rf"></th></tr></thead><tbody>';
+  for(const r of rows){
+    h+=`<tr><td class="lb">${esc(r.label)}${r.unit?' <span class="u">'+esc(r.unit)+'</span>':''}</td>`;
+    for(let i=0;i<N;i++){ const c=r.cells[i];
+      h+=c?`<td class="v${c.abn?' abn':''}${text?' tx':''}">${esc(c.val)}</td>`:'<td class="v"></td>'; }
+    h+=`<td class="rf">${esc(r.ref)}</td></tr>`;
+  }
+  return h+'</tbody></table>';
+}
+
 function feedPayload(v){
+  if(v&&typeof v==='object'&&v.series) return labSeries(v.series);
   if(!v||typeof v!=='object') return v?`<div class="fb">${esc(v)}</div>`:'';
   if(v.kind==='image') return imageThumb(v);
   /* The reference range is the third cell. It is hidden while the record is docked,
@@ -1060,7 +1121,7 @@ function renderActionTab(tab,intro){
     <div class="toolbar">
       <span class="searchwrap">
         <input type="text" id="filterbox" class="filter" placeholder="Filter this tab"
-          value="${esc(filterOf(tab))}" data-tabof="${tab}">
+          value="${esc(FILTERS[tab]||'')}" data-tabof="${tab}">
         ${filterOf(tab)?`<button class="clearfilter" id="clearfilter" data-tabof="${tab}"
           title="Clear the filter" aria-label="Clear the filter">\u00D7</button>`:''}
       </span>
@@ -2144,7 +2205,7 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('input',e=>{
   if(e.target.id==='askbox'){ ASKTEXT=e.target.value; return; }
   if(e.target.id==='filterbox'){
-    FILTERS[e.target.dataset.tabof||TAB]=e.target.value.toLowerCase().trim();
+    FILTERS[e.target.dataset.tabof||TAB]=e.target.value.toLowerCase();
     renderTab(); return;
   }
   if(e.target.id==='dxbox'){
@@ -2396,6 +2457,16 @@ function finish(){
      resume and nothing left to lose by leaving. */
   el('pauseview').classList.add('hidden'); closeLeave(); PAUSED=false;
   el('playview').classList.add('hidden');
+  /* Saved progress (28 October 2026): the run becomes a score summary in the learner's
+     history and its saved log is emptied. Labels, percentages and counts only, the same
+     rows the debrief's Summary shows. Nothing here names an action. */
+  try{
+    const ov=overallScore(ST);
+    PROGRESS.finish({mode:MODE, sim_seconds:ST.now||0, outcome:endingKind(), ended_by:endedBy(),
+      score_pct:ov.scored?ov.pct:null,
+      summary:{v:1, scored:!!ov.scored, critical:{done:ov.critical.done,total:ov.critical.total},
+               rows:summaryScores(ST).map(r=>({id:r.id,label:r.label,pct:r.pct,detail:r.detail||''}))}});
+  }catch(err){}
   const v=el('endview'); v.classList.remove('hidden');
   REVEALED=false;
   v.innerHTML='<div class="endwrap">'+gateHTML()+'</div>';
@@ -2404,7 +2475,7 @@ function finish(){
     const c=AN.takeCounts(), kinds={};
     LOG.forEach(e=>{ const k=e.kind||(e.actionId?'action':'other'); kinds[k]=(kinds[k]||0)+1; });
     AN.track('case_finished',{case:PACK.prefix, mode:MODE, outcome:endingKind(),
-      ended_by: ST.halted?'harmful_action':(ST.failed?(ST.failed.byClock?'clock':'action'):(ST.earlyExit?'early_exit':'completed')),
+      ended_by: endedBy(),
       sim_seconds: Math.round(ST.now||0),
       critical_done:[...ST.expected].filter(id=>ST.satisfied.has(id)).length, critical_total:ST.expected.size,
       actions:kinds.action||0, interview_questions:kinds.interview||0, exams:kinds.exam||0,
@@ -2412,7 +2483,12 @@ function finish(){
   }catch(err){}
   v.scrollTop=0;
 }
+function endedBy(){
+  return ST.halted?'harmful_action':(ST.failed?(ST.failed.byClock?'clock':'action'):(ST.earlyExit?'early_exit':'completed'));
+}
 function restart(){
+  /* A run left unfinished stays saved to be resumed. This only stops saving into it. */
+  PROGRESS.detach();
   LOG=[];SEQ=0;ENDED=false;STARTED=false;TAB='stabilization';LASTNURSE=-1;LASTPHASE=null;
   RUNID++; ASKTEXT=''; DXTEXT='';
   VOICE.reset(); ASKMIC.abort();
@@ -2433,6 +2509,7 @@ function restart(){
   el('splash').classList.remove('hidden');
   setPanels(true,false);
   renderSplash(); refold(); renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor();
+  PROGRESS.onSplash(PACK.prefix);
 }
 function toPickerFromDebrief(){ restart(); backToPicker(); }
 function haltCard(){
@@ -2505,10 +2582,14 @@ function debriefHTML(){
     const head=`<span class="nm">${esc(label||dispName(id))}</span><span class="pill ${pillcls}">${pill}</span>
       ${ST.prompted.has(id)?'<span class="pill p-warn">prompted</span>':''}`;
     if(!note&&!refs.length) return `<div class="item"><div class="hd">${head}</div></div>`;
+    /* Sources sit behind a small button at the end of the note and drop down under it
+       (author instruction, 28 October 2026), so the note reads as prose first. */
+    const srcBtn=refs.length?`<button type="button" class="srcbtn" aria-expanded="false">Sources</button>`:'';
     return `<div class="item"><details class="teach">
       <summary class="hd">${head}<span class="expand">Why</span></summary>
-      ${note?`<div class="note" style="background:none;border:0;padding:0;margin:8px 0 0">${esc(note)}</div>`:''}
-      ${refs.length?`<div class="refs">${refs.map(esc).join('<br>')}</div>`:''}
+      ${note?`<div class="note" style="background:none;border:0;padding:0;margin:8px 0 0">${esc(note)} ${srcBtn}</div>`
+            :(srcBtn?`<div class="note" style="background:none;border:0;padding:0;margin:8px 0 0">${srcBtn}</div>`:'')}
+      ${refs.length?`<div class="refs" hidden>${refs.map(esc).join('<br>')}</div>`:''}
     </details></div>`;
   };
 
@@ -2826,12 +2907,14 @@ function renderPicker(){
     if(grouped) html+=`<div class="wl-group">${esc(g)}</div>`;
     for(const c of hits.filter(x=>x.category===g)){
       const face=WL_SHORT[c.sex]?`<i class="${c.sex}"></i>`:'';
+      const prog=PROGRESS.rowBadge(c.prefix);
       const aria=[c.complaint,
                   (WL_LABEL[c.sex]||'Patient')+', '+(c.age!==undefined?c.age+' years old':'age not recorded'),
                   c.category,c.level,c.mins?'about '+c.mins+' minutes':'',
                   c.unreviewed?'Unsigned draft.':'Reviewed.',
                   c.locked&&!ACCESS_UI.signedIn()?'Sign in to open.':'',
-                  c.broken?'Incomplete: '+c.broken+' build problems, this case will not run correctly.':''
+                  c.broken?'Incomplete: '+c.broken+' build problems, this case will not run correctly.':'',
+                  prog.aria
                  ].filter(Boolean).join('. ');
       html+=`<button class="wl-case${ACCESS_UI.loadingIndex()===c.i?' loading':''}" type="button" role="option" data-case="${c.i}"
         data-row="${WL_ROWS.indexOf(c)}" aria-label="${esc(aria)}">
@@ -2842,7 +2925,7 @@ function renderPicker(){
             <span class="ag">${c.age!==undefined?esc(String(c.age)):'\u2013'} ${esc(WL_SHORT[c.sex]||'\u2013')}</span>
             <span class="lv">${c.broken?'<span style="color:var(--harm)">will not run correctly</span>':esc(c.level)}</span>
             <span class="rt">${c.mins?c.mins+' min':''}</span>
-          </span>
+          </span>${prog.html}
         </span>
         ${c.locked&&!ACCESS_UI.signedIn()?`<svg class="wl-lock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>`:''}
         <span class="wl-state${c.unreviewed?'':' ok'}" title="${c.unreviewed?'Unsigned draft':'Reviewed'}"></span>
@@ -2978,6 +3061,7 @@ const CHARGE=(function(){
     $('chargetitle').textContent=title||'';
     $('chg-state').textContent='CHARGING';
     $('chg-btnlab').textContent='CHARGING';
+    { const tp=$('chargetop'); if(tp) tp.textContent='Charging'; }
     $('chg-led').setAttribute('fill','#3a3f45');
     const b=$('chargedeliver'); b.disabled=true;
     setStatus('Charging. Opening the case.');
@@ -3010,6 +3094,7 @@ const CHARGE=(function(){
       v.classList.add('ready');
       $('chg-state').textContent='CHARGED';
       $('chg-btnlab').textContent='CHARGED';
+      { const tp=$('chargetop'); if(tp) tp.textContent='Charged'; }
       $('chg-led').setAttribute('fill','#38e07b');
       const b=$('chargedeliver'); b.disabled=false; b.focus();
       setStatus('Charged. Press the button to enter the case.');
@@ -3063,6 +3148,7 @@ function chooseCase(i){
   el('picker').classList.add('hidden');
   el('splash').classList.remove('hidden');
   renderSplash();
+  PROGRESS.onSplash(PACK.prefix);
 }
 function backToPicker(){
   VOICE.reset(); ASKMIC.abort();
@@ -3170,6 +3256,8 @@ function renderSplashVitals(){
 function begin(){
   AN.takeCounts(); AN.track('case_started',{case:PACK.prefix, mode:MODE});
   STARTED=true; T0=Date.now(); PAUSED=false; PAUSED_MS=0; PAUSED_AT=0;
+  /* Saved progress: a new run. One already in progress on this case is discarded (Start over). */
+  PROGRESS.start(PACK.prefix, MODE);
   /* A history entry to pop, so the back button has something to catch. It can throw on a
      file:// URL in some browsers, and a simulator that will not start because the history
      API refused would be a poor trade for a guard. */
@@ -3184,6 +3272,60 @@ function begin(){
   VOICE.paint();
   startLoop();
   NINTRO.play();
+}
+
+/* ---------- saved progress (28 October 2026) ----------
+   What engine/progress.js stores for a run in progress, and how it is put back. The log,
+   the case clock and the mode are the run: fold() rebuilds the rest. The tab, the handoff
+   being drafted and the six-minute pause are screen state a resumed learner would notice
+   losing. Order baskets, filters and search text are not kept. */
+function runSnapshot(){
+  return {v:1, t:Math.round(now()*1000)/1000, mode:MODE, tab:TAB,
+    log:LOG,
+    handoff:{disposition:PENDING_HANDOFF.disposition||null,
+             diagnoses:Array.isArray(PENDING_HANDOFF.diagnoses)?PENDING_HANDOFF.diagnoses.slice():[]},
+    /* An open pause is saved as not yet shown, so it opens again rather than losing a note
+       that was half written. */
+    reflect:{done:REFLECT_DONE&&!REFLECT_OPEN, note:REFLECT_NOTE, note2:REFLECT_NOTE2}};
+}
+/* Called from the splash of the case the run belongs to (chooseCase has bound it). The run
+   opens paused at the saved case time, with no nurse card, and the clock starts again only
+   when the learner presses play, as after any other pause. */
+function resumeRun(s){
+  VOICE.reset(); ASKMIC.abort(); RUNID++;
+  const D=SHARED.difficulty||{};
+  if(s.mode&&D.modes&&D.modes[s.mode]) MODE=s.mode;
+  LOG=s.log.map(e=>Object.assign({},e));
+  SEQ=LOG.reduce((m,e)=>Math.max(m,(Number(e.seq)||0)+1),0);
+  const t=Math.max(0,Number(s.t)||0);
+  AN.takeCounts();
+  STARTED=true; ENDED=false; CLOCK_HELD=false;
+  T0=Date.now()-t*1000; PAUSED_MS=0; PAUSED=true; PAUSED_AT=Date.now();
+  if(s.tab&&tabList().includes(s.tab)) TAB=s.tab;
+  if(s.handoff&&typeof s.handoff==='object')
+    PENDING_HANDOFF={disposition:s.handoff.disposition||null,
+                     diagnoses:Array.isArray(s.handoff.diagnoses)?s.handoff.diagnoses.slice():[]};
+  const r=s.reflect||{};
+  REFLECT_DONE=!!r.done; REFLECT_NOTE=String(r.note||''); REFLECT_NOTE2=String(r.note2||'');
+  try{ history.pushState({emsim:1},''); }catch(err){}
+  clearSplashPatient();
+  el('splash').classList.add('hidden');
+  resetRamp(); refold();
+  /* Results already on the chart were seen before the break and do not open again. */
+  Object.keys(ST.orders).forEach(id=>ST.orders[id].forEach(rec=>{
+    const v=rec.value; if(v&&typeof v==='object'&&v.kind==='image') IMG_SEEN.add(id+'@'+rec.dueT);
+  }));
+  LASTNURSE=-1; LASTPHASE=null;      /* the nurse's latest line is shown, without its chime */
+  AUDIO.unlock(); AUDIO.setScene('idle'); MONITOR.setScene('idle');
+  render(); VOICE.paint(); startLoop();
+  if(ENDED) return;                  /* render() ended a run that a harmful action had halted */
+  /* A run whose handover or early exit was saved, but whose ending was not (the network
+     failed at the debrief), ends now: those two end the case from the click, not the fold. */
+  if(LOG.some(e=>e.actionId==='handoff_submit'||e.kind==='early_exit')){ PAUSED=false; finish(); return; }
+  el('pausemsg').innerHTML='Resumed at '+esc(mmss(t))+' of case time.<br><span>The case clock is stopped. '+
+    'It starts again when you press play.</span>';
+  el('pauseview').classList.remove('hidden');
+  el('resumebtn').focus();
 }
 
 /* ---------- the nurse's opening card (author instruction, 13 October 2026) ----------
@@ -3285,8 +3427,11 @@ function pauseSim(){
   VOICE.pause(); ASKMIC.abort();
   PAUSED=true; PAUSED_AT=Date.now();
   AUDIO.setScene('idle'); MONITOR.setScene('idle');
+  el('pausemsg').innerHTML=PAUSE_MSG;
   el('pauseview').classList.remove('hidden');
+  PROGRESS.flush();
 }
+const PAUSE_MSG=el('pausemsg').innerHTML;
 function resumeSim(){
   if(!PAUSED) return;
   const away=Date.now()-PAUSED_AT;
@@ -3387,15 +3532,22 @@ function searchNorm(s){ return String(s==null?'':s).toLowerCase().replace(/[^a-z
 /* Every token has to appear somewhere in the row's text, so "chest x" finds the chest
    radiograph and "x chest" finds it too. A row scores higher when a token starts a word in
    the name than when it only appears in the group or the tab. */
+/* Words a learner uses for the same order (author instruction, 28 October 2026: a nitro drip
+   is found by "nitroglycerin infusion" and the other way round). A token matches if any of its
+   forms does. Shared by the global search and every tab filter. */
+const SEARCH_SAME={drip:['infusion'],drips:['infusion'],infusion:['drip'],infusions:['drip'],
+  nitro:['nitroglycerin'],ntg:['nitroglycerin']};
 function searchScore(q,name,extra){
   const hay=' '+searchNorm(name)+' ', side=' '+searchNorm(extra)+' ';
   let score=0;
-  for(const t of q){
-    if(hay.indexOf(' '+t)>=0) score+=10;
-    else if(hay.indexOf(t)>=0) score+=6;
-    else if(side.indexOf(' '+t)>=0) score+=3;
-    else if(side.indexOf(t)>=0) score+=2;
-    else return -1;
+  for(const t0 of q){
+    let best=-1;
+    for(const t of [t0].concat(SEARCH_SAME[t0]||[])){
+      const s=hay.indexOf(' '+t)>=0?10:hay.indexOf(t)>=0?6:side.indexOf(' '+t)>=0?3:side.indexOf(t)>=0?2:-1;
+      if(s>best) best=s;
+    }
+    if(best<0) return -1;
+    score+=best;
   }
   return score;
 }
@@ -3501,6 +3653,10 @@ function askLeave(action){
   if(!inCase()||LEAVING) return false;
   LEAVE_ACT=action;
   holdClock();
+  el('leavemsg').textContent=PROGRESS.kept()
+    ? 'Your progress is saved. You can resume this case from the case list.'
+    : 'You will lose progress. This case cannot be resumed from where it is.';
+  PROGRESS.flush();
   el('leaveview').classList.remove('hidden');
   el('leavecancel').focus();
   return true;
@@ -3554,11 +3710,14 @@ el('searchbox').addEventListener('keydown',e=>{
   if(e.key==='Enter'){ const f=el('searchresults').querySelector('[data-sgo]'); if(f) f.click(); }
 });
 el('leavecancel').addEventListener('click',closeLeave);
-el('leaveok').addEventListener('click',()=>{
+el('leaveok').addEventListener('click',async ()=>{
   const act=LEAVE_ACT;
   CLOCK_HELD=false;                    /* leaving for good; restart() resets the clock */
   closeLeave();
   LEAVING=true;
+  /* The clock is still stopped here (PAUSED stays set), so what is saved is the moment the
+     learner asked to leave. A slow network delays leaving by four seconds at most. */
+  await PROGRESS.flush(4000);
   if(act==='reload'){ location.reload(); return; }
   /* Back, and the rail's Main menu, which is the same act by another control. The guard
      entry pushed at Begin is popped here. A file opened directly may have
@@ -3953,7 +4112,8 @@ window.addEventListener('popstate',()=>{
   askLeave('back');
 });
 window.addEventListener('beforeunload',e=>{
-  if(LEAVING||!inCase()) return;
+  /* A saved run is not lost by a reload: progress.js sends the last moment on pagehide. */
+  if(LEAVING||!inCase()||PROGRESS.kept()) return;
   e.preventDefault(); e.returnValue='';
 });
 
@@ -4140,11 +4300,16 @@ function mvPump(label,timer,fill){
    stop order is given, which is the red cross on the drip's own button (dripStops).
 
    Display only: it reads the run (ST.timeline, ACT, dripStops) and changes nothing. Timers
-   run on the case clock, so they stand still while the case is paused. Switched on per case
-   by SHARED.medOverlayCases; AFRVR first, by instruction. */
+   run on the case clock, so they stand still while the case is paused. Switched on by
+   SHARED.medOverlayCases, "all" or a list of case prefixes. Every case since 28 October 2026.
+
+   A drug or fluid with no authored timer is drawn too (author instruction, 28 October 2026),
+   with a display-only countdown: a syringe for MEDVIS_DEFAULT.syringe seconds, a fluid bag
+   for MEDVIS_DEFAULT.bag. It says nothing about when the drug acts. */
+const MEDVIS_DEFAULT={syringe:10,bag:60};
 const MEDVIS=(function(){
   let host=null, els={}, done=new Set(), run=-1;
-  const on=()=>!!(PACK&&(SHARED.medOverlayCases||[]).includes(PACK.prefix));
+  const on=()=>{ const m=SHARED.medOverlayCases; return !!(PACK&&(m==='all'||(Array.isArray(m)&&m.includes(PACK.prefix)))); };
   function label(id){
     let n=String(dispName(id)||id)
       .replace(/^normal saline/i,'NS').replace(/^lactated ringer'?s/i,'LR')
@@ -4174,7 +4339,8 @@ const MEDVIS=(function(){
         if(!open[id]){ const it={key:id+'@'+x.t,id,kind:'pump',drip:true,t0:x.t,onset:T>0?x.t+T:null,end:null}; out.push(it); open[id]=it; }
         continue;
       }
-      if(T>0) out.push({key:id+'@'+x.t,id,kind:isFluid(a)?'pump':'syringe',drip:false,t0:x.t,end:x.t+T,total:T});
+      const D=T>0?T:(isFluid(a)?MEDVIS_DEFAULT.bag:MEDVIS_DEFAULT.syringe);
+      out.push({key:id+'@'+x.t,id,kind:isFluid(a)?'pump':'syringe',drip:false,t0:x.t,end:x.t+D,total:D});
     }
     return out;
   }

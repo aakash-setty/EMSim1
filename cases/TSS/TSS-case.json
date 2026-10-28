@@ -348,7 +348,7 @@
      "to": "profound_shock",
      "narration": "I can barely rouse her. Her pressure has dropped again and her rate is higher.",
      "debrief_note": "Her mean arterial pressure stayed under 65 without both fluid and a vasopressor, and she progressed to profound shock.\n\nHypotension that persists after fluid is not treated with more waiting or with fluid alone. Norepinephrine can be started through a good peripheral line while central access is arranged. A vasopressor without any fluid is also not enough in a patient this dry.",
-     "author_rationale": "Deterioration on inaction. The nurse asks for norepinephrine at 30 seconds and again at 120, and for fluid at 60 if none has been given. In the default mode those are 90, 360 and 180, so both first warnings come at least 60 seconds before this rule and the escalation is never heard. Four minutes is a drafting judgment and needs a physician's signature."
+     "author_rationale": "Deterioration on inaction. The nurse says the mean pressure is under 65 at 30 seconds and again at 120, and for fluid at 60 if none has been given. In the default mode those are 90, 360 and 180, so both first warnings come at least 60 seconds before this rule and the escalation is never heard. Four minutes is a drafting judgment and needs a physician's signature."
     }
    ]
   },
@@ -403,7 +403,7 @@
      "to": "profound_shock",
      "narration": "I've been going up and up on the vasopressor and it isn't enough any more. Her pressure has dropped, her rate is up, and I can barely rouse her.",
      "debrief_note": "She had fluid and a vasopressor and still got worse, because the source was never removed. A retained tampon colonized with toxin-producing staphylococci keeps delivering toxin for as long as it stays in.\n\nShock that needs a rising vasopressor dose after adequate fluid means the cause is still active. Go back and look for it: a full examination including the pelvis, wounds, lines and packing.",
-     "author_rationale": "Deterioration on inaction. The nurse asks whether anyone has examined her fully at 60 seconds and asks about her period at 180. In the default mode those are 180 and 540, so the first warning comes 90 seconds before this rule and the escalation is never heard. Four and a half minutes is longer than the other clocks on purpose: the directing physician asked that treated sepsis with a missed source decline more slowly. Needs a physician's signature."
+     "author_rationale": "Deterioration on inaction. The nurse asks whether anyone has checked for pregnancy at 60 seconds and again at 180. In the default mode those are 180 and 540, so the first warning comes 90 seconds before this rule and the escalation is never heard. Four and a half minutes is longer than the other clocks on purpose: the directing physician asked that treated sepsis with a missed source decline more slowly. Needs a physician's signature."
     }
    ]
   },
@@ -980,10 +980,10 @@
    "prompt": {
     "deadline_seconds": 60,
     "guard": "phase is supported OR phase is profound_shock",
-    "text": "She's a young woman in shock and no source has been dealt with. Has anyone asked about her period, or examined her from head to toe, including a pelvic exam?",
+    "text": "Did someone check if she's pregnant?",
     "escalation": {
      "deadline_seconds": 180,
-     "text": "She's a young woman with a fever, a rash and shock. Has anyone asked about her period? Do you want to examine her?"
+     "text": "Has anyone checked whether she could be pregnant?"
     }
    },
    "debrief_note": "This is the action the case turns on. A tampon left in for four days was the site where Staphylococcus aureus was making toxin, and nothing given through a vein removes it.\n\nNobody will tell you it is there. She thinks her period is over and has forgotten the tampon. You find it by asking about menstruation and tampon use, or by doing a pelvic examination because a febrile patient in shock with a red rash has no other source. A CT of the abdomen and pelvis would also show it, later.\n\nThe idea that travels: septic shock without a source means you have not finished looking. Examine the places that are easy to skip, which are the pelvis, the perineum, the back, wounds, and anything packed or implanted.\n\nIn this simulator the pelvic examination has to come first, because you cannot remove what you have not found."
@@ -1021,10 +1021,10 @@
    "prompt": {
     "deadline_seconds": 30,
     "guard": "phase is hypotensive OR phase is profound_shock",
-    "text": "Her mean pressure is under 65. Do you want norepinephrine started?",
+    "text": "Her mean pressure is under 65. Should we do something?",
     "escalation": {
      "deadline_seconds": 120,
-     "text": "Her mean pressure is still under 65. Can I start norepinephrine?"
+     "text": "Her mean pressure is still under 65. What do you want to do?"
     }
    },
    "debrief_note": "Norepinephrine is the first vasopressor in septic shock. The indication is a mean arterial pressure under 65 that persists after fluid. In this case that moment arrives when the effect of the first liters fades.\n\nStarting it earlier, while a second liter runs, is also accepted here. Guidelines allow a vasopressor through a good peripheral line for a short time, so it should not wait for a central line.\n\nEpinephrine, vasopressin and phenylephrine infusions count as the same act in this case. Norepinephrine is the one to reach for first. [UNVERIFIED, confirm against the current Surviving Sepsis guideline]"
@@ -1465,7 +1465,7 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [

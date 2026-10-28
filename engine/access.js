@@ -57,11 +57,14 @@ const ACCESS_UI = (function(){
     const oauthReturn = readOAuthReturn();
     client = supabase.createClient(CFG.supabaseUrl, CFG.supabaseKey,
       {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:!!CFG.googleSignIn, flowType:'pkce'}});
-    client.auth.onAuthStateChange((_ev,s)=>{ session=s||null; A.user(session&&session.user&&session.user.id); paint(); });
+    /* Saved progress (engine/progress.js) uses the same client and follows the session. */
+    const P=(typeof PROGRESS==='object'&&PROGRESS)||{init(){},onSession(){}};
+    P.init(client);
+    client.auth.onAuthStateChange((_ev,s)=>{ session=s||null; A.user(session&&session.user&&session.user.id); P.onSession(session); paint(); });
     client.auth.getSession().then(({data})=>{
         session=(data&&data.session)||null; A.user(session&&session.user&&session.user.id);
-        known=true; afterOAuthReturn(oauthReturn); paint(); })
-      .catch(()=>{ session=null; known=true; afterOAuthReturn(oauthReturn); paint(); });
+        known=true; P.onSession(session); afterOAuthReturn(oauthReturn); paint(); })
+      .catch(()=>{ session=null; known=true; P.onSession(null); afterOAuthReturn(oauthReturn); paint(); });
     if(CFG.googleSignIn){ $('signingoogle').hidden=false; $('signinor').hidden=false; }
     paint();
   }

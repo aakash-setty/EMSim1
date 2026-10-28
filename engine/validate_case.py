@@ -1353,6 +1353,11 @@ def run_checks(case):
                               f"duration would never take effect")
             if a.get("state_changing") is False:
                 errors.append(f"{loc}: state_changing is false, so the flag is never granted")
+            ln = tf.get("lapse_note")
+            if ln is not None and (not isinstance(ln, str) or not ln.strip()):
+                errors.append(f"{loc}: lapse_note must be a non-empty string, the nurse's line when the flag lapses")
+            elif isinstance(ln, str) and re.search(r"\[(UNVERIFIED|PubMed|VERIFY|MODEL OUTPUT)", ln):
+                errors.append(f"{loc}: lapse_note carries a reviewer marker, and the nurse would say it aloud")
             if f not in cond_flags:
                 warnings.append(f"{loc}: nothing in this case reads flag {f!r}. A flag that "
                                 f"expires and that no transition, tag, prompt guard, "

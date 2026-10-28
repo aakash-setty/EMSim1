@@ -214,7 +214,10 @@ IMAGING = ["CT - Abdomen", "CT - Aorta", "CT - C-spine", "CT - Chest", "CT - Hea
 RADIOGRAPH = {"XR - Chest", "XR - Pelvis"}
 
 for d in BEDSIDE:
-    tc = "ecg" if d == "ECG" else "bedside"
+    # 28 October 2026, author instruction: an ultrasound takes 10 seconds to result, so the
+    # image is not on the screen the instant it is ordered. Its own class keeps the nurse's
+    # "is done" wording that bedside studies use.
+    tc = "ecg" if d == "ECG" else "ultrasound" if d.startswith("Ultrasound") else "bedside"
     add(d, "investigations", "Bedside Tests", category="investigation",
         id="ecg_12_lead" if d == "ECG" else sid(d),
         turnaround_class=tc, repeatable=True,
@@ -708,7 +711,7 @@ CATALOG = {
     # a twelve-lead in a resuscitation bay is handed over in well under a minute, and in a
     # case whose next decision depends on the QRS the wait was buying nothing.
     "turnaround_seconds_by_class": {"lab": 5, "radiograph": 5, "imaging": 10,
-                                    "ecg": 5, "bedside": 0},
+                                    "ecg": 5, "bedside": 0, "ultrasound": 10},
     "equivalence_groups": {
         "_note": "Sets of entries a case may treat as interchangeable. Where a case "
                  "requires or forbids the act rather than one specific agent, bind one "

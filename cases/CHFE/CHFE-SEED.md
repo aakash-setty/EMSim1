@@ -24,6 +24,7 @@ support is an invented fact and should be removed rather than reconciled.
 
 ## What a person decided
 
+- 28 October 2026, Aakash Setty: only the nitroglycerin infusion and the nitroprusside drip set `nitrate_given` and move the phase. Sublingual nitroglycerin and the intravenous bolus lift the saturation by two for 60 seconds (timed flag `nitrate_bolus_acting`, one shared key, a repeat dose refreshes and does not stack), then the nurse says it has worn off and that the effect is sped up in this case. A bolus no longer holds off the four-minute tiring. The stabilizing and improving phases author a saturation of 93, which the monitor shows as 97 with the mask's four. Teaching choices, not physician reviewed.
 - 27 October 2026, Aakash Setty: pressors the case does not author now move the monitor by the catalog default (`catalog/default-vital-effects.json`, display only, no change to phases, tags or scoring). Here `norepinephrine_infusion` carries `"vital_effects": []`, because it sets `pressor_running`, which moves the phase, and that phase's vitals already carry the rise. Push-dose epinephrine takes the default.
 
 - 11 October 2026, Aakash Setty: the formal transthoracic echocardiogram (`echo_formal`)

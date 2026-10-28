@@ -953,6 +953,23 @@ section('expiring flags and delayed onset');
         !fold(mk([[1, '__probe_drug'], [20, '__probe_drug']]), 55).flags.has('__probe_acting'));
   }
 
+  /* --- the nurse's line when it lapses (28 October 2026, lapse_note) --- */
+  {
+    A.__probe_drug.flags_set_timed[0].lapse_note = 'Probe wore off.';
+    const said = st => st.nurse.filter(n => n.text === 'Probe wore off.');
+    const once = said(fold(mk([[1, '__probe_drug']]), 40));
+    chk('a lapse note is said once, as an alert, at the lapse',
+        once.length === 1 && once[0].kind === 'alert' && once[0].t === 31, JSON.stringify(once));
+    chk('not before it',
+        said(fold(mk([[1, '__probe_drug']]), 30)).length === 0);
+    const rep = said(fold(mk([[1, '__probe_drug'], [20, '__probe_drug']]), 60));
+    chk('a repeat dose moves the line to the later lapse, said once',
+        rep.length === 1 && rep[0].t === 50, JSON.stringify(rep));
+    delete A.__probe_drug.flags_set_timed[0].lapse_note;
+    chk('without a lapse note the lapse says nothing',
+        fold(mk([[1, '__probe_drug']]), 40).nurse.every(n => n.t !== 31 || n.kind !== 'alert'));
+  }
+
   /* --- a permanent grant absorbs a timed one, in either order --- */
   chk('a permanent grant taken after a timed one stops it expiring',
       fold(mk([[1, '__probe_drug'], [5, '__probe_perm']]), 60).flags.has('__probe_acting'));
@@ -1657,6 +1674,8 @@ section('the overall score (11 October 2026)');
   chk('weights: critical 85, the rest 15 shared evenly',
       none.parts.reduce((s, p) => s + p.weight, 0) === (none.parts.length ? 15 : 0) &&
       none.parts.every(p => Math.abs(p.weight - none.parts[0].weight) < 1e-9));
+  chk('history and examination are not in the overall score (28 October 2026)',
+      !none.parts.some(p => p.id === 'history' || p.id === 'physical'), none.parts.map(p => p.id).join(','));
   chk('nothing done scores no more than the critical share a case without critical actions gives',
       none.pct <= (none.critical.total ? 15 : 100), String(none.pct));
   const allCrit = [...fold([], 1).expected];

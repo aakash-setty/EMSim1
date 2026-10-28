@@ -144,6 +144,7 @@ FIELDS = {
 "case_actions[].flags_set_if[].when": ("no", "18", "Section 4 condition, evaluated at the moment of the act"),
 "case_actions[].flags_set_timed[].flag": ("no", "17", "A flag that lapses. A permanent grant of the same flag wins in either order. Expiry re-checks transitions"),
 "case_actions[].flags_set_timed[].duration_seconds": ("no", "17", "From the administration. A repeat extends to the later deadline"),
+"case_actions[].flags_set_timed[].lapse_note": ("nurse", "17", "Optional. What the nurse says, filed in the chart, when the flag lapses. The latest grant's line is said"),
 "case_actions[].prerequisites[].when": ("no", "22.1", "Added to the catalog's defaults. Write the requirement, not the block. A condition that does not parse PASSES"),
 "case_actions[].prerequisites[].failure_message": ("nurse+chart", "22.1", "Spoken when the action is blocked, in the nurse's voice. The attempt is logged and nothing changes"),
 "case_actions[].prerequisites[].source": ("never", "22.1", "Reviewer note"),

@@ -316,7 +316,7 @@ PHASES = [
        "access is arranged. A vasopressor without any fluid is also not enough in a patient "
        "this dry."),
      "author_rationale": (
-       "Deterioration on inaction. The nurse asks for norepinephrine at 30 seconds and again "
+       "Deterioration on inaction. The nurse says the mean pressure is under 65 at 30 seconds and again "
        "at 120, and for fluid at 60 if none has been given. In the default mode those are 90, "
        "360 and 180, so both first warnings come at least 60 seconds before this rule and the "
        "escalation is never heard. Four minutes is a drafting judgment and needs a "
@@ -365,8 +365,8 @@ PHASES = [
        "still active. Go back and look for it: a full examination including the pelvis, "
        "wounds, lines and packing."),
      "author_rationale": (
-       "Deterioration on inaction. The nurse asks whether anyone has examined her fully at "
-       "60 seconds and asks about her period at 180. In the default mode those are 180 and "
+       "Deterioration on inaction. The nurse asks whether anyone has checked for pregnancy at "
+       "60 seconds and again at 180. In the default mode those are 180 and "
        "540, so the first warning comes 90 seconds before this rule and the escalation is "
        "never heard. Four and a half minutes is longer than "
        "the other clocks on purpose: the directing physician asked that treated sepsis with a "

@@ -523,7 +523,7 @@ chk('the source prompt claims no fluid and no drug',
   !/given her fluid|norepinephrine|turn it up/.test(PT('remove_vaginal_foreign_body').text + PT('remove_vaginal_foreign_body').escalation.text));
 st = fold(mk([]), 615);
 chk('on the do-nothing path it is spoken in profound shock to a patient given nothing, and is true',
-  st.promptFires.some(p => p.id === 'remove_vaginal_foreign_body' && p.t === 600) && said(st, /no source has been dealt with/) &&
+  st.promptFires.some(p => p.id === 'remove_vaginal_foreign_body' && p.t === 600) && said(st, /check if she's pregnant/) &&
   !st.flags.has('fluids_given') && !st.flags.has('pressor_running'));
 chk('neither fluid line says what is about to happen',
   !/going to/.test(PT('normal_saline_1l_bolus').text + PT('normal_saline_1l_bolus').escalation.text + PT('norepinephrine_drip').text + PT('norepinephrine_drip').escalation.text));

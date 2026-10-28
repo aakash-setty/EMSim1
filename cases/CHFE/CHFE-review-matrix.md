@@ -1139,6 +1139,16 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | rule 1 (default) | plausible |
 
 
+### `interview_topic/home_oxygen`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
 ### `interview_topic/pde5_inhibitor_use`
 
 | phase | resolves to | reachable? |

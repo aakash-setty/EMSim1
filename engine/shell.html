@@ -235,6 +235,19 @@ body.nintro-on .nurse .nurseface{visibility:hidden}
 .voicebtn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .voicebtn:hover{border-color:var(--actb);color:var(--act);background:var(--actl)}
 .voicebtn:disabled{opacity:.45;cursor:default;box-shadow:none}
+/* Search glows for the whole case (author instruction, 28 October 2026): a soft halo and two
+   thin rings that grow and fade, slowly and out of step, so the button is easy to find
+   without pulling the eye. Transform and opacity only, so it runs on the compositor. It
+   shows only while search is available, which is only inside a case. */
+#searchbtn{position:relative;overflow:visible}
+#searchbtn:not(:disabled){box-shadow:0 3px 10px -6px var(--shadow),0 0 0 3px var(--actl),0 0 16px 2px rgba(31,111,178,.22)}
+#searchbtn:not(:disabled)::before,#searchbtn:not(:disabled)::after{content:"";position:absolute;inset:-2px;border-radius:50%;
+  border:1.5px solid rgba(31,111,178,.45);opacity:0;pointer-events:none;will-change:transform,opacity;
+  animation:srchring 4.2s ease-out infinite}
+#searchbtn:not(:disabled)::after{animation-delay:2.1s}
+#searchbtn[aria-expanded="true"]::before,#searchbtn[aria-expanded="true"]::after{animation:none;opacity:0}
+@keyframes srchring{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.75);opacity:0}}
+@media (prefers-reduced-motion:reduce){ #searchbtn::before,#searchbtn::after{animation:none!important;opacity:0!important} }
 .voicebtn:disabled:hover{border-color:var(--rule);color:var(--ink2);background:var(--pane2)}
 /* Listening is red, and it pulses, because a live microphone is the one state on
    this page that should never be ambiguous. */
@@ -309,7 +322,9 @@ body.nintro-on .nurse .nurseface{visibility:hidden}
 .mon{display:flex;gap:18px;align-items:flex-end}
 .vit{text-align:right;min-width:78px}
 .vitlab{font-size:10px;color:#83A0AF;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
-.vitval{font-family:var(--mono);font-weight:600;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.vitval{font-family:var(--mono);font-weight:400;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+/* Bold only when outside the normal range (28 October 2026, VITAL_NORMAL in ui.js). */
+.vitval.vabn{font-weight:700}
 .vitunit{font-size:11px;color:#83A0AF;font-family:var(--mono)}
 .v-hr{color:var(--hr)} .v-bp{color:var(--bp)} .v-spo2{color:var(--spo2)}
 .v-rr{color:var(--rr)} .v-temp{color:var(--temp)}
@@ -649,6 +664,18 @@ body[data-right="wide"] .labt th:not(.lb),body[data-right="wide"] .labt td:not(.
 .fitem td.rf{font-family:var(--mono);font-size:10.5px;color:var(--ink3);text-align:right;
   white-space:nowrap;padding-left:10px}
 body[data-right="dock"] .fitem td.rf{display:none}
+/* A lab's draws as columns in the running chart (28 October 2026): times on top, newest
+   left, values right-aligned so the columns read down. Shading is the chart's own. */
+.fitem table.labser{width:auto;min-width:100%}
+.fitem .labser th{font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--ink3);text-align:right;
+  padding:0 0 2px 10px;white-space:nowrap;border-bottom:1px solid var(--rule2)}
+.fitem .labser th:first-child + th{color:var(--ink)}
+.fitem .labser td.v{font-family:var(--mono);text-align:right;white-space:nowrap;padding-left:10px}
+.fitem .labser td.v.tx{font-family:inherit;white-space:normal;text-align:left;min-width:9em}
+.fitem .labser td.lb{white-space:nowrap}
+.fitem .labser .u{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+.fitem .labser th.rf{padding:0}
+body[data-right="dock"] .fitem .labser th.rf{display:none}
 /* Expanded, the chart flows into as many columns as the width allows.
    The scroll moves up to .rp-body and #feed itself stops scrolling: a
    multi-column box that scrolls internally paginates SIDEWAYS, which would
@@ -807,6 +834,98 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
   .wl-text{padding:0 24px 22px}
   .wl-text h1{font-size:clamp(28px,6.4vw,40px); margin-bottom:0}
   .wl-board{box-shadow:none; border-top:1px solid var(--rule)}
+}
+
+/* ---------- saved progress (engine/progress.js, 28 October 2026) ----------
+   Signed in, the left of the case board stops being only a picture (author, 28 October
+   2026). The illustration keeps a band at the top with the product name over it, and the
+   learner's own runs fill the rest: a case in progress, then finished attempts as score
+   summaries. Signed out, the page is exactly as before. */
+#picker.home-on{--band:clamp(140px,22vh,210px)}
+#picker.home-on .wl-hero{justify-content:flex-start; background:var(--screen)}
+#picker.home-on .wl-shot{bottom:auto; height:var(--band); background-position:54% 62%}
+#picker.home-on .wl-scrim{bottom:auto; height:var(--band); background:
+  linear-gradient(to top, rgba(12,25,34,1) 0%, rgba(12,25,34,.6) 45%, rgba(12,25,34,.15) 100%),
+  linear-gradient(to right, rgba(12,25,34,.72) 0%, rgba(12,25,34,0) 70%)}
+#picker.home-on .wl-edge,#picker.home-on .wl-lede{display:none}
+#picker.home-on .wl-text{flex:none; height:var(--band); display:flex; flex-direction:column;
+  justify-content:flex-end; padding-bottom:14px}
+#picker.home-on .wl-text h1{font-size:clamp(24px,2.3vw,34px); margin:0; max-width:none}
+#picker.home-on .wl-stamp{top:calc(var(--band) - 42px); bottom:auto}
+.wl-home{position:relative; flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain;
+  padding:24px clamp(28px,4.4vw,72px) 36px; background:var(--screen); color:#E4EEF3}
+.wl-home[hidden]{display:none}
+.hm-sec{max-width:780px}
+.hm-sec+.hm-sec{margin-top:30px}
+.hm-sec h2{display:flex; align-items:center; gap:10px; margin:0 0 12px; font-family:var(--mono);
+  font-size:10.5px; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
+  color:rgba(226,238,244,.58)}
+.hm-sec h2::after{content:""; flex:1; height:1px; background:rgba(226,238,244,.12)}
+.hm-empty{margin:0; color:rgba(226,238,244,.62); font-size:13.5px; line-height:1.5}
+.hm-mono{font-family:var(--mono); font-variant-numeric:tabular-nums}
+.hm-cont{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px}
+.hm-card{background:var(--screen2); border:1px solid rgba(226,238,244,.10); border-radius:8px;
+  padding:14px 16px}
+.hm-ct{font-size:15px; font-weight:600; color:#F5F9FB}
+.hm-cm{margin-top:4px; font-size:12px; line-height:1.5; color:rgba(226,238,244,.64)}
+.hm-cw{margin-top:8px; font-size:12px; line-height:1.45; color:#E8C27A}
+.hm-ca{display:flex; align-items:center; gap:16px; margin-top:12px}
+.hm-ca .btn{padding:7px 16px; font-size:13px}
+.hm-link{font:inherit; font-size:12.5px; background:none; border:0; padding:2px 0; cursor:pointer;
+  color:rgba(226,238,244,.72); text-decoration:underline; text-underline-offset:3px}
+.hm-link:hover{color:#fff}
+.hm-link:focus-visible,.hm-ca .btn:focus-visible{outline:2px solid #8FC3EE; outline-offset:2px}
+.hm-confirm{display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:10px;
+  padding:10px 12px; border-radius:6px; background:rgba(192,48,42,.16);
+  border:1px solid rgba(240,138,132,.35); font-size:12.5px}
+.hm-confirm span{flex-basis:100%}
+.hm-confirm .btn{padding:6px 14px; font-size:12.5px}
+.btn.harm{background:var(--harm)}
+.hm-list{display:flex; flex-direction:column; gap:6px}
+.hm-row{background:var(--screen2); border:1px solid rgba(226,238,244,.08); border-radius:8px}
+.hm-row.open{border-color:rgba(226,238,244,.18)}
+.hm-rh{display:flex; align-items:center; gap:14px; width:100%; padding:11px 14px; background:none;
+  border:0; border-radius:8px; color:inherit; font:inherit; text-align:left; cursor:pointer}
+.hm-rh:hover{background:rgba(255,255,255,.04)}
+.hm-rh:focus-visible{outline:2px solid #8FC3EE; outline-offset:-2px}
+.hm-score{flex:none; width:58px; font-family:var(--mono); font-size:22px; font-weight:500;
+  color:#F5F9FB; font-variant-numeric:tabular-nums}
+.hm-score small{font-size:12px; color:rgba(226,238,244,.55); margin-left:1px}
+.hm-score.ns{color:rgba(226,238,244,.4)}
+.hm-rb{min-width:0; flex:1}
+.hm-rt{display:block; font-size:14px; font-weight:500; color:#F5F9FB; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis}
+.hm-rm{display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; margin-top:4px;
+  font-size:11.5px; color:rgba(226,238,244,.62)}
+.hm-tag{padding:1px 7px; border-radius:999px; font-size:11px; border:1px solid currentColor}
+.hm-tag.ok{color:#6FCFA4} .hm-tag.warn{color:#E8C27A} .hm-tag.harm{color:#F08A84}
+.hm-rd{flex:none; font-size:11.5px; color:rgba(226,238,244,.5); text-align:right}
+.hm-rx{padding:2px 14px 14px 86px}
+.hm-why{font-size:12.5px; color:rgba(226,238,244,.72); margin-bottom:8px}
+.hm-part{display:grid; grid-template-columns:110px minmax(0,1fr) 44px; gap:3px 12px;
+  align-items:center; padding:6px 0; border-top:1px solid rgba(226,238,244,.07); font-size:12.5px}
+.hm-part .l{color:#E4EEF3}
+.hm-part .bar{height:5px; border-radius:3px; background:rgba(226,238,244,.12); overflow:hidden}
+.hm-part .bar i{display:block; height:100%; background:#8FC3EE}
+.hm-part .p{text-align:right; color:#E4EEF3}
+.hm-part .d{grid-column:1/-1; color:rgba(226,238,244,.56); font-size:11.5px}
+.hm-ra{margin-top:10px}
+.hm-note{max-width:780px; margin:30px 0 0; font-size:11.5px; line-height:1.55;
+  color:rgba(226,238,244,.46)}
+/* The case board row: in progress, or the best scored attempt. */
+.wl-prog{display:block; margin-top:4px; font-family:var(--mono); font-size:10.5px;
+  color:var(--ink3)}
+.wl-prog.go{color:var(--act); font-weight:500}
+/* The splash: Resume beside Start over, with one line under them. */
+.sp-run:not([hidden]){display:contents}
+.sp-runnote{flex-basis:100%; order:3; font-size:12.5px; line-height:1.45; color:var(--ink3)}
+@media (max-width:900px){
+  #picker.welcome.home-on{grid-template-rows:minmax(200px,38dvh) minmax(0,1fr)}
+  #picker.home-on{--band:92px}
+  #picker.home-on .wl-text{padding:0 16px 12px}
+  .wl-home{padding:16px 16px 22px}
+  .hm-rx{padding-left:14px}
+  .hm-rd{display:none}
 }
 
 /* ---------- splash and picker ---------- */
@@ -1345,7 +1464,9 @@ table.labtbl tr.abn td.val::after{content:" \2691";font-size:10px}
 .chargeview.leaving{animation:chgout .35s ease both}
 @keyframes chgin{from{opacity:0}to{opacity:1}}
 @keyframes chgout{from{opacity:1}to{opacity:0}}
-.chargecard{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"dev side" "foot foot";
+/* 28 October 2026, author instruction: "Charging" above the device, and no case line or status
+   text in the foot. Both stay in the markup for screen readers (.chg-sr). */
+.chargecard{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"top ." "dev side" "foot foot";
   gap:18px 44px;align-items:center;width:min(980px,100%)}
 /* The shadow sits on a static layer under the drawing. A filter on the SVG itself was
    re-rendered on every frame the screen changed, which is what made the charge stutter. */
@@ -1383,6 +1504,10 @@ table.labtbl tr.abn td.val::after{content:" \2691";font-size:10px}
   font-variant-numeric:tabular-nums;text-align:right}
 .chg-jcol div{height:7.143cqw;line-height:7.143cqw;white-space:nowrap}
 .chargeview.ready .df-state{fill:#38e07b}
+.charge-top{grid-area:top;justify-self:center;font-family:var(--mono);font-size:22px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:#ffb020;transition:color .3s ease}
+.chargeview.ready .charge-top{color:#38e07b}
+.chg-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .charge-side{grid-area:side;display:flex;flex-direction:column;align-items:center;gap:22px;padding-top:8px}
 .charge-sub{font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55);
   transition:color .3s ease}
@@ -1415,11 +1540,13 @@ body.chg-cover #splash,body.chg-cover #picker{visibility:hidden}
   border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 16px;cursor:pointer}
 .charge-cancel:hover{color:#fff;border-color:rgba(255,255,255,.5)}
 .chargeview.ready .charge-cancel{display:none}
+.chargeview.ready .charge-foot{border-top-color:transparent}
 .charge-flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none}
 .chargeview.shocked .charge-flash{animation:chgflash .45s ease-out both}
 @keyframes chgflash{0%{opacity:0}12%{opacity:.85}100%{opacity:0}}
 @media (max-width:760px){
-  .chargecard{grid-template-columns:minmax(0,1fr);grid-template-areas:"dev" "side" "foot";gap:16px}
+  .chargecard{grid-template-columns:minmax(0,1fr);grid-template-areas:"top" "dev" "side" "foot";gap:16px}
+  .charge-top{font-size:18px}
   .charge-shock{width:108px;height:108px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -1720,6 +1847,13 @@ details.dbfold>summary:hover .dbfold-arrow{stroke:var(--act)}
 .item .nm{font-weight:600;font-size:14.5px}
 .item .note{font-size:13.5px;color:var(--ink2);margin-top:4px;max-width:78ch}
 .item .refs{font-size:12px;color:var(--ink3);margin-top:5px;font-family:var(--mono)}
+/* Sources button at the end of a debrief note (28 October 2026), styled like the Why control. */
+.srcbtn{font-family:var(--mono);font-size:11px;line-height:1.4;color:var(--act);background:none;cursor:pointer;
+  border:1px solid var(--rule);border-radius:3px;padding:1px 7px;margin-left:4px;vertical-align:1px;white-space:nowrap}
+.srcbtn::after{content:"\00A0\25BE"}
+.srcbtn[aria-expanded="true"]::after{content:"\00A0\25B4"}
+.srcbtn:hover{background:var(--actl);border-color:var(--actb)}
+.srcbtn:focus-visible{outline:2px solid var(--act);outline-offset:2px}
 /* v0.18a: the time column of "What happened, in order" */
 .item .tlt{font-family:var(--mono);font-size:12px;color:var(--ink3);min-width:42px;font-variant-numeric:tabular-nums}
 details.teach summary{list-style:none;cursor:pointer}
@@ -2208,6 +2342,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       <p class="wl-lede">Run a resuscitation in the browser. Take a history, examine, order, treat,
         hand over, then read what your timing cost. Most of __PRODUCT__ is free to use.</p>
     </div>
+    <!-- Saved progress (28 October 2026): signed in, the learner's runs. engine/progress.js. -->
+    <div class="wl-home" id="wl-home" hidden aria-label="Your progress"></div>
     <div class="wl-stamp" aria-hidden="true"><div>Engine v0.9</div><div>Catalog v0.2-draft</div></div>
   </section>
 
@@ -2272,6 +2408,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       <div class="modes" id="sp-modes" role="radiogroup" aria-label="Difficulty"></div>
     </div>
     <div class="splashactions">
+      <div class="sp-run" id="sp-run" hidden></div>
       <button class="btn begin" id="beginbtn">Begin</button>
     </div>
   </div>
@@ -2434,6 +2571,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
      Author instruction, 11 October 2026. -->
 <div id="chargeview" class="chargeview hidden" role="dialog" aria-modal="true" aria-labelledby="chargetitle" aria-describedby="chargestatus">
   <div class="chargecard">
+    <div class="charge-top" id="chargetop" aria-hidden="true">Charging</div>
     <div class="charge-device" aria-hidden="true">
       <svg viewBox="0 0 560 400" class="defib">
         <defs>
@@ -2495,9 +2633,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
           <rect x="396" y="201" width="96" height="50" rx="13" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="3"/>
           <text x="444" y="231" class="df-btnlab" text-anchor="middle" id="chg-btnlab">CHARGING</text>
         </g>
-        <!-- ready lamp -->
-        <circle cx="408" cy="282" r="6" fill="#3a3f45" id="chg-led"/>
-        <text x="422" y="286" class="df-small">READY</text>
+        <!-- ready lamp, centered under the charge button (no label since 28 October 2026) -->
+        <circle cx="444" cy="282" r="9" fill="#3a3f45" id="chg-led"/>
         <!-- pad connector and cable -->
         <circle cx="470" cy="322" r="17" fill="#121518" stroke="rgba(255,255,255,.12)" stroke-width="2"/>
         <circle cx="470" cy="322" r="8" fill="#2b3138"/>
@@ -2522,8 +2659,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       </button>
     </div>
     <div class="charge-foot">
-      <div class="charge-title" id="chargetitle"></div>
-      <div class="charge-status" id="chargestatus" aria-live="polite">Charging. Opening the case.</div>
+      <div class="charge-title chg-sr" id="chargetitle"></div>
+      <div class="charge-status chg-sr" id="chargestatus" aria-live="polite">Charging. Opening the case.</div>
       <button id="chargecancel" class="charge-cancel" type="button">Cancel</button>
     </div>
   </div>
@@ -2590,10 +2727,24 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
      aria-labelledby="leavetitle">
   <div class="leavecard">
     <h2 id="leavetitle">Are you sure you want to leave?</h2>
-    <p>You will lose progress. This case cannot be resumed from where it is.</p>
+    <p id="leavemsg">You will lose progress. This case cannot be resumed from where it is.</p>
     <div class="leavebtns">
       <button id="leavecancel" class="btn ghost" type="button">Cancel</button>
       <button id="leaveok" class="btn" type="button">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- Saved progress: a run saved against an earlier version of the case is not resumed
+     (owner decision, 28 October 2026). engine/progress.js shows this and deletes the run. -->
+<div id="improvedview" class="leaveview hidden" role="dialog" aria-modal="true"
+     aria-labelledby="improvedtitle">
+  <div class="leavecard">
+    <h2 id="improvedtitle">This case has been improved</h2>
+    <p>The case has changed since your last attempt, so your saved progress cannot be continued.
+      Play the case from the start.</p>
+    <div class="leavebtns">
+      <button id="improvedok" class="btn" type="button">OK</button>
     </div>
   </div>
 </div>

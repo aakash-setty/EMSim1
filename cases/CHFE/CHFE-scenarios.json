@@ -33,13 +33,13 @@
    "expect_phase": "stabilizing"
   },
   {
-   "name": "Sublingual nitrate as the bridge still advances the phase",
+   "name": "Sublingual nitrate is a bridge and does not advance the phase",
    "steps": [
     "iv_access_peripheral",
     "niv_bipap_cpap",
     "nitroglycerin_sublingual"
    ],
-   "expect_phase": "stabilizing"
+   "expect_phase": "niv_supported"
   },
   {
    "name": "Harmful: intravenous metoprolol for the compensatory tachycardia",

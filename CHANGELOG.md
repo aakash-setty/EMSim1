@@ -5,6 +5,81 @@ is usable with learners.
 
 ---
 
+## Saved progress (28 October 2026, author instruction)
+
+Site build only. The local build is unchanged.
+
+- Learners can leave a case and resume it later from where they left it, paused at the same case time, with the same log, mode, tab and drafted handoff.
+- Signed in, the left of the case list is now the learner's own page: Continue (runs in progress, Resume or Discard) and Your attempts (score summaries, newest first, each opening to its Summary rows, each deletable). The picture is cut to a band at the top. Signed out, nothing changes.
+- Each case row on the list shows "In progress" or the best score and the number of attempts.
+- The splash of a case in progress offers Resume and Start over. Start over deletes the saved run (owner decision: abandoned runs are discarded).
+- A run saved under an earlier version of the case is not resumed: "This case has been improved", and the run is deleted (owner decision).
+- The leave dialog says the progress is saved when it is. A saved run no longer triggers the browser's own leave prompt on reload.
+- Database: `supabase/migrations/002_runs.sql`, `public.runs` with row-level security, applied 28 October 2026. When a run finishes its saved log is emptied and only the score summary is kept.
+- New: `engine/progress.js`, `engine/site-check/progress.js`. Changed: `engine/ui.js` (runSnapshot, resumeRun and hooks), `engine/access.js`, `engine/shell.html`, `engine/build_simulator.py` (versionKey per case), `engine/site-check/mock.js`.
+- Site check: `flow.js` and `deep.js` now press the charging defibrillator after a download and wait out the nurse's opening card. Both had failed since those features arrived (11 and 13 October).
+- Not decided: free or paid.
+
+---
+
+## The drug overlay in every case (28 October 2026, author instruction)
+
+- The drips and medication animations above the patient, first built for AFRVR, are on in every case (`medOverlayCases: "all"`).
+- A drug or fluid with no authored timer is now drawn too, with a display-only countdown of 10 s for a syringe and 60 s for a fluid bag (owner's choice). Drugs with timed effects and drips are drawn as before. No vitals, phases or scores change.
+- Authoring 16.1 updated.
+
+---
+
+## A spoken lapse, and CHFE's nitrate boluses (28 October 2026, author instruction)
+
+Engine: a timed flag grant may carry `lapse_note`, the nurse's line, filed as an alert, when the flag lapses. The latest grant's line is said once. The validator refuses an empty note or one with a reviewer marker. Field note, engine tests and a validator test added. Authoring 17 updated.
+
+CHFE:
+- Only the nitroglycerin infusion and the nitroprusside drip set `nitrate_given` and move the phase.
+- Sublingual nitroglycerin and the intravenous bolus raise the saturation by two for 60 seconds, then the nurse says "The nitro has worn off and his saturation has drifted back down. (Note for the student: this effect is sped up in this case.)". A repeat dose refreshes the minute and does not stack. A bolus no longer holds off the four-minute tiring.
+- The stabilizing and improving phases author a saturation of 93. The monitor shows 97 with the mask.
+- The two debrief notes say what the bolus does here. The scenario "Sublingual nitrate as the bridge" now expects the mask phase. Teaching choices, not physician reviewed.
+
+---
+
+## TSS notes, a case discussion, the drug overlay, and five changes for every case (28 October 2026, author instruction)
+
+Every case:
+- The tab filter keeps a typed space, so two words can be searched ("blood gas"). It stored the trimmed text and redrew the box from it. `filterOf` now trims and the box keeps what was typed.
+- Ultrasounds take 10 seconds to result (new catalog class `ultrasound`, nurse line "is done"). Only the eight ultrasound entries changed. TAKO's cardiology scenarios now wait 11 seconds after the echo, and one DKA test reads the echo at 35 s.
+- The search button glows and two thin rings grow from it slowly for the whole case. Off while the panel is open and with reduced motion.
+- The running chart shows each lab once, at its newest result, with every draw as a column headed by its draw time, newest on the left, keeping the chart's row shading (`labSeries` in ui.js).
+- The overall score no longer counts the history or the examination: critical actions 85, recommended actions and the handoff 15. Their Summary rows stay. Engine test added.
+
+TSS:
+- The pressor prompt says "Her mean pressure is under 65. Should we do something?" and its escalation "What do you want to do?". Neither names the drug.
+- The source prompt is "Did someone check if she's pregnant?", and its escalation asks again. Her answer mentions her period, which is the cue.
+- Consult Critical Care is neutral, no longer recommended.
+- The drug overlay is on (`medOverlayCases`): the fluid bolus, acetaminophen and metoprolol count down above her, and a vasopressor drip shows ON until stopped.
+- A case discussion, `cases/TSS/TSS-discussion.html`, from `Claude outputs/dbv3/tss_discussion_v1.py`, in the form AFRVR's settled on. Four figures from the case's own numbers. The CDC 2011 case definition and the Surviving Sepsis 2021 recommendations were read in secondary copies. Citation details and the menstrual and blood-culture proportions are marked unverified. Not physician reviewed.
+
+Later the same morning, every case:
+- A debrief note's references sit behind a small "Sources" button at the end of the note and drop down under it when pressed.
+- The monitor's numbers are bold only when outside the normal range (HR 60 to 100, systolic 90 to 139, diastolic 60 to 89, SpO2 94 to 100, RR 12 to 20, T 36.0 to 37.9, `VITAL_NORMAL` in ui.js). Teaching thresholds, not physician reviewed.
+- Search and the tab filters treat "drip" and "infusion" as one word, so "nitroglycerin infusion" finds a nitroglycerin drip and the other way round.
+
+CHFE: a `home_oxygen` topic ("No, I've never been on oxygen."), a plain denial in every phase. The matcher's held-out scores are unchanged.
+
+Authoring requirements 5.1, 6.3, 7.2, 8.2, 8.4, 9.4, 10.3, 10.4, 13 and 16.1 gained this session's rules, and 10.5 is new (the case discussion).
+
+---
+
+## The charging screen: a label on top, no text underneath (28 October 2026, author instruction)
+
+The case line and the status sentence under the defibrillator are gone from view. Both stay in
+the markup for screen readers, since the dialog is labelled by the case line. "Charging" now
+sits above the device in amber and turns to a green "Charged" when the case is ready. The
+"READY" text beside the lamp is removed, and the lamp is larger (radius 9, was 6) and centered
+under the charge button. The divider over Cancel hides once Cancel does. Shell CSS and markup
+(`#chargeview`) and two lines in `CHARGE` in ui.js.
+
+---
+
 ## Pressors move the monitor in every case (27 October 2026, author instruction)
 
 A pressor a case does not author now raises the pressure on the monitor by a catalog default, so the simulator answers a pressor the way a patient would. Display only: no phase, tag, flag, prompt, score or debrief line changes, and an engine test plays every pack with and without the defaults to show it. Defaults, in `catalog/default-vital-effects.json`: norepinephrine drip SBP +15/DBP +8, epinephrine drip +15/+6 and HR +12, vasopressin drip +12/+8, phenylephrine drip +15/+10 and HR −6, dopamine drip +10/+5 and HR +15, onset 20 s, until the drip is stopped; push-dose epinephrine +20/+8 and HR +15, phenylephrine bolus +15/+8, onset 10 s, for 5 minutes; vasopressin bolus +12/+6 for 10 minutes. Two different pressors add up, and the existing clamp keeps the numbers plausible. Dobutamine and IM epinephrine have no default. The numbers are teaching defaults the owner accepted, not physician reviewed.

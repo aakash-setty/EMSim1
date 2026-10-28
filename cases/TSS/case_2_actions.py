@@ -247,14 +247,13 @@ act("remove_vaginal_foreign_body", ALWAYS("critical"),
     # 180, which leaves 90 seconds before the 270-second exit. The line says "a pelvic
     # exam" and not "a pelvic", because the spoken phrase "pelvic exam" orders the
     # genitourinary examination and a bare "pelvic" is offered as a choice with a film.
+    # 28 October 2026, author instruction: the nurse only asks whether anyone checked for
+    # pregnancy. Her answer to that ("I've just had my period") is the cue to periods and
+    # tampons, so the prompt no longer names the period, the source or the pelvic exam.
     prompt={"deadline_seconds": 60, "guard": SUPP + " OR " + PROF,
-            "text": ("She's a young woman in shock and no source has been dealt with. Has "
-                     "anyone asked about her period, or examined her from head to toe, "
-                     "including a pelvic exam?"),
+            "text": "Did someone check if she's pregnant?",
             "escalation": {"deadline_seconds": 180,
-                           "text": ("She's a young woman with a fever, a rash and shock. Has "
-                                    "anyone asked about her period? Do you want to examine "
-                                    "her?")}},
+                           "text": "Has anyone checked whether she could be pregnant?"}},
     debrief_note=(
       "This is the action the case turns on. A tampon left in for four days was the site "
       "where Staphylococcus aureus was making toxin, and nothing given through a vein "
@@ -289,11 +288,13 @@ act("norepinephrine_drip",
     # or covered sibling running the mean is under 65 in both phases, with every effect.
     nurse_alert=("The vasopressor is running. I'll titrate to a mean of 65 and watch the "
                  "site."),
+    # 28 October 2026, author instruction: the nurse states the number and does not name the
+    # drug. Choosing the vasopressor is the resident's step.
     prompt={"deadline_seconds": 30, "guard": LOW,
-            "text": ("Her mean pressure is under 65. Do you want norepinephrine started?"),
+            "text": ("Her mean pressure is under 65. Should we do something?"),
             "escalation": {"deadline_seconds": 120,
-                           "text": ("Her mean pressure is still under 65. Can I start "
-                                    "norepinephrine?")}},
+                           "text": ("Her mean pressure is still under 65. What do you want "
+                                    "to do?")}},
     debrief_note=(
       "Norepinephrine is the first vasopressor in septic shock. The indication is a mean "
       "arterial pressure under 65 that persists after fluid. In this case that moment "
@@ -558,7 +559,9 @@ for cid, note in STUDY_NOTES.items():
 
 # =====================================================================  CONSULTS
 
-act("consult_critical_care", ALWAYS("recommended"),
+# 28 October 2026, author instruction: no longer recommended. She still needs the ICU, and
+# the disposition scores that. Calling the consultant is the resident's choice.
+act("consult_critical_care", ALWAYS("neutral"),
     flags_set=["icu_consulted"], state_changing=True,
     debrief_note=(
       "She needs intensive care: a vasopressor, organ support and close monitoring. Call "

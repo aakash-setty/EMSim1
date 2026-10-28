@@ -22,8 +22,8 @@ not another whole pack. Line numbers are recomputed each time this is generated.
 | Terminal phase inheriting vitals | A handover that shows the patient as they were | 19 | `cases/AFRVR/case_1_shell.py:355` (AFRVR) |
 | Disposition intercept | A disposition with a consequence instead of an ending | 20 | `cases/TSS/case_5_handoff.py:21` (TSS) |
 | Harmful action and the halted phase | A tag that halts the case, its halt_reason, and the halted phase it needs | 21 | `cases/DIPH/case_2_actions.py:378` (DIPH) |
-| Prerequisite override | Waiving a catalog default prerequisite with a reason | 22.1 | `cases/CHFE/CHFE-case.json:1141` (CHFE) |
-| Follow-up with satisfied_when | An obligation discharged by a condition, for a repeat | 22.2 | `cases/TSS/case_2_actions.py:651` (TSS) |
+| Prerequisite override | Waiving a catalog default prerequisite with a reason | 22.1 | `cases/CHFE/CHFE-case.json:1170` (CHFE) |
+| Follow-up with satisfied_when | An obligation discharged by a condition, for a repeat | 22.2 | `cases/TSS/case_2_actions.py:654` (TSS) |
 | Nurse alert | A second nurse line after the catalog's, filed in the chart | 7.1 | `cases/AFRVR/case_2_actions.py:267` (AFRVR) |
 | Narration override | Replacing the catalog's acknowledgement line | 7.1 | `cases/DKA/case_2_actions.py:309` (DKA) |
 | Prompt with escalation | A second warning later, exempt from the cap | 7.2 | `cases/DKA/case_2_actions.py:279` (DKA) |

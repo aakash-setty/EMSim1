@@ -859,11 +859,14 @@ function fold(log, now, difficultyMultiplier){
      no later timed grant can take it away, because the permanent one is still true. A
      timed grant extends the flag to the later of its own expiry and any expiry already
      standing, so a second dose refreshes rather than shortening. */
-  function grantFlag(f,t,duration){
+  function grantFlag(f,t,duration,lapseNote){
     st.flags.add(f);
     const g=st.flagGrants[f]||(st.flagGrants[f]={permanent:false,until:-Infinity});
     if(duration===null||duration===undefined){ g.permanent=true; return; }
     if(g.permanent) return;
+    /* 28 October 2026: a timed grant may carry the line the nurse says when it lapses. The
+       latest grant's line is the one said. */
+    if(lapseNote) g.note=lapseNote;
     const until=t+duration;
     if(until>g.until) g.until=until;
     push({t:until,kind:'flag_expire',flag:f});
@@ -969,7 +972,7 @@ function fold(log, now, difficultyMultiplier){
       st.adminCount[key]=(st.adminCount[key]||0)+1;
       if(st.adminCount[key]>=fr.after_administrations) grantFlag(fr.flag,t,null);
     }
-    for(const tf of (a.flags_set_timed||[])) grantFlag(tf.flag,t,tf.duration_seconds);
+    for(const tf of (a.flags_set_timed||[])) grantFlag(tf.flag,t,tf.duration_seconds,tf.lapse_note);
 
     /* An administration, not an effect. Whether it is still acting is decided later,
        against the clock and against its guard, so a repeat dose refreshes rather than
@@ -1019,7 +1022,7 @@ function fold(log, now, difficultyMultiplier){
       const a=ACT[e.id]||{};
       const tmpl={lab:'{name} is back.',imaging:'{name} is up on the screen.',
                   radiograph:'{name} is up on the screen.',
-                  ecg:'{name} is up.',bedside:'{name} is done.'}[a.turnaround_class]||'{name} is back.';
+                  ecg:'{name} is up.',bedside:'{name} is done.',ultrasound:'{name} is done.'}[a.turnaround_class]||'{name} is back.';
       /* Leads with the name, so it goes through the same sentence rule as the rest. */
       narrate(t,sentence(tmpl.replace('{name}',dispName(e.id))),'result');
       return;
@@ -1060,6 +1063,8 @@ function fold(log, now, difficultyMultiplier){
       if(!st.flags.has(e.flag)) return;
       st.flags.delete(e.flag);
       st.flagExpiries.push({t,flag:e.flag});
+      /* Said as an alert, so it is filed in the running chart and is not a prompt. */
+      if(g.note) narrate(t,g.note,'alert');
       checkTransitions(t);
       return;
     }
@@ -1403,10 +1408,11 @@ function summaryScores(st){
 
 /* ---------- overall score (author instruction, 11 October 2026) ----------
    One number for the debrief's second dial. Critical actions carry 85 of the 100: all of
-   them done is 85, and each counts its share. The other 15 is split evenly between four
-   parts, each a fraction from 0 to 1: the history (key topics asked), the examination
-   (expected regions examined), the recommended actions across every tab (less one for each
-   discouraged action taken, never below zero), and the handoff (its own 0 to 100). A part
+   them done is 85, and each counts its share. The other 15 is split evenly between two
+   parts, each a fraction from 0 to 1: the recommended actions across every tab (less one
+   for each discouraged action taken, never below zero), and the handoff (its own 0 to 100).
+   The history and the examination still have their own rows in the Summary and no longer
+   count here (author instruction, 28 October 2026). A part
    the case gives nothing to score drops out and the others share its weight. A case with
    no critical actions gives the 85 in full. A run that a harmful action halted or that ended
    in a terminal phase is not scored, as everywhere else in the debrief: `scored` is false. */
@@ -1424,8 +1430,6 @@ function overallScore(st){
   const recDone=rec.filter(id=>st.satisfied.has(id)).length;
   const recFrac=rec.length?Math.max(0,recDone-st.discouragedTaken.size)/rec.length:null;
   const parts=[
-    {id:'history',label:'History',frac:frac(byId.history)},
-    {id:'physical',label:'Examination',frac:frac(byId.physical)},
     {id:'recommended',label:'Recommended actions',frac:recFrac},
     {id:'handoff',label:'Handoff',frac:frac(byId.handoff)},
   ].filter(p=>p.frac!==null);

@@ -200,7 +200,7 @@ shared = {
     "authorNotes": True,
     # Drugs acting, drawn above the patient's head (author instruction, 14 October 2026):
     # the cases it is switched on for. AFRVR first; the rest once it is approved.
-    "medOverlayCases": ["AFRVR"],
+    "medOverlayCases": "all",   # every case, 28 October 2026, author instruction (was AFRVR, TSS). A list of prefixes limits it
     # Author instruction, 13 October 2026. The buttons of these groups come in this order,
     # by catalog id, instead of alphabetically. Anything not named follows, alphabetically.
     "buttonOrder": {"Examination": ["exam_neck", "exam_heent", "exam_card", "exam_pulm",
@@ -983,6 +983,10 @@ def main():
               # from chooseCase, so it too comes before ui.js.
               "\n/*__ACCESS_START__*/\n" + open(os.path.join(HERE, "access.js"), encoding="utf-8").read() +
               "\n/*__ACCESS_END__*/\n" +
+              # progress.js (28 October 2026) declares `const PROGRESS`, saved runs in the site
+              # build. access.js hands it the Supabase client; ui.js calls it. Inert in the
+              # local build, where ACCESS.mode is "local".
+              "\n" + open(os.path.join(HERE, "progress.js"), encoding="utf-8").read() + "\n" +
               "\n" + open(os.path.join(HERE, "ui.js"), encoding="utf-8").read() + "\n" +
               # pupils.js (19 October 2026) declares `const PUPILVIEW` and reads ST, PT and
               # pupilState at run time, so it comes after ui.js and engine.js.
@@ -1065,9 +1069,17 @@ def main():
         for f in stale:
             print("  warning: private-packs/" + f + " is not from this build; do not upload it")
         site_cases = []
+        # Saved progress (28 October 2026). A saved run is its action log, and fold() reads the
+        # pack, the engine and the shared catalog. versionKey hashes all three, so a run saved
+        # under one build is never resumed under a build that would replay it differently:
+        # the site says the case has been improved and the run is deleted (owner decision).
+        engine_src = open(os.path.join(HERE, "engine.js"), encoding="utf-8").read()
+        shared_src = jsafe(shared)
+        def version_key(pack_text):
+            return hashlib.sha256((engine_src + "\n" + shared_src + "\n" + pack_text).encode("utf-8")).hexdigest()[:32]
         for p in packs:
             if p["prefix"] in free:
-                site_cases.append(p)
+                site_cases.append(dict(p, versionKey=version_key(jsafe(p))))
                 continue
             body = jsafe(p).encode("utf-8")
             open(os.path.join(PACKS_DIR, p["prefix"] + ".json"), "wb").write(body)
@@ -1081,6 +1093,7 @@ def main():
                 "buildNoteCount": len(p["buildNotes"]),
                 "packSha256": hashlib.sha256(body).hexdigest(),
                 "packBytes": len(body),
+                "versionKey": version_key(body.decode("utf-8")),
             })
         check_public_key(cfg.get("supabaseKey", ""), cfg.get("supabaseUrl", ""))
         access = {"mode": "site", "product": product, "legal": legal,

@@ -55,6 +55,7 @@ Claude. The files in git are the record of what is live.
 | Piece | Where it lives | Who changes it |
 |---|---|---|
 | Tables, rate limit, bucket | `supabase/migrations/001_access.sql`, applied 29 Sep 2026 | Claude, via the connector |
+| Saved progress (`public.runs`) | `supabase/migrations/002_runs.sql`, applied 28 Oct 2026 | Claude, via the connector |
 | Edge function `case-pack` (Verify JWT on) | `supabase/functions/case-pack/index.ts` | Claude, via the connector |
 | Allowed site address | `DEFAULT_ORIGINS` in the function. The secret `ALLOWED_ORIGINS` overrides it if set | Code change |
 | Rate limits | 20 per hour, 100 per day. Secrets `CASE_LOADS_PER_HOUR` and `CASE_LOADS_PER_DAY` override them | Dashboard, Edge Functions, Secrets |
@@ -134,12 +135,46 @@ email or name. Events never carry case text, typed questions, orders, diagnoses 
 | `case_opened`, `case_started` | `case`, `mode` |
 | `case_finished` | `case`, `mode`, `outcome` (all, missed, failed), `ended_by`, `sim_seconds`, `critical_done`, `critical_total`, `actions`, `interview_questions`, `exams`, `voice_orders`, `search_opens` |
 | `debrief_revealed` | `case` |
+| `run_saved` | `case`. The first save of a new run |
+| `run_resumed` | `case`, `sim_seconds` |
+| `run_discarded` | `case`, `reason`: start_over, version, deleted |
+| `attempt_deleted` | `case` |
+| `run_save_failed` | `case`, `at`: finish |
 | `js_error` | `message` (200 characters), `case`. At most five per page load |
 
 PostHog drops events from browsers that identify as automated, so test runs of the site
 check do not appear in PostHog.
 
 Recommended PostHog project settings: Settings, Project, turn on "Discard client IP data".
+
+## Saved progress (28 October 2026)
+
+A signed-in learner's runs are kept in `public.runs` (`supabase/migrations/002_runs.sql`).
+The browser code is `engine/progress.js`. The local build has none of it.
+
+- **In progress.** The run's action log, case clock, mode, open tab, the handoff being
+  drafted and the six-minute pause notes, saved within 5 seconds of an action, every 15
+  seconds of case time, on pause, when the leave dialog opens, and on page close (a
+  keepalive request of at most 60 KB). One run in progress per learner per case.
+- **Resume.** From the home panel or the case's splash. The run opens paused at the saved
+  case time, with no nurse card. Start over deletes the saved run.
+- **Finished.** The row keeps the outcome, how it ended, the overall score (null when the
+  debrief does not score the run), the critical actions done, and the Summary rows (label,
+  percentage, one line of counts). The database empties the saved log at that moment, so the
+  typed questions and notes of a run are not kept after the debrief.
+- **Case changed.** Each case in the site carries `versionKey`, a build-time hash of its
+  pack, `engine/engine.js` and the shared catalog: everything that replaying a log reads. A
+  run saved under a different key is not resumed. The splash says "This case has been
+  improved" and the run is deleted (owner decision). Any change to the engine or the catalog
+  therefore ends every run in progress when it is deployed.
+- **Delete.** Learners can delete any run or attempt from the home panel. Deleting an account
+  deletes its runs.
+- **Who sees it.** Each learner sees only their own rows (row-level security, and column
+  grants so the browser cannot set the owner, the case of an existing run or any timestamp).
+  Programs never see progress. The scores are computed in the learner's browser, so they are
+  a record for the learner, not evidence for anyone else.
+- **Limits.** 256 KB of saved state per run, 50 runs in progress and 2000 rows per learner.
+- **Free or paid.** Not decided. `profiles.plan` is not read.
 
 ## Adding a user
 
@@ -159,6 +194,9 @@ before relying on email.
 3. Browser console: no "Content Security Policy" messages.
 4. Claude can confirm through the connector: a new `ok` row in `case_access`, and the
    function logs.
+5. Leave the case through Main menu: the dialog says the progress is saved. The case list's
+   left side shows it under Continue. Resume it, then finish it: it moves to Your attempts
+   with its score. Claude can confirm a `finished` row in `public.runs` with `state` empty.
 
 To test locally against the real project: set the secret `ALLOWED_ORIGINS` to
 `https://em-case-simulator-v1.vercel.app,http://localhost:8000`, then
@@ -208,7 +246,7 @@ profile row is refused without a log row.
 
 ## Not built yet
 
-Watermarking (planned, not a priority), run history and progress, password reset by email,
+Watermarking (planned, not a priority), password reset by email,
 CAPTCHA, Paddle, PostHog and Sentry. PostHog and Sentry will each need their hosts added to
 `CSP_BASE` in `engine/build_simulator.py`. Cloudflare R2 is not needed for this: Supabase
 Storage holds the packs. R2 may earn a place later for large video on the marketing page,

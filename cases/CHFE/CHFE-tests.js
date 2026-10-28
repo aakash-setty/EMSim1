@@ -110,13 +110,21 @@ section('the two treatments are not the same treatment');
   chk('a nitrate added to the mask reaches the mild phase',
       at([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion']],30).phase==='stabilizing');
 
-  /* The sublingual route is a bridge and the case accepts it as one: it sets the shared
-     flag and moves the patient, and it is not what is scored. */
-  chk('sublingual nitrate moves the patient too',
-      at([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_sublingual']],30).phase==='stabilizing');
-  chk('both routes set the shared flag',
-      at([IV,[6,'nitroglycerin_sublingual']],10).flags.has('nitrate_given')&&
+  /* Owner instruction, 28 October 2026: only an infusion or drip moves the phase. The
+     sublingual and intravenous boluses lift the saturation by two for one minute, then the
+     nurse says it has worn off. The minute is sped up and the line says so. */
+  for(const b of ['nitroglycerin_sublingual','nitroglycerin']){
+    chk(b+' does not move the patient',
+        at([IV,MON,[6,'niv_bipap_cpap'],[20,b]],30).phase==='niv_supported');
+    chk(b+' does not set the shared flag',
+        !at([IV,[6,b]],10).flags.has('nitrate_given'));
+  }
+  chk('the infusion sets the shared flag',
       at([IV,[6,'nitroglycerin_infusion']],10).flags.has('nitrate_given'));
+  chk('the drip sets the shared flag',
+      at([IV,[6,'nitroprusside_drip']],10).flags.has('nitrate_given'));
+  chk('a bolus does not hold off the four-minute tiring',
+      at([IV,MON,[6,'nitroglycerin_sublingual']],250).phase==='impending_respiratory_failure');
   chk('only the infusion is the scored critical action',
       PROTO.actions.nitroglycerin_infusion.tag.some(r=>r.value==='critical')&&
       !PROTO.actions.nitroglycerin_sublingual.tag.some(r=>r.value==='critical'));
@@ -150,11 +158,25 @@ section('the saturation ladder');
       spo2([IV,MON,[6,'niv_bipap_cpap']],200)===89);
   chk('the nitrate moves the baseline instead, with no mask on',
       base('nitrate_responding')===88&&spo2([IV,MON,[6,'nitroglycerin_infusion']],20)===88);
-  chk('both together read 94',
-      spo2([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion']],30)===94);
-  chk('the nitrate carries no vital effect of its own any more',
-      !(PROTO.actions.nitroglycerin_infusion.vital_effects||[]).length&&
-      !(PROTO.actions.nitroglycerin_sublingual.vital_effects||[]).length);
+  chk('both together read 97',
+      spo2([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion']],30)===97);
+  chk('the improving phase reads 97 too',
+      spo2([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion'],[30,'furosemide_iv']],40)===97);
+  chk('the infusion carries no vital effect of its own',
+      !(PROTO.actions.nitroglycerin_infusion.vital_effects||[]).length);
+
+  /* The bolus: two points for sixty seconds, then the nurse's line. */
+  const sl=[IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_sublingual']];
+  chk('a sublingual dose reads two higher while it acts',spo2(sl,50)===91,String(spo2(sl,50)));
+  chk('and drops back after a minute',spo2(sl,85)===89,String(spo2(sl,85)));
+  chk('the intravenous bolus does the same',
+      spo2([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin']],50)===91&&
+      spo2([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin']],85)===89);
+  chk('a second dose does not stack',
+      spo2([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_sublingual'],[40,'nitroglycerin_sublingual']],60)===91);
+  const worn=fold(mk(sl),85).nurse.filter(e=>/worn off/.test(e.text||''));
+  chk('the nurse says it wore off, once',worn.length===1,String(worn.length));
+  chk('and tells the student the timing is sped up',worn.length&&/sped up/.test(worn[0].text));
 
   /* Unchanged from the previous design and still the second learning objective. */
   const both=[IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion']];

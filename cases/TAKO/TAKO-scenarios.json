@@ -1,7 +1,7 @@
 {
  "scenarios_version": "0.1",
  "case_id": "takotsubo-lvoto-01",
- "note": "End-to-end paths. Steps cost eight seconds each on the runner's clock.",
+ "note": "End-to-end paths. Steps cost eight seconds each on the runner's clock. 28 October 2026: an ultrasound now takes 10 s, so each scenario that calls cardiology straight after the echo waits 11 s for it first.",
  "scenarios": [
   {
    "name": "Intended path: infarct pathway, examine and echo, the pressure falls, fluid and phenylephrine, handoff",
@@ -13,6 +13,9 @@
     "consult_activate_cath_lab",
     "exam_card",
     "ultrasound_cardiac",
+    {
+     "wait": 11
+    },
     "consult_cardiology",
     {
      "wait": 140
@@ -277,6 +280,9 @@
      "wait": 150
     },
     "ultrasound_cardiac",
+    {
+     "wait": 11
+    },
     "consult_cardiology",
     {
      "wait": 95
@@ -297,6 +303,9 @@
      "wait": 150
     },
     "ultrasound_cardiac",
+    {
+     "wait": 11
+    },
     "consult_cardiology",
     {
      "wait": 60
@@ -321,6 +330,9 @@
      "wait": 12
     },
     "ultrasound_cardiac",
+    {
+     "wait": 11
+    },
     "consult_cardiology",
     {
      "wait": 95
@@ -338,6 +350,9 @@
     "aspirin",
     "consult_activate_cath_lab",
     "ultrasound_cardiac",
+    {
+     "wait": 11
+    },
     "consult_cardiology",
     {
      "wait": 120
@@ -573,6 +588,9 @@
      "wait": 12
     },
     "ultrasound_cardiac",
+    {
+     "wait": 11
+    },
     "consult_cardiology",
     {
      "wait": 95

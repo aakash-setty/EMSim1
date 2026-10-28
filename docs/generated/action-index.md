@@ -215,14 +215,14 @@ stop action for an infusion, and whether a default result exists (D).
 | `mri_lumbar_spine` | MRI - Lumbar Spine | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `mri_mra_head_and_neck` | MRI/MRA - Head and Neck | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
 | `mri_thoracic_spine` | MRI - Thoracic Spine | investigations / Imaging | investigation | imaging |  | 0 |  |  | D |
-| `ultrasound_aorta` | Ultrasound - Aorta | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_cardiac` | Ultrasound - Cardiac | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_fast` | Ultrasound - FAST | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_lower_extremity_venous` | Ultrasound - Lower Extremity Venous | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_lung` | Ultrasound - Lung | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_renal` | Ultrasound - Renal | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_ruq` | Ultrasound - RUQ | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
-| `ultrasound_soft_tissue` | Ultrasound - Soft Tissue | investigations / Imaging | investigation | bedside |  | 0 |  |  | D |
+| `ultrasound_aorta` | Ultrasound - Aorta | investigations / Imaging | investigation | ultrasound |  | 0 |  |  | D |
+| `ultrasound_cardiac` | Ultrasound - Cardiac | investigations / Imaging | investigation | ultrasound |  | 0 |  |  | D |
+| `ultrasound_fast` | Ultrasound - FAST | investigations / Imaging | investigation | ultrasound |  | 0 |  |  | D |
+| `ultrasound_lower_extremity_venous` | Ultrasound - Lower Extremity Venous | investigations / Imaging | investigation | ultrasound |  | 0 |  |  | D |
+| `ultrasound_lung` | Ultrasound - Lung | investigations / Imaging | investigation | ultrasound |  | 0 |  |  | D |
+| `ultrasound_renal` | Ultrasound - Renal | investigations / Imaging | investigation | ultrasound |  | 0 |  |  | D |
+| `ultrasound_ruq` | Ultrasound - RUQ | investigations / Imaging | investigation | ultrasound |  | 0 |  |  | D |
+| `ultrasound_soft_tissue` | Ultrasound - Soft Tissue | investigations / Imaging | investigation | ultrasound |  | 0 |  |  | D |
 | `xr_chest` | XR - Chest | investigations / Imaging | investigation | radiograph |  | 0 |  |  | D |
 | `xr_pelvis` | XR - Pelvis | investigations / Imaging | investigation | radiograph |  | 0 |  |  | D |
 | `acetaminophen_level` | Acetaminophen Level | investigations / Lab Work | investigation | lab |  | 0 |  |  | D |

@@ -271,7 +271,7 @@
     "systolic_bp": 144,
     "diastolic_bp": 84,
     "respiratory_rate": 22,
-    "oxygen_saturation": 90,
+    "oxygen_saturation": 93,
     "temperature_c": 36.8
    },
    "appearance": {
@@ -311,7 +311,7 @@
     "systolic_bp": 132,
     "diastolic_bp": 80,
     "respiratory_rate": 18,
-    "oxygen_saturation": 90,
+    "oxygen_saturation": 93,
     "temperature_c": 36.8
    },
    "appearance": {
@@ -648,11 +648,26 @@
     }
    ],
    "flags_set": [
-    "nitro_sl_given",
-    "nitrate_given"
+    "nitro_sl_given"
    ],
    "halt_reason": "You gave sublingual nitroglycerin to a patient who was already hypotensive after intubation; further vasodilation dropped his coronary perfusion pressure and he arrested.",
-   "debrief_note": "A reasonable bridge while an infusion is being mixed, and repeated sublingual dosing is a legitimate strategy when a pump is not immediately available. It is not a substitute for a titratable infusion in a patient who is going to need sustained afterload reduction, because the effect is short-lived and cannot be dialed back if the pressure falls too far. Credit here is partial: the right idea, an incomplete execution."
+   "debrief_note": "A reasonable bridge while an infusion is being mixed, and repeated sublingual dosing is a legitimate strategy when a pump is not immediately available. It is not a substitute for a titratable infusion in a patient who is going to need sustained afterload reduction, because the effect is short-lived and cannot be dialed back if the pressure falls too far. In this case it lifts his saturation by two for a minute and changes nothing else. Only the infusion moves him. Credit here is partial: the right idea, an incomplete execution.",
+   "flags_set_timed": [
+    {
+     "flag": "nitrate_bolus_acting",
+     "duration_seconds": 60,
+     "lapse_note": "The nitro has worn off and his saturation has drifted back down. (Note for the student: this effect is sped up in this case.)"
+    }
+   ],
+   "vital_effects": [
+    {
+     "vital": "oxygen_saturation",
+     "delta": 2,
+     "key": "nitrate_bolus_spo2",
+     "while": "flag nitrate_bolus_acting set",
+     "note": "Teaching choice, owner instruction 28 October 2026: a nitrate bolus lifts the saturation by two for one minute, sped up, and moves no phase. Only an infusion or drip sets nitrate_given. A repeat dose refreshes the minute and does not stack."
+    }
+   ]
   },
   {
    "catalog_id": "nitroprusside_drip",
@@ -695,11 +710,25 @@
      "value": "recommended"
     }
    ],
-   "flags_set": [
-    "nitrate_given"
-   ],
+   "flags_set": [],
    "halt_reason": "You gave a vasodilator to a patient who was already hypotensive after intubation; further vasodilation dropped his coronary perfusion pressure and he arrested.",
-   "debrief_note": "A high-dose intravenous nitroglycerin bolus is an established emergency strategy for this presentation and lowers the pressure driving the edema within minutes; follow it with an infusion. After intubation, with the pressure already falling, it is the wrong drug."
+   "debrief_note": "A high-dose intravenous nitroglycerin bolus is an established emergency strategy for this presentation and lowers the pressure driving the edema within minutes. Follow it with an infusion. In this case the bolus lifts his saturation by two for a minute and only the infusion moves him. After intubation, with the pressure already falling, it is the wrong drug.",
+   "flags_set_timed": [
+    {
+     "flag": "nitrate_bolus_acting",
+     "duration_seconds": 60,
+     "lapse_note": "The nitro has worn off and his saturation has drifted back down. (Note for the student: this effect is sped up in this case.)"
+    }
+   ],
+   "vital_effects": [
+    {
+     "vital": "oxygen_saturation",
+     "delta": 2,
+     "key": "nitrate_bolus_spo2",
+     "while": "flag nitrate_bolus_acting set",
+     "note": "Teaching choice, owner instruction 28 October 2026: a nitrate bolus lifts the saturation by two for one minute, sped up, and moves no phase. Only an infusion or drip sets nitrate_given. A repeat dose refreshes the minute and does not stack."
+    }
+   ]
   },
   {
    "catalog_id": "nitroglycerin_stop",
@@ -5918,6 +5947,37 @@
       "value": "'Before this I could get round the shops and do the stairs.'"
      }
     ]
+   },
+   {
+    "topic": "home_oxygen",
+    "canonical": "Do you use oxygen at home?",
+    "variants": [
+     "Do you use oxygen at home?",
+     "Are you on home oxygen?",
+     "Home O2?",
+     "Any home oxygen?",
+     "Do you have oxygen at home?",
+     "Do you need oxygen at home?",
+     "Have you ever been on oxygen?",
+     "Do you use a concentrator?",
+     "Are you on oxygen normally?",
+     "Do you wear oxygen at night?",
+     "How many liters of oxygen do you use at home?",
+     "Any supplemental oxygen at home?"
+    ],
+    "answer": [
+     {
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'No. Never... needed it.'"
+     },
+     {
+      "when": null,
+      "value": "'No, I've never been on oxygen. Nobody's ever said I needed it.'"
+     }
+    ],
+    "echo": "oxygen at home",
+    "pertinent_negative": true,
+    "authoring_note": "Added 28 October 2026 on the owner's instruction (note 9). He has no lung disease in the case, so the answer is a plain denial in every phase. Variants written by a model, not expanded from the shared library."
    },
    {
     "topic": "pde5_inhibitor_use",

@@ -7,6 +7,9 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  p.on('pageerror',e=>errs.push('pageerror: '+e.message));
  p.on('console',m=>{ const t=m.text(); if(/Content Security Policy|Refused to/.test(t)) csp.push(t.slice(0,200)); else if(m.type()==='error' && !/ERR_TUNNEL|status of (400|401|403|429)/.test(t)) errs.push('console: '+t.slice(0,200)); });
  const ok=(n,c,x)=>console.log((c?'ok   ':'FAIL ')+n+(c||x===undefined?'':'  -> '+JSON.stringify(x)));
+ // Since 11 October 2026 a downloaded case waits behind the charging defibrillator (CHARGE in
+ // ui.js) until the learner presses its button. This presses it once it is armed.
+ const shock=async()=>{ for(let k=0;k<20;k++){ if(await p.evaluate(()=>{ const d=document.getElementById('chargedeliver'); return !!d&&!d.disabled&&!document.getElementById('chargeview').classList.contains('hidden'); })){ await p.click('#chargedeliver'); await p.waitForTimeout(500); return; } await p.waitForTimeout(150); } };
  const FN_BEFORE=(await ctl({})).calls.fn; await p.goto('http://localhost:8080/'); await p.waitForTimeout(1500);
  const s0=await p.evaluate(()=>({rows:document.querySelectorAll('.wl-case').length, locks:document.querySelectorAll('.wl-case .wl-lock').length,
    acct:document.getElementById('wl-acct').innerText, legal:document.getElementById('pk-legal').innerText, h1:document.querySelector('.wl-text h1').innerText,
@@ -52,9 +55,11 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  console.log(JSON.stringify(s1));
  ok('after sign-in the pending case loads and its splash opens', !s1.dlg&&s1.splash&&s1.prefix==='CHFE'&&s1.locked===N-1);
  ok('signed in: the welcome page is gone', await p.evaluate(()=>!LANDING.visible()));
+ await shock();
  let c=await ctl({}); const fn1=c.calls.fn;
  ok('one function call for one case', fn1===FN_BEFORE+1, c.calls);
- await p.evaluate(()=>begin()); await p.waitForTimeout(2500);
+ // The nurse's opening card holds the clock for about 4.4 s (13 October 2026).
+ await p.evaluate(()=>begin()); await p.waitForTimeout(6000);
  ok('the case runs', await p.evaluate(()=>STARTED&&ST&&ST.now>0.5));
  await p.screenshot({path:'/tmp/e2e/running.png'});
  // leave to the list and reopen: no second download
@@ -95,6 +100,7 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  ok('reload: session kept, packs dropped', /res@example/.test(s3.acct)&&s3.locked===N, s3);
  await p.evaluate(i=>chooseCase(i),di); await p.waitForTimeout(3000);
  ok('a large pack with images (DIPH) loads and opens', await p.evaluate(()=>PACK&&PACK.prefix==='DIPH'&&Object.keys(PACK.media||{}).length>0&&!document.getElementById('splash').classList.contains('hidden')));
+ await shock();
  await p.evaluate(()=>backToPicker()); await p.waitForTimeout(300);
  await p.click('#acct-out'); await p.waitForTimeout(2000);
  const s4=await p.evaluate(()=>({acct:document.getElementById('wl-acct').innerText, locked:CASES.filter(c=>c.locked).length, ls:Object.keys(localStorage).filter(k=>/sb-|supabase/.test(k)).map(k=>k+':'+String(localStorage.getItem(k)).length)}));
