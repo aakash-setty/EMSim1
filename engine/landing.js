@@ -19,7 +19,9 @@ const LANDING=(function(){
   /* ---- the demo patient ----
      Two steps. First the visitor picks one of three airway and breathing moves. Three
      seconds later those buttons give way to a harder choice: get an ECG, or push
-     metoprolol. The ECG finds the anterior STEMI and invites them to continue the case.
+     metoprolol. The ECG prints a twelve-lead over half the screen and asks where the STEMI
+     is (owner instruction, 28 October 2026: anterior, inferior or high-lateral, and the
+     answer is high-lateral). The right answer invites them to continue the case.
      Metoprolol, a beta-blocker given to a man in acute heart failure, tips him into
      cardiogenic shock: IV beta-blockers are to be avoided in STEMI with signs of heart
      failure or a risk of shock (2013 ACCF/AHA STEMI guideline, class III: harm; the COMMIT
@@ -36,13 +38,14 @@ const LANDING=(function(){
     nrb:'"Still... can\'t..."',
     bipap:'(nods, breathing with the mask)',
     tired:'(his eyes are closing)',
-    ecg:'12-lead: ST elevation V1 to V4. Anterior STEMI.',
+    ecg:'12-lead printing. Where is the STEMI?',
+    read:'12-lead: ST elevation in I and aVL. High-lateral STEMI.',
     meto:'"I feel... faint..."',
     shock:'(grey, clammy, barely rousable)'
   };
   function buttons(list, ask){
     const box=$('ld-actions'); if(!box) return;
-    box.classList.toggle('two', list.length===2);
+    box.classList.toggle('two', list.length===2); box.classList.toggle('one', list.length===1);
     box.innerHTML=(ask?`<div class="ld-ask">${ask}</div>`:'')+list.map(([k,label])=>
       `<button type="button" data-ldact="${k}">${label}</button>`).join('');
   }
@@ -50,10 +53,10 @@ const LANDING=(function(){
     V=Object.assign({},START); done=new Set(); over=false; step=1; crashAt=0;
     clearTimeout(stepTimer); t0=performance.now(); lastTick=t0; tLast=null;
     const o=$('ld-over'); if(o) o.hidden=true;
-    buttons(STEP1,'');
+    buttons(STEP1,''); ecgReset();
     say(LINES.start); paintVitals(); paintFigure();
   }
-  function say(t){ if(t===lastSay) return; lastSay=t; const e=$('ld-say'); if(e){ e.textContent=t; e.classList.toggle('result', t===LINES.ecg); } }
+  function say(t){ if(t===lastSay) return; lastSay=t; const e=$('ld-say'); if(e){ e.textContent=t; e.classList.toggle('result', t===LINES.ecg||t===LINES.read); } }
   function clamp(x,a,b){ return Math.max(a,Math.min(b,x)); }
   function paintVitals(){
     const set=(id,v,bad)=>{ const e=$(id); if(!e) return; e.textContent=v; e.parentElement.classList.toggle('bad',!!bad); };
@@ -121,8 +124,8 @@ const LANDING=(function(){
     const o=$('ld-over'); if(!o) return;
     const T={
       crash:["He's crashing.", 'A beta-blocker in acute heart failure dropped his pressure into cardiogenic shock. In the full case you would have to get him back, and find what the monitor was trying to tell you.', 'Help the Patient: Sign Up Free!'],
-      ecg:['Good call. Anterior STEMI.', 'ST elevation across V1 to V4. The clock on his heart muscle is running: the cath lab, the drugs and the handoff are all still to come. Continue the case.', 'Continue the Case: Sign Up Free!'],
-      tiring:["He's tiring.", 'Look at the monitor: that ST elevation is a STEMI until proven otherwise, and he is running out of breath. Every minute counts. Take over the whole case.', 'Help the Patient: Sign Up Free!']
+      ecg:['Good call. High-lateral STEMI.', 'ST elevation in I and aVL, mirrored by depression in III and aVF. The clock on his heart muscle is running: the cath lab, the drugs and the handoff are all still to come. Continue the case.', 'Continue the Case: Sign Up Free!'],
+      tiring:["He's tiring.", 'Look at the monitor: that ST elevation in lead I is a STEMI until proven otherwise, and he is running out of breath. Every minute counts. Take over the whole case.', 'Help the Patient: Sign Up Free!']
     }[kind];
     $('ld-overtitle').textContent=T[0]; $('ld-overtext').textContent=T[1];
     const cta=$('ld-overcta'); if(cta) cta.textContent=T[2];
@@ -141,7 +144,7 @@ const LANDING=(function(){
       step=2;
       stepTimer=setTimeout(()=>{ if(!over&&shown) buttons(STEP2,'What next?'); }, 3000);
     }else if(what==='ecg'){
-      stepTimer=setTimeout(()=>{ if(!over) finish('ecg'); }, 2200);
+      stepTimer=setTimeout(()=>{ if(!over&&shown) openEcg(); }, 700);
     }else if(what==='meto'){
       crashAt=performance.now()+6000;
     }
@@ -150,19 +153,21 @@ const LANDING=(function(){
   /* ---- the monitor traces ----
      The ECG is the simulator's own synthesiser (MONITOR.synth in monitor.js), not a
      drawing: real PR, QRS and QTc, and the QT shortens with rate the way a heart's does.
-     The morphology is the ECG generator's straight upsloping ST elevation (ECG_Generator,
-     src/core/st-morphology.ts) at a J-point level of 0.5 mV on lead V3's baseline complex
-     (src/core/leads.ts). 0.5 mV is the generator's own anterior STEMI preset, and V3 is
-     where the anterior territory weights it fully. The figures are the generator's exactly:
-     ST at T onset = level + 0.6 x level (0.8 mV), a linear segment (exponent 1), and
-     T = 1.1 x V3's T + 0.3 x level (0.81 mV); R and S are V3's own. All of it is the
-     generator's stylisation, not a fit to data. The trace is sampled every 0.75 px, so no
-     complex is lost between frames. */
-  const LEVEL=0.5, V3={p:0.05, q:0, r:0.8, s:-1.2, t:0.6};
+     The monitor shows lead I, so it agrees with the twelve-lead the demo prints (a
+     high-lateral STEMI since 28 October 2026). The morphology is the ECG generator's
+     straight upsloping ST elevation (ECG_Generator, src/core/st-morphology.ts) on lead I's
+     baseline complex (src/core/leads.ts: P 0.08, Q -0.03, R 0.6, S -0.1, T 0.25 mV), at a
+     J-point level of 0.45 mV, which is what lead I of the printed twelve-lead shows
+     (measured from its trace: about 0.45 to 0.6 mV above the baseline). The generator's
+     figures: ST at T onset = level + 0.6 x level (0.72 mV), a linear segment (exponent 1),
+     and T = 1.1 x lead I's T + 0.3 x level (0.41 mV). All of it is the generator's
+     stylisation, not a fit to data. The trace is sampled every 0.75 px, so no complex is
+     lost between frames. */
+  const LEVEL=0.45, LEAD_I={p:0.08, q:-0.03, r:0.6, s:-0.1, t:0.25};
   const UP={slope:0.6, shape:1.0, tScale:1.1, tAdd:0.3};
   const SPEC={pattern:'organised', pWaves:true, prS:0.16, qrsS:0.09, qtcS:0.44,
-    stMv:LEVEL, stT:LEVEL+UP.slope*LEVEL, stShape:UP.shape, tMv:UP.tScale*V3.t+UP.tAdd*LEVEL,
-    amp:Object.assign({},V3)};
+    stMv:LEVEL, stT:LEVEL+UP.slope*LEVEL, stShape:UP.shape, tMv:UP.tScale*LEAD_I.t+UP.tAdd*LEVEL,
+    amp:Object.assign({},LEAD_I)};
   const SWEEP=4;                       // seconds across the canvas
   let beats=[], nextQ=0, tLast=null, cache={};
   function complexFor(rr){
@@ -190,7 +195,7 @@ const LANDING=(function(){
     const t=(now-t0)/1000;
     if(tLast===null||t<tLast){ tLast=t; beats=[]; nextQ=t+0.3; }
     schedule(t);
-    [['ld-ecg','#3EE08F',ecgAt,0.47,0.34],['ld-pleth','#5FC8FF',plethAt,0.88,0.72]].forEach(([id,col,fn,base,gain])=>{
+    [['ld-ecg','#3EE08F',ecgAt,0.64,0.36],['ld-pleth','#5FC8FF',plethAt,0.88,0.72]].forEach(([id,col,fn,base,gain])=>{
       const c=$(id); if(!c) return;
       const dpr=window.devicePixelRatio||1, w=c.clientWidth, h=c.clientHeight; if(!w||!h) return;
       if(c.width!==Math.round(w*dpr)||c.height!==Math.round(h*dpr)){ c.width=Math.round(w*dpr); c.height=Math.round(h*dpr); c._y=null; }
@@ -215,6 +220,68 @@ const LANDING=(function(){
     tLast=t;
   }
 
+  /* ---- the 12-lead (owner instruction, 28 October 2026) ----
+     Ordering the ECG prints a twelve-lead up from the bottom of the screen: the sheet rises
+     over about half the page, the paper feeds out left to right behind a print head, and it
+     asks where the STEMI is: anterior, inferior or high-lateral. The tracing is the ECG
+     generator's (ECG_Generator), edited by the owner: ST elevation in I and aVL with
+     reciprocal depression in III and aVF, the generator's high-lateral territory. The answer,
+     high-lateral, is the owner's. A wrong answer says why and lights I and aVL. The right
+     one also lights III and aVF, then the demo ends on its "Good call" card. The cross,
+     Escape or a click outside closes the sheet, and the demo then offers to open it again.
+     Only right or wrong, and the number of tries, reach analytics, never the answer. */
+  const ECG_RIGHT='highlat';
+  const ECG_WHY={
+    anterior:'Not anterior. V1 to V4 show no ST elevation. Look at I and aVL.',
+    inferior:'Not inferior. II, III and aVF are not raised: III and aVF are pushed down, the mirror image of an elevation elsewhere. Look at I and aVL.',
+    highlat:'Yes. High-lateral: ST elevation in I and aVL, mirrored by ST depression in III and aVF.'
+  };
+  let ecgOpen=false, ecgSolved=false, ecgTries=0, ecgTimer=0;
+  function ecgReset(){
+    clearTimeout(ecgTimer); ecgOpen=false; ecgSolved=false; ecgTries=0;
+    const w=$('ld-ecgwrap'), root=$('landing'); if(root) root.classList.remove('ecg-open');
+    if(!w) return;
+    w.hidden=true; w.classList.remove('on','hint','solved');
+    w.querySelectorAll('[data-ldecg]').forEach(b=>{ b.disabled=false; b.classList.remove('right','wrong'); });
+    const fb=$('ld-ecgfb'); if(fb){ fb.textContent=''; fb.className='ld-ecgfb'; }
+  }
+  function openEcg(){
+    const w=$('ld-ecgwrap'); if(!w||ecgOpen) return;
+    clearTimeout(ecgTimer); ecgOpen=true;
+    w.hidden=false; void w.offsetWidth; w.classList.add('on');
+    const root=$('landing'); if(root) root.classList.add('ecg-open');
+    const h=$('ld-ecgtitle'); if(h) h.focus({preventScroll:true});
+  }
+  function closeEcg(then){
+    const w=$('ld-ecgwrap'); if(!w||!ecgOpen) return;
+    ecgOpen=false; w.classList.remove('on'); clearTimeout(ecgTimer);
+    const root=$('landing'); if(root) root.classList.remove('ecg-open');
+    ecgTimer=setTimeout(()=>{
+      w.hidden=true;
+      if(then) then();
+      else if(ecgSolved&&!over) finish('ecg');
+      else if(!over){
+        buttons([['ecgopen','Open the ECG again']],'Where is the STEMI?');
+        const b=document.querySelector('#ld-actions [data-ldact="ecgopen"]'); if(b) b.focus({preventScroll:true});
+      }
+    }, reduce?0:380);
+  }
+  function answerEcg(k){
+    if(!ecgOpen||ecgSolved) return;
+    const w=$('ld-ecgwrap'), b=w&&w.querySelector('[data-ldecg="'+k+'"]'), fb=$('ld-ecgfb');
+    if(!b||b.disabled) return;
+    ecgTries++;
+    const right=k===ECG_RIGHT;
+    A.track('landing_demo_action',{action:'ecg_read', step:3, correct:right, tries:ecgTries});
+    if(fb){ fb.textContent=ECG_WHY[k]||''; fb.className='ld-ecgfb '+(right?'right':'wrong'); }
+    w.classList.add('hint');
+    if(!right){ b.classList.add('wrong'); b.disabled=true; return; }
+    ecgSolved=true; b.classList.add('right'); w.classList.add('solved');
+    w.querySelectorAll('[data-ldecg]').forEach(x=>x.disabled=true);
+    say(LINES.read);
+    ecgTimer=setTimeout(()=>closeEcg(()=>{ if(!over) finish('ecg'); }), 2600);
+  }
+
   /* ---- the page ---- */
   function fillCases(){
     const box=$('ld-caselist'); if(!box||typeof CASES!=='object') return;
@@ -232,7 +299,10 @@ const LANDING=(function(){
     const root=$('landing'); if(!root||root._bound) return; root._bound=true;
     root.addEventListener('click',e=>{
       e.stopPropagation();
-      const t=e.target.closest('[data-ld],[data-ldact],[data-ldcase],#ld-again,.ld-nav a,.ld-brand'); if(!t) return;
+      const t=e.target.closest('[data-ld],[data-ldact],[data-ldcase],[data-ldecg],[data-ldecgclose],#ld-again,.ld-nav a,.ld-brand'); if(!t) return;
+      if(t.dataset.ldecgclose){ closeEcg(); return; }
+      if(t.dataset.ldecg){ answerEcg(t.dataset.ldecg); return; }
+      if(t.dataset.ldact==='ecgopen'){ openEcg(); return; }
       if(t.matches('.ld-brand')){ e.preventDefault(); root.scrollTo({top:0,behavior:reduce?'auto':'smooth'}); return; }
       if(t.matches('.ld-nav a')){ e.preventDefault(); const s=$(t.getAttribute('href').slice(1)); if(s) s.scrollIntoView({behavior:reduce?'auto':'smooth'}); return; }
       if(t.id==='ld-again'){ reset(); return; }
@@ -240,6 +310,17 @@ const LANDING=(function(){
       if(t.dataset.ld){ A.track(t.dataset.ld==='signup'?'signup_clicked':'login_clicked',{from:t.closest('.ld-over')?'demo':(t.closest('.ld-top')?'header':'page')}); handlers[t.dataset.ld](-1); return; }
       if(t.dataset.ldcase!==undefined){ A.track('landing_case_clicked',{case:(CASES[+t.dataset.ldcase]||{}).prefix}); handlers.signup(+t.dataset.ldcase); }
     });
+    /* While the twelve-lead is open it keeps the keys: Escape closes it, and Tab goes round
+       its own buttons. */
+    document.addEventListener('keydown',e=>{
+      if(!ecgOpen) return;
+      if(e.key==='Escape'){ e.preventDefault(); e.stopImmediatePropagation(); closeEcg(); return; }
+      if(e.key==='Tab'){
+        const f=[...document.querySelectorAll('#ld-ecgwrap button:not(:disabled)')]; if(!f.length) return;
+        const i=f.indexOf(document.activeElement); e.preventDefault();
+        f[i<0?0:(i+(e.shiftKey?f.length-1:1))%f.length].focus();
+      }
+    },true);
   }
   /* ---- lights in the distance (v0.19h) ----
      Two rotating beacons, one red and one blue, far behind the screen. No source and no beam
@@ -394,7 +475,7 @@ const LANDING=(function(){
   }
   function hide(){
     const root=$('landing'); if(!root) return;
-    shown=false; cancelAnimationFrame(raf); root.classList.add('hidden');
+    shown=false; cancelAnimationFrame(raf); root.classList.add('hidden'); ecgReset();
   }
   return {bind, show, hide, visible:()=>shown};
 })();

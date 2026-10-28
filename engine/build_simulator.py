@@ -1020,6 +1020,17 @@ def main():
                          base64.b64encode(open(lp, "rb").read()).decode() + '">')
             break
     shell = shell.replace("__LOGO__", logo_html)
+    # The welcome demo's twelve-lead (owner instruction, 28 October 2026): an SVG from the ECG
+    # generator, its points thinned to 500 Hz and its pattern ids prefixed with ldecg- so they
+    # cannot clash with anything else on the page. Inlined like the other assets.
+    ecg_fp = os.path.join(HERE, "assets", "landing-ecg.svg")
+    if os.path.exists(ecg_fp):
+        ecg_svg = open(ecg_fp, encoding="utf-8").read()
+        ecg_svg = re.sub(r"<\?xml[^>]*\?>", "", ecg_svg).strip()
+    else:
+        print("  warning: engine/assets/landing-ecg.svg is missing; the demo's ECG sheet is empty")
+        ecg_svg = '<p style="padding:20px">The ECG could not be loaded.</p>'
+    shell = shell.replace("__LD_ECG__", ecg_svg)
     # The interface fonts (author's choice, 28 October 2026): Atkinson Hyperlegible Next and
     # Atkinson Hyperlegible Mono, from engine/assets/fonts/ (see its README for sources and
     # licenses). They are inlined like every other asset, so the page asks no one for a font,

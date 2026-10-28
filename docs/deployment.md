@@ -142,6 +142,11 @@ email or name. Events never carry case text, typed questions, orders, diagnoses 
 | `theme_changed` | `theme`: day, night |
 | `run_save_failed` | `case`, `at`: finish |
 | `js_error` | `message` (200 characters), `case`. At most five per page load |
+| `landing_viewed` | The signed-out welcome page, once per page load |
+| `landing_demo_action` | `action` (the demo's own buttons: sit, nrb, bipap, ecg, meto), `step`. Reading the demo's twelve-lead sends `action`: ecg_read, `step`: 3, `correct` (true or false) and `tries`, never the answer chosen |
+| `landing_demo_end` | `outcome` (ecg, crash, tiring), `actions`, `seconds` |
+| `landing_case_clicked` | `case` |
+| `signup_clicked`, `login_clicked` | `from`: demo, header, page |
 
 PostHog drops events from browsers that identify as automated, so test runs of the site
 check do not appear in PostHog.

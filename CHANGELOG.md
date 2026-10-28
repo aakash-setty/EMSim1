@@ -5,6 +5,16 @@ is usable with learners.
 
 ---
 
+## Welcome demo: read the twelve-lead (28 October 2026, owner's instruction)
+
+- On the signed-out welcome page, "Get an ECG" now prints a twelve-lead. A sheet rises from the bottom over about half the screen, the paper feeds out left to right behind a red print head, and the question fades in: where is the STEMI? Anterior, Inferior or High-lateral. The answer, High-lateral, is the owner's.
+- A wrong answer is struck through, says why ("Not anterior. V1 to V4 show no ST elevation. Look at I and aVL.") and lights I and aVL in red. The right answer also lights III and aVF in blue as the reciprocal change, then the sheet closes and the demo ends on "Good call. High-lateral STEMI." The cross, Escape or a click outside closes the sheet at any time, and the demo then offers "Open the ECG again". While it is open, Tab stays inside it and the page behind does not scroll. On a phone the sheet takes most of the screen, the tracing scrolls sideways, and the answers sit in a row.
+- The tracing is `engine/assets/landing-ecg.svg`: the owner's edit of an ECG generator tracing (ST elevation in I and aVL, reciprocal depression in III and aVF), thinned from 1000 to 500 points a second (368 KB to 173 KB, no visible change) with its pattern ids prefixed. The build inlines it.
+- The demo's monitor now shows lead I, with ST elevation of 0.45 mV on the generator's lead I complex, so it agrees with the twelve-lead. Before, it showed V3 with anterior elevation, and the demo's lines and end cards said "Anterior STEMI, V1 to V4". Those now say high-lateral.
+- Analytics: reading the twelve-lead sends `landing_demo_action` with `correct` and `tries` only, never the answer. The welcome page's events are now listed in `docs/deployment.md`.
+- Not physician reviewed: the demo's teaching lines are the owner's instruction, not a signed review.
+- Site check: new checks for the sheet, the three answers, a wrong answer, Escape, reopening, and the right answer.
+
 ## Dashboard: floating milestones, two Next up cards, colour-coded categories (28 October 2026, author's instructions)
 
 - Milestones are a badge that floats at the right of the screen: a gold medal with the count earned as a ring round it and as a number under it, and a red dot when the case just finished earned one. Hovering it, reaching it with the keyboard or tapping it drops down the nearest milestone with a progress bar and six medals (any just earned, the nearest, the others earned, then the rest by how close they are), each easing in a little after the last. "Show all 9 milestones" opens every milestone, with what each asks for, in a dialog. Escape, the cross or the backdrop closes it, Tab stays on its close button, and no key reaches the case list behind it. Focus then returns to the badge with the drop-down shut. The milestone shelf under Continue is gone.

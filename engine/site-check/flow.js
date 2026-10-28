@@ -24,6 +24,25 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
  ok('welcome page screenshots load', L0.imgs.length===3&&L0.imgs.every(w=>w>0), L0.imgs);
  await p.click('[data-ldact="sit"]'); await p.waitForTimeout(1300);
  ok('the demo takes an action', await p.evaluate(()=>document.querySelector('[data-ldact="sit"]').classList.contains('done')));
+ // The demo's twelve-lead (28 October 2026): Get an ECG prints it over about half the screen and
+ // asks where the STEMI is. A wrong answer says why, Escape closes it, it opens again, and
+ // High-lateral ends the demo on its Good call card.
+ await p.waitForTimeout(2400); await p.click('[data-ldact="ecg"]'); await p.waitForTimeout(3400);
+ const e0=await p.evaluate(()=>{ const w=document.getElementById('ld-ecgwrap'), s=w.querySelector('.ld-ecgsheet').getBoundingClientRect();
+   return {on:!w.hidden&&w.classList.contains('on'), traces:w.querySelectorAll('svg .trace').length, frac:+(s.height/innerHeight).toFixed(2),
+     opts:[...w.querySelectorAll('[data-ldecg]')].map(b=>b.textContent.trim()), monitor:document.querySelector('.ld-lead span').textContent}; });
+ ok('Get an ECG opens the 12-lead over about half the screen, three answers, lead I on the monitor',
+   e0.on&&e0.traces===13&&e0.frac>0.4&&e0.frac<0.75&&e0.opts.join()==='Anterior,Inferior,High-lateral'&&e0.monitor==='I', e0);
+ await p.click('[data-ldecg="anterior"]'); await p.waitForTimeout(300);
+ ok('a wrong answer says why and the sheet stays open', await p.evaluate(()=>{ const w=document.getElementById('ld-ecgwrap');
+   return w.classList.contains('on')&&/Not anterior/.test(document.getElementById('ld-ecgfb').textContent)&&w.querySelector('[data-ldecg="anterior"]').disabled; }));
+ await p.keyboard.press('Escape'); await p.waitForTimeout(700);
+ ok('Escape closes the sheet and the demo offers it again', await p.evaluate(()=>document.getElementById('ld-ecgwrap').hidden&&!!document.querySelector('#ld-actions [data-ldact="ecgopen"]')));
+ await p.click('[data-ldact="ecgopen"]'); await p.waitForTimeout(2900);
+ await p.click('[data-ldecg="highlat"]'); await p.waitForTimeout(3700);
+ const e1=await p.evaluate(()=>({closed:document.getElementById('ld-ecgwrap').hidden, over:!document.getElementById('ld-over').hidden,
+   title:document.getElementById('ld-overtitle').textContent, scroll:getComputedStyle(document.getElementById('landing')).overflowY}));
+ ok('High-lateral is right: the sheet closes, the page scrolls again, the demo ends on Good call', e1.closed&&e1.over&&/High-lateral/.test(e1.title)&&e1.scroll==='auto', e1);
  ok('no review tools (speed control) in the site', await p.evaluate(()=>typeof REVIEW_SPEED==='undefined'&&!document.getElementById('reviewspeed')));
  ok('legal line and product name', /2026 Aakash Setty/.test(s0.legal)&&/EMSim/.test(s0.h1)&&s0.title==='EMSim');
  // the page must sit on the list without errors (setInterval guard)
