@@ -100,8 +100,18 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
  const pct=await p.evaluate(()=>{ const o=overallScore(ST); return o.scored?o.pct:null; });
  ok('the stored score is the debrief\'s', f&&f.score_pct===pct, [f&&f.score_pct,pct]);
  await p.evaluate(()=>toPickerFromDebrief()); await wait(1200);
- const h2=await p.evaluate(()=>document.getElementById('wl-home').innerText);
- ok('Your attempts lists it; nothing in progress', /No case in progress/.test(h2)&&/Ended early|Critical|critical|failed/i.test(h2), h2.slice(0,400));
+ const h2=await p.evaluate(()=>({home:document.getElementById('wl-home').innerText, hist:document.getElementById('db-history').innerText,
+   stats:document.getElementById('db-stats').innerText, statsShown:!document.getElementById('db-stats').hidden, top:document.getElementById('db-scroll').scrollTop}));
+ ok('back on the dashboard, at the top, nothing in progress', /No case in progress/.test(h2.home)&&h2.top===0, h2);
+ ok('a note says what the case changed', /First score on Case \d+|Finished Case \d+/.test(h2.home)&&/Milestone earned: First case/.test(h2.home), h2.home.slice(0,300));
+ ok('the hero shows the learner\'s numbers', h2.statsShown&&/cases passed/i.test(h2.stats)&&/cases finished/i.test(h2.stats)&&/day streak/i.test(h2.stats), h2.stats);
+ ok('History lists the attempt', /Ended early|Critical|critical|failed/i.test(h2.hist), h2.hist.slice(0,300));
+ ok('milestones count what was earned', /1 of 9/.test(h2.home), h2.home.slice(-200));
+ await p.click('[data-fbclose]'); await wait(200);
+ ok('the note can be dismissed', await p.evaluate(()=>!document.querySelector('.db-fb')));
+ ok('the case card carries its tier', await p.evaluate(()=>{ const c=document.querySelector('.wl-case[data-case="'+CASES.findIndex(c=>c.prefix==='CHFE')+'"]'); return /t-(tried|passed|mastered)/.test(c.className)&&/Attempted|Passed|Mastered/.test(c.innerText); }));
+ await p.click('[data-dbtab="history"]'); await wait(200);
+ ok('the History tab opens and Cases closes', await p.evaluate(()=>!document.getElementById('db-history').hidden&&document.getElementById('db-cases').hidden&&document.querySelector('[data-dbtab="history"]').getAttribute('aria-selected')==='true'));
  ok('the case row shows the attempt', await p.evaluate(()=>/attempt/.test(document.querySelector('.wl-case[data-case="'+CASES.findIndex(c=>c.prefix==='CHFE')+'"]').innerText)));
  await p.click('[data-hmopen]'); await wait(200);
  ok('an attempt opens to its summary rows', await p.evaluate(()=>document.querySelectorAll('.hm-part').length>=5));
@@ -109,6 +119,7 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
  await p.click('.hm-rx [data-hmdel]'); await wait(150);
  await p.click('[data-hmdelok]'); await wait(800);
  ok('delete removes the attempt', (await table()).length===0&&await p.evaluate(()=>!document.querySelector('.hm-row')));
+ await p.click('[data-dbtab="cases"]'); await wait(200);
 
  // Start over: a saved run is discarded and a new one takes its place.
  await p.evaluate(i=>chooseCase(i),idx); await wait(400);
@@ -163,10 +174,10 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
 
  // Day and night (28 October 2026): the board's switch flips the theme and is remembered.
  const th0=await p.evaluate(()=>document.documentElement.dataset.theme);
- await p.click('.wl-head [data-themetoggle]'); await wait(300);
+ await p.click('.db-top [data-themetoggle]'); await wait(300);
  const th1=await p.evaluate(()=>({t:document.documentElement.dataset.theme, s:localStorage.getItem('emsim.theme')}));
  ok('the day and night switch flips the theme and remembers it', th1.t!==th0&&th1.s===th1.t&&['day','night'].includes(th1.t), [th0,th1]);
- await p.click('.wl-head [data-themetoggle]'); await wait(300);
+ await p.click('.db-top [data-themetoggle]'); await wait(300);
  ok('no page errors', errs.length===0, errs);
  ok('no CSP violations', csp.length===0, csp);
 

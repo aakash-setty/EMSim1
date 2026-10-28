@@ -545,19 +545,27 @@ const PATIENT=(function(){
   }});
   register('eyes_closed',{builtin:true,priority:20,tick:function(f){ f.pose.eyes='Close'; }});
   register('seizure',{builtin:true,priority:30,tick:function(f){
-    /* Rhythmic jerks near 3.5 Hz with a fine tremor on top, the whole body moving
-       together and the head a little more than the rest. The envelope wanders so it
-       never looks like a loop. Reduced motion keeps the sign and drops most of the
-       travel. No luminance changes anywhere: this is movement, never a flash. */
+    /* Clonic jerks (author instruction, 28 October 2026: jerkier, sharper). Each beat is a
+       snap out in about 30 ms and a slower fall back, not a sine, so the body moves in hits.
+       Beats come near 3.5 Hz with the interval, size and direction varied beat to beat, so it
+       never looks like a loop. A fine tremor sits on top. The envelope wanders. Reduced motion
+       keeps the sign and drops most of the travel. No luminance changes anywhere: this is
+       movement, never a flash. */
     const k=f.reduced?0.3:1, t=f.t/1000;
-    const env=0.75+0.25*Math.sin(t*0.9)+0.1*Math.sin(t*2.3);
-    const jerk=Math.pow(Math.abs(Math.sin(t*Math.PI*3.5)),0.6)*(Math.sin(t*Math.PI*3.5)>=0?1:-1);
+    const env=0.8+0.2*Math.sin(t*0.9)+0.1*Math.sin(t*2.3);
+    const h=n=>{ const x=Math.sin(n*127.1+311.7)*43758.5453; return x-Math.floor(x); };   /* 0..1 per beat */
+    const P=0.29, w=t/P+0.35*Math.sin(t*1.7);          /* a wobbling beat clock */
+    const n=Math.floor(w), p=w-n;
+    const rise=0.1;                                     /* fraction of the beat spent snapping out */
+    const pulse=p<rise?Math.pow(p/rise,0.5):Math.exp(-(p-rise)*9);
+    const amp=0.7+0.6*h(n), side=h(n+17.3)<0.5?-1:1, lift=0.6+0.8*h(n+5.1);
+    const jerk=pulse*amp*side;
     const trem=Math.sin(t*2*Math.PI*9.3)*0.5+Math.sin(t*2*Math.PI*13.1)*0.3;
-    f.ch.figure.x+=(jerk*2.6+trem*0.9)*env*k;
-    f.ch.figure.y+=(Math.abs(jerk)*-1.2+trem*0.5)*env*k;
-    f.ch.figure.rot+=(jerk*1.1)*env*k;
-    f.ch.head.rot+=(jerk*1.6+trem*0.8)*env*k;
-    f.ch.head.x+=trem*0.8*k;
+    f.ch.figure.x+=(jerk*3.4+trem*0.8)*env*k;
+    f.ch.figure.y+=(-pulse*amp*lift*2.0+trem*0.4)*env*k;
+    f.ch.figure.rot+=(jerk*1.5)*env*k;
+    f.ch.head.rot+=(jerk*2.4+trem*0.8)*env*k;
+    f.ch.head.x+=(jerk*0.8+trem*0.8)*k;
     /* No blinking through a seizure: a blink written earlier this frame is undone unless
        the eyes are meant to be closed. */
     if(f.state.eyes!=='closed') f.pose.eyes=(f.state.expression&&f.state.expression.eyeType)||f.inst.appearance.eyeType;

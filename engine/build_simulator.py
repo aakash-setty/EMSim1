@@ -784,8 +784,9 @@ def load_series(pack):
 CSP_BASE = {
     "default-src": ["'self'"],
     "script-src": ["'self'", "https://cdn.jsdelivr.net", "'wasm-unsafe-eval'"],
-    "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-    "font-src": ["'self'", "https://fonts.gstatic.com"],
+    "style-src": ["'self'", "'unsafe-inline'"],
+    # The fonts are inlined as data URIs (engine/assets/fonts/), so no font host is allowed.
+    "font-src": ["'self'", "data:"],
     "img-src": ["'self'", "data:", "blob:"],
     "media-src": ["'self'", "data:", "blob:"],
     "connect-src": ["'self'", "https://*.supabase.co", "wss://*.supabase.co",
@@ -1019,6 +1020,26 @@ def main():
                          base64.b64encode(open(lp, "rb").read()).decode() + '">')
             break
     shell = shell.replace("__LOGO__", logo_html)
+    # The interface fonts (author's choice, 28 October 2026): Atkinson Hyperlegible Next and
+    # Atkinson Hyperlegible Mono, from engine/assets/fonts/ (see its README for sources and
+    # licenses). They are inlined like every other asset, so the page asks no one for a font,
+    # the local file works offline, and the policy needs only font-src data:. A missing file
+    # leaves its family to the fallbacks in --sans and --mono.
+    font_dir = os.path.join(HERE, "assets", "fonts")
+    font_faces = [("Atkinson Hyperlegible Next", "normal", "200 800", "atkinson-hyperlegible-next-latin-wght-normal.woff2"),
+                  ("Atkinson Hyperlegible Next", "italic", "200 800", "atkinson-hyperlegible-next-latin-wght-italic.woff2"),
+                  ("Atkinson Hyperlegible Mono", "normal", "200 800", "atkinson-hyperlegible-mono-latin-wght-normal.woff2")]
+    font_css = ""
+    for fam, style, weights, fname in font_faces:
+        fp = os.path.join(font_dir, fname)
+        if not os.path.exists(fp):
+            print("  warning: font file missing, the fallback is used: " + os.path.relpath(fp, ROOT))
+            continue
+        font_css += ("@font-face{font-family:'" + fam + "';font-style:" + style + ";font-weight:" + weights +
+                     ";font-display:swap;src:url(data:font/woff2;base64," +
+                     base64.b64encode(open(fp, "rb").read()).decode() + ") format('woff2')}\n")
+    shell = shell.replace("/*__FONTS__*/", "/* Atkinson Hyperlegible Next and Mono: SIL Open Font License 1.1, "
+                          "see engine/assets/fonts/ */\n" + font_css)
     shell = shell.replace("__N_ACTIONS__", str(len(CE))).replace("__N_DIAGNOSES__", str(len(shared["diagnoses"])))
     shell = shell.replace("__HERO_BG__", "data:image/jpeg;base64," + hero_bg)
     shell = shell.replace("__AVATAR_M__", "data:image/png;base64," + avatar_m)

@@ -184,9 +184,9 @@ two are worth separating because until v0.10 this section ran them together:
   interface says so, and the simulator runs on the lexical matcher alone. That is a
   deliberate design constraint rather than a fallback that happens to work: see
   authoring section 10.6.
-- an IBM Plex stylesheet from Google Fonts, purely cosmetic. Blocked, the page falls
-  back to the system sans and mono stacks and nothing else changes. Inline the two
-  faces if the deployment must make no third-party requests at all.
+- no fonts. Since 28 October 2026 the two faces (Atkinson Hyperlegible Next and Mono)
+  are inlined into the page from `engine/assets/fonts/`, so type makes no request to
+  anyone and works offline.
 
 Verified by loading the built file over http with the hosts blocked: the case renders,
 the seven tabs work, and the interview answers, with the matcher chip reading

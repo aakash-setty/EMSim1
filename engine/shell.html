@@ -13,10 +13,8 @@ document.documentElement.setAttribute('data-theme',t);})();</script>
 <!-- An empty icon. Without one the browser asks the host for /favicon.ico, which does not
      exist, and logs a 404 in the console that looks like a fault. -->
 <link rel="icon" href="data:,">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap" rel="stylesheet">
 <style>
+/*__FONTS__*/
 /* ============================================================
    PALETTE — daylight
 
@@ -64,8 +62,14 @@ document.documentElement.setAttribute('data-theme',t);})();</script>
   --warn:#A16A05; --warnl:rgba(161,106,5,.13);
   --voice:#6A4CA6; --voicel:rgba(106,76,166,.10);
 
-  --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  /* Type (author's choice, 28 October 2026). Atkinson Hyperlegible Next for all text and
+     Atkinson Hyperlegible Mono for every number that changes. The Braille Institute drew both
+     so that the letters people mix up differ: the l has a tail, the 1 a flag, the zero a slash.
+     That matters most on the monitor and on a dose. Titles are the same family at a heavier
+     weight (--title), so the page speaks in one voice. */
+  --sans:'Atkinson Hyperlegible Next',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --mono:'Atkinson Hyperlegible Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --title:var(--sans);
 
   --rail:88px;                /* fixed icon rail, always on screen  */
   --rdock:34vw;               /* right panel, docked width          */
@@ -698,98 +702,383 @@ body[data-right="wide"] .fitem td{font-size:12.5px}
 body[data-right="wide"] .fitem .ft{font-size:11px}
 
 
-/* ---------- welcome screen ----------
-   Replaces the old case picker and keeps its id, so chooseCase(), backToPicker()
-   and the [data-case] click delegation are untouched. __HERO_BG__, __AVATAR_M__ and
-   __AVATAR_F__ are replaced at build time from engine/hero-bg.txt and
-   engine/avatar-{male,female}.txt, the same way __ROOM_BG__ is. Regenerate them from
-   assets/ with the commands in engine/README-assets.md. */
-#picker.welcome{
-  position:fixed; inset:0; z-index:100; display:grid; padding:0; overflow:hidden;
-  background:var(--screen); -webkit-backdrop-filter:none; backdrop-filter:none;
-  grid-template-columns:1fr clamp(380px,34vw,480px);
-  grid-template-rows:minmax(0,1fr);
-}
-.wl-hero{position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end}
-.wl-shot{
-  position:absolute; inset:0; background-image:url("__HERO_BG__");
-  background-size:cover; background-position:54% 58%;
-  /* the illustration is warm and bright; the product is a cool clinical grey */
-  filter:saturate(.72) contrast(1.04) brightness(.94); transform:scale(1.03);
-}
-.wl-scrim{position:absolute; inset:0; background:
-  linear-gradient(to top, rgba(12,25,34,.94) 0%, rgba(12,25,34,.70) 26%, rgba(12,25,34,.20) 56%, rgba(12,25,34,0) 80%),
-  linear-gradient(to right, rgba(12,25,34,.78) 0%, rgba(12,25,34,.46) 28%, rgba(12,25,34,.12) 56%, rgba(12,25,34,0) 78%)}
-.wl-edge{position:absolute; top:0; right:0; bottom:0; width:120px;
-  background:linear-gradient(to right, rgba(12,25,34,0), rgba(12,25,34,.45))}
-.wl-text{position:relative; padding:0 clamp(32px,4.4vw,72px) clamp(40px,4.6vw,72px)}
-.wl-text h1{
-  font-family:'IBM Plex Serif',Georgia,serif; font-weight:600;
-  font-size:clamp(34px,3.55vw,56px); line-height:1.06; letter-spacing:-.02em;
-  color:#F5F9FB; margin:0 0 20px; max-width:11.4em; text-wrap:balance;
-  text-shadow:0 2px 34px rgba(6,16,23,.6)}
-.wl-lede{max-width:46ch; margin:0; color:rgba(228,240,246,.82);
-  font-size:clamp(14px,1.02vw,16px); line-height:1.6; text-shadow:0 1px 18px rgba(6,16,23,.5)}
-.wl-stamp{position:absolute; right:clamp(26px,3vw,44px); bottom:clamp(22px,2.6vw,32px);
-  font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
-  color:rgba(226,238,244,.42); line-height:1.8; text-align:right}
+/* ---------- the case dashboard (author instruction, 28 October 2026) ----------
+   Replaces the two-column welcome screen and keeps its ids (#picker, #wl-q, #wl-chips,
+   #pk-list, #wl-count, #wl-acct, #wl-home), so chooseCase(), backToPicker(), the [data-case]
+   click delegation and access.js are untouched. __HERO_BG__, __AVATAR_M__ and __AVATAR_F__
+   are replaced at build time, as before.
 
-.wl-board{background:var(--paper); display:flex; flex-direction:column; min-width:0; min-height:0;
-  box-shadow:-1px 0 0 rgba(21,48,66,.22), -24px 0 60px rgba(6,16,23,.35)}
-.wl-head{display:flex; align-items:center; gap:10px; padding:20px 20px 14px;
-  border-bottom:1px solid var(--rule2)}
-.wl-head h2{margin:0; font-size:15px; font-weight:600; letter-spacing:-.006em}
-.wl-head .n{font-family:var(--mono); font-size:11px; color:var(--ink3);
-  background:var(--sunk); border-radius:999px; padding:2px 8px}
-.wl-menuwrap{position:relative; margin-left:auto}
-.wl-kebab{width:30px; height:30px; border-radius:6px; border:1px solid transparent;
+   The principles it follows, so later changes can keep to them:
+   - One scroll, one column of intent: where you are (the hero), what to do next (Continue,
+     Next up), what you have earned (milestones), then everything (the cases), then what
+     happened (History).
+   - Progress is shown the same way everywhere: a ring that fills. The colour says the tier:
+     amber attempted, blue passed, green mastered. Grey is not started.
+   - Every action answers. A finished case brings a note about what changed, including when
+     nothing improved. Loading and failure each have their own state.
+   - Nothing is shared or ranked against anyone else. The game is with yourself. */
+:root{--dash-bg:#EEF2F5}
+:root[data-theme="night"]{--dash-bg:#0B1419}
+#picker.welcome{position:fixed; inset:0; z-index:100; display:flex; flex-direction:column; padding:0;
+  overflow:hidden; background:var(--dash-bg); -webkit-backdrop-filter:none; backdrop-filter:none}
+.ic{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round;
+  stroke-linejoin:round; flex:none}
+
+/* ---- top bar ---- */
+.db-top{flex:none; position:relative; z-index:6; display:flex; align-items:center; gap:12px;
+  height:64px; padding:0 clamp(14px,3vw,32px); background:var(--solid);
+  border-bottom:1px solid var(--rule2); box-shadow:0 6px 20px -18px var(--shadow)}
+.db-brand{display:flex; align-items:center; gap:10px; white-space:nowrap}
+.db-name{font-size:16px; font-weight:700; letter-spacing:-.01em; color:var(--ink)}
+.wl-search{position:relative}
+.db-search{flex:1; max-width:520px; margin:0 auto}
+.wl-search svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--ink3); pointer-events:none}
+#wl-q{width:100%; font:inherit; font-size:13.5px; color:var(--ink); padding:9px 40px 9px 33px;
+  border:1px solid var(--rule); border-radius:10px; background:var(--dash-bg)}
+#wl-q::placeholder{color:var(--ink3)}
+#wl-q:focus{border-color:var(--actb); box-shadow:0 0 0 3px var(--actl); outline:none; background:var(--solid)}
+.wl-slash{position:absolute; right:9px; top:50%; transform:translateY(-50%); font-family:var(--mono);
+  font-size:10.5px; color:var(--ink3); border:1px solid var(--rule); border-radius:4px; padding:1px 5px; background:var(--solid)}
+#wl-q:focus ~ .wl-slash{opacity:0}
+.db-top .wl-acct{display:flex; align-items:center; gap:10px; padding:0; border:0; font-size:12.5px;
+  color:var(--ink2); white-space:nowrap; flex-wrap:nowrap; min-width:0}
+.db-top .wl-acct[hidden]{display:none}
+.db-top .wl-acct .who{max-width:240px; overflow:hidden; text-overflow:ellipsis}
+.db-top .wl-acct button{margin:0; font:inherit; font-size:12.5px; padding:6px 12px; border-radius:8px;
+  border:1px solid var(--rule); background:var(--solid); color:var(--act); cursor:pointer}
+.db-top .wl-acct button:hover{border-color:var(--actb); background:var(--actl)}
+/* A message from sign-in or a download (rate limit, access, a damaged pack) is a toast under the bar. */
+.db-top .wl-acct .msg{position:fixed; top:70px; left:50%; transform:translateX(-50%); z-index:30;
+  max-width:min(560px,92vw); white-space:normal; flex-basis:auto; background:var(--solid); color:var(--harm);
+  border:1px solid var(--harmb); border-radius:10px; padding:10px 14px; font-size:13px;
+  box-shadow:0 14px 34px -14px var(--shadow)}
+.db-top .wl-acct .msg:empty{display:none}
+.wl-menuwrap{position:relative}
+.wl-kebab{width:32px; height:32px; border-radius:8px; border:1px solid transparent;
   background:transparent; color:var(--ink2); cursor:pointer; display:grid; place-items:center}
 .wl-kebab:hover{background:var(--sunk); border-color:var(--rule2)}
 .wl-kebab[aria-expanded="true"]{background:var(--actl); border-color:var(--actb); color:var(--act)}
-.wl-menu{position:absolute; right:0; top:34px; z-index:20; min-width:212px; background:var(--solid);
-  border:1px solid var(--rule); border-radius:8px; box-shadow:0 12px 30px var(--shadow);
-  padding:5px; display:none}
+.wl-menu{position:absolute; right:0; top:38px; z-index:20; min-width:212px; background:var(--solid);
+  border:1px solid var(--rule); border-radius:10px; box-shadow:0 12px 30px var(--shadow); padding:5px; display:none}
 .wl-menu.open{display:block}
-.wl-menu a{display:block; padding:8px 10px; border-radius:5px; color:var(--ink);
-  text-decoration:none; font-size:13px}
+.wl-menu a{display:block; padding:8px 10px; border-radius:6px; color:var(--ink); text-decoration:none; font-size:13px}
 .wl-menu a:hover{background:var(--sunk)}
 .wl-menu hr{border:0; border-top:1px solid var(--rule2); margin:5px 2px}
 .wl-menu .sub{color:var(--ink3); font-size:11.5px; padding:4px 10px 7px}
 
-.wl-tools{padding:14px 20px 12px; border-bottom:1px solid var(--rule2)}
-.wl-search{position:relative}
-.wl-search svg{position:absolute; left:10px; top:50%; transform:translateY(-50%);
-  color:var(--ink3); pointer-events:none}
-#wl-q{width:100%; font:inherit; font-size:13.5px; color:var(--ink); padding:9px 40px 9px 32px;
-  border:1px solid var(--rule); border-radius:7px; background:var(--solid)}
-#wl-q::placeholder{color:var(--ink3)}
-#wl-q:focus{border-color:var(--actb); box-shadow:0 0 0 3px var(--actl); outline:none}
-.wl-slash{position:absolute; right:9px; top:50%; transform:translateY(-50%); font-family:var(--mono);
-  font-size:10.5px; color:var(--ink3); border:1px solid var(--rule); border-radius:4px;
-  padding:1px 5px; background:var(--paper)}
-#wl-q:focus ~ .wl-slash{opacity:0}
-.wl-chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:11px}
-.wl-chip{font:inherit; font-size:12px; padding:4px 10px; border-radius:999px; cursor:pointer;
+.db-scroll{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; scroll-behavior:smooth}
+
+/* ---- the hero: the photograph, the title, and the learner's numbers ---- */
+.wl-hero{position:relative; overflow:hidden; display:flex; align-items:flex-end; min-height:clamp(230px,32vh,320px)}
+.wl-shot{position:absolute; inset:0; background-image:url("__HERO_BG__"); background-size:cover;
+  background-position:54% 62%; filter:saturate(.72) contrast(1.04) brightness(.94); transform:scale(1.03)}
+.wl-scrim{position:absolute; inset:0; background:
+  linear-gradient(to top, rgba(12,25,34,.92) 0%, rgba(12,25,34,.58) 48%, rgba(12,25,34,.18) 100%),
+  linear-gradient(to right, rgba(12,25,34,.72) 0%, rgba(12,25,34,.1) 70%)}
+.db-heroin{position:relative; width:100%; max-width:1240px; margin:0 auto;
+  padding:34px clamp(16px,3vw,32px) 26px; display:flex; align-items:flex-end; justify-content:space-between;
+  gap:20px 28px; flex-wrap:wrap}
+.wl-text{min-width:0; flex:1 1 380px}
+.wl-text h1{font-family:var(--title); font-weight:600; font-size:clamp(26px,2.7vw,40px);
+  line-height:1.08; letter-spacing:-.02em; color:#F5F9FB; margin:0; max-width:15em; text-wrap:balance;
+  text-shadow:0 2px 30px rgba(6,16,23,.6)}
+.db-greet{margin:0 0 8px; font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(226,238,244,.78)}
+.db-greet[hidden]{display:none}
+.wl-lede{max-width:52ch; margin:12px 0 0; color:rgba(228,240,246,.84); font-size:clamp(14px,1.02vw,15.5px);
+  line-height:1.6; text-shadow:0 1px 18px rgba(6,16,23,.5)}
+.home-on .wl-lede{display:none}
+.wl-stamp{position:absolute; right:clamp(16px,3vw,32px); top:14px; font-family:var(--mono); font-size:10px;
+  letter-spacing:.08em; text-transform:uppercase; color:rgba(226,238,244,.5); line-height:1.7; text-align:right}
+.db-stats{display:flex; align-items:center; gap:20px; padding:14px 20px 14px 14px; border-radius:18px;
+  background:rgba(10,20,27,.58); border:1px solid rgba(226,238,244,.14); color:#E8F0F4;
+  -webkit-backdrop-filter:blur(12px) saturate(1.2); backdrop-filter:blur(12px) saturate(1.2);
+  box-shadow:0 20px 50px -30px rgba(0,0,0,.6)}
+.db-stats[hidden]{display:none}
+.ds-main{position:relative; width:108px; height:108px; flex:none}
+.ds-svg{display:block; width:100%; height:100%}
+.ds-svg .t{fill:none; stroke:rgba(226,238,244,.16)}
+.ds-svg .f{fill:none; stroke:#4CC28F; stroke-linecap:round; transition:stroke-dasharray .9s var(--ease)}
+.ds-num{position:absolute; inset:0 0 14px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:26px; font-weight:600; color:#F5F9FB}
+.ds-num small{font-size:13px; color:rgba(226,238,244,.6); margin-left:1px}
+.ds-lab{position:absolute; left:0; right:0; bottom:26px; text-align:center; font-size:9px; letter-spacing:.08em;
+  text-transform:uppercase; color:rgba(226,238,244,.7)}
+.ds-tiles{display:grid; grid-template-columns:repeat(2,minmax(118px,auto)); gap:10px 24px}
+.ds-tile b{display:block; font-family:var(--mono); font-size:21px; font-weight:600; color:#F5F9FB; line-height:1.15}
+.ds-tile b small{font-size:12px; color:rgba(226,238,244,.6)}
+.ds-tile span{font-size:11.5px; color:rgba(226,238,244,.72)}
+.ds-tile em{display:block; font-style:normal; font-size:11px; color:rgba(226,238,244,.55); margin-top:1px}
+.ds-tile.t-m b{color:#7FDCB2}
+.ds-tile.t-s.risk em{color:#F2C46B}
+.ds-skel{width:118px; height:46px; border-radius:10px; background:rgba(255,255,255,.08)}
+@media (prefers-reduced-motion:no-preference){
+  .ds-skel{animation:dskel 1.1s ease-in-out infinite alternate}
+  @keyframes dskel{from{opacity:.45}to{opacity:1}}
+  .wl-text h1{animation:wlrise .7s cubic-bezier(.32,.72,.24,1) both}
+  .db-stats:not([hidden]){animation:wlrise .7s cubic-bezier(.32,.72,.24,1) .08s both}
+  @keyframes wlrise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+}
+
+/* ---- the body ---- */
+.db-body{max-width:1240px; margin:0 auto; padding:24px clamp(16px,3vw,32px) 30px}
+.wl-home{display:block}
+.wl-home[hidden]{display:none}
+.hm-sec{margin:0 0 26px}
+.hm-sec h2,.db-ms-head h2{display:flex; align-items:center; gap:10px; margin:0 0 12px; font-family:var(--mono);
+  font-size:10.5px; font-weight:500; letter-spacing:.09em; text-transform:uppercase; color:var(--ink3)}
+.hm-sec>h2::after{content:""; flex:1; height:1px; background:var(--rule2)}
+.hm-empty{margin:0; color:var(--ink2); font-size:13.5px; line-height:1.5}
+.hm-empty.sm{margin-top:10px; font-size:12.5px; color:var(--ink3)}
+.hm-mono{font-family:var(--mono); font-variant-numeric:tabular-nums}
+.hm-no{font-family:var(--mono); font-size:11px; font-weight:400; color:var(--ink3); margin-right:8px}
+
+/* the note after a case: what changed */
+.db-fb{display:flex; align-items:flex-start; gap:12px; margin:0 0 22px; padding:13px 12px 13px 16px;
+  border-radius:14px; background:var(--solid); border:1px solid var(--rule2); border-left:4px solid var(--ok);
+  box-shadow:0 12px 30px -22px var(--shadow)}
+.db-fb ul{list-style:none; margin:0; padding:0; flex:1; display:flex; flex-direction:column; gap:7px}
+.db-fb li{display:flex; align-items:center; gap:10px; font-size:14px; font-weight:500; color:var(--ink)}
+.db-fb li .ic{width:18px; height:18px; color:var(--ok)}
+.db-fb li.fb-done .ic{color:var(--act)}
+.db-fb li.fb-streak .ic{color:var(--warn)}
+.db-x{flex:none; width:28px; height:28px; border-radius:8px; border:0; background:none; color:var(--ink3);
+  cursor:pointer; display:grid; place-items:center}
+.db-x:hover{background:var(--sunk); color:var(--ink)}
+@media (prefers-reduced-motion:no-preference){
+  .db-fb{animation:fbin .55s cubic-bezier(.2,.8,.3,1) both}
+  .db-fb li{animation:fbin .5s cubic-bezier(.2,.8,.3,1) both}
+  .db-fb li:nth-child(2){animation-delay:.08s} .db-fb li:nth-child(3){animation-delay:.16s} .db-fb li:nth-child(4){animation-delay:.24s}
+  @keyframes fbin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+}
+
+/* Continue and Next up */
+.hm-cont{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:12px}
+.hm-card{background:var(--solid); border:1px solid var(--rule2); border-radius:14px; padding:15px 17px;
+  box-shadow:0 10px 26px -22px var(--shadow)}
+.hm-card.go{border-top:3px solid var(--act)}
+.hm-card.next{border-top:3px solid var(--ok)}
+.hm-kind{display:flex; align-items:center; gap:6px; margin-bottom:7px; font-family:var(--mono); font-size:10.5px;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--act)}
+.hm-card.next .hm-kind{color:var(--ok)}
+.hm-kind .ic{width:12px; height:12px}
+.hm-ct{font-size:15.5px; font-weight:600; color:var(--ink)}
+.hm-cm{margin-top:4px; font-size:12.5px; line-height:1.5; color:var(--ink2)}
+.hm-cw{margin-top:8px; font-size:12px; line-height:1.45; color:var(--warn)}
+.hm-ca{display:flex; align-items:center; gap:16px; margin-top:13px}
+.hm-ca .btn{padding:8px 18px; font-size:13.5px; border-radius:8px}
+.hm-link{font:inherit; font-size:12.5px; background:none; border:0; padding:2px 0; cursor:pointer;
+  color:var(--ink2); text-decoration:underline; text-underline-offset:3px}
+.hm-link:hover{color:var(--act)}
+.hm-link:focus-visible,.hm-ca .btn:focus-visible{outline:2px solid var(--act); outline-offset:2px}
+.hm-confirm{display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:10px; padding:10px 12px;
+  border-radius:8px; background:var(--harml); border:1px solid var(--harmb); font-size:12.5px; color:var(--ink)}
+.hm-confirm span{flex-basis:100%}
+.hm-confirm .btn{padding:6px 14px; font-size:12.5px}
+.btn.harm{background:var(--harm)}
+
+/* milestones */
+.db-ms-head{display:flex; align-items:center; gap:10px; margin:0 0 12px}
+.db-ms-head h2{margin:0}
+.db-ms-head::after{content:""; flex:1; height:1px; background:var(--rule2); order:1}
+.db-ms-head .hm-mono{order:2; font-size:11px; color:var(--ink3)}
+.db-ms{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(205px,1fr)); gap:8px}
+.ms{display:grid; grid-template-columns:36px minmax(0,1fr); column-gap:11px; row-gap:6px; align-items:center;
+  padding:10px 12px; border-radius:12px; background:var(--solid); border:1px solid var(--rule2)}
+.ms-ic{grid-row:span 2; width:36px; height:36px; border-radius:50%; display:grid; place-items:center;
+  background:var(--sunk); color:var(--ink3); border:1px dashed var(--rule)}
+.ms-ic .ic{width:18px; height:18px}
+.ms.on .ms-ic{background:linear-gradient(140deg,#F6D06A,#D99A1E); color:#3A2600; border:0;
+  box-shadow:0 6px 14px -8px rgba(217,154,30,.8), inset 0 1px 0 rgba(255,255,255,.5)}
+.ms-t{min-width:0}
+.ms-t b{display:block; font-size:13px; font-weight:600; color:var(--ink2)}
+.ms.on .ms-t b{color:var(--ink)}
+.ms-t span{display:block; font-size:11.5px; color:var(--ink3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.ms.on .ms-t span{color:var(--ok)}
+.ms-bar{grid-column:2; height:4px; border-radius:2px; background:var(--rule2); overflow:hidden}
+.ms-bar i{display:block; height:100%; background:var(--act); border-radius:2px}
+
+/* milestones, compact: the medals in a row, the nearest one to aim at, and the full list on request */
+.db-msbar{display:flex; align-items:center; gap:10px 16px; flex-wrap:wrap; padding:10px 14px;
+  background:var(--solid); border:1px solid var(--rule2); border-radius:14px}
+.db-medals{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:6px}
+.md{width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:var(--sunk);
+  color:var(--ink3); border:1px dashed var(--rule)}
+.md .ic{width:15px; height:15px}
+.md.on{background:linear-gradient(140deg,#F6D06A,#D99A1E); color:#3A2600; border:0;
+  box-shadow:0 4px 10px -6px rgba(217,154,30,.8), inset 0 1px 0 rgba(255,255,255,.5)}
+.db-near{font-size:12.5px; color:var(--ink2)}
+.db-near b{color:var(--ink); font-weight:600}
+.db-msbar .hm-link{margin-left:auto}
+.db-ms{margin-top:10px}
+@media (max-width:560px){
+  .db-top .wl-acct button{padding:5px 9px}
+  .db-msbar .hm-link{margin-left:0}
+}
+
+/* ---- Continue and Next up, lifted onto the hero (28 October 2026) ---- */
+.home-on .wl-hero{padding-bottom:64px}
+.home-on .db-body{padding-top:0}
+.home-on .wl-home{position:relative; z-index:2; margin-top:-64px}
+.db-play{margin:0 0 22px}
+.cx-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:16px}
+.cx-grid.one{grid-template-columns:minmax(0,640px)}
+.cx{position:relative; display:flex; gap:20px; align-items:center; padding:20px 22px; border-radius:20px;
+  background:var(--solid); border:1px solid var(--rule2); overflow:hidden;
+  box-shadow:0 24px 50px -30px var(--shadow), 0 2px 6px -3px var(--shadow)}
+.cx::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:.9}
+.cx-go::before{background:radial-gradient(120% 120% at 0% 0%, var(--actl), transparent 60%)}
+.cx-next::before{background:radial-gradient(120% 120% at 0% 0%, var(--okl), transparent 60%)}
+.cx>*{position:relative}
+.cx-art{flex:none}
+.cx-ringwrap{position:relative; display:block; width:108px; height:108px}
+.cx-svg{position:absolute; inset:0; width:100%; height:100%}
+.cx-svg .t{fill:none; stroke:var(--rule2)}
+.cx-svg .f{fill:none; stroke-linecap:round}
+.cx-go .cx-svg .f{stroke:var(--act)}
+.cx-next .cx-svg .f{stroke:var(--ink3)}
+.cx-next.t-tried .cx-svg .f{stroke:var(--warn)}
+.cx-next.t-passed .cx-svg .f{stroke:var(--act)}
+.cx-face.wl-face{position:absolute; inset:14px; width:auto; height:auto}
+.cx-body{min-width:0; flex:1}
+.cx-kind{display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11px; font-weight:500;
+  letter-spacing:.09em; text-transform:uppercase; color:var(--act); margin-bottom:7px}
+.cx-next .cx-kind{color:var(--ok)}
+.cx-kind .ic{width:13px; height:13px}
+.cx-title{margin:0; font-family:var(--sans); text-transform:none; font-size:clamp(17px,1.5vw,20px); font-weight:600; letter-spacing:-.01em; line-height:1.25; color:var(--ink)}
+.cx-title .hm-no{font-size:12px}
+.cx-meta{margin-top:5px; font-size:12.5px; color:var(--ink2)}
+.cx-why{margin-top:8px; font-size:13px; color:var(--ink2)}
+.cx-time{display:flex; align-items:center; gap:12px; margin-top:12px; font-size:12px; color:var(--ink2)}
+.cx-bar{flex:1; max-width:260px; height:6px; border-radius:3px; background:var(--rule2); overflow:hidden}
+.cx-bar i{display:block; height:100%; border-radius:3px; background:linear-gradient(90deg,var(--act),#5AA6E6)}
+.cx .hm-ca{margin-top:16px}
+.cx-btn{display:inline-flex; align-items:center; gap:8px; padding:10px 22px !important; font-size:14.5px !important;
+  border-radius:10px !important; box-shadow:0 10px 22px -12px rgba(31,111,178,.7)}
+.cx-btn .ic{width:12px; height:12px; fill:currentColor; stroke:none}
+.cx-btn.ghost{box-shadow:none}
+.cx-arr{transition:transform .15s ease}
+.cx-btn:hover .cx-arr{transform:translateX(3px)}
+.db-play .hm-empty.sm{margin-top:12px}
+
+/* ---- the milestone shelf ---- */
+.db-trophy{position:relative; margin:0 0 26px; padding:20px 22px 18px; border-radius:20px; background:
+  radial-gradient(90% 140% at 0% 0%, rgba(246,208,106,.20), transparent 55%),
+  radial-gradient(70% 120% at 100% 100%, var(--actl), transparent 60%), var(--solid);
+  border:1px solid var(--rule2); box-shadow:0 18px 40px -30px var(--shadow)}
+.tr-head{display:flex; align-items:baseline; flex-wrap:wrap; gap:6px 16px; margin:0 0 16px}
+.tr-head h2{letter-spacing:-.01em; margin:0; font-size:17px; font-weight:600; letter-spacing:-.01em; color:var(--ink); font-family:var(--sans); text-transform:none}
+.tr-count{font-size:13px; color:var(--ink2)}
+.tr-count b{font-family:var(--mono); font-size:15px; color:#B7811A}
+:root[data-theme="night"] .tr-count b{color:#F2C46B}
+.tr-next{margin-left:auto; font-size:12.5px; color:var(--ink2); max-width:56ch}
+.tr-next b{color:var(--ink)}
+.tr-row{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); gap:14px 8px}
+.tr{display:flex; flex-direction:column; align-items:center; text-align:center; gap:4px; padding:4px 2px}
+.tr-medal{position:relative; width:72px; height:72px; margin-bottom:6px}
+.tr-svg{position:absolute; inset:0; width:100%; height:100%}
+.tr-svg .t{fill:none; stroke:var(--rule2)}
+.tr-svg .f{fill:none; stroke:var(--ink3); stroke-linecap:round}
+.tr.next .tr-svg .f{stroke:var(--act)}
+.tr-disc{position:absolute; inset:9px; border-radius:50%; display:grid; place-items:center;
+  background:var(--sunk); color:var(--ink3); box-shadow:inset 0 0 0 1px var(--rule2)}
+.tr-disc .ic{width:22px; height:22px}
+/* earned: a gold medal on a short ribbon */
+.tr.on .tr-medal::before{content:""; position:absolute; left:50%; bottom:-7px; width:26px; height:18px;
+  transform:translateX(-50%); background:linear-gradient(90deg,#1F6FB2 0 50%,#1A7A55 50% 100%);
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 70%,0 100%); z-index:0}
+.tr.on .tr-disc{inset:4px; z-index:1; color:#4A3000;
+  background:radial-gradient(circle at 32% 28%,#FFF1BF 0,#F6D06A 28%,#E0A52A 62%,#B7811A 100%);
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.38), inset 0 -4px 8px rgba(120,70,0,.35), 0 10px 18px -10px rgba(183,129,26,.9)}
+.tr.on .tr-disc .ic{width:26px; height:26px; stroke-width:2.1}
+.tr-t{font-size:12.5px; font-weight:600; color:var(--ink2); line-height:1.25}
+.tr.on .tr-t{color:var(--ink)}
+.tr-s{font-family:var(--mono); font-size:10.5px; color:var(--ink3)}
+.tr.on .tr-s{color:#B7811A}
+:root[data-theme="night"] .tr.on .tr-s{color:#F2C46B}
+.tr.next .tr-disc{color:var(--act); background:var(--actl)}
+.tr.next .tr-s{color:var(--act)}
+.tr-newtag{position:absolute; top:-6px; right:-12px; z-index:2; font-size:9.5px; font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; color:#fff; background:var(--harm); padding:2px 6px; border-radius:999px;
+  box-shadow:0 4px 10px -4px rgba(192,48,42,.7)}
+@media (prefers-reduced-motion:no-preference){
+  .tr.next .tr-medal::after{content:""; position:absolute; inset:0; border-radius:50%;
+    box-shadow:0 0 0 0 rgba(31,111,178,.35); animation:trpulse 2.4s ease-out infinite}
+  @keyframes trpulse{0%{box-shadow:0 0 0 0 rgba(31,111,178,.35)}70%,100%{box-shadow:0 0 0 12px rgba(31,111,178,0)}}
+  .tr.new .tr-disc{animation:trpop .9s cubic-bezier(.2,1.4,.4,1) both}
+  @keyframes trpop{0%{transform:scale(.4) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
+  .tr.on .tr-disc{transition:transform .2s ease}
+  .tr.on:hover .tr-disc{transform:rotate(-8deg) scale(1.05)}
+}
+
+/* ---- the logo in the bar ---- */
+.db-logo{display:flex; align-items:center}
+.db-logo .ld-logoimg{display:block; height:42px; width:auto}
+.db-logo .ld-mark{display:block; width:26px; height:26px; border-radius:7px; background:linear-gradient(135deg,#1A7A55,#1F6FB2)}
+.db-brand:has(.ld-logoimg) .db-name{display:none}
+:root[data-theme="night"] .db-logo .ld-logoimg{filter:brightness(1.8) saturate(1.05) drop-shadow(0 0 10px rgba(98,169,230,.22))}
+
+@media (max-width:560px){ .db-logo .ld-logoimg{height:32px} }
+@media (max-width:760px){
+  .cx{flex-direction:column; align-items:flex-start; padding:18px}
+  .cx-ringwrap{width:84px; height:84px}
+  .cx-face.wl-face{inset:11px}
+  .tr-next{margin-left:0; flex-basis:100%}
+  .tr-row{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:4px; padding-bottom:6px; margin:0 -6px}
+  .tr{flex:0 0 96px; scroll-snap-align:start}
+  .home-on .wl-hero{padding-bottom:48px}
+  .home-on .wl-home{margin-top:-48px}
+}
+
+/* tabs */
+.db-tabs{display:flex; gap:2px; margin:8px 0 16px; border-bottom:1px solid var(--rule)}
+.db-tabs button{display:flex; align-items:center; gap:8px; font:inherit; font-size:14.5px; font-weight:600;
+  color:var(--ink3); background:none; border:0; border-bottom:2px solid transparent; padding:10px 14px 11px;
+  margin-bottom:-1px; cursor:pointer}
+.db-tabs button:hover{color:var(--ink)}
+.db-tabs button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--act)}
+.db-tabs button[hidden]{display:none}
+.db-tabs .n{font-family:var(--mono); font-size:11px; font-weight:500; color:var(--ink3); background:var(--sunk);
+  border-radius:999px; padding:1px 8px}
+.db-pane[hidden]{display:none}
+
+/* category chips */
+.wl-chips{display:flex; gap:6px; flex-wrap:wrap; margin:0 0 16px}
+.wl-chip{font:inherit; font-size:12.5px; padding:5px 12px; border-radius:999px; cursor:pointer;
   border:1px solid var(--rule); background:var(--solid); color:var(--ink2)}
 .wl-chip:hover{border-color:var(--actb); color:var(--act)}
 .wl-chip[aria-pressed="true"]{background:var(--act); border-color:var(--act); color:#fff}
 
-.wl-list{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding-bottom:8px}
-.wl-group{position:sticky; top:0; z-index:2; display:flex; align-items:center; gap:9px;
-  padding:13px 20px 7px; background:var(--paper); font-family:var(--mono); font-size:10px;
-  letter-spacing:.085em; text-transform:uppercase; color:var(--ink3)}
+/* ---- the case cards ---- */
+.wl-list{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; outline:none}
+.wl-group{grid-column:1/-1; display:flex; align-items:center; gap:9px; margin:8px 0 -2px; font-family:var(--mono);
+  font-size:10.5px; letter-spacing:.085em; text-transform:uppercase; color:var(--ink3)}
+.wl-group:first-child{margin-top:0}
 .wl-group::after{content:""; flex:1; height:1px; background:var(--rule2)}
-
-.wl-case{display:flex; gap:13px; align-items:center; width:100%; text-align:left;
-  padding:11px 18px 11px 20px; border:0; border-left:2px solid transparent; background:transparent;
-  cursor:pointer; font:inherit; color:inherit}
-.wl-case:hover{background:var(--sunk)}
-.wl-case.sel{background:var(--actl); border-left-color:var(--act)}
-.wl-case:focus-visible{outline:2px solid var(--act); outline-offset:-3px}
-.wl-face{flex:none; width:38px; height:38px; border-radius:50%; background:rgba(21,48,66,.08);
+.wl-case{position:relative; display:flex; flex-direction:column; gap:12px; width:100%; text-align:left;
+  padding:14px 16px 13px; border-radius:14px; border:1px solid var(--rule2); border-top:3px solid var(--rule);
+  background:var(--solid); cursor:pointer; font:inherit; color:inherit;
+  box-shadow:0 10px 24px -22px var(--shadow);
+  transition:transform .16s var(--ease), box-shadow .16s ease, border-color .16s ease}
+.wl-case:hover{transform:translateY(-2px); box-shadow:0 18px 34px -22px var(--shadow); border-color:var(--actb)}
+.wl-case:active{transform:translateY(0)}
+.wl-case.sel{border-color:var(--act); box-shadow:0 0 0 3px var(--actl)}
+.wl-case:focus-visible{outline:2px solid var(--act); outline-offset:2px}
+.wl-case.t-tried{border-top-color:var(--warn)}
+.wl-case.t-passed{border-top-color:var(--act)}
+.wl-case.t-mastered{border-top-color:var(--ok)}
+.wl-case.loading{opacity:.55; pointer-events:none}
+.dc-head{display:flex; align-items:center; gap:8px; min-height:14px}
+.dc-head .wl-no{font-family:var(--mono); font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3)}
+.wl-case.sel .wl-no{color:var(--act)}
+.dc-sp{flex:1}
+.wl-lock{flex:none; width:13px; height:13px; color:var(--ink3)}
+.wl-state{flex:none; width:7px; height:7px; border-radius:50%; background:#D9A441}
+.wl-state.ok{background:var(--ok)}
+.dc-main{display:flex; gap:12px; align-items:center}
+.wl-face{flex:none; width:44px; height:44px; border-radius:50%; background:rgba(21,48,66,.08);
   box-shadow:inset 0 0 0 1px var(--rule2); overflow:hidden; position:relative}
-/* mask rather than a coloured image, so the silhouette follows the theme and the
-   selected state can tint it */
+/* mask rather than a coloured image, so the silhouette follows the theme */
 .wl-face i{position:absolute; inset:0; display:block; background:rgba(21,48,66,.46);
   -webkit-mask-size:cover; mask-size:cover; -webkit-mask-position:center; mask-position:center;
   -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat}
@@ -798,35 +1087,97 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .wl-case.sel .wl-face{background:rgba(31,111,178,.16); box-shadow:inset 0 0 0 1px var(--actb)}
 .wl-case.sel .wl-face i{background:rgba(23,74,120,.66)}
 .wl-body{min-width:0; flex:1}
-.wl-ttl{font-size:13.8px; font-weight:500; letter-spacing:-.004em; color:var(--ink);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.wl-meta{display:flex; align-items:baseline; gap:10px; margin-top:3px}
-/* Case numbers (28 October 2026): "Case N" before the title, on the list, the splash and in
-   the learner's history. */
-.wl-no{font-family:var(--mono); font-size:10.5px; font-weight:400; letter-spacing:.02em;
-  color:var(--ink3); margin-right:8px}
-.wl-case.sel .wl-no{color:var(--act)}
-.sp-no{font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--ink3); margin:0 0 6px}
-.sp-no[hidden]{display:none}
-.hm-no{font-family:var(--mono); font-size:11px; font-weight:400; color:rgba(226,238,244,.55);
-  margin-right:8px}
-.wl-meta .ag{font-family:var(--mono); font-size:11.5px; color:var(--ink2); min-width:44px;
-  font-variant-numeric:tabular-nums}
-.wl-meta .lv{font-size:11.5px; color:var(--ink3); white-space:nowrap; overflow:hidden;
-  text-overflow:ellipsis}
-.wl-meta .rt{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--ink3)}
-.wl-state{flex:none; width:7px; height:7px; border-radius:50%; background:#D9A441}
-.wl-state.ok{background:var(--ok)}
-.wl-empty{padding:34px 22px; color:var(--ink3); font-size:13px}
-.wl-empty b{display:block; color:var(--ink2); font-weight:500; font-size:13.5px; margin-bottom:4px}
-.wl-foot{border-top:1px solid var(--rule2); padding:11px 20px 13px; display:flex; gap:14px;
+.wl-ttl{display:block; font-size:15.5px; font-weight:600; letter-spacing:-.006em; line-height:1.3; color:var(--ink)}
+.wl-meta{display:flex; flex-wrap:wrap; align-items:baseline; gap:3px 10px; margin-top:4px; font-size:12px; color:var(--ink3)}
+.wl-meta .ag{font-family:var(--mono); font-size:11.5px; color:var(--ink2); font-variant-numeric:tabular-nums}
+.wl-meta .rt{font-family:var(--mono); font-size:11.5px}
+.dc-foot{display:flex; align-items:center; gap:10px; padding-top:11px; border-top:1px solid var(--rule2)}
+.dc-ring{position:relative; width:36px; height:36px; flex:none}
+.dc-svg{display:block; width:100%; height:100%}
+.dc-svg .t{fill:none; stroke:var(--rule2)}
+.dc-svg .f{fill:none; stroke:var(--ink3); stroke-linecap:round}
+.t-tried .dc-svg .f{stroke:var(--warn)}
+.t-passed .dc-svg .f{stroke:var(--act)}
+.t-mastered .dc-svg .f{stroke:var(--ok)}
+.dc-star{position:absolute; left:9px; top:9px; width:18px; height:18px; fill:var(--ok); stroke:none}
+.dc-st{min-width:0}
+.dc-st b{display:block; font-size:12.5px; font-weight:600; color:var(--ink3)}
+.t-tried .dc-st b{color:var(--warn)}
+.t-passed .dc-st b{color:var(--act)}
+.t-mastered .dc-st b{color:var(--ok)}
+.dc-st span{display:block; font-size:11.5px; font-family:var(--mono); color:var(--ink3)}
+.dc-go{margin-left:auto; display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600;
+  color:var(--act); background:var(--actl); padding:4px 10px; border-radius:999px; white-space:nowrap}
+.dc-go .ic{width:10px; height:10px}
+.wl-empty{grid-column:1/-1; padding:30px 4px; color:var(--ink3); font-size:13.5px}
+.wl-empty b{display:block; color:var(--ink2); font-weight:600; font-size:14px; margin-bottom:4px}
+
+/* ---- history ---- */
+.db-trend{margin:0 0 24px; padding:15px 18px 12px; background:var(--solid); border:1px solid var(--rule2);
+  border-radius:14px}
+.db-trend figcaption{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin-bottom:12px}
+.db-trend figcaption b{font-size:14px; color:var(--ink)}
+.db-trend figcaption span{font-size:12px; color:var(--ink3)}
+.db-trend svg{display:block; width:100%; height:120px}
+.db-trend .tb.ok{fill:var(--ok)}
+.db-trend .tb.warn{fill:var(--warn)}
+.db-trend .tb.harm,.db-trend .tb.ns{fill:var(--rule)}
+.db-trend .tg{stroke:var(--ok); stroke-width:1; stroke-dasharray:4 4; vector-effect:non-scaling-stroke; opacity:.7}
+.db-trend-k{margin-top:6px; font-size:11px; color:var(--ink3); font-family:var(--mono)}
+.hm-list{display:flex; flex-direction:column; gap:7px}
+.hm-row{background:var(--solid); border:1px solid var(--rule2); border-radius:12px; box-shadow:0 8px 20px -18px var(--shadow)}
+.hm-row.open{border-color:var(--rule)}
+.hm-rh{display:flex; align-items:center; gap:14px; width:100%; padding:11px 14px; background:none;
+  border:0; border-radius:12px; color:inherit; font:inherit; text-align:left; cursor:pointer}
+.hm-rh:hover{background:var(--sunk)}
+.hm-rh:focus-visible{outline:2px solid var(--act); outline-offset:-2px}
+/* The debrief's two dials, small, in the debrief's own colours. */
+.hm-dials{flex:none; display:flex; gap:10px}
+.hm-dial{display:flex; flex-direction:column; align-items:center; gap:5px; width:60px}
+.hm-ring{position:relative; width:56px; height:56px}
+.hm-ring svg{display:block; width:100%; height:100%}
+.hm-ring circle{fill:none; stroke-width:6}
+.hm-ring .t{stroke:var(--rule2)}
+.hm-ring .f{stroke-linecap:round}
+.hm-dial.crit .f{stroke:var(--ok)}
+.hm-dial.ovr .f{stroke:var(--act)}
+.hm-dn{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:13.5px; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums}
+.hm-dn small{font-size:9.5px; font-weight:500; color:var(--ink3); margin-left:1px}
+.hm-dial.muted .hm-dn{font-size:11.5px; font-weight:500; color:var(--ink3)}
+.hm-dc{font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3)}
+.hm-rb{min-width:0; flex:1}
+.hm-rt{display:block; font-size:14px; font-weight:500; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.hm-rm{display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; margin-top:4px; font-size:11.5px; color:var(--ink2)}
+.hm-tag{padding:1px 7px; border-radius:999px; font-size:11px; border:1px solid currentColor}
+.hm-tag.ok{color:var(--ok)} .hm-tag.warn{color:var(--warn)} .hm-tag.harm{color:var(--harm)}
+.hm-rd{flex:none; font-size:11.5px; color:var(--ink3); text-align:right}
+.hm-rx{padding:2px 14px 14px 158px}
+.hm-why{font-size:12.5px; color:var(--ink2); margin-bottom:8px}
+.hm-part{display:grid; grid-template-columns:110px minmax(0,1fr) 44px; gap:3px 12px; align-items:center;
+  padding:6px 0; border-top:1px solid var(--rule2); font-size:12.5px}
+.hm-part .l{color:var(--ink)}
+.hm-part .bar{height:5px; border-radius:3px; background:var(--rule2); overflow:hidden}
+.hm-part .bar i{display:block; height:100%; background:var(--act)}
+.hm-part .p{text-align:right; color:var(--ink)}
+.hm-part .d{grid-column:1/-1; color:var(--ink3); font-size:11.5px}
+.hm-ra{margin-top:10px}
+.hm-note{margin:24px 0 0; font-size:11.5px; line-height:1.55; color:var(--ink3); max-width:90ch}
+
+.wl-foot{margin-top:34px; padding:16px 0 0; border-top:1px solid var(--rule2); display:flex; gap:6px 14px;
   align-items:center; flex-wrap:wrap}
 .wl-foot .note{font-size:11.5px; color:var(--ink3)}
 .wl-foot #pk-warn{background:none; padding:0; border:0; border-radius:0; margin:0}
 .wl-foot #pk-legal{background:none; padding:0; border:0; border-radius:0; margin:0; flex-basis:100%}
 .wl-foot #pk-legal:empty{display:none}
 .wl-foot .ver{margin-left:auto; font-family:var(--mono); font-size:10.5px; color:var(--ink3)}
+
+/* Case numbers on the splash. */
+.sp-no{font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); margin:0 0 6px}
+.sp-no[hidden]{display:none}
+/* The splash: Resume beside Start over, with one line under them. */
+.sp-run:not([hidden]){display:contents}
+.sp-runnote{flex-basis:100%; order:3; font-size:12.5px; line-height:1.45; color:var(--ink3)}
 
 /* the splash gains a real back control, top left of the card */
 .splashback{display:inline-flex; align-items:center; gap:9px; background:var(--actl);
@@ -838,124 +1189,25 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .splashback svg{width:20px; height:20px; stroke:currentColor; stroke-width:2; fill:none;
   stroke-linecap:round; stroke-linejoin:round}
 
-@media (prefers-reduced-motion:no-preference){
-  .wl-text h1{animation:wlrise .8s cubic-bezier(.32,.72,.24,1) both}
-  .wl-lede{animation:wlrise .8s cubic-bezier(.32,.72,.24,1) .1s both}
-  @keyframes wlrise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-}
-@media (max-width:1180px){ #picker.welcome{grid-template-columns:1fr clamp(340px,38vw,440px)} }
 @media (max-width:900px){
-  #picker.welcome{grid-template-columns:1fr; grid-template-rows:minmax(240px,34dvh) minmax(0,1fr)}
-  .wl-edge,.wl-stamp,.wl-lede{display:none}
-  .wl-text{padding:0 24px 22px}
-  .wl-text h1{font-size:clamp(28px,6.4vw,40px); margin-bottom:0}
-  .wl-board{box-shadow:none; border-top:1px solid var(--rule)}
-}
-
-/* ---------- saved progress (engine/progress.js, 28 October 2026) ----------
-   Signed in, the left of the case board stops being only a picture (author, 28 October
-   2026). The illustration keeps a band at the top with the product name over it, and the
-   learner's own runs fill the rest: a case in progress, then finished attempts as score
-   summaries. Signed out, the page is exactly as before. */
-#picker.home-on{--band:clamp(140px,22vh,210px)}
-#picker.home-on .wl-hero{justify-content:flex-start; background:var(--screen)}
-#picker.home-on .wl-shot{bottom:auto; height:var(--band); background-position:54% 62%}
-#picker.home-on .wl-scrim{bottom:auto; height:var(--band); background:
-  linear-gradient(to top, rgba(12,25,34,1) 0%, rgba(12,25,34,.6) 45%, rgba(12,25,34,.15) 100%),
-  linear-gradient(to right, rgba(12,25,34,.72) 0%, rgba(12,25,34,0) 70%)}
-#picker.home-on .wl-edge,#picker.home-on .wl-lede{display:none}
-#picker.home-on .wl-text{flex:none; height:var(--band); display:flex; flex-direction:column;
-  justify-content:flex-end; padding-bottom:14px}
-#picker.home-on .wl-text h1{font-size:clamp(24px,2.3vw,34px); margin:0; max-width:none}
-#picker.home-on .wl-stamp{top:calc(var(--band) - 42px); bottom:auto}
-.wl-home{position:relative; flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain;
-  padding:24px clamp(28px,4.4vw,72px) 36px; background:var(--screen); color:#E4EEF3}
-.wl-home[hidden]{display:none}
-.hm-sec{max-width:780px}
-.hm-sec+.hm-sec{margin-top:30px}
-.hm-sec h2{display:flex; align-items:center; gap:10px; margin:0 0 12px; font-family:var(--mono);
-  font-size:10.5px; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
-  color:rgba(226,238,244,.58)}
-.hm-sec h2::after{content:""; flex:1; height:1px; background:rgba(226,238,244,.12)}
-.hm-empty{margin:0; color:rgba(226,238,244,.62); font-size:13.5px; line-height:1.5}
-.hm-mono{font-family:var(--mono); font-variant-numeric:tabular-nums}
-.hm-cont{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px}
-.hm-card{background:var(--screen2); border:1px solid rgba(226,238,244,.10); border-radius:8px;
-  padding:14px 16px}
-.hm-ct{font-size:15px; font-weight:600; color:#F5F9FB}
-.hm-cm{margin-top:4px; font-size:12px; line-height:1.5; color:rgba(226,238,244,.64)}
-.hm-cw{margin-top:8px; font-size:12px; line-height:1.45; color:#E8C27A}
-.hm-ca{display:flex; align-items:center; gap:16px; margin-top:12px}
-.hm-ca .btn{padding:7px 16px; font-size:13px}
-.hm-link{font:inherit; font-size:12.5px; background:none; border:0; padding:2px 0; cursor:pointer;
-  color:rgba(226,238,244,.72); text-decoration:underline; text-underline-offset:3px}
-.hm-link:hover{color:#fff}
-.hm-link:focus-visible,.hm-ca .btn:focus-visible{outline:2px solid #8FC3EE; outline-offset:2px}
-.hm-confirm{display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:10px;
-  padding:10px 12px; border-radius:6px; background:rgba(192,48,42,.16);
-  border:1px solid rgba(240,138,132,.35); font-size:12.5px}
-.hm-confirm span{flex-basis:100%}
-.hm-confirm .btn{padding:6px 14px; font-size:12.5px}
-.btn.harm{background:var(--harm)}
-.hm-list{display:flex; flex-direction:column; gap:6px}
-.hm-row{background:var(--screen2); border:1px solid rgba(226,238,244,.08); border-radius:8px}
-.hm-row.open{border-color:rgba(226,238,244,.18)}
-.hm-rh{display:flex; align-items:center; gap:14px; width:100%; padding:11px 14px; background:none;
-  border:0; border-radius:8px; color:inherit; font:inherit; text-align:left; cursor:pointer}
-.hm-rh:hover{background:rgba(255,255,255,.04)}
-.hm-rh:focus-visible{outline:2px solid #8FC3EE; outline-offset:-2px}
-/* The debrief's two dials, small: green for critical actions, blue for the overall score.
-   The hues are the debrief's (--ok, --act), lifted for the dark panel. */
-.hm-dials{flex:none; display:flex; gap:10px}
-.hm-dial{display:flex; flex-direction:column; align-items:center; gap:5px; width:60px}
-.hm-ring{position:relative; width:56px; height:56px}
-.hm-ring svg{display:block; width:100%; height:100%}
-.hm-ring circle{fill:none; stroke-width:6}
-.hm-ring .t{stroke:rgba(226,238,244,.13)}
-.hm-ring .f{stroke-linecap:round}
-.hm-dial.crit .f{stroke:#3DBE85}
-.hm-dial.ovr .f{stroke:#5AA6E6}
-.hm-dn{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  font-family:var(--mono); font-size:13.5px; font-weight:600; color:#F5F9FB;
-  font-variant-numeric:tabular-nums}
-.hm-dn small{font-size:9.5px; font-weight:500; color:rgba(226,238,244,.6); margin-left:1px}
-.hm-dial.muted .hm-dn{font-size:11.5px; font-weight:500; color:rgba(226,238,244,.45)}
-.hm-dc{font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase;
-  color:rgba(226,238,244,.55)}
-.hm-rb{min-width:0; flex:1}
-.hm-rt{display:block; font-size:14px; font-weight:500; color:#F5F9FB; white-space:nowrap;
-  overflow:hidden; text-overflow:ellipsis}
-.hm-rm{display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; margin-top:4px;
-  font-size:11.5px; color:rgba(226,238,244,.62)}
-.hm-tag{padding:1px 7px; border-radius:999px; font-size:11px; border:1px solid currentColor}
-.hm-tag.ok{color:#6FCFA4} .hm-tag.warn{color:#E8C27A} .hm-tag.harm{color:#F08A84}
-.hm-rd{flex:none; font-size:11.5px; color:rgba(226,238,244,.5); text-align:right}
-.hm-rx{padding:2px 14px 14px 158px}
-.hm-why{font-size:12.5px; color:rgba(226,238,244,.72); margin-bottom:8px}
-.hm-part{display:grid; grid-template-columns:110px minmax(0,1fr) 44px; gap:3px 12px;
-  align-items:center; padding:6px 0; border-top:1px solid rgba(226,238,244,.07); font-size:12.5px}
-.hm-part .l{color:#E4EEF3}
-.hm-part .bar{height:5px; border-radius:3px; background:rgba(226,238,244,.12); overflow:hidden}
-.hm-part .bar i{display:block; height:100%; background:#8FC3EE}
-.hm-part .p{text-align:right; color:#E4EEF3}
-.hm-part .d{grid-column:1/-1; color:rgba(226,238,244,.56); font-size:11.5px}
-.hm-ra{margin-top:10px}
-.hm-note{max-width:780px; margin:30px 0 0; font-size:11.5px; line-height:1.55;
-  color:rgba(226,238,244,.46)}
-/* The case board row: in progress, or the best scored attempt. */
-.wl-prog{display:block; margin-top:4px; font-family:var(--mono); font-size:10.5px;
-  color:var(--ink3)}
-.wl-prog.go{color:var(--act); font-weight:500}
-/* The splash: Resume beside Start over, with one line under them. */
-.sp-run:not([hidden]){display:contents}
-.sp-runnote{flex-basis:100%; order:3; font-size:12.5px; line-height:1.45; color:var(--ink3)}
-@media (max-width:900px){
-  #picker.welcome.home-on{grid-template-rows:minmax(200px,38dvh) minmax(0,1fr)}
-  #picker.home-on{--band:92px}
-  #picker.home-on .wl-text{padding:0 16px 12px}
-  .wl-home{padding:16px 16px 22px}
+  .db-name{display:none}
+  .db-top .wl-acct .who{display:none}
+  .wl-stamp{display:none}
+  .db-stats{width:100%; justify-content:flex-start}
   .hm-rx{padding-left:14px}
   .hm-rd{display:none}
+}
+@media (max-width:560px){
+  .db-top{gap:8px}
+  .wl-slash{display:none}
+  .db-stats{gap:14px; padding:12px}
+  .ds-main{width:92px; height:92px}
+  .ds-tiles{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 14px}
+  .ds-tile b{font-size:18px}
+  .wl-list{grid-template-columns:minmax(0,1fr)}
+  .hm-dials{gap:6px}
+  .hm-dial{width:52px}
+  .hm-ring{width:48px; height:48px}
 }
 
 /* ---------- splash and picker ---------- */
@@ -2071,7 +2323,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 .ld-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,560px);gap:clamp(24px,5vw,72px);align-items:center;
   max-width:1240px;margin:0 auto;padding:clamp(28px,6vw,72px) clamp(16px,4vw,48px)}
 .ld-kicker{font-family:var(--mono);font-size:clamp(13px,1.3vw,15px);font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--act);margin-bottom:14px}
-.ld-hero h1{font-family:"IBM Plex Serif",Georgia,serif;font-size:clamp(40px,6vw,72px);line-height:1.02;margin:0 0 20px;letter-spacing:-.02em;color:var(--ink)}
+.ld-hero h1{font-family:var(--title);font-size:clamp(40px,6vw,72px);line-height:1.02;margin:0 0 20px;letter-spacing:-.02em;color:var(--ink)}
 .ld-lede{font-size:clamp(16px,1.6vw,19px);line-height:1.55;color:var(--ink2);max-width:520px;margin:0 0 26px}
 .ld-ctas{display:flex;gap:12px;flex-wrap:wrap}
 .ld-fine{font-size:12.5px;color:var(--ink3);margin:18px 0 0}
@@ -2131,12 +2383,12 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 .ld-stat.c2{--c:var(--ok);--cl:var(--okl)}.ld-stat.c3{--c:#7A4FB3;--cl:rgba(122,79,179,.11)}.ld-stat.c4{--c:var(--warn);--cl:var(--warnl)}
 .ld-stat .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--cl);color:var(--c);margin-bottom:14px}
 .ld-stat .ic svg{width:24px;height:24px}
-.ld-stat b{font-family:"IBM Plex Serif",Georgia,serif;font-size:clamp(40px,4.2vw,54px);line-height:1;color:var(--c);letter-spacing:-.02em;margin-bottom:10px}
+.ld-stat b{font-family:var(--title);font-size:clamp(40px,4.2vw,54px);line-height:1;color:var(--c);letter-spacing:-.02em;margin-bottom:10px}
 .ld-stat b small{font-size:.45em;letter-spacing:0;margin-left:2px}
 .ld-stat strong{font-size:17px;color:var(--ink);margin-bottom:6px}
 .ld-stat span:last-child{font-size:14px;line-height:1.5;color:var(--ink2)}
 .ld-inside,.ld-why,.ld-cases{max-width:1240px;margin:0 auto;padding:clamp(40px,7vw,90px) clamp(16px,4vw,48px) 0}
-.landing h2{font-family:"IBM Plex Serif",Georgia,serif;font-size:clamp(28px,3.6vw,42px);margin:0 0 8px;letter-spacing:-.01em;color:var(--ink)}
+.landing h2{font-family:var(--title);font-size:clamp(28px,3.6vw,42px);margin:0 0 8px;letter-spacing:-.01em;color:var(--ink)}
 .ld-sub{color:var(--ink3);margin:0 0 30px;font-size:14px}
 .ld-row{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:center;margin:0 0 clamp(36px,6vw,72px)}
 .ld-row.flip .ld-shot{order:2}
@@ -2174,6 +2426,21 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   .ld-actions{grid-template-columns:1fr}.ld-auth .ghost{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+
+/* ---------- type roles (28 October 2026) ----------
+   One family throughout. What is read slowly (titles, the debrief's headings, the case
+   discussion, the cards that ask you to start or resume) is set heavier and a little tighter.
+   The italic is for what someone says: the patient's own words on the splash and the handover. */
+.splashcard h1,.gatetitle,#endview h2,.cdisc h3,.cd-point,.cx-title,.tr-head h2{font-family:var(--title)}
+.wl-text h1,.ld-hero h1{font-weight:750; letter-spacing:-.015em}
+.splashcard h1{font-weight:750; font-size:27px; letter-spacing:-.015em}
+.gatetitle{font-weight:750; letter-spacing:-.015em}
+.cx-title{font-weight:750; letter-spacing:-.01em}
+.tr-head h2{font-size:19px; font-weight:750; letter-spacing:-.01em}
+.splashcard .cc,.handover,.ld-say{font-style:italic}
+.splashcard .cc{font-size:19px}
+.handover{font-size:15.5px}
+.handover .who{font-style:normal}
 
 /* ============================================================
    DAY AND NIGHT (author instruction, 28 October 2026)
@@ -2539,59 +2806,74 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 </div>
 
 <div id="picker" class="welcome">
-  <section class="wl-hero">
-    <div class="wl-shot" role="img" aria-label="The ambulance entrance of a coastal teaching hospital emergency department"></div>
-    <div class="wl-scrim"></div>
-    <div class="wl-edge"></div>
-    <div class="wl-text">
-      <h1>__PRODUCT__: Emergency Medicine Case&nbsp;Simulator</h1>
-      <p class="wl-lede">Run a resuscitation in the browser. Take a history, examine, order, treat,
-        hand over, then read what your timing cost. Most of __PRODUCT__ is free to use.</p>
-    </div>
-    <!-- Saved progress (28 October 2026): signed in, the learner's runs. engine/progress.js. -->
-    <div class="wl-home" id="wl-home" hidden aria-label="Your progress"></div>
-    <div class="wl-stamp" aria-hidden="true"><div>Engine v0.9</div><div>Catalog v0.2-draft</div></div>
-  </section>
-
-  <aside class="wl-board" aria-label="Available cases">
-    <div class="wl-head">
-      <h2>Cases</h2>
-      <span class="n" id="wl-count">0</span>
-      <button type="button" class="themebtn" data-themetoggle></button>
-      <div class="wl-menuwrap">
-        <button class="wl-kebab" id="wl-menubtn" aria-haspopup="true" aria-expanded="false" aria-label="More">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-            <circle cx="8" cy="3" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="8" cy="13" r="1.5"/></svg>
-        </button>
-        <div class="wl-menu" id="wl-menu" role="menu">
-          <a href="#" role="menuitem" data-nav="about">About this project</a>
-          <a href="#" role="menuitem" data-nav="authoring">Write a case</a>
-          <a href="#" role="menuitem" data-nav="catalog">Action catalog</a>
-          <a href="#" role="menuitem" data-nav="diagnoses">Diagnosis catalog</a>
-          <hr>
-          <a href="#" role="menuitem" data-nav="review">Review artifacts</a>
-          <div class="sub">Pacing is chosen when a case starts.</div>
-        </div>
-      </div>
+  <!-- The case dashboard (author instruction, 28 October 2026). One page: a top bar, the
+       hero with the learner's progress, Continue and Next up, milestones, then the cases as
+       cards with their mastery, and History as a second tab. The progress parts are filled
+       by engine/progress.js and appear only when a learner is signed in to the site. -->
+  <header class="db-top">
+    <div class="db-brand" role="img" aria-label="__PRODUCT__"><span class="db-logo">__LOGO__</span><span class="db-name">__PRODUCT__</span></div>
+    <div class="wl-search db-search">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="7" cy="7" r="4.4"/><path d="M10.4 10.4 14 14"/></svg>
+      <input id="wl-q" type="search" autocomplete="off" spellcheck="false"
+             placeholder="Search complaint, age, category or case number" aria-label="Search cases">
+      <span class="wl-slash" aria-hidden="true">/</span>
     </div>
     <div class="wl-acct" id="wl-acct" hidden></div>
-    <div class="wl-tools">
-      <div class="wl-search">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-          <circle cx="7" cy="7" r="4.4"/><path d="M10.4 10.4 14 14"/></svg>
-        <input id="wl-q" type="search" autocomplete="off" spellcheck="false"
-               placeholder="Search complaint, age, category or case number" aria-label="Search cases">
-        <span class="wl-slash" aria-hidden="true">/</span>
+    <button type="button" class="themebtn" data-themetoggle></button>
+    <div class="wl-menuwrap">
+      <button class="wl-kebab" id="wl-menubtn" aria-haspopup="true" aria-expanded="false" aria-label="More">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <circle cx="8" cy="3" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="8" cy="13" r="1.5"/></svg>
+      </button>
+      <div class="wl-menu" id="wl-menu" role="menu">
+        <a href="#" role="menuitem" data-nav="about">About this project</a>
+        <a href="#" role="menuitem" data-nav="authoring">Write a case</a>
+        <a href="#" role="menuitem" data-nav="catalog">Action catalog</a>
+        <a href="#" role="menuitem" data-nav="diagnoses">Diagnosis catalog</a>
+        <hr>
+        <a href="#" role="menuitem" data-nav="review">Review artifacts</a>
+        <div class="sub">Pacing is chosen when a case starts.</div>
       </div>
-      <div class="wl-chips" id="wl-chips" role="group" aria-label="Filter by category"></div>
     </div>
-    <div class="wl-list" id="pk-list" role="listbox" aria-label="Cases" tabindex="-1"></div>
-    <div class="wl-foot">
-      <span class="note" id="pk-warn"></span>
-      <span class="note" id="pk-legal"></span>
-      <span class="ver">v0.6</span>
+  </header>
+
+  <div class="db-scroll" id="db-scroll">
+    <section class="wl-hero">
+      <div class="wl-shot" role="img" aria-label="The ambulance entrance of a coastal teaching hospital emergency department"></div>
+      <div class="wl-scrim"></div>
+      <div class="db-heroin">
+        <div class="wl-text">
+          <p class="db-greet" id="db-greet" hidden></p>
+          <h1>__PRODUCT__: Emergency Medicine Case&nbsp;Simulator</h1>
+          <p class="wl-lede">Run a resuscitation in the browser. Take a history, examine, order, treat,
+            hand over, then read what your timing cost. Most of __PRODUCT__ is free to use.</p>
+        </div>
+        <div class="db-stats" id="db-stats" hidden></div>
+      </div>
+      <div class="wl-stamp" aria-hidden="true"><div>Engine v0.9</div><div>Catalog v0.2-draft</div></div>
+    </section>
+
+    <div class="db-body">
+      <div class="wl-home" id="wl-home" hidden aria-label="Your progress"></div>
+
+      <div class="db-tabs" id="db-tabs" role="tablist" aria-label="Cases and history">
+        <button type="button" role="tab" data-dbtab="cases" aria-selected="true" aria-controls="db-cases">Cases <span class="n" id="wl-count">0</span></button>
+        <button type="button" role="tab" data-dbtab="history" aria-selected="false" aria-controls="db-history" tabindex="-1" hidden>History <span class="n" id="db-hcount">0</span></button>
+      </div>
+      <section class="db-pane" id="db-cases" role="tabpanel" aria-label="Cases">
+        <div class="wl-chips" id="wl-chips" role="group" aria-label="Filter by category"></div>
+        <div class="wl-list" id="pk-list" role="listbox" aria-label="Cases" tabindex="-1"></div>
+      </section>
+      <section class="db-pane" id="db-history" role="tabpanel" aria-label="History" hidden></section>
+
+      <footer class="wl-foot">
+        <span class="note" id="pk-warn"></span>
+        <span class="note" id="pk-legal"></span>
+        <span class="ver">v0.6</span>
+      </footer>
     </div>
-  </aside>
+  </div>
 </div>
 
 <div id="splash" class="splash hidden">

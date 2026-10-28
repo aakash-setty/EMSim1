@@ -5,12 +5,39 @@ is usable with learners.
 
 ---
 
+## New type: Atkinson Hyperlegible Next and Mono (28 October 2026, author's choice)
+
+- All text is Atkinson Hyperlegible Next: the interface, the titles (the same family at weight 750, slightly tighter), the debrief's headings, the case discussion, the Continue and Next up cards and the milestones heading. Its italic carries what people say: the patient's words on the splash, the paramedic or triage handover, the patient's line on the welcome page. Numbers (monitor, clock, timers, labs, small labels) are Atkinson Hyperlegible Mono.
+- Why: the Braille Institute drew the family for readers with low vision, and the letters that are easily confused differ. The lower-case l has a tail, the 1 has a flag, and the zero is slashed in both families. Checked on screen.
+- This replaces the Overpass, Overpass Mono and Brygada 1918 set chosen earlier the same day. The owner found the serif too close to Times New Roman, and on screen Overpass drew I and l, and Overpass Mono drew 0 and O, nearly alike. The retired files are kept outside the repository in `Claude outputs/fonts-atkinson/retired-fonts/`.
+- Both fonts are under the SIL Open Font License 1.1, from Fontsource 5.3.0, Latin subsets, with their license files in `engine/assets/fonts/`. The build inlines them as data URIs, so the page loads no fonts from Google Fonts or anywhere else, and the Content-Security-Policy allows only `font-src 'self' data:`. The CSS token `--serif` is now `--title`.
+
+
+
+The case list is now one dashboard page (owner's choices: one dashboard; per-case mastery, overall progress, a practice streak and milestones; the signed-out welcome page unchanged).
+
+- Top bar: the product, search, the account, day and night, the menu. A sign-in or download message shows as a toast under it.
+- Hero: the hospital picture with the title and, signed in, the learner's numbers: a ring of cases passed out of all cases, cases mastered, critical actions found (best run of each case tried), the day streak (with its longest, and a gentle "finish a case today to keep it" when it would lapse tonight), and cases finished.
+- Continue: runs in progress, and a Next up card (the lowest-numbered case not yet passed, or the passed case furthest from mastery).
+- Milestones: nine, earned from the learner's own history: First case, Clean run, Mastery, Every system, Half the board, Full board, Three days running, Ten cases, Comeback (best raised by 20 points). A compact row of medals with the nearest one named, and the full list on request.
+- Cases: a grid of cards grouped by category, in case-number order. Signed in, each card shows its tier with a ring filled to the best score: Not started (grey), Attempted (amber), Passed (blue), Mastered (green, with a star), and a run in progress.
+- History: a second tab with a bar chart of the last 20 overall scores (the mastery line drawn in) and the attempt list with the two dials.
+- After every case the dashboard opens at the top with a note on what changed: a first or new best score, a new tier, a milestone, a longer streak, or, when nothing improved, the best that stands and what passes the case.
+- Tiers, for the owner to confirm (teaching choices, not physician reviewed): Passed is a run with every critical action. Mastered is that, with an overall score of 90% or more, in the default (Normal) mode.
+- Everything is computed in the browser from the learner's own runs. Nothing new is stored, nothing is ranked against other learners, and programs see none of it. The local build shows the same page without the progress parts.
+- Continue and Next up are now large cards lifted onto the bottom of the hero (author instruction): the patient in a ring that fills with case time, a time bar, and a large Resume or Start. Milestones are a shelf of medals: gold on a ribbon when earned, a progress ring around a dim disc when not, the nearest one lit with a slow pulse, and "New" on one earned with the case just played.
+- The top bar carries the EMSim logo (`engine/assets/logo.png`, the same file as the welcome page), brightened at night.
+- Keyboard: arrow keys walk the cards in the order they are drawn, left and right included. Site check: the progress checks cover the dashboard (108 `ok` in all).
+
+---
+
 ## Day and night (28 October 2026, author instruction)
 
 - A day and night switch: on the case board beside the menu, on the welcome page beside Log in, and on the rail above Main menu during a case. A first visit follows the device's own setting, and follows it live until the learner chooses. The choice is remembered in this browser only. The page is drawn in the right theme from the first frame, so a night reader never sees a white flash.
 - Night is the room with the lights down: the photograph dims and cools, the panes go dark, and the monitor becomes the brightest thing on the screen. The welcome page's hospital turns to night too.
 - Clinical colours keep their meaning (red harm, green done, amber waiting, violet speech), lifted for a dark ground. Where one is a fill under white text it is darkened instead, so the text stays readable.
 - ECGs, films and the case discussion figures keep their white paper, since they were drawn for it.
+- The signed-in home panel (Continue, Your attempts) now follows the theme too. It was dark in both themes. Its colours are all theme tokens now, with the dials in the debrief's own green and blue.
 - Switching changes nothing in a case: clock, timings, monitor values and scores are the same in both. Day is the stylesheet as it was. Night is one block of overrides at the end of it (`engine/shell.html`), so day cannot change by accident. Analytics: `theme_changed`.
 
 ---
@@ -39,6 +66,12 @@ Site build only. The local build is unchanged.
 - New: `engine/progress.js`, `engine/site-check/progress.js`. Changed: `engine/ui.js` (runSnapshot, resumeRun and hooks), `engine/access.js`, `engine/shell.html`, `engine/build_simulator.py` (versionKey per case), `engine/site-check/mock.js`.
 - Site check: `flow.js` and `deep.js` now press the charging defibrillator after a download and wait out the nurse's opening card. Both had failed since those features arrived (11 and 13 October).
 - Not decided: free or paid.
+
+---
+
+## A jerkier seizure (28 October 2026, author instruction)
+
+The patient figure's seizure (`engine/patient.js`) moves in sharp clonic jerks instead of a smooth shake. Each beat snaps out in about 30 ms and falls back more slowly, near 3.5 Hz, with interval, size and direction varied beat to beat. Larger travel than before. Fine tremor, the clenched grimace, reduced motion and no luminance change are kept. Display only.
 
 ---
 

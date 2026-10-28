@@ -2896,10 +2896,12 @@ function renderPicker(){
       .join(' ').toLowerCase();
     return q.split(/\s+/).every(t=>hay.includes(t));
   });
-  /* In case-number order within each group (28 October 2026). */
+  /* In case-number order within each group (28 October 2026). WL_ROWS is in the order the
+     cards are drawn, groups first, so the arrow keys walk the page as it reads. */
   hits.sort((a,b)=>(a.num||1e9)-(b.num||1e9));
   el('wl-count').textContent=hits.length;
-  WL_ROWS=hits;
+  const order=[...new Set(hits.map(c=>c.category))].sort();
+  WL_ROWS=order.flatMap(g=>hits.filter(c=>c.category===g));
 
   if(!hits.length){
     el('pk-list').innerHTML='<div class="wl-empty"><b>No case matches that.</b>'+
@@ -2913,7 +2915,7 @@ function renderPicker(){
     if(grouped) html+=`<div class="wl-group">${esc(g)}</div>`;
     for(const c of hits.filter(x=>x.category===g)){
       const face=WL_SHORT[c.sex]?`<i class="${c.sex}"></i>`:'';
-      const prog=PROGRESS.rowBadge(c.prefix);
+      const prog=PROGRESS.cardInfo(c.prefix);
       const aria=[(c.num?'Case '+c.num+'. ':'')+c.complaint,
                   (WL_LABEL[c.sex]||'Patient')+', '+(c.age!==undefined?c.age+' years old':'age not recorded'),
                   c.category,c.level,c.mins?'about '+c.mins+' minutes':'',
@@ -2922,19 +2924,24 @@ function renderPicker(){
                   c.broken?'Incomplete: '+c.broken+' build problems, this case will not run correctly.':'',
                   prog.aria
                  ].filter(Boolean).join('. ');
-      html+=`<button class="wl-case${ACCESS_UI.loadingIndex()===c.i?' loading':''}" type="button" role="option" data-case="${c.i}"
+      /* A card (28 October 2026): the number and the review dot, the patient and the
+         complaint, then, signed in, the learner's own mastery of it (engine/progress.js). */
+      html+=`<button class="wl-case${prog.cls}${ACCESS_UI.loadingIndex()===c.i?' loading':''}" type="button" role="option" data-case="${c.i}"
         data-row="${WL_ROWS.indexOf(c)}" aria-label="${esc(aria)}">
-        <span class="wl-face">${face}</span>
-        <span class="wl-body">
-          <span class="wl-ttl">${c.num?`<span class="wl-no">Case ${c.num}</span>`:''}${esc(c.complaint)}</span>
-          <span class="wl-meta">
-            <span class="ag">${c.age!==undefined?esc(String(c.age)):'\u2013'} ${esc(WL_SHORT[c.sex]||'\u2013')}</span>
-            <span class="lv">${c.broken?'<span style="color:var(--harm)">will not run correctly</span>':esc(c.level)}</span>
-            <span class="rt">${c.mins?c.mins+' min':''}</span>
-          </span>${prog.html}
-        </span>
-        ${c.locked&&!ACCESS_UI.signedIn()?`<svg class="wl-lock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>`:''}
-        <span class="wl-state${c.unreviewed?'':' ok'}" title="${c.unreviewed?'Unsigned draft':'Reviewed'}"></span>
+        <span class="dc-head">${c.num?`<span class="wl-no">Case ${c.num}</span>`:''}<span class="dc-sp"></span>
+          ${c.locked&&!ACCESS_UI.signedIn()?`<svg class="wl-lock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>`:''}
+          <span class="wl-state${c.unreviewed?'':' ok'}" title="${c.unreviewed?'Unsigned draft':'Reviewed'}"></span></span>
+        <span class="dc-main">
+          <span class="wl-face">${face}</span>
+          <span class="wl-body">
+            <span class="wl-ttl">${esc(c.complaint)}</span>
+            <span class="wl-meta">
+              <span class="ag">${c.age!==undefined?esc(String(c.age)):'\u2013'} ${esc(WL_SHORT[c.sex]||'\u2013')}</span>
+              <span class="lv">${c.broken?'<span style="color:var(--harm)">will not run correctly</span>':esc(c.level)}</span>
+              <span class="rt">${c.mins?c.mins+' min':''}</span>
+            </span>
+          </span>
+        </span>${prog.html}
       </button>`;
     }
   }
@@ -2987,9 +2994,11 @@ function wlBind(){
         el('wl-menubtn').setAttribute('aria-expanded','false'); return; }
       if(q.value){ q.value=''; renderPicker(); } return; }
     if(!WL_ROWS.length) return;
-    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+    const typing=document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
+    const fwd=e.key==='ArrowDown'||(e.key==='ArrowRight'&&!typing), back=e.key==='ArrowUp'||(e.key==='ArrowLeft'&&!typing);
+    if((fwd||back)&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#db-tabs'))){
       e.preventDefault();
-      WL_SEL=e.key==='ArrowDown'?Math.min(WL_ROWS.length-1,WL_SEL+1):Math.max(0,WL_SEL-1);
+      WL_SEL=fwd?Math.min(WL_ROWS.length-1,WL_SEL+1):Math.max(0,WL_SEL-1);
       wlPaint();
       const r=document.querySelector('.wl-case[data-row="'+WL_SEL+'"]');
       if(r) r.scrollIntoView({block:'nearest'});
@@ -3163,6 +3172,8 @@ function backToPicker(){
   AUDIO.setScene('idle'); MONITOR.setScene('idle'); MONITOR.reset();
   el('splash').classList.add('hidden');
   el('picker').classList.remove('hidden');
+  /* Back at the top, where the note about the case just played and Continue are. */
+  { const sc=el('db-scroll'); if(sc) sc.scrollTop=0; }
   WL_SEL=-1;                          // returning must not land on a stale highlight
   renderPicker();
   const q=el('wl-q'); if(q) q.blur();
