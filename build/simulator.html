@@ -888,10 +888,24 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
   border:0; border-radius:8px; color:inherit; font:inherit; text-align:left; cursor:pointer}
 .hm-rh:hover{background:rgba(255,255,255,.04)}
 .hm-rh:focus-visible{outline:2px solid #8FC3EE; outline-offset:-2px}
-.hm-score{flex:none; width:58px; font-family:var(--mono); font-size:22px; font-weight:500;
-  color:#F5F9FB; font-variant-numeric:tabular-nums}
-.hm-score small{font-size:12px; color:rgba(226,238,244,.55); margin-left:1px}
-.hm-score.ns{color:rgba(226,238,244,.4)}
+/* The debrief's two dials, small: green for critical actions, blue for the overall score.
+   The hues are the debrief's (--ok, --act), lifted for the dark panel. */
+.hm-dials{flex:none; display:flex; gap:10px}
+.hm-dial{display:flex; flex-direction:column; align-items:center; gap:5px; width:60px}
+.hm-ring{position:relative; width:56px; height:56px}
+.hm-ring svg{display:block; width:100%; height:100%}
+.hm-ring circle{fill:none; stroke-width:6}
+.hm-ring .t{stroke:rgba(226,238,244,.13)}
+.hm-ring .f{stroke-linecap:round}
+.hm-dial.crit .f{stroke:#3DBE85}
+.hm-dial.ovr .f{stroke:#5AA6E6}
+.hm-dn{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:13.5px; font-weight:600; color:#F5F9FB;
+  font-variant-numeric:tabular-nums}
+.hm-dn small{font-size:9.5px; font-weight:500; color:rgba(226,238,244,.6); margin-left:1px}
+.hm-dial.muted .hm-dn{font-size:11.5px; font-weight:500; color:rgba(226,238,244,.45)}
+.hm-dc{font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase;
+  color:rgba(226,238,244,.55)}
 .hm-rb{min-width:0; flex:1}
 .hm-rt{display:block; font-size:14px; font-weight:500; color:#F5F9FB; white-space:nowrap;
   overflow:hidden; text-overflow:ellipsis}
@@ -900,7 +914,7 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .hm-tag{padding:1px 7px; border-radius:999px; font-size:11px; border:1px solid currentColor}
 .hm-tag.ok{color:#6FCFA4} .hm-tag.warn{color:#E8C27A} .hm-tag.harm{color:#F08A84}
 .hm-rd{flex:none; font-size:11.5px; color:rgba(226,238,244,.5); text-align:right}
-.hm-rx{padding:2px 14px 14px 86px}
+.hm-rx{padding:2px 14px 14px 158px}
 .hm-why{font-size:12.5px; color:rgba(226,238,244,.72); margin-bottom:8px}
 .hm-part{display:grid; grid-template-columns:110px minmax(0,1fr) 44px; gap:3px 12px;
   align-items:center; padding:6px 0; border-top:1px solid rgba(226,238,244,.07); font-size:12.5px}
@@ -8193,6 +8207,29 @@ const PROGRESS = (function(){
       <button class="btn harm" type="button" data-hmdelok="${escP(id)}">Delete</button>
       <button class="hm-link" type="button" data-hmdelno="1">Cancel</button></div>`;
   }
+  /* The debrief's two dials, small (author instruction, 28 October 2026): critical actions
+     (green ring, the count in the centre) and the overall score (blue ring). A case with no
+     critical actions has no first dial, as in the debrief, and keeps its slot empty so the
+     rows line up. A run the debrief does not score shows an empty ring and "n/a". */
+  function ring(f,big,cap,cls,aria){
+    f=Math.max(0,Math.min(1,f||0)); const r=23, c=2*Math.PI*r;
+    return `<span class="hm-dial ${cls}" role="img" aria-label="${escP(aria)}">
+      <span class="hm-ring"><svg viewBox="0 0 56 56" aria-hidden="true">
+        <circle class="t" cx="28" cy="28" r="${r}"/>
+        ${f>0?`<circle class="f" cx="28" cy="28" r="${r}" stroke-dasharray="${(f*c).toFixed(2)} ${c.toFixed(2)}" transform="rotate(-90 28 28)"/>`:''}
+      </svg><span class="hm-dn">${big}</span></span>
+      <span class="hm-dc" aria-hidden="true">${escP(cap)}</span></span>`;
+  }
+  function dialsHTML(crit, scored, pct){
+    const a=(crit&&crit.total)
+      ? ring(crit.done/crit.total, escP(crit.done)+'/'+escP(crit.total), 'Critical', 'crit',
+             crit.done+' of '+crit.total+' critical actions completed')
+      : '<span class="hm-dial none" aria-hidden="true"></span>';
+    const b=scored
+      ? ring(pct/100, escP(pct)+'<small>%</small>', 'Overall', 'ovr', 'Overall score '+pct+' percent')
+      : ring(0, 'n/a', 'Overall', 'ovr muted', 'Overall score: not scored');
+    return `<span class="hm-dials">${a}${b}</span>`;
+  }
   function attemptsHTML(){
     const done=runs.filter(r=>r.status==='finished');
     if(!done.length) return '<p class="hm-empty">Finished cases appear here with their scores.</p>';
@@ -8203,11 +8240,10 @@ const PROGRESS = (function(){
       const rows=Array.isArray(s.rows)?s.rows:[];
       return `<div class="hm-row${open?' open':''}">
         <button class="hm-rh" type="button" data-hmopen="${escP(r.id)}" aria-expanded="${open}">
-          <span class="hm-score${scored?'':' ns'}">${scored?escP(r.score_pct)+'<small>%</small>':'–'}</span>
+          ${dialsHTML(crit, scored, r.score_pct)}
           <span class="hm-rb">
             <span class="hm-rt">${escP(caseTitle(r.case_prefix))}</span>
             <span class="hm-rm"><span class="hm-tag ${o[1]}">${escP(o[0])}</span>
-              ${crit?`<span class="hm-mono">${escP(crit.done)}/${escP(crit.total)} critical</span>`:''}
               <span>${escP(modeLabel(r.mode))}</span><span class="hm-mono">${escP(mmssP(r.sim_seconds))}</span></span>
           </span>
           <span class="hm-rd">${escP(when(r.finished_at||r.updated_at))}</span>

@@ -12,6 +12,7 @@ Site build only. The local build is unchanged.
 - Learners can leave a case and resume it later from where they left it, paused at the same case time, with the same log, mode, tab and drafted handoff.
 - Signed in, the left of the case list is now the learner's own page: Continue (runs in progress, Resume or Discard) and Your attempts (score summaries, newest first, each opening to its Summary rows, each deletable). The picture is cut to a band at the top. Signed out, nothing changes.
 - Each case row on the list shows "In progress" or the best score and the number of attempts.
+- Each attempt carries the debrief's two dials, small: critical actions (green ring, done of total) and the overall score (blue ring, "n/a" when the debrief does not score the run).
 - The splash of a case in progress offers Resume and Start over. Start over deletes the saved run (owner decision: abandoned runs are discarded).
 - A run saved under an earlier version of the case is not resumed: "This case has been improved", and the run is deleted (owner decision).
 - The leave dialog says the progress is saved when it is. A saved run no longer triggers the browser's own leave prompt on reload.

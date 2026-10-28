@@ -307,6 +307,29 @@ const PROGRESS = (function(){
       <button class="btn harm" type="button" data-hmdelok="${escP(id)}">Delete</button>
       <button class="hm-link" type="button" data-hmdelno="1">Cancel</button></div>`;
   }
+  /* The debrief's two dials, small (author instruction, 28 October 2026): critical actions
+     (green ring, the count in the centre) and the overall score (blue ring). A case with no
+     critical actions has no first dial, as in the debrief, and keeps its slot empty so the
+     rows line up. A run the debrief does not score shows an empty ring and "n/a". */
+  function ring(f,big,cap,cls,aria){
+    f=Math.max(0,Math.min(1,f||0)); const r=23, c=2*Math.PI*r;
+    return `<span class="hm-dial ${cls}" role="img" aria-label="${escP(aria)}">
+      <span class="hm-ring"><svg viewBox="0 0 56 56" aria-hidden="true">
+        <circle class="t" cx="28" cy="28" r="${r}"/>
+        ${f>0?`<circle class="f" cx="28" cy="28" r="${r}" stroke-dasharray="${(f*c).toFixed(2)} ${c.toFixed(2)}" transform="rotate(-90 28 28)"/>`:''}
+      </svg><span class="hm-dn">${big}</span></span>
+      <span class="hm-dc" aria-hidden="true">${escP(cap)}</span></span>`;
+  }
+  function dialsHTML(crit, scored, pct){
+    const a=(crit&&crit.total)
+      ? ring(crit.done/crit.total, escP(crit.done)+'/'+escP(crit.total), 'Critical', 'crit',
+             crit.done+' of '+crit.total+' critical actions completed')
+      : '<span class="hm-dial none" aria-hidden="true"></span>';
+    const b=scored
+      ? ring(pct/100, escP(pct)+'<small>%</small>', 'Overall', 'ovr', 'Overall score '+pct+' percent')
+      : ring(0, 'n/a', 'Overall', 'ovr muted', 'Overall score: not scored');
+    return `<span class="hm-dials">${a}${b}</span>`;
+  }
   function attemptsHTML(){
     const done=runs.filter(r=>r.status==='finished');
     if(!done.length) return '<p class="hm-empty">Finished cases appear here with their scores.</p>';
@@ -317,11 +340,10 @@ const PROGRESS = (function(){
       const rows=Array.isArray(s.rows)?s.rows:[];
       return `<div class="hm-row${open?' open':''}">
         <button class="hm-rh" type="button" data-hmopen="${escP(r.id)}" aria-expanded="${open}">
-          <span class="hm-score${scored?'':' ns'}">${scored?escP(r.score_pct)+'<small>%</small>':'–'}</span>
+          ${dialsHTML(crit, scored, r.score_pct)}
           <span class="hm-rb">
             <span class="hm-rt">${escP(caseTitle(r.case_prefix))}</span>
             <span class="hm-rm"><span class="hm-tag ${o[1]}">${escP(o[0])}</span>
-              ${crit?`<span class="hm-mono">${escP(crit.done)}/${escP(crit.total)} critical</span>`:''}
               <span>${escP(modeLabel(r.mode))}</span><span class="hm-mono">${escP(mmssP(r.sim_seconds))}</span></span>
           </span>
           <span class="hm-rd">${escP(when(r.finished_at||r.updated_at))}</span>
