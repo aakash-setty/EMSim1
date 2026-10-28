@@ -440,6 +440,17 @@ def check_default_effects(case, errors, warnings, notes):
         notes.append("default pressor effects (display only): " + ", ".join(on_default))
 
 
+def check_case_number(case, errors, warnings):
+    """metadata.case_number (authoring 2.2): a whole number from 1. Uniqueness across the
+    library is checked by kit_check and by the build, which see every pack."""
+    n = (case.get("metadata") or {}).get("case_number")
+    if n is None:
+        warnings.append("[case number] metadata.case_number is missing: take one more than the "
+                        "highest in docs/generated/case-index.md")
+    elif not isinstance(n, int) or isinstance(n, bool) or n < 1:
+        errors.append(f"[case number] metadata.case_number must be a whole number from 1, not {n!r}")
+
+
 def check_ungraded(case, errors, warnings):
     """Intubation care is never graded (owner, 23 October 2026, authoring 6.3 and 22.2). The
     list of catalog ids is data in catalog/ungraded-intubation-care.json, so this file names
@@ -1643,6 +1654,7 @@ def run_checks(case):
     check_pupils(case, errors, warnings)
     check_ungraded(case, errors, warnings)
     check_default_effects(case, errors, warnings, notes)
+    check_case_number(case, errors, warnings)
 
     # numeric plausibility of the abnormal flags. The renderer must not recompute,
     # but the validator can, and a mis-set flag is invisible everywhere else.

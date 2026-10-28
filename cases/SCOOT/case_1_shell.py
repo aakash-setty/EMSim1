@@ -18,6 +18,7 @@ the opt-in. All three deadlines are teaching choices, not measured intervals.
 """
 
 META = {
+ "case_number": 8,
  "working_title": "22-year-old man after an e-scooter crash",
  "chief_complaint_patient_voice": "My head is killing me. What happened?",
  "final_diagnosis": (

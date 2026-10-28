@@ -5,6 +5,25 @@ is usable with learners.
 
 ---
 
+## Day and night (28 October 2026, author instruction)
+
+- A day and night switch: on the case board beside the menu, on the welcome page beside Log in, and on the rail above Main menu during a case. A first visit follows the device's own setting, and follows it live until the learner chooses. The choice is remembered in this browser only. The page is drawn in the right theme from the first frame, so a night reader never sees a white flash.
+- Night is the room with the lights down: the photograph dims and cools, the panes go dark, and the monitor becomes the brightest thing on the screen. The welcome page's hospital turns to night too.
+- Clinical colours keep their meaning (red harm, green done, amber waiting, violet speech), lifted for a dark ground. Where one is a fill under white text it is darkened instead, so the text stays readable.
+- ECGs, films and the case discussion figures keep their white paper, since they were drawn for it.
+- Switching changes nothing in a case: clock, timings, monitor values and scores are the same in both. Day is the stylesheet as it was. Night is one block of overrides at the end of it (`engine/shell.html`), so day cannot change by accident. Analytics: `theme_changed`.
+
+---
+
+## Case numbers (28 October 2026, author instruction)
+
+- Every case has a permanent number, `metadata.case_number`, in the order the cases were written: 1 CHFE, 2 MGCA, 3 AFRVR, 4 DIPH, 5 TSS, 6 TAKO, 7 DKA, 8 SCOOT. Numbers are never changed or reused. For packs with a generator the number is in `case_1_shell.py`, and each generator reproduces its case file exactly.
+- Shown as "Case N" on the case list (rows in number order within each group), the welcome page tiles, the splash, and the learner's Continue and Your attempts lists. "case 4" or "#4" in the search finds that case.
+- The number lives in each case's own folder, so adding a case still touches only that folder. The build stops on a duplicate or a malformed number. `kit_check` reports a pack with no number or a shared one. The validator checks the field's shape. The case index lists cases by number.
+- Authoring 2.2 and the field reference updated.
+
+---
+
 ## Saved progress (28 October 2026, author instruction)
 
 Site build only. The local build is unchanged.

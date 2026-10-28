@@ -113,6 +113,7 @@
   "The scenario runner does not implement also_satisfies. Scenarios that depend on a hidden target name it as a step. DKA-tests.js folds the real routes."
  ],
  "metadata": {
+  "case_number": 7,
   "working_title": "24-year-old woman, two days of vomiting and diarrhea, brought through from triage",
   "chief_complaint_patient_voice": "I can't keep anything down and I feel really weak.",
   "final_diagnosis": "Mild diabetic ketoacidosis in type 1 diabetes, set off by gastroenteritis and reduced insulin doses, with hypokalemia (3.1 mEq/L) and mild hypomagnesemia from gastrointestinal losses. The potassium is low before any insulin is given, so insulin waits until it has been replaced.",

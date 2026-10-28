@@ -15,6 +15,7 @@ one of them:
 """
 
 META = {
+ "case_number": 5,
  "working_title": "22-year-old woman, fainted at home with a fever and a rash, walked in with her roommate",
  "chief_complaint_patient_voice": "I fainted in the shower. I've had a fever for two days and now I'm red all over.",
  "final_diagnosis": (

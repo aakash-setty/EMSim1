@@ -2858,7 +2858,7 @@ function wlModel(){
     const lvs=(Array.isArray(k.target_level)?k.target_level:[k.target_level||''])
       .filter(Boolean).map(x=>String(x).replace(/_/g,' '));
     const lv=lvs.length>2 ? lvs[0]+' to '+lvs[lvs.length-1] : lvs.join(' and ');
-    return {i, prefix:c.prefix,
+    return {i, prefix:c.prefix, num:k.number||null,
       complaint:k.complaint||k.title||c.prefix,
       age:p.age, sex:(p.sex||'').toLowerCase(),
       category:k.category||'Cases',
@@ -2885,13 +2885,19 @@ function renderPicker(){
   const m=wlModel();
   const q=(el('wl-q')?el('wl-q').value:'').trim().toLowerCase();
   wlChips(m);
+  /* "case 3" or "#3" finds that case by its number. A bare 3 stays a word search, so an age
+     still finds what it found before. */
+  const qn=q.match(/^(?:case\s*|#)(\d{1,4})$/);
   const hits=m.filter(c=>{
     if(WL_FILTER!=='all'&&c.category!==WL_FILTER) return false;
+    if(qn) return c.num===Number(qn[1]);
     if(!q) return true;
     const hay=[c.complaint,c.category,c.level,String(c.age),WL_SHORT[c.sex]||'',c.sex,c.prefix]
       .join(' ').toLowerCase();
     return q.split(/\s+/).every(t=>hay.includes(t));
   });
+  /* In case-number order within each group (28 October 2026). */
+  hits.sort((a,b)=>(a.num||1e9)-(b.num||1e9));
   el('wl-count').textContent=hits.length;
   WL_ROWS=hits;
 
@@ -2908,7 +2914,7 @@ function renderPicker(){
     for(const c of hits.filter(x=>x.category===g)){
       const face=WL_SHORT[c.sex]?`<i class="${c.sex}"></i>`:'';
       const prog=PROGRESS.rowBadge(c.prefix);
-      const aria=[c.complaint,
+      const aria=[(c.num?'Case '+c.num+'. ':'')+c.complaint,
                   (WL_LABEL[c.sex]||'Patient')+', '+(c.age!==undefined?c.age+' years old':'age not recorded'),
                   c.category,c.level,c.mins?'about '+c.mins+' minutes':'',
                   c.unreviewed?'Unsigned draft.':'Reviewed.',
@@ -2920,7 +2926,7 @@ function renderPicker(){
         data-row="${WL_ROWS.indexOf(c)}" aria-label="${esc(aria)}">
         <span class="wl-face">${face}</span>
         <span class="wl-body">
-          <span class="wl-ttl">${esc(c.complaint)}</span>
+          <span class="wl-ttl">${c.num?`<span class="wl-no">Case ${c.num}</span>`:''}${esc(c.complaint)}</span>
           <span class="wl-meta">
             <span class="ag">${c.age!==undefined?esc(String(c.age)):'\u2013'} ${esc(WL_SHORT[c.sex]||'\u2013')}</span>
             <span class="lv">${c.broken?'<span style="color:var(--harm)">will not run correctly</span>':esc(c.level)}</span>
@@ -3167,6 +3173,8 @@ function renderSplash(){
   const m=CASE.metadata, p=CASE.patient, cs=m.care_setting||{}, ar=m.arrival||{};
   /* The care setting label is no longer shown on the splash. */
   el('sp-title').textContent=m.working_title||'';
+  { const no=el('sp-no'), n=(PACK.card||{}).number||m.case_number;
+    if(no){ no.textContent=n?'Case '+n:''; no.hidden=!n; } }
   el('sp-cc').textContent=m.chief_complaint_patient_voice
     ? '\u201C'+m.chief_complaint_patient_voice+'\u201D' : '';
   /* Section 3.2 used to print the arrival line and the full EMS narrative here.
@@ -3271,6 +3279,7 @@ function begin(){
   render();
   VOICE.paint();
   startLoop();
+  THEME.fitRail();
   NINTRO.play();
 }
 
@@ -3317,7 +3326,7 @@ function resumeRun(s){
   }));
   LASTNURSE=-1; LASTPHASE=null;      /* the nurse's latest line is shown, without its chime */
   AUDIO.unlock(); AUDIO.setScene('idle'); MONITOR.setScene('idle');
-  render(); VOICE.paint(); startLoop();
+  render(); VOICE.paint(); startLoop(); THEME.fitRail();
   if(ENDED) return;                  /* render() ended a run that a harmful action had halted */
   /* A run whose handover or early exit was saved, but whose ending was not (the network
      failed at the debrief), ends now: those two end the case from the click, not the fold. */
@@ -4157,7 +4166,7 @@ const DEVNOTES=(function(){
     const title=(CASE.metadata&&CASE.metadata.working_title)||'';
     const mode=((PROTO.difficulty||{}).modes||{})[MODE];
     return [
-      PACK.prefix+(title?' ('+title+')':'')+' at '+mmss(t)+(mode?', '+mode.label.toLowerCase()+' mode':''),
+      PACK.prefix+((PACK.card||{}).number?' case '+PACK.card.number:'')+(title?' ('+title+')':'')+' at '+mmss(t)+(mode?', '+mode.label.toLowerCase()+' mode':''),
       'Note: '+text,
       'State: '+(ph.label||ST.phase)+' ['+ST.phase+']',
       'Vitals: '+vitalsLine(),
@@ -4406,7 +4415,57 @@ const MEDVIS=(function(){
    Nothing is bound until a case is chosen, and the clock does not start until Begin.
    With a single case the picker is skipped, because choosing from a list of one is a
    step that teaches nothing. */
+/* ---------- day and night (author instruction, 28 October 2026) ----------
+   The head of the page sets data-theme before anything is drawn. This keeps the switches in
+   step with it: on the case board, on the welcome page and on the rail in a case. A choice
+   is remembered in this browser only (localStorage, and the page works without it). Until
+   one is made, the theme follows the device's setting, live. Nothing about a case changes:
+   the monitor, the timings and the scores are the same in both. */
+const THEME=(function(){
+  const KEY='emsim.theme', root=document.documentElement;
+  const mq=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
+  const stored=()=>{ try{ const v=localStorage.getItem(KEY); return (v==='day'||v==='night')?v:null; }catch(e){ return null; } };
+  const current=()=>root.getAttribute('data-theme')==='night'?'night':'day';
+  const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg>';
+  const MOON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6z"/></svg>';
+  function paint(){
+    const night=current()==='night';
+    document.querySelectorAll('[data-themetoggle]').forEach(b=>{
+      const lab=night?'Switch to day':'Switch to night';
+      b.setAttribute('aria-label',lab); b.title=lab;
+      b.innerHTML=(night?SUN:MOON)+(b.dataset.themetoggle==='label'?'<span class="lb">'+(night?'Day':'Night')+'</span>':'');
+    });
+    const mc=document.querySelector('meta[name="theme-color"]'); if(mc) mc.setAttribute('content',night?'#0D161C':'#E7EDF1');
+  }
+  let animT=0;
+  function set(t,save){
+    root.classList.add('theme-anim'); clearTimeout(animT);
+    animT=setTimeout(()=>root.classList.remove('theme-anim'),450);
+    root.setAttribute('data-theme',t);
+    if(save){ try{ localStorage.setItem(KEY,t); }catch(e){} }
+    paint();
+  }
+  /* The rail's switch sits on top of Main menu, whose height depends on its label. */
+  function fitRail(){
+    const m=document.getElementById('railmenu');
+    if(m&&m.offsetHeight) root.style.setProperty('--railmenu-h',m.offsetHeight+'px');
+  }
+  function bind(){
+    document.querySelectorAll('[data-themetoggle]').forEach(b=>b.addEventListener('click',e=>{
+      e.stopPropagation();
+      set(current()==='night'?'day':'night',true);
+      AN.track('theme_changed',{theme:current()});
+    }));
+    if(mq){ const f=e=>{ if(!stored()) set(e.matches?'night':'day',false); };
+      if(mq.addEventListener) mq.addEventListener('change',f); else if(mq.addListener) mq.addListener(f); }
+    window.addEventListener('resize',fitRail);
+    paint(); fitRail();
+  }
+  return {bind, current, set, fitRail};
+})();
+
 function boot(){
+  THEME.bind();
   ACCESS_UI.init();
   /* The first case that is actually here. In the deployed build every case may be a locked
      stub, and then nothing is bound until one is fetched: begin() renders everything once

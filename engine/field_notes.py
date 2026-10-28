@@ -54,6 +54,7 @@ FIELDS = {
 
 # ---------------------------------------------------------------- metadata
 "metadata.working_title": ("splash", "2.2", "The splash headline. Not an internal name: the learner reads it before pressing Begin, so it must not name the diagnosis"),
+"metadata.case_number": ("list", "2.2", "Shown as Case N on the case list, the splash and the learner's history. Permanent, never reused"),
 "metadata.complaint": ("list", "2.2", "Row title on the case list. Three or four words in clinical register. Falls back to working_title"),
 "metadata.category": ("list", "2.2", "Group heading and filter chip on the case list. Can name an organ system, which narrows the field before play"),
 "metadata.chief_complaint_patient_voice": ("splash", "2.2", "Quoted on the splash in the patient's words"),

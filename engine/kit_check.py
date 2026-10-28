@@ -20,6 +20,8 @@ Three checks, so that the kit stays small, true and complete as cases are added:
      field reference points at exists. A field with no note is a field a builder cannot
      look up, which is how short_label went undocumented.
 
+  6. Case numbers. Every pack has metadata.case_number and no two packs share one.
+
   5. Nothing per case in shared code. No file under engine/ or catalog/ holds a table keyed
      by a case prefix, or a path into a pack, except the three interview scripts that were
      frozen with the four older packs. Adding a case must touch only its own folder; this
@@ -191,6 +193,22 @@ def main():
                             if rel in FROZEN_FILES and pk in FROZEN_PACKS:
                                 continue
                             errors.append(f"{rel}:{ln}: names the pack {pk} in shared code (a case must touch only its own folder): {line.strip()[:80]!r}")
+
+    # 6. case numbers (authoring 2.2): every pack has one, and no two share one
+    import json
+    from paths import CasePack
+    by_number = {}
+    for pk in packs:
+        try:
+            n = (json.load(open(CasePack(pk).case, encoding="utf-8")).get("metadata") or {}).get("case_number")
+        except Exception:
+            continue
+        if n is None:
+            errors.append(f"{pk}: no metadata.case_number (authoring 2.2)")
+        elif n in by_number:
+            errors.append(f"case number {n} is used by both {by_number[n]} and {pk}")
+        else:
+            by_number[n] = pk
 
     if strict:
         errors += warnings; warnings = []

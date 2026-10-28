@@ -93,6 +93,7 @@
   "The diagnosis catalog has no entry for acute liver injury or transaminitis short of acute liver failure, so her liver involvement cannot be named at handover."
  ],
  "metadata": {
+  "case_number": 5,
   "working_title": "22-year-old woman, fainted at home with a fever and a rash, walked in with her roommate",
   "chief_complaint_patient_voice": "I fainted in the shower. I've had a fever for two days and now I'm red all over.",
   "final_diagnosis": "Menstrual staphylococcal toxic shock syndrome from a tampon retained for about four days, with septic shock, acute kidney injury, thrombocytopenia, transaminitis and early rhabdomyolysis. Blood cultures are expected to stay negative, as they usually do in staphylococcal toxic shock.",

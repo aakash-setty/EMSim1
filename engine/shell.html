@@ -3,6 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#E7EDF1">
+<!-- Day or night, set before the page is drawn so a night reader never sees a white flash.
+     The remembered choice first, then the device's own setting. THEME in ui.js does the rest. -->
+<script>(function(){var t;try{t=localStorage.getItem('emsim.theme');}catch(e){}
+if(t!=='day'&&t!=='night')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'night':'day';
+document.documentElement.setAttribute('data-theme',t);})();</script>
 <title>__TITLE__</title>
 <!-- An empty icon. Without one the browser asks the host for /favicon.ico, which does not
      exist, and logs a 404 in the console that looks like a fault. -->
@@ -795,6 +801,16 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .wl-ttl{font-size:13.8px; font-weight:500; letter-spacing:-.004em; color:var(--ink);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .wl-meta{display:flex; align-items:baseline; gap:10px; margin-top:3px}
+/* Case numbers (28 October 2026): "Case N" before the title, on the list, the splash and in
+   the learner's history. */
+.wl-no{font-family:var(--mono); font-size:10.5px; font-weight:400; letter-spacing:.02em;
+  color:var(--ink3); margin-right:8px}
+.wl-case.sel .wl-no{color:var(--act)}
+.sp-no{font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink3); margin:0 0 6px}
+.sp-no[hidden]{display:none}
+.hm-no{font-family:var(--mono); font-size:11px; font-weight:400; color:rgba(226,238,244,.55);
+  margin-right:8px}
 .wl-meta .ag{font-family:var(--mono); font-size:11.5px; color:var(--ink2); min-width:44px;
   font-variant-numeric:tabular-nums}
 .wl-meta .lv{font-size:11.5px; color:var(--ink3); white-space:nowrap; overflow:hidden;
@@ -2135,6 +2151,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 .ld-caselist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:24px}
 .ld-case{background:#fff;border:1px solid var(--rule2);border-radius:12px;padding:18px;cursor:pointer;text-align:left;font:inherit;color:inherit;transition:border-color .15s ease,box-shadow .15s ease}
 .ld-case:hover{border-color:var(--act);box-shadow:0 8px 20px rgba(31,111,178,.12)}
+.ld-case .n{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
 .ld-case .t{font-weight:600;font-size:16px;margin-bottom:6px}
 .ld-case .m{font-family:var(--mono);font-size:12.5px;color:var(--ink3)}
 .ld-final{text-align:center;padding:clamp(56px,9vw,110px) 16px}
@@ -2157,6 +2174,180 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   .ld-actions{grid-template-columns:1fr}.ld-auth .ghost{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+
+/* ============================================================
+   DAY AND NIGHT (author instruction, 28 October 2026)
+   The toggle (THEME in ui.js) sets data-theme on <html>: "day" or "night". A first visit
+   follows the device's own setting, and a choice is remembered in this browser only.
+
+   Day is the stylesheet above, unchanged. Night is this block alone: the tokens are
+   redefined, and the few surfaces above that were written as literal white are given a
+   dark equivalent here, so nothing in day can change by accident.
+
+   What night means here, beyond dark surfaces:
+   - The room is the same room with the lights down. The photograph dims and cools, and
+     the monitor, which was already a dark screen, becomes the brightest thing in it, as it
+     is in a resuscitation bay at night.
+   - The clinical colours keep their meaning. Red is still harm, green still done, amber
+     still waiting, violet still speech. They are lifted for a dark ground, and where one
+     is a fill under white text it is darkened instead, so the text stays readable.
+   - Pictures stay as they were made. ECGs, films and the case discussion figures were
+     drawn on white paper, so they keep a paper ground rather than being inverted.
+   - The welcome page's hospital turns to night with the rest.
+   ============================================================ */
+:root{color-scheme:light}
+:root[data-theme="night"]{
+  color-scheme:dark;
+  --paper:#0D161C;
+  --pane:rgba(17,27,34,.90);
+  --pane2:rgba(255,255,255,.05);
+  --sunk:rgba(255,255,255,.045);
+  --stripe:rgba(255,255,255,.03);
+  --solid:#15212A;
+  --ink:#E2EBF0; --ink2:#A7B9C5; --ink3:#7F94A2;
+  --rule:rgba(196,220,234,.17); --rule2:rgba(196,220,234,.09);
+  --shadow:rgba(0,0,0,.55);
+  --act:#62A9E6;  --actl:rgba(98,169,230,.14);  --actb:rgba(98,169,230,.45);
+  --harm:#F07A71; --harml:rgba(240,122,113,.14); --harmb:rgba(240,122,113,.45);
+  --ok:#4CC28F;   --okl:rgba(76,194,143,.14);
+  --warn:#E3AA45; --warnl:rgba(227,170,69,.15);
+  --voice:#AE93EA; --voicel:rgba(174,147,234,.14);
+  /* fills that carry white text */
+  --fill-act:#2C74B5; --fill-act-h:#3585CB; --fill-harm:#C2453C; --fill-warn:#A8740E;
+}
+/* A short cross-fade when the theme is switched, and none for a reader who asks for less motion. */
+@media (prefers-reduced-motion:no-preference){
+  :root.theme-anim *,:root.theme-anim *::before,:root.theme-anim *::after{
+    transition:background-color .35s ease,color .35s ease,border-color .35s ease,fill .35s ease,stroke .35s ease,filter .35s ease !important}
+}
+
+/* ---- the switch itself ---- */
+.themebtn{appearance:none;display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:8px;
+  border:1px solid transparent;background:transparent;color:var(--ink2);cursor:pointer;flex:0 0 auto}
+.themebtn:hover{background:var(--sunk);border-color:var(--rule2);color:var(--act)}
+.themebtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.wl-head .themebtn{margin-left:auto}
+.wl-head .themebtn + .wl-menuwrap{margin-left:0}
+.ld-auth .themebtn{width:42px;height:42px;border-radius:10px}
+/* In a case: on the rail, above Main menu, in the rail's own idiom (icon over a word). */
+.railtheme{position:fixed;left:0;bottom:var(--railmenu-h,70px);width:var(--rail);height:auto;z-index:51;border-radius:0;
+  display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 4px 8px;
+  background:rgba(255,255,255,.92);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+  border:0;border-top:1px solid var(--rule);border-right:1px solid var(--rule);color:var(--ink3)}
+.railtheme:hover{background:var(--actl);border-color:var(--rule);color:var(--act)}
+.railtheme .lb{font-size:9px;letter-spacing:.02em;text-transform:uppercase;line-height:1.15}
+.tabdock{padding-bottom:calc(var(--railmenu-h,70px) + 62px)}
+
+/* ---- the room at night ---- */
+:root[data-theme="night"] body{background:var(--paper)}
+:root[data-theme="night"] .room{filter:blur(11px) saturate(.5) brightness(.33) hue-rotate(-8deg)}
+:root[data-theme="night"] .roomtint{background:
+  radial-gradient(130% 100% at 50% 22%,rgba(10,20,28,0),rgba(6,12,17,.5) 82%),
+  linear-gradient(180deg,rgba(8,16,22,.38),rgba(8,16,22,.05) 34%,rgba(6,12,17,.5))}
+:root[data-theme="night"] .ptstage,:root[data-theme="night"] .spfig{filter:brightness(.86) saturate(.92)}
+:root[data-theme="night"] .bay{background:rgba(13,22,28,.86)}
+:root[data-theme="night"] .tabdock{background:rgba(13,22,28,.9)}
+:root[data-theme="night"] .railmenu,:root[data-theme="night"] .railtheme{background:rgba(13,22,28,.95)}
+:root[data-theme="night"] .railmenu:hover,:root[data-theme="night"] .railtheme:hover{background:#18303F}
+:root[data-theme="night"] body[data-right="wide"] .rpanel{background:rgba(17,27,34,.97)}
+:root[data-theme="night"] .nintro{background:rgba(5,10,14,.5)}
+:root[data-theme="night"] .nintro.away{background-color:rgba(5,10,14,0)}
+:root[data-theme="night"] .nintro-face{border-color:var(--solid)}
+:root[data-theme="night"] .nintro-drawer{background:rgba(21,33,42,.98)}
+
+/* ---- surfaces written as literal white in day ---- */
+:root[data-theme="night"] .splash{background:rgba(5,10,14,.6)}
+:root[data-theme="night"] .splashwrap{background:rgba(21,33,42,.97)}
+:root[data-theme="night"] .modedot{background:var(--solid);box-shadow:inset 0 0 0 3px var(--solid)}
+:root[data-theme="night"] .mode[aria-checked="true"] .modedot{background:var(--act)}
+:root[data-theme="night"] .ab{background:rgba(255,255,255,.045)}
+:root[data-theme="night"] .ab:hover{background:rgba(255,255,255,.085)}
+:root[data-theme="night"] .ab:disabled:hover{background:rgba(255,255,255,.045)}
+:root[data-theme="night"] .abstop{background:var(--solid);border-color:var(--harm);color:var(--harm)}
+:root[data-theme="night"] .abstop:hover{background:var(--fill-harm);color:#fff}
+:root[data-theme="night"] .grouphdr:hover,:root[data-theme="night"] .subtab:hover,
+:root[data-theme="night"] .opt:hover,:root[data-theme="night"] .dxbtn:hover{background:rgba(255,255,255,.08)}
+:root[data-theme="night"] .basket{color:var(--act)}
+:root[data-theme="night"] input[type=text],:root[data-theme="night"] select,
+:root[data-theme="night"] .devn-box{background:var(--solid)}
+:root[data-theme="night"] .voicebox:focus{background:var(--solid)}
+:root[data-theme="night"] .devn-item{background:var(--sunk)}
+:root[data-theme="night"] .labwrap,:root[data-theme="night"] .labt th.lb,
+:root[data-theme="night"] .labt td.lb{background:#111C23}
+:root[data-theme="night"] .bar{background:rgba(255,255,255,.1)}
+:root[data-theme="night"] .srch-hit mark{background:rgba(227,170,69,.32)}
+:root[data-theme="night"] .cdisc{background:rgba(17,27,34,.96)}
+:root[data-theme="night"] .halt{background:linear-gradient(var(--harml),var(--harml)),rgba(17,27,34,.96)}
+:root[data-theme="night"] .dbsec{background:rgba(17,27,34,.95)}
+:root[data-theme="night"] *::-webkit-scrollbar-thumb{background:rgba(196,220,234,.2)}
+:root[data-theme="night"] *::-webkit-scrollbar-thumb:hover{background:rgba(196,220,234,.34)}
+
+/* ---- fills under white text: darker, not lighter ---- */
+:root[data-theme="night"] .btn{background:var(--fill-act)}
+:root[data-theme="night"] .btn:hover{background:var(--fill-act-h)}
+:root[data-theme="night"] .btn.ghost{background:var(--solid);color:var(--act)}
+:root[data-theme="night"] .btn.ghost:hover{background:var(--actl)}
+:root[data-theme="night"] .btn.ghost:disabled{background:none}
+:root[data-theme="night"] .btn:disabled{background:rgba(255,255,255,.08);color:var(--ink3)}
+:root[data-theme="night"] .btn.danger,:root[data-theme="night"] .btn.harm{background:var(--fill-harm)}
+:root[data-theme="night"] .btn.danger:hover{background:#A9372F}
+:root[data-theme="night"] .wl-chip[aria-pressed="true"],:root[data-theme="night"] .subtab[aria-selected="true"],
+:root[data-theme="night"] .splashback:hover{background:var(--fill-act);border-color:var(--fill-act)}
+:root[data-theme="night"] .homeic{background:var(--fill-act)}
+:root[data-theme="night"] .homebtn:hover .homeic{background:var(--fill-act-h)}
+:root[data-theme="night"] .voicebtn.live,:root[data-theme="night"] .vrec.live:hover{background:var(--fill-harm);border-color:var(--fill-harm)}
+:root[data-theme="night"] .tabbtn .badge{background:var(--fill-warn)}
+
+/* ---- the history thread: the same glass, smoked ---- */
+:root[data-theme="night"] .imsg-glass{
+  background:linear-gradient(160deg,rgba(40,58,72,.55),rgba(20,32,42,.45) 55%,rgba(36,52,64,.5));
+  border-color:rgba(196,220,234,.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 40px -22px rgba(0,0,0,.6)}
+:root[data-theme="night"] .imsg-glass::before{background:radial-gradient(120% 60% at 15% -10%,rgba(255,255,255,.07),transparent 60%)}
+:root[data-theme="night"] .imsg.them{color:var(--ink);background:linear-gradient(180deg,rgba(52,68,82,.92),rgba(40,54,66,.9));
+  border-color:rgba(196,220,234,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 4px 12px -8px rgba(0,0,0,.5)}
+:root[data-theme="night"] .imsg-compose{border-top-color:rgba(196,220,234,.1);background:rgba(0,0,0,.15)}
+:root[data-theme="night"] .imsg-compose input[type=text]{background:rgba(255,255,255,.07);border-color:rgba(196,220,234,.16)}
+:root[data-theme="night"] .imsg-mic{background:rgba(255,255,255,.07);border-color:rgba(196,220,234,.16);box-shadow:none}
+
+/* ---- pictures keep their paper ---- */
+:root[data-theme="night"] .imgwrap,:root[data-theme="night"] .imgthumb{background:#fff}
+:root[data-theme="night"] .cd-fig{background:#F2F5F7;border-color:transparent;color:#16242E;
+  --ink:#16242E; --ink2:#46606F; --ink3:#78909F; --rule:rgba(21,48,66,.17); --rule2:rgba(21,48,66,.09);
+  --act:#1F6FB2; --harm:#C0302A; --ok:#1A7A55; --warn:#A16A05; --solid:#FFFFFF; --sunk:rgba(21,48,66,.05)}
+
+/* ---- the case board and its picture ---- */
+:root[data-theme="night"] .wl-shot{filter:saturate(.45) contrast(1.05) brightness(.5) hue-rotate(-10deg)}
+:root[data-theme="night"] .wl-face{background:rgba(255,255,255,.07)}
+:root[data-theme="night"] .wl-face i{background:rgba(196,220,234,.42)}
+:root[data-theme="night"] .wl-case.sel .wl-face{background:rgba(98,169,230,.18)}
+:root[data-theme="night"] .wl-case.sel .wl-face i{background:rgba(160,205,240,.75)}
+:root[data-theme="night"] .wl-board{box-shadow:-1px 0 0 rgba(196,220,234,.1),-24px 0 60px rgba(0,0,0,.4)}
+
+/* ---- the welcome page ---- */
+:root[data-theme="night"] .landing{background:#0B1419}
+:root[data-theme="night"] .ld-top{background:rgba(11,20,25,.8)}
+:root[data-theme="night"] .ld-top.scrolled{background:rgba(11,20,25,.94);box-shadow:0 1px 0 var(--rule2),0 8px 24px rgba(0,0,0,.35)}
+:root[data-theme="night"] .ld-wash{mix-blend-mode:screen}
+:root[data-theme="night"] .ld-wash i.r{background:radial-gradient(120% 90% at 55% 20%,#2c0c0e,#120506 70%)}
+:root[data-theme="night"] .ld-wash i.b{background:radial-gradient(120% 90% at 65% 20%,#0c1b36,#060c1a 70%)}
+:root[data-theme="night"] .ld-logo img.ld-logoimg{filter:brightness(1.8) saturate(1.05) drop-shadow(0 0 10px rgba(98,169,230,.22))}
+:root[data-theme="night"] .ld-nav{background:rgba(255,255,255,.05)}
+:root[data-theme="night"] .ld-nav a:hover{background:rgba(255,255,255,.07)}
+:root[data-theme="night"] .ld-nav a.on{background:var(--solid);box-shadow:0 1px 4px rgba(0,0,0,.4)}
+:root[data-theme="night"] .ld-btn.primary{background:var(--fill-act)}
+:root[data-theme="night"] .ld-btn.primary:hover{background:var(--fill-act-h)}
+:root[data-theme="night"] .ld-btn.ghost,:root[data-theme="night"] .ld-demo,:root[data-theme="night"] .ld-demohead,
+:root[data-theme="night"] .ld-say,:root[data-theme="night"] .ld-actions,:root[data-theme="night"] .ld-actions button,
+:root[data-theme="night"] .ld-stat,:root[data-theme="night"] .ld-card,:root[data-theme="night"] .ld-case,
+:root[data-theme="night"] .ld-foot{background:var(--solid)}
+:root[data-theme="night"] .ld-actions button:hover:not(:disabled){background:var(--actl)}
+:root[data-theme="night"] .ld-actions button.done{background:var(--okl)}
+:root[data-theme="night"] .ld-actions button.bad{border-color:var(--harm);color:var(--harm);background:var(--harml)}
+:root[data-theme="night"] .ld-bed{background:radial-gradient(ellipse at 50% 30%,#22323D 0%,#121D24 75%)}
+:root[data-theme="night"] .ld-over{background:linear-gradient(180deg,rgba(21,33,42,0) 18%,rgba(21,33,42,.96) 60%)}
+:root[data-theme="night"] .ld-shot{background:var(--solid)}
+:root[data-theme="night"] .ld-stat.c3{--c:#B497EC;--cl:rgba(180,151,236,.14)}
 </style>
 </head>
 <body data-left="open" data-right="dock">
@@ -2219,6 +2410,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       <a href="#ld-cases" data-sec="ld-cases">Cases</a>
     </nav>
     <div class="ld-auth">
+      <button type="button" class="themebtn" data-themetoggle></button>
       <button type="button" class="ld-btn text" data-ld="login">Log in</button>
       <button type="button" class="ld-btn primary" data-ld="signup">Sign Up Free!<span class="arr" aria-hidden="true">&rarr;</span></button>
     </div>
@@ -2365,6 +2557,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
     <div class="wl-head">
       <h2>Cases</h2>
       <span class="n" id="wl-count">0</span>
+      <button type="button" class="themebtn" data-themetoggle></button>
       <div class="wl-menuwrap">
         <button class="wl-kebab" id="wl-menubtn" aria-haspopup="true" aria-expanded="false" aria-label="More">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -2387,7 +2580,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
           <circle cx="7" cy="7" r="4.4"/><path d="M10.4 10.4 14 14"/></svg>
         <input id="wl-q" type="search" autocomplete="off" spellcheck="false"
-               placeholder="Search complaint, age, or category" aria-label="Search cases">
+               placeholder="Search complaint, age, category or case number" aria-label="Search cases">
         <span class="wl-slash" aria-hidden="true">/</span>
       </div>
       <div class="wl-chips" id="wl-chips" role="group" aria-label="Filter by category"></div>
@@ -2415,6 +2608,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
     <div class="spstage" aria-hidden="true"><div class="spfig" id="sp-patient"></div></div>
   </div>
   <div class="splashcard">
+    <div class="sp-no" id="sp-no" hidden></div>
     <h1 id="sp-title"></h1>
     <div class="arrival" id="sp-arrival"></div>
     <div class="cc" id="sp-cc"></div>
@@ -2534,6 +2728,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
        under the case list and the card, which are overlays above it. -->
   <button class="railmenu" id="railmenu" title="Leave this case and return to the main menu">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5"/><path d="M6.2 10.4V19a1 1 0 0 0 1 1h9.6a1 1 0 0 0 1-1v-8.6"/></svg><span class="lb">Main menu</span></button>
+  <!-- Day and night (28 October 2026), on the rail above Main menu. -->
+  <button type="button" class="themebtn railtheme" data-themetoggle="label"></button>
 
   <aside class="lpanel" id="leftpanel" aria-label="Workspace">
     <button class="lp-collapse" id="lp-collapse" title="Collapse this panel" aria-label="Collapse this panel">

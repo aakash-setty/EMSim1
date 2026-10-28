@@ -666,6 +666,9 @@ def build_pack(pack):
         # everything the picker needs, so it does not have to open the case file
         "card": {
             "title": m.get("working_title", case["case_id"]),
+            # Case number (author instruction, 28 October 2026): "Case N" on the list, the
+            # splash and the learner's history. Permanent, never reused.
+            "number": m.get("case_number"),
             # The welcome screen lists the short clinical complaint, not the patient's
             # own words; chief_complaint is the quote and belongs on the splash. Both
             # of these are optional and degrade, so a pack written before them lists.
@@ -1045,6 +1048,20 @@ def main():
         # Last, so that nothing inside a case pack can be mistaken for one of the markers.
         out = out.replace("__CASES_JSON__", jsafe(cases))
         return out
+
+    # Case numbers: whole numbers from 1, one per case. Two cases sharing a number would be
+    # two "Case 3"s on the list and in a learner's history, so that stops the build.
+    _seen_numbers = {}
+    for p in packs:
+        n = p["card"].get("number")
+        if n is None:
+            print("  warning: " + p["prefix"] + " has no metadata.case_number (authoring 2.2)")
+            continue
+        if not isinstance(n, int) or isinstance(n, bool) or n < 1:
+            raise SystemExit(p["prefix"] + ": metadata.case_number must be a whole number from 1, not " + repr(n))
+        if n in _seen_numbers:
+            raise SystemExit("case number " + str(n) + " is used by both " + _seen_numbers[n] + " and " + p["prefix"])
+        _seen_numbers[n] = p["prefix"]
 
     # ---- the local build: every case, no backend. Behaves exactly as before v0.18.
     local_title = (product + " (local build)") if len(packs) != 1 else packs[0]["card"]["title"]

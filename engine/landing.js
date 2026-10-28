@@ -223,7 +223,7 @@ const LANDING=(function(){
       const card=c.card||{}, p=c.patient||(c.case&&c.case.patient)||{};
       const who=[p.age,(p.sex||'').charAt(0).toUpperCase()].filter(Boolean).join(' ');
       const mins=card.runtime_seconds?Math.round(card.runtime_seconds/60)+' min':'';
-      return `<button type="button" class="ld-case" data-ldcase="${i}"><div class="t">${esc(card.complaint||card.title||c.prefix)}</div>
+      return `<button type="button" class="ld-case" data-ldcase="${i}">${card.number?`<div class="n">Case ${esc(String(card.number))}</div>`:''}<div class="t">${esc(card.complaint||card.title||c.prefix)}</div>
         <div class="m">${esc([who,card.category||'',mins].filter(Boolean).join(' \u00b7 '))}</div></button>`;
     }).join('');
   }

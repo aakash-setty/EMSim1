@@ -43,6 +43,9 @@ const PROGRESS = (function(){
   const mmssP = s => { s=Math.max(0,Math.floor(s||0)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
   const caseIndex = prefix => CASES.findIndex(c=>c.prefix===prefix);
   const caseTitle = prefix => { const c=CASES[caseIndex(prefix)]; const k=(c&&c.card)||{}; return k.complaint||k.title||prefix; };
+  /* "Case N" before a title, from the case's card. Escaped, and empty for a case with none. */
+  const caseNo = prefix => { const c=CASES[caseIndex(prefix)]; const n=c&&c.card&&c.card.number;
+    return n?`<span class="hm-no">Case ${escP(n)}</span>`:''; };
   const openRun = prefix => runs.find(r=>r.status==='in_progress'&&r.case_prefix===prefix)||null;
 
   /* ---- session ---- */
@@ -290,7 +293,7 @@ const PROGRESS = (function(){
     return '<div class="hm-cont">'+open.map(r=>{
       const stale=r.version_key!==KEYS[r.case_prefix], gone=caseIndex(r.case_prefix)<0;
       return `<div class="hm-card">
-        <div class="hm-ct">${escP(caseTitle(r.case_prefix))}</div>
+        <div class="hm-ct">${caseNo(r.case_prefix)}${escP(caseTitle(r.case_prefix))}</div>
         <div class="hm-cm"><span class="hm-mono">${escP(mmssP(r.sim_seconds))}</span> of case time · ${escP(modeLabel(r.mode))} · saved ${escP(when(r.updated_at))}</div>
         ${stale?'<div class="hm-cw">This case has been improved since. It will start from the beginning.</div>':''}
         <div class="hm-ca">
@@ -342,7 +345,7 @@ const PROGRESS = (function(){
         <button class="hm-rh" type="button" data-hmopen="${escP(r.id)}" aria-expanded="${open}">
           ${dialsHTML(crit, scored, r.score_pct)}
           <span class="hm-rb">
-            <span class="hm-rt">${escP(caseTitle(r.case_prefix))}</span>
+            <span class="hm-rt">${caseNo(r.case_prefix)}${escP(caseTitle(r.case_prefix))}</span>
             <span class="hm-rm"><span class="hm-tag ${o[1]}">${escP(o[0])}</span>
               <span>${escP(modeLabel(r.mode))}</span><span class="hm-mono">${escP(mmssP(r.sim_seconds))}</span></span>
           </span>

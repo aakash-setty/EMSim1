@@ -430,9 +430,11 @@ def case_index(problems):
            "variety dimensions come from `metadata.library` in each case; a blank means the pack\n"
            "has not stated it yet. Nothing here has been reviewed by a physician unless the pack's\n"
            "SEED says so.\n\n",
-           "| prefix | complaint | category | diagnosis | phases | mechanisms | tempo | uncertainty | right answer | danger | setting | feel |\n"
-           "|---|---|---|---|---|---|---|---|---|---|---|---|\n"]
-    for prefix in list_packs():
+           "| no. | prefix | complaint | category | diagnosis | phases | mechanisms | tempo | uncertainty | right answer | danger | setting | feel |\n"
+           "|---|---|---|---|---|---|---|---|---|---|---|---|---|\n"]
+    # In case-number order. A new case takes one more than the highest number here.
+    num = lambda p: (load_json(CasePack(p).case).get("metadata") or {}).get("case_number") or 10**6
+    for prefix in sorted(list_packs(), key=lambda p: (num(p), p)):
         c = load_json(CasePack(prefix).case)
         m = c.get("metadata", {})
         lib = m.get("library") or {}
@@ -440,8 +442,8 @@ def case_index(problems):
         if missing:
             problems.append(f"case-index: {prefix} states no metadata.library.{'/'.join(missing)} (warning: the case index is blank there)")
         dx = (c.get("handoff", {}).get("correct_diagnosis") or {}).get("catalog_id", "")
-        out.append("| {p} | {comp} | {cat} | `{dx}` | {n} | {mech} | {dims} |\n".format(
-            p=prefix, comp=m.get("complaint") or m.get("working_title", ""), cat=m.get("category", ""), dx=dx,
+        out.append("| {no} | {p} | {comp} | {cat} | `{dx}` | {n} | {mech} | {dims} |\n".format(
+            no=m.get("case_number", ""), p=prefix, comp=m.get("complaint") or m.get("working_title", ""), cat=m.get("category", ""), dx=dx,
             n=len([x for x in c["phases"] if not x.get("terminal")]), mech=", ".join(uses(c)) or "none",
             dims=" | ".join(str(lib.get(d, "")) for d in LIBRARY_DIMS)))
     out.append(f"\n{len(list_packs())} cases, as of the last generation.\n")

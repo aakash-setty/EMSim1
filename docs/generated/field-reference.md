@@ -270,6 +270,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `metadata.care_setting.detail` | generic | never | 2.3 | Detail and provenance. Nothing reads them |
 | `metadata.care_setting.label` | generic | splash | 2.3 | Printed on the splash |
 | `metadata.care_setting.provenance` | generic | never |  | Reviewer note. Nothing reads it |
+| `metadata.case_number` | engine+build+validator | list | 2.2 | Shown as Case N on the case list, the splash and the learner's history. Permanent, never reused |
 | `metadata.category` | engine+build+validator+tools | list | 2.2 | Group heading and filter chip on the case list. Can name an organ system, which narrows the field before play |
 | `metadata.chief_complaint_patient_voice` | engine+build+tools | splash | 2.2 | Quoted on the splash in the patient's words |
 | `metadata.complaint` | engine+build | list | 2.2 | Row title on the case list. Three or four words in clinical register. Falls back to working_title |
@@ -402,4 +403,4 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `tag_vocabulary.values` | engine+build+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `tag_vocabulary.values_used_by_this_case` | none | never |  | Reviewer note. Nothing reads it |
 
-379 fields across 8 packs, as of the last generation.
+380 fields across 8 packs, as of the last generation.

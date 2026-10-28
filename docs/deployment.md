@@ -139,6 +139,7 @@ email or name. Events never carry case text, typed questions, orders, diagnoses 
 | `run_resumed` | `case`, `sim_seconds` |
 | `run_discarded` | `case`, `reason`: start_over, version, deleted |
 | `attempt_deleted` | `case` |
+| `theme_changed` | `theme`: day, night |
 | `run_save_failed` | `case`, `at`: finish |
 | `js_error` | `message` (200 characters), `case`. At most five per page load |
 

@@ -20,6 +20,15 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
  await ctl({rpc:'ok',tamper:false,userOk:true,unconfirmed:false,storeOnly:false,runsFail:false}); await setTable([]);
 
  await p.goto('http://localhost:8080/'); await wait(1200);
+ // Case numbers (28 October 2026): on the list, the welcome tiles, and found by "case N".
+ const nums=await p.evaluate(()=>{
+   const q=document.getElementById('wl-q'); q.value='case 4'; renderPicker();
+   const hit=[...document.querySelectorAll('.wl-case')].map(b=>CASES[+b.dataset.case].prefix);
+   q.value=''; renderPicker();
+   return {n:CASES.length, cards:CASES.map(c=>c.card.number), rows:document.querySelectorAll('.wl-case .wl-no').length,
+     tiles:document.querySelectorAll('.ld-case .n').length, hit}; });
+ ok('every case has its own number, shown on every row and tile', new Set(nums.cards).size===nums.n&&nums.cards.every(n=>Number.isInteger(n)&&n>0)&&nums.rows===nums.n&&nums.tiles===nums.n, nums);
+ ok('"case 4" finds exactly that case', nums.hit.length===1, nums.hit);
  ok('signed out: no home panel', await p.evaluate(()=>document.getElementById('wl-home').hidden&&!document.getElementById('picker').classList.contains('home-on')));
  const idx=await p.evaluate(()=>CASES.findIndex(c=>c.prefix==='CHFE'));
  const KEYS=await p.evaluate(()=>Object.fromEntries(CASES.map(c=>[c.prefix,c.versionKey])));
@@ -28,6 +37,7 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
  await p.fill('#signinemail','res@example.com'); await p.fill('#signinpass','right-password'); await p.keyboard.press('Enter'); await wait(2500);
  await shock();
  ok('signed in, the case splash is open', await p.evaluate(()=>PACK&&PACK.prefix==='CHFE'&&!document.getElementById('splash').classList.contains('hidden')));
+ ok('the splash shows the case number', await p.evaluate(()=>document.getElementById('sp-no').textContent==='Case '+PACK.card.number&&!document.getElementById('sp-no').hidden));
  ok('a case with nothing saved offers Begin only', await p.evaluate(()=>document.getElementById('sp-run').hidden&&document.getElementById('beginbtn').textContent==='Begin'));
 
  // A run in a non-default mode, with a few acts, a tab change and a handoff being drafted.
@@ -56,6 +66,7 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
  ok('the home panel replaces most of the picture', await p.evaluate(()=>document.getElementById('picker').classList.contains('home-on')&&!document.getElementById('wl-home').hidden));
  const home=await p.evaluate(()=>document.getElementById('wl-home').innerText);
  ok('Continue lists the run with its case time', /Continue/i.test(home)&&/Resume/.test(home), home.slice(0,300));
+ ok('the run carries its case number', /Case \d+/.test(home), home.slice(0,200));
  ok('the case row says in progress', await p.evaluate(()=>/In progress/.test((document.querySelector('.wl-case[data-case="'+CASES.findIndex(c=>c.prefix==='CHFE')+'"]')||{}).innerText||'')));
  await p.screenshot({path:'/tmp/e2e/progress-home.png'});
 
@@ -150,6 +161,12 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
  await p.screenshot({path:'/tmp/e2e/progress-phone.png'});
  await p.setViewportSize({width:1440,height:860});
 
+ // Day and night (28 October 2026): the board's switch flips the theme and is remembered.
+ const th0=await p.evaluate(()=>document.documentElement.dataset.theme);
+ await p.click('.wl-head [data-themetoggle]'); await wait(300);
+ const th1=await p.evaluate(()=>({t:document.documentElement.dataset.theme, s:localStorage.getItem('emsim.theme')}));
+ ok('the day and night switch flips the theme and remembers it', th1.t!==th0&&th1.s===th1.t&&['day','night'].includes(th1.t), [th0,th1]);
+ await p.click('.wl-head [data-themetoggle]'); await wait(300);
  ok('no page errors', errs.length===0, errs);
  ok('no CSP violations', csp.length===0, csp);
 

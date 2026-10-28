@@ -18,6 +18,7 @@ delayed consequence of something the learner did.
 """
 
 META = {
+ "case_number": 7,
  "working_title": "24-year-old woman, two days of vomiting and diarrhea, brought through from triage",
  "chief_complaint_patient_voice": "I can't keep anything down and I feel really weak.",
  "final_diagnosis": (

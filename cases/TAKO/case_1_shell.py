@@ -13,6 +13,7 @@ Three learning goals drive the structure:
 """
 
 META = {
+ "case_number": 6,
  "working_title": "68-year-old woman, chest pain at her husband's funeral, brought in by EMS",
  "chief_complaint_patient_voice": "There's an elephant on my chest and I can't get my breath.",
  "final_diagnosis": (
