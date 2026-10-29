@@ -3318,11 +3318,14 @@ function layoutSplashSay(){
     if(beside){
       const above=[el('sp-arrival'),el('sp-title')].find(n=>n&&n.offsetParent&&n.textContent.trim());
       const act=card.querySelector('.splashactions');
-      REACH=Math.max(14,Math.min(250,cr.right-sr.right-70));
+      REACH=Math.max(14,Math.min(430,cr.right-sr.right-60));
       if(above) yLo=above.getBoundingClientRect().bottom-sr.top+20;
       if(act) yHi=act.getBoundingClientRect().top-sr.top-16;
     }
-    const MAXW=beside?310:236, MINW=118, GAP=10;
+    /* Side by side it is set larger, and may run well into the empty space on the right
+       (author instruction, 29 October 2026). */
+    say.classList.toggle('wide',beside&&!off);
+    const MAXW=beside?460:236, MINW=118, GAP=10;
     const my=(mouth.top+mouth.bottom)/2;
     let side, bx, bw;
     const rightRoom=W+REACH-(head.right+GAP), leftRoom=head.left-GAP;
@@ -3337,6 +3340,15 @@ function layoutSplashSay(){
       t.style.left='0px'; t.style.width='max-content'; t.style.maxWidth=bw+'px';
       const nat=t.offsetWidth+1;   // layout width: the pop-in scale must not count
       t.style.maxWidth=''; bw=Math.max(MINW+40,Math.min(bw,nat)); t.style.width=bw+'px';
+      /* Balanced lines are shorter than the box they were balanced in: the box is drawn to
+         its longest line. Measured on the page, so the pop-in scale is divided back out. */
+      const rg=document.createRange(); rg.selectNodeContents(t);
+      const rs=[...rg.getClientRects()].filter(q=>q.width>0), sc=t.getBoundingClientRect().width/(t.offsetWidth||1);
+      if(rs.length&&sc>0){
+        const cs=getComputedStyle(t), pad=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight);
+        const tight=Math.ceil((Math.max(...rs.map(q=>q.right))-Math.min(...rs.map(q=>q.left)))/sc+pad)+2;
+        if(tight<bw&&tight>=MINW){ bw=tight; t.style.width=bw+'px'; }
+      }
       bx=Math.max(head.right+GAP, W+6-Math.round(bw*0.5));
     }
     let bh=t.offsetHeight;
@@ -3360,7 +3372,7 @@ function layoutSplashSay(){
     let tail, tx, ty;
     if(side==='edge'){ tx=-30; ty=by+bh*0.66; tail=['left',by+bh-34,by+bh-14]; }
     else if(side==='right'){ tx=mouth.right+2; ty=my;
-      tail=by+bh<=ty-10?['bottom',bx+20,bx+Math.min(70,bw*0.36)]:['left',Math.min(by+bh-18,ty)-30,Math.min(by+bh-18,ty)]; }
+      tail=by+bh<=ty-10?['bottom',bx+22,bx+Math.min(84,bw*0.3)]:['left',Math.min(by+bh-18,ty)-30,Math.min(by+bh-18,ty)]; }
     else if(side==='left'){ tx=mouth.left-2; ty=my; tail=['bottom',bx+bw-46,bx+bw-12]; }
     /* Above the head the tail stops at the top of it, as a comic does, rather than crossing
        the face to the mouth. */
