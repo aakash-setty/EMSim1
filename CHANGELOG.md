@@ -43,6 +43,10 @@ is usable with learners.
   the road is written straight into pixels, and the score and banner change the page only
   when their text changes.
 - `003_arcade` applied to the live database on 29 October 2026.
+- Density reworked the same day (owner): rows start 54 m apart and close by 0.16 m a second
+  to 30 m at 150 s (was 66 m, closing by 0.32 m a second to 30 m at 113 s). Lanes blocked per
+  row average 1.15 at the start and rise to at most 1.8 at 120 s (was 1.0 rising to 2.25).
+  About 0.9 obstacles a second at the start (was 0.64).
 - After a crash the scene keeps playing under a smaller score panel at the top. One of four
   scenes, never the same twice in a row: the crew gets out and puts out the fire; the crew
   runs around, pulls out the stretcher, and one rides while the other pushes them off the

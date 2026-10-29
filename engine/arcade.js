@@ -53,8 +53,9 @@ const ARCADE = (function(){
   /* A small seeded generator, so tests repeat. */
   function rng(seed){ let a=(seed>>>0)||1; return ()=>{ a=(a+0x6D2B79F5)>>>0; let t=a; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^t>>>7,t|61); return ((t^t>>>14)>>>0)/4294967296; }; }
   const speedAt = t => Math.min(RULES.vmax, RULES.v0 + RULES.accel*t);
-  /* Meters between rows: wide at first, closing to 30. */
-  const rowGap = t => Math.max(30, 66 - 0.32*t);
+  /* Meters between rows: 54 at the start, closing by 0.16 m a second to 30 at 150 s
+     (owner, 29 October 2026: close more slowly, start with more coming). */
+  const rowGap = t => Math.max(30, 54 - 0.16*t);
 
   function newGame(seed){
     const g={t:0, v:RULES.v0, dist:0, x:1, target:1, obs:[], rowZ:RULES.firstRowZ, path:1,
@@ -75,7 +76,9 @@ const ARCADE = (function(){
     const t=g.t, r=g.rand, L=RULES.lanes;
     const gap=g.lastGap||rowGap(t), reach=Math.min(L-1, reachFor(gap, speedAt(t+ (z-RULES.playerZ)/speedAt(t))));
     if(g.rows>0) g.path=clamp(g.path+Math.round((r()*2-1)*reach), 0, L-1);
-    const p3=clamp((t-45)/90,0,0.35), p2=clamp((t-12)/50,0,0.55);
+    /* Lanes blocked per row: 1.15 on average at the start, rising to 1.8 at 120 s and no more.
+       Two lanes: 15% at the start, 50% from 90 s. Three lanes: from 40 s, 15% from 120 s. */
+    const p2=0.15+0.35*clamp(t/90,0,1), p3=0.15*clamp((t-40)/80,0,1);
     const u=r(), n = u<p3 ? 3 : u<p3+p2 ? 2 : 1;
     const open=[...Array(L).keys()].filter(i=>i!==g.path);
     for(let k=0;k<n;k++){
