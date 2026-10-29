@@ -22,6 +22,8 @@ const ACCESS_UI = (function(){
   const $ = id => document.getElementById(id);
   let known=false, mode='signin';
   let client=null, session=null, pending=-1, busy=false, loading=-1, lastFocus=null, msg='';
+  /* A procedure waiting on sign-in (engine/procedures.js): run after a password sign-in. */
+  let pendingFn=null;
   const configured = () => SITE && !!CFG.supabaseUrl && !!CFG.supabaseKey &&
                            typeof supabase==='object' && typeof supabase.createClient==='function';
 
@@ -180,7 +182,7 @@ const ACCESS_UI = (function(){
     setTimeout(()=>{ const e=$('signinemail'); if(e.hidden){ $('signingoogle').focus(); return; } (e.value?$('signinpass'):e).focus(); },0);
   }
   function hideDialog(){
-    $('signinview').classList.add('hidden'); pending=-1;
+    $('signinview').classList.add('hidden'); pending=-1; pendingFn=null;
     if(lastFocus&&lastFocus.focus) try{ lastFocus.focus(); }catch(e){}
   }
   async function submit(){
@@ -199,8 +201,9 @@ const ACCESS_UI = (function(){
       }
       session=data.session; msg='';
       A.user(session&&session.user&&session.user.id); A.track('signin_succeeded',{method:'password'});
-      const want=pending; hideDialog(); paint();
+      const want=pending, fn=pendingFn; hideDialog(); paint();
       if(want>=0) open(want);
+      else if(fn) fn();
     }catch(err){
       A.track('signin_failed', {reason:'network'});
       $('signinerr').textContent='Could not reach the sign-in service. Check your connection and try again.';
@@ -307,5 +310,24 @@ const ACCESS_UI = (function(){
     return pack;
   }
 
-  return {init, open, isLocked, signedIn, modalOpen, loadingIndex:()=>loading, site:SITE};
+  /* ---- a locked procedure (28 October 2026) ----
+     The same route as a locked case: the signed-in session asks the edge function for the
+     pack by prefix and hash, and the bytes are checked against the hash. A procedure's
+     prefix never matches a case's (the build checks). Without a session the sign-in dialog
+     opens, and after a password sign-in `retry` runs. */
+  async function fetchProcedure(stub, retry){
+    if(!configured()) throw fail('Sign-in is not configured for this build.');
+    if(!session){
+      try{ const {data}=await client.auth.getSession(); session=(data&&data.session)||null; }catch(e){}
+    }
+    if(!session){ showDialog(-1,'signin'); pendingFn=retry||null; throw fail('Sign in to open this procedure.','signin'); }
+    try{ return await fetchPack(stub); }
+    catch(err){
+      if(err&&err.code==='signin'){ session=null; paint(); showDialog(-1,'signin'); pendingFn=retry||null; }
+      if(err&&err.userMessage) err.userMessage=err.userMessage.replace(/\bcases\b/g,'procedures').replace(/\bcase\b/g,'procedure');
+      throw err;
+    }
+  }
+
+  return {init, open, isLocked, signedIn, modalOpen, loadingIndex:()=>loading, site:SITE, fetchProcedure};
 })();

@@ -257,3 +257,14 @@ CAPTCHA, Paddle, PostHog and Sentry. PostHog and Sentry will each need their hos
 `CSP_BASE` in `engine/build_simulator.py`. Cloudflare R2 is not needed for this: Supabase
 Storage holds the packs. R2 may earn a place later for large video on the marketing page,
 because it does not charge for downloads.
+
+## Procedures (28 October 2026)
+
+`python3 engine/build_simulator.py` also writes `private-packs/<P>.json` for each procedure
+in `procedures/` and `site/px/procsim-<hash>.js`, the procedure code (three.js and
+`engine/procsim-*.js`). Commit `site/px/` with `site/index.html`. The Action uploads the
+procedure packs with the case packs (`engine/publish_packs.js` reads both blocks). Opening a
+procedure is logged in `case_access` under its prefix and counts toward the same rate limit
+as cases. Events: `procedures_opened`, `procedure_loaded`, `procedure_load_failed`
+(`procedure`, `reason`), `procedure_started` (`procedure`, `mode`, `hand`),
+`procedure_finished` (`procedure`, `mode`, `seconds`, `errors`, `critical`, `clean`, `total`).

@@ -50,6 +50,14 @@ SUPABASE_JS = os.path.join(HERE, "vendor", "supabase-js", "supabase.umd.js")
 SUPABASE_LICENSE = os.path.join(HERE, "vendor", "supabase-js", "LICENSE")
 POSTHOG_JS = os.path.join(HERE, "vendor", "posthog-js", "posthog.no-external.js")
 POSTHOG_LICENSE = os.path.join(HERE, "vendor", "posthog-js", "LICENSE")
+# Procedures (28 October 2026). One folder per procedure under procedures/, each with
+# <P>-procedure.json. The code that plays them (three.js and engine/procsim-*.js) is one
+# script, loaded only when a procedure is opened: inline as text in the local build, its own
+# file under site/px/ in the site. The packs are locked like cases.
+PROC_DIR = os.path.join(ROOT, "procedures")
+THREE_JS = os.path.join(HERE, "vendor", "three", "three.min.js")
+THREE_LICENSE = os.path.join(HERE, "vendor", "three", "LICENSE")
+PX_FILES = ("procsim-geom.js", "procsim-core.js", "procsim-view.js")
 
 catalog = json.load(open(catalog_path("action-catalog.json"), encoding="utf-8"))
 dxcat = json.load(open(catalog_path("diagnosis-catalog.json"), encoding="utf-8"))
@@ -843,7 +851,7 @@ def check_posthog(key, host):
 def write_headers(site_html):
     hashes = []
     for m in re.finditer(r"<script(?P<attrs>[^>]*)>(?P<body>.*?)</script>", site_html, re.S):
-        if "application/json" in m.group("attrs") or "src=" in m.group("attrs"):
+        if "application/json" in m.group("attrs") or "text/plain" in m.group("attrs") or "src=" in m.group("attrs"):
             continue
         digest = hashlib.sha256(m.group("body").encode("utf-8")).digest()
         hashes.append("'sha256-" + base64.b64encode(digest).decode() + "'")
@@ -883,6 +891,36 @@ def write_headers(site_html):
     }
     open(os.path.join(ROOT, "vercel.json"), "w", encoding="utf-8", newline="\n").write(json.dumps(conf, indent=2) + "\n")
     print("wrote vercel.json with", len(hashes), "script hashes in the CSP")
+
+
+def load_procedures(packs, jsafe):
+    """Every procedure pack, checked, and the code that plays them as one script."""
+    sys.path.insert(0, HERE)
+    from validate_procedure import validate as validate_procedure
+    procs = []
+    if os.path.isdir(PROC_DIR):
+        for d in sorted(os.listdir(PROC_DIR)):
+            fp = os.path.join(PROC_DIR, d, d + "-procedure.json")
+            if not os.path.exists(fp):
+                continue
+            pk = json.load(open(fp, encoding="utf-8"))
+            errs = validate_procedure(pk, d)
+            if errs:
+                raise SystemExit("procedures/" + d + ":\n  " + "\n  ".join(errs))
+            procs.append(pk)
+    # A procedure's prefix is its key in the pack bucket, beside the cases.
+    clash = {p["prefix"] for p in procs} & (set(list_packs()) | {p["prefix"] for p in packs})
+    if clash:
+        raise SystemExit("a procedure and a case share a prefix: " + ", ".join(sorted(clash)))
+    if not procs:
+        return procs, ""
+    notice = ("three.js 0.186.1, https://threejs.org\n" +
+              open(THREE_LICENSE, encoding="utf-8").read()).replace("*/", "* /")
+    code = ("/*\n" + notice + "\n*/\n" + open(THREE_JS, encoding="utf-8").read() + "\n" +
+            "".join(open(os.path.join(HERE, f), encoding="utf-8").read() + "\n" for f in PX_FILES))
+    if re.search(r"</script", code, re.I):
+        raise SystemExit("the procedure code contains </script and cannot be inlined")
+    return procs, code
 
 
 def main():
@@ -991,6 +1029,10 @@ def main():
               # build. access.js hands it the Supabase client; ui.js calls it. Inert in the
               # local build, where ACCESS.mode is "local".
               "\n" + open(os.path.join(HERE, "progress.js"), encoding="utf-8").read() + "\n" +
+              # procedures.js (28 October 2026) declares `const PROCEDURES`, the Procedures box
+              # and window. ui.js calls PROCEDURES.init from boot(), so it comes before ui.js.
+              # The procedure engine itself is not in this bundle: see load_procedures.
+              "\n" + open(os.path.join(HERE, "procedures.js"), encoding="utf-8").read() + "\n" +
               "\n" + open(os.path.join(HERE, "ui.js"), encoding="utf-8").read() + "\n" +
               # pupils.js (19 October 2026) declares `const PUPILVIEW` and reads ST, PT and
               # pupilState at run time, so it comes after ui.js and engine.js.
@@ -1069,16 +1111,21 @@ def main():
     if re.search(r"</script", review_js, re.I):
         raise SystemExit("review.js contains </script, which would end the inline script early")
 
-    def page(title, cases, access, lib, review=""):
+    procs, px_code = load_procedures(packs, jsafe)
+
+    def page(title, cases, access, lib, review="", procedures=(), px=""):
         """One finished page. What differs between the local build and the site: the title,
-        the cases block, the access block, whether supabase-js is inlined, and whether the
-        review tools are."""
+        the cases block, the access block, whether supabase-js is inlined, whether the
+        review tools are, and whether the procedures are whole with their code inline (local)
+        or stubs whose code is a separate file (site)."""
         out = shell.replace("__TITLE__", title.replace("<", ""))
         out = out.replace("/*__REVIEW_TOOLS__*/\n", review)
         out = out.replace("__ACCESS_JSON__", jsafe(access))
         out = out.replace("<!--__SUPABASE_LIB__-->", lib)
         # Last, so that nothing inside a case pack can be mistaken for one of the markers.
         out = out.replace("__CASES_JSON__", jsafe(cases))
+        out = out.replace("__PROCEDURES_JSON__", jsafe(list(procedures)))
+        out = out.replace("__PX_CODE__", px)
         return out
 
     # Case numbers: whole numbers from 1, one per case. Two cases sharing a number would be
@@ -1098,7 +1145,8 @@ def main():
     # ---- the local build: every case, no backend. Behaves exactly as before v0.18.
     local_title = (product + " (local build)") if len(packs) != 1 else packs[0]["card"]["title"]
     local = page(local_title, packs, {"mode": "local", "product": product, "legal": legal}, "",
-                 review="/*__REVIEW_START__*/\n" + review_js + "\n/*__REVIEW_END__*/\n")
+                 review="/*__REVIEW_START__*/\n" + review_js + "\n/*__REVIEW_END__*/\n",
+                 procedures=procs, px=px_code)
     os.makedirs(BUILD_DIR, exist_ok=True)
     open(OUT, "w", encoding="utf-8", newline="\n").write(local)
     open(SITE_INDEX, "w", encoding="utf-8", newline="\n").write(local)
@@ -1114,7 +1162,8 @@ def main():
         # Files are overwritten, never deleted, so a case that has been removed leaves its old
         # pack behind. Say so, so that it is not uploaded by mistake.
         stale = sorted(f for f in os.listdir(PACKS_DIR)
-                       if f.endswith(".json") and f[:-5] not in {p["prefix"] for p in packs if p["prefix"] not in free})
+                       if f.endswith(".json") and f[:-5] not in ({p["prefix"] for p in packs if p["prefix"] not in free} |
+                                                                 {p["prefix"] for p in procs}))
         for f in stale:
             print("  warning: private-packs/" + f + " is not from this build; do not upload it")
         site_cases = []
@@ -1152,6 +1201,28 @@ def main():
                   "emailSignUp": bool(cfg.get("emailSignUp", False)),
                   "posthogKey": cfg.get("posthogKey", ""), "posthogHost": cfg.get("posthogHost", "")}
         check_posthog(access["posthogKey"], access["posthogHost"])
+        # Procedures: the packs go to private-packs/ like a locked case, the site keeps a stub
+        # and the hash, and the code is written as site/px/procsim-<hash>.js. The hash in the
+        # name means a browser never runs an old copy against a new pack.
+        proc_stubs = []
+        for pr in procs:
+            body = jsafe(pr).encode("utf-8")
+            open(os.path.join(PACKS_DIR, pr["prefix"] + ".json"), "wb").write(body)
+            proc_stubs.append({"prefix": pr["prefix"], "kind": "procedure", "locked": True, "card": pr["card"],
+                               "packSha256": hashlib.sha256(body).hexdigest(), "packBytes": len(body)})
+        px_dir = os.path.join(DEPLOY_DIR, "px")
+        os.makedirs(px_dir, exist_ok=True)
+        px_name = ("procsim-" + hashlib.sha256(px_code.encode("utf-8")).hexdigest()[:16] + ".js") if px_code else ""
+        # Older copies are left in place and named, like stale packs: the build never deletes.
+        # Remove them before committing site/.
+        for f in sorted(os.listdir(px_dir)):
+            if re.fullmatch(r"procsim-[0-9a-f]+\.js", f) and f != px_name:
+                print("  warning: site/px/" + f + " is not from this build; delete it before committing site/")
+        if px_code:
+            fp = os.path.join(px_dir, px_name)
+            if not (os.path.exists(fp) and open(fp, encoding="utf-8").read() == px_code):
+                open(fp, "w", encoding="utf-8", newline="\n").write(px_code)
+            access["pxScript"] = "px/" + px_name
         lib_js = open(SUPABASE_JS, encoding="utf-8").read()
         if "</script" in lib_js.lower():
             raise SystemExit("vendored supabase-js contains </script and cannot be inlined")
@@ -1165,7 +1236,7 @@ def main():
             ph_notice = open(POSTHOG_LICENSE, encoding="utf-8").read().replace("*/", "* /")
             lib += ("\n<script>/*\nposthog-js 1.434.17 (no-external build), https://github.com/PostHog/posthog-js\n" +
                     ph_notice + "\n*/\n" + ph_js + "\n</script>")
-        site = page(product, site_cases, access, lib)
+        site = page(product, site_cases, access, lib, procedures=proc_stubs, px="")
         # The review tools are for authors and reviewers and never ship.
         if "REVIEW_SPEED" in site or "__REVIEW_START__" in site:
             raise SystemExit("the review tools found their way into the site build")
@@ -1176,11 +1247,17 @@ def main():
             for probe in (jsafe(p["case"]["phases"])[:300], jsafe(p["bindings"])[:300]):
                 if probe in site:
                     raise SystemExit(p["prefix"] + ": case content found in the site build")
+        for pr in procs:
+            for probe in (jsafe(pr["steps"])[:300], jsafe(pr["layers"])[:300]):
+                if probe in site:
+                    raise SystemExit(pr["prefix"] + ": procedure content found in the site build")
         os.makedirs(DEPLOY_DIR, exist_ok=True)
         open(DEPLOY_INDEX, "w", encoding="utf-8", newline="\n").write(site)
         write_headers(site)
         print("wrote", os.path.relpath(DEPLOY_INDEX, ROOT), round(len(site) / 1024), "KB,",
-              len(packs) - len(free), "locked,", len(free), "free")
+              len(packs) - len(free), "locked,", len(free), "free,", len(procs), "procedures")
+        if px_code:
+            print("wrote", "site/" + access["pxScript"], round(len(px_code) / 1024), "KB")
         print("wrote", os.path.relpath(PACKS_DIR, ROOT) + "/", "(upload these to the case-packs bucket)")
         if not access["supabaseUrl"] or not access["supabaseKey"]:
             print("  note: site-config.json has no Supabase URL or key yet, so the site will say sign-in is not configured")

@@ -38,6 +38,36 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
  await shock();
  ok('signed in, the case splash is open', await p.evaluate(()=>PACK&&PACK.prefix==='CHFE'&&!document.getElementById('splash').classList.contains('hidden')));
  ok('the splash shows the case number', await p.evaluate(()=>document.getElementById('sp-no').textContent==='Case '+PACK.card.number&&!document.getElementById('sp-no').hidden));
+ // The splash (29 October 2026): the patient's words come out of the mouth in a bubble, and the
+ // mode is a small switch with an i that explains the other mode.
+ const sp0=await p.evaluate(()=>{ const say=document.getElementById('sp-say'), t=say&&say.querySelector('.spsay-t'), path=say&&say.querySelector('path');
+   const svg=document.querySelector('#sp-patient svg'), m=svg&&svg.querySelector('[data-rig="mouth"]');
+   const mr=m&&m.getBoundingClientRect(), tr=t&&t.getBoundingClientRect();
+   return {shown:!!say&&!say.hidden, text:t&&t.textContent, words:CASE.metadata.chief_complaint_patient_voice, d:(path&&path.getAttribute('d'))||'',
+     sr:document.getElementById('sp-cc').classList.contains('srsay'), side:say&&say.dataset.side,
+     clear:!!(mr&&tr)&&(tr.left>=mr.right||tr.right<=mr.left||tr.bottom<=mr.top),
+     other:splashSayParts("Her mother: 'She wasn't making any sense.'"),
+     seg:[...document.querySelectorAll('#sp-modes [data-mode]')].map(b=>b.dataset.mode+':'+b.getAttribute('aria-checked')), def:PROTO.difficulty.default}; });
+ ok("the patient's words come out of the mouth in a bubble, kept in the card for a screen reader",
+   sp0.shown&&sp0.text===sp0.words&&/Q/.test(sp0.d)&&sp0.sr&&sp0.clear&&['right','left','top'].includes(sp0.side), sp0);
+ ok('a line given as "Speaker: words" names the speaker', sp0.other.who==='Her mother'&&sp0.other.text==="She wasn't making any sense.", sp0.other);
+ ok('the mode is a small switch with the default chosen', sp0.seg.length===2&&sp0.seg[0]===sp0.def+':true', sp0.seg);
+ const sp1=await p.evaluate(()=>{ const r=n=>n.getBoundingClientRect(), t=r(document.querySelector('#sp-say .spsay-t')), st=r(document.querySelector('#splash .spstage'));
+   const above=[document.getElementById('sp-arrival'),document.getElementById('sp-title')].find(n=>n.offsetParent&&n.textContent.trim());
+   const act=r(document.querySelector('#splash .splashactions')), sw=r(document.getElementById('sp-modes')), go=r(document.getElementById('beginbtn'));
+   return {crosses:t.right>st.right+40&&t.left<st.right, clearAbove:t.top>=r(above).bottom, clearBelow:t.bottom<=act.top,
+     switchRight:sw.left>go.right&&Math.abs((sw.top+sw.bottom)/2-(go.top+go.bottom)/2)<12}; });
+ ok('side by side, the bubble crosses into the text half, clear of the title and the buttons', sp1.crosses&&sp1.clearAbove&&sp1.clearBelow, sp1);
+ ok('the switch sits at the right of the row with Begin', sp1.switchRight, sp1);
+ await p.hover('#sp-modes .spinfo-b'); await wait(300);
+ ok('hovering the i explains the other mode', await p.evaluate(()=>{ const t=document.querySelector('#sp-modes .sptip');
+   return getComputedStyle(t).visibility==='visible'&&t.textContent.length>10; }));
+ const fig0=await p.evaluate(()=>{ window.__fig=document.querySelector('#sp-patient svg'); return true; });
+ await p.click('#sp-modes [data-mode]:not([aria-checked="true"])'); await wait(200);
+ const sw=await p.evaluate(()=>({mode:MODE, def:PROTO.difficulty.default, same:document.querySelector('#sp-patient svg')===window.__fig,
+   checked:[...document.querySelectorAll('#sp-modes [data-mode]')].filter(b=>b.getAttribute('aria-checked')==='true').map(b=>b.dataset.mode)}));
+ ok('the switch changes the mode without redrawing the patient', fig0&&sw.mode!==sw.def&&sw.checked.join()===sw.mode&&sw.same, sw);
+ await p.click('#sp-modes [data-mode="'+sw.def+'"]'); await wait(150);
  ok('a case with nothing saved offers Begin only', await p.evaluate(()=>document.getElementById('sp-run').hidden&&document.getElementById('beginbtn').textContent==='Begin'));
 
  // A run in a non-default mode, with a few acts, a tab change and a handoff being drafted.

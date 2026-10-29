@@ -35,7 +35,9 @@ if (key.startsWith('sb_publishable_')) die('SUPABASE_SECRET_KEY holds the publis
 const site = fs.readFileSync(path.join(ROOT, 'site/index.html'), 'utf8');
 const m = site.match(/<script type="application\/json" id="cases-data">([\s\S]*?)<\/script>/);
 if (!m) die('site/index.html has no cases-data block');
-const stubs = JSON.parse(m[1]).filter(c => c.locked);
+// Procedures (28 October 2026) are locked packs too, in their own block.
+const mp = site.match(/<script type="application\/json" id="procedures-data">([\s\S]*?)<\/script>/);
+const stubs = JSON.parse(m[1]).filter(c => c.locked).concat(mp ? JSON.parse(mp[1]).filter(c => c.locked) : []);
 if (!stubs.length) die('site/index.html has no locked cases');
 
 // The same supabase-js the site uses (engine/vendor), so no npm install is needed.

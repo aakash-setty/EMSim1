@@ -2110,7 +2110,7 @@ document.addEventListener('click',e=>{
   }
   if(t.dataset.case){ chooseCase(Number(t.dataset.case)); return; }
   if(t.id==='backtopicker'){ backToPicker(); return; }
-  if(t.dataset.mode){ MODE=t.dataset.mode; renderSplash(); return; }
+  if(t.dataset.mode){ MODE=t.dataset.mode; renderSplashModes(); return; }
   if(t.id==='beginbtn'){ begin(); return; }
   if(t.dataset.subfold){
     const k=t.dataset.subfold; SUBOPEN.has(k)?SUBOPEN.delete(k):SUBOPEN.add(k);
@@ -3210,26 +3210,166 @@ function renderSplash(){
   arr.classList.toggle('hidden', !room);
   renderSplashVitals();
   renderSplashPatient();
-  /* The mode the case starts in is drawn first and as a box; every other mode follows
-     it as a line of text. Which is which is read from `difficulty.default` rather than
-     from a mode's name, so the card cannot end up recommending one mode while the
-     interface starts in another. */
-  const D=PROTO.difficulty;
+  renderSplashSay();
+  renderSplashModes();
+}
+/* The mode, as a small switch (author instruction, 29 October 2026). The default mode is
+   first and chosen, read from `difficulty.default` rather than from a mode's name, so the
+   card cannot offer one mode while the interface starts in another. Each other mode has an
+   i beside the switch, and hovering or focusing it shows that mode's one line. Choosing a
+   mode redraws only this row, so the patient and the bubble do not animate in again. */
+function renderSplashModes(){
+  const D=PROTO.difficulty, box=el('sp-modes'); if(!box||!D) return;
   const order=Object.keys(D.modes).sort((a,b)=>(a===D.default?0:1)-(b===D.default?0:1));
-  el('sp-modes').innerHTML=order.map(k=>{
-    const md=D.modes[k], plain=k!==D.default;
-    /* The default mode is a name and nothing else (v0.17l, on the author's instruction): the
-       paragraph under it was the longest thing on the card and said what the debrief says
-       better. Its description stays in SHARED and is the button's tooltip and its name for
-       a screen reader. Every other mode keeps its one line, because that line is the only
-       reason to choose it. */
-    return plain
-      ? `<button class="mode plain" role="radio" data-mode="${esc(k)}" aria-checked="${MODE===k}">
-      <b>${esc(md.label)}</b><span>${esc(md.description)}</span></button>`
-      : `<button class="mode" role="radio" data-mode="${esc(k)}" aria-checked="${MODE===k}"
-      title="${esc(md.description)}" aria-label="${esc(md.label+'. '+md.description)}"><i class="modedot" aria-hidden="true"></i><b>${esc(md.label)}</b></button>`;
-  }).join('');
+  box.innerHTML=`<span class="spmode-l" id="sp-model">Mode</span>
+    <span class="spseg" role="radiogroup" aria-labelledby="sp-model">${order.map(k=>
+      `<button type="button" class="spseg-b" role="radio" data-mode="${esc(k)}" aria-checked="${MODE===k}">${esc(D.modes[k].label)}</button>`).join('')}</span>
+    ${order.filter(k=>k!==D.default).map(k=>`<span class="spinfo"><button type="button" class="spinfo-b"
+      aria-label="About ${esc(D.modes[k].label)} mode" aria-describedby="sp-tip-${esc(k)}">i</button><span class="sptip" role="tooltip"
+      id="sp-tip-${esc(k)}"><b>${esc(D.modes[k].label)}.</b> ${esc(D.modes[k].description)}</span></span>`).join('')}`;
+}
 
+/* The patient's own words as a speech bubble from the mouth (author instruction, 29 October
+   2026). The bubble is drawn in the figure's stage, beside the head on whichever side has
+   room, as one outline: the box and a curved tail that ends at the corner of the mouth. The
+   mouth and head are measured from the figure's own drawing (its data-rig groups), not
+   assumed. The stage is aria-hidden, so the words stay in the card as #sp-cc for a screen
+   reader, hidden on screen while the bubble shows. A line written as "Speaker: 'words'" is
+   someone else talking, a parent say, so its bubble names them and its tail points out of
+   the frame rather than at the patient's mouth. With no figure the card shows the words. */
+let SAY_RO=null;
+function splashSayParts(raw){
+  const s=String(raw||'').trim();
+  const m=s.match(/^([^:'"‘“]{2,40}):\s*['"‘“](.+)['"’”]\.?$/);
+  return m?{who:m[1].trim(), text:m[2].trim()}:{who:'', text:s};
+}
+function renderSplashSay(){
+  const stage=document.querySelector('#splash .spstage'), cc=el('sp-cc');
+  if(!stage) return;
+  let say=el('sp-say');
+  if(!say){ say=document.createElement('div'); say.id='sp-say'; say.className='spsay'; stage.appendChild(say); }
+  const raw=(CASE&&CASE.metadata&&CASE.metadata.chief_complaint_patient_voice)||'';
+  const fig=!el('splashwrap').classList.contains('nofig');
+  say.classList.remove('in'); stage.style.paddingTop='';
+  if(!raw||!fig){ say.hidden=true; say.innerHTML=''; if(cc) cc.classList.remove('srsay'); return; }
+  const p=splashSayParts(raw);
+  say.hidden=false; say.classList.toggle('off',!!p.who);
+  say.innerHTML='<svg class="spsay-ol" aria-hidden="true"><path/></svg><div class="spsay-t">'+
+    (p.who?'<span class="spsay-who">'+esc(p.who)+'</span>':'')+esc(p.text)+'</div>';
+  if(cc) cc.classList.add('srsay');
+  if(!SAY_RO&&typeof ResizeObserver==='function'){ SAY_RO=new ResizeObserver(()=>layoutSplashSay()); SAY_RO.observe(stage); }
+  requestAnimationFrame(layoutSplashSay);
+}
+/* One outline: a rounded box, with a tail let out of its bottom edge (or its left edge) and
+   brought to the point (tx,ty). The tail's two sides bow the same way, so it reads as drawn. */
+function sayPath(x,y,w,h,side,a,b,tx,ty){
+  const r=Math.min(18,h/2,w/2), f=n=>n.toFixed(1);
+  const mx=side==='bottom'?(a+b)/2:x, my=side==='bottom'?y+h:(a+b)/2;
+  const vx=tx-mx, vy=ty-my, L=Math.hypot(vx,vy)||1, nx=-vy/L*7, ny=vx/L*7;
+  const ctl=(px,py)=>f((px+tx)/2+nx)+' '+f((py+ty)/2+ny);
+  let d='M'+f(x+r)+' '+f(y)+' H'+f(x+w-r)+' Q'+f(x+w)+' '+f(y)+' '+f(x+w)+' '+f(y+r)+
+        ' V'+f(y+h-r)+' Q'+f(x+w)+' '+f(y+h)+' '+f(x+w-r)+' '+f(y+h);
+  if(side==='bottom'){
+    d+=' H'+f(b)+' Q'+ctl(b,y+h)+' '+f(tx)+' '+f(ty)+' Q'+ctl(a,y+h)+' '+f(a)+' '+f(y+h)+
+       ' H'+f(x+r)+' Q'+f(x)+' '+f(y+h)+' '+f(x)+' '+f(y+h-r)+' V'+f(y+r);
+  }else{
+    d+=' H'+f(x+r)+' Q'+f(x)+' '+f(y+h)+' '+f(x)+' '+f(y+h-r)+
+       ' V'+f(b)+' Q'+ctl(x,b)+' '+f(tx)+' '+f(ty)+' Q'+ctl(x,a)+' '+f(x)+' '+f(a)+' V'+f(y+r);
+  }
+  return d+' Q'+f(x)+' '+f(y)+' '+f(x+r)+' '+f(y)+' Z';
+}
+function layoutSplashSay(){
+  const say=el('sp-say'), stage=document.querySelector('#splash .spstage'), host=el('sp-patient');
+  if(!say||say.hidden||!stage||!host) return;
+  const svg=host.querySelector('svg'), W=stage.clientWidth;
+  if(!svg||!W||!svg.getScreenCTM||!svg.viewBox||!svg.viewBox.baseVal) return;
+  try{
+    /* Figure coordinates to stage pixels. Both matrices carry the figure's entrance
+       animation, so it cancels; the layout offsets do not move with it. */
+    const vb=svg.viewBox.baseVal, k=svg.clientWidth/vb.width, root=svg.getScreenCTM().inverse();
+    const ox=host.offsetLeft, oy=host.offsetTop+(host.clientHeight-svg.clientHeight);
+    const boxOf=sel=>{
+      const g=svg.querySelector(sel); if(!g||!g.getBBox) return null;
+      const bb=g.getBBox(); if(!bb.width) return null;
+      const m=root.multiply(g.getScreenCTM());
+      const xs=[], ys=[];
+      [[bb.x,bb.y],[bb.x+bb.width,bb.y],[bb.x,bb.y+bb.height],[bb.x+bb.width,bb.y+bb.height]].forEach(([x,y])=>{
+        xs.push(ox+((m.a*x+m.c*y+m.e)-vb.x)*k); ys.push(oy+((m.b*x+m.d*y+m.f)-vb.y)*k); });
+      return {left:Math.min(...xs), right:Math.max(...xs), top:Math.min(...ys), bottom:Math.max(...ys)};
+    };
+    /* The head group spans the drawing's whole 264 by 280 box, so the face is judged from
+       the eyes: it runs about one and a quarter eye-widths either side of their centre,
+       which clears long hair too, and its top about one eye-width above them. */
+    const mouth=boxOf('[data-rig="mouth"]'), eyes=boxOf('[data-rig="eyes"]');
+    if(!mouth||!eyes) return;
+    const ew=eyes.right-eyes.left, ecx=(eyes.left+eyes.right)/2;
+    const head={left:ecx-1.25*ew, right:ecx+1.25*ew, top:eyes.top-1.15*ew};
+    const t=say.querySelector('.spsay-t'), off=say.classList.contains('off');
+    const vit=el('sp-vitalsec'), sr=stage.getBoundingClientRect();
+    const top0=vit?vit.getBoundingClientRect().bottom-sr.top+10:-40;
+    /* Side by side, the bubble crosses the card's midline into the text half (author
+       instruction, 29 October 2026): it starts over the bed beside the face and runs on into
+       the band the card keeps clear between the title and the buttons. Stacked, there is no
+       text half beside it, and it stays over the figure. REACH is how far past the stage's
+       right edge it may go. */
+    const card=document.querySelector('#splash .splashcard'), cr=card?card.getBoundingClientRect():null;
+    const beside=!!cr&&cr.width>0&&cr.left>=sr.right-20;
+    let REACH=14, yLo=-1e9, yHi=1e9;
+    if(beside){
+      const above=[el('sp-arrival'),el('sp-title')].find(n=>n&&n.offsetParent&&n.textContent.trim());
+      const act=card.querySelector('.splashactions');
+      REACH=Math.max(14,Math.min(250,cr.right-sr.right-70));
+      if(above) yLo=above.getBoundingClientRect().bottom-sr.top+20;
+      if(act) yHi=act.getBoundingClientRect().top-sr.top-16;
+    }
+    const MAXW=beside?310:236, MINW=118, GAP=10;
+    const my=(mouth.top+mouth.bottom)/2;
+    let side, bx, bw;
+    const rightRoom=W+REACH-(head.right+GAP), leftRoom=head.left-GAP;
+    if(off){ side='edge'; bw=Math.max(MINW,Math.min(MAXW,leftRoom-4)); bx=4; }
+    else if(rightRoom>=MINW){ side='right'; bw=Math.min(MAXW,rightRoom); bx=head.right+GAP; }
+    else if(leftRoom>=MINW){ side='left'; bw=Math.min(MAXW,leftRoom); bx=head.left-GAP-bw; }
+    else { side='top'; bw=Math.min(MAXW,W-8); bx=Math.max(4,Math.min(W-bw-4,(mouth.left+mouth.right)/2-bw/2)); }
+    t.style.width=bw+'px';
+    if(side==='right'&&beside){
+      /* Fitted to its words, and set astride the midline: about half over the bed, half
+         over the text half, unless the face is in the way. */
+      t.style.left='0px'; t.style.width='max-content'; t.style.maxWidth=bw+'px';
+      const nat=t.offsetWidth+1;   // layout width: the pop-in scale must not count
+      t.style.maxWidth=''; bw=Math.max(MINW+40,Math.min(bw,nat)); t.style.width=bw+'px';
+      bx=Math.max(head.right+GAP, W+6-Math.round(bw*0.5));
+    }
+    let bh=t.offsetHeight;
+    let by=side==='top'?head.top-16-bh:(side==='edge'?Math.max(head.top,top0):my-34-bh);
+    if(side==='right'&&bx+bw>W+14){
+      /* Where it crosses into the text half it keeps to the clear band. With no room there
+         it pulls back over the figure. */
+      by=Math.min(Math.max(by,yLo),yHi-bh);
+      if(by<yLo){ bw=Math.max(MINW,Math.min(236,W+14-bx)); t.style.width=bw+'px'; bh=t.offsetHeight; by=my-34-bh; }
+    }
+    /* Above the head and short of room: the stage is given the room rather than the bubble
+       sitting on the face. It only ever grows, so this settles in one pass. */
+    if(side==='top'&&by<top0){
+      const need=Math.ceil(top0-by), cur=parseFloat(stage.style.paddingTop)||20;
+      if(need>0&&need<400){ stage.style.paddingTop=(cur+need)+'px'; requestAnimationFrame(layoutSplashSay); return; }
+    }
+    /* Beside the head again (the window grew): the room given above it goes back. */
+    if(side!=='top'&&stage.style.paddingTop){ stage.style.paddingTop=''; requestAnimationFrame(layoutSplashSay); return; }
+    by=Math.max(top0,by);
+    t.style.left=bx+'px'; t.style.top=by+'px';
+    let tail, tx, ty;
+    if(side==='edge'){ tx=-30; ty=by+bh*0.66; tail=['left',by+bh-34,by+bh-14]; }
+    else if(side==='right'){ tx=mouth.right+2; ty=my;
+      tail=by+bh<=ty-10?['bottom',bx+20,bx+Math.min(70,bw*0.36)]:['left',Math.min(by+bh-18,ty)-30,Math.min(by+bh-18,ty)]; }
+    else if(side==='left'){ tx=mouth.left-2; ty=my; tail=['bottom',bx+bw-46,bx+bw-12]; }
+    /* Above the head the tail stops at the top of it, as a comic does, rather than crossing
+       the face to the mouth. */
+    else { tx=(mouth.left+mouth.right)/2; ty=head.top+8; tail=['bottom',tx-12,tx+12]; }
+    say.querySelector('path').setAttribute('d',sayPath(bx,by,bw,bh,tail[0],tail[1],tail[2],tx,ty));
+    say.style.transformOrigin=tx.toFixed(0)+'px '+ty.toFixed(0)+'px';
+    say.dataset.side=side;
+    if(!say.classList.contains('in')) requestAnimationFrame(()=>say.classList.add('in'));
+  }catch(e){}
 }
 /* The arrival vitals, on the card, before Begin.
 
@@ -4490,6 +4630,7 @@ const THEME=(function(){
 function boot(){
   THEME.bind();
   ACCESS_UI.init();
+  if(typeof PROCEDURES==='object') PROCEDURES.init();   /* the Procedures box and window */
   /* The first case that is actually here. In the deployed build every case may be a locked
      stub, and then nothing is bound until one is fetched: begin() renders everything once
      a case is chosen, so the first-render calls below are only for a build that has one. */

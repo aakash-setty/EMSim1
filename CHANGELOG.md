@@ -5,6 +5,14 @@ is usable with learners.
 
 ---
 
+## Case splash: the words from the mouth, the mode as a switch (29 October 2026, owner's instruction)
+
+- The patient's opening words are a speech bubble beside the patient's head, with a curved tail that ends at the corner of the mouth. It is drawn as one outline, white with an ink line, measured from the figure's own mouth and head, and placed on whichever side of the head has room (above it if neither does). It appears a moment after the patient. The purple quote box in the card is gone. The words stay in the card, hidden on screen, for a screen reader, and the card shows them as before when there is no figure.
+- A line written as "Speaker: 'words'" (DIPH: "Her mother: ...") is someone else talking. Its bubble names the speaker and its tail points out of the frame, not at the patient's mouth.
+- Side by side, the bubble starts over the bed beside the face and crosses the card's midline into the text half, in the band the card now keeps clear between the title (top) and the buttons (bottom). Stacked on a phone it stays over the figure.
+- Mode is a small two-part switch, Normal and Easy, with Normal chosen, at the right end of the row with Begin, in place of the large Normal box and the Easy line under it. An i beside it shows Easy's one line on hover or keyboard focus. Choosing a mode redraws only the switch, so the patient no longer animates in again.
+- Site check: new checks for the bubble (its words, clear of the mouth, kept for a screen reader), the speaker parse, the switch, the i, and that switching does not redraw the patient.
+
 ## Welcome demo: read the twelve-lead (28 October 2026, owner's instruction)
 
 - On the signed-out welcome page, "Get an ECG" now prints a twelve-lead. A sheet rises from the bottom over about half the screen, the paper feeds out left to right behind a red print head, and the question fades in: where is the STEMI? Anterior, Inferior or High-lateral. The answer, High-lateral, is the owner's.
@@ -84,6 +92,43 @@ Site build only. The local build is unchanged.
 - New: `engine/progress.js`, `engine/site-check/progress.js`. Changed: `engine/ui.js` (runSnapshot, resumeRun and hooks), `engine/access.js`, `engine/shell.html`, `engine/build_simulator.py` (versionKey per case), `engine/site-check/mock.js`.
 - Site check: `flow.js` and `deep.js` now press the charging defibrillator after a download and wait out the nurse's opening card. Both had failed since those features arrived (11 and 13 October).
 - Not decided: free or paid.
+
+---
+
+## Procedures, and a cricothyrotomy (28 October 2026, author instruction)
+
+A Procedures box sits beside the milestones badge on the case list, to its left at the same
+height (in the badge's place when the badge is hidden). It opens a window listing procedures. The first is a cricothyrotomy:
+scalpel, bougie, tube, on a normal adult neck with a palpable membrane, following the
+Difficult Airway Society 2025 eFONA card (transverse stab incision). Not physician reviewed.
+
+- Three-dimensional, in three.js 0.186.1 (vendored in `engine/vendor/three/`, MIT). The neck
+  is built in layers from the pack: skin, fat and anterior jugular veins, strap muscles,
+  thyroid and cricoid cartilage, the cricothyroid membrane, trachea and rings, thyroid
+  isthmus and lobes, esophagus, the air column. A layers panel hides groups, makes the skin
+  and fat see-through and opens a midline cut with solid section faces.
+- Learn mode prompts each step and quotes the card for why. Practice mode shows no prompts
+  and lists every error in the debrief. Either hand: the side, the cutting edge and the
+  turns follow it.
+- The pack is locked like a case: `private-packs/CRIC.json`, fetched after sign-in through
+  the `case-pack` edge function with the hash check. No change to the function.
+- The code loads only when a procedure is opened: `site/px/procsim-<hash>.js` in the site
+  (allowed by the existing policy, 'self'), inline text in the local build.
+- New files: `procedures/CRIC/`, `engine/procedures.js`, `engine/procsim-geom.js`,
+  `engine/procsim-core.js`, `engine/procsim-view.js`, `engine/validate_procedure.py`,
+  `engine/procsim-tests.js`, `docs/procedure-authoring.md`. Changed: `engine/shell.html`
+  (box, window, blocks, styles), `engine/ui.js` (one init line), `engine/access.js`
+  (`fetchProcedure`), `engine/build_simulator.py`, `engine/publish_packs.js`.
+- Reworked after review on 28 and 29 October: the bougie follows the tissue (a straight tract,
+  one 12 mm arc inside the airway, then down the trachea); adult proportions from the
+  sternomental (14 cm) and thyromental (7 cm) distances; a head, torso and arms under the
+  drape; the clavicles to the acromion, the upper trapezius, the deltoid and the hollows above
+  the clavicles. The drapes cover the chest and face only. Shapes by eye, recorded in the SEED.
+- The build writes `site/px/procsim-<hash>.js` and never deletes an older one. It names any
+  older copy so it can be removed before committing `site/`.
+- Analytics events, no content: `procedures_opened`, `procedure_loaded`,
+  `procedure_load_failed`, `procedure_started` (mode, hand), `procedure_finished` (mode,
+  seconds, error and step counts).
 
 ---
 
