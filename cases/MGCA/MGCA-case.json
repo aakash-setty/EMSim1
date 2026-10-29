@@ -188,7 +188,7 @@
      "after_seconds": 240,
      "measured_from": "phase_entry",
      "to": "progressive_meningococcemia",
-     "narration": "The spots on her ankles have joined up into patches while we've been standing here, and there are new ones on her forearms. She's oozing round the cannula site now too.",
+     "narration": "The spots on her ankles have joined up into patches while we've been standing here, and there are new ones on her forearms. She's oozing around the cannula site now too.",
      "debrief_note": "The organism was never treated and the septicemia progressed. Meningococcal disease is measured in hours and the rash is the clock you can see. Antibiotics are given on the clinical picture, not on a culture, an antigen test or a lumbar puncture.",
      "author_rationale": "Untreated meningococcal bacteremia progresses. Reachable only when glucocorticoid has been replaced, because the rule above it catches every patient who has not had it."
     },
@@ -768,7 +768,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "It discharges the post-intubation sedation obligation, and it is the wrong agent for it in a hypotensive patient. Propofol will deepen the shock you are already fighting. An analgesia-first approach with fentanyl, or a ketamine infusion, is kinder to the haemodynamics.",
+   "debrief_note": "It discharges the post-intubation sedation obligation, and it is the wrong agent for it in a hypotensive patient. Propofol will deepen the shock you are already fighting. An analgesia-first approach with fentanyl, or a ketamine infusion, is kinder to the hemodynamics.",
    "flags_set": [
     "post_intubation_sedation"
    ],
@@ -865,26 +865,28 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "A maintenance infusion is a reasonable thing to have running after the boluses, and it is not a resuscitation. This action deliberately does not satisfy the volume resuscitation requirement in this case: an infusion at a maintenance rate delivers in an hour what she needs in the next ten minutes.",
+   "debrief_note": "A maintenance infusion is a reasonable thing to have running after the boluses, and it is not a resuscitation. This action deliberately does not satisfy the volume resuscitation requirement in this case: an infusion at a maintenance rate delivers in an hour what she needs in the next ten minutes. Accepted and not expected: what runs after the boluses does not change the next ten minutes.",
    "flags_set": [
     "maintenance_fluid"
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "lactated_ringer_s_infusion",
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "As for the saline infusion: appropriate as continuing fluid, not a substitute for bolus resuscitation, and the balanced composition is preferable in a patient with a metabolic acidosis.",
+   "debrief_note": "As for the saline infusion: appropriate as continuing fluid, not a substitute for bolus resuscitation, and the balanced composition is preferable in a patient with a metabolic acidosis. Accepted and not expected: what runs after the boluses does not change the next ten minutes.",
    "flags_set": [
     "maintenance_fluid"
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "d50_bolus",
@@ -924,10 +926,10 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "Reasonable as continuing dextrose cover once the acute hypoglycemia is corrected, and too dilute to correct a glucose of 53 quickly on its own. Same caveat as the concentrated bolus: the definitive treatment for this patient's hypoglycemia is glucocorticoid replacement.",
+   "debrief_note": "Reasonable as continuing dextrose cover once the acute hypoglycemia is corrected, and too dilute to correct a glucose of 53 quickly on its own. Same caveat as the concentrated bolus: the definitive treatment for this patient's hypoglycemia is glucocorticoid replacement. The concentrated bolus is the expected dextrose. This is accepted and not expected.",
    "flags_set": [
     "dextrose_given"
    ],
@@ -937,7 +939,8 @@
      "failure_message": "She hasn't got a line in yet. Do you want me to get IV access first?",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "glucagon",
@@ -1070,10 +1073,10 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "Adequate: it covers Neisseria meningitidis and penetrates the cerebrospinal fluid at meningitic doses. It is broader than this patient needs, adding antipseudomonal cover with no indication for it. Credited as adequate empiric therapy because it is, and ceftriaxone is the guideline-preferred agent.",
+   "debrief_note": "Adequate: it covers Neisseria meningitidis and penetrates the cerebrospinal fluid at meningitic doses. It is broader than this patient needs, adding antipseudomonal cover with no indication for it. Credited as adequate empiric therapy because it is, and ceftriaxone is the guideline-preferred agent. It counts as the antibiotic this case expects, in place of ceftriaxone.",
    "display_name": "Cefepime",
    "flags_set": [
     "abx_given"
@@ -1084,6 +1087,13 @@
      "failure_message": "She hasn't got a line in yet. Do you want me to get IV access first?",
      "source": "catalog_default_retained"
     }
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed.",
+   "also_satisfies": [
+    {
+     "id": "ceftriaxone",
+     "when": null
+    }
    ]
   },
   {
@@ -1091,10 +1101,10 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "Adequate and unnecessarily broad. It treats the organism, and reaching for a carbapenem in a previously well 21 year old with community-acquired disease and no resistance risk factors is stewardship you would be asked to justify. Credited as adequate therapy.",
+   "debrief_note": "Adequate and unnecessarily broad. It treats the organism, and reaching for a carbapenem in a previously well 21 year old with community-acquired disease and no resistance risk factors is stewardship you would be asked to justify. Credited as adequate therapy. It counts as the antibiotic this case expects, in place of ceftriaxone.",
    "display_name": "Meropenem",
    "flags_set": [
     "abx_given"
@@ -1104,6 +1114,13 @@
      "when": "flag iv_access set OR flag central_access set OR flag io_access set",
      "failure_message": "She hasn't got a line in yet. Do you want me to get IV access first?",
      "source": "catalog_default_retained"
+    }
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed.",
+   "also_satisfies": [
+    {
+     "id": "ceftriaxone",
+     "when": null
     }
    ]
   },
@@ -1195,10 +1212,10 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "Defensible and specific. Rocky Mountain spotted fever is the mimic that matters in a febrile patient with a petechial rash and shock, it is diagnosed clinically because serology is retrospective, and delayed doxycycline is where the mortality in that disease comes from. Adding it costs almost nothing. What argues against it here is the epidemiology: no tick exposure, no outdoor exposure, and a rash that began on the ankles and feet within hours rather than evolving over days from the wrists and ankles inward. It does not cover meningococcus, so it does not satisfy the antibiotic requirement.",
+   "debrief_note": "Defensible and specific. Rocky Mountain spotted fever is the mimic that matters in a febrile patient with a petechial rash and shock, it is diagnosed clinically because serology is retrospective, and delayed doxycycline is where the mortality in that disease comes from. Adding it costs almost nothing. What argues against it here is the epidemiology: no tick exposure, no outdoor exposure, and a rash that began on the ankles and feet within hours rather than evolving over days from the wrists and ankles inward. It does not cover meningococcus, so it does not satisfy the antibiotic requirement. Not expected here, and not marked against you either way.",
    "flags_set": [
     "doxycycline_given"
    ],
@@ -1208,7 +1225,8 @@
      "failure_message": "She hasn't got a line in yet. Do you want me to get IV access first?",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "rifampin",
@@ -1296,15 +1314,11 @@
    "catalog_id": "epinephrine_drip",
    "tag": [
     {
-     "when": "phase is frank_septic_shock",
-     "value": "recommended"
-    },
-    {
      "when": null,
      "value": "neutral"
     }
    ],
-   "debrief_note": "An acceptable second or third agent when norepinephrine is not achieving the target, and not the first choice: the guideline preference for norepinephrine over epinephrine as the initial agent is explicit. Epinephrine also raises the lactate through beta-2 mediated glycolysis, which muddies the one number you are using to follow her perfusion.",
+   "debrief_note": "An acceptable second or third agent when norepinephrine is not achieving the target, and not the first choice: the guideline preference for norepinephrine over epinephrine as the initial agent is explicit. Epinephrine also raises the lactate through beta-2 mediated glycolysis, which muddies the one number you are using to follow her perfusion. Norepinephrine is the expected agent. A second agent is accepted and not expected.",
    "flags_set": [
     "pressor_running"
    ],
@@ -1315,21 +1329,18 @@
      "source": "catalog_default_retained"
     }
    ],
-   "vital_effects": []
+   "vital_effects": [],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "vasopressin_drip",
    "tag": [
     {
-     "when": "phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock",
-     "value": "recommended"
-    },
-    {
      "when": null,
      "value": "neutral"
     }
    ],
-   "debrief_note": "A reasonable addition once the norepinephrine requirement is climbing, conventionally added rather than escalating norepinephrine indefinitely. As a sole first agent it is not supported. It is credited here as a vasopressor because it is one, and the debrief should note if it was started without norepinephrine.",
+   "debrief_note": "A reasonable addition once the norepinephrine requirement is climbing, conventionally added rather than escalating norepinephrine indefinitely. As a sole first agent it is not supported. It is credited here as a vasopressor because it is one, and the debrief should note if it was started without norepinephrine. Norepinephrine is the expected agent. A second agent is accepted and not expected.",
    "flags_set": [
     "pressor_running"
    ],
@@ -1340,7 +1351,8 @@
      "source": "catalog_default_retained"
     }
    ],
-   "vital_effects": []
+   "vital_effects": [],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "dopamine_drip",
@@ -1388,15 +1400,11 @@
    "catalog_id": "epinephrine_bolus",
    "tag": [
     {
-     "when": "phase is frank_septic_shock",
-     "value": "recommended"
-    },
-    {
      "when": null,
      "value": "neutral"
     }
    ],
-   "debrief_note": "A bridge rather than a plan. Push-dose epinephrine buys the ninety seconds it takes to get an infusion spiked and running, and it is better than watching a mean arterial pressure of 51. It does not resolve this phase on its own, deliberately: the lesson is that this patient needs an infusion, glucocorticoid and the antibiotic, not a bolus. Dosing errors with push-dose vasopressors are well described and they happen at the dilution step.",
+   "debrief_note": "A bridge rather than a plan. Push-dose epinephrine buys the ninety seconds it takes to get an infusion spiked and running, and it is better than watching a mean arterial pressure of 51. It does not resolve this phase on its own, deliberately: the lesson is that this patient needs an infusion, glucocorticoid and the antibiotic, not a bolus. Dosing errors with push-dose vasopressors are well described and they happen at the dilution step. Norepinephrine is the expected agent. A second agent is accepted and not expected.",
    "flags_set": [
     "push_dose_pressor"
    ],
@@ -1406,7 +1414,8 @@
      "failure_message": "She hasn't got a line in yet. Do you want me to get IV access first?",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "stop_norepinephrine",
@@ -1795,7 +1804,7 @@
      "value": "discouraged"
     }
    ],
-   "debrief_note": "Her bicarbonate is 19 with a lactate of 2.8, which is a lactic acidosis from hypoperfusion, and the treatment for that is perfusion. Bicarbonate does not improve haemodynamics or mortality in lactic acidosis at this pH, it shifts potassium only transiently, and the carbon dioxide it generates has to be blown off by a patient who is already tachypneic at 24 to compensate. If you were treating the hyperkalemia, treat the cause instead.",
+   "debrief_note": "Her bicarbonate is 19 with a lactate of 2.8, which is a lactic acidosis from hypoperfusion, and the treatment for that is perfusion. Bicarbonate does not improve hemodynamics or mortality in lactic acidosis at this pH, it shifts potassium only transiently, and the carbon dioxide it generates has to be blown off by a patient who is already tachypneic at 24 to compensate. If you were treating the hyperkalemia, treat the cause instead.",
    "flags_set": [],
    "prerequisites": [
     {
@@ -2001,10 +2010,10 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "The study that answers whether there is meningitis as well as bacteremia. Here it is normal, and that is a finding rather than an anticlimax: invasive meningococcal disease presents across a spectrum from meningitis without shock to fulminant septicemia without meningitis, and the purely septicaemic form carries the higher mortality. A normal cerebrospinal fluid does not downgrade this patient in any way.",
+   "debrief_note": "The study that answers whether there is meningitis as well as bacteremia. Here it is normal, and that is a finding rather than an anticlimax: invasive meningococcal disease presents across a spectrum from meningitis without shock to fulminant septicemia without meningitis, and the purely septicemic form carries the higher mortality. A normal cerebrospinal fluid does not downgrade this patient in any way. Not expected: the puncture they need is deferred while she is in shock.",
    "display_name": "CSF cell count",
    "flags_set": [],
    "prerequisites": [
@@ -2013,17 +2022,18 @@
      "failure_message": "We haven't done the LP, so there's no CSF to send.",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "csf_gram_stain",
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "Negative here, because there is no meningitis. Worth knowing what it would show if there were: Gram-negative diplococci, often intracellular. A negative Gram stain never justifies stopping or withholding therapy in a patient who looks like this.",
+   "debrief_note": "Negative here, because there is no meningitis. Worth knowing what it would show if there were: Gram-negative diplococci, often intracellular. A negative Gram stain never justifies stopping or withholding therapy in a patient who looks like this. Not expected: the puncture they need is deferred while she is in shock.",
    "display_name": "CSF Gram stain",
    "flags_set": [],
    "prerequisites": [
@@ -2032,17 +2042,18 @@
      "failure_message": "We haven't done the LP, so there's no CSF to send.",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "csf_protein",
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "Marginally raised at 48 and non-specific. It does not make a meningitis in the absence of pleocytosis.",
+   "debrief_note": "Marginally raised at 48 and non-specific. It does not make a meningitis in the absence of pleocytosis. Not expected: the puncture they need is deferred while she is in shock.",
    "display_name": "CSF protein",
    "flags_set": [],
    "prerequisites": [
@@ -2051,17 +2062,18 @@
      "failure_message": "We haven't done the LP, so there's no CSF to send.",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "csf_glucose",
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "Thirty-four, which looks low against the usual quoted range and is not. The number that matters is the ratio to serum glucose, and her serum glucose is 53, so a cerebrospinal fluid glucose of 34 is a ratio of about 0.64 and entirely normal. This is a good illustration of why a reference interval can mislead: the same cerebrospinal fluid value read against a normal serum glucose would suggest bacterial meningitis.",
+   "debrief_note": "Thirty-four, which looks low against the usual quoted range and is not. The number that matters is the ratio to serum glucose, and her serum glucose is 53, so a cerebrospinal fluid glucose of 34 is a ratio of about 0.64 and entirely normal. This is a good illustration of why a reference interval can mislead: the same cerebrospinal fluid value read against a normal serum glucose would suggest bacterial meningitis. Not expected: the puncture they need is deferred while she is in shock.",
    "display_name": "CSF glucose",
    "flags_set": [],
    "prerequisites": [
@@ -2070,17 +2082,18 @@
      "failure_message": "We haven't done the LP, so there's no CSF to send.",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "csf_culture",
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "Sent and pending, with the same 24 to 48 hour reality the blood cultures have. It will not return inside this encounter.",
+   "debrief_note": "Sent and pending, with the same 24 to 48 hour reality the blood cultures have. It will not return inside this encounter. Not expected: the puncture they need is deferred while she is in shock.",
    "display_name": "CSF culture",
    "flags_set": [],
    "prerequisites": [
@@ -2089,17 +2102,18 @@
      "failure_message": "We haven't done the LP, so there's no CSF to send.",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "csf_rapid_antigen_test_for_n_meningitidis",
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "Negative, consistent with the absence of meningitis. As with the urine version, the performance of antigen detection for this organism is poor and a negative result must not be allowed to influence treatment. Where a rapid answer on cerebrospinal fluid genuinely matters, multiplex PCR is the modern test, and it is not in this catalog.",
+   "debrief_note": "Negative, consistent with the absence of meningitis. As with the urine version, the performance of antigen detection for this organism is poor and a negative result must not be allowed to influence treatment. Where a rapid answer on cerebrospinal fluid genuinely matters, multiplex PCR is the modern test, and it is not in this catalog. Not expected: the puncture they need is deferred while she is in shock.",
    "display_name": "CSF rapid antigen for N. meningitidis",
    "flags_set": [],
    "prerequisites": [
@@ -2108,7 +2122,8 @@
      "failure_message": "We haven't done the LP, so there's no CSF to send.",
      "source": "catalog_default_retained"
     }
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "complete_blood_count_cbc",
@@ -2357,24 +2372,26 @@
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "The right antipyretic and analgesic for this patient, chosen by exclusion: it is neither nephrotoxic in a kidney that has already been injured nor antiplatelet in a patient with a consumptive coagulopathy. Fever raises metabolic demand in a patient whose oxygen delivery is already inadequate, and her myalgia is genuinely severe. The evidence that antipyresis improves outcome in sepsis is weak; the argument here is comfort and demand reduction at very low cost.",
+   "debrief_note": "The right antipyretic and analgesic for this patient, chosen by exclusion: it is neither nephrotoxic in a kidney that has already been injured nor antiplatelet in a patient with a consumptive coagulopathy. Fever raises metabolic demand in a patient whose oxygen delivery is already inadequate, and her myalgia is genuinely severe. The evidence that antipyresis improves outcome in sepsis is weak; the argument here is comfort and demand reduction at very low cost. Accepted and not expected in the resuscitation.",
    "flags_set": [
     "antipyretic_given"
-   ]
+   ],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "ondansetron",
    "tag": [
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
-   "debrief_note": "Reasonable. She has vomited twice and cannot keep fluid down, which is part of why she is volume depleted and hyponatremic. Low cost, and it does not substitute for the intravenous route for anything that matters.",
-   "flags_set": []
+   "debrief_note": "Reasonable. She has vomited twice and cannot keep fluid down, which is part of why she is volume depleted and hyponatremic. Low cost, and it does not substitute for the intravenous route for anything that matters. Accepted and not expected in the resuscitation.",
+   "flags_set": [],
+   "author_note": "29 October 2026, owner instruction: do not tell the learner she missed what did not matter. Not physician reviewed."
   },
   {
    "catalog_id": "consult_critical_care",
@@ -2530,7 +2547,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Supple, with no meningism. Kernig and Brudzinski are negative and she moves her neck freely on request. This is the most important pertinent negative in the case: invasive meningococcal disease does not require meningitis, the purely septicaemic form carries the higher mortality, and waiting for a stiff neck before treating gets the sicker end of the spectrum treated later. Jugular venous pressure is low, consistent with hypovolemia.",
+   "debrief_note": "Supple, with no meningism. Kernig and Brudzinski are negative and she moves her neck freely on request. This is the most important pertinent negative in the case: invasive meningococcal disease does not require meningitis, the purely septicemic form carries the higher mortality, and waiting for a stiff neck before treating gets the sicker end of the spectrum treated later. Jugular venous pressure is low, consistent with hypovolemia.",
    "flags_set": [],
    "state_changing": false
   },
@@ -5771,7 +5788,7 @@
     },
     {
      "when": "study basic_chemistry_chem_7 ordered AND NOT study basic_chemistry_chem_7 resulted",
-     "value": "Endocrinology: \"I need the sodium, the potassium and the glucose. Ring me when they are back, and tell me now if a bedside sugar is low.\""
+     "value": "Endocrinology: \"I need the sodium, the potassium and the glucose. Call me when they are back, and tell me now if a bedside sugar is low.\""
     },
     {
      "when": "study fingerstick_blood_sugar resulted",
@@ -5817,7 +5834,7 @@
    "consult_heme_onc": [
     {
      "when": "study coagulation_panel resulted AND study peripheral_smear resulted",
-     "value": "Hematology: \"No schistocytes, so this is disseminated intravascular coagulation from her sepsis, not a microangiopathy. Treat the sepsis. She is not bleeding, so no products and no anticoagulation. Ring me if the purpura becomes necrotic.\""
+     "value": "Hematology: \"No schistocytes, so this is disseminated intravascular coagulation from her sepsis, not a microangiopathy. Treat the sepsis. She is not bleeding, so no products and no anticoagulation. Call me if the purpura becomes necrotic.\""
     },
     {
      "when": "study coagulation_panel resulted",
@@ -8575,7 +8592,7 @@
    "How many kids do you have?",
    "Do you follow any sports?",
    "Do you watch much television?",
-   "Are you comfortable on that trolley?",
+   "Are you comfortable on that stretcher?",
    "Would you like a blanket?",
    "Is the bed at the right height?",
    "Can I get you anything?",
@@ -8671,7 +8688,7 @@
     "catalog_id": "dx_bacterial_meningitis",
     "label": "Bacterial meningitis",
     "verdict": "incorrect",
-    "explanation": "The commonest wrong answer, because meningococcus and meningitis are joined in most people's memory. She has no meningitis: her neck is supple, Kernig and Brudzinski are negative, and she has no photophobia. Invasive meningococcal disease runs on a spectrum from meningitis without shock to fulminant septicemia without meningitis, and the purely septicaemic form is the one with the higher mortality. Waiting for meningism before treating selects for treating the sicker patients later."
+    "explanation": "The commonest wrong answer, because meningococcus and meningitis are joined in most people's memory. She has no meningitis: her neck is supple, Kernig and Brudzinski are negative, and she has no photophobia. Invasive meningococcal disease runs on a spectrum from meningitis without shock to fulminant septicemia without meningitis, and the purely septicemic form is the one with the higher mortality. Waiting for meningism before treating selects for treating the sicker patients later."
    },
    {
     "catalog_id": "dx_toxic_shock_syndrome",

@@ -39,6 +39,10 @@ Not physician reviewed.
   neck to the shoulder behind them, the deltoid caps the shoulder, and the hollow above each
   clavicle opens between them. The drapes now cover only the chest below the clavicles and
   the face above the chin, so the whole neck is bare from side to side. Placed by eye.
+- 29 October 2026, Aakash Setty: the bougie grew outside as it went in, and the tube had no
+  end. Both now have a fixed length, so what goes in comes off the outer end. The turn buttons
+  are much larger. When a step needs an instrument, Learn mode says to pick it up and the
+  instrument glows in the tray. The cuff can be deflated with a button.
 
 ## What a model chose, not yet reviewed
 
@@ -52,6 +56,8 @@ Not physician reviewed.
 - The bougie range of 10 to 15 cm is from the card. The tube's depth range (55 to 85 mm from
   the skin) and the cuff's position on the tube are teaching choices.
 - The cuff volume range of 5 to 10 mL is a teaching choice.
+- The lengths: bougie 60 cm, tube 28 cm with a 16 mm connector. Round figures for an adult
+  bougie and a 6.0 tube, not checked against a product sheet.
 - The bougie's path: tract 70 degrees from the skin plane, 4 mm further straight into the
   air, then an arc of 12 mm radius. Teaching choices, chosen so the tract stays inside the
   membrane opening and the arc clears the cricoid ring and the back wall. The coude tip is

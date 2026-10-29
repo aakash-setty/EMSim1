@@ -37,6 +37,28 @@
    "catalog_id": "ct_c_spine"
   },
   {
+   "case_id": "cchr_history",
+   "catalog_id": null,
+   "note": "Hidden target. Credited once loss of consciousness, memory of the event, nausea and vomiting, and mechanism of injury have all been asked (asked_all, owner's instruction of 29 October 2026). Not a button.",
+   "unmatched_placement": {
+    "tab": "history",
+    "group": "Interview"
+   }
+  },
+  {
+   "case_id": "interview_topic_anticoagulants",
+   "catalog_id": null,
+   "note": "Interview topics are not catalog actions. Credited by asking the anticoagulants topic (owner, 29 October 2026).",
+   "unmatched_placement": {
+    "tab": "history",
+    "group": "Interview"
+   }
+  },
+  {
+   "case_id": "ultrasound_fast",
+   "catalog_id": "ultrasound_fast"
+  },
+  {
    "case_id": "ct_head",
    "catalog_id": "ct_head"
   },
@@ -208,6 +230,16 @@
   {
    "case_id": "morphine_bolus",
    "catalog_id": "morphine_bolus"
+  },
+  {
+   "case_id": "analgesia_given",
+   "catalog_id": null,
+   "note": "Hidden target. Credited by acetaminophen, fentanyl or morphine before the tube (owner, 29 October 2026). Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
   },
   {
    "case_id": "ondansetron",

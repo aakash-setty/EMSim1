@@ -151,7 +151,7 @@ chk('bicarbonate alone returns her to the seizing phase', bicarbOnly.phase === '
 chk('ten seconds after the bicarbonate, with a nurse line that says why',
     bicarbOnly.timeFires.some(f => f.from === 'wide_complex_tachycardia' && f.to === 'seizing'
                                   && f.after === 10) &&
-    bicarbOnly.nurse.some(n => n.kind === 'deterioration' && /still seizing/.test(n.text)),
+    bicarbOnly.nurse.some(n => n.kind === 'deterioration' && /seizing/.test(n.text)),
     JSON.stringify(bicarbOnly.timeFires.map(f => f.from + '>' + f.to + '@' + f.after)));
 /* Physician review DIPH-09: a seizure treated with bicarbonate and no anticonvulsant relapses
    once into the wide-complex rhythm, three minutes after the seizing phase is entered. */
@@ -600,7 +600,7 @@ section('volunteered answers (v0.18a)');
   const sp = st => st.readouts.filter(r => r.kind === 'speech');
   const early = fold(mk([{ t: 5, kind: 'interview', topic: 'onset', q: 'When did this start?' }]), 10);
   chk('her mother volunteers when she was last well and that she was home alone',
-      /half seven this morning/.test(sp(early)[0].body) && /home on her own/.test(sp(early)[0].body)
+      /seven thirty this morning/.test(sp(early)[0].body) && /home on her own/.test(sp(early)[0].body)
       && early.askedTopics.has('last_seen_well'), sp(early)[0].body.slice(-120));
   const seizing = fold(mk([{ t: 250, kind: 'interview', topic: 'onset', q: 'When did this start?' }]), 260);
   chk('with her mother out of the room nothing is volunteered',
@@ -666,3 +666,87 @@ chk('reached from the post-ictal phase, eyes closed and obtunded',
 chk('and she is not talking in that phase',
     !/Talking/.test(resolve(CASE.content_keys.exam.exam_airway, wctPost).findings) &&
     /22/.test(resolve(CASE.content_keys.exam.exam_breath, wctPost).findings));
+
+section('owner corrections, 29 October 2026');
+{
+  const at = (steps, t) => fold(mk(steps), t);
+  const IV = [1, 'insert_iv'];
+  const R = (k, s) => resolve(CASE.content_keys.exam[k], s).findings;
+
+  /* Paralysis hides the convulsion. It does not end the seizure. */
+  const par = at([IV, [250, 'etomidate_bolus'], [251, 'rocuronium_bolus']], 262);
+  chk('paralyzed with no benzodiazepine: she is still in the seizing phase', par.phase === 'seizing', par.phase);
+  chk('the neuro exam shows no convulsion once she is paralyzed',
+      /Paralyzed/.test(R('exam_neuro', par)) && !/tonic-clonic|jerking|seizing/i.test(R('exam_neuro', par)), R('exam_neuro', par));
+  chk('the breathing exam no longer describes chest movement with the seizure',
+      !/seizure/i.test(R('exam_breath', par)) && /bag/.test(R('exam_breath', par)), R('exam_breath', par));
+  chk('the eyes no longer rove', !/roving/.test(R('exam_heent', par)) || /no roving/.test(R('exam_heent', par)), R('exam_heent', par));
+  chk('the figure stops convulsing', patientVisual(par).value.seizure !== true);
+  chk('the bedside summary does not say generalized seizure',
+      !/seizure/i.test(JSON.stringify(resolve(CASE.content_keys.general_status.rules, par))));
+  chk('the nurse does not say she is still seizing once she is paralyzed',
+      !at([IV, [250, 'etomidate_bolus'], [251, 'rocuronium_bolus']], 600).nurse.some(e => /still seizing/i.test(e.text || '')));
+  chk('the benzodiazepine is still expected and not satisfied by paralysis',
+      !par.satisfied.has('lorazepam_bolus') && (par.expected.has('lorazepam_bolus') || par.recommendedExpected.has('lorazepam_bolus')));
+  chk('the rocuronium note teaches that paralysis hides the seizure',
+      /cannot see whether she is still seizing/.test(A['rocuronium_bolus'].debrief_note || ''));
+
+  /* Not telling her she missed what did not matter. */
+  const good = at([[1, 'attach_monitor'], IV, [2, 'second_iv'], [3, 'non_rebreather_mask'], [4, 'ecg_12_lead'],
+                   [5, 'venous_blood_gas'], [6, 'urine_hcg_qualitative'], [245, 'lorazepam_bolus'],
+                   [246, 'na_bicarbonate_bolus']], 330);
+  chk('two IVs count as the vascular access, so the IO is not asked for', good.satisfied.has('intraosseous_line'));
+  chk('a non-rebreather counts as the oxygen, so nasal cannula is not asked for', good.satisfied.has('nasal_cannula_oxygen'));
+  chk('one gas counts for both', good.satisfied.has('arterial_blood_gas'));
+  chk('one pregnancy test counts for both', good.satisfied.has('serum_hcg_quantitative'));
+  chk('intubation is neutral: one benzodiazepine that stopped the seizure leaves nothing to ask',
+      A['intubate_rapid_sequence'].tag.every(r => r.value === 'neutral') &&
+      !good.recommendedExpected.has('intubate_rapid_sequence') && !good.expected.has('intubate_rapid_sequence'));
+
+  /* The gases follow the seizure and the dose. */
+  const gas = (steps, t, id) => {
+    const s = at(steps, t); const o = (s.orders[id] || []).slice(-1)[0];
+    return o && o.value && o.value.components ? Object.fromEntries(o.value.components.map(c => [c.label, c.value])) : {};
+  };
+  const hh = g => Math.abs(6.1 + Math.log10(Number(g['Bicarbonate']) / (0.03 * Number(g['pCO2']))) - Number(g['pH'])) <= 0.015;
+  const V = 'venous_blood_gas', AB = 'arterial_blood_gas';
+  const vg = {
+    arrival: gas([IV, [5, V]], 60, V),
+    seizing: gas([IV, [250, V]], 300, V),
+    seizBic: gas([IV, [245, 'na_bicarbonate_bolus'], [250, V]], 300, V),
+    one: gas([IV, [5, 'na_bicarbonate_bolus'], [10, V]], 60, V),
+    two: gas([IV, [5, 'na_bicarbonate_bolus'], [20, 'na_bicarbonate_bolus'], [30, V]], 80, V),
+    drip: gas([IV, [5, 'na_bicarbonate_bolus'], [10, 'na_bicarbonate_infusion'], [30, V]], 80, V),
+  };
+  chk('venous pH on arrival 7.25', vg.arrival['pH'] === '7.25', JSON.stringify(vg.arrival));
+  chk('venous pH while seizing with no bicarbonate is far lower, 6.94', vg.seizing['pH'] === '6.94', JSON.stringify(vg.seizing));
+  chk('bicarbonate during the seizure helps but the retained carbon dioxide holds it down, 7.11',
+      vg.seizBic['pH'] === '7.11', JSON.stringify(vg.seizBic));
+  chk('one dose 7.41, two doses 7.47, an infusion 7.52',
+      vg.one['pH'] === '7.41' && vg.two['pH'] === '7.47' && vg.drip['pH'] === '7.52',
+      [vg.one['pH'], vg.two['pH'], vg.drip['pH']].join());
+  chk('every venous gas agrees with Henderson-Hasselbalch', Object.values(vg).every(hh),
+      JSON.stringify(Object.entries(vg).filter(([k, g]) => !hh(g)).map(([k]) => k)));
+  const ag = {
+    seizBic: gas([IV, [245, 'na_bicarbonate_bolus'], [250, AB]], 300, AB),
+    two: gas([IV, [5, 'na_bicarbonate_bolus'], [20, 'na_bicarbonate_bolus'], [30, AB]], 80, AB),
+    drip: gas([IV, [5, 'na_bicarbonate_bolus'], [10, 'na_bicarbonate_infusion'], [30, AB]], 80, AB),
+  };
+  chk('arterial pH 7.16 seizing on bicarbonate, 7.53 after two doses, 7.55 on the infusion',
+      ag.seizBic['pH'] === '7.16' && ag.two['pH'] === '7.53' && ag.drip['pH'] === '7.55',
+      [ag.seizBic['pH'], ag.two['pH'], ag.drip['pH']].join());
+  chk('every new arterial gas agrees with Henderson-Hasselbalch', Object.values(ag).every(hh));
+
+  /* Bicarbonate narrows the monitor on arrival. */
+  const qrs = s => { const old = global.ST; global.ST = s; const e = MONITOR.ecgNow(); global.ST = old; return Math.round(e.qrsS * 1000); };
+  const before = at([IV], 20), after = at([IV, [5, 'na_bicarbonate_bolus']], 20);
+  chk('the monitor complex narrows after bicarbonate on arrival', qrs(after) === 116 && qrs(before) > 116, qrs(before) + ' -> ' + qrs(after));
+
+  /* US usage in learner text. */
+  const strip = o => { if (Array.isArray(o)) return o.map(strip); if (o && typeof o === 'object') { const r = {};
+    for (const k in o) { if (['variants', 'expanded_variants', 'asks', 'canonical', 'references', 'migrations', 'provenance',
+      'review_hints', 'authored_against', 'binding_note', 'author_note', 'author_rationale', 'verify'].includes(k)) continue; r[k] = strip(o[k]); } return r; } return o; };
+  const UK = /registrar|half (seven|six|eight)|Paracetamol|\bring (her|me|him)\b|\bsmelt\b|trolley|haemo|aemia\b|kalaem|\bquiet|colour|litre\b|off school/i;
+  const flat = JSON.stringify(strip(CASE));
+  chk('no British spelling or usage, and no banned word, in learner text', !UK.test(flat), (flat.match(new RegExp('.{40}(' + UK.source + ').{20}', 'i')) || [''])[0]);
+}

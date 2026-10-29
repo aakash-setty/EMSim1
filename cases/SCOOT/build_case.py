@@ -62,15 +62,16 @@ CASE = {
  "flag_namespace_note": (
    "Flags are permanent. intubated is set by the tube, neurosurgery_called by the neurosurgery "
    "consult, handoff_submitted by the handoff. sedation_given and paralytic_given come from "
-   "the catalog. Order and place are carried by four hidden case actions credited through "
-   "also_satisfies: neuro_reexamined, neurosurgery_updated, osmotherapy_for_herniation and "
-   "post_intubation_sedation."),
+   "the catalog. Order and place are carried by five hidden case actions credited through "
+   "also_satisfies: neuro_reexamined, neurosurgery_updated, osmotherapy_for_herniation, "
+   "post_intubation_sedation and analgesia_given. A sixth, cchr_history, is credited by "
+   "asking four interview topics (asked_all)."),
  "case_actions": ACTIONS,
  "follow_ups": FOLLOW_UPS,
  "prompt_cap_recommendation": {
    "per_phase": 5,
    "rationale": (
-     "Five. On arrival: the monitor at 20 and a neuro exam at 60. No neurosurgery or CT "
+     "Five. On arrival: the monitor at 20, a neuro exam at 60 and his headache at 70. No neurosurgery or CT "
      "prompt on arrival (owner, 19 and 20 October 2026). In the decline: the repeat "
      "exam at 15, neurosurgery at 25 with an escalation at 35, the call back at 40 and the CT "
      "at 50. In herniation: osmotherapy at 20 with an escalation at 60, neurosurgery at 25, a "
@@ -129,11 +130,31 @@ HIDDEN_TARGETS = {
  "post_intubation_sedation": (
    "Hidden target. Credited by sedation or analgesia once intubated. Discharges the "
    "follow-up. Not a button."),
+ "analgesia_given": (
+   "Hidden target. Credited by acetaminophen, fentanyl or morphine before the tube (owner, "
+   "29 October 2026). Not a button."),
+}
+
+# Interview credit (authoring 6.1 and 19). The history tab draws no button.
+HISTORY_TARGETS = {
+ "interview_topic_anticoagulants": (
+   "Interview topics are not catalog actions. Credited by asking the anticoagulants topic "
+   "(owner, 29 October 2026)."),
+ "cchr_history": (
+   "Hidden target. Credited once loss of consciousness, memory of the event, nausea and "
+   "vomiting, and mechanism of injury have all been asked (asked_all, owner's instruction "
+   "of 29 October 2026). Not a button."),
 }
 
 BINDING_ROWS = []
 for a in ACTIONS:
     cid = a["catalog_id"]
+    if cid in HISTORY_TARGETS:
+        BINDING_ROWS.append({
+          "case_id": cid, "catalog_id": None,
+          "note": HISTORY_TARGETS[cid],
+          "unmatched_placement": {"tab": "history", "group": "Interview"}})
+        continue
     if cid in HIDDEN_TARGETS:
         BINDING_ROWS.append({
           "case_id": cid, "catalog_id": None,

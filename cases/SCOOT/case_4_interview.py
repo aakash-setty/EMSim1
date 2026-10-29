@@ -47,10 +47,23 @@ topic("mechanism_of_injury",
   variants=["How did you get hurt?", "Tell me about the accident.", "What happened with the scooter?",
             "How did the crash happen?", "Did you fall off the scooter?", "What did you hit?",
             "Mechanism of injury?", "How did you land?", "Where did you hit your head?",
-            "Which side of your head hit the ground?", "How fast were you going?",
-            "Were you going fast?", "Did you hit a car?", "Did you go over the handlebars?",
+            "Which side of your head hit the ground?",
+            "Did you hit a car?", "Did you go over the handlebars?",
             "What happened tonight?", "Can you tell me about the crash?"],
   echo="how the crash happened")
+
+# Owner, 29 October 2026: "If someone asks how fast he was going, you can say I don't know
+# but top speed is 40 mph."
+topic("speed",
+  "'I don't know. I don't remember the ride. It tops out at forty miles an hour.'",
+  "'Don't know... forty, tops.'",
+  canonical="How fast were you going?",
+  variants=["Were you going fast?", "What speed were you going?", "How fast was the scooter going?",
+            "Do you know how fast you were going?", "What was your speed?", "Were you speeding?",
+            "How fast does the scooter go?", "What's the top speed of the scooter?",
+            "How fast can it go?", "Was it a fast scooter?", "Roughly what speed?",
+            "Were you going full speed?", "How fast was he going?"],
+  echo="how fast I was going")
 
 topic("helmet",
   "'No helmet. I know. It's like a ten minute ride.'",

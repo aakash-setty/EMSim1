@@ -175,14 +175,14 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| impending_respiratory_failure | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
-| improving | rule 2 (phase is stabilizing OR phase is improving) | plausible |
-| nitrate_responding | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
-| niv_supported | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
+| impending_respiratory_failure | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing OR phase is improving) | plausible |
+| improving | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing OR phase is improving) | plausible |
+| nitrate_responding | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing OR phase is improving) | plausible |
+| niv_supported | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing OR phase is improving) | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) | plausible |
-| presentation | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure) | plausible |
-| stabilizing | rule 2 (phase is stabilizing OR phase is improving) | plausible |
-| «any other phase» | rule 3 (default) | plausible |
+| presentation | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing OR phase is improving) | plausible |
+| stabilizing | rule 1 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing OR phase is improving) | plausible |
+| «any other phase» | rule 2 (default) | plausible |
 
 
 ### `action_tag/epinephrine_push_dose`
@@ -211,11 +211,7 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/crystalloid_bolus_1l`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/dobutamine_infusion`
@@ -490,7 +486,7 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| impending_respiratory_failure | rule 1 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Crackles from bases to apices. Poor air entry, chest quieter than the ... | plausible |
+| impending_respiratory_failure | rule 1 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Crackles from bases to apices. Poor air entry, breath sounds softer th... | plausible |
 | intubated_stabilized | rule 0 (phase is post_intubation_hypotension OR phase is intubated_stabilized) &rarr; ABNORMAL: Coarse crackles to the mid-zones bilaterally. Equal breath sounds with... | plausible |
 | nitrate_responding | rule 3 (phase is niv_supported OR phase is nitrate_responding) &rarr; ABNORMAL: Crackles to the mid-zones. Wheeze settled. Air entry improved. | plausible |
 | niv_supported | rule 3 (phase is niv_supported OR phase is nitrate_responding) &rarr; ABNORMAL: Crackles to the mid-zones. Wheeze settled. Air entry improved. | plausible |
@@ -693,10 +689,10 @@ Single unconditional rule; nothing to enumerate.
 | phase | resolves to | reachable? |
 |---|---|---|
 | impending_respiratory_failure | rule 2 (phase is impending_respiratory_failure) &rarr; **pH (arterial) 7.23**; **pCO2 62 mmHg**; **pO2 48 mmHg**; Bicarbonate 25 mEq/L; Base excess -1 mEq/L; **Lactate 2.8 mmol/L** | plausible |
-| improving | rule 3 (phase is stabilizing OR phase is improving) &rarr; pH (arterial) 7.41; pCO2 38 mmHg; **pO2 64 mmHg**; Bicarbonate 23 mEq/L; Base excess -1 mEq/L; Lactate 1.4 mmol/L | plausible |
+| improving | rule 3 (phase is stabilizing OR phase is improving) &rarr; pH (arterial) 7.41; pCO2 38 mmHg; pO2 88 mmHg; Bicarbonate 23 mEq/L; Base excess -1 mEq/L; Lactate 1.4 mmol/L | plausible |
 | intubated_stabilized | rule 1 (phase is intubated_stabilized) &rarr; pH (arterial) 7.39; pCO2 36 mmHg; pO2 96 mmHg; **Bicarbonate 21 mEq/L**; **Base excess -3 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
 | post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; **pH (arterial) 7.30**; pCO2 44 mmHg; **pO2 78 mmHg**; **Bicarbonate 21 mEq/L**; **Base excess -4 mEq/L**; **Lactate 3.4 mmol/L** | plausible |
-| stabilizing | rule 3 (phase is stabilizing OR phase is improving) &rarr; pH (arterial) 7.41; pCO2 38 mmHg; **pO2 64 mmHg**; Bicarbonate 23 mEq/L; Base excess -1 mEq/L; Lactate 1.4 mmol/L | plausible |
+| stabilizing | rule 3 (phase is stabilizing OR phase is improving) &rarr; pH (arterial) 7.41; pCO2 38 mmHg; pO2 88 mmHg; Bicarbonate 23 mEq/L; Base excess -1 mEq/L; Lactate 1.4 mmol/L | plausible |
 | «any other phase» | rule 4 (default) &rarr; **pH (arterial) 7.32**; **pCO2 48 mmHg**; **pO2 54 mmHg**; Bicarbonate 24 mEq/L; Base excess -1 mEq/L; **Lactate 2.1 mmol/L** | plausible |
 
 
@@ -744,40 +740,102 @@ Single unconditional rule; nothing to enumerate.
 
 ### `consultant/consult_cardiology`
 
-| phase | ecg_12_lead | labs_troponin_hs | resolves to | reachable? |
-|---|---|---|---|---|
-| post_intubation_hypotension | not_ordered | not_ordered | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | not_ordered | pending | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | not_ordered | resulted | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | pending | not_ordered | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | pending | pending | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | pending | resulted | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | resulted | not_ordered | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | resulted | pending | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | resulted | resulted | rule 0 (phase is post_intubation_hypotension) | plausible |
-| «any other phase» | not_ordered | not_ordered | rule 5 (default) | plausible |
-| «any other phase» | not_ordered | pending | rule 5 (default) | plausible |
-| «any other phase» | not_ordered | resulted | rule 5 (default) | plausible |
-| «any other phase» | pending | not_ordered | rule 4 (study ecg_12_lead ordered) | plausible |
-| «any other phase» | pending | pending | rule 4 (study ecg_12_lead ordered) | plausible |
-| «any other phase» | pending | resulted | rule 4 (study ecg_12_lead ordered) | plausible |
-| «any other phase» | resulted | not_ordered | rule 3 (study ecg_12_lead resulted) | plausible |
-| «any other phase» | resulted | pending | rule 2 (study ecg_12_lead resulted AND study labs_troponin_hs ordered) | plausible |
-| «any other phase» | resulted | resulted | rule 1 (study ecg_12_lead resulted AND study labs_troponin_hs resulted) | plausible |
+| phase | nitro_infusion_running | nitro_stopped | ecg_12_lead | labs_troponin_hs | resolves to | reachable? |
+|---|---|---|---|---|---|---|
+| post_intubation_hypotension | no | no | not_ordered | not_ordered | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | no | not_ordered | pending | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | no | not_ordered | resulted | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | no | pending | not_ordered | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | no | pending | pending | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | no | pending | resulted | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | no | resulted | not_ordered | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | no | resulted | pending | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | no | resulted | resulted | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | yes | not_ordered | not_ordered | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | no | yes | not_ordered | pending | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | no | yes | not_ordered | resulted | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | no | yes | pending | not_ordered | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | no | yes | pending | pending | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | no | yes | pending | resulted | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | no | yes | resulted | not_ordered | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | no | yes | resulted | pending | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | no | yes | resulted | resulted | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | yes | no | not_ordered | not_ordered | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | no | not_ordered | pending | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | no | not_ordered | resulted | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | no | pending | not_ordered | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | no | pending | pending | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | no | pending | resulted | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | no | resulted | not_ordered | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | no | resulted | pending | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | no | resulted | resulted | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | yes | not_ordered | not_ordered | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | yes | yes | not_ordered | pending | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | yes | yes | not_ordered | resulted | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | yes | yes | pending | not_ordered | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | yes | yes | pending | pending | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | yes | yes | pending | resulted | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | yes | yes | resulted | not_ordered | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | yes | yes | resulted | pending | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | yes | yes | resulted | resulted | rule 1 (phase is post_intubation_hypotension) | plausible |
+| «any other phase» | no | no | not_ordered | not_ordered | rule 6 (default) | plausible |
+| «any other phase» | no | no | not_ordered | pending | rule 6 (default) | plausible |
+| «any other phase» | no | no | not_ordered | resulted | rule 6 (default) | plausible |
+| «any other phase» | no | no | pending | not_ordered | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | no | no | pending | pending | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | no | no | pending | resulted | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | no | no | resulted | not_ordered | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any other phase» | no | no | resulted | pending | rule 3 (study ecg_12_lead resulted AND study labs_troponin_hs ordered) | plausible |
+| «any other phase» | no | no | resulted | resulted | rule 2 (study ecg_12_lead resulted AND study labs_troponin_hs resulted) | plausible |
+| «any other phase» | no | yes | not_ordered | not_ordered | rule 6 (default) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | no | yes | not_ordered | pending | rule 6 (default) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | no | yes | not_ordered | resulted | rule 6 (default) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | no | yes | pending | not_ordered | rule 5 (study ecg_12_lead ordered) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | no | yes | pending | pending | rule 5 (study ecg_12_lead ordered) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | no | yes | pending | resulted | rule 5 (study ecg_12_lead ordered) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | no | yes | resulted | not_ordered | rule 4 (study ecg_12_lead resulted) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | no | yes | resulted | pending | rule 3 (study ecg_12_lead resulted AND study labs_troponin_hs ordered) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | no | yes | resulted | resulted | rule 2 (study ecg_12_lead resulted AND study labs_troponin_hs resulted) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | yes | no | not_ordered | not_ordered | rule 6 (default) | plausible |
+| «any other phase» | yes | no | not_ordered | pending | rule 6 (default) | plausible |
+| «any other phase» | yes | no | not_ordered | resulted | rule 6 (default) | plausible |
+| «any other phase» | yes | no | pending | not_ordered | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | yes | no | pending | pending | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | yes | no | pending | resulted | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | yes | no | resulted | not_ordered | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any other phase» | yes | no | resulted | pending | rule 3 (study ecg_12_lead resulted AND study labs_troponin_hs ordered) | plausible |
+| «any other phase» | yes | no | resulted | resulted | rule 2 (study ecg_12_lead resulted AND study labs_troponin_hs resulted) | plausible |
+| «any other phase» | yes | yes | not_ordered | not_ordered | rule 6 (default) | plausible |
+| «any other phase» | yes | yes | not_ordered | pending | rule 6 (default) | plausible |
+| «any other phase» | yes | yes | not_ordered | resulted | rule 6 (default) | plausible |
+| «any other phase» | yes | yes | pending | not_ordered | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | yes | yes | pending | pending | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | yes | yes | pending | resulted | rule 5 (study ecg_12_lead ordered) | plausible |
+| «any other phase» | yes | yes | resulted | not_ordered | rule 4 (study ecg_12_lead resulted) | plausible |
+| «any other phase» | yes | yes | resulted | pending | rule 3 (study ecg_12_lead resulted AND study labs_troponin_hs ordered) | plausible |
+| «any other phase» | yes | yes | resulted | resulted | rule 2 (study ecg_12_lead resulted AND study labs_troponin_hs resulted) | plausible |
 
 
 ### `consultant/consult_critical_care`
 
-| phase | nitro_infusion_running | on_niv | resolves to | reachable? |
-|---|---|---|---|---|
-| post_intubation_hypotension | no | no | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | no | yes | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | yes | no | rule 0 (phase is post_intubation_hypotension) | plausible |
-| post_intubation_hypotension | yes | yes | rule 0 (phase is post_intubation_hypotension) | plausible |
-| «any other phase» | no | no | rule 3 (default) | plausible |
-| «any other phase» | no | yes | rule 2 (flag on_niv set) | plausible |
-| «any other phase» | yes | no | rule 3 (default) | plausible |
-| «any other phase» | yes | yes | rule 1 (flag on_niv set AND flag nitro_infusion_running set) | plausible |
+| phase | nitro_infusion_running | nitro_stopped | on_niv | resolves to | reachable? |
+|---|---|---|---|---|---|
+| post_intubation_hypotension | no | no | no | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | no | yes | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | no | yes | no | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | no | yes | yes | rule 1 (phase is post_intubation_hypotension) | not reachable: nitro_stopped without an infusion running |
+| post_intubation_hypotension | yes | no | no | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | no | yes | rule 0 ((phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set) | plausible |
+| post_intubation_hypotension | yes | yes | no | rule 1 (phase is post_intubation_hypotension) | plausible |
+| post_intubation_hypotension | yes | yes | yes | rule 1 (phase is post_intubation_hypotension) | plausible |
+| «any other phase» | no | no | no | rule 4 (default) | plausible |
+| «any other phase» | no | no | yes | rule 3 (flag on_niv set) | plausible |
+| «any other phase» | no | yes | no | rule 4 (default) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | no | yes | yes | rule 3 (flag on_niv set) | not reachable: nitro_stopped without an infusion running |
+| «any other phase» | yes | no | no | rule 4 (default) | plausible |
+| «any other phase» | yes | no | yes | rule 2 (flag on_niv set AND flag nitro_infusion_running set) | plausible |
+| «any other phase» | yes | yes | no | rule 4 (default) | plausible |
+| «any other phase» | yes | yes | yes | rule 2 (flag on_niv set AND flag nitro_infusion_running set) | plausible |
 
 
 ### `consultant/consult_nephrology`

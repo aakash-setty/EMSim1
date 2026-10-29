@@ -238,9 +238,11 @@ class Run:
             return self.t - self.guard_true[k] >= tr["after_seconds"]
         return self.t - self.entry_t >= tr["after_seconds"]
 
-    def step_transitions(self):
+    def step_transitions(self, hop=0):
         """One evaluation of the ordered list. First match wins. A time-guarded rule
-        matches only when due."""
+        matches only when due. After an instant move, the new phase is checked at once,
+        as engine.js does since 29 October 2026, so a rule that already holds on arrival
+        fires without waiting for the next order. Not after a timed move. Bounded."""
         for i, tr in enumerate(PHASES[self.phase].get("transitions", [])):
             if not holds(tr.get("when"), self.assign()):
                 continue
@@ -251,6 +253,8 @@ class Run:
                 self.flags.update(tr.get("flags_set") or [])
                 self.phase = tr["to"]
                 self.entry_t = self.t
+                if "after_seconds" not in tr and hop < 8 and not PHASES[self.phase].get("terminal"):
+                    self.step_transitions(hop + 1)
                 return tr
             return None
         return None

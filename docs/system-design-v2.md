@@ -696,7 +696,7 @@ to phases that have a time-guarded rule, which means no case written before v0.6
 such a phase the cascade resolves promptly, which is the more coherent behavior: a patient should
 not sit in a phase whose exit condition is already met while a deterioration clock runs against her.
 
-This is reachable in practice: a resident who gives the diuretic early can satisfy the improving-phase transition before ever entering the stabilizing phase, and the next action then advances two phases in one step. Single-step evaluation is the specified behavior. Authors should be aware that prompt deadlines are measured from phase entry, so a phase entered and left in the same step issues no prompts.
+**Since 29 October 2026 an instant move chains.** When an instantaneous rule moves the phase, the checker evaluates the new phase's rules at once, up to eight hops, and stops at a terminal phase. A move by a time-guarded rule does not chain, so a scheduled event (DIPH's seizure) is never cancelled unseen by an earlier act. The case that showed the need: a resident who gave the diuretic early in CHFE reached improving only on the next order. `sim_runner.py` chains the same way. Authors should be aware that prompt deadlines are measured from phase entry, so a phase entered and left in the same step issues no prompts.
 
 ---
 

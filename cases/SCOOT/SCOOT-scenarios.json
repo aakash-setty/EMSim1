@@ -4,7 +4,7 @@
  "note": "End-to-end paths, one per story in SCOOT-SEED.md section 2.4 plus the rescue windows, the blocked prerequisite and the known gaps. Steps cost eight seconds each on the runner's clock. The runner does not implement also_satisfies, so a hidden target is named as a step straight after the order that earns it in the engine. SCOOT-tests.js folds the real routes and is the authority.",
  "scenarios": [
   {
-   "name": "Treated well: monitor, exam, CT, neurosurgery with the scan, then the decline: repeat exam, call back, antiemetic, handoff to the OR",
+   "name": "Treated well: monitor, exam, CT, the head rule questions, blood thinners, a FAST, something for his headache, neurosurgery with the scan, then the decline: repeat exam, call back, antiemetic, handoff to the OR",
    "steps": [
     "attach_monitor",
     "insert_iv",
@@ -14,8 +14,13 @@
      "wait": 12
     },
     "consult_neurosurgeon",
+    "interview_topic_anticoagulants",
+    "cchr_history",
+    "ultrasound_fast",
+    "acetaminophen",
+    "analgesia_given",
     {
-     "wait": 220
+     "wait": 180
     },
     "exam_neuro",
     "neuro_reexamined",
@@ -25,7 +30,7 @@
     "handoff_submit"
    ],
    "expect_phase": "case_complete",
-   "note": "neuro_reexamined and neurosurgery_updated are hidden targets named as steps because the runner does not implement also_satisfies. SCOOT-tests.js folds the real route."
+   "note": "neuro_reexamined, neurosurgery_updated, cchr_history and analgesia_given are hidden targets named as steps because the runner implements neither also_satisfies nor asked_all. SCOOT-tests.js folds the real route."
   },
   {
    "name": "Treated well but late: the scan only after the decline, then the call, no herniation",

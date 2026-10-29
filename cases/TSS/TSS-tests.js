@@ -245,14 +245,21 @@ chk('no other answer mentions a tampon',
 chk('no answer names the diagnosis',
   CASE.interview.topics.every(t => !/toxic shock|sepsis|septic/i.test(JSON.stringify(t.answer) + JSON.stringify(t.facts || ''))));
 // 11 October 2026, author instruction: she presents fainting, febrile and with a rash, so the
-// handover now names those. It still leaves the source to be found.
-chk('the arrival handover names the faint, the fever and the rash, and not her period',
+// handover now names those. It still leaves the source to be found. 29 October 2026: the
+// vomiting and diarrhea are back, and the handover names them.
+chk('the arrival handover names the faint, the fever, the vomiting and the rash, and not her period',
   /fainted/.test(CASE.patient.arrival_handover) && /fever/.test(CASE.patient.arrival_handover) &&
+  /vomiting and diarrhea/.test(CASE.patient.arrival_handover) &&
   /red all over/.test(CASE.patient.arrival_handover) &&
   !/period|tampon|temperature|\d/i.test(CASE.patient.arrival_handover), CASE.patient.arrival_handover);
 chk('the faint is where she mentions her period, unprompted by any question about it',
   /period/.test(ask('dizziness_syncope', 5)) && !/tampon/.test(ask('dizziness_syncope', 5)), ask('dizziness_syncope', 5));
-chk('she has no vomiting and no diarrhea', /^'No/.test(ask('nausea_vomiting', 5)) && /^'No/.test(ask('diarrhea', 5)));
+chk('she has vomiting and diarrhea (owner, 29 October 2026)', /^'Yes/.test(ask('nausea_vomiting', 5)) && /^'Yes/.test(ask('diarrhea', 5)));
+chk('the fluid prompt agrees with her: she cannot keep anything down',
+  /kept nothing\s+down/.test(CASE.case_actions.find(a => a.prompt && /fluid bolus/.test(a.prompt.text)).prompt.text) &&
+  /can't even keep water down/.test(ask('nausea_vomiting', 5)));
+chk('no answer says she has not vomited or blames a meal',
+  CASE.interview.topics.every(t => !/haven't thrown up|takeout|something I ate/.test(JSON.stringify(t.answer))));
 chk('her roommate is well', /roommate/.test(ask('sick_contacts', 5)) && /fine/.test(ask('sick_contacts', 5)));
 chk('drowsy, she gives the same fact in fewer words',
   /don't remember taking the last one out/.test(ask('menstrual_and_tampon', 310)), ask('menstrual_and_tampon', 310));
@@ -451,7 +458,19 @@ chk('hypotensive: 95, 97 on a cannula, 99 on a mask, a bag or non-invasive venti
 chk('and all four together are still 99, not stacked',
   SPO2(O2R.map((id, i) => [305 + i, id]), 312) === 99, String(SPO2(O2R.map((id, i) => [305 + i, id]), 312)));
 st = fold(mk([[305, 'nasal_cannula_oxygen']]), 310);
-chk('oxygen is recommended once she is hypotensive, as its note says', st.recommendedExpected.has('nasal_cannula_oxygen') || st.recommendedTaken.has('nasal_cannula_oxygen'));
+chk('oxygen is recommended once she is hypotensive, as its note says, and the cannula meets it',
+  st.satisfied.has('non_rebreather_mask') && !st.recommendedExpected.has('nasal_cannula_oxygen'));
+section('owner corrections, 29 October 2026: one act by any route');
+{
+  const hyp = fold(mk([]), 345);
+  chk('once she is hypotensive one oxygen expectation is open, the mask',
+      hyp.recommendedExpected.has('non_rebreather_mask') && !hyp.recommendedExpected.has('nasal_cannula_oxygen'), hyp.phase + ' ' + [...hyp.recommendedExpected].join());
+  const m = fold(mk([[305, 'non_rebreather_mask']]), 340);
+  chk('the mask alone leaves no oxygen expectation open',
+      !m.recommendedExpected.has('nasal_cannula_oxygen') && m.satisfied.has('nasal_cannula_oxygen'));
+  chk('norepinephrine is neutral while she still answers fluid',
+      A['norepinephrine_drip'].tag.find(r => r.when && /fluid_responsive/.test(r.when)) === undefined);
+}
 
 section('every authored study has a case action and a note');
 const ABN = AUTHORED_STUDIES.filter(id => (CASE.content_keys.labs[id] || CASE.content_keys.imaging[id]).rules.some(r => r.value.abnormal));
@@ -666,7 +685,7 @@ for (const id of ['fever_and_chills', 'nausea_vomiting', 'current_medications'])
   const extra = T(id).facts.flatMap(f => f.value.flatMap(r => wordsOf(r.value))).filter(w => !own.has(w));
   chk(id + ': every word of every new fact is in the topic\'s own answer, so a fact adds nothing', extra.length === 0, extra.join());
 }
-// 11 October 2026: the case no longer has vomiting or diarrhea, so only the fever rides on onset.
+// Only the fever rides on onset. Her onset answer already says when the vomiting and diarrhea began.
 for (const [host, adj] of [['onset', 'fever_and_chills']]) {
   const vol = T(adj).volunteer.replace(/'/g, ''), hostAns = T(host).answer[1].value;
   const words = w => w.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(' ').filter(x => x.length > 3);

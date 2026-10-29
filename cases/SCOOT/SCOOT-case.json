@@ -408,7 +408,7 @@
   ],
   "note": "Harmful is not used. Nothing halts this case (model default, SCOOT-SEED.md section 0)."
  },
- "flag_namespace_note": "Flags are permanent. intubated is set by the tube, neurosurgery_called by the neurosurgery consult, handoff_submitted by the handoff. sedation_given and paralytic_given come from the catalog. Order and place are carried by four hidden case actions credited through also_satisfies: neuro_reexamined, neurosurgery_updated, osmotherapy_for_herniation and post_intubation_sedation.",
+ "flag_namespace_note": "Flags are permanent. intubated is set by the tube, neurosurgery_called by the neurosurgery consult, handoff_submitted by the handoff. sedation_given and paralytic_given come from the catalog. Order and place are carried by five hidden case actions credited through also_satisfies: neuro_reexamined, neurosurgery_updated, osmotherapy_for_herniation, post_intubation_sedation and analgesia_given. A sixth, cchr_history, is credited by asking four interview topics (asked_all).",
  "case_actions": [
   {
    "catalog_id": "attach_monitor",
@@ -490,6 +490,56 @@
    "debrief_note": "Normal. Worth sending with the head CT: he had a dangerous mechanism and lost consciousness, and after the decline his exam could no longer clear his neck. It costs a few seconds in the same scanner. [UNVERIFIED: written by a model from memory, no source opened]"
   },
   {
+   "catalog_id": "cchr_history",
+   "tag": [
+    {
+     "when": "phase is presentation OR phase is decline",
+     "value": "critical"
+    },
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "hidden": true,
+   "display_name": "Canadian CT Head Rule questions asked",
+   "expectation_label": "The Canadian CT Head Rule questions",
+   "asked_all": [
+    "loss_of_consciousness",
+    "memory_of_event",
+    "nausea_vomiting",
+    "mechanism_of_injury"
+   ],
+   "debrief_note": "Not an order. Credited once you have asked every part of the story the Canadian CT Head Rule turns on: whether he was knocked out, what he remembers, whether he has vomited, and how he fell.\n\nThe rule is for an alert adult, GCS 13 to 15, who was knocked out, cannot remember the event, or was disoriented after it. He was out for about a minute and has no memory of the crash, so it applies to him. It does not apply to anyone under 16, to a patient on a blood thinner or with a bleeding disorder, or once the GCS is below 13.\n\nScan if any one item is present. High risk: GCS below 15 two hours after the injury, a suspected open or depressed skull fracture, any sign of a basal skull fracture, vomiting twice or more, or age 65 or older. Medium risk: amnesia for more than 30 minutes before the impact, or a dangerous mechanism, which the rule defines as a pedestrian struck by a vehicle, an occupant thrown from a vehicle, or a fall from more than 3 feet or 5 stairs.\n\nFrom his story, most answers are no. He is 22, he has not vomited, and his memory stops when he got on the scooter, under ten minutes before the fall by his account of the ride. He does not know how fast he was going, and the scooter tops out at 40 miles an hour. Going over the handlebars is not one of the rule's dangerous mechanisms as written, though many would treat it as one.\n\nHis ears settle it. The dark blue-purple behind his right eardrum is blood, a sign of a basal skull fracture, which is a high-risk item. The rule says scan him, and the exam found the reason the story did not. Once his GCS fell to 12 he was outside the rule and needed a scan whatever it said.\n\nAsk the questions, then say the answer out loud. That is how the scan is justified, to the radiologist and in the chart. [UNVERIFIED: Stiell et al., Lancet 2001;357:1391-6, not opened, read through Walling, Am Fam Physician 2001;64:1886-8 and the Wikipedia summary, through a summarizing tool]"
+  },
+  {
+   "catalog_id": "interview_topic_anticoagulants",
+   "tag": [
+    {
+     "when": "phase is presentation OR phase is decline",
+     "value": "critical"
+    },
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "display_name": "Ask about blood thinners",
+   "expectation_label": "Asked about blood thinners",
+   "debrief_note": "Ask every head-injured patient about blood thinners, by name: warfarin, apixaban, rivaroxaban, dabigatran, aspirin, clopidogrel. Many people do not think of these as blood thinners, so asking about medications in general does not count here. A patient on one bleeds more, and the bleed can keep growing for hours. The answer changes how low your bar for a scan is, which bloods you send, whether he needs a reversal agent before the OR, and what neurosurgery will ask you first. The Canadian CT Head Rule was built without anticoagulated patients and does not apply to them.\n\nHe takes nothing, which is why his coagulation panel was normal and nothing needed reversing. [UNVERIFIED: written by a model from memory, no source opened] [UNVERIFIED: Stiell et al., Lancet 2001;357:1391-6, not opened, read through Walling, Am Fam Physician 2001;64:1886-8 and the Wikipedia summary, through a summarizing tool]"
+  },
+  {
+   "catalog_id": "ultrasound_fast",
+   "tag": [
+    {
+     "when": null,
+     "value": "critical"
+    }
+   ],
+   "expectation_label": "A FAST exam",
+   "debrief_note": "Every patient with a significant mechanism gets a primary survey, and the FAST is its bedside adjunct for blood in the abdomen, around the heart and in the pelvis. He went over the handlebars at speed, and the handlebars or the road can hit the abdomen on the way over. A head injury makes the rest of the exam less reliable: a drowsy patient cannot tell you his belly hurts. And a falling blood pressure in a head injury is rarely from the head, except at the very end, so look for the bleeding elsewhere.\n\nHis was negative, which is what lets everyone focus on his head. [UNVERIFIED: written by a model from memory, no source opened]"
+  },
+  {
    "catalog_id": "ct_head",
    "tag": [
     {
@@ -502,7 +552,7 @@
     "guard": "NOT phase is presentation AND NOT study ct_head ordered AND NOT study ct_cta_head_and_neck ordered",
     "text": "He hit his head hard and he hasn't had a CT of his head yet."
    },
-   "debrief_note": "This is the scan that shows the problem, and he needed it from the door. A loss of consciousness, amnesia for the crash, a headache and a scalp hematoma each justify a head CT by any decision rule, and the scooter, the speed and the missing helmet add to it.\n\nThe scan is yours to read. Scroll from the skull base to the vertex on the brain window, then look again on the bone window. His shows a biconvex collection over the right temporoparietal convexity that stops at the sutures, with a linear fracture of the temporal squama beneath it. That shape is an epidural hematoma: arterial blood, usually from the middle meningeal artery, stripping the dura off the skull. A crescent that crosses the sutures would be a subdural.\n\nThe darker pockets inside the clot are the swirl sign: unclotted blood, which means it is still bleeding. That is why he declined while you watched.\n\nThe size matters to the neurosurgeon. The guideline says an epidural over 30 mL should be evacuated whatever the GCS, and his was about 50 mL, about 19 mm thick, with about 6 mm of shift. Your decision is simpler than that: any traumatic epidural hematoma is a call to neurosurgery now. [UNVERIFIED: Bullock et al. 2006, read through a summarizing tool]"
+   "debrief_note": "This is the scan that shows the problem, and he needed it from the door. He was knocked out and cannot remember the crash, so the Canadian CT Head Rule applies to him, and its questions have their own note. The boggy hematoma over his temple, the speed and the missing helmet all push toward a scan, and once his GCS fell below 13 he needed one whatever any rule said.\n\nThe scan is yours to read. Scroll from the skull base to the vertex on the brain window, then look again on the bone window. His shows a biconvex collection over the right temporoparietal convexity that stops at the sutures, with a linear fracture of the temporal squama beneath it. That shape is an epidural hematoma: arterial blood, usually from the middle meningeal artery, stripping the dura off the skull. A crescent that crosses the sutures would be a subdural.\n\nThe darker pockets inside the clot are the swirl sign: unclotted blood, which means it is still bleeding. That is why he declined while you watched.\n\nThe size matters to the neurosurgeon. The guideline says an epidural over 30 mL should be evacuated whatever the GCS, and his was about 50 mL, about 19 mm thick, with about 6 mm of shift. Your decision is simpler than that: any traumatic epidural hematoma is a call to neurosurgery now. [UNVERIFIED: Bullock et al. 2006, read through a summarizing tool]"
   },
   {
    "catalog_id": "ct_cta_head_and_neck",
@@ -952,7 +1002,7 @@
      "value": "discouraged"
     }
    ],
-   "debrief_note": "An anti-inflammatory weakens platelet function, and he is bleeding inside his head. Acetaminophen is the analgesic for a head injury. [UNVERIFIED: written by a model from memory, no source opened]"
+   "debrief_note": "An anti-inflammatory weakens platelet function, and he is bleeding inside his head. Acetaminophen is the analgesic for a head injury. It does not count as pain control here. [UNVERIFIED: written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "acetaminophen",
@@ -962,7 +1012,13 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "A reasonable analgesic for his headache. Not scored."
+   "also_satisfies": [
+    {
+     "id": "analgesia_given",
+     "when": "NOT flag intubated set"
+    }
+   ],
+   "debrief_note": "The first analgesic for a head injury. It treats his headache without touching his platelets or his level of consciousness. Counts as pain control. [UNVERIFIED: written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "fentanyl_bolus",
@@ -974,11 +1030,15 @@
    ],
    "also_satisfies": [
     {
+     "id": "analgesia_given",
+     "when": "NOT flag intubated set"
+    },
+    {
      "id": "post_intubation_sedation",
      "when": "flag intubated set"
     }
    ],
-   "debrief_note": "A small dose for his headache is kind. Before the tube, an opioid can blunt the exam you are following, so give little and examine before you give it. After the tube it counts as analgesia for the ventilator. Not scored. [UNVERIFIED: written by a model from memory, no source opened]"
+   "debrief_note": "A small dose for his headache is kind, and before the tube it counts as pain control. An opioid can blunt the exam you are following, so examine him first and give little at a time. After the tube it counts as analgesia for the ventilator. [UNVERIFIED: written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "morphine_bolus",
@@ -990,11 +1050,37 @@
    ],
    "also_satisfies": [
     {
+     "id": "analgesia_given",
+     "when": "NOT flag intubated set"
+    },
+    {
      "id": "post_intubation_sedation",
      "when": "flag intubated set"
     }
    ],
-   "debrief_note": "A small dose for his headache is kind. Before the tube, an opioid can blunt the exam you are following, so give little and examine before you give it. After the tube it counts as analgesia for the ventilator. Not scored. [UNVERIFIED: written by a model from memory, no source opened]"
+   "debrief_note": "A small dose for his headache is kind, and before the tube it counts as pain control. An opioid can blunt the exam you are following, so examine him first and give little at a time. After the tube it counts as analgesia for the ventilator. [UNVERIFIED: written by a model from memory, no source opened]"
+  },
+  {
+   "catalog_id": "analgesia_given",
+   "tag": [
+    {
+     "when": "phase is presentation OR phase is decline",
+     "value": "critical"
+    },
+    {
+     "when": null,
+     "value": "neutral"
+    }
+   ],
+   "hidden": true,
+   "display_name": "Something for his headache",
+   "expectation_label": "Pain control",
+   "prompt": {
+    "deadline_seconds": 70,
+    "guard": "phase is presentation AND NOT flag intubated set",
+    "text": "He's asking for something for his headache."
+   },
+   "debrief_note": "Not an order. Credited by acetaminophen, fentanyl or morphine given before the tube.\n\nHe has a pounding headache and grazed palms. Treating pain is part of the resuscitation, and a patient in pain is harder to examine. Start with acetaminophen. If that is not enough, a small dose of an opioid is reasonable, given after you have examined him and in small steps, so it does not cloud the next exam. Avoid an anti-inflammatory such as ibuprofen, which weakens platelets in a man bleeding inside his head. [UNVERIFIED: written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "ondansetron",
@@ -1142,7 +1228,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "The scalp hematoma over the temple is the sign of where he hit, and the pupils are the sign of herniation. The pupils stayed equal through the decline and blew only once the brain herniated, which is why waiting for them is waiting too long. [UNVERIFIED: written by a model from memory, no source opened]"
+   "debrief_note": "The scalp hematoma over the temple is the sign of where he hit, and the pupils are the sign of herniation. The pupils stayed equal through the decline and blew only once the brain herniated, which is why waiting for them is waiting too long.\n\nLook in the ears of every head injury. The dark blue-purple behind his right eardrum is blood in the middle ear, a hemotympanum. It is a sign of a fracture through the base of the skull, and under the Canadian CT Head Rule it alone calls for a scan. Battle's sign and raccoon eyes take hours to appear, so their absence on arrival does not rule a basal fracture out. [UNVERIFIED: written by a model from memory, no source opened]"
   },
   {
    "catalog_id": "exam_neck",
@@ -1274,7 +1360,7 @@
  ],
  "prompt_cap_recommendation": {
   "per_phase": 5,
-  "rationale": "Five. On arrival: the monitor at 20 and a neuro exam at 60. No neurosurgery or CT prompt on arrival (owner, 19 and 20 October 2026). In the decline: the repeat exam at 15, neurosurgery at 25 with an escalation at 35, the call back at 40 and the CT at 50. In herniation: osmotherapy at 20 with an escalation at 60, neurosurgery at 25, a tube at 30, the call back at 40 and the CT at 50. The herniation and the brainstem clocks rest on the neurosurgery and osmotherapy prompts, which come first or second in their phase, so a cap of five never suppresses them."
+  "rationale": "Five. On arrival: the monitor at 20, a neuro exam at 60 and his headache at 70. No neurosurgery or CT prompt on arrival (owner, 19 and 20 October 2026). In the decline: the repeat exam at 15, neurosurgery at 25 with an escalation at 35, the call back at 40 and the CT at 50. In herniation: osmotherapy at 20 with an escalation at 60, neurosurgery at 25, a tube at 30, the call back at 40 and the CT at 50. The herniation and the brainstem clocks rest on the neurosurgery and osmotherapy prompts, which come first or second in their phase, so a cap of five never suppresses them."
  },
  "prerequisite_semantics_note": "One case prerequisite: the neurosurgery consult needs a resulted head CT or CT/CTA, with the neurosurgeon's request as the failure message (authoring 9.5). The catalog's are kept: a line before every intravenous drug, central access for concentrated saline, sedation and a paralytic before the tube.",
  "content_keys": {
@@ -1380,7 +1466,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Boggy right temporal scalp hematoma. Right pupil 6 mm and fixed. Left 3 mm and reactive."
+      "findings": "Boggy right temporal scalp hematoma. Right pupil 6 mm and fixed. Left 3 mm and reactive. Right eardrum intact, dark blue-purple behind it. Left eardrum normal."
      }
     },
     {
@@ -1388,7 +1474,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Boggy right temporal scalp hematoma. Right pupil 4 mm and sluggish. Left 3 mm and reactive."
+      "findings": "Boggy right temporal scalp hematoma. Right pupil 4 mm and sluggish. Left 3 mm and reactive. Right eardrum intact, dark blue-purple behind it. Left eardrum normal."
      }
     },
     {
@@ -1396,7 +1482,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Boggy right temporal scalp hematoma. Both pupils 6 mm and fixed."
+      "findings": "Boggy right temporal scalp hematoma. Both pupils 6 mm and fixed. Right eardrum intact, dark blue-purple behind it. Left eardrum normal."
      }
     },
     {
@@ -1404,7 +1490,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Boggy right temporal scalp hematoma, no laceration. Pupils 3 mm, equal and reactive. No blood behind the eardrums. No fluid from the nose or ears."
+      "findings": "Boggy right temporal scalp hematoma, no laceration. Pupils 3 mm, equal and reactive. Right eardrum intact, dark blue-purple behind it. Left eardrum normal. No fluid from the nose or ears. No bruising behind the ears or around the eyes."
      }
     },
     {
@@ -1412,7 +1498,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Boggy right temporal scalp hematoma. Pupils 3 mm, equal and reactive."
+      "findings": "Boggy right temporal scalp hematoma. Pupils 3 mm, equal and reactive. Right eardrum intact, dark blue-purple behind it. Left eardrum normal."
      }
     }
    ],
@@ -1710,7 +1796,7 @@
    "authoring_note": "Section 9.1. No lab is authored. The catalog defaults are normal and that is the truth of this patient: a normal CBC, coagulation panel, type and screen, chemistry, glucose, ethanol level and urine toxicology. Each is named in SCOOT-SEED.md section 2.7."
   },
   "imaging": {
-   "authoring_note": "Section 9.4 and 23. The head CT is the image stack itself, one series for every phase (SCOOT-SEED.md 2.7). The CT/CTA reports the same head findings in words, because its source images would show them. The MRI shows the clot too, so that an MRI ordered by mistake does not answer with the catalog's normal read. The C-spine CT is the catalog default. The ECG is a generated tracing per phase (media/README.md), its read the debrief comment. The brainstem phase has none: a terminal phase cannot order one.",
+   "authoring_note": "Section 9.4 and 23. The head CT is the image stack itself, one series for every phase (SCOOT-SEED.md 2.7). The CT/CTA reports the same head findings in words, because its source images would show them. The MRI shows the clot too, so that an MRI ordered by mistake does not answer with the catalog's normal read. The C-spine CT is the catalog default. The chest film is the owner's normal male film, with a tube drawn in once he is intubated, and the FAST is the catalog's negative read. The ECG is a generated tracing per phase (media/README.md), its read the debrief comment. The brainstem phase has none: a terminal phase cannot order one.",
    "ct_head": {
     "changes_with_state": false,
     "rules": [
@@ -1751,6 +1837,47 @@
        "kind": "report",
        "abnormal": true,
        "report": "Right temporal biconvex extra-axial collection with signal of acute blood, compressing the right temporal lobe, with leftward midline shift. Right temporal squamous fracture. Intracranial and neck arteries normal.",
+       "verify": "Model output, not from a physician or a radiology report. [UNVERIFIED]"
+      }
+     }
+    ]
+   },
+   "xr_chest": {
+    "changes_with_state": true,
+    "rules": [
+     {
+      "when": "flag intubated set",
+      "value": {
+       "kind": "image",
+       "abnormal": false,
+       "image": "scoot-cxr-normal-ett",
+       "caption": "Chest radiograph",
+       "comment": "Portable AP chest. Endotracheal tube tip about 3 to 4 cm above the carina. Lungs clear. No consolidation, effusion or pneumothorax. Cardiac silhouette normal in size. No acute bony abnormality.",
+       "verify": "The tube is drawn on the film (media/README.md). The carina was estimated by eye and the film has no recorded pixel spacing, so the distance is an estimate. Model output, not from a physician or a radiology report. [UNVERIFIED]"
+      }
+     },
+     {
+      "when": null,
+      "value": {
+       "kind": "image",
+       "abnormal": false,
+       "image": "scoot-cxr-normal",
+       "caption": "Chest radiograph",
+       "comment": "Lungs clear. No consolidation, effusion or pneumothorax. Cardiac silhouette normal in size. No acute bony abnormality.",
+       "verify": "Model output, not from a physician or a radiology report. [UNVERIFIED]"
+      }
+     }
+    ]
+   },
+   "ultrasound_fast": {
+    "changes_with_state": false,
+    "rules": [
+     {
+      "when": null,
+      "value": {
+       "kind": "report",
+       "abnormal": false,
+       "report": "No free fluid in Morison's pouch, splenorenal recess, pelvis or pericardium. Negative FAST.",
        "verify": "Model output, not from a physician or a radiology report. [UNVERIFIED]"
       }
      }
@@ -1965,8 +2092,6 @@
      "How did you land?",
      "Where did you hit your head?",
      "Which side of your head hit the ground?",
-     "How fast were you going?",
-     "Were you going fast?",
      "Did you hit a car?",
      "Did you go over the handlebars?",
      "What happened tonight?",
@@ -1983,6 +2108,36 @@
      }
     ],
     "echo": "how the crash happened"
+   },
+   {
+    "topic": "speed",
+    "canonical": "How fast were you going?",
+    "variants": [
+     "Were you going fast?",
+     "What speed were you going?",
+     "How fast was the scooter going?",
+     "Do you know how fast you were going?",
+     "What was your speed?",
+     "Were you speeding?",
+     "How fast does the scooter go?",
+     "What's the top speed of the scooter?",
+     "How fast can it go?",
+     "Was it a fast scooter?",
+     "Roughly what speed?",
+     "Were you going full speed?",
+     "How fast was he going?"
+    ],
+    "answer": [
+     {
+      "when": "phase is decline",
+      "value": "'Don't know... forty, tops.'"
+     },
+     {
+      "when": null,
+      "value": "'I don't know. I don't remember the ride. It tops out at forty miles an hour.'"
+     }
+    ],
+    "echo": "how fast I was going"
    },
    {
     "topic": "helmet",
@@ -3737,7 +3892,27 @@
      "exam_circ",
      "exam_heent",
      "exam_neck",
-     "exam_neuro"
+     "exam_neuro",
+     "ultrasound_fast"
+    ]
+   },
+   {
+    "id": "the_questions",
+    "label": "The questions that decide the scan",
+    "actions": [
+     "cchr_history",
+     "interview_topic_anticoagulants"
+    ]
+   },
+   {
+    "id": "his_headache",
+    "label": "His headache",
+    "actions": [
+     "analgesia_given",
+     "acetaminophen",
+     "fentanyl_bolus",
+     "morphine_bolus",
+     "ibuprofen"
     ]
    },
    {
@@ -3806,7 +3981,7 @@
    "decline",
    "case_complete"
   ],
-  "intended_path_note": "Monitor, a baseline exam, a head CT, neurosurgery called once it is back, then the decline at four minutes: a repeat exam, a second call, an antiemetic, no tube, and the handoff to the OR. A learner who hands over before four minutes ends in presentation, which is good care (known gap 1).",
+  "intended_path_note": "Monitor, a baseline exam, the Canadian CT Head Rule questions, blood thinners, a FAST, something for his headache, a head CT, neurosurgery called once it is back, then the decline at four minutes: a repeat exam, a second call, an antiemetic, no tube, and the handoff to the OR. A learner who hands over before four minutes ends in presentation, which is good care (known gap 1).",
   "trap_actions": [
    "mannitol_bolus",
    "hypertonic_saline_3_infusion",
@@ -3816,6 +3991,7 @@
   "cross_cutting_teaching_points": [
    "When the exam changes, the plan changes, whatever the monitor says. His pressure went up seven points and his pulse eight. His GCS went from 15 to 12. Only one of those was the emergency.",
    "The treatment for an epidural hematoma is a surgeon. Call neurosurgery the moment the scan is back. Do not wait for a blown pupil or Cushing's response, because by then the brain has already herniated. [UNVERIFIED: Bullock et al. 2006, read through a summarizing tool]",
+   "Say why you are scanning. The Canadian CT Head Rule is for an alert adult who was knocked out, cannot remember or was disoriented, and turns on a few questions: how did he fall, what does he remember, has he vomited, how old is he. Ask about blood thinners by name first, because the rule does not apply to a patient on one. [UNVERIFIED: Stiell et al., Lancet 2001, read through a summary]",
    "Intubate for a reason, not a number. A tube in a talking patient takes away the exam that tells you he is getting worse.",
    "Before you fix a number, ask whether the body made it on purpose. A high pressure and a slow pulse in a herniating brain are the body defending its blood supply. [UNVERIFIED: written by a model from memory]",
    "A plan made on an old exam is out of date when the exam changes. Tell the consultant what changed, in numbers: GCS 15 to 12, pupils equal, vomited.",

@@ -172,7 +172,7 @@ T("leg_swelling", "Have your legs been swelling?",
   "Are your legs bigger than usual?", "Any fluid in your legs?",
   "Have your ankles been bothering you?"],
  "'Yes. Both... of them.'",
- "'About a week. My socks have been leaving deep marks round the top and my shoes have been "
+ "'About a week. My socks have been leaving deep marks around the top and my shoes have been "
  "tight. Both legs, the same. I thought it was the heat.'"),
 
 T("weight_gain", "Have you put on weight recently?",
@@ -183,8 +183,8 @@ T("weight_gain", "Have you put on weight recently?",
   "Have you been getting heavier?", "What was your weight before this?",
   "Have you noticed any change in your weight?", "Any bloating or weight gain?",
   "Do you know your usual weight?", "Have you gained anything in the last week?"],
- "'Trousers... tighter.'",
- "'I don't weigh myself, but my trousers have been tight round the waist this last week and I've "
+ "'Pants... tighter.'",
+ "'I don't weigh myself, but my pants have been tight around the waist this last week and I've "
  "had to let my belt out a notch. My middle feels bloated.'"),
 
 T("exercise_tolerance_baseline", "What could you do before this started?",
@@ -288,7 +288,7 @@ T("current_medications", "What medications are you taking?",
   "Do you take any heart tablets?", "What are you prescribed?",
   "Any regular medicines?", "What do you take at home?"],
  "'Three. Blood pressure... statin... metformin.'",
- "'Three things. A blood pressure tablet, lisinopril I think it's called, twenty milligrams. A "
+ "'Three things. A blood pressure pill, lisinopril I think it's called, twenty milligrams. A "
  "statin at night, atorvastatin. And metformin twice a day for the sugar. That's the lot.'"),
 
 T("anticoagulant_history_and_bleeding", "Are you on any blood thinners?",
@@ -411,7 +411,7 @@ T("family_history", "Any heart problems in the family?",
   "Is there anything that runs in the family?", "Any inherited conditions?"],
  "'Dad had... a stroke.'",
  "'My dad had a stroke when he was seventy-four and never really got over it. My brother has "
- "something with his heartbeat, he's on tablets for it, I don't know what it's called. My mother "
+ "something with his heartbeat, he's on pills for it, I don't know what it's called. My mother "
  "was fine until she was ninety.'"),
 
 T("last_oral_intake", "When did you last eat or drink?",
@@ -1352,7 +1352,7 @@ OUT_OF_SCOPE_BANK = [
   'Do you watch much television?',
   'What do you do to relax?',
   'Do you have a garden?',
-  'Are you comfortable on that trolley?',
+  'Are you comfortable on that stretcher?',
   'Would you like a blanket?',
   'Can I get you anything?',
   'What is your date of birth?',
@@ -1400,7 +1400,7 @@ ECHO = {
  "prior_heart_failure": "heart failure",
  "past_medical_history": "my medical history",
  "past_surgical_history": "operations",
- "current_medications": "my tablets",
+ "current_medications": "my pills",
  "anticoagulant_history_and_bleeding": "blood thinners",
  "medication_adherence": "whether I take them",
  "allergies": "allergies",
@@ -1620,7 +1620,7 @@ FACTS = {
     },
     {
      "when": None,
-     "value": "'A blood pressure tablet, lisinopril I think, twenty milligrams. A statin at night, atorvastatin. And metformin twice a day.'"
+     "value": "'A blood pressure pill, lisinopril I think, twenty milligrams. A statin at night, atorvastatin. And metformin twice a day.'"
     }
    ],
    "restate": True
@@ -1659,7 +1659,7 @@ FACTS = {
     },
     {
      "when": None,
-     "value": "'That's the lot. Nothing else, no inhalers, nothing from the chemist.'"
+     "value": "'That's the lot. Nothing else, no inhalers, nothing from the pharmacy.'"
     }
    ]
   }
@@ -1893,7 +1893,7 @@ VOLUNTEER = {
  "paroxysmal_nocturnal_dyspnea": "'Twice last night I woke up feeling like I was drowning.'",
  "syncope_presyncope": "'I've not passed out, though.'",
  "calf_pain_or_asymmetry": "'My legs don't hurt, and they're not red or hot.'",
- "weight_gain": "'My trousers have got tight round the waist this week too.'",
+ "weight_gain": "'My pants have gotten tight around the waist this week too.'",
  "leg_swelling": "'My legs have been swelling this last week, both of them.'",
  "fever_and_chills": "'I've had no fever or shivering.'",
  "recent_illness_or_sick_contacts": "'I've not had a cold, and nobody at home's been ill.'",

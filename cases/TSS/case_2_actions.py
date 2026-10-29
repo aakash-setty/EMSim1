@@ -41,7 +41,7 @@ act("attach_monitor",
     debrief_note=(
       "The monitor is dark until it is attached. In this case the numbers are the whole "
       "argument against the story she tells: a heart rate of 128, a pressure of 94 over 58 "
-      "and a temperature of 39.4 in someone who says she has the flu."))
+      "and a temperature of 39.4 in someone who says she has a stomach flu."))
 
 # The prompt says she has no line, so its guard tests the peripheral access flag (authoring
 # 9.5 rule 2). Without that the nurse said it to a learner who had pressed Second IV first,
@@ -131,8 +131,14 @@ act("normal_saline_infusion", ALWAYS("neutral"),
 # derived by a model from the mask's and is a teaching choice awaiting sign-off.
 O2 = "oxygen_support"
 O2_WHILE = LOW_G + " AND NOT flag intubated set"
+# 29 October 2026 (owner: one act by any route). The mask carries the one oxygen
+# expectation and the cannula meets it. Before this, a cannula alone was marked as a missed
+# mask and a mask alone as a missed cannula.
 for cid, delta in [("nasal_cannula_oxygen", 2), ("non_rebreather_mask", 4)]:
-    act(cid, [{"when": LOW, "value": "recommended"}, {"when": None, "value": "neutral"}],
+    act(cid, ([{"when": LOW, "value": "recommended"}, {"when": None, "value": "neutral"}]
+              if cid == "non_rebreather_mask" else ALWAYS("neutral")),
+        **({"also_satisfies": [{"id": "non_rebreather_mask", "when": None}]}
+           if cid == "nasal_cannula_oxygen" else {"expectation_label": "Oxygen, by any device"}),
         flags_set=["oxygen_applied"],
         vital_effects=[{"vital": "oxygen_saturation", "delta": delta, "key": O2,
                         "while": O2_WHILE,
@@ -140,7 +146,8 @@ for cid, delta in [("nasal_cannula_oxygen", 2), ("non_rebreather_mask", 4)]:
         debrief_note=(
           "Her saturation is normal until she is in established shock, so oxygen has nothing "
           "to add early. It does no harm. It is worth applying once she is hypotensive and "
-          "her saturation falls."))
+          "her saturation falls. Either device is enough at her saturations, and either one "
+          "counts."))
 for cid in ["bag_valve_mask", "non_invasive_positive_pressure_ventilation"]:
     act(cid, ALWAYS("neutral"),
         flags_set=["oxygen_applied"],
@@ -272,7 +279,8 @@ act("remove_vaginal_foreign_body", ALWAYS("critical"),
 
 act("norepinephrine_drip",
     [{"when": LOW, "value": "critical"},
-     {"when": RESP + " OR " + SUPP + " OR " + STAB, "value": "recommended"},
+     # 29 October 2026 (owner): neutral while she still answers fluid. Accepted, not expected.
+     {"when": SUPP + " OR " + STAB, "value": "recommended"},
      {"when": None, "value": "neutral"}],
     expectation_label="Vasopressor (norepinephrine first)",
     flags_set=["pressor_running"],
@@ -415,8 +423,9 @@ act("acetaminophen", ALWAYS("neutral"),
 
 act("ondansetron", ALWAYS("neutral"),
     debrief_note=(
-      "She is not vomiting, so this treats nothing here. Feeling less sick is not the same "
-      "as being less sick, and her vital signs do not change with it."))
+      "She is vomiting, so an antiemetic is kind. It treats a symptom and not the shock. "
+      "Feeling less sick is not the same as being less sick, and her vital signs do not "
+      "change with it."))
 
 act("ibuprofen", ALWAYS("discouraged"),
     debrief_note=(
@@ -480,8 +489,10 @@ act("blood_culture_x_2", ALWAYS("recommended"),
 
 act("basic_chemistry_chem_7", ALWAYS("recommended"),
     debrief_note=(
-      "Her creatinine is 2.6 at age 22. Two days of flu does not do that without shock. "
-      "This is one of the results that should end the flu story."))
+      "Her creatinine is 2.6 at age 22. Two days of vomiting and diarrhea make a young "
+      "person dry, and the potassium of 3.3 is what those losses do. A creatinine of 2.6 with "
+      "a lactate of 4.6 is shock, not a stomach bug. This is one of the results that should "
+      "end the stomach bug story."))
 
 act("complete_blood_count_cbc", ALWAYS("recommended"),
     debrief_note=(
@@ -518,7 +529,7 @@ STUDY_NOTES = {
   "liver_function_tests_lfts": (
     "Liver involvement: raised transaminases and bilirubin, and a low albumin. Kidney, "
     "liver, platelets and muscle are all involved in her, and that pattern is what "
-    "separates toxic shock from flu or another viral illness."),
+    "separates toxic shock from a stomach bug or another viral illness."),
   "creatine_kinase_ck": (
     "Her creatine kinase is 2,140. That is muscle involvement, and it matches her muscle "
     "pain and tenderness. Muscle involvement is part of toxic shock, and with an injured "
@@ -602,8 +613,8 @@ act("attempt_discharge", ALWAYS("discouraged"),
       "You chose to send her home while she still looked well, and she fainted on standing. "
       "The case let that play out instead of ending.\n\n"
       "Before discharging anyone, read the vital signs as if you had not heard the story. "
-      "A heart rate over 110 with a fever, a low pressure and a faint is not explained by the "
-      "flu until everything else has been excluded."))
+      "A heart rate over 110 with a fever, a low pressure and a faint is not explained by a "
+      "stomach bug until everything else has been excluded."))
 
 act("handoff_submit", ALWAYS("neutral"),
     display_name="Submit handoff",

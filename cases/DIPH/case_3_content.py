@@ -13,6 +13,8 @@ WIDE = "phase is wide_complex_tachycardia"
 RESOLVING = "phase is stabilizing OR phase is stabilized"
 # Still convulsing in the wide-complex rhythm: she has seized and nothing has ended it. The
 # same definition as SEIZURE_STOPPED in case_1_shell.py. Physician review DIPH-29, option C.
+# 29 October 2026: a paralytic stops the visible convulsion and not the seizure.
+PARALYZED = "flag paralytic_given set"
 STILL_SEIZING = ("phase is wide_complex_tachycardia AND flag seized set AND NOT "
                  "(flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)")
 
@@ -114,6 +116,8 @@ EXAM = {
    "substance. Their expansion across phases is not hers."),
 
  "exam_heent": [
+   {"when": PARALYZED, "value": ex(
+     "Pupils 7 mm, equal, sluggish. Eyes still, no roving movements. Dry mucosa.")},
    {"when": SEIZ, "value": ex(
      "Eyes deviated and roving. Pupils 7 mm, equal, sluggish. Dry mucosa. Saliva at the mouth.")},
    {"when": RESOLVING, "value": ex(
@@ -156,6 +160,8 @@ EXAM = {
      "Hot, flushed and completely dry, no sweat even in the axillae. No rash or needle marks.")}],
 
  "exam_neuro": [
+   {"when": PARALYZED, "value": ex(
+     "Paralyzed. No movement of any limb, no response to assess. GCS cannot be assessed.")},
    {"when": STILL_SEIZING, "value": ex(
      "Still seizing. Generalized jerking, eyes deviated, not rousable.")},
    {"when": WIDE, "value": ex(
@@ -180,6 +186,8 @@ EXAM = {
  "exam_airway": [
    {"when": "flag airway_protected set", "value": ex(
      "Endotracheal tube in place, cuff up. Normal capnography waveform.")},
+   {"when": PARALYZED, "value": ex(
+     "Paralyzed and apneic. Needs a jaw thrust and bag-mask ventilation.")},
    {"when": SEIZ, "value": ex(
      "Not protecting her airway. Clenched teeth, secretions at the mouth.")},
    {"when": POST, "value": ex(
@@ -190,6 +198,10 @@ EXAM = {
      "Patent. Talking, though not sensibly. No stridor. Dry mucosa.", abnormal=False)}],
 
  "exam_breath": [
+   {"when": "flag airway_protected set", "value": ex(
+     "On the ventilator. Equal chest rise. No spontaneous effort.")},
+   {"when": PARALYZED, "value": ex(
+     "No breathing effort after the paralytic. Chest rises only with the bag.")},
    {"when": SEIZ, "value": ex(
      "Not ventilating adequately. Irregular chest movement with the seizure.")},
    {"when": RESOLVING, "value": ex(
@@ -227,6 +239,8 @@ GENERAL_STATUS = {
      "Intubated and sedated. Warm, cooling under way. Narrow complexes on the monitor.")},
    {"when": "flag airway_protected set", "value": gs(
      "Intubated and sedated. Hot to touch.")},
+   {"when": PARALYZED, "value": gs(
+     "Paralyzed and not breathing on her own. No visible movement. Hot to touch.")},
    {"when": STILL_SEIZING, "value": gs(
      "Still seizing, gray and unresponsive. Wide-complex rhythm, thready pulse.")},
    {"when": SEIZ, "value": gs(
@@ -277,6 +291,12 @@ PATIENT_VISUAL = {
   },
   {
    "when": "phase is pulseless_vt OR phase is halted",
+   "value": {
+    "eyes": "closed"
+   }
+  },
+  {
+   "when": PARALYZED,
    "value": {
     "eyes": "closed"
    }
@@ -388,6 +408,15 @@ LABS = {
  "arterial_blood_gas": {
    "changes_with_state": True,
    "rules": [
+     {"when": SEIZ + " AND flag bicarb_given set", "value": panel([
+        comp("pH", "7.16", "", "7.35-7.45", True),
+        comp("pCO2", "52", "mmHg", "35-45", True),
+        comp("pO2", "61", "mmHg", "80-100", True),
+        comp("Bicarbonate", "18", "mEq/L", "22-26", True),
+        comp("Lactate", "6.4", "mmol/L", "0.5-2.0", True)],
+        comment=("Still acidemic while she seizes. The bicarbonate is working on the metabolic "
+                 "part, and the carbon dioxide she is retaining holds the pH down."),
+        verify="Model output, consistent with Henderson-Hasselbalch.")},
      {"when": SEIZ, "value": panel([
         comp("pH", "6.99", "", "7.35-7.45", True),
         comp("pCO2", "52", "mmHg", "35-45", True),
@@ -398,6 +427,23 @@ LABS = {
                  "worst the pH gets and it is not only a respiratory problem: acidemia increases the ionized fraction of the drug, the form that binds the cardiac sodium channel, so the gas is a cardiac measurement here as well as a respiratory "
                  "one."),
         verify="Model output. The author supplies one gas and it is the arrival one below.")},
+     {"when": "flag bicarb_infusion_running set", "value": panel([
+        comp("pH", "7.55", "", "7.35-7.45", True),
+        comp("pCO2", "32", "mmHg", "35-45", True),
+        comp("pO2", "142", "mmHg", "80-100", True),
+        comp("Bicarbonate", "27", "mEq/L", "22-26", True),
+        comp("Lactate", "2.2", "mmol/L", "0.5-2.0", True)],
+        comment=("At the top of the range usually aimed at, about 7.50 to 7.55. Going further "
+                 "buys little and costs potassium and ionized calcium."),
+        verify="Model output, consistent with Henderson-Hasselbalch.")},
+     {"when": "flag bicarb_titrated set", "value": panel([
+        comp("pH", "7.53", "", "7.35-7.45", True),
+        comp("pCO2", "30", "mmHg", "35-45", True),
+        comp("pO2", "142", "mmHg", "80-100", True),
+        comp("Bicarbonate", "24", "mEq/L", "22-26", False),
+        comp("Lactate", "2.2", "mmol/L", "0.5-2.0", True)],
+        comment="After the second dose. In the range usually aimed at, about 7.50 to 7.55.",
+        verify="Model output, consistent with Henderson-Hasselbalch.")},
      {"when": "flag bicarb_given set", "value": panel([
         comp("pH", "7.47", "", "7.35-7.45", True),
         comp("pCO2", "30", "mmHg", "35-45", True),
@@ -425,11 +471,36 @@ LABS = {
  "venous_blood_gas": {
    "changes_with_state": True,
    "rules": [
+     {"when": SEIZ + " AND flag bicarb_given set", "value": panel([
+        comp("pH", "7.11", "", "7.31-7.41", True),
+        comp("pCO2", "58", "mmHg", "41-51", True),
+        comp("Bicarbonate", "18", "mEq/L", "22-26", True)],
+        comment=("Still a mixed acidosis while she seizes. The bicarbonate has raised the "
+                 "bicarbonate, and the carbon dioxide she is not breathing off holds the pH down."),
+        verify="Model output, consistent with Henderson-Hasselbalch.")},
+     {"when": SEIZ, "value": panel([
+        comp("pH", "6.94", "", "7.31-7.41", True),
+        comp("pCO2", "58", "mmHg", "41-51", True),
+        comp("Bicarbonate", "12", "mEq/L", "22-26", True)],
+        comment="A mixed metabolic and respiratory acidosis during the convulsion.",
+        verify="Model output, the venous counterpart of the arterial gas in this phase.")},
+     {"when": "flag bicarb_infusion_running set", "value": panel([
+        comp("pH", "7.52", "", "7.31-7.41", True),
+        comp("pCO2", "34", "mmHg", "41-51", True),
+        comp("Bicarbonate", "27", "mEq/L", "22-26", True)],
+        comment="In the range usually aimed at for sodium-channel blockade, about 7.50 to 7.55.",
+        verify="Model output, consistent with Henderson-Hasselbalch.")},
+     {"when": "flag bicarb_titrated set", "value": panel([
+        comp("pH", "7.47", "", "7.31-7.41", True),
+        comp("pCO2", "34", "mmHg", "41-51", True),
+        comp("Bicarbonate", "24", "mEq/L", "22-26", False)],
+        comment="Rising with the second dose and close to the range usually aimed at, about 7.50 to 7.55.",
+        verify="Model output, consistent with Henderson-Hasselbalch.")},
      {"when": "flag bicarb_given set", "value": panel([
         comp("pH", "7.41", "", "7.31-7.41", False),
         comp("pCO2", "34", "mmHg", "41-51", True),
         comp("Bicarbonate", "21", "mEq/L", "22-26", True)],
-        comment="Adequate for following the pH and the bicarbonate.", verify="Model output.")},
+        comment="After one dose. Short of the range usually aimed at, about 7.50 to 7.55.", verify="Model output.")},
      {"when": None, "value": panel([
         comp("pH", "7.25", "", "7.31-7.41", True),
         comp("pCO2", "31", "mmHg", "41-51", True),
@@ -722,7 +793,7 @@ CONSULTANTS = {
    {"when": WIDE,
     "value": ("Intensivist: she is coming to us, but she is not safe to move in this rhythm. "
               "Sodium bicarbonate now, a benzodiazepine if she is still seizing, pads on, and "
-              "call toxicology. Ring me when the complexes narrow.")},
+              "call toxicology. Call me when the complexes narrow.")},
    {"when": SEIZ,
     "value": ("Intensivist: she is coming to us. Stop the seizure first with a benzodiazepine, "
               "protect her airway, and treat a wide QRS with sodium bicarbonate. Call me back "
@@ -743,21 +814,21 @@ CONSULTANTS = {
 
  "consult_psychiatry": [
    {"when": "flag bicarb_given set AND flag cooling_started set",
-    "value": ("Psychiatry registrar: thank you for waiting until she is treated. She needs a "
+    "value": ("Psychiatry resident: thank you for waiting until she is treated. She needs a "
               "monitored medical bed and we will assess her there. Someone should be with her "
               "continuously, and not her mother.")},
    {"when": None,
-    "value": ("Psychiatry registrar: she is not ready for me. She is delirious, so I cannot "
+    "value": ("Psychiatry resident: she is not ready for me. She is delirious, so I cannot "
               "assess capacity or risk. Call me when she is on a monitored bed and awake, and "
               "keep someone with her.")}],
 
  "consult_neurology": [
    {"when": "study ct_head resulted AND study ecg_12_lead resulted",
-    "value": ("Neurology registrar: the scan is clear and the tracing is not. This is a toxic "
+    "value": ("Neurology resident: the scan is clear and the tracing is not. This is a toxic "
               "seizure, so benzodiazepines and fix the physiology. If it recurs, levetiracetam "
               "or propofol, and no phenytoin.")},
    {"when": None,
-    "value": ("Neurology registrar: this is a provoked seizure until proven otherwise. "
+    "value": ("Neurology resident: this is a provoked seizure until proven otherwise. "
               "Benzodiazepines, fix the cause, and get a head CT if you have not. No phenytoin "
               "in an unknown overdose.")}],
 
@@ -788,11 +859,11 @@ CONSULTANTS = {
 
  "consult_renal": [
    {"when": "study creatine_kinase_ck resulted",
-    "value": ("Renal registrar: that creatine kinase is early and her creatinine is normal, so "
+    "value": ("Nephrology fellow: that creatine kinase is early and her creatinine is normal, so "
               "keep her filled and measure the urine output. Dialysis does not remove "
               "diphenhydramine.")},
    {"when": None,
-    "value": ("Renal registrar: nothing for me yet. Send a creatine kinase and a creatinine and "
+    "value": ("Nephrology fellow: nothing for me yet. Send a creatine kinase and a creatinine and "
               "call me back if either is bad. Dialysis does not remove diphenhydramine, if that "
               "is what you were going to ask.")}],
 }

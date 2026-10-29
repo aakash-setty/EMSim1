@@ -191,6 +191,10 @@ for(const P of packs){
   const inf=pack.steps.find(s=>s.type==='inflate');
   { const sim=walkTo(fresh(),inf.id); sim.inflate(inf.range_ml[0]-1); chk('a soft cuff is refused', sim.inflateDone().code==='low'); }
   { const sim=walkTo(fresh(),inf.id); sim.inflate(inf.range_ml[1]+2); chk('an overfilled cuff is refused', sim.inflateDone().code==='high'); }
+  { const sim=walkTo(fresh(),inf.id); sim.inflate(inf.range_ml[1]+2); sim.inflate(-100);
+    chk('the cuff never goes below empty', sim.state.cuff_ml===0); }
+  { const sim=walkTo(fresh(),inf.id); sim.inflate(inf.range_ml[1]+2); sim.inflate(-3);
+    chk('deflating takes air out of an overfilled cuff', Math.abs(sim.state.cuff_ml-(inf.range_ml[1]-1))<1e-9 && sim.inflateDone().kind!=='error'); }
   { const sim=walkTo(fresh(),inf.id); chk('the bougie is out before the cuff', sim.state.rod===null); }
   { const sim=walkTo(fresh(),'secure'); chk('the scalpel is out by the end', sim.state.blade===null); }
 

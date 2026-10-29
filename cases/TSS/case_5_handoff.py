@@ -46,7 +46,7 @@ HANDOFF = {
    {"id": "discharge_home", "label": "Discharge home",
     "verdict": "incorrect",
     "explanation": (
-      "She is in shock. The story of the flu and a sunburn fits her symptoms and does not fit her "
+      "She is in shock. The story of a stomach bug and a sunburn fits her symptoms and does not fit her "
       "vital signs, her skin or her laboratory results. Sending her home is the error this "
       "case exists to prevent.")},
    {"id": "transfer_tertiary", "label": "Transfer to another hospital",
@@ -116,7 +116,7 @@ HANDOFF = {
    {"catalog_id": "dx_hyponatremia", "label": "Hyponatremia",
     "explanation": "Her sodium is 131, against a lower limit of 135."},
    {"catalog_id": "dx_hypokalemia", "label": "Hypokalemia",
-    "explanation": "Her potassium is 3.3, against a lower limit of 3.5."}],
+    "explanation": "Her potassium is 3.3, against a lower limit of 3.5. Two days of vomiting and diarrhea explain it."}],
 
  "alternative_diagnoses": [
    {"catalog_id": "dx_septic_shock", "label": "Septic shock",
@@ -134,15 +134,16 @@ HANDOFF = {
    {"catalog_id": "dx_viral_gastroenteritis", "label": "Viral gastroenteritis",
     "verdict": "incorrect",
     "explanation": (
-      "She has no vomiting and no diarrhea, so this does not fit even her symptoms. It does "
-      "not explain a temperature of 39.4 with a red rash, a creatinine of 2.6, platelets of "
-      "98 or a lactate of 4.6. When a common diagnosis does not explain the vital signs, "
-      "keep looking.")},
+      "Her vomiting and diarrhea fit it, and that is the trap. It does not explain a "
+      "temperature of 39.4 with a red rash to her palms, a creatinine of 2.6, platelets of "
+      "98 or a lactate of 4.6, and her roommate, who eats what she eats, is well. Vomiting "
+      "and diarrhea at the start are part of toxic shock itself. When a common diagnosis "
+      "does not explain the vital signs, keep looking.")},
    {"catalog_id": "dx_infectious_gastroenteritis", "label": "Infectious gastroenteritis",
     "verdict": "incorrect",
     "explanation": (
-      "She has no gut symptoms, and a gut infection does not cause a diffuse rash, liver "
-      "injury and low platelets.")},
+      "Her vomiting and diarrhea fit a gut infection. A gut infection does not cause a "
+      "diffuse rash, red eyes, liver injury and low platelets.")},
    {"catalog_id": "dx_hypovolemia", "label": "Hypovolemia",
     "verdict": "incorrect",
     "explanation": (

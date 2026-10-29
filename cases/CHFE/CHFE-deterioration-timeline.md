@@ -10,11 +10,53 @@ Two questions per row. Would this patient really deteriorate in that time if tha
 
 Vitals in this phase: HR 118, BP 188/104, RR 32, SpO2 85%, T 36.8
 
-**Rule 4: at 240s (measured from phase_entry) → `impending_respiratory_failure`**
+**Rule 2: at 10s (measured from guard_true) → `impending_respiratory_failure`**
+
+- guard: `flag fluid_bolus_given set AND NOT flag fluid_harm_done set`
+- destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
+- narration: “That fluid has gone to his lungs. He's wetter, his sat is falling and he's hardly answering me.”
+- author rationale: AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question).
+
+Prompts in this phase that set fluid_bolus_given, fluid_harm_done, which is what the fairness rule requires:
+
+- **NONE. This is a trap rather than a lesson.**
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
+
+1. 45s `niv_bipap_cpap` (first)
+2. 60s `nitroglycerin_infusion` (first)
+3. 90s `ecg_12_lead` (first)
+4. 90s `niv_bipap_cpap` (escalation)
+5. 140s `nitroglycerin_infusion` (escalation)
+6. 150s `cxr_portable` (first)  **suppressed by the cap**
+7. 210s `interview_topic_medication_adherence` (first)  **suppressed by the cap**
+
+**Rule 3: at 10s (measured from guard_true) → `impending_respiratory_failure`**
+
+- guard: `flag pressor_running set AND NOT flag pressor_harm_done set`
+- destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
+- narration: “Since the norepinephrine went up he's worse. His sat is falling and he's hardly answering me.”
+- author rationale: AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question).
+
+Prompts in this phase that set pressor_harm_done, pressor_running, which is what the fairness rule requires:
+
+- **NONE. This is a trap rather than a lesson.**
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
+
+1. 45s `niv_bipap_cpap` (first)
+2. 60s `nitroglycerin_infusion` (first)
+3. 90s `ecg_12_lead` (first)
+4. 90s `niv_bipap_cpap` (escalation)
+5. 140s `nitroglycerin_infusion` (escalation)
+6. 150s `cxr_portable` (first)  **suppressed by the cap**
+7. 210s `interview_topic_medication_adherence` (first)  **suppressed by the cap**
+
+**Rule 6: at 240s (measured from phase_entry) → `impending_respiratory_failure`**
 
 - guard: `NOT flag on_niv set AND NOT flag nitrate_given set`
 - destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
-- narration: “He's wearing out on me. He's stopped answering and he's gone gray round the lips.”
+- narration: “He's wearing out on me. He's stopped answering and he's gone gray around the lips.”
 - author rationale: AUTHOR SIGNATURE REQUIRED. The claim is that a sixty-five year old man in hypertensive acute cardiogenic pulmonary edema at a saturation of 85 percent and a respiratory rate of 32 begins to tire inside four minutes if nothing is done. Four minutes is compressed against real disease tempo the way every deadline in these packs is. The guard names both treatments so that either one alone stops it, which is the fairness claim: a learner who did something is not punished for not doing everything.
 
 Prompts in this phase that set nitrate_given, on_niv, which is what the fairness rule requires:
@@ -38,7 +80,41 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 Vitals in this phase: HR 110, BP 178/98, RR 28, SpO2 85%, T 36.8
 
-**Rule 3: at 240s (measured from phase_entry) → `impending_respiratory_failure`**
+**Rule 2: at 10s (measured from guard_true) → `impending_respiratory_failure`**
+
+- guard: `flag fluid_bolus_given set AND NOT flag fluid_harm_done set`
+- destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
+- narration: “That fluid has gone to his lungs. He's wetter, his sat is falling and he's hardly answering me.”
+- author rationale: AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question).
+
+Prompts in this phase that set fluid_bolus_given, fluid_harm_done, which is what the fairness rule requires:
+
+- **NONE. This is a trap rather than a lesson.**
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
+
+1. 60s `nitroglycerin_infusion` (first)
+2. 140s `nitroglycerin_infusion` (escalation)
+3. 210s `interview_topic_medication_adherence` (first)
+
+**Rule 3: at 10s (measured from guard_true) → `impending_respiratory_failure`**
+
+- guard: `flag pressor_running set AND NOT flag pressor_harm_done set`
+- destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
+- narration: “Since the norepinephrine went up he's worse. His sat is falling and he's hardly answering me.”
+- author rationale: AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question).
+
+Prompts in this phase that set pressor_harm_done, pressor_running, which is what the fairness rule requires:
+
+- **NONE. This is a trap rather than a lesson.**
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
+
+1. 60s `nitroglycerin_infusion` (first)
+2. 140s `nitroglycerin_infusion` (escalation)
+3. 210s `interview_topic_medication_adherence` (first)
+
+**Rule 5: at 240s (measured from phase_entry) → `impending_respiratory_failure`**
 
 - guard: `NOT flag nitrate_given set`
 - destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
@@ -60,11 +136,49 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 Vitals in this phase: HR 108, BP 152/88, RR 30, SpO2 88%, T 36.8
 
-**Rule 3: at 300s (measured from phase_entry) → `impending_respiratory_failure`**
+**Rule 2: at 10s (measured from guard_true) → `impending_respiratory_failure`**
+
+- guard: `flag fluid_bolus_given set AND NOT flag fluid_harm_done set`
+- destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
+- narration: “That fluid has gone to his lungs. He's wetter, his sat is falling and he's hardly answering me.”
+- author rationale: AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question).
+
+Prompts in this phase that set fluid_bolus_given, fluid_harm_done, which is what the fairness rule requires:
+
+- **NONE. This is a trap rather than a lesson.**
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
+
+1. 45s `niv_bipap_cpap` (first)
+2. 60s `nitroglycerin_infusion` (first)
+3. 90s `niv_bipap_cpap` (escalation)
+4. 140s `nitroglycerin_infusion` (escalation)
+5. 210s `interview_topic_medication_adherence` (first)
+
+**Rule 3: at 10s (measured from guard_true) → `impending_respiratory_failure`**
+
+- guard: `flag pressor_running set AND NOT flag pressor_harm_done set`
+- destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
+- narration: “Since the norepinephrine went up he's worse. His sat is falling and he's hardly answering me.”
+- author rationale: AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question).
+
+Prompts in this phase that set pressor_harm_done, pressor_running, which is what the fairness rule requires:
+
+- **NONE. This is a trap rather than a lesson.**
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 3, so only the first 3 first warnings are heard; escalations are exempt):
+
+1. 45s `niv_bipap_cpap` (first)
+2. 60s `nitroglycerin_infusion` (first)
+3. 90s `niv_bipap_cpap` (escalation)
+4. 140s `nitroglycerin_infusion` (escalation)
+5. 210s `interview_topic_medication_adherence` (first)
+
+**Rule 5: at 300s (measured from phase_entry) → `impending_respiratory_failure`**
 
 - guard: `NOT flag on_niv set`
 - destination vitals: HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8
-- narration: “He's still pulling hard and he's starting to flag. He's gone quiet on me.”
+- narration: “He's still pulling hard and he's starting to flag. He's stopped talking to me.”
 - author rationale: AUTHOR SIGNATURE REQUIRED. Longer than the other two deadlines on the judgment that a treated afterload buys more time than an untreated one. Five minutes is a teaching tempo.
 
 Prompts in this phase that set on_niv, which is what the fairness rule requires:
@@ -87,7 +201,7 @@ What a resident who performs no state-changing action at all sees, from arrival 
 | clock | phase | vitals | how it was reached |
 |---|---|---|---|
 | 0:00 | `presentation` | HR 118, BP 188/104, RR 32, SpO2 85%, T 36.8 | arrival |
-| 4:00 | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | rule 4 fired at 240s |
+| 4:00 | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | rule 6 fired at 240s |
 
 **The trajectory stops at `impending_respiratory_failure`, which is not terminal.** The clock cannot end this case: a resident who does nothing at all reaches this phase and stays in it. Whether that is the right teaching claim for this presentation is the author's call.
 
@@ -97,9 +211,15 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 
 | from | at | to | vitals immediately after | the line |
 |---|---|---|---|---|
-| `presentation` | 240s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “He's wearing out on me. He's stopped answering and he's gone gray round the lips.” |
+| `presentation` | 10s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “That fluid has gone to his lungs. He's wetter, his sat is falling and he's hardly answering me.” |
+| `presentation` | 10s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “Since the norepinephrine went up he's worse. His sat is falling and he's hardly answering me.” |
+| `presentation` | 240s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “He's wearing out on me. He's stopped answering and he's gone gray around the lips.” |
+| `niv_supported` | 10s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “That fluid has gone to his lungs. He's wetter, his sat is falling and he's hardly answering me.” |
+| `niv_supported` | 10s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “Since the norepinephrine went up he's worse. His sat is falling and he's hardly answering me.” |
 | `niv_supported` | 240s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “He's tiring under the mask. He's stopped talking to me and his pressure is no better than when he came in.” |
-| `nitrate_responding` | 300s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “He's still pulling hard and he's starting to flag. He's gone quiet on me.” |
+| `nitrate_responding` | 10s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “That fluid has gone to his lungs. He's wetter, his sat is falling and he's hardly answering me.” |
+| `nitrate_responding` | 10s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “Since the norepinephrine went up he's worse. His sat is falling and he's hardly answering me.” |
+| `nitrate_responding` | 300s | `impending_respiratory_failure` | HR 126, BP 176/98, RR 38, SpO2 80%, T 36.8 | “He's still pulling hard and he's starting to flag. He's stopped talking to me.” |
 
 Compare each line with the row before it in section 2, not only with the destination: a line saying a number has fallen must be preceded by a phase in which it was higher.
 

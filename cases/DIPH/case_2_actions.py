@@ -55,7 +55,7 @@ act("attach_monitor",
     [{"when": PRES, "value": "critical"}, {"when": None, "value": "recommended"}],
     flags_set=["monitor_on"],
     prompt={"deadline_seconds": 20,
-            "text": "She's on the trolley and she's got nothing on her. Do you want her on the monitor?"},
+            "text": "She's on the stretcher and she's got nothing on her. Do you want her on the monitor?"},
     nurse_alert="Monitor's on her. Would you like anything else?",
     debrief_note=(
       "Nothing is visible until this is done: the monitor shows dashes for every vital and plays no heartbeat until one is attached. That is a property of the simulator and it "
@@ -125,10 +125,10 @@ act("suction",
     [{"when": SEIZ, "value": "recommended"}, {"when": None, "value": "neutral"}],
     debrief_note="Airway housekeeping during and after the convulsion. Not scored beyond the point.")
 
+# Owner, 29 October 2026: not scored in any phase. A learner whose first benzodiazepine
+# stopped the seizure and who watched her airway has not made an error.
 act("intubate_rapid_sequence",
-    [{"when": PRES, "value": "neutral"},
-     {"when": SEIZ, "value": "recommended"},
-     {"when": None, "value": "recommended"}],
+    ALWAYS("neutral"),
     flags_set=["airway_protected"],
     vital_effects=[{"vital": "oxygen_saturation", "delta": 8, "key": O2_KEY,
                     "onset_seconds": 0, "while": HYPOXIC}],
@@ -145,9 +145,11 @@ act("intubate_rapid_sequence",
       "the hyperthermia: sedation and paralysis stop the muscle activity that is generating the "
       "heat, which is why the temperature guidance in this poisoning reads intubate, sedate and "
       "paralyze rather than give an antipyretic.\n\n"
-      "It is tagged neutral rather than recommended in the arrival phase only because a "
-      "delirious patient who is maintaining her own airway and saturating at 98 percent has "
-      "other things needed first, and none of them is the tube. It is not risk-free here. She is compensating for a metabolic acidosis at a respiratory rate of 25, and the apnea of induction followed by a ventilator at a routine rate will drop her pH and can widen the QRS into a dysrhythmia. Give bicarbonate before induction when the QRS is wide, keep the apnea short, set a minute ventilation that matches or exceeds hers, check a gas soon after, and remember that rocuronium hides a recurrent seizure."))
+      "It is not scored. Whether she needs a tube depends on how fast the seizure stops and what "
+      "her airway and her gas do after it, and a resident whose first benzodiazepine ended the "
+      "seizure and who watched her closely has not made an error. On arrival a delirious "
+      "patient who is maintaining her own airway and saturating at 98 percent has other things "
+      "needed first, and none of them is the tube. It is not risk-free here. She is compensating for a metabolic acidosis at a respiratory rate of 25, and the apnea of induction followed by a ventilator at a routine rate will drop her pH and can widen the QRS into a dysrhythmia. Give bicarbonate before induction when the QRS is wide, keep the apnea short, set a minute ventilation that matches or exceeds hers, check a gas soon after, and remember that rocuronium hides a recurrent seizure."))
 
 # The catalog's intubation prerequisite is `flag sedation_given set AND flag paralytic_given
 # set`, and the catalog sets neither flag itself, so every case has to author them on its own
@@ -172,7 +174,10 @@ for drug, tag_v, note in [
    "sodium channels. Nothing here says it is dangerous, and the case does not penalize it; "
    "etomidate or propofol asks less of the same heart."),
   ("rocuronium_bolus", "neutral",
-   "The paralytic to prefer in this patient. See the note on succinylcholine."),
+   "The paralytic to prefer in this patient. See the note on succinylcholine. Paralysis stops "
+   "the jerking and not the seizure: once she is paralyzed you cannot see whether she is still "
+   "seizing, so give the benzodiazepine anyway, and ask for continuous EEG if she stays "
+   "paralyzed."),
 ]:
     act(drug, ALWAYS(tag_v), debrief_note=note,
         flags_set=INDUCTION_FLAGS[drug])
@@ -291,9 +296,11 @@ act("lorazepam_bolus",
     flags_set=["benzo_given", "sedation_given"],
     display_name="Lorazepam (or midazolam)",
     prompt={"deadline_seconds": 15, "guard": "(" + SEIZ + " OR " + WIDE + ") AND NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)",
-            "text": "She's seizing. What do you want for it?",
+            # 29 October 2026: true whether or not she has been paralyzed, since a paralytic
+            # hides the convulsion and not the seizure.
+            "text": "She's had nothing to stop the seizure. What do you want for it?",
             "escalation": {"deadline_seconds": 60,
-                           "text": "She's still going. I've got lorazepam and midazolam drawn up. Which one?"}},
+                           "text": "She still hasn't had anything for the seizure. I've got lorazepam and midazolam drawn up. Which one?"}},
     debrief_note=(
       "First-line for all four of the things wrong with this patient that a drug can touch "
       "quickly: the agitation, the seizure, the sympathetic overactivity and, through the first "
@@ -320,7 +327,12 @@ act("na_bicarbonate_bolus",
                        "counter": "bicarbonate_doses"}],
     follow_ups_triggered=["bicarbonate_reassessment", "repeat_ecg_after_bicarbonate"],
     # Physician review DIPH-41 (Aakash Setty, 27 October 2026): the effect takes ten seconds.
-    nurse_alert="Give it a few seconds and watch the complexes.",
+    # 29 October 2026: the monitor narrows on arrival (phase ecg_when) and the phase moves in the
+    # wide-complex and post-ictal phases. During the convulsion nothing on the trace can show it.
+    nurse_alert=[{"when": SEIZ, "value": ("It's in. I can't read the complexes through the "
+                                          "movement, so a repeat ECG once she's still will show "
+                                          "whether they've narrowed.")},
+                 {"when": None, "value": "Give it a few seconds and watch the complexes."}],
     # The escalation "The QRS on the monitor is still wide. Do you want bicarb?" was removed
     # on the owner's instruction, 27 October 2026: the nurse names the problem, not the drug.
     # This prompt stays because it is the warning the three bicarbonate deteriorations need.
@@ -659,7 +671,7 @@ act("potassium_chloride_kcl",
     [{"when": "flag bicarb_given set", "value": "recommended"}, {"when": None, "value": "neutral"}],
     debrief_note=(
       "Her potassium is 3.8 before any treatment. Bicarbonate drives potassium intracellularly, "
-      "so a patient who receives repeated boluses and then an infusion will become hypokalaemic, "
+      "so a patient who receives repeated boluses and then an infusion will become hypokalemic, "
       "and hypokalemia prolongs the QT in a patient whose QT is already long. Replacing it is "
       "part of running the treatment rather than a separate thought."))
 

@@ -75,7 +75,20 @@ const PXVIEW = (function(){
 .pxs-tool b{font-size:13px}
 .pxs-tool span{font-size:11.5px;color:var(--ink3);line-height:1.3}
 .pxs-tool[aria-pressed="true"]{border-color:var(--act);background:var(--actl)}
-.pxs-tool.glow{box-shadow:0 0 0 3px var(--actb)}
+.pxs-tool.glow{border-color:var(--act);background:var(--actl);animation:pxsglow 1.3s ease-in-out infinite}
+.pxs-tool.glow b::before{content:"Pick up";display:inline-block;margin-right:6px;padding:1px 6px;border-radius:999px;background:var(--act);color:#fff;
+  font-size:10px;letter-spacing:.06em;text-transform:uppercase;vertical-align:1px}
+@keyframes pxsglow{0%,100%{box-shadow:0 0 0 2px var(--actb),0 0 14px 2px rgba(31,111,178,.25)}50%{box-shadow:0 0 0 5px var(--actb),0 0 26px 8px rgba(31,111,178,.45)}}
+@media (prefers-reduced-motion:reduce){.pxs-tool.glow{animation:none;box-shadow:0 0 0 4px var(--actb)}}
+.pxs-rot{display:inline-flex;flex-direction:column;align-items:center;gap:3px;width:78px;padding:8px 4px 6px;border-radius:14px;border:1px solid var(--rule);
+  background:var(--solid);color:var(--act);font:inherit;font-size:11.5px;font-weight:650;cursor:pointer}
+.pxs-rot svg{width:40px;height:40px}
+.pxs-rot span{color:var(--ink2)}
+.pxs-rot:hover{border-color:var(--act);background:var(--actl)}
+.pxs-rot:focus-visible{outline:2px solid var(--act);outline-offset:2px}
+.pxs-pick{margin:8px 0;padding:9px 11px;border-radius:10px;background:var(--actl);border:1px solid var(--actb);font-size:13.5px;line-height:1.4}
+.pxs-pick b{color:var(--act)}
+.pxs-hold{font-size:12.5px;color:var(--ink2);margin-top:6px}
 .pxs-capno{position:absolute;right:14px;bottom:14px;background:#0b141a;border:1px solid #23404f;border-radius:10px;padding:6px 8px;color:#ffe46b;font-family:var(--mono);font-size:11px}
 .pxs-capno[hidden]{display:none}
 .pxs-deb{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,20,30,.55);padding:16px;z-index:5}
@@ -287,7 +300,8 @@ const PXVIEW = (function(){
     const slit=new THREE.Mesh(new THREE.BoxGeometry(9, 0.6, 1.2), new THREE.MeshBasicMaterial({color:'#5b1712'}));
     slit.visible=false; world.add(slit);
     const rodMat=mat('#e8dcc0'), tubeMat=mat('#f4f7f9', 0.82), cuffMat=mat('#d6ecff', 0.7);
-    let rodMesh=null, tubeMesh=null, cuffMesh=null;
+    let rodMesh=null, tubeMesh=null, cuffMesh=null, connMesh=null;
+    const connMat=mat('#2f6fa8');
     /* the target ring, Learn only */
     const ring=new THREE.Mesh(new THREE.RingGeometry(1, 1.25, 48), new THREE.MeshBasicMaterial({color:'#3fb6ff', transparent:true, opacity:0.85, side:THREE.DoubleSide, depthTest:false}));
     ring.rotation.x=-Math.PI/2; ring.renderOrder=10; ring.visible=false; world.add(ring);
@@ -305,10 +319,19 @@ const PXVIEW = (function(){
        After the turn: the path the geometry gives (straight through the tract, one gentle arc
        inside the airway, then down the airway) and, outside, the same line continued: the
        shaft rises toward the head at the tract's angle. No hairpin: a bougie is semi-rigid. */
-    function rodPath(depth, turned){
+    /* A path from the tip outward, for the rod and the tube, of the instrument's own length
+       (length_mm): what goes in comes off the end outside.
+       Before the turn: the shaft lies across the neck, parallel to the floor, toward the
+       operator, and only the angled (coude) tip goes in, down and away along the blade.
+       After the turn: the path the geometry gives (straight through the tract, one gentle arc
+       inside the airway, then down the airway) and, outside, the same line continued: the
+       shaft rises toward the head at the tract's angle. No hairpin: a bougie is semi-rigid. */
+    function rodPath(depth, turned, kind){
       const e=sim.state.rodEntry; if(!e) return null;
       const R=sim.rodGeom(), top=e.col.top, s=sim.state.side==='right'?-1:1;
       const T=Object.values(tools).find(t=>t.kind==='rod')||{};
+      const I=Object.values(tools).find(t=>t.kind===(kind||'rod'))||T;
+      const total=I.length_mm||600;
       const pts=[];
       if(!turned){
         const cd=(T.coude_deg||40)*Math.PI/180, tipLen=T.tip_mm||28;
@@ -317,13 +340,15 @@ const PXVIEW = (function(){
         const tip=[e.x+c[0]*along, top+c[1]*along, e.z];
         const knee=[tip[0]-c[0]*tipLen, tip[1]-c[1]*tipLen, e.z];
         for(let k=0;k<=8;k++){ const f=k/8; pts.push([tip[0]+(knee[0]-tip[0])*f, tip[1]+(knee[1]-tip[1])*f, e.z]); }
+        const rest=Math.max(10, total-tipLen);
         pts.push([knee[0]+s*6, knee[1]+0.8, e.z]);
-        for(const L of [30, 120, 420]) pts.push([knee[0]+s*L, knee[1]+1, e.z]);
+        for(const f of [0.08, 0.4, 1]) pts.push([knee[0]+s*rest*f, knee[1]+1, e.z]);
       } else {
         const P=R.path.pts, n=Math.min(P.length-1, Math.round(depth/0.5));
         for(let i=n;i>=0;i-=2) pts.push([P[i].x, P[i].y, P[i].z]);
-        const d=R.path.dir;
-        for(const L of [4, 60, 160, 320]) pts.push([e.x, top+d[1]*L, e.z+d[2]*L]);
+        if(pts.length<2) pts.push([P[0].x, P[0].y, P[0].z]);
+        const d=R.path.dir, rest=Math.max(4, total-depth);
+        for(const f of [0.01, 0.2, 0.55, 1]) pts.push([e.x, top+d[1]*rest*f, e.z+d[2]*rest*f]);
       }
       return pts.map(p=>new THREE.Vector3(p[0],p[1],p[2]));
     }
@@ -350,9 +375,14 @@ const PXVIEW = (function(){
       /* tube and cuff */
       if(tubeMesh){ world.remove(tubeMesh); tubeMesh.geometry.dispose(); tubeMesh=null; }
       if(cuffMesh){ world.remove(cuffMesh); cuffMesh.geometry.dispose(); cuffMesh=null; }
+      if(connMesh){ world.remove(connMesh); connMesh.geometry.dispose(); connMesh=null; }
       if(S.tube && S.tube.depth>0){ const T=Object.values(tools).find(t=>t.kind==='tube')||{};
-        const p=rodPath(S.tube.depth, 'feet');
+        const p=rodPath(S.tube.depth, 'feet', 'tube');
         if(p){ tubeMesh=new THREE.Mesh(tubeAlong(p, T.radius||4.1), tubeMat); world.add(tubeMesh);
+          /* The connector at the outer end. */
+          const L=T.length_mm||280, C=T.connector_mm||16;
+          if(connMesh){ world.remove(connMesh); connMesh.geometry.dispose(); connMesh=null; }
+          connMesh=new THREE.Mesh(tubeAlong(p, (T.radius||4.1)+1.6, L-C, L), connMat); world.add(connMesh);
           const rr=pack.steps.find(s=>s.type==='railroad');
           if(rr&&rr.cuff_mm){ const infl=pack.steps.find(s=>s.type==='inflate'); const full=infl?infl.range_ml[1]:10;
             const r=(T.radius||4.1)+0.6+Math.min(1.4,S.cuff_ml/full)*4.5;
@@ -435,29 +465,45 @@ const PXVIEW = (function(){
         ch.map(c=>`<div class="pxs-grp">${esc(c.label)}</div><div class="pxs-acts many">${c.options.map(o=>`<button class="pxs-btn" data-choose="${esc(o.id)}">${esc(o.label)}</button>`).join('')}</div>`).join('');
     }
     function controlsHTML(){
-      const t=view.tool&&tools[view.tool]; if(!t) return '<div class="pxs-note" style="margin-top:8px">Pick an instrument from the tray, or an action.</div>';
+      const t=view.tool&&tools[view.tool]; if(!t) return (mode==='learn'&&needTool()) ? '' : '<div class="pxs-note" style="margin-top:8px">Pick an instrument from the tray, or an action.</div>';
       const S=sim.state, k=t.kind;
       if(k==='finger') return `<div class="pxs-note" style="margin-top:8px">Move over the neck to feel. Click to mark.</div>`;
       if(k==='blade'){
         const edge=S.blade?S.blade.edge:view.preEdge;
         const nm={operator:'toward you', far:'away from you', head:'toward the head', feet:'toward the feet'}[sim.named(edge)];
         return `<div class="pxs-ctl"><span class="pxs-note">Cutting edge: <b>${esc(nm)}</b></span></div>
-          <div class="pxs-ctl"><button class="pxs-btn" data-rot="ccw" aria-label="Turn counterclockwise, seen from above">⟲ Turn</button>
-          <button class="pxs-btn" data-rot="cw" aria-label="Turn clockwise, seen from above">Turn ⟳</button>
-          ${S.blade?`<button class="pxs-btn hold" data-hold="blade">Push</button>`:'<span class="pxs-note">Click the neck to place the blade.</span>'}</div>`;
+          <div class="pxs-ctl"><button class="pxs-rot" data-rot="ccw" aria-label="Turn the blade counterclockwise, seen from above"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.5A8 8 0 1 1 4.2 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M3 4.5v5h5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Turn left</span></button>
+          <button class="pxs-rot" data-rot="cw" aria-label="Turn the blade clockwise, seen from above"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 6.5A8 8 0 1 0 19.8 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M21 4.5v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Turn right</span></button></div>
+          <div class="pxs-ctl">${S.blade?`<button class="pxs-btn hold" data-hold="blade">Push</button>`:'<span class="pxs-note">Click the neck to place the blade.</span>'}</div>`;
       }
       if(k==='rod') return `<div class="pxs-ctl"><button class="pxs-btn hold" data-hold="rod">Push</button><button class="pxs-btn hold" data-hold="rodback">Pull back</button>
-          <button class="pxs-btn" data-turn="ccw">⟲ Swing</button><button class="pxs-btn" data-turn="cw">Swing ⟳</button>
           <button class="pxs-btn" data-done="rod">Done</button></div>
+          <div class="pxs-ctl"><button class="pxs-rot" data-turn="ccw" aria-label="Swing the bougie counterclockwise, seen from above"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.5A8 8 0 1 1 4.2 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M3 4.5v5h5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Swing left</span></button><button class="pxs-rot" data-turn="cw" aria-label="Swing the bougie clockwise, seen from above"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 6.5A8 8 0 1 0 19.8 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M21 4.5v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Swing right</span></button></div>
           <div class="pxs-note">In: <b>${S.rod?(S.rod.depth/10).toFixed(1):'0.0'} cm</b></div>`;
       if(k==='tube') return `<div class="pxs-ctl"><button class="pxs-btn hold" data-hold="tube">Push</button><button class="pxs-btn hold" data-hold="tubeback">Pull back</button>
           <button class="pxs-btn" data-twist="1" aria-pressed="${view.twist}">Rotate as you push</button>
           <button class="pxs-btn" data-done="tube">Done</button></div>`;
       if(k==='syringe') return `<div class="pxs-ctl"><button class="pxs-btn hold" data-hold="syringe">Inflate</button>
+          <button class="pxs-btn hold" data-hold="syringe_out">Deflate</button>
           <button class="pxs-btn" data-done="syringe">Done</button></div>
           <div class="pxs-note">Pilot balloon: <b>${S.cuff_ml<3?'empty':S.cuff_ml<5?'soft':S.cuff_ml<=10?'firm':'very tense'}</b></div>`;
       if(k==='bag') return `<div class="pxs-ctl"><button class="pxs-btn pri" data-vent="1">Ventilate</button></div>`;
       return '';
+    }
+    /* Which instrument the step needs, said plainly. Learn mode only: in Practice choosing the
+       instrument is part of the test. */
+    function needTool(){
+      const s=cur(); if(!s) return null;
+      const id=s.tool || (s.type==='palpate' ? (Object.values(tools).find(t=>t.kind==='finger')||{}).id : null);
+      return id && tools[id] ? tools[id] : null;
+    }
+    function pickHTML(){
+      const t=view.tool && tools[view.tool];
+      const hold=t?`<div class="pxs-hold">In your hand: <b>${esc(t.name)}</b></div>`:'';
+      if(mode!=='learn') return hold;
+      const need=needTool();
+      if(need && view.tool!==need.id) return `<div class="pxs-pick">Pick up the <b>${esc(need.name)}</b>. It is glowing in the tray below.</div>`;
+      return hold;
     }
     function card(){
       const s=cur(), S=sim.state, n=pack.steps.length;
@@ -470,7 +516,7 @@ const PXVIEW = (function(){
         h=`<div class="pxs-n">Practice · ${S.stepLog.filter(r=>r.t!=null).length} of ${n} done</div><div class="pxs-h">What next?</div>`;
       }
       if(view.msg && view.msg.at===S.i) h+=`<div class="pxs-fb on ${view.msg.kind}" role="status">${esc(view.msg.text)}</div>`;
-      h+=actionButtons()+controlsHTML()+handsLine();
+      h+=pickHTML()+actionButtons()+controlsHTML()+handsLine();
       if(mode==='learn') h+=`<details class="pxs-why" style="margin-top:10px"${view.listOpen?' open':''}><summary>All steps</summary><ol class="pxs-steps">${pack.steps.map((x,i)=>`<li class="${i<S.i?'done':i===S.i?'cur':''}">${esc(x.label)}</li>`).join('')}</ol></details>`;
       const c=$('pxs-card'); c.hidden=false; c.innerHTML=h;
       if(view.msg && view.msg.at===S.i) c.scrollTop=0;
@@ -492,7 +538,7 @@ const PXVIEW = (function(){
     function tray(){
       const s=cur();
       $('pxs-tray').innerHTML=(pack.tools||[]).filter(t=>!sim.state.removed[t.id]||t.id===view.tool).map(t=>
-        `<button class="pxs-tool${mode==='learn'&&s&&s.tool===t.id&&view.tool!==t.id?' glow':''}${mode==='learn'&&s&&s.type==='palpate'&&t.kind==='finger'&&view.tool!==t.id?' glow':''}" type="button" data-tool="${esc(t.id)}" aria-pressed="${view.tool===t.id}">
+        `<button class="pxs-tool${mode==='learn'&&needTool()&&needTool().id===t.id&&view.tool!==t.id?' glow':''}" type="button" data-tool="${esc(t.id)}" aria-pressed="${view.tool===t.id}">
           <b>${esc(t.name)}</b><span>${esc(t.desc||'')}</span></button>`).join('');
       $('pxs-tray').querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{ view.tool=view.tool===b.dataset.tool?null:b.dataset.tool; view.hover=null; tray(); card(); });
     }
@@ -516,10 +562,12 @@ const PXVIEW = (function(){
         else if(what==='tube') r=sim.pushTube(SPEED.tube*dt, view.twist);
         else if(what==='tubeback') r=sim.pullTube(SPEED.tube*dt);
         else if(what==='syringe') r=sim.inflate(SPEED.syringe*dt);
+        else if(what==='syringe_out') r=sim.inflate(-SPEED.syringe*dt);
         readout(r, what);
         if(r && (r.kind==='error' || r.advanced || r.code==='order')){ say(r); stop(true); return; }
         drawInstruments();
         const n=root.querySelector('.pxs-note b'); if(n && what.indexOf('rod')===0 && sim.state.rod) n.textContent=(sim.state.rod.depth/10).toFixed(1)+' cm';
+        if(n && what.indexOf('syringe')===0){ const ml=sim.state.cuff_ml; n.textContent=ml<3?'empty':ml<5?'soft':ml<=10?'firm':'very tense'; }
         raf=requestAnimationFrame(step);
       };
       const start=(e)=>{ e.preventDefault(); if(on) return; on=true; btn.classList.add('on'); last=performance.now(); raf=requestAnimationFrame(step); };
@@ -538,7 +586,7 @@ const PXVIEW = (function(){
       if(what==='blade' && r.layer){ const f=sim.feelOf(r.layer); line=(mode==='learn'?`<b>${(r.depth||0).toFixed(1)} mm</b>${esc(f.learn)}. `:'')+esc(f.feel||''); }
       else if((what==='rod'||what==='rodback') && sim.state.rod){ line=`<b>${(sim.state.rod.depth/10).toFixed(1)} cm</b>`+(r.click?esc(r.text):''); }
       else if((what==='tube'||what==='tubeback') && sim.state.tube){ line=mode==='learn' ? (sim.cuffIn()?'The cuff is inside the trachea.':'The cuff is not inside the trachea yet.') : ''; }
-      else if(what==='syringe'){ line=''; }
+      else if(what==='syringe'||what==='syringe_out'){ line=''; }
       if(r.kind==='error') line=esc(r.text);
       if(!line){ return; }
       el.innerHTML=line; el.classList.add('on');

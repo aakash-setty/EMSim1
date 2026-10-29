@@ -165,6 +165,12 @@ it ships: `docs/procedure-authoring.md`. Check a pack with
 `python3 engine/validate_procedure.py procedures/<P>` and test every pack with
 `node engine/procsim-tests.js`. The build validates them and stops on an error.
 
+## Ambulance Run
+
+A small arcade game on the case list (`engine/arcade.js`), not part of any case. Test its
+rules with `node engine/arcade-tests.js`. The shared leaderboard is
+`supabase/migrations/003_arcade.sql` and `docs/deployment.md`, Ambulance Run leaderboard.
+
 ## Things that have gone wrong before
 
 - **Tests log whole seconds. The browser clock does not.** A timing fault that only shows
@@ -189,7 +195,8 @@ it ships: `docs/procedure-authoring.md`. Check a pack with
 - **Prompt deadlines are multiplied in the default mode and deterioration deadlines are
   not.** A warning the validator accepts can arrive after the deterioration it warns about.
 - **Instant transitions are re-checked only after a state-changing action or a clock
-  event.** Exams and interview questions do not trigger them.
+  event.** Exams and interview questions do not trigger them. A phase entered by an instant
+  move is checked at once (29 October 2026).
 - **Held-out matcher questions are never tuned against.**
 - **The scenario runner (`sim_runner.py`) is a second implementation.** It can agree with
   itself and disagree with the engine. The engine tests are the authority.

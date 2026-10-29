@@ -83,3 +83,11 @@ you should confirm you accept it for this case.
   lost the sentence suggesting a lesion biopsy. Nothing else changed.
 - 11 October 2026, Aakash Setty: every consultant answer over 40 words is shortened to 40 or fewer (authoring 9.5), keeping what the consultant thinks, what to do now and the disposition or callback. Wording by a model. Rule order, conditions, tags and debrief notes are unchanged. Not physician reviewed. Twenty-five of twenty-nine answers changed. Dropped: the sodium, potassium and glucose values the frank-shock intensivist quoted (now a condition), "she has had fluid" from the adrenal-branch intensivist, the infectious diseases differential, the fludrocortisone, dexamethasone and discharge detail from endocrinology, the contact list, prophylaxis agents and timing from public health, the KDIGO stage from nephrology, and plasma exchange and protein C from hematology. Each of these teaching points is still in a debrief note in the case. Physician review question MGCA-25 quotes the old wording, and two of its three problems are no longer in the text. The vancomycin line it asks about is unchanged.
 - 23 October 2026, Aakash Setty: the handover is scored on one or two major diagnoses and nothing minor. Here the primary and adrenal crisis. Moved to `minor_diagnoses`, credited if named and never penalized if left out: septic shock, disseminated intravascular coagulation, acute kidney injury and hypoglycemia. Which diagnosis stayed scored was a model's pick, accepted by the author. Explanations unchanged. Not physician reviewed.
+- 29 October 2026, Aakash Setty: do not tell the learner she missed what did not matter.
+  Cefepime and meropenem count as the antibiotic in place of ceftriaxone and are neutral.
+  Neutral, accepted and not expected: doxycycline, the epinephrine and vasopressin infusions
+  and push-dose epinephrine, both maintenance infusions, D5 normal saline, acetaminophen and
+  ondansetron. The six CSF studies are neutral, because the lumbar puncture they need is
+  discouraged until she improves (a validator rule now refuses this pattern). US usage in
+  learner text. Which items to make neutral was a model's reading of the instruction. Not
+  physician reviewed.

@@ -41,11 +41,7 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/nasal_cannula_oxygen`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| hypotensive | rule 0 (phase is hypotensive OR phase is profound_shock) | plausible |
-| profound_shock | rule 0 (phase is hypotensive OR phase is profound_shock) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/non_rebreather_mask`
@@ -144,11 +140,10 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_responsive | rule 1 (phase is fluid_responsive OR phase is supported OR phase is stabilizing) | plausible |
 | hypotensive | rule 0 (phase is hypotensive OR phase is profound_shock) | plausible |
 | profound_shock | rule 0 (phase is hypotensive OR phase is profound_shock) | plausible |
-| stabilizing | rule 1 (phase is fluid_responsive OR phase is supported OR phase is stabilizing) | plausible |
-| supported | rule 1 (phase is fluid_responsive OR phase is supported OR phase is stabilizing) | plausible |
+| stabilizing | rule 1 (phase is supported OR phase is stabilizing) | plausible |
+| supported | rule 1 (phase is supported OR phase is stabilizing) | plausible |
 | «any other phase» | rule 2 (default) | plausible |
 
 
@@ -555,7 +550,7 @@ Single unconditional rule; nothing to enumerate.
 | stabilizing | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
 | supported | no | rule 3 (phase is supported) &rarr; ABNORMAL: Awake, washed out, flushed. Vasopressor running. GCS 15. | plausible |
 | supported | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
-| «any other phase» | no | rule 6 (default) &rarr; ABNORMAL: Sitting up, talking, flushed all over, dry lips. GCS 15. | plausible |
+| «any other phase» | no | rule 6 (default) &rarr; ABNORMAL: Sitting up, talking, flushed all over, dry lips, vomit bag in her lap.... | plausible |
 | «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. Flushed. | plausible |
 
 

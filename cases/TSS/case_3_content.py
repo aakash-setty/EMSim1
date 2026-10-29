@@ -166,7 +166,7 @@ GENERAL_STATUS = {
    {"when": SUPP, "value": gs("Awake, washed out, flushed. Vasopressor running. GCS 15.")},
    {"when": STAB, "value": gs("Awake, tired, flushed. Vasopressor running. GCS 15.")},
    {"when": RESP, "value": gs("Sitting up, flushed, says she feels a bit better. GCS 15.")},
-   {"when": None, "value": gs("Sitting up, talking, flushed all over, dry lips. GCS 15.")},
+   {"when": None, "value": gs("Sitting up, talking, flushed all over, dry lips, vomit bag in her lap. GCS 15.")},
  ],
 }
 

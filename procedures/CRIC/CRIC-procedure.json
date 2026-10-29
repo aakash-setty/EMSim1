@@ -177355,14 +177355,17 @@
    "bend_mm": 12,
    "coude_deg": 40,
    "note": "Teaching choices: the tract angle keeps the shaft inside the membrane opening, the bend radius is what the airway has room for.",
-   "straight_mm": 4
+   "straight_mm": 4,
+      "length_mm": 600
   },
   {
    "id": "tube",
    "kind": "tube",
    "name": "Cuffed tube, 6.0 mm",
    "desc": "Internal diameter 6.0 mm.",
-   "radius": 4.1
+   "radius": 4.1,
+      "length_mm": 280,
+      "connector_mm": 16
   },
   {
    "id": "syringe",

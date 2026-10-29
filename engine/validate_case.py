@@ -451,6 +451,48 @@ def check_case_number(case, errors, warnings):
         errors.append(f"[case number] metadata.case_number must be a whole number from 1, not {n!r}")
 
 
+def check_expectation_credit(errors):
+    """catalog/expectation-credit.json names catalog ids only (29 October 2026)."""
+    cr, _ = _load(catalog_path("expectation-credit.json"))
+    cat, _ = _load(catalog_path("action-catalog.json"))
+    if not cr or not cat:
+        return
+    ids = {e["id"] for e in cat.get("entries", [])}
+    for k, v in (cr.get("credit") or {}).items():
+        for x in [k] + list(v):
+            if x not in ids:
+                errors.append(f"[credit] catalog/expectation-credit.json names {x!r}, which is not a catalog entry")
+        if k in v:
+            errors.append(f"[credit] {k} credits itself")
+
+
+def check_expected_behind_discouraged(case, errors):
+    """An expected action whose prerequisite only an unexpected, discouraged act can meet
+    (29 October 2026). A learner who rightly avoids the act is marked missing the other."""
+    acts = case.get("case_actions", [])
+    setters = {}
+    for a in acts:
+        for f in a.get("flags_set") or []:
+            setters.setdefault(f, []).append(a)
+    vals = lambda a: {r.get("value") for r in a.get("tag", [])}
+    for a in acts:
+        if not vals(a) & {"recommended", "critical"}:
+            continue
+        for pr in a.get("prerequisites") or []:
+            w = pr.get("when") or ""
+            if " OR " in w:
+                continue
+            for f in re.findall(r"flag (\w+) set", w):
+                ss = setters.get(f, [])
+                if ss and all(not vals(s) & {"recommended", "critical"} and vals(s) & {"discouraged", "harmful"}
+                              for s in ss):
+                    errors.append(
+                        f"[expectation] {a['catalog_id']} is expected, and its prerequisite `flag {f} set` is "
+                        f"met only by {', '.join(s['catalog_id'] for s in ss)}, which is never expected and is "
+                        f"discouraged. A learner who avoids it is marked missing {a['catalog_id']}. Make it neutral "
+                        f"(authoring 6.3).")
+
+
 def check_ungraded(case, errors, warnings):
     """Intubation care is never graded (owner, 23 October 2026, authoring 6.3 and 22.2). The
     list of catalog ids is data in catalog/ungraded-intubation-care.json, so this file names
@@ -1254,6 +1296,26 @@ def run_checks(case):
         # author would be looking at a narrow complex wondering why.
         if "ecg" in p:
             _check_ecg(p, errors, warnings)
+        # ecg_when (29 October 2026): each rule overrides the block while it holds. Its
+        # condition must parse, and the merged block is checked like the block itself.
+        if "ecg_when" in p:
+            ew = p["ecg_when"]
+            if not isinstance(ew, list) or not ew:
+                errors.append(f"[ecg] {p['id']}: ecg_when must be a non-empty list of {{when, ecg}}")
+            else:
+                for i, r in enumerate(ew):
+                    loc = f"{p['id']}/ecg_when[{i}]"
+                    if not isinstance(r, dict) or not r.get("when") or not isinstance(r.get("ecg"), dict):
+                        errors.append(f"[ecg] {loc}: needs a condition `when` and an `ecg` object")
+                        continue
+                    try:
+                        parse_condition(r["when"])
+                    except Exception as e:
+                        errors.append(f"[ecg] {loc}: condition does not parse: {e}")
+                    base = p.get("ecg")
+                    merged = dict(base) if isinstance(base, dict) else {}
+                    merged.update(r["ecg"])
+                    _check_ecg({"id": loc, "ecg": merged, "rhythm": p.get("rhythm")}, errors, warnings)
 
     # -- V: vital effects (design 2.3, authoring 16) -----------------------
     # Six rules, and the reason for each is that the mechanism is easy to author into
@@ -1406,6 +1468,28 @@ def run_checks(case):
                     parse_condition(w_)
                 except Exception as e:
                     errors.append(f"{loc}: condition does not parse: {e}")
+
+    # asked_all (29 October 2026, authoring 19): an action credited once every interview
+    # topic it lists has been asked. A topic the interview does not have can never be asked,
+    # so the action could never be credited.
+    _topics = {t.get("topic") for t in ((case.get("interview") or {}).get("topics") or [])}
+    for a in case["case_actions"]:
+        if "asked_all" not in a:
+            continue
+        loc = f"[asked_all] {a['catalog_id']}"
+        aa = a["asked_all"]
+        if not isinstance(aa, list) or not aa or not all(isinstance(x, str) for x in aa):
+            errors.append(f"{loc}: must be a non-empty list of interview topic ids")
+            continue
+        for t in aa:
+            if t not in _topics:
+                errors.append(f"{loc}: {t!r} is not a topic in this case's interview, so the "
+                              f"action can never be credited")
+        if len(set(aa)) != len(aa):
+            warnings.append(f"{loc}: lists a topic twice")
+        if not a.get("hidden"):
+            warnings.append(f"{loc}: an action credited by questions is normally hidden, with a "
+                            f"placement on history, so that no button credits it on its own")
     for p in case["phases"]:
         if p.get("inherit_vitals") and not p.get("terminal"):
             errors.append(f"[inherit_vitals] {p['id']}: only a terminal phase may inherit the "
@@ -1653,6 +1737,8 @@ def run_checks(case):
     check_patient(case, errors, warnings)
     check_pupils(case, errors, warnings)
     check_ungraded(case, errors, warnings)
+    check_expectation_credit(errors)
+    check_expected_behind_discouraged(case, errors)
     check_default_effects(case, errors, warnings, notes)
     check_case_number(case, errors, warnings)
 

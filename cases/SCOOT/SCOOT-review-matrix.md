@@ -46,6 +46,29 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `action_tag/cchr_history`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| decline | rule 0 (phase is presentation OR phase is decline) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is decline) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
+### `action_tag/interview_topic_anticoagulants`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| decline | rule 0 (phase is presentation OR phase is decline) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is decline) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
+### `action_tag/ultrasound_fast`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `action_tag/ct_head`
 
 Single unconditional rule; nothing to enumerate.
@@ -244,6 +267,15 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `action_tag/analgesia_given`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| decline | rule 0 (phase is presentation OR phase is decline) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is decline) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
 ### `action_tag/ondansetron`
 
 | phase | resolves to | reachable? |
@@ -403,13 +435,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| brainstem_compression | rule 2 (phase is brainstem_compression) &rarr; ABNORMAL: Boggy right temporal scalp hematoma. Both pupils 6 mm and fixed. | plausible |
+| brainstem_compression | rule 2 (phase is brainstem_compression) &rarr; ABNORMAL: Boggy right temporal scalp hematoma. Both pupils 6 mm and fixed. Right... | plausible |
 | case_complete | rule 3 (phase is presentation OR phase is decline OR phase is case_complete) &rarr; ABNORMAL: Boggy right temporal scalp hematoma, no laceration. Pupils 3 mm, equal... | plausible |
 | decline | rule 3 (phase is presentation OR phase is decline OR phase is case_complete) &rarr; ABNORMAL: Boggy right temporal scalp hematoma, no laceration. Pupils 3 mm, equal... | plausible |
 | herniation | rule 0 (phase is herniation) &rarr; ABNORMAL: Boggy right temporal scalp hematoma. Right pupil 6 mm and fixed. Left ... | plausible |
 | presentation | rule 3 (phase is presentation OR phase is decline OR phase is case_complete) &rarr; ABNORMAL: Boggy right temporal scalp hematoma, no laceration. Pupils 3 mm, equal... | plausible |
 | temporized | rule 1 (phase is temporized) &rarr; ABNORMAL: Boggy right temporal scalp hematoma. Right pupil 4 mm and sluggish. Le... | plausible |
-| «any other phase» | rule 4 (default) &rarr; ABNORMAL: Boggy right temporal scalp hematoma. Pupils 3 mm, equal and reactive. | plausible |
+| «any other phase» | rule 4 (default) &rarr; ABNORMAL: Boggy right temporal scalp hematoma. Pupils 3 mm, equal and reactive. ... | plausible |
 
 
 ### `exam/exam_neck`
@@ -506,6 +538,19 @@ Single unconditional rule; nothing to enumerate.
 Single unconditional rule; nothing to enumerate.
 
 
+### `imaging/xr_chest`
+
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| «any phase» | no | rule 1 (default) &rarr;  | plausible |
+| «any phase» | yes | rule 0 (flag intubated set) &rarr;  | plausible |
+
+
+### `imaging/ultrasound_fast`
+
+Single unconditional rule; nothing to enumerate.
+
+
 ### `imaging/ecg_12_lead`
 
 | phase | resolves to | reachable? |
@@ -557,6 +602,14 @@ Single unconditional rule; nothing to enumerate.
 
 
 ### `interview_topic/mechanism_of_injury`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| decline | rule 0 (phase is decline) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
+### `interview_topic/speed`
 
 | phase | resolves to | reachable? |
 |---|---|---|

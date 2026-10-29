@@ -31,6 +31,8 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `case_actions[].also_covers_group` | tools | never | 2.5 | Reviewer note. Coverage itself is authored in the binding map (also_covers) |
 | `case_actions[].also_satisfies[].id` | generic | no | 19 | Another case action credited as done when this one is taken and `when` holds, judged before this action's flags |
 | `case_actions[].also_satisfies[].when` | generic | no | 19 | Condition, or null for always |
+| `case_actions[].asked_all` | engine+validator | no | 19 | Interview topic ids. The action is satisfied once every one has been asked or volunteered, in any order and any phase. For questions that are one act only as a set. Normally on a hidden target placed on history |
+| `case_actions[].author_note` | validator | never |  | Reviewer note. Nothing reads it |
 | `case_actions[].binding_note` | none | never |  | Reviewer note. Nothing reads it |
 | `case_actions[].catalog_id` | engine+build+validator+tools | button | 6.1 | The case id of the action. Usually the catalog id; the binding map says otherwise. Used in conditions and content keys. Underscores removed as a fallback button name |
 | `case_actions[].debrief_note` | engine+validator+tools | debrief | 10.3 | The expander under the action. Marker-stripped. Every tagged action needs one |
@@ -332,6 +334,10 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `phases[].ecg.st_mv` | engine+build+validator | monitor | 5.2 | ST level at the J point in lead II |
 | `phases[].ecg.t_mv` | engine+build+validator | monitor | 5.2 | T amplitude in lead II |
 | `phases[].ecg.verify` | generic | never |  | Reviewer note. Nothing reads it |
+| `phases[].ecg_when[].ecg.qrs_ms` | engine+build+validator+tools | monitor | 5.2 | Fields of the ecg block that apply while `when` holds, over the phase's own block |
+| `phases[].ecg_when[].ecg.qtc_ms` | engine+build+validator | monitor | 5.2 | Fields of the ecg block that apply while `when` holds, over the phase's own block |
+| `phases[].ecg_when[].ecg.verify` | generic | never |  | Reviewer note. Nothing reads it |
+| `phases[].ecg_when[].when` | generic | no | 5.2 | Condition. The first rule that holds changes the monitor's trace within the phase |
 | `phases[].entered_by` | none | never |  | Reviewer note |
 | `phases[].id` | generic | no | 4 | State machine key and the condition atom `phase is X`. The first phase in the list is the start. `halted` and `case_complete` are reserved |
 | `phases[].inherit_vitals` | engine+validator | monitor | 19 | A terminal phase shows the vitals as they stood when it was entered, effects included, instead of its own. Its own vitals block is still required |
@@ -403,4 +409,4 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `tag_vocabulary.values` | engine+build+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `tag_vocabulary.values_used_by_this_case` | none | never |  | Reviewer note. Nothing reads it |
 
-380 fields across 8 packs, as of the last generation.
+386 fields across 8 packs, as of the last generation.

@@ -90,11 +90,11 @@ topic("onset", "When did this start?",
          "'About four o'clock. That's when I got in from work.'", restate=True),
     fact("before_that", ["how long before", "how long had she been like that",
                          "was she like that all day", "do you know when it started"],
-         ("'That's what I keep thinking about. I left at half seven this morning and she was "
+         ("'That's what I keep thinking about. I left at seven thirty this morning and she was "
           "asleep. So it could have been any time in there.'")),
     fact("how_found", ["how did you find her", "what was she doing", "where was she",
                        "what did you see"],
-         ("'She was on the floor in her bedroom, sat up against the bed. She looked at me and "
+         ("'She was on the floor in her bedroom, sitting up against the bed. She looked at me and "
           "she didn't know me. That's when I called the ambulance.'"))])
 
 topic("last_seen_well", "When was she last her normal self?",
@@ -102,8 +102,8 @@ topic("last_seen_well", "When was she last her normal self?",
    "When was she last herself?", "What was she like this morning?",
    "Was she fine earlier?", "When was she last okay?", "Was she normal yesterday?",
    "When did you last speak to her?"],
-  ("'This morning. I looked in before I left for work, about half seven, and she was asleep in "
-   "bed. She was fine last night. Quiet, but she's been quiet for months.'"),
+  ("'This morning. I looked in before I left for work, about seven thirty, and she was asleep in "
+   "bed. She was fine last night. Withdrawn, but she's been withdrawn for months.'"),
   "when she was last herself")
 
 topic("progression", "Has she been getting worse?",
@@ -119,9 +119,9 @@ topic("what_she_was_doing", "What was she doing before this?",
   ["What was she doing before?", "What happened before she got like this?",
    "What was she up to today?", "Where had she been?", "Was she out anywhere?",
    "Who was she with?", "Was she alone?", "What did she do today?"],
-  ("'She was off school today, she said she had a headache last night and wanted a day at home. "
+  ("'She stayed home from school today, she said she had a headache last night and wanted a day at home. "
    "That's been happening a lot lately. She's missed a lot of school these last few weeks, she "
-   "just stays in her room. So she was in on her own from half seven. Her brother got back about three, he was upstairs "
+   "just stays in her room. So she was in on her own from seven thirty. Her brother got back about three, he was upstairs "
    "on his computer, he says he didn't hear anything.'"),
   "what she was doing today")
 
@@ -133,7 +133,7 @@ topic("bottle_or_pills_found", "Was there anything near her? Any bottles or pack
    "Is anything missing from the house?", "Could she have taken something?",
    "Any pill bottles?", "Did you find anything in her room?"],
   ("She stops. 'I didn't look. I just saw her on the floor and I called the ambulance, I "
-   "didn't look at anything else.' She takes out her phone. 'Let me ring her brother, he's still "
+   "didn't look at anything else.' She takes out her phone. 'Let me call her brother, he's still "
    "at home.'\n\nShe steps out and comes back a couple of minutes later, holding the phone.\n\n"
    "'He's found a bottle. It was on the floor by the bed, half under it. It's her Benadryl, the "
    "big bottle she keeps in her room for her allergies, and it's empty. I bought it about a "
@@ -159,7 +159,7 @@ topic("what_she_took", "Do you know what she took?",
    "Was it a deliberate overdose?"],
   ("'I didn't think that at all until you asked. She's never done anything like this.' Pause. "
    "'If it was the Benadryl, then whatever was in that bottle. I don't know when. She'd been on "
-   "her own since half seven this morning.'"),
+   "her own since seven thirty this morning.'"),
   "what she might have taken")
 
 topic("medicines_in_the_house", "What medicines do you keep in the house?",
@@ -170,9 +170,9 @@ topic("medicines_in_the_house", "What medicines do you keep in the house?",
    "Any co-ingestants?", "Co-ingestants?", "What else was available to her?",
    "Is there anything else in the house she could have taken?",
    "Any other medicines at home?", "What has she got access to at home?"],
-  ("'Not much. Paracetamol and ibuprofen in the kitchen drawer, and her Benadryl, which she "
+  ("'Not much. Tylenol and ibuprofen in the kitchen drawer, and her Benadryl, which she "
    "keeps in her room. I take "
-   "something for my blood pressure, ramipril, and that's in my bedroom and the packet's still "
+   "something for my blood pressure, ramipril, and that's in my bedroom and the bottle's still "
    "full, I checked it before we left. There's nothing strong in the house. Nobody's got "
    "anything for pain or anything like that.'"),
   "what's in the house")
@@ -268,7 +268,7 @@ topic("bullying_and_school", "Has anything been happening at school?",
    "Any problems with friends?", "Anything happening online?", "Has she fallen out with anyone?",
    "How's school been?", "Any social media problems?", "Has anyone been picking on her?"],
   ("'There was something online. In the spring. Some girls in her year set up an account and "
-   "were putting things on it about her, and it went round the whole school. I only found out "
+   "were putting things on it about her, and it went around the whole school. I only found out "
    "because another mom told me. The school said they dealt with it.'\n\n'She stopped talking to "
    "the two friends she had left after that. I don't know if they were part of it or if she just "
    "cut everyone off.'"),
@@ -279,7 +279,7 @@ topic("relationship", "Has anything changed at home or in her relationships?",
    "Has anything happened recently?", "Any recent stress?", "Has she split up with anyone?",
    "Anything happen in the last few weeks?", "Any big changes?"],
   ("'She was seeing a boy for about a year and they broke up three or four weeks ago. She "
-   "wouldn't talk about it. She cried for two days and then she just went quiet on it.'"),
+   "wouldn't talk about it. She cried for two days and then she just stopped talking about it.'"),
   "the break-up")
 
 topic("sleep_and_appetite", "How have her sleep and appetite been?",
@@ -298,7 +298,7 @@ topic("alcohol_and_drugs", "Does she drink or use anything?",
    "Any substance use?", "Does she take anything recreationally?", "Any drug use?",
    "Could she have taken something at a party?"],
   ("'She has a drink at a party like they all do. Not at home and not on her own. Drugs, no. "
-   "I've never seen anything and I've never smelt anything on her.' She pauses. 'I'd have said "
+   "I've never seen anything and I've never smelled anything on her.' She pauses. 'I'd have said "
    "the same thing about the Benadryl an hour ago.'"),
   "drink and drugs")
 
@@ -1179,7 +1179,7 @@ OUT_OF_SCOPE_BANK = [
   'Do you follow any sports?',
   'What do you do to relax?',
   'Do you have a garden?',
-  'Are you comfortable on that trolley?',
+  'Are you comfortable on that stretcher?',
   'Would you like a blanket?',
   'Is the bed at the right height?',
   'What is your date of birth?',
@@ -1271,8 +1271,8 @@ ADJACENT = {
  ]
 }
 VOLUNTEER = {
- "last_seen_well": "'She was fine when I looked in at half seven this morning.'",
- "what_she_was_doing": "'She'd stayed off school today, so she was home on her own.'",
+ "last_seen_well": "'She was fine when I looked in at seven thirty this morning.'",
+ "what_she_was_doing": "'She'd stayed home from school today, so she was home on her own.'",
  "vision_or_hallucinations": "'In the ambulance she was reaching for people who weren't there.'",
  "current_medications": "'She doesn't take anything regularly.'",
  "seizure_history": "'She's never had a fit.'",

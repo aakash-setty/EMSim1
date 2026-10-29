@@ -27,7 +27,7 @@ case plan written in the same conversation. Everything else below is model outpu
 
 | Goal | What the case contains so the learner meets it by deciding |
 |---|---|
-| Recognize shock in a young patient who compensates | She talks, apologizes and blames a takeout meal. Only the monitor, the capillary refill and the lactate say otherwise. Discharge is available and has a consequence |
+| Recognize shock in a young patient who compensates | She talks, apologizes and puts it down to a stomach flu. Only the monitor, the capillary refill and the lactate say otherwise. Discharge is available and has a consequence |
 | Find the source and remove it | Nobody mentions her period. The history and the pelvic examination are available and never prompted on arrival. Her course changes only when the tampon is out |
 | Resuscitate toxin-mediated shock | The first liter helps and the help fades. Further fluid buys six points for a minute. A vasopressor is what holds her |
 ## 2. Phases
@@ -485,18 +485,20 @@ dropped. The mean and the diastolic have fallen. The systolic has not.
 ## 12. Authoring sections 3.1 to 3.8, as a list a physician can sign
 
 Copied on 7 October 2026 from the `case_*.py` files. A model wrote all of it on 6 October
-2026 except what sections 0 and 4a record. Read every number as a proposal.
+2026 except what sections 0 and 4a record. Read every number as a proposal. On 29 October
+2026, 3.1, 3.2, the general status line and 3.7 were copied again from the built case, so
+they match the case after the rewrites of 11 and 29 October (What a person decided).
 
 ### 3.1 Identity
 
-- Working title: 22-year-old woman, vomiting and diarrhea for two days, walked in with her roommate
-- Chief complaint, her words: "I think I've got food poisoning. I can't keep anything down."
-- Clinical complaint: Vomiting and diarrhea. Category: Infectious disease
+- Working title: 22-year-old woman, fainted at home after two days of fever, vomiting and diarrhea, now red all over
+- Chief complaint, her words: "I fainted in the shower. I've had a fever and a stomach bug for two days and now I'm red all over."
+- Clinical complaint: Fainting, fever, vomiting and rash. Category: Infectious disease
 - Scored diagnosis: `dx_toxic_shock_syndrome`
 - Final diagnosis, prose: Menstrual staphylococcal toxic shock syndrome from a tampon retained for about four days, with septic shock, acute kidney injury, thrombocytopenia, transaminitis and early rhabdomyolysis. Blood cultures are expected to stay negative, as they usually do in staphylococcal toxic shock.
 - Target level: medical_student, intern, junior_resident
 - Learning objectives:
-  - Recognize shock in a young, talking patient from the heart rate, the blood pressure, the capillary refill and the lactate, and do not let a plausible story of gastroenteritis explain them away.
+  - Recognize shock in a young, talking patient from the heart rate, the blood pressure, the capillary refill and the lactate, and do not let a plausible story of a stomach bug and a sunburn explain them away.
   - In fever, rash and hypotension with no clear source, ask about menstruation and tampon use and do a pelvic examination.
   - Remove the source. A retained tampon is found and removed at the bedside, and nothing else in the resuscitation replaces that.
   - Give about 30 mL/kg of crystalloid, reassess, and start norepinephrine when the mean arterial pressure stays under 65 after fluid.
@@ -507,11 +509,11 @@ Copied on 7 October 2026 from the `case_*.py` files. A model wrote all of it on 
 
 - 22-year-old female, 62 kg.
 - Graduate student, lives with one roommate. No past medical history. Wisdom teeth removed at eighteen and no other surgery. Takes a combined oral contraceptive pill. She took ibuprofen yesterday, two tablets a couple of times, and nothing else. No allergies. Does not smoke, drinks socially, uses no drugs.
-- Her period started five days ago. She uses super-absorbency tampons. Four days ago she put one in before an evening out, came home late, and did not take it out. She believes her period has ended and has not thought about the tampon since. Two days ago she developed fever, muscle aches, vomiting and watery diarrhea, which she puts down to a takeout meal. Yesterday she took her temperature and it was 102. The same day she spent an hour at the beach and blames her red skin on that. This morning she nearly fainted in the shower and her roommate drove her in.
-- Appearance: A young woman sitting up on the bed, talking in full sentences and apologizing for coming in. She is flushed all over, her lips are dry, and she keeps a vomit bag in her lap. She does not look as sick as her numbers.
+- Her period started five days ago. She uses super-absorbency tampons. Four days ago she put one in before an evening out, came home late, and did not take it out. She believes her period has ended and has not thought about the tampon since. Two days ago she developed fever, chills, muscle aches and a sore throat. By Friday morning she was vomiting, and watery diarrhea started the same day. She puts it all down to a stomach flu, and she has kept almost nothing down since. Yesterday she took her temperature and it was 102. The same day she spent an hour at the beach and blames her red skin on that. This morning she fainted in the shower, for a few seconds by her roommate's account and without hitting her head, and her roommate drove her in. Rewritten on 11 October 2026 on author instruction: she presents fainting, febrile and with a rash. Vomiting and diarrhea restored on 29 October 2026 on author instruction, as she would most often have them (TSS-SEED.md, What a person decided).
+- Appearance: A young woman sitting up on the bed, talking in full sentences and apologizing for coming in. She is flushed red all over, her lips are dry, and she keeps a vomit bag in her lap. She does not look as sick as her numbers.
 - Care setting: Urban academic emergency department. Adult emergency department with an intensive care unit, infectious disease and gynecology on call, and a full laboratory and imaging service. Nothing in this case is limited by resources.
 - Arrival: mode `triage`, location `patient_room`.
-- Handover, two sentences, 32 words: "Twenty-two year old, two days of vomiting and diarrhea, says she thinks it was something she ate. Her roommate drove her in after she nearly passed out in the shower this morning."
+- Handover, two sentences, 29 words: "Twenty-two year old, two days of fever, vomiting and diarrhea, and red all over since yesterday. She fainted in the shower this morning and her roommate drove her in."
 
 ### 3.3 Phases
 
@@ -616,13 +618,13 @@ change within the case. The pelvic examination and the CT change once the tampon
 
 ### 3.7 Interview ground truth
 
-Her answers when alert, word for word. Each topic also has a shorter drowsy answer with
-the same fact.
+Her answers when alert, word for word, from the built case on 29 October 2026. Each topic
+also has a shorter drowsy answer with the same fact.
 
-- `onset`: 'Two days ago. Thursday night I started shivering and aching, and by the early hours I was throwing up. The diarrhea started Friday morning.'
+- `onset`: 'Two days ago. Thursday night I started shivering and aching, and by Friday morning I had a proper fever and was throwing up. The diarrhea started Friday too.'
 - `timing_progression`: 'Worse. Yesterday I could get up and about for a bit. Today I can't stand without everything going gray.'
 - `character_of_symptoms`: 'Like the worst flu I've ever had. Everything aches, I'm hot and cold, and my stomach keeps turning over.'
-- `location_of_pain`: 'All over, really. My thighs and calves are the worst. My stomach is crampy but it's not one spot.'
+- `location_of_pain`: 'All over, really. My thighs and calves are the worst. My stomach is crampy too, but it's not one spot.'
 - `radiation_of_pain` (pertinent negative): 'No, it doesn't go anywhere. It's just a general ache.'
 - `severity`: 'The aching is maybe a six. It's more that I feel so weak. I've never felt this ill.'
 - `aggravating_relieving`: 'Standing up makes everything worse. I get dizzy and my heart pounds. I took some ibuprofen yesterday and it brought the fever down for a couple of hours. Nothing has stayed down today.'
@@ -631,14 +633,14 @@ the same fact.
 - `headache`: 'A bit of one, across my forehead. It's not the main thing.'
 - `neck_stiffness` (pertinent negative): 'No. My neck's fine, I can move it.'
 - `photophobia` (pertinent negative): 'No, the lights are okay.'
-- `nausea_vomiting`: 'Constantly. I've thrown up maybe eight or ten times since Friday. No blood in it. I can't even keep water down now.'
+- `nausea_vomiting`: 'Yes, constantly. I've thrown up maybe eight or ten times since Friday. No blood in it. I can't even keep water down now.'
 - `diarrhea`: 'Yes, watery. Maybe six times yesterday and a few today. No blood.'
 - `abdominal_pain`: 'Crampy, all over, and it comes with the diarrhea. It's not a sharp pain anywhere, and not in my sides or my back.'
 - `chest_pain` (pertinent negative): 'No chest pain. My heart's racing, though. I can feel it when I stand up.'
 - `breathing`: 'I'm not short of breath exactly. I just feel like I'm breathing fast.'
 - `cough_sore_throat`: 'No cough, no cold. My throat's sore, I thought from throwing up so much.'
 - `urine_output`: 'Hardly at all. I think I went once yesterday and it was really dark. Nothing today. It doesn't burn.'
-- `dizziness_syncope`: 'Yes. This morning in the shower everything went gray and I had to sit down on the floor. I didn't black out. My roommate found me and made me come in.'
+- `dizziness_syncope`: 'Yes. This morning in the shower everything went gray and I went down. My roommate heard me and found me on the floor. She says I was out for a few seconds. I didn't hit my head. I thought maybe it was my period on top of the flu.'
 - `confusion`: 'No, I know where I am. I'm just exhausted.'
 - `cold_extremities`: 'My hands and feet are freezing, which is weird, because the rest of me is burning.'
 - `joint_pain`: 'It's not my joints, it's the muscles. My thighs and calves feel like I ran a marathon. Nothing's swollen.'
@@ -652,10 +654,10 @@ the same fact.
 - `allergies` (pertinent negative): 'None that I know of. I've had penicillin before and it was fine.'
 - `social_history`: 'I don't smoke or vape. I drink at weekends, a few drinks. No drugs, and I've never injected anything. I'm a grad student and I share an apartment with my roommate.'
 - `family_history`: 'My dad has high blood pressure. Nothing else I know of, and nothing like this.'
-- `last_oral_intake`: 'I had a few sips of water this morning and brought them back up. I haven't eaten since Thursday.'
+- `last_oral_intake`: 'A few sips of water this morning, and they came back up. I haven't eaten since Thursday.'
 - `vaccinations`: 'I think so. I had everything for college, including the meningitis ones. I had a flu shot last fall.'
-- `sick_contacts`: 'No. My roommate had the same takeout I did on Thursday and she's completely fine. My boyfriend's fine too. Nobody I know is sick.'
-- `suspect_meal`: 'Thai takeout on Thursday, about seven. I started feeling ill a few hours later. My roommate ate the same dishes and she's fine, which is the part I don't get.'
+- `sick_contacts`: 'No. My roommate's fine and my boyfriend's fine. Nobody I know is sick.'
+- `suspect_meal`: 'Nothing unusual. My roommate eats what I eat and she's fine. I figured it was a stomach flu.'
 - `travel_history` (pertinent negative): 'No, I haven't been anywhere. Just the beach yesterday, twenty minutes away.'
 - `tick_and_outdoor_exposure` (pertinent negative): 'No bites that I've seen. No hiking or camping, no pets. I sat on the beach for an hour yesterday, that's all.'
 - `recent_antibiotics_healthcare` (pertinent negative): 'No. No antibiotics, no doctors, no dentist. I haven't seen anyone about this.'
@@ -666,8 +668,8 @@ the same fact.
 **Pertinent negatives, authored as denials (11).** radiation of pain, neck stiffness, photophobia, chest pain, pregnancy, past medical history, allergies, travel history, tick and outdoor exposure, recent antibiotics healthcare, wounds and skin.
 
 Denials inside other answers, not their own topics: no blood in the vomit or the stool, no
-flank or back pain, no burning on passing urine, no cough, no joint swelling, no loss of
-consciousness, no tick bite, no new drug apart from ibuprofen, no injected drugs.
+flank or back pain, no burning on passing urine, no cough, no joint swelling, no head strike
+when she fainted, no tick bite, no new drug apart from ibuprofen, no injected drugs.
 
 **Must ask, never volunteered.** allergies, pregnancy, sexual history, menstrual and tampon, dysuria gu symptoms, social history, code status goals.
 
@@ -708,3 +710,27 @@ consciousness, no tick bite, no new drug apart from ibuprofen, no injected drugs
 
 - 11 October 2026, Aakash Setty: every consultant answer over 40 words is shortened to 40 or fewer (authoring 9.5), keeping what the consultant thinks, what to do now and the disposition or callback. Wording by a model. Rule order, conditions, tags and debrief notes are unchanged. Not physician reviewed. Four of sixteen answers changed (critical care after fluid and a vasopressor, nephrology with the chemistry back, both infectious disease answers). Dropped: the intensivist's summary of her, "send the swab and blood cultures" and the immunoglobulin sentence, which the immunoglobulin action's own note covers.
 - 23 October 2026, Aakash Setty: the handover is scored on one or two major diagnoses and nothing minor. Here the primary and retained vaginal foreign body. Moved to `minor_diagnoses`, credited if named and never penalized if left out: septic shock, acute kidney injury, lactic acidosis, rhabdomyolysis, thrombocytopenia, anion gap metabolic acidosis, hyponatremia and hypokalemia. Which diagnosis stayed scored was a model's pick, accepted by the author. Explanations unchanged. Not physician reviewed.
+- 29 October 2026, Aakash Setty: vomiting and diarrhea are added back. His reasons, from a
+  model's clinical review of the same day (`claude/tss-clinical-review-2026-10-29.md`): "No
+  GI symptoms makes her atypical. In one French series of 55 menstrual cases, 45 (82%) had
+  digestive involvement. The first CDC report said it 'typically begins suddenly with high
+  fever, vomiting, and profuse watery diarrhea'. Removing them also leaves a potassium of 3.3
+  unexplained and drops the gastroenteritis misdiagnosis trap." The CDC sentence was checked
+  against the MMWR reprint on 29 October 2026 (https://www.cdc.gov/mmwr/preview/mmwrhtml/00047818.htm).
+  [UNVERIFIED: the French series, eClinicalMedicine 2020, Table 1, was not opened by the
+  model that made this change.] She still presents fainting, with fever and a rash, and she
+  still does not connect her period. She now puts it all down to a stomach flu. The takeout
+  meal of the first version is not restored: asked what she ate, she says nothing unusual and
+  that her roommate eats what she eats and is well. Rewritten by a model: the working title,
+  chief complaint, complaint, background, appearance, both handovers, the general status line,
+  the answers on onset, character, location of pain, aggravating factors, nausea and vomiting
+  (with its facts), diarrhea, abdominal pain, throat, oral intake and suspected cause, the
+  notes on the monitor, the chemistry, the liver tests, ondansetron and the discharge, the
+  hypokalemia and both gastroenteritis explanations, the case discussion (six of seven CDC
+  organ systems again, with gastrointestinal), and section 12 of this file. The fluid
+  prompt ("she's kept nothing down for two days") is true again and is unchanged. Not
+  physician reviewed.
+- 29 October 2026, Aakash Setty: oxygen is one act. The non-rebreather carries the one
+  oxygen expectation once she is hypotensive, and the nasal cannula meets it (it was a
+  second, separately missable expectation). Norepinephrine is neutral, not recommended, while
+  she still answers fluid. She took "two pills" of ibuprofen. Not physician reviewed.

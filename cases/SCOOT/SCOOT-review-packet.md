@@ -15,13 +15,13 @@ were approved by Aakash Setty on 19 October 2026. Everything else is model outpu
 | `SCOOT-SEED.md` | What a person decided, the model defaults taken without a decision, sources and how each was read, the goals, the stories, the phases, the race tables, the action spine, key findings, the interview ground truth, known gaps and open questions |
 | `SCOOT-review-matrix.md` | What every tag, finding, result, consultant line and answer resolves to in every state |
 | `SCOOT-deterioration-timeline.md` | Every timed rule with the prompts before it, the do-nothing path, and every nurse line beside the vitals it introduces |
-| `SCOOT-binding-map.json` | Every case action and the catalog entries it claims. Two coverage rows and five case-only rows |
+| `SCOOT-binding-map.json` | Every case action and the catalog entries it claims. Two coverage rows and eight case-only rows |
 | `case_1_shell.py` | Identity, the patient, the handover, the phases and every transition |
 | `case_2_actions.py` | Every tag, prompt, prerequisite, hidden target, the follow-up and every debrief note |
 | `case_3_content.py` | Findings, results, the tracings and what the consultants say |
 | `case_4_interview.py` | Everything he says, in both voices |
 | `case_5_handoff.py` | Dispositions, diagnoses, teaching points, provenance |
-| `media/README.md` | How the four tracings were drawn |
+| `media/README.md` | How the four tracings were drawn, and where the chest films came from |
 | `SCOOT-tests.js`, `SCOOT-scenarios.json` | The case assertions and the walked scenarios |
 | `SCOOT-matcher-eval-questions.json` | The held-out interview questions |
 
@@ -55,6 +55,17 @@ The review matrix does not show prompts, prerequisites, the follow-up, transitio
    nurse prompts only the monitor and the neuro exam (3:00 in the default mode). A learner who
    never scans him first hears about it at 5:15 (SEED 2.15). Check that this is the help a
    junior learner should get.
+10. **The owner's four critical actions of 29 October 2026** (SEED 2.16): the Canadian CT Head
+    Rule questions, blood thinners, a FAST and pain control. The decision that each is critical
+    is the owner's. Check the notes, the four questions that credit the rule, the phases each
+    is critical in, and the Canadian CT Head Rule note's reading of this patient (SEED 2.10,
+    open questions 7 to 10). Since the second request of the day, blood behind his right
+    eardrum, described and not named, makes the rule positive (SEED 2.17). The `ct_head` note was corrected in the same
+    change.
+11. **The chest films.** A normal male film, and once intubated the same film with a tube drawn
+    in by a model, whose tip position is an estimate. Neither has a recorded source.
+12. **The ear and the speed** (SEED 2.17). The CT read shows a squamous fracture and not a
+    petrous one, and his hearing is normal.
 
 ## Counts, from the run of 19 October 2026
 
@@ -135,3 +146,10 @@ opens the plain image viewer, there are no console errors, and with the site's
 Content-Security-Policy applied there are no violations, at desktop and phone widths. Not run:
 `engine/site-check` (Deno is not installed on this machine), and the upload of the larger
 private pack. SCOOT's private pack is now about 4.6 MB.
+
+## Added 29 October 2026: a chest film and four critical actions
+
+On the owner's instruction (SEED 2.16). Run after the change, in a copy of the repository:
+`engine/test_packs.py` for all eight packs (all pass. SCOOT: 631 engine checks, 12 of 12
+scenarios, validator 0 errors and 2 warnings, 138 validator negative tests), `gen_docs.py`,
+`kit_check.py` (0 errors, 0 warnings), the full build, and `engine/site-check` (136 ok, 0 FAIL).

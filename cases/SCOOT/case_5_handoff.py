@@ -103,7 +103,12 @@ DEBRIEF = {
  "clinical_domains": [
    {"id": "first_minutes", "label": "The first minutes",
     "actions": ["attach_monitor", "insert_iv", "c_collar", "exam_airway", "exam_breath",
-                "exam_circ", "exam_heent", "exam_neck", "exam_neuro"]},
+                "exam_circ", "exam_heent", "exam_neck", "exam_neuro", "ultrasound_fast"]},
+   {"id": "the_questions", "label": "The questions that decide the scan",
+    "actions": ["cchr_history", "interview_topic_anticoagulants"]},
+   {"id": "his_headache", "label": "His headache",
+    "actions": ["analgesia_given", "acetaminophen", "fentanyl_bolus", "morphine_bolus",
+                "ibuprofen"]},
    {"id": "imaging", "label": "Imaging",
     "actions": ["ct_head", "ct_cta_head_and_neck", "ct_c_spine", "mri_mra_head_and_neck"]},
    {"id": "the_trend", "label": "Seeing the change, and saying it",
@@ -122,7 +127,8 @@ DEBRIEF = {
  ],
  "intended_path": ["presentation", "decline", "case_complete"],
  "intended_path_note": (
-   "Monitor, a baseline exam, a head CT, neurosurgery called once it is back, then the "
+   "Monitor, a baseline exam, the Canadian CT Head Rule questions, blood thinners, a FAST, "
+   "something for his headache, a head CT, neurosurgery called once it is back, then the "
    "decline at four minutes: a repeat exam, a second call, an antiemetic, no tube, and the "
    "handoff to the OR. A learner who hands over before four minutes ends in presentation, "
    "which is good care (known gap 1)."),
@@ -139,6 +145,11 @@ DEBRIEF = {
     "scan is back. Do not wait for a blown pupil or Cushing's response, because by then the "
     "brain has already herniated. [UNVERIFIED: Bullock et al. 2006, read through a "
     "summarizing tool]"),
+   ("Say why you are scanning. The Canadian CT Head Rule is for an alert adult who was "
+    "knocked out, cannot remember or was disoriented, and turns on a few questions: how did "
+    "he fall, what does he remember, has he vomited, how old is he. Ask about blood thinners "
+    "by name first, because the rule does not apply to a patient on one. [UNVERIFIED: "
+    "Stiell et al., Lancet 2001, read through a summary]"),
    ("Intubate for a reason, not a number. A tube in a talking patient takes away the exam "
     "that tells you he is getting worse."),
    ("Before you fix a number, ask whether the body made it on purpose. A high pressure and a "

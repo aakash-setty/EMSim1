@@ -51,12 +51,15 @@
    "expect_phase": "halted"
   },
   {
-   "name": "Harmful: crystalloid bolus",
+   "name": "Crystalloid bolus on arrival: impending respiratory failure ten seconds later, not a halt (owner, 29 October 2026)",
    "steps": [
     "iv_access_peripheral",
-    "crystalloid_bolus_1l"
+    "crystalloid_bolus_1l",
+    {
+     "wait": 12
+    }
    ],
-   "expect_phase": "halted"
+   "expect_phase": "impending_respiratory_failure"
   },
   {
    "name": "Harmful: dobutamine while warm and hypertensive",
@@ -109,42 +112,51 @@
    "note": "v0.18a: harmful only while he is hypotensive; once rescued, restarting it is discouraged."
   },
   {
-   "name": "Diuretic given before positive pressure still reaches stabilizing",
+   "name": "Diuretic given before positive pressure: improving the moment he stabilizes",
    "steps": [
     "iv_access_peripheral",
     "furosemide_iv",
     "niv_bipap_cpap",
     "nitroglycerin_infusion"
    ],
-   "expect_phase": "stabilizing",
-   "note": "Previously named niv_bipap, which the binding shadowed, so the step was silently discarded and the scenario reached presentation instead. Fixed by the NIV consolidation."
+   "expect_phase": "improving",
+   "note": "Previously named niv_bipap, which the binding shadowed, so the step was silently discarded and the scenario reached presentation instead. Fixed by the NIV consolidation. Since 29 October 2026 the engine checks a phase's rules the moment it is entered, so the early diuretic takes him straight on to improving instead of waiting for the next order."
   },
   {
-   "name": "Harmful: a liter of Ringer's reaches the same halt through the equivalence group",
+   "name": "Crystalloid: a liter of Ringer's reaches the same consequence through the equivalence group",
    "steps": [
     "iv_access_peripheral",
-    "lactated_ringer_s_1l_bolus"
+    "lactated_ringer_s_1l_bolus",
+    {
+     "wait": 12
+    }
    ],
-   "expect_phase": "halted",
-   "note": "A harmful tag has to cover every catalog route to the same act. This walks one of the three siblings the crystalloid_bolus group covers."
+   "expect_phase": "impending_respiratory_failure",
+   "note": "A tag and its consequence have to cover every catalog route to the same act. This walks one of the three siblings the crystalloid_bolus group covers. Since 29 October 2026 the consequence is impending respiratory failure, not a halt."
   },
   {
-   "name": "Harmful: 500 mL of saline reaches the same halt through the equivalence group",
+   "name": "Crystalloid: 500 mL of saline reaches the same consequence through the equivalence group",
    "steps": [
     "iv_access_peripheral",
-    "normal_saline_500ml_bolus"
+    "normal_saline_500ml_bolus",
+    {
+     "wait": 12
+    }
    ],
-   "expect_phase": "halted",
-   "note": "A harmful tag has to cover every catalog route to the same act. This walks one of the three siblings the crystalloid_bolus group covers."
+   "expect_phase": "impending_respiratory_failure",
+   "note": "A tag and its consequence have to cover every catalog route to the same act. This walks one of the three siblings the crystalloid_bolus group covers. Since 29 October 2026 the consequence is impending respiratory failure, not a halt."
   },
   {
-   "name": "Harmful: 500 mL of Ringer's reaches the same halt through the equivalence group",
+   "name": "Crystalloid: 500 mL of Ringer's reaches the same consequence through the equivalence group",
    "steps": [
     "iv_access_peripheral",
-    "lactated_ringer_s_500ml_bolus"
+    "lactated_ringer_s_500ml_bolus",
+    {
+     "wait": 12
+    }
    ],
-   "expect_phase": "halted",
-   "note": "A harmful tag has to cover every catalog route to the same act. This walks one of the three siblings the crystalloid_bolus group covers."
+   "expect_phase": "impending_respiratory_failure",
+   "note": "A tag and its consequence have to cover every catalog route to the same act. This walks one of the three siblings the crystalloid_bolus group covers. Since 29 October 2026 the consequence is impending respiratory failure, not a halt."
   },
   {
    "name": "The mask alone plateaus at moderate and stays there",
@@ -241,6 +253,35 @@
    ],
    "expect_phase": "post_intubation_hypotension",
    "note": "The deterioration does not change what a tube does. The same vasodilated, preload-dependent collapse follows."
+  },
+  {
+   "name": "Norepinephrine at 188/104: impending respiratory failure ten seconds later, not a halt (owner, 29 October 2026)",
+   "steps": [
+    "iv_access_peripheral",
+    "norepinephrine_infusion",
+    {
+     "wait": 12
+    }
+   ],
+   "expect_phase": "impending_respiratory_failure",
+   "note": ""
+  },
+  {
+   "name": "Fluid on arrival, then the mask and a drip: he comes back and stays back",
+   "steps": [
+    "iv_access_peripheral",
+    "crystalloid_bolus_1l",
+    {
+     "wait": 12
+    },
+    "niv_bipap_cpap",
+    "nitroglycerin_infusion",
+    {
+     "wait": 200
+    }
+   ],
+   "expect_phase": "stabilizing",
+   "note": ""
   }
  ]
 }

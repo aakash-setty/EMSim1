@@ -48,3 +48,25 @@ It is provided "as is" without express or implied warranty.
 
 [UNVERIFIED: a named person has to look at the series beside its read before release
 (authoring section 23).]
+
+## Chest films (added 29 October 2026)
+
+`scoot-cxr-normal.webp` is `Normal/Normal_Male.png` from the folder "Images Manual - Chest
+XRay" that Aakash Setty supplied, chosen on his instruction of 29 October 2026 ("pull a normal
+cxr from the chest xray folder"), converted to WebP (quality 82, 1024 pixels, greyscale). The
+male film because the patient is a man. It is shown captioned "Chest radiograph" with no read.
+The read is the comment the debrief prints. Its original source is not recorded here.
+
+`scoot-cxr-normal-ett.webp` is the same film with an endotracheal tube drawn in, shown once he
+is intubated. A model choice, not asked for, so that a film taken after the tube shows one.
+Drawn by `Claude outputs/scoot-critical/cxr_ett_draw_gap.py`, the MGCA script
+(`Claude outputs/ett_v1/cxr_ett_draw.py`) with one change: the tip's distance above the
+carina is a setting. Settings: carina estimated by eye at (512, 380), tracheal width 34
+pixels, the tube down the tracheal air column from x 508 at the top of the film to x 505, tip
+2.4 tracheal widths (82 pixels) above the carina. At a guessed 0.4 mm per pixel that is about
+3.3 cm, and the read says "about 3 to 4 cm".
+
+[UNVERIFIED: record where the film came from and that it may be used. The carina was
+estimated by eye and the film has no recorded pixel spacing, so the tube's distance in the
+read is an estimate. A named person has to look at both films beside their reads, in their
+states, before release (authoring section 23).]

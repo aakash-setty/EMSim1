@@ -20,7 +20,12 @@ const RSI = t => [[t, 'etomidate_bolus'], [t + 0.5, 'rocuronium_bolus'], [t + 1,
 const HERNIATE = WORK;   // decline at 240, herniation at 360
 
 section('intended path');
-let st = F(CALLED.concat([[245.5, 'exam_neuro'], [250.5, 'consult_neurosurgeon'], [255.5, 'ondansetron'],
+// The owner's critical actions of 29 October 2026: the Canadian CT Head Rule questions,
+// blood thinners, a FAST and something for his headache.
+const ASK = (t0, topics) => topics.map((topic, i) => ({ t: t0 + i, kind: 'interview', topic, q: '?' }));
+const CCHR_Q = ['loss_of_consciousness', 'memory_of_event', 'nausea_vomiting', 'mechanism_of_injury'];
+const ARRIVAL_EXTRAS = ASK(21.5, CCHR_Q.concat(['anticoagulants'])).concat([[26.5, 'ultrasound_fast'], [27.5, 'acetaminophen']]);
+let st = F(CALLED.concat(ARRIVAL_EXTRAS, [[245.5, 'exam_neuro'], [250.5, 'consult_neurosurgeon'], [255.5, 'ondansetron'],
   [260.5, 'complete_blood_count_cbc'], [261.5, 'coagulation_panel'], [262.5, 'blood_type_and_screen'],
   [263.5, 'c_collar'], [264.5, 'ct_c_spine'], [270.5, 'handoff_submit']]), 275);
 chk('reaches case_complete through the decline', seq(st) === 'presentation > decline > case_complete', seq(st));
@@ -31,6 +36,39 @@ chk('the repeat exam and the call back were both expected and both credited',
   st.expected.has('neurosurgery_updated') && st.satisfied.has('neurosurgery_updated'));
 chk('no herniation, nothing discouraged', !st.phaseSeq.some(p => p.id === 'herniation') && st.discouragedTaken.size === 0,
   [...st.discouragedTaken].join());
+chk('the four added actions were expected and credited',
+  ['cchr_history', 'interview_topic_anticoagulants', 'ultrasound_fast', 'analgesia_given'].every(id => st.expected.has(id) && st.satisfied.has(id)),
+  ['cchr_history', 'interview_topic_anticoagulants', 'ultrasound_fast', 'analgesia_given'].filter(id => !(st.expected.has(id) && st.satisfied.has(id))).join());
+
+section('the questions, the FAST and his headache (owner, 29 October 2026)');
+chk('the Canadian CT Head Rule questions are critical and expected on arrival',
+  tagOf('cchr_history', F(LINE, 10)) === 'critical' && F(LINE, 10).expected.has('cchr_history'));
+chk('and neutral once he has herniated', tagOf('cchr_history', F(LINE, 365)) === 'neutral');
+chk('three of the four questions do not credit it', !F(LINE.concat(ASK(5.5, CCHR_Q.slice(0, 3))), 20).satisfied.has('cchr_history'));
+chk('all four do', F(LINE.concat(ASK(5.5, CCHR_Q)), 20).satisfied.has('cchr_history'));
+chk('in any order', F(LINE.concat(ASK(5.5, CCHR_Q.slice().reverse())), 20).satisfied.has('cchr_history'));
+chk('and across the decline', F(LINE.concat(ASK(5.5, CCHR_Q.slice(0, 2)), ASK(245.5, CCHR_Q.slice(2))), 250).satisfied.has('cchr_history'));
+chk('blood thinners are critical on arrival', tagOf('interview_topic_anticoagulants', F(LINE, 10)) === 'critical');
+chk('asking about blood thinners credits it', F(LINE.concat(ASK(5.5, ['anticoagulants'])), 10).satisfied.has('interview_topic_anticoagulants'));
+chk('asking about medications in general does not', !F(LINE.concat(ASK(5.5, ['current_medications'])), 10).satisfied.has('interview_topic_anticoagulants'));
+chk('a FAST is critical on arrival', tagOf('ultrasound_fast', F(LINE, 10)) === 'critical');
+chk('and comes back negative', /Negative FAST/.test(JSON.stringify(last(F(LINE.concat([[5.5, 'ultrasound_fast']]), 200), 'ultrasound_fast'))),
+  JSON.stringify(last(F(LINE.concat([[5.5, 'ultrasound_fast']]), 200), 'ultrasound_fast')));
+chk('pain control is critical on arrival', tagOf('analgesia_given', F(LINE, 10)) === 'critical');
+for (const d of ['acetaminophen', 'fentanyl_bolus', 'morphine_bolus'])
+  chk(d + ' before the tube counts as pain control', F(LINE.concat([[5.5, d]]), 10).satisfied.has('analgesia_given'));
+st = F(LINE.concat([[5.5, 'ibuprofen']]), 10);
+chk('ibuprofen does not, and is discouraged', !st.satisfied.has('analgesia_given') && st.discouragedTaken.has('ibuprofen'));
+st = F(WORK.concat(RSI(30.5), [[40.5, 'fentanyl_bolus']]), 45);
+chk('fentanyl after the tube is sedation, not pain control', !st.satisfied.has('analgesia_given') && st.satisfied.has('post_intubation_sedation'));
+chk('the nurse asks for something for his headache at 70 s',
+  F(LINE, 71).promptFires.some(p => p.id === 'analgesia_given' && Math.abs(p.t - 70) < 1e-6) && said(F(LINE, 71), /He's asking for something for his headache/));
+chk('not once he has had acetaminophen', !F(LINE.concat([[5.5, 'acetaminophen']]), 100).promptFires.some(p => p.id === 'analgesia_given'));
+chk('not after an early tube', !F(WORK.concat(RSI(30.5)), 100).promptFires.some(p => p.id === 'analgesia_given'));
+const film = st => { const r = last(st, 'xr_chest'); return r && r.body && r.body.image; };
+chk('the chest film is the normal male film', film(F(LINE.concat([[5.5, 'xr_chest']]), 200)) === 'scoot-cxr-normal', film(F(LINE.concat([[5.5, 'xr_chest']]), 200)));
+chk('and once intubated, the film with the tube', film(F(WORK.concat(RSI(30.5), [[40.5, 'xr_chest']]), 240)) === 'scoot-cxr-normal-ett',
+  film(F(WORK.concat(RSI(30.5), [[40.5, 'xr_chest']]), 240)));
 
 section('the decline is natural history');
 for (const log of [[], WORK, CALLED, CALLED.concat([[30.5, 'mannitol_bolus']])]) {
@@ -178,11 +216,11 @@ chk('default: the osmotherapy prompt at 60 and escalation at 180, before the ter
   st.promptFires.some(p => p.id === 'osmotherapy_for_herniation' && p.level === 2 && Math.abs(p.t - 540) < 1e-6),
   st.promptFires.map(p => p.id + '@' + p.t).join());
 st = F([], 239.9);
-chk('on arrival with nothing done, easy: the monitor at 20 and the neuro exam at 60, and no CT or neurosurgery prompt',
-  st.promptFires.map(p => p.id + '@' + p.t).join() === 'attach_monitor@20,exam_neuro@60', st.promptFires.map(p => p.id + '@' + p.t).join());
+chk('on arrival with nothing done, easy: the monitor at 20, the neuro exam at 60 and his headache at 70, and no CT or neurosurgery prompt',
+  st.promptFires.map(p => p.id + '@' + p.t).join() === 'attach_monitor@20,exam_neuro@60,analgesia_given@70', st.promptFires.map(p => p.id + '@' + p.t).join());
 st = F([], 239.9, 3);
-chk('on arrival with nothing done, default: the monitor at 1:00 and the neuro exam at 3:00, nothing else',
-  st.promptFires.map(p => p.id + '@' + p.t).join() === 'attach_monitor@60,exam_neuro@180', st.promptFires.map(p => p.id + '@' + p.t).join());
+chk('on arrival with nothing done, default: the monitor at 1:00, the neuro exam at 3:00 and his headache at 3:30, nothing else',
+  st.promptFires.map(p => p.id + '@' + p.t).join() === 'attach_monitor@60,exam_neuro@180,analgesia_given@210', st.promptFires.map(p => p.id + '@' + p.t).join());
 st = F(WORK, 120);
 st = F(WORK, 239.9, 3);
 chk('on arrival with the CT back, no neurosurgery prompt in either mode (the call is the learner\'s)',
@@ -281,3 +319,12 @@ st = F(HERNIATE.concat([[365.5, 'mannitol_bolus']]), 600);
 chk('temporized: the right 4 mm and sluggish, the left 3 mm and brisk, as the text says',
   st.phase === 'temporized' && PV(st).affected_mm === 4 && PV(st).affected_reaction === 'sluggish' && PV(st).size_mm === 3 &&
   /Right pupil 4 mm and sluggish\. Left 3 mm and reactive/.test(HEENT(st)), JSON.stringify(PV(st)));
+
+section('the ears and the speed (owner, 29 October 2026)');
+st = F(WORK, 100);
+chk('on arrival the right eardrum shows blood behind it, described and not named',
+  /Right eardrum intact, dark blue-purple behind it/.test(HEENT(st)) && !/hemotympan|blood/i.test(HEENT(st)), HEENT(st));
+chk('and in herniation', /dark blue-purple behind it/.test(HEENT(F(HERNIATE, 600))));
+chk('the debrief names it', /hemotympanum/.test(CASE.case_actions.find(a => a.catalog_id === 'exam_heent').debrief_note));
+const speedAns = (F(LINE.concat([{ t: 5.5, kind: 'interview', topic: 'speed', q: '?' }]), 6).readouts.pop() || {}).body;
+chk('asked how fast, he does not know, and the scooter tops out at forty', /I don't know.*forty miles an hour/.test(speedAns), speedAns);

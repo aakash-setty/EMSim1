@@ -647,3 +647,19 @@ now five seconds after the order rather than ten. See review packet section 2.9 
 - 11 October 2026, Aakash Setty: every consultant answer over 40 words is shortened to 40 or fewer (authoring 9.5), keeping what the consultant thinks, what to do now and the disposition or callback. Wording by a model. Rule order, conditions, tags and debrief notes are unchanged. Not physician reviewed. Eighteen of nineteen answers changed. Dropped: toxicology's rescue ladder (lidocaine, hypertonic saline, lipid, extracorporeal support), which its debrief note still names, the class IA and IC warning, which the amiodarone and lidocaine notes give, the aVR measurements and the QTc of 495 in cardiology, the history summary and "medical clearance is not a form" in psychiatry (its debrief note keeps the second), and some creatine kinase and salicylate requests. Critical care no longer quotes a QRS of 132. Cardiology still reads 132 and then 104, which the case tests require. Physician review questions DIPH-02 and DIPH-30 quote the old wording. Not yet put to Dr Medwid.
 - 23 October 2026, Aakash Setty: the handover is scored on one or two major diagnoses and nothing minor. Here the primary and sodium channel blocker cardiotoxicity. Moved to `minor_diagnoses`, credited if named and never penalized if left out: the anticholinergic toxidrome, rhabdomyolysis, drug-induced seizure and suicide attempt. Which diagnosis stayed scored was a model's pick, accepted by the author. Explanations unchanged. Not physician reviewed.
 - 23 October 2026, Aakash Setty, from validating the case: the nurse says "seizing", not "fitting" (four lines). A greeting or an open question ("Hi", "What's going on?", "What happened?", "What brings you in today?") now gets a brief history from her mother in a new `presenting_story` topic, which stops short of the bottle. The answer to when this started is shorter. Wording by a model. Not physician reviewed.
+- 29 October 2026, Aakash Setty: paralysis hides the convulsion and does not end the
+  seizure. Once a paralytic is given, the neuro, HEENT, airway and breathing exams, the
+  status line and the figure show a still, paralyzed patient, the nurse no longer says she
+  is still seizing, and the benzodiazepine is still expected. The rocuronium note teaches
+  it. Intubation is neutral in every phase (it was expected after one benzodiazepine had
+  already stopped the seizure). The IO, the second gas, the second pregnancy test and the
+  cannula on top of a mask are met by the alternative (catalog expectation credit). After
+  bicarbonate on arrival the monitor narrows to QRS 116, QTc 480, the figures of the
+  arrival-after-bicarbonate twelve-lead (`ecg_when`). While she seizes the nurse says the
+  complexes cannot be read and a repeat ECG will show it. The gases follow the seizure and
+  the dose: venous pH 6.94 seizing, 7.11 seizing after bicarbonate, 7.41 after one dose,
+  7.47 after two, 7.52 on the infusion, with arterial gases to match, each consistent with
+  Henderson-Hasselbalch and commented against the 7.50 to 7.55 target. US usage: resident
+  and fellow for registrar, seven thirty, Tylenol, call, smelled, stretcher. Values by a
+  model. No physician review decision (DIPH-01 to DIPH-46) is changed, and the arrival
+  gas DIPH-06 confirmed is unchanged. Not physician reviewed.

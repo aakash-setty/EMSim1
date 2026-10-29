@@ -99,6 +99,11 @@ tests check that the path crosses nothing but the layers above the air and the a
 stays off the back wall, and never bends tighter than `bend_mm`. Choose the tract angle so
 the tract stays inside the opening, and the bend so the arc has room in the airway.
 
+Each rod and tube has a fixed `length_mm` (a tube also takes `connector_mm`, drawn at the outer
+end). The part outside is the length less the part inside, so pushing in shortens what shows.
+In Learn mode the instrument a step names in `tool` is called out in the step card and pulses
+in the tray. A palpate step calls out the finger.
+
 ## Zones
 
 What the finger feels and where the blade may go. Each zone is an x range and a z range on

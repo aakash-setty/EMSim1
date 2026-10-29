@@ -4,12 +4,17 @@ Nothing is tagged harmful and nothing halts the case (model default, SCOOT-SEED.
 0). Every clinical judgment here is model output awaiting a physician's signature, except
 the learning goals and the states, which Aakash Setty approved on 19 October 2026.
 
-Four hidden case actions carry what no flag can (authoring 19 and 22.2):
+Six hidden case actions carry what no flag can (authoring 19 and 22.2):
 
   neuro_reexamined             a neuro exam done in the decline phase
   neurosurgery_updated         a neurosurgery call made in any phase after arrival
   osmotherapy_for_herniation   mannitol or hypertonic saline given in the herniation phase
   post_intubation_sedation     sedation or analgesia given once the tube is in
+  cchr_history                 the Canadian CT Head Rule questions, all asked (asked_all)
+  analgesia_given              acetaminophen, fentanyl or morphine given before the tube
+
+cchr_history, interview_topic_anticoagulants, ultrasound_fast and analgesia_given are the
+owner's critical actions of 29 October 2026 (SCOOT-SEED.md 2.16).
 
 The neurosurgery consult needs a resulted head CT, as a prerequisite whose failure message
 is the neurosurgeon's request (authoring 9.5). It sets neurosurgery_called, which guards
@@ -44,6 +49,9 @@ MEMORY = " [UNVERIFIED: written by a model from memory, no source opened]"
 BULLOCK = " [UNVERIFIED: Bullock et al. 2006, read through a summarizing tool]"
 BTF = " [UNVERIFIED: BTF 4th edition, read through a summarizing tool]"
 CRASH3 = " [UNVERIFIED: CRASH-3, read through a summarizing tool]"
+CCHR = (" [UNVERIFIED: Stiell et al., Lancet 2001;357:1391-6, not opened, read through Walling, "
+        "Am Fam Physician 2001;64:1886-8 and the Wikipedia summary, through a summarizing tool]")
+AWAKE = PRES + " OR " + DECL   # the phases in which he can answer and can say he hurts
 
 # =====================================================================  FIRST MINUTES
 
@@ -83,16 +91,82 @@ act("ct_c_spine", ALWAYS("recommended"),
       "consciousness, and after the decline his exam could no longer clear his neck. It costs "
       "a few seconds in the same scanner." + MEMORY))
 
+# =====================================================================  THE QUESTIONS
+# Owner, 29 October 2026: "Canadian Head CT rules questions should be asked. Should be part
+# of teaching too. Asking about blood thinner." Critical while he can answer. No prompt:
+# asking is the learner's decision, as the scan and the first call are.
+
+act("cchr_history",
+    [{"when": AWAKE, "value": "critical"}, {"when": None, "value": "neutral"}],
+    hidden=True, display_name="Canadian CT Head Rule questions asked",
+    expectation_label="The Canadian CT Head Rule questions",
+    asked_all=["loss_of_consciousness", "memory_of_event", "nausea_vomiting",
+               "mechanism_of_injury"],
+    debrief_note=(
+      "Not an order. Credited once you have asked every part of the story the Canadian CT "
+      "Head Rule turns on: whether he was knocked out, what he remembers, whether he has "
+      "vomited, and how he fell.\n\n"
+      "The rule is for an alert adult, GCS 13 to 15, who was knocked out, cannot remember "
+      "the event, or was disoriented after it. He was out for about a minute and has no "
+      "memory of the crash, so it applies to him. It does not apply to anyone under 16, to "
+      "a patient on a blood thinner or with a bleeding disorder, or once the GCS is below "
+      "13.\n\n"
+      "Scan if any one item is present. High risk: GCS below 15 two hours after the injury, "
+      "a suspected open or depressed skull fracture, any sign of a basal skull fracture, "
+      "vomiting twice or more, or age 65 or older. Medium risk: amnesia for more than 30 "
+      "minutes before the impact, or a dangerous mechanism, which the rule defines as a "
+      "pedestrian struck by a vehicle, an occupant thrown from a vehicle, or a fall from more "
+      "than 3 feet or 5 stairs.\n\n"
+      "From his story, most answers are no. He is 22, he has not vomited, and his memory "
+      "stops when he got on the scooter, under ten minutes before the fall by his account of "
+      "the ride. He does not know how fast he was going, and the scooter tops out at 40 miles "
+      "an hour. Going over the handlebars is not one of the rule's dangerous mechanisms as "
+      "written, though many would treat it as one.\n\n"
+      "His ears settle it. The dark blue-purple behind his right eardrum is blood, a sign of a "
+      "basal skull fracture, which is a high-risk item. The rule says scan him, and the exam "
+      "found the reason the story did not. Once his GCS fell to 12 he was outside the rule and "
+      "needed a scan whatever it said.\n\n"
+      "Ask the questions, then say the answer out loud. That is how the scan is justified, "
+      "to the radiologist and in the chart." + CCHR))
+
+act("interview_topic_anticoagulants",
+    [{"when": AWAKE, "value": "critical"}, {"when": None, "value": "neutral"}],
+    display_name="Ask about blood thinners",
+    expectation_label="Asked about blood thinners",
+    debrief_note=(
+      "Ask every head-injured patient about blood thinners, by name: warfarin, apixaban, "
+      "rivaroxaban, dabigatran, aspirin, clopidogrel. Many people do not think of these as "
+      "blood thinners, so asking about medications in general does not count here. A patient "
+      "on one bleeds more, and the bleed can keep growing for hours. The answer changes how "
+      "low your bar for a scan is, which bloods you send, whether he needs a reversal agent "
+      "before the OR, and what neurosurgery will ask you first. The Canadian CT Head Rule was "
+      "built without anticoagulated patients and does not apply to them.\n\n"
+      "He takes nothing, which is why his coagulation panel was normal and nothing needed "
+      "reversing." + MEMORY + CCHR))
+
+act("ultrasound_fast", ALWAYS("critical"),
+    # Owner, 29 October 2026: "Performing a FAST exam." No prompt.
+    expectation_label="A FAST exam",
+    debrief_note=(
+      "Every patient with a significant mechanism gets a primary survey, and the FAST is its "
+      "bedside adjunct for blood in the abdomen, around the heart and in the pelvis. He went "
+      "over the handlebars at speed, and the handlebars or the road can hit the abdomen on the "
+      "way over. A head injury makes the rest of the exam less reliable: a drowsy patient "
+      "cannot tell you his belly hurts. And a falling blood pressure in a head injury is "
+      "rarely from the head, except at the very end, so look for the bleeding elsewhere.\n\n"
+      "His was negative, which is what lets everyone focus on his head." + MEMORY))
+
 act("ct_head", ALWAYS("critical"),
     # No prompt on arrival (owner, 20 October 2026: "eliminate the CT head prompt at 2:30").
     # Getting the scan on arrival is the learner's own decision.
     prompt={"deadline_seconds": 50, "guard": "NOT " + PRES + " AND " + NO_CT,
             "text": "He hit his head hard and he hasn't had a CT of his head yet."},
     debrief_note=(
-      "This is the scan that shows the problem, and he needed it from the door. A loss of "
-      "consciousness, amnesia for the crash, a headache and a scalp hematoma each justify a "
-      "head CT by any decision rule, and the scooter, the speed and the missing helmet add to "
-      "it.\n\n"
+      "This is the scan that shows the problem, and he needed it from the door. He was "
+      "knocked out and cannot remember the crash, so the Canadian CT Head Rule applies to "
+      "him, and its questions have their own note. The boggy hematoma over his temple, the "
+      "speed and the missing helmet all push toward a scan, and once his GCS fell below 13 "
+      "he needed one whatever any rule said.\n\n"
       "The scan is yours to read. Scroll from the skull base to the vertex on the brain "
       "window, then look again on the bone window. His shows a biconvex collection over the "
       "right temporoparietal convexity that stops at the sutures, with a linear fracture of "
@@ -323,21 +397,47 @@ act("normal_saline_1l_bolus", ALWAYS("neutral"),
       "isotonic crystalloid to keep the systolic at 110 or more is right: low pressure is "
       "one of the two things that make a brain injury worse. Not scored." + BTF))
 
+# Owner, 29 October 2026: "Pain control." Credited by a safe analgesic before the tube.
+# Ibuprofen does not count (model default, SCOOT-SEED.md 2.16).
+PAIN = {"id": "analgesia_given", "when": "NOT " + TUBED}
+
 act("ibuprofen", ALWAYS("discouraged"),
     debrief_note=(
       "An anti-inflammatory weakens platelet function, and he is bleeding inside his head. "
-      "Acetaminophen is the analgesic for a head injury." + MEMORY))
+      "Acetaminophen is the analgesic for a head injury. It does not count as pain control "
+      "here." + MEMORY))
 
 act("acetaminophen", ALWAYS("neutral"),
-    debrief_note="A reasonable analgesic for his headache. Not scored.")
+    also_satisfies=[PAIN],
+    debrief_note=(
+      "The first analgesic for a head injury. It treats his headache without touching his "
+      "platelets or his level of consciousness. Counts as pain control." + MEMORY))
 
 for cid in ("fentanyl_bolus", "morphine_bolus"):
     act(cid, ALWAYS("neutral"),
-        also_satisfies=[{"id": "post_intubation_sedation", "when": TUBED}],
+        also_satisfies=[PAIN, {"id": "post_intubation_sedation", "when": TUBED}],
         debrief_note=(
-          "A small dose for his headache is kind. Before the tube, an opioid can blunt the "
-          "exam you are following, so give little and examine before you give it. After the "
-          "tube it counts as analgesia for the ventilator. Not scored." + MEMORY))
+          "A small dose for his headache is kind, and before the tube it counts as pain "
+          "control. An opioid can blunt the exam you are following, so examine him first and "
+          "give little at a time. After the tube it counts as analgesia for the "
+          "ventilator." + MEMORY))
+
+act("analgesia_given",
+    [{"when": AWAKE, "value": "critical"}, {"when": None, "value": "neutral"}],
+    hidden=True, display_name="Something for his headache",
+    expectation_label="Pain control",
+    # 70 s: 1:10 in easy, 3:30 in the default mode, inside the 240 s arrival phase.
+    prompt={"deadline_seconds": 70, "guard": PRES + " AND NOT " + TUBED,
+            "text": "He's asking for something for his headache."},
+    debrief_note=(
+      "Not an order. Credited by acetaminophen, fentanyl or morphine given before the "
+      "tube.\n\n"
+      "He has a pounding headache and grazed palms. Treating pain is part of the "
+      "resuscitation, and a patient in pain is harder to examine. Start with acetaminophen. "
+      "If that is not enough, a small dose of an opioid is reasonable, given after you have "
+      "examined him and in small steps, so it does not cloud the next exam. Avoid an "
+      "anti-inflammatory such as ibuprofen, which weakens platelets in a man bleeding inside "
+      "his head." + MEMORY))
 
 # =====================================================================  OTHER TREATMENTS
 
@@ -403,7 +503,12 @@ EXAM_NOTES = {
   "exam_heent": (
     "The scalp hematoma over the temple is the sign of where he hit, and the pupils are the "
     "sign of herniation. The pupils stayed equal through the decline and blew only once the "
-    "brain herniated, which is why waiting for them is waiting too long."),
+    "brain herniated, which is why waiting for them is waiting too long.\n\n"
+    "Look in the ears of every head injury. The dark blue-purple behind his right eardrum is "
+    "blood in the middle ear, a hemotympanum. It is a sign of a fracture through the base of "
+    "the skull, and under the Canadian CT Head Rule it alone calls for a scan. Battle's sign "
+    "and raccoon eyes take hours to appear, so their absence on arrival does not rule a "
+    "basal fracture out."),
   "exam_neck": (
     "No midline tenderness on arrival. After the decline his answers could not be trusted, "
     "so his neck could not be cleared by examination."),

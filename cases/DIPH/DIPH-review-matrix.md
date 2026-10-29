@@ -71,11 +71,7 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/intubate_rapid_sequence`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
-| seizing | rule 1 (phase is seizing) | plausible |
-| «any other phase» | rule 2 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/etomidate_bolus`
@@ -713,12 +709,16 @@ Single unconditional rule; nothing to enumerate.
 
 ### `exam/exam_heent`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| seizing | rule 0 (phase is seizing) &rarr; ABNORMAL: Eyes deviated and roving. Pupils 7 mm, equal, sluggish. Dry mucosa. Sa... | plausible |
-| stabilized | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Pupils 7 mm, equal, sluggish. Mucosa still dry. Roving eye movements s... | plausible |
-| stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Pupils 7 mm, equal, sluggish. Mucosa still dry. Roving eye movements s... | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Pupils 7 mm, equal, reactive. Roving eye movements. Mucosa bone dry. N... | plausible |
+| phase | paralytic_given | resolves to | reachable? |
+|---|---|---|---|
+| seizing | no | rule 1 (phase is seizing) &rarr; ABNORMAL: Eyes deviated and roving. Pupils 7 mm, equal, sluggish. Dry mucosa. Sa... | plausible |
+| seizing | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Pupils 7 mm, equal, sluggish. Eyes still, no roving movements. Dry muc... | plausible |
+| stabilized | no | rule 2 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Pupils 7 mm, equal, sluggish. Mucosa still dry. Roving eye movements s... | plausible |
+| stabilized | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Pupils 7 mm, equal, sluggish. Eyes still, no roving movements. Dry muc... | plausible |
+| stabilizing | no | rule 2 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Pupils 7 mm, equal, sluggish. Mucosa still dry. Roving eye movements s... | plausible |
+| stabilizing | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Pupils 7 mm, equal, sluggish. Eyes still, no roving movements. Dry muc... | plausible |
+| «any other phase» | no | rule 3 (default) &rarr; ABNORMAL: Pupils 7 mm, equal, reactive. Roving eye movements. Mucosa bone dry. N... | plausible |
+| «any other phase» | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Pupils 7 mm, equal, sluggish. Eyes still, no roving movements. Dry muc... | plausible |
 
 
 ### `exam/exam_neck`
@@ -769,104 +769,106 @@ Single unconditional rule; nothing to enumerate.
 
 ### `exam/exam_neuro`
 
-| phase | benzo_given | seized | propofol_bolus | propofol_infusion | resolves to | reachable? |
-|---|---|---|---|---|---|---|
-| post_ictal | no | no | no | no | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | no | no | no | yes | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | no | no | yes | no | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | no | no | yes | yes | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | no | yes | no | no | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | no | yes | no | yes | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | no | yes | yes | no | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | no | yes | yes | yes | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | yes | no | no | no | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | yes | no | no | yes | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | yes | no | yes | no | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | yes | no | yes | yes | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | yes | yes | no | no | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | yes | yes | no | yes | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | yes | yes | yes | no | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| post_ictal | yes | yes | yes | yes | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
-| seizing | no | no | no | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | no | no | no | yes | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | no | no | yes | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | no | no | yes | yes | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | no | yes | no | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | no | yes | no | yes | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | no | yes | yes | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | no | yes | yes | yes | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | yes | no | no | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | yes | no | no | yes | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | yes | no | yes | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | yes | no | yes | yes | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | yes | yes | no | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | yes | yes | no | yes | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | yes | yes | yes | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| seizing | yes | yes | yes | yes | rule 2 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
-| stabilized | no | no | no | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | no | no | no | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | no | no | yes | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | no | no | yes | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | no | yes | no | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | no | yes | no | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | no | yes | yes | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | no | yes | yes | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | yes | no | no | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | yes | no | no | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | yes | no | yes | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | yes | no | yes | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | yes | yes | no | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | yes | yes | no | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | yes | yes | yes | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilized | yes | yes | yes | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | no | no | no | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | no | no | no | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | no | no | yes | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | no | no | yes | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | no | yes | no | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | no | yes | no | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | no | yes | yes | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | no | yes | yes | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | yes | no | no | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | yes | no | no | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | yes | no | yes | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | yes | no | yes | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | yes | yes | no | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | yes | yes | no | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | yes | yes | yes | no | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| stabilizing | yes | yes | yes | yes | rule 4 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
-| wide_complex_tachycardia | no | no | no | no | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | no | no | no | yes | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | no | no | yes | no | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | no | no | yes | yes | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | no | yes | no | no | rule 0 (phase is wide_complex_tachycardia AND flag seized set AND NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)) &rarr; ABNORMAL: Still seizing. Generalized jerking, eyes deviated, not rousable. | plausible |
-| wide_complex_tachycardia | no | yes | no | yes | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | no | yes | yes | no | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | no | yes | yes | yes | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | yes | no | no | no | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | yes | no | no | yes | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | yes | no | yes | no | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | yes | no | yes | yes | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | yes | yes | no | no | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | yes | yes | no | yes | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | yes | yes | yes | no | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| wide_complex_tachycardia | yes | yes | yes | yes | rule 1 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Obtunded, responds only to pain. Pupils large. No focal deficit. | plausible |
-| «any other phase» | no | no | no | no | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | no | no | no | yes | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | no | no | yes | no | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | no | no | yes | yes | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | no | yes | no | no | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | no | yes | no | yes | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | no | yes | yes | no | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | no | yes | yes | yes | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | yes | no | no | no | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | yes | no | no | yes | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | yes | no | yes | no | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | yes | no | yes | yes | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | yes | yes | no | no | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | yes | yes | no | yes | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | yes | yes | yes | no | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
-| «any other phase» | yes | yes | yes | yes | rule 5 (default) &rarr; ABNORMAL: Agitated, disoriented, inattentive. No focal deficit. Symmetric reflex... | plausible |
+_192 combinations, exceeds the 96-row display cap. Axes: phases=['post_ictal', 'seizing', 'stabilized', 'stabilizing', 'wide_complex_tachycardia', '«any other phase»'], flags=['benzo_given', 'paralytic_given', 'seized'], studies=[], actions=['propofol_bolus', 'propofol_infusion']._
+
+| phase | benzo_given | paralytic_given | seized | propofol_bolus | propofol_infusion | resolves to | reachable? |
+|---|---|---|---|---|---|---|---|
+| post_ictal | no | no | no | no | no | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | no | no | no | no | yes | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | no | no | no | yes | no | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | no | no | no | yes | yes | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | no | no | yes | no | no | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | no | no | yes | no | yes | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | no | no | yes | yes | no | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | no | no | yes | yes | yes | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | no | yes | no | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | no | yes | no | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | no | yes | no | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | no | yes | no | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | no | yes | yes | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | no | yes | yes | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | no | yes | yes | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | no | yes | yes | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | yes | no | no | no | no | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | yes | no | no | no | yes | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | yes | no | no | yes | no | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | yes | no | no | yes | yes | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | yes | no | yes | no | no | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | yes | no | yes | no | yes | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | yes | no | yes | yes | no | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | yes | no | yes | yes | yes | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice with effort. Disoriented. Symmet... | plausible |
+| post_ictal | yes | yes | no | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | yes | yes | no | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | yes | yes | no | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | yes | yes | no | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | yes | yes | yes | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | yes | yes | yes | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | yes | yes | yes | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| post_ictal | yes | yes | yes | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | no | no | no | no | no | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | no | no | no | no | yes | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | no | no | no | yes | no | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | no | no | no | yes | yes | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | no | no | yes | no | no | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | no | no | yes | no | yes | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | no | no | yes | yes | no | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | no | no | yes | yes | yes | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | no | yes | no | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | no | yes | no | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | no | yes | no | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | no | yes | no | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | no | yes | yes | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | no | yes | yes | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | no | yes | yes | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | no | yes | yes | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | yes | no | no | no | no | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | yes | no | no | no | yes | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | yes | no | no | yes | no | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | yes | no | no | yes | yes | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | yes | no | yes | no | no | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | yes | no | yes | no | yes | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | yes | no | yes | yes | no | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | yes | no | yes | yes | yes | rule 3 (phase is seizing) &rarr; ABNORMAL: Generalized tonic-clonic seizure. Not rousable, eyes deviated, not pro... | plausible |
+| seizing | yes | yes | no | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | yes | yes | no | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | yes | yes | no | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | yes | yes | no | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | yes | yes | yes | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | yes | yes | yes | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | yes | yes | yes | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| seizing | yes | yes | yes | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | no | no | no | no | no | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | no | no | no | no | yes | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | no | no | no | yes | no | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | no | no | no | yes | yes | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | no | no | yes | no | no | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | no | no | yes | no | yes | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | no | no | yes | yes | no | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | no | no | yes | yes | yes | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | no | yes | no | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | no | yes | no | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | no | yes | no | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | no | yes | no | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | no | yes | yes | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | no | yes | yes | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | no | yes | yes | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | no | yes | yes | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | yes | no | no | no | no | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | yes | no | no | no | yes | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | yes | no | no | yes | no | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | yes | no | no | yes | yes | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | yes | no | yes | no | no | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | yes | no | yes | no | yes | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | yes | no | yes | yes | no | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | yes | no | yes | yes | yes | rule 5 (phase is stabilizing OR phase is stabilized) &rarr; ABNORMAL: Drowsy but rousable, settling. Oriented to person only. No focal defic... | plausible |
+| stabilized | yes | yes | no | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | yes | yes | no | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | yes | yes | no | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | yes | yes | no | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | yes | yes | yes | no | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | yes | yes | yes | no | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | yes | yes | yes | yes | no | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
+| stabilized | yes | yes | yes | yes | yes | rule 0 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed. No movement of any limb, no response to assess. GCS cannot ... | plausible |
 
 
 ### `exam/exam_psych`
@@ -883,28 +885,54 @@ Single unconditional rule; nothing to enumerate.
 
 ### `exam/exam_airway`
 
-| phase | airway_protected | resolves to | reachable? |
-|---|---|---|---|
-| post_ictal | no | rule 2 (phase is post_ictal) &rarr; ABNORMAL: Patent with a jaw thrust. Reduced gag, intermittent snoring. | plausible |
-| post_ictal | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
-| seizing | no | rule 1 (phase is seizing) &rarr; ABNORMAL: Not protecting her airway. Clenched teeth, secretions at the mouth. | plausible |
-| seizing | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
-| wide_complex_tachycardia | no | rule 3 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Not protecting her airway well. Snoring respirations, secretions pooli... | plausible |
-| wide_complex_tachycardia | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
-| «any other phase» | no | rule 4 (default) &rarr; normal: Patent. Talking, though not sensibly. No stridor. Dry mucosa. | plausible |
-| «any other phase» | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
+| phase | airway_protected | paralytic_given | resolves to | reachable? |
+|---|---|---|---|---|
+| post_ictal | no | no | rule 3 (phase is post_ictal) &rarr; ABNORMAL: Patent with a jaw thrust. Reduced gag, intermittent snoring. | plausible |
+| post_ictal | no | yes | rule 1 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and apneic. Needs a jaw thrust and bag-mask ventilation. | plausible |
+| post_ictal | yes | no | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
+| post_ictal | yes | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
+| seizing | no | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Not protecting her airway. Clenched teeth, secretions at the mouth. | plausible |
+| seizing | no | yes | rule 1 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and apneic. Needs a jaw thrust and bag-mask ventilation. | plausible |
+| seizing | yes | no | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
+| seizing | yes | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
+| wide_complex_tachycardia | no | no | rule 4 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Not protecting her airway well. Snoring respirations, secretions pooli... | plausible |
+| wide_complex_tachycardia | no | yes | rule 1 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and apneic. Needs a jaw thrust and bag-mask ventilation. | plausible |
+| wide_complex_tachycardia | yes | no | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
+| wide_complex_tachycardia | yes | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
+| «any other phase» | no | no | rule 5 (default) &rarr; normal: Patent. Talking, though not sensibly. No stridor. Dry mucosa. | plausible |
+| «any other phase» | no | yes | rule 1 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and apneic. Needs a jaw thrust and bag-mask ventilation. | plausible |
+| «any other phase» | yes | no | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
+| «any other phase» | yes | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: Endotracheal tube in place, cuff up. Normal capnography waveform. | plausible |
 
 
 ### `exam/exam_breath`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| post_ictal | rule 2 (phase is post_ictal) &rarr; ABNORMAL: Spontaneous, normal rate but shallow. No increased work. | plausible |
-| seizing | rule 0 (phase is seizing) &rarr; ABNORMAL: Not ventilating adequately. Irregular chest movement with the seizure. | plausible |
-| stabilized | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; normal: Normal rate, no increased work. Equal expansion. | plausible |
-| stabilizing | rule 1 (phase is stabilizing OR phase is stabilized) &rarr; normal: Normal rate, no increased work. Equal expansion. | plausible |
-| wide_complex_tachycardia | rule 3 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Rate about 22, shallow. No increased work of breathing. | plausible |
-| «any other phase» | rule 4 (default) &rarr; ABNORMAL: Rate about 25, no increased work of breathing. No accessory muscle use... | plausible |
+| phase | airway_protected | paralytic_given | resolves to | reachable? |
+|---|---|---|---|---|
+| post_ictal | no | no | rule 4 (phase is post_ictal) &rarr; ABNORMAL: Spontaneous, normal rate but shallow. No increased work. | plausible |
+| post_ictal | no | yes | rule 1 (flag paralytic_given set) &rarr; ABNORMAL: No breathing effort after the paralytic. Chest rises only with the bag... | plausible |
+| post_ictal | yes | no | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| post_ictal | yes | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| seizing | no | no | rule 2 (phase is seizing) &rarr; ABNORMAL: Not ventilating adequately. Irregular chest movement with the seizure. | plausible |
+| seizing | no | yes | rule 1 (flag paralytic_given set) &rarr; ABNORMAL: No breathing effort after the paralytic. Chest rises only with the bag... | plausible |
+| seizing | yes | no | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| seizing | yes | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| stabilized | no | no | rule 3 (phase is stabilizing OR phase is stabilized) &rarr; normal: Normal rate, no increased work. Equal expansion. | plausible |
+| stabilized | no | yes | rule 1 (flag paralytic_given set) &rarr; ABNORMAL: No breathing effort after the paralytic. Chest rises only with the bag... | plausible |
+| stabilized | yes | no | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| stabilized | yes | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| stabilizing | no | no | rule 3 (phase is stabilizing OR phase is stabilized) &rarr; normal: Normal rate, no increased work. Equal expansion. | plausible |
+| stabilizing | no | yes | rule 1 (flag paralytic_given set) &rarr; ABNORMAL: No breathing effort after the paralytic. Chest rises only with the bag... | plausible |
+| stabilizing | yes | no | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| stabilizing | yes | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| wide_complex_tachycardia | no | no | rule 5 (phase is wide_complex_tachycardia) &rarr; ABNORMAL: Rate about 22, shallow. No increased work of breathing. | plausible |
+| wide_complex_tachycardia | no | yes | rule 1 (flag paralytic_given set) &rarr; ABNORMAL: No breathing effort after the paralytic. Chest rises only with the bag... | plausible |
+| wide_complex_tachycardia | yes | no | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| wide_complex_tachycardia | yes | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| «any other phase» | no | no | rule 6 (default) &rarr; ABNORMAL: Rate about 25, no increased work of breathing. No accessory muscle use... | plausible |
+| «any other phase» | no | yes | rule 1 (flag paralytic_given set) &rarr; ABNORMAL: No breathing effort after the paralytic. Chest rises only with the bag... | plausible |
+| «any other phase» | yes | no | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
+| «any other phase» | yes | yes | rule 0 (flag airway_protected set) &rarr; ABNORMAL: On the ventilator. Equal chest rise. No spontaneous effort. | plausible |
 
 
 ### `exam/exam_circ`
@@ -924,210 +952,210 @@ Single unconditional rule; nothing to enumerate.
 
 ### `general_status`
 
-_224 combinations, exceeds the 96-row display cap. Axes: phases=['post_ictal', 'pulseless_vt', 'seizing', 'stabilized', 'stabilizing', 'wide_complex_tachycardia', '«any other phase»'], flags=['airway_protected', 'benzo_given', 'seized'], studies=[], actions=['propofol_bolus', 'propofol_infusion']._
+_448 combinations, exceeds the 96-row display cap. Axes: phases=['post_ictal', 'pulseless_vt', 'seizing', 'stabilized', 'stabilizing', 'wide_complex_tachycardia', '«any other phase»'], flags=['airway_protected', 'benzo_given', 'paralytic_given', 'seized'], studies=[], actions=['propofol_bolus', 'propofol_infusion']._
 
-| phase | airway_protected | benzo_given | seized | propofol_bolus | propofol_infusion | resolves to | reachable? |
-|---|---|---|---|---|---|---|---|
-| post_ictal | no | no | no | no | no | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | no | no | no | yes | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | no | no | yes | no | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | no | no | yes | yes | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | no | yes | no | no | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | no | yes | no | yes | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | no | yes | yes | no | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | no | yes | yes | yes | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | yes | no | no | no | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | yes | no | no | yes | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | yes | no | yes | no | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | yes | no | yes | yes | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | yes | yes | no | no | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | yes | yes | no | yes | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | yes | yes | yes | no | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | no | yes | yes | yes | yes | rule 6 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
-| post_ictal | yes | no | no | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | no | no | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | no | no | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | no | no | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | no | yes | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | no | yes | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | no | yes | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | no | yes | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | yes | no | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | yes | no | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | yes | no | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | yes | no | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | yes | yes | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | yes | yes | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | yes | yes | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| post_ictal | yes | yes | yes | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | no | no | no | no | no | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | no | no | no | yes | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | no | no | yes | no | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | no | no | yes | yes | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | no | yes | no | no | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | no | yes | no | yes | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | no | yes | yes | no | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | no | yes | yes | yes | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | yes | no | no | no | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | yes | no | no | yes | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | yes | no | yes | no | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | yes | no | yes | yes | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | yes | yes | no | no | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | yes | yes | no | yes | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | yes | yes | yes | no | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | no | yes | yes | yes | yes | rule 9 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
-| pulseless_vt | yes | no | no | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | no | no | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | no | no | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | no | no | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | no | yes | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | no | yes | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | no | yes | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | no | yes | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | yes | no | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | yes | no | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | yes | no | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | yes | no | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | yes | yes | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | yes | yes | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | yes | yes | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| pulseless_vt | yes | yes | yes | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | no | no | no | no | no | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | no | no | no | yes | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | no | no | yes | no | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | no | no | yes | yes | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | no | yes | no | no | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | no | yes | no | yes | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | no | yes | yes | no | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | no | yes | yes | yes | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | yes | no | no | no | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | yes | no | no | yes | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | yes | no | yes | no | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | yes | no | yes | yes | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | yes | yes | no | no | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | yes | yes | no | yes | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | yes | yes | yes | no | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | no | yes | yes | yes | yes | rule 4 (phase is seizing) &rarr; ABNORMAL: Generalized seizure. Unresponsive, not protecting her airway, cyanosed... | plausible |
-| seizing | yes | no | no | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | no | no | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | no | no | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | no | no | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | no | yes | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | no | yes | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | no | yes | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | no | yes | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | yes | no | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | yes | no | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | yes | no | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | yes | no | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | yes | yes | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | yes | yes | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | yes | yes | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
-| seizing | yes | yes | yes | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| phase | airway_protected | benzo_given | paralytic_given | seized | propofol_bolus | propofol_infusion | resolves to | reachable? |
+|---|---|---|---|---|---|---|---|---|
+| post_ictal | no | no | no | no | no | no | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | no | no | no | no | yes | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | no | no | no | yes | no | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | no | no | no | yes | yes | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | no | no | yes | no | no | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | no | no | yes | no | yes | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | no | no | yes | yes | no | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | no | no | yes | yes | yes | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | no | yes | no | no | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | no | yes | no | no | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | no | yes | no | yes | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | no | yes | no | yes | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | no | yes | yes | no | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | no | yes | yes | no | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | no | yes | yes | yes | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | no | yes | yes | yes | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | yes | no | no | no | no | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | yes | no | no | no | yes | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | yes | no | no | yes | no | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | yes | no | no | yes | yes | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | yes | no | yes | no | no | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | yes | no | yes | no | yes | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | yes | no | yes | yes | no | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | yes | no | yes | yes | yes | rule 7 (phase is post_ictal) &rarr; ABNORMAL: Post-ictal. Drowsy, rousable to voice, hot and flushed. Disoriented. G... | plausible |
+| post_ictal | no | yes | yes | no | no | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | yes | yes | no | no | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | yes | yes | no | yes | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | yes | yes | no | yes | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | yes | yes | yes | no | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | yes | yes | yes | no | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | yes | yes | yes | yes | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | no | yes | yes | yes | yes | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| post_ictal | yes | no | no | no | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | no | no | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | no | no | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | no | no | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | no | yes | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | no | yes | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | no | yes | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | no | yes | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | yes | no | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | yes | no | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | yes | no | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | yes | no | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | yes | yes | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | yes | yes | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | yes | yes | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | no | yes | yes | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | no | no | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | no | no | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | no | no | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | no | no | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | no | yes | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | no | yes | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | no | yes | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | no | yes | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | yes | no | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | yes | no | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | yes | no | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | yes | no | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | yes | yes | no | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | yes | yes | no | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | yes | yes | yes | no | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| post_ictal | yes | yes | yes | yes | yes | yes | rule 2 (flag airway_protected set) &rarr; ABNORMAL: Intubated and sedated. Hot to touch. | plausible |
+| pulseless_vt | no | no | no | no | no | no | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | no | no | no | no | yes | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | no | no | no | yes | no | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | no | no | no | yes | yes | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | no | no | yes | no | no | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | no | no | yes | no | yes | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | no | no | yes | yes | no | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | no | no | yes | yes | yes | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | no | yes | no | no | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | no | yes | no | no | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | no | yes | no | yes | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | no | yes | no | yes | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | no | yes | yes | no | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | no | yes | yes | no | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | no | yes | yes | yes | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | no | yes | yes | yes | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | yes | no | no | no | no | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | yes | no | no | no | yes | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | yes | no | no | yes | no | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | yes | no | no | yes | yes | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | yes | no | yes | no | no | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | yes | no | yes | no | yes | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | yes | no | yes | yes | no | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | yes | no | yes | yes | yes | rule 10 (phase is pulseless_vt) &rarr; ABNORMAL: Cardiac arrest. No pulse or breathing. Wide complexes on the monitor. | plausible |
+| pulseless_vt | no | yes | yes | no | no | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | yes | yes | no | no | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | yes | yes | no | yes | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | yes | yes | no | yes | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | yes | yes | yes | no | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | yes | yes | yes | no | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | yes | yes | yes | yes | no | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
+| pulseless_vt | no | yes | yes | yes | yes | yes | rule 3 (flag paralytic_given set) &rarr; ABNORMAL: Paralyzed and not breathing on her own. No visible movement. Hot to to... | plausible |
 
 
 ### `patient_visual`
 
-_160 combinations, exceeds the 96-row display cap. Axes: phases=['halted', 'pulseless_vt', 'seizing', 'wide_complex_tachycardia', '«any other phase»'], flags=['airway_protected', 'benzo_given', 'seized'], studies=[], actions=['propofol_bolus', 'propofol_infusion']._
+_320 combinations, exceeds the 96-row display cap. Axes: phases=['halted', 'pulseless_vt', 'seizing', 'wide_complex_tachycardia', '«any other phase»'], flags=['airway_protected', 'benzo_given', 'paralytic_given', 'seized'], studies=[], actions=['propofol_bolus', 'propofol_infusion']._
 
-| phase | airway_protected | benzo_given | seized | propofol_bolus | propofol_infusion | resolves to | reachable? |
-|---|---|---|---|---|---|---|---|
-| halted | no | no | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | no | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | no | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | no | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | no | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | no | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | no | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | no | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | yes | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | yes | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | yes | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | yes | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | yes | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | yes | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | yes | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | no | yes | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| halted | yes | no | no | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | no | no | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | no | no | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | no | no | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | no | yes | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | no | yes | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | no | yes | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | no | yes | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | yes | no | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | yes | no | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | yes | no | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | yes | no | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | yes | yes | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | yes | yes | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | yes | yes | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| halted | yes | yes | yes | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | no | no | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | no | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | no | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | no | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | no | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | no | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | no | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | no | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | yes | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | yes | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | yes | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | yes | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | yes | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | yes | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | yes | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | no | yes | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
-| pulseless_vt | yes | no | no | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | no | no | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | no | no | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | no | no | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | no | yes | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | no | yes | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | no | yes | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | no | yes | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | yes | no | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | yes | no | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | yes | no | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | yes | no | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | yes | yes | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | yes | yes | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | yes | yes | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| pulseless_vt | yes | yes | yes | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | no | no | no | no | no | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | no | no | no | yes | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | no | no | yes | no | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | no | no | yes | yes | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | no | yes | no | no | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | no | yes | no | yes | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | no | yes | yes | no | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | no | yes | yes | yes | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | yes | no | no | no | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | yes | no | no | yes | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | yes | no | yes | no | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | yes | no | yes | yes | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | yes | yes | no | no | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | yes | yes | no | yes | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | yes | yes | yes | no | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | no | yes | yes | yes | yes | rule 2 (phase is seizing) &rarr; figure: eyes open, SEIZURE | plausible |
-| seizing | yes | no | no | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | no | no | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | no | no | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | no | no | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | no | yes | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | no | yes | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | no | yes | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | no | yes | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | yes | no | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | yes | no | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | yes | no | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | yes | no | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | yes | yes | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | yes | yes | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | yes | yes | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
-| seizing | yes | yes | yes | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| phase | airway_protected | benzo_given | paralytic_given | seized | propofol_bolus | propofol_infusion | resolves to | reachable? |
+|---|---|---|---|---|---|---|---|---|
+| halted | no | no | no | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | no | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | no | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | no | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | no | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | no | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | no | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | no | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | yes | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | yes | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | yes | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | yes | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | yes | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | yes | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | yes | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | no | yes | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | no | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | no | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | no | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | no | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | no | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | no | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | no | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | no | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | yes | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | yes | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | yes | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | yes | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | yes | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | yes | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | yes | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | no | yes | yes | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| halted | yes | no | no | no | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | no | no | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | no | no | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | no | no | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | no | yes | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | no | yes | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | no | yes | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | no | yes | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | no | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | no | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | no | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | no | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | yes | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | yes | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | yes | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | no | yes | yes | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | no | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | no | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | no | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | no | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | yes | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | yes | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | yes | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | no | yes | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | no | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | no | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | no | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | no | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | yes | no | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | yes | no | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | yes | yes | no | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| halted | yes | yes | yes | yes | yes | yes | rule 0 (flag airway_protected set) &rarr; figure: eyes closed, +intubated | plausible |
+| pulseless_vt | no | no | no | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | no | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | no | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | no | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | no | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | no | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | no | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | no | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | yes | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | yes | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | yes | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | yes | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | yes | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | yes | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | yes | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | no | yes | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | no | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | no | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | no | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | no | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | no | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | no | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | no | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | no | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | yes | no | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | yes | no | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | yes | no | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | yes | no | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | yes | yes | no | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | yes | yes | no | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | yes | yes | yes | no | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
+| pulseless_vt | no | yes | yes | yes | yes | yes | rule 1 (phase is pulseless_vt OR phase is halted) &rarr; figure: eyes closed | plausible |
 
 
 ### `pupils`
@@ -1159,20 +1187,46 @@ Single unconditional rule; nothing to enumerate.
 
 ### `labs/arterial_blood_gas`
 
-| phase | bicarb_given | resolves to | reachable? |
-|---|---|---|---|
-| seizing | no | rule 0 (phase is seizing) &rarr; **pH 6.99**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 12 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
-| seizing | yes | rule 0 (phase is seizing) &rarr; **pH 6.99**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 12 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
-| «any other phase» | no | rule 2 (default) &rarr; **pH 7.28**; **pCO2 28 mmHg**; pO2 94 mmHg; **Bicarbonate 13 mEq/L**; **Lactate 3.1 mmol/L** | plausible |
-| «any other phase» | yes | rule 1 (flag bicarb_given set) &rarr; **pH 7.47**; **pCO2 30 mmHg**; **pO2 142 mmHg**; **Bicarbonate 21 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
+| phase | bicarb_given | bicarb_infusion_running | bicarb_titrated | resolves to | reachable? |
+|---|---|---|---|---|---|
+| seizing | no | no | no | rule 1 (phase is seizing) &rarr; **pH 6.99**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 12 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
+| seizing | no | no | yes | rule 1 (phase is seizing) &rarr; **pH 6.99**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 12 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
+| seizing | no | yes | no | rule 1 (phase is seizing) &rarr; **pH 6.99**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 12 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
+| seizing | no | yes | yes | rule 1 (phase is seizing) &rarr; **pH 6.99**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 12 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
+| seizing | yes | no | no | rule 0 (phase is seizing AND flag bicarb_given set) &rarr; **pH 7.16**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 18 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
+| seizing | yes | no | yes | rule 0 (phase is seizing AND flag bicarb_given set) &rarr; **pH 7.16**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 18 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
+| seizing | yes | yes | no | rule 0 (phase is seizing AND flag bicarb_given set) &rarr; **pH 7.16**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 18 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
+| seizing | yes | yes | yes | rule 0 (phase is seizing AND flag bicarb_given set) &rarr; **pH 7.16**; **pCO2 52 mmHg**; **pO2 61 mmHg**; **Bicarbonate 18 mEq/L**; **Lactate 6.4 mmol/L** | plausible |
+| «any other phase» | no | no | no | rule 5 (default) &rarr; **pH 7.28**; **pCO2 28 mmHg**; pO2 94 mmHg; **Bicarbonate 13 mEq/L**; **Lactate 3.1 mmol/L** | plausible |
+| «any other phase» | no | no | yes | rule 3 (flag bicarb_titrated set) &rarr; **pH 7.53**; **pCO2 30 mmHg**; **pO2 142 mmHg**; Bicarbonate 24 mEq/L; **Lactate 2.2 mmol/L** | plausible |
+| «any other phase» | no | yes | no | rule 2 (flag bicarb_infusion_running set) &rarr; **pH 7.55**; **pCO2 32 mmHg**; **pO2 142 mmHg**; **Bicarbonate 27 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
+| «any other phase» | no | yes | yes | rule 2 (flag bicarb_infusion_running set) &rarr; **pH 7.55**; **pCO2 32 mmHg**; **pO2 142 mmHg**; **Bicarbonate 27 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
+| «any other phase» | yes | no | no | rule 4 (flag bicarb_given set) &rarr; **pH 7.47**; **pCO2 30 mmHg**; **pO2 142 mmHg**; **Bicarbonate 21 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
+| «any other phase» | yes | no | yes | rule 3 (flag bicarb_titrated set) &rarr; **pH 7.53**; **pCO2 30 mmHg**; **pO2 142 mmHg**; Bicarbonate 24 mEq/L; **Lactate 2.2 mmol/L** | plausible |
+| «any other phase» | yes | yes | no | rule 2 (flag bicarb_infusion_running set) &rarr; **pH 7.55**; **pCO2 32 mmHg**; **pO2 142 mmHg**; **Bicarbonate 27 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
+| «any other phase» | yes | yes | yes | rule 2 (flag bicarb_infusion_running set) &rarr; **pH 7.55**; **pCO2 32 mmHg**; **pO2 142 mmHg**; **Bicarbonate 27 mEq/L**; **Lactate 2.2 mmol/L** | plausible |
 
 
 ### `labs/venous_blood_gas`
 
-| phase | bicarb_given | resolves to | reachable? |
-|---|---|---|---|
-| «any phase» | no | rule 1 (default) &rarr; **pH 7.25**; **pCO2 31 mmHg**; **Bicarbonate 13 mEq/L** | plausible |
-| «any phase» | yes | rule 0 (flag bicarb_given set) &rarr; pH 7.41; **pCO2 34 mmHg**; **Bicarbonate 21 mEq/L** | plausible |
+| phase | bicarb_given | bicarb_infusion_running | bicarb_titrated | resolves to | reachable? |
+|---|---|---|---|---|---|
+| seizing | no | no | no | rule 1 (phase is seizing) &rarr; **pH 6.94**; **pCO2 58 mmHg**; **Bicarbonate 12 mEq/L** | plausible |
+| seizing | no | no | yes | rule 1 (phase is seizing) &rarr; **pH 6.94**; **pCO2 58 mmHg**; **Bicarbonate 12 mEq/L** | plausible |
+| seizing | no | yes | no | rule 1 (phase is seizing) &rarr; **pH 6.94**; **pCO2 58 mmHg**; **Bicarbonate 12 mEq/L** | plausible |
+| seizing | no | yes | yes | rule 1 (phase is seizing) &rarr; **pH 6.94**; **pCO2 58 mmHg**; **Bicarbonate 12 mEq/L** | plausible |
+| seizing | yes | no | no | rule 0 (phase is seizing AND flag bicarb_given set) &rarr; **pH 7.11**; **pCO2 58 mmHg**; **Bicarbonate 18 mEq/L** | plausible |
+| seizing | yes | no | yes | rule 0 (phase is seizing AND flag bicarb_given set) &rarr; **pH 7.11**; **pCO2 58 mmHg**; **Bicarbonate 18 mEq/L** | plausible |
+| seizing | yes | yes | no | rule 0 (phase is seizing AND flag bicarb_given set) &rarr; **pH 7.11**; **pCO2 58 mmHg**; **Bicarbonate 18 mEq/L** | plausible |
+| seizing | yes | yes | yes | rule 0 (phase is seizing AND flag bicarb_given set) &rarr; **pH 7.11**; **pCO2 58 mmHg**; **Bicarbonate 18 mEq/L** | plausible |
+| «any other phase» | no | no | no | rule 5 (default) &rarr; **pH 7.25**; **pCO2 31 mmHg**; **Bicarbonate 13 mEq/L** | plausible |
+| «any other phase» | no | no | yes | rule 3 (flag bicarb_titrated set) &rarr; **pH 7.47**; **pCO2 34 mmHg**; Bicarbonate 24 mEq/L | plausible |
+| «any other phase» | no | yes | no | rule 2 (flag bicarb_infusion_running set) &rarr; **pH 7.52**; **pCO2 34 mmHg**; **Bicarbonate 27 mEq/L** | plausible |
+| «any other phase» | no | yes | yes | rule 2 (flag bicarb_infusion_running set) &rarr; **pH 7.52**; **pCO2 34 mmHg**; **Bicarbonate 27 mEq/L** | plausible |
+| «any other phase» | yes | no | no | rule 4 (flag bicarb_given set) &rarr; pH 7.41; **pCO2 34 mmHg**; **Bicarbonate 21 mEq/L** | plausible |
+| «any other phase» | yes | no | yes | rule 3 (flag bicarb_titrated set) &rarr; **pH 7.47**; **pCO2 34 mmHg**; Bicarbonate 24 mEq/L | plausible |
+| «any other phase» | yes | yes | no | rule 2 (flag bicarb_infusion_running set) &rarr; **pH 7.52**; **pCO2 34 mmHg**; **Bicarbonate 27 mEq/L** | plausible |
+| «any other phase» | yes | yes | yes | rule 2 (flag bicarb_infusion_running set) &rarr; **pH 7.52**; **pCO2 34 mmHg**; **Bicarbonate 27 mEq/L** | plausible |
 
 
 ### `labs/lactate`

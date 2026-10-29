@@ -725,7 +725,7 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
   stroke-linejoin:round; flex:none}
 
 /* ---- top bar ---- */
-.db-top{flex:none; position:relative; z-index:6; display:flex; align-items:center; gap:12px;
+.db-top{flex:none; position:relative; z-index:50; display:flex; align-items:center; gap:12px;
   height:64px; padding:0 clamp(14px,3vw,32px); background:var(--solid);
   border-bottom:1px solid var(--rule2); box-shadow:0 6px 20px -18px var(--shadow)}
 .db-brand{display:flex; align-items:center; gap:10px; white-space:nowrap}
@@ -800,8 +800,8 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 .ds-svg .t{fill:none; stroke:rgba(226,238,244,.16)}
 .ds-svg .f{fill:none; stroke:#4CC28F; stroke-linecap:round; transition:stroke-dasharray .9s var(--ease)}
 .ds-num{position:absolute; inset:0 0 14px; display:flex; align-items:center; justify-content:center;
-  font-family:var(--mono); font-size:26px; font-weight:600; color:#F5F9FB}
-.ds-num small{font-size:13px; color:rgba(226,238,244,.6); margin-left:1px}
+  font-family:var(--mono); font-size:22px; font-weight:600; color:#F5F9FB}
+.ds-num small{font-size:12px; color:rgba(226,238,244,.6); margin-left:1px}
 .ds-lab{position:absolute; left:0; right:0; bottom:26px; text-align:center; font-size:9px; letter-spacing:.08em;
   text-transform:uppercase; color:rgba(226,238,244,.7)}
 .ds-tiles{display:grid; grid-template-columns:repeat(2,minmax(118px,auto)); gap:10px 24px}
@@ -1173,6 +1173,84 @@ body.px-on{overflow:hidden}
 body.px-on .px-float,body.px-on .ms-float{visibility:hidden}
 @media (max-width:560px){ .px-float{top:72px; right:calc(clamp(14px,2vw,28px) + 54px + 12px)} .ms-float[hidden] ~ .px-float{right:clamp(14px,2vw,28px)} .px-box{width:54px; height:54px; border-radius:15px} .px-lab{display:none} }
 
+/* ---- Ambulance Run: the button in the bottom left corner of the case list and its window (engine/arcade.js, 29 October 2026) ---- */
+.ar-float{position:fixed; z-index:40; left:clamp(14px,2vw,28px); bottom:clamp(14px,2vw,28px)}
+.ar-float[hidden]{display:none}
+.ar-box{display:grid; place-items:center; width:62px; height:62px; padding:0; border:0; border-radius:50%; cursor:pointer;
+  background:var(--solid); box-shadow:0 16px 34px -14px rgba(10,30,45,.6), 0 0 0 1px var(--rule2);
+  transition:transform .25s cubic-bezier(.2,.9,.3,1.2), box-shadow .25s ease}
+.ar-box svg{width:40px; height:30px; display:block}
+.ar-box:hover{transform:translateY(-2px) rotate(-4deg) scale(1.06); box-shadow:0 20px 40px -14px rgba(10,30,45,.65), 0 0 0 1px var(--actb)}
+.ar-box:focus-visible{outline:2px solid var(--act); outline-offset:3px}
+.ar-box:hover .ar-l1{animation:arblink .5s steps(1) infinite}
+.ar-box:hover .ar-l2{animation:arblink .5s steps(1) infinite reverse}
+@keyframes arblink{0%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.ar-box:hover{transform:none}.ar-box:hover .ar-l1,.ar-box:hover .ar-l2{animation:none}}
+body.px-on .ar-float,body.ar-on .ar-float{visibility:hidden}
+body.ar-on{overflow:hidden}
+/* Speed: no blur behind the game window, and the case list under it is not drawn while it is open. */
+#ar-modal .ms-back{-webkit-backdrop-filter:none; backdrop-filter:none; background:rgba(8,20,30,.82)}
+body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-float, body.ar-on .ms-float{visibility:hidden}
+.ar-card{width:min(980px,100%); background:var(--solid)}
+.ar-in{padding:20px 22px 16px}
+.ar-head{display:flex; align-items:center; gap:12px; padding-right:44px; margin-bottom:12px}
+.ar-head h2{margin:0; font-family:var(--title); font-size:22px}
+.ar-snd{margin-left:auto; font:inherit; font-size:12px; font-weight:650; color:var(--ink2); background:transparent; border:1px solid var(--rule);
+  border-radius:999px; padding:4px 12px; cursor:pointer}
+.ar-snd[aria-pressed="true"]{color:var(--act); border-color:var(--actb); background:var(--actl)}
+.ar-snd:focus-visible{outline:2px solid var(--act); outline-offset:2px}
+.ar-grid{display:grid; grid-template-columns:minmax(0,1fr) 230px; gap:16px; align-items:start}
+.ar-stage{position:relative; border-radius:14px; overflow:hidden; background:#0b1840; aspect-ratio:4/3; outline:none;
+  box-shadow:0 0 0 1px var(--rule2); touch-action:none; -webkit-user-select:none; user-select:none}
+.ar-stage canvas{display:block; width:100%; height:100%; image-rendering:pixelated; image-rendering:crisp-edges}
+.ar-hud{position:absolute; left:10px; right:10px; top:8px; display:flex; justify-content:space-between; gap:8px; pointer-events:none}
+.ar-cell{font-family:var(--mono); font-size:clamp(10px,1.5vw,13px); line-height:1.15; color:#fff; text-transform:uppercase; letter-spacing:.06em;
+  background:rgba(7,14,36,.78); border:2px solid #d33a2c; padding:3px 8px; text-align:center; min-width:92px; font-variant-numeric:tabular-nums}
+.ar-cell b{display:block; font-weight:700; color:#ffd5cf; font-size:.82em}
+.ar-mid{min-width:64px}
+.ar-banner{position:absolute; left:50%; bottom:10px; transform:translateX(-50%); font-family:var(--mono); font-weight:700; text-transform:uppercase;
+  letter-spacing:.1em; font-size:clamp(10px,1.6vw,14px); color:#d33a2c; background:#f6f6f2; padding:3px 12px; opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap}
+.ar-banner.on{opacity:1}
+.ar-over{position:absolute; inset:0; display:grid; place-items:center; padding:14px; background:rgba(5,10,28,.42)}
+.ar-over[hidden]{display:none}
+.ar-panel{width:min(360px,100%); text-align:center; color:#fff; background:rgba(7,14,36,.9); border:2px solid #d33a2c; border-radius:6px; padding:16px 18px}
+.ar-panel p{margin:0 0 10px; font-size:13.5px; line-height:1.45; color:#dfe6f5}
+.ar-big{font-family:var(--mono); font-weight:800; text-transform:uppercase; letter-spacing:.12em; font-size:22px!important; color:#fff!important}
+.ar-final b{font-family:var(--mono); font-size:18px; color:#fff}
+.ar-final span{display:block; font-size:12px; color:#9fb0d0}
+.ar-go{font:inherit; font-weight:750; font-size:14px; color:#fff; background:#d33a2c; border:0; border-radius:999px; padding:8px 22px; cursor:pointer}
+.ar-go:hover{background:#e04a3c}
+.ar-go:focus-visible{outline:2px solid #fff; outline-offset:3px}
+.ar-form{margin:0 0 6px; text-align:left}
+.ar-form label{display:block; font-size:12.5px; color:#dfe6f5; margin-bottom:6px}
+.ar-row{display:flex; gap:6px}
+.ar-row input{flex:1; min-width:0; font-family:var(--mono); font-size:15px; text-transform:uppercase; padding:6px 8px; border-radius:6px;
+  border:2px solid #f2c12e; background:#0b1430; color:#fff}
+.ar-row input:focus{outline:none; border-color:#fff}
+.ar-post{font:inherit; font-weight:700; font-size:13px; color:#0b1430; background:#f2c12e; border:0; border-radius:6px; padding:0 14px; cursor:pointer}
+.ar-post:disabled{opacity:.6; cursor:progress}
+.ar-msg{min-height:1em; font-size:12.5px!important; color:#ffd36b!important}
+.ar-note{font-size:12.5px!important; color:#ffd36b!important}
+.ar-touch{display:none}
+@media (pointer:coarse){
+  .ar-touch{display:flex; position:absolute; left:0; right:0; bottom:38px; justify-content:space-between; padding:0 10px; pointer-events:none}
+  .ar-touch button{pointer-events:auto; width:64px; height:64px; border-radius:50%; border:2px solid rgba(255,255,255,.7); background:rgba(7,14,36,.45);
+    color:#fff; font-size:24px; touch-action:none}
+}
+.ar-board{border:1px solid var(--rule); border-radius:14px; padding:12px 14px}
+.ar-board h3{margin:0 0 8px; font-size:14px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink2)}
+.ar-board ol{list-style:none; margin:0; padding:0; display:grid; gap:2px}
+.ar-board li{display:grid; grid-template-columns:22px 1fr auto; gap:6px; align-items:baseline; font-size:13.5px; padding:4px 6px; border-radius:7px}
+.ar-board li.mine{background:var(--actl); font-weight:650}
+.ar-rk{font-family:var(--mono); color:var(--ink3); font-size:12px}
+.ar-nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-transform:uppercase; font-family:var(--mono); font-size:13px}
+.ar-sc{font-family:var(--mono); font-variant-numeric:tabular-nums}
+.ar-board li.ar-empty{display:block; color:var(--ink3); font-size:13px}
+.ar-fine{margin:10px 0 0; font-size:11.5px; color:var(--ink3)}
+.ar-keys{margin:10px 0 0; font-size:12.5px; color:var(--ink2)}
+.ar-live{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+@media (max-width:760px){ .ar-grid{grid-template-columns:1fr} .ar-in{padding:16px 14px 12px} .ar-box{width:54px; height:54px} .ar-box svg{width:34px; height:26px} }
+
 /* ---- more runs in progress: the control on the Continue card and its dialog (28 October 2026) ---- */
 .cx .hm-ca{flex-wrap:wrap; gap:8px 14px}
 .cx-more{margin-left:auto; display:inline-flex; align-items:center; gap:6px; font:inherit; font-size:12px; font-weight:650;
@@ -1205,6 +1283,42 @@ body.px-on .px-float,body.px-on .ms-float{visibility:hidden}
   .rp-row{flex-wrap:wrap}
   .rp-a{flex-direction:row; align-items:center; width:100%; justify-content:flex-end; gap:14px}
 }
+
+/* ---- credits and licenses (29 October 2026) ---- */
+.wl-credits,.ld-credits{font:inherit; font-size:11.5px; color:var(--ink3); background:none; border:0; padding:0;
+  text-decoration:underline; text-underline-offset:2px; cursor:pointer}
+.wl-credits:hover,.ld-credits:hover{color:var(--ink)}
+.ld-credits{font-size:inherit}
+.crd-modal{position:fixed; inset:0; z-index:900; display:grid; place-items:center; padding:20px}
+.crd-modal[hidden]{display:none}
+.crd-back{position:absolute; inset:0; background:rgba(8,20,30,.5)}
+.crd-card{position:relative; display:flex; flex-direction:column; width:min(760px,100%); max-height:calc(100vh - 40px);
+  background:var(--solid); color:var(--ink); border:1px solid var(--rule2); border-radius:14px;
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.55)}
+.crd-head{display:flex; align-items:center; gap:12px; padding:18px 22px 14px; border-bottom:1px solid var(--rule2)}
+.crd-head h2{margin:0; font-family:var(--title); font-size:20px; font-weight:750; letter-spacing:-.01em}
+.crd-x{margin-left:auto; width:36px; height:36px; display:grid; place-items:center; border-radius:50%;
+  border:1px solid var(--rule2); background:var(--solid); color:var(--ink2); cursor:pointer}
+.crd-x:hover{background:var(--sunk); color:var(--ink)}
+.crd-body{overflow:auto; padding:6px 22px 22px}
+.crd-intro{margin:12px 0 4px; font-size:13.5px; color:var(--ink2); max-width:none}
+.crd-sec h3{margin:22px 0 4px}
+.crd-item{padding:12px 0; border-top:1px solid var(--rule2)}
+.crd-sec h3 + .crd-item{border-top:0}
+.crd-top{display:flex; align-items:baseline; gap:6px 14px; flex-wrap:wrap}
+.crd-name{font-size:15px; font-weight:700}
+.crd-name a,.crd-lic a{color:inherit; text-decoration:underline; text-decoration-color:var(--rule); text-underline-offset:3px}
+.crd-name a:hover,.crd-lic a:hover{text-decoration-color:currentColor}
+.crd-lic{margin-left:auto; font-family:var(--mono); font-size:11.5px; color:var(--ink2)}
+.crd-by{margin-top:2px; font-size:12.5px; color:var(--ink3)}
+.crd-use{margin:6px 0 0; font-size:13.5px; line-height:1.5; color:var(--ink2); max-width:none}
+.crd-notice{margin:6px 0 0; font-family:var(--mono); font-size:11.5px; line-height:1.55; color:var(--ink2); max-width:none}
+.crd-full{margin-top:8px}
+.crd-full summary{cursor:pointer; font-size:12.5px; color:var(--act); width:max-content}
+.crd-full pre{margin:8px 0 0; max-height:260px; overflow:auto; padding:12px 14px; border-radius:8px; background:var(--sunk);
+  font-family:var(--mono); font-size:11px; line-height:1.55; white-space:pre-wrap; color:var(--ink2)}
+.crd-x:focus-visible,.crd-full summary:focus-visible,.crd-card a:focus-visible,.wl-credits:focus-visible,.ld-credits:focus-visible{
+  outline:2px solid var(--act); outline-offset:2px}
 
 /* ---- the logo in the bar ---- */
 .db-logo{display:flex; align-items:center}
@@ -1282,7 +1396,10 @@ body.px-on .px-float,body.px-on .ms-float{visibility:hidden}
 .wl-lock{flex:none; width:13px; height:13px; color:var(--ink3)}
 .wl-state{flex:none; width:7px; height:7px; border-radius:50%; background:#D9A441}
 .wl-state.ok{background:var(--ok)}
-.dc-main{display:flex; gap:12px; align-items:center}
+.dc-main{display:flex; gap:12px; align-items:flex-start}
+/* The age and sex sit under the silhouette (author instruction, 29 October 2026). */
+.dc-who{flex:none; display:flex; flex-direction:column; align-items:center; gap:6px}
+.dc-ag{font-family:var(--mono); font-size:12px; line-height:1; color:var(--ink2); white-space:nowrap; font-variant-numeric:tabular-nums}
 .wl-face{flex:none; width:40px; height:40px; border-radius:50%; background:rgba(21,48,66,.08);
   box-shadow:inset 0 0 0 1px var(--rule2); overflow:hidden; position:relative}
 /* mask rather than a coloured image, so the silhouette follows the theme */
@@ -3136,6 +3253,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   <footer class="ld-foot">
     <div id="ld-legal"></div>
     <div>Cases are drafts under clinical review and are not for patient care.</div>
+    <div><button type="button" class="ld-credits" data-credits="1">Credits and licenses</button></div>
   </footer>
 
   <!-- The demo's twelve-lead (owner instruction, 28 October 2026). engine/landing.js opens it
@@ -3198,6 +3316,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
         <a href="#" role="menuitem" data-nav="diagnoses">Diagnosis catalog</a>
         <hr>
         <a href="#" role="menuitem" data-nav="review">Review artifacts</a>
+        <a href="#" role="menuitem" data-credits="1">Credits and licenses</a>
         <div class="sub">Pacing is chosen when a case starts.</div>
       </div>
     </div>
@@ -3209,6 +3328,9 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   <!-- Procedures: a box under the badge and its window (engine/procedures.js, 28 October 2026). -->
   <div class="px-float" id="px-float" hidden></div>
   <div class="ms-modal" id="px-modal" hidden></div>
+  <!-- Ambulance Run: a button in the bottom left corner and its window (engine/arcade.js, 29 October 2026). -->
+  <div class="ar-float" id="ar-float" hidden></div>
+  <div class="ms-modal" id="ar-modal" hidden></div>
 
   <div class="db-scroll" id="db-scroll">
     <section class="wl-hero">
@@ -3242,6 +3364,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
       <footer class="wl-foot">
         <span class="note" id="pk-warn"></span>
         <span class="note" id="pk-legal"></span>
+        <button type="button" class="wl-credits" data-credits="1">Credits and licenses</button>
         <span class="ver">v0.6</span>
       </footer>
     </div>
@@ -3694,6 +3817,10 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
      build only and run on first use. The site loads the same code from its own file. -->
 <script type="text/plain" id="px-code">__PX_CODE__</script>
 <!-- The procedures: whole packs in the local build, stubs in the site. -->
+<!-- Credits and licenses (engine/credits.json, with each license's text added by the build).
+     ui.js CREDITS draws the dialog. -->
+<div class="crd-modal" id="creditsview" hidden></div>
+<script type="application/json" id="credits-data">__CREDITS_JSON__</script>
 <script type="application/json" id="procedures-data">__PROCEDURES_JSON__</script>
 <script type="application/json" id="shared-data">__SHARED_JSON__</script>
 <script type="application/json" id="cases-data">__CASES_JSON__</script>

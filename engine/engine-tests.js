@@ -408,8 +408,11 @@ section('time-guarded transitions');
          the validator cannot see, which is the prompt cap, and the cap can only suppress
          a prompt in a phase somebody is standing in. */
       if (idle.phaseEntry[phase] === undefined) { offPath.push(phase); continue; }
-      const flags = [...(t.when.match(/flag ([a-z0-9_]+) set/g) || [])]
-        .map(x => x.replace('flag ', '').replace(' set', ''));
+      /* Only the flags the guard waits on not being set make it a deterioration on
+         inaction. A flag the guard needs SET is the resident's own act, and the rule is its
+         delayed consequence (29 October 2026: CHFE's fluid bolus before the tube). */
+      const flags = [...(t.when.match(/NOT\s+flag ([a-z0-9_]+) set/g) || [])]
+        .map(x => x.replace(/^NOT\s+flag /, '').replace(' set', ''));
       for (const f of flags) {
         const setters = Object.keys(A).filter(id => (A[id].flags_set || []).includes(f));
         /* A flag only a transition grants (27 October 2026) is bookkeeping, not something
@@ -2162,6 +2165,27 @@ section('intubation care is never graded');
     chk(PACK.prefix + ': ' + f.id + ' (graded false) is never an open obligation' + (asked ? ', and was asked' : ''),
         !st.fuOutstanding.has(f.id));
   }
+}
+
+section('not telling a learner they missed what did not matter (29 October 2026)');
+{
+  /* Expectation credit: a catalog entry, once taken, meets the expectation of the entries
+     catalog/expectation-credit.json lists under it. Checked for every such action this case
+     binds that can be taken on its own at the first second. */
+  let n = 0;
+  for (const id in A) {
+    const a = A[id];
+    if (!(a.credit_targets || []).length || a.covered_by) continue;
+    const st = fold(mk([[1, id]]), 2);
+    if (!st.taken.has(id)) continue;
+    n++;
+    chk(PACK.prefix + ': ' + id + ' meets the expectation of ' + a.credit_targets.join(', '),
+        a.credit_targets.every(x => st.satisfied.has(x)));
+  }
+  console.log('  note ' + n + ' credited actions checked');
+  /* A phase's recommended actions are expected only after 30 seconds in it. */
+  chk(PACK.prefix + ': nothing recommended is expected in the first seconds',
+      fold([], 5).recommendedExpected.size === 0, [...fold([], 5).recommendedExpected].join());
 }
 
 /* ================= case pack assertions ================= */

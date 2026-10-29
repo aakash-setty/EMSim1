@@ -58,7 +58,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 3, so o
 
 - guard: `NOT flag abx_given set`
 - destination vitals: HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2
-- narration: “The spots on her ankles have joined up into patches while we've been standing here, and there are new ones on her forearms. She's oozing round the cannula site now too.”
+- narration: “The spots on her ankles have joined up into patches while we've been standing here, and there are new ones on her forearms. She's oozing around the cannula site now too.”
 - author rationale: Untreated meningococcal bacteremia progresses. Reachable only when glucocorticoid has been replaced, because the rule above it catches every patient who has not had it.
 
 Prompts in this phase that set abx_given, which is what the fairness rule requires:
@@ -183,7 +183,7 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 |---|---|---|---|---|
 | `presentation` | 90s | `adrenal_crisis` | HR 136, BP 88/54, RR 28, SpO2 97%, T 39.0 | “She's had the fluid and her pressure's come down, not up. She's still cold and she's harder to rouse.” |
 | `presentation` | 240s | `adrenal_crisis` | HR 136, BP 88/54, RR 28, SpO2 97%, T 39.0 | “She's harder to rouse than when she came in, doctor, and she's gone a worse color. Her pressure's come down too. I don't think she's holding.” |
-| `presentation` | 240s | `progressive_meningococcemia` | HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2 | “The spots on her ankles have joined up into patches while we've been standing here, and there are new ones on her forearms. She's oozing round the cannula site now too.” |
+| `presentation` | 240s | `progressive_meningococcemia` | HR 140, BP 84/50, RR 30, SpO2 97%, T 39.2 | “The spots on her ankles have joined up into patches while we've been standing here, and there are new ones on her forearms. She's oozing around the cannula site now too.” |
 | `adrenal_crisis` | 210s | `frank_septic_shock` | HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8 | “Her pressure's in the seventies now and she's not answering me properly. I can't feel a radial pulse on either side.” |
 | `progressive_meningococcemia` | 210s | `frank_septic_shock` | HR 150, BP 70/42, RR 32, SpO2 95%, T 38.8 | “The purpura is spreading up both legs and onto her belly, and she's stopped answering me. Her pressure is seventy over forty.” |
 | `frank_septic_shock` | 300s | `cardiac_arrest` | HR 26, BP 44/24, RR 4, SpO2 58%, T 38.2 | “She's lost her output. No pulse. I'm starting compressions.” |

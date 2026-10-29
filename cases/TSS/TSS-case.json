@@ -94,8 +94,8 @@
  ],
  "metadata": {
   "case_number": 5,
-  "working_title": "22-year-old woman, fainted at home with a fever and a rash, walked in with her roommate",
-  "chief_complaint_patient_voice": "I fainted in the shower. I've had a fever for two days and now I'm red all over.",
+  "working_title": "22-year-old woman, fainted at home after two days of fever, vomiting and diarrhea, now red all over",
+  "chief_complaint_patient_voice": "I fainted in the shower. I've had a fever and a stomach bug for two days and now I'm red all over.",
   "final_diagnosis": "Menstrual staphylococcal toxic shock syndrome from a tampon retained for about four days, with septic shock, acute kidney injury, thrombocytopenia, transaminitis and early rhabdomyolysis. Blood cultures are expected to stay negative, as they usually do in staphylococcal toxic shock.",
   "target_level": [
    "medical_student",
@@ -104,7 +104,7 @@
   ],
   "estimated_runtime_seconds": 600,
   "learning_objectives": [
-   "Recognize shock in a young, talking patient from the heart rate, the blood pressure, the capillary refill and the lactate, and do not let a plausible story of flu and a sunburn explain them away.",
+   "Recognize shock in a young, talking patient from the heart rate, the blood pressure, the capillary refill and the lactate, and do not let a plausible story of a stomach bug and a sunburn explain them away.",
    "In fever, rash and hypotension with no clear source, ask about menstruation and tampon use and do a pelvic examination.",
    "Remove the source. A retained tampon is found and removed at the bedside, and nothing else in the resuscitation replaces that.",
    "Give about 30 mL/kg of crystalloid, reassess, and start norepinephrine when the mean arterial pressure stays under 65 after fluid.",
@@ -121,7 +121,7 @@
    "location": "patient_room",
    "line": "Walked in with her roommate after fainting at home. Triaged as fever and rash and placed in a room."
   },
-  "complaint": "Fainting, fever and rash",
+  "complaint": "Fainting, fever, vomiting and rash",
   "category": "Infectious disease",
   "library": {
    "tempo": "minutes: the shock progresses without fluid",
@@ -137,12 +137,12 @@
   "age": 22,
   "sex": "female",
   "weight_kg": 62,
-  "background": "Graduate student, lives with one roommate. No past medical history. Wisdom teeth removed at eighteen and no other surgery. Takes a combined oral contraceptive pill. She took ibuprofen yesterday, two tablets a couple of times, and nothing else. No allergies. Does not smoke, drinks socially, uses no drugs.\n\nHer period started five days ago. She uses super-absorbency tampons. Four days ago she put one in before an evening out, came home late, and did not take it out. She believes her period has ended and has not thought about the tampon since. Two days ago she developed fever, chills, muscle aches and a sore throat, which she puts down to the flu. She has no vomiting and no diarrhea, and she has barely eaten or drunk since. Yesterday she took her temperature and it was 102. The same day she spent an hour at the beach and blames her red skin on that. This morning she fainted in the shower, for a few seconds by her roommate's account and without hitting her head, and her roommate drove her in. Rewritten on 11 October 2026 on author instruction: she presents fainting, febrile and with a rash, not with vomiting and diarrhea.",
+  "background": "Graduate student, lives with one roommate. No past medical history. Wisdom teeth removed at eighteen and no other surgery. Takes a combined oral contraceptive pill. She took ibuprofen yesterday, two pills a couple of times, and nothing else. No allergies. Does not smoke, drinks socially, uses no drugs.\n\nHer period started five days ago. She uses super-absorbency tampons. Four days ago she put one in before an evening out, came home late, and did not take it out. She believes her period has ended and has not thought about the tampon since. Two days ago she developed fever, chills, muscle aches and a sore throat. By Friday morning she was vomiting, and watery diarrhea started the same day. She puts it all down to a stomach flu, and she has kept almost nothing down since. Yesterday she took her temperature and it was 102. The same day she spent an hour at the beach and blames her red skin on that. This morning she fainted in the shower, for a few seconds by her roommate's account and without hitting her head, and her roommate drove her in. Rewritten on 11 October 2026 on author instruction: she presents fainting, febrile and with a rash. Vomiting and diarrhea restored on 29 October 2026 on author instruction, as she would most often have them (TSS-SEED.md, What a person decided).",
   "presenting_vitals_source": "Inherited from phase 'presentation'. Measured at triage.",
-  "presenting_appearance": "A young woman sitting up on the bed, talking in full sentences and apologizing for coming in. She is flushed red all over and her lips are dry. She does not look as sick as her numbers.",
-  "ems_handover_text": "Twenty-two year old woman, two days of fever, chills and body aches. She thinks it is the flu. Fainted in the shower this morning, out for a few seconds by her roommate's account, no head strike. Heart rate 128 and pressure 94 over 58 at triage, temperature 39.4. She looks sunburned and says she was at the beach yesterday. Walking, talking, roommate with her.",
-  "arrival_handover": "Twenty-two year old, fever for two days and red all over since yesterday. She fainted in the shower this morning and her roommate drove her in.",
-  "handover_authoring_note": "Section 2.3. Two sentences, 26 words, in a triage nurse's voice. No vital sign, no past history, no medication, no pertinent negative, and no diagnosis in clinical or lay words. Rewritten on 11 October 2026: the presentation is fainting, fever and a rash. The period is left for the learner to find. The earlier wording repeated her 'something she ate', a recorded exception to section 11.5 that no longer applies."
+  "presenting_appearance": "A young woman sitting up on the bed, talking in full sentences and apologizing for coming in. She is flushed red all over, her lips are dry, and she keeps a vomit bag in her lap. She does not look as sick as her numbers.",
+  "ems_handover_text": "Twenty-two year old woman, two days of fever, chills, body aches, vomiting and diarrhea. She thinks it is a stomach flu. Fainted in the shower this morning, out for a few seconds by her roommate's account, no head strike. Heart rate 128 and pressure 94 over 58 at triage, temperature 39.4. She looks sunburned and says she was at the beach yesterday. Walking, talking, roommate with her.",
+  "arrival_handover": "Twenty-two year old, two days of fever, vomiting and diarrhea, and red all over since yesterday. She fainted in the shower this morning and her roommate drove her in.",
+  "handover_authoring_note": "Section 2.3. Two sentences, 29 words, in a triage nurse's voice. No vital sign, no past history, no medication, no pertinent negative, and no diagnosis in clinical or lay words. Rewritten on 11 October 2026: the presentation is fainting, fever and a rash. Vomiting and diarrhea added back on 29 October 2026 (author instruction). The period is left for the learner to find. The earlier wording repeated her 'something she ate', a recorded exception to section 11.5 that no longer applies."
  },
  "phase_notes": {
   "count_justification": "Six clinical phases, the ceiling the authoring document set at the time, and one terminal. They are the natural history (compensated, transient response to fluid, hypotensive) crossed with what the learner has done about it (a vasopressor with the source in, the source out) plus one deterioration for a learner who does neither.",
@@ -155,7 +155,7 @@
    "id": "presentation",
    "label": "Compensated shock, looks well",
    "short_label": "on arrival",
-   "clinical_description": "Alert, talking, flushed and febrile. Tachycardic with a low-normal pressure and a narrow margin. Capillary refill is slow and the lactate is raised. She has had nothing but sips for two days and has a retained tampon nobody knows about.",
+   "clinical_description": "Alert, talking, flushed and febrile. Tachycardic with a low-normal pressure and a narrow margin. Capillary refill is slow and the lactate is raised. She has kept almost nothing down for two days and has a retained tampon nobody knows about.",
    "vitals": {
     "heart_rate": 128,
     "systolic_bp": 94,
@@ -192,7 +192,7 @@
      "measured_from": "guard_true",
      "to": "hypotensive",
      "narration": "She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure has dropped.",
-     "debrief_note": "She was discharged with a heart rate over 110 and a fever, and she fainted when she stood up. She is both dry and vasodilated. A young adult in that state holds a blood pressure with her heart rate, and standing takes that away.\n\nThe trap was the story. The flu and a day at the beach seem to explain the fever and the red skin, and fluid makes most people feel better. They do not explain a fit 22 year old who fainted, with a low pressure and slow capillary refill. A patient you are about to send home should have vital signs you would accept at home.",
+     "debrief_note": "She was discharged with a heart rate over 110 and a fever, and she fainted when she stood up. She is both dry and vasodilated. A young adult in that state holds a blood pressure with her heart rate, and standing takes that away.\n\nThe trap was the story. A stomach bug and a day at the beach seem to explain the fever and the red skin, and fluid makes most people feel better. They do not explain a fit 22 year old who fainted, with a low pressure and slow capillary refill. A patient you are about to send home should have vital signs you would accept at home.",
      "author_rationale": "A delayed consequence of the learner's own action, so the five-second floor applies. Orthostatic syncope in compensated distributive shock is plausible. That it happens every time is a teaching choice. Model output, needs a physician's signature."
     },
     {
@@ -256,7 +256,7 @@
      "measured_from": "guard_true",
      "to": "hypotensive",
      "narration": "She stood up to get dressed and went straight down. I've got her back on the bed. She's gray and drowsy and her pressure has dropped.",
-     "debrief_note": "She was discharged with a heart rate over 110 and a fever, and she fainted when she stood up. She is both dry and vasodilated. A young adult in that state holds a blood pressure with her heart rate, and standing takes that away.\n\nThe trap was the story. The flu and a day at the beach seem to explain the fever and the red skin, and fluid makes most people feel better. They do not explain a fit 22 year old who fainted, with a low pressure and slow capillary refill. A patient you are about to send home should have vital signs you would accept at home.",
+     "debrief_note": "She was discharged with a heart rate over 110 and a fever, and she fainted when she stood up. She is both dry and vasodilated. A young adult in that state holds a blood pressure with her heart rate, and standing takes that away.\n\nThe trap was the story. A stomach bug and a day at the beach seem to explain the fever and the red skin, and fluid makes most people feel better. They do not explain a fit 22 year old who fainted, with a low pressure and slow capillary refill. A patient you are about to send home should have vital signs you would accept at home.",
      "author_rationale": "A delayed consequence of the learner's own action, so the five-second floor applies. Orthostatic syncope in compensated distributive shock is plausible. That it happens every time is a teaching choice. Model output, needs a physician's signature."
     },
     {
@@ -564,7 +564,7 @@
     "guard": "phase is presentation",
     "text": "She's not on a monitor yet. Do you want her hooked up?"
    },
-   "debrief_note": "The monitor is dark until it is attached. In this case the numbers are the whole argument against the story she tells: a heart rate of 128, a pressure of 94 over 58 and a temperature of 39.4 in someone who says she has the flu."
+   "debrief_note": "The monitor is dark until it is attached. In this case the numbers are the whole argument against the story she tells: a heart rate of 128, a pressure of 94 over 58 and a temperature of 39.4 in someone who says she has a stomach flu."
   },
   {
    "catalog_id": "insert_iv",
@@ -668,12 +668,14 @@
    "catalog_id": "nasal_cannula_oxygen",
    "tag": [
     {
-     "when": "phase is hypotensive OR phase is profound_shock",
-     "value": "recommended"
-    },
-    {
      "when": null,
      "value": "neutral"
+    }
+   ],
+   "also_satisfies": [
+    {
+     "id": "non_rebreather_mask",
+     "when": null
     }
    ],
    "flags_set": [
@@ -688,7 +690,7 @@
      "note": "Teaching choice, not a modeled quantity."
     }
    ],
-   "debrief_note": "Her saturation is normal until she is in established shock, so oxygen has nothing to add early. It does no harm. It is worth applying once she is hypotensive and her saturation falls."
+   "debrief_note": "Her saturation is normal until she is in established shock, so oxygen has nothing to add early. It does no harm. It is worth applying once she is hypotensive and her saturation falls. Either device is enough at her saturations, and either one counts."
   },
   {
    "catalog_id": "non_rebreather_mask",
@@ -702,6 +704,7 @@
      "value": "neutral"
     }
    ],
+   "expectation_label": "Oxygen, by any device",
    "flags_set": [
     "oxygen_applied"
    ],
@@ -714,7 +717,7 @@
      "note": "Teaching choice, not a modeled quantity."
     }
    ],
-   "debrief_note": "Her saturation is normal until she is in established shock, so oxygen has nothing to add early. It does no harm. It is worth applying once she is hypotensive and her saturation falls."
+   "debrief_note": "Her saturation is normal until she is in established shock, so oxygen has nothing to add early. It does no harm. It is worth applying once she is hypotensive and her saturation falls. Either device is enough at her saturations, and either one counts."
   },
   {
    "catalog_id": "bag_valve_mask",
@@ -997,7 +1000,7 @@
      "value": "critical"
     },
     {
-     "when": "phase is fluid_responsive OR phase is supported OR phase is stabilizing",
+     "when": "phase is supported OR phase is stabilizing",
      "value": "recommended"
     },
     {
@@ -1193,7 +1196,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "She is not vomiting, so this treats nothing here. Feeling less sick is not the same as being less sick, and her vital signs do not change with it."
+   "debrief_note": "She is vomiting, so an antiemetic is kind. It treats a symptom and not the shock. Feeling less sick is not the same as being less sick, and her vital signs do not change with it."
   },
   {
    "catalog_id": "ibuprofen",
@@ -1299,7 +1302,7 @@
      "value": "recommended"
     }
    ],
-   "debrief_note": "Her creatinine is 2.6 at age 22. Two days of flu does not do that without shock. This is one of the results that should end the flu story."
+   "debrief_note": "Her creatinine is 2.6 at age 22. Two days of vomiting and diarrhea make a young person dry, and the potassium of 3.3 is what those losses do. A creatinine of 2.6 with a lactate of 4.6 is shock, not a stomach bug. This is one of the results that should end the stomach bug story."
   },
   {
    "catalog_id": "complete_blood_count_cbc",
@@ -1359,7 +1362,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Liver involvement: raised transaminases and bilirubin, and a low albumin. Kidney, liver, platelets and muscle are all involved in her, and that pattern is what separates toxic shock from flu or another viral illness."
+   "debrief_note": "Liver involvement: raised transaminases and bilirubin, and a low albumin. Kidney, liver, platelets and muscle are all involved in her, and that pattern is what separates toxic shock from a stomach bug or another viral illness."
   },
   {
    "catalog_id": "creatine_kinase_ck",
@@ -1527,7 +1530,7 @@
     "discharge_attempted"
    ],
    "narration_override": "You want her to go home? She still has a fever. All right, I'll get her up and dressed.",
-   "debrief_note": "You chose to send her home while she still looked well, and she fainted on standing. The case let that play out instead of ending.\n\nBefore discharging anyone, read the vital signs as if you had not heard the story. A heart rate over 110 with a fever, a low pressure and a faint is not explained by the flu until everything else has been excluded."
+   "debrief_note": "You chose to send her home while she still looked well, and she fainted on standing. The case let that play out instead of ending.\n\nBefore discharging anyone, read the vital signs as if you had not heard the story. A heart rate over 110 with a fever, a low pressure and a faint is not explained by a stomach bug until everything else has been excluded."
   },
   {
    "catalog_id": "handoff_submit",
@@ -2068,7 +2071,7 @@
      "value": {
       "kind": "general_status",
       "abnormal": true,
-      "findings": "Sitting up, talking, flushed all over, dry lips. GCS 15."
+      "findings": "Sitting up, talking, flushed all over, dry lips, vomit bag in her lap. GCS 15."
      }
     }
    ]
@@ -3479,7 +3482,7 @@
  },
  "interview": {
   "authoring_notes": {
-   "voice": "A 22-year-old graduate student. Lay words, apologetic, minimizing. She is sure it is the flu and says so, which is her belief and not a diagnosis the case endorses.",
+   "voice": "A 22-year-old graduate student. Lay words, apologetic, minimizing. She is sure it is a stomach flu and says so, which is her belief and not a diagnosis the case endorses.",
    "the_tampon": "She does not volunteer it and it is a must-ask topic, so no other answer carries it. Asked about her period or tampons in any wording, she says she cannot remember taking the last one out. Section 8.4 holds: she reports what she knows and draws no conclusion from it.",
    "close_to_the_line": "Two answers sit near the section 8.4 line and are flagged for the reviewer. The rash answer says the redness is under her shirt, and the genitourinary answer mentions a smell. Both are things a patient would notice and say. Neither names a cause.",
    "phrasings": "The canonical question, hand-written variants and echo for forty topics are MGCA's, in case_4_variants.py. Three topics are this case's own: rash, suspect_meal and wounds_and_skin. EXTRA_VARIANTS adds eleven phrasings by hand, each under the topic whose answer covers it.",
@@ -3607,7 +3610,7 @@
      },
      {
       "when": null,
-      "value": "'Two days ago. Thursday night I started shivering and aching, and by Friday morning I had a proper fever.'"
+      "value": "'Two days ago. Thursday night I started shivering and aching, and by Friday morning I had a proper fever and was throwing up. The diarrhea started Friday too.'"
      }
     ],
     "echo": "when it started",
@@ -3755,7 +3758,7 @@
      },
      {
       "when": null,
-      "value": "'Like the worst flu I've ever had. Everything aches and I'm hot and cold.'"
+      "value": "'Like the worst flu I've ever had. Everything aches, I'm hot and cold, and my stomach keeps turning over.'"
      }
     ],
     "echo": "what it feels like",
@@ -3801,7 +3804,7 @@
      },
      {
       "when": null,
-      "value": "'All over, really. My thighs and calves are the worst.'"
+      "value": "'All over, really. My thighs and calves are the worst. My stomach is crampy too, but it's not one spot.'"
      }
     ],
     "echo": "where it hurts",
@@ -3946,7 +3949,7 @@
      },
      {
       "when": null,
-      "value": "'Standing up makes everything worse. I get dizzy and my heart pounds. I took some ibuprofen yesterday and it brought the fever down for a couple of hours.'"
+      "value": "'Standing up makes everything worse. I get dizzy and my heart pounds. I took some ibuprofen yesterday and it brought the fever down for a couple of hours. Nothing has stayed down today.'"
      }
     ],
     "echo": "what makes it better or worse",
@@ -4346,15 +4349,14 @@
     "answer": [
      {
       "when": "phase is hypotensive",
-      "value": "'No. Not sick.'"
+      "value": "'Yes. I keep throwing up.'"
      },
      {
       "when": null,
-      "value": "'No, I haven't thrown up at all, and I don't feel sick. I just don't want to eat. I can drink a little.'"
+      "value": "'Yes, constantly. I've thrown up maybe eight or ten times since Friday. No blood in it. I can't even keep water down now.'"
      }
     ],
     "echo": "throwing up",
-    "pertinent_negative": true,
     "facts": [
      {
       "id": "how_often",
@@ -4366,11 +4368,11 @@
       "value": [
        {
         "when": "phase is hypotensive",
-        "value": "'No.'"
+        "value": "'I keep throwing up.'"
        },
        {
         "when": null,
-        "value": "'I haven't thrown up at all.'"
+        "value": "'Maybe eight or ten times since Friday.'"
        }
       ],
       "restate": true
@@ -4385,11 +4387,11 @@
       "value": [
        {
         "when": "phase is hypotensive",
-        "value": "'No.'"
+        "value": "'No blood in it.'"
        },
        {
         "when": null,
-        "value": "'No.'"
+        "value": "'No blood in it.'"
        }
       ]
      },
@@ -4403,11 +4405,11 @@
       "value": [
        {
         "when": "phase is hypotensive",
-        "value": "'No. Not sick.'"
+        "value": "'I keep throwing up.'"
        },
        {
         "when": null,
-        "value": "'I can drink a little.'"
+        "value": "'I can't even keep water down now.'"
        }
       ]
      }
@@ -4452,15 +4454,14 @@
     "answer": [
      {
       "when": "phase is hypotensive",
-      "value": "'No.'"
+      "value": "'Yes. Watery.'"
      },
      {
       "when": null,
-      "value": "'No, nothing like that.'"
+      "value": "'Yes, watery. Maybe six times yesterday and a few today. No blood.'"
      }
     ],
     "echo": "diarrhea",
-    "pertinent_negative": true,
     "expanded_variants": [
      "Diarrhea?",
      "Have your bowels been loose?",
@@ -4499,15 +4500,14 @@
     "answer": [
      {
       "when": "phase is hypotensive",
-      "value": "'No. Not my back.'"
+      "value": "'Crampy. Not my back.'"
      },
      {
       "when": null,
-      "value": "'No, my stomach doesn't hurt. The aching is in my muscles, and it's not in my sides or my back.'"
+      "value": "'Crampy, all over, and it comes with the diarrhea. It's not a sharp pain anywhere, and not in my sides or my back.'"
      }
     ],
     "echo": "my stomach",
-    "pertinent_negative": true,
     "expanded_variants": [
      "Any tummy pain?",
      "Does your belly hurt?",
@@ -4650,7 +4650,7 @@
      },
      {
       "when": null,
-      "value": "'No cough, no cold. My throat's sore, I thought from the flu.'"
+      "value": "'No cough, no cold. My throat's sore, I thought from throwing up so much.'"
      }
     ],
     "echo": "a cough or sore throat",
@@ -5291,7 +5291,7 @@
      },
      {
       "when": null,
-      "value": "'Just the pill. I took ibuprofen yesterday, two tablets a couple of times. Nothing else, no supplements.'"
+      "value": "'Just the pill. I took ibuprofen yesterday, two pills a couple of times. Nothing else, no supplements.'"
      }
     ],
     "echo": "my medication",
@@ -5332,7 +5332,7 @@
        },
        {
         "when": null,
-        "value": "'Ibuprofen yesterday. Two tablets, a couple of times.'"
+        "value": "'Ibuprofen yesterday. Two pills, a couple of times.'"
        }
       ]
      },
@@ -5581,11 +5581,11 @@
     "answer": [
      {
       "when": "phase is hypotensive",
-      "value": "'Sips of water. Nothing since Thursday.'"
+      "value": "'Sips of water. They came back up.'"
      },
      {
       "when": null,
-      "value": "'A few sips of water this morning. I haven't really eaten since Thursday. I'm just not hungry.'"
+      "value": "'A few sips of water this morning, and they came back up. I haven't eaten since Thursday.'"
      }
     ],
     "echo": "when I last ate",
@@ -5724,11 +5724,11 @@
     "answer": [
      {
       "when": "phase is hypotensive",
-      "value": "'Nothing unusual. I thought it was flu.'"
+      "value": "'Nothing unusual. Stomach flu, I thought.'"
      },
      {
       "when": null,
-      "value": "'Nothing unusual. I don't think it's anything I ate. I thought it was the flu.'"
+      "value": "'Nothing unusual. My roommate eats what I eat and she's fine. I figured it was a stomach flu.'"
      }
     ],
     "echo": "what I ate",
@@ -6121,7 +6121,7 @@
     "id": "discharge_home",
     "label": "Discharge home",
     "verdict": "incorrect",
-    "explanation": "She is in shock. The story of the flu and a sunburn fits her symptoms and does not fit her vital signs, her skin or her laboratory results. Sending her home is the error this case exists to prevent."
+    "explanation": "She is in shock. The story of a stomach bug and a sunburn fits her symptoms and does not fit her vital signs, her skin or her laboratory results. Sending her home is the error this case exists to prevent."
    },
    {
     "id": "transfer_tertiary",
@@ -6189,7 +6189,7 @@
    {
     "catalog_id": "dx_hypokalemia",
     "label": "Hypokalemia",
-    "explanation": "Her potassium is 3.3, against a lower limit of 3.5."
+    "explanation": "Her potassium is 3.3, against a lower limit of 3.5. Two days of vomiting and diarrhea explain it."
    }
   ],
   "alternative_diagnoses": [
@@ -6209,13 +6209,13 @@
     "catalog_id": "dx_viral_gastroenteritis",
     "label": "Viral gastroenteritis",
     "verdict": "incorrect",
-    "explanation": "She has no vomiting and no diarrhea, so this does not fit even her symptoms. It does not explain a temperature of 39.4 with a red rash, a creatinine of 2.6, platelets of 98 or a lactate of 4.6. When a common diagnosis does not explain the vital signs, keep looking."
+    "explanation": "Her vomiting and diarrhea fit it, and that is the trap. It does not explain a temperature of 39.4 with a red rash to her palms, a creatinine of 2.6, platelets of 98 or a lactate of 4.6, and her roommate, who eats what she eats, is well. Vomiting and diarrhea at the start are part of toxic shock itself. When a common diagnosis does not explain the vital signs, keep looking."
    },
    {
     "catalog_id": "dx_infectious_gastroenteritis",
     "label": "Infectious gastroenteritis",
     "verdict": "incorrect",
-    "explanation": "She has no gut symptoms, and a gut infection does not cause a diffuse rash, liver injury and low platelets."
+    "explanation": "Her vomiting and diarrhea fit a gut infection. A gut infection does not cause a diffuse rash, red eyes, liver injury and low platelets."
    },
    {
     "catalog_id": "dx_hypovolemia",

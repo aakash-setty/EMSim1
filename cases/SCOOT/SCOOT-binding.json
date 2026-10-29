@@ -4,9 +4,9 @@
  "catalog_version": "0.3-draft",
  "status": "DRAFT. Every mapped row is an author judgement and needs review.",
  "counts": {
-  "exact": 59,
+  "exact": 60,
   "mapped": 0,
-  "unmatched": 5
+  "unmatched": 8
  },
  "group_coverage": {
   "labetalol_bolus": [
@@ -66,6 +66,24 @@
   {
    "case_id": "ct_c_spine",
    "catalog_id": "ct_c_spine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "cchr_history",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited once loss of consciousness, memory of the event, nausea and vomiting, and mechanism of injury have all been asked (asked_all, owner's instruction of 29 October 2026). Not a button."
+  },
+  {
+   "case_id": "interview_topic_anticoagulants",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Interview topics are not catalog actions. Credited by asking the anticoagulants topic (owner, 29 October 2026)."
+  },
+  {
+   "case_id": "ultrasound_fast",
+   "catalog_id": "ultrasound_fast",
    "status": "exact",
    "note": null
   },
@@ -287,6 +305,12 @@
    "catalog_id": "morphine_bolus",
    "status": "exact",
    "note": null
+  },
+  {
+   "case_id": "analgesia_given",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by acetaminophen, fentanyl or morphine before the tube (owner, 29 October 2026). Not a button."
   },
   {
    "case_id": "ondansetron",

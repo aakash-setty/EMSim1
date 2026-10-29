@@ -241,20 +241,12 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/epinephrine_drip`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/vasopressin_drip`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
-| frank_septic_shock | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
-| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia OR phase is frank_septic_shock) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/dopamine_drip`
@@ -269,10 +261,7 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/epinephrine_bolus`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/stop_norepinephrine`

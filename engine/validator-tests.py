@@ -759,5 +759,33 @@ expect_clean("a pressor on the default that drives nothing does not",
 expect("vital_effects that is not a list is rejected",
        lambda c: pressor(c, {"vital": "systolic_bp"}), "vital_effects must be a list")
 
+print("\n-- asked_all (29 October 2026) --")
+
+
+def asked(c, topics, hidden=True):
+    a = act(c)
+    a["asked_all"] = topics
+    a["hidden"] = hidden
+
+
+_T = [t["topic"] for t in (BASE.get("interview") or {}).get("topics") or []][:2]
+expect("asked_all naming a topic the interview does not have is rejected",
+       lambda c: asked(c, _T[:1] + ["no_such_topic"]), "'no_such_topic' is not a topic")
+expect("an empty asked_all is rejected",
+       lambda c: asked(c, []), "must be a non-empty list")
+expect("asked_all on an action that is not hidden warns",
+       lambda c: asked(c, _T, hidden=False), "[asked_all]", "warnings")
+expect_clean("asked_all naming the interview's own topics is accepted",
+             lambda c: asked(c, _T), "[asked_all]")
+
+def behind_discouraged(c):
+    a, b = c["case_actions"][0], c["case_actions"][1]
+    a["flags_set"] = ["vt_gate_flag"]
+    a["tag"] = [{"when": None, "value": "discouraged"}]
+    b["tag"] = [{"when": None, "value": "recommended"}]
+    b["prerequisites"] = [{"when": "flag vt_gate_flag set", "failure_message": "x"}]
+expect("an expected action behind a discouraged prerequisite is rejected",
+       behind_discouraged, "[expectation]")
+
 print(f"\n  {COUNT} checks, " + (f"{len(FAILS)} FAILURES" if FAILS else "all passed"))
 sys.exit(1 if FAILS else 0)

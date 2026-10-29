@@ -176,3 +176,27 @@ section('volunteered answers (v0.18a)');
       CASE.interview.must_ask.includes('menstrual_and_tampon') &&
       !CASE.interview.topics.some(t => (t.adjacent || []).includes('menstrual_and_tampon')));
 }
+
+section('owner corrections, 29 October 2026: not telling her she missed what did not matter');
+{
+  const NEU = ['doxycycline','epinephrine_drip','vasopressin_drip','epinephrine_bolus','normal_saline_infusion',
+               'lactated_ringer_s_infusion','d5_ns_bolus','acetaminophen','ondansetron','cefepime','meropenem',
+               'csf_cell_count','csf_gram_stain','csf_protein','csf_glucose','csf_culture','csf_rapid_antigen_test_for_n_meningitidis'];
+  chk('alternatives, second agents and the CSF studies are neutral',
+      NEU.every(id => A[id].tag.every(r => r.value === 'neutral')), NEU.filter(id => !A[id].tag.every(r => r.value === 'neutral')).join());
+  for (const ab of ['cefepime', 'meropenem']) {
+    const s = fold(mk([[1,'insert_iv'],[4,'blood_culture_x_2'],[6,ab]]), 20);
+    chk(ab + ' counts as the antibiotic', s.satisfied.has('ceftriaxone'));
+  }
+  const good = fold(mk([[1,'insert_iv'],[2,'fingerstick_blood_sugar'],[3,'basic_chemistry_chem_7'],
+                [4,'blood_culture_x_2'],[6,'ceftriaxone'],[8,'hydrocortisone_bolus'],[10,'normal_saline_1l_bolus']]), 200);
+  chk('deferring the lumbar puncture leaves no CSF study marked missing',
+      ![...good.recommendedExpected].some(id => /^csf_/.test(id)));
+  const strip = o => { if (Array.isArray(o)) return o.map(strip); if (o && typeof o === 'object') { const r = {};
+    for (const k in o) { if (['variants','expanded_variants','asks','canonical','references','migrations','provenance','review_hints',
+      'authored_against','binding_note','author_note','author_rationale','verify','authoring_note'].includes(k)) continue; r[k] = strip(o[k]); } return r; } return o; };
+  const UK = /haemo|septicaem|\bRing me|\bround the|trolley|\bquiet/i;
+  const flat = JSON.stringify(strip(CASE));
+  chk('no British spelling or usage, and no banned word, in learner text', !UK.test(flat), (flat.match(UK) || [''])[0]);
+}
+

@@ -95,8 +95,8 @@
   "stated_dry_weight_kg": 84,
   "background": "Ischemic cardiomyopathy with HFrEF, LVEF 25-30% on echocardiogram eight months ago. Anterior STEMI six years ago treated with a drug-eluting stent to the left anterior descending artery. Hypertension. Type 2 diabetes mellitus. Chronic kidney disease stage 3 with a baseline creatinine of 1.4 mg/dL. Ex-smoker, 30 pack-years, stopped at the time of his infarct. Untreated obstructive sleep apnea (declined CPAP two years ago). Home medications: furosemide 40 mg daily, carvedilol 12.5 mg twice daily, sacubitril/valsartan 49/51 mg twice daily, spironolactone 25 mg daily, empagliflozin 10 mg daily, atorvastatin 40 mg nightly, aspirin 81 mg daily, metformin 1000 mg twice daily.",
   "presenting_vitals_source": "Inherited from phase 'presentation'. EMS applied a nasal cannula at 6 L/min en route and established no intravenous access.",
-  "presenting_appearance": "A heavy-set older man sitting bolt upright on the EMS stretcher, gripping the rails, visibly sweating and speaking in two or three word bursts. He will not lie flat and pushes the trolley back up when it is lowered.",
-  "ems_handover_text": "Sixty-five year old man, known heart failure, three or four days of worsening breathlessness, much worse since about four this morning. Family called when he could not get up the stairs. Sats were 82 percent on room air at the house, 85 on six liters now. Pressure has been running high the whole way in, last was 190 over 100. He ran out of his water tablet about five days ago. No chest pain that he will admit to. Nothing given en route apart from oxygen.",
+  "presenting_appearance": "A heavy-set older man sitting bolt upright on the EMS stretcher, gripping the rails, visibly sweating and speaking in two or three word bursts. He will not lie flat and pushes the head of the stretcher back up when it is lowered.",
+  "ems_handover_text": "Sixty-five year old man, known heart failure, three or four days of worsening breathlessness, much worse since about four this morning. Family called when he could not get up the stairs. Sats were 82 percent on room air at the house, 85 on six liters now. Pressure has been running high the whole way in, last was 190 over 100. He ran out of his water pill about five days ago. No chest pain that he will admit to. Nothing given en route apart from oxygen.",
   "arrival_handover": "Sixty-five year old man, breathing trouble that's been getting worse over the last few days. Family called us this morning when he couldn't manage the stairs, and he's still only holding 85% on six liters by nasal cannula.",
   "avatar": {
    "authoring_note": "Only what differs from the standard patient. build is obese from the presenting appearance, 'a heavy-set older man', and 88 kg; the case gives no height, so this is the text's word and not a BMI. The age group is not authored: it is drawn from patient.age.",
@@ -144,6 +144,30 @@
      "author_note": "Intubation in a preload-dependent, vasodilated patient predictably drops the blood pressure. Modeled as certain here for teaching; see review packet, this is the most debatable transition in the case."
     },
     {
+     "when": "flag fluid_bolus_given set AND NOT flag fluid_harm_done set",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "impending_respiratory_failure",
+     "flags_set": [
+      "fluid_harm_done"
+     ],
+     "narration": "That fluid has gone to his lungs. He's wetter, his sat is falling and he's hardly answering me.",
+     "debrief_note": "A liter of crystalloid into a man already four kilograms over his dry weight with a systolic of 188. It raised the pressure in his lungs and he tired. The mask and a nitrate drip still bring him back.",
+     "author_rationale": "AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question)."
+    },
+    {
+     "when": "flag pressor_running set AND NOT flag pressor_harm_done set",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "impending_respiratory_failure",
+     "flags_set": [
+      "pressor_harm_done"
+     ],
+     "narration": "Since the norepinephrine went up he's worse. His sat is falling and he's hardly answering me.",
+     "debrief_note": "Norepinephrine into a hypertensive failing ventricle raised the afterload it was already failing against. He tired. The mask and a nitrate drip still bring him back.",
+     "author_rationale": "AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question)."
+    },
+    {
      "when": "flag on_niv set",
      "to": "niv_supported",
      "author_note": "The mask alone. Work of breathing and oxygenation improve and the edema goes from severe to moderate; the driving pressure is untouched, so this is as far as it goes. Reached in passing, for one instant, by a learner who submits the mask and the nitrate in the same batch: the engine re-checks the transitions after each order, so the pair arrives at stabilizing through here rather than needing a rule of its own."
@@ -158,7 +182,7 @@
      "after_seconds": 240,
      "measured_from": "phase_entry",
      "to": "impending_respiratory_failure",
-     "narration": "He's wearing out on me. He's stopped answering and he's gone gray round the lips.",
+     "narration": "He's wearing out on me. He's stopped answering and he's gone gray around the lips.",
      "debrief_note": "Four minutes of severe hypertensive pulmonary edema with neither positive pressure nor a vasodilator. Both were asked for by name before this fired. The patient is not lost: the mask and a nitrate together still turn him around, and nothing in this case kills him. What has been lost is the part of the history he can no longer give you.",
      "author_rationale": "AUTHOR SIGNATURE REQUIRED. The claim is that a sixty-five year old man in hypertensive acute cardiogenic pulmonary edema at a saturation of 85 percent and a respiratory rate of 32 begins to tire inside four minutes if nothing is done. Four minutes is compressed against real disease tempo the way every deadline in these packs is. The guard names both treatments so that either one alone stops it, which is the fairness claim: a learner who did something is not punished for not doing everything."
     }
@@ -199,6 +223,30 @@
      "to": "post_intubation_hypotension"
     },
     {
+     "when": "flag fluid_bolus_given set AND NOT flag fluid_harm_done set",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "impending_respiratory_failure",
+     "flags_set": [
+      "fluid_harm_done"
+     ],
+     "narration": "That fluid has gone to his lungs. He's wetter, his sat is falling and he's hardly answering me.",
+     "debrief_note": "A liter of crystalloid into a man already four kilograms over his dry weight with a systolic of 188. It raised the pressure in his lungs and he tired. The mask and a nitrate drip still bring him back.",
+     "author_rationale": "AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question)."
+    },
+    {
+     "when": "flag pressor_running set AND NOT flag pressor_harm_done set",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "impending_respiratory_failure",
+     "flags_set": [
+      "pressor_harm_done"
+     ],
+     "narration": "Since the norepinephrine went up he's worse. His sat is falling and he's hardly answering me.",
+     "debrief_note": "Norepinephrine into a hypertensive failing ventricle raised the afterload it was already failing against. He tired. The mask and a nitrate drip still bring him back.",
+     "author_rationale": "AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question)."
+    },
+    {
      "when": "flag nitrate_given set",
      "to": "stabilizing"
     },
@@ -208,7 +256,7 @@
      "measured_from": "phase_entry",
      "to": "impending_respiratory_failure",
      "narration": "He's tiring under the mask. He's stopped talking to me and his pressure is no better than when he came in.",
-     "debrief_note": "The mask bought four minutes and the afterload driving the edema was never treated. This is the commonest way this version of the case is lost: positive pressure looks like an answer because the saturation on the screen improves, and positive pressure looks like the whole answer because the saturation on the screen improves, and that improvement is real, but the systolic pressure of 178 driving the edema still needs a vasodilator.",
+     "debrief_note": "The mask bought four minutes and the afterload driving the edema was never treated. This is the commonest way this version of the case is lost: positive pressure looks like the whole answer because the saturation on the screen improves, and that improvement is real, but the systolic pressure of 178 driving the edema still needs a vasodilator.",
      "author_rationale": "AUTHOR SIGNATURE REQUIRED. Non-invasive ventilation failure in hypertensive acute cardiogenic pulmonary edema is real and is the usual route to intubation in these patients. Four minutes is a teaching tempo, not a measured interval."
     }
    ],
@@ -248,6 +296,30 @@
      "to": "post_intubation_hypotension"
     },
     {
+     "when": "flag fluid_bolus_given set AND NOT flag fluid_harm_done set",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "impending_respiratory_failure",
+     "flags_set": [
+      "fluid_harm_done"
+     ],
+     "narration": "That fluid has gone to his lungs. He's wetter, his sat is falling and he's hardly answering me.",
+     "debrief_note": "A liter of crystalloid into a man already four kilograms over his dry weight with a systolic of 188. It raised the pressure in his lungs and he tired. The mask and a nitrate drip still bring him back.",
+     "author_rationale": "AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question)."
+    },
+    {
+     "when": "flag pressor_running set AND NOT flag pressor_harm_done set",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "impending_respiratory_failure",
+     "flags_set": [
+      "pressor_harm_done"
+     ],
+     "narration": "Since the norepinephrine went up he's worse. His sat is falling and he's hardly answering me.",
+     "debrief_note": "Norepinephrine into a hypertensive failing ventricle raised the afterload it was already failing against. He tired. The mask and a nitrate drip still bring him back.",
+     "author_rationale": "AUTHOR SIGNATURE REQUIRED. Owner instruction, 29 October 2026: this used to halt the case with a cardiac arrest, which overstated the causal certainty. It now worsens him into impending respiratory failure, from which the mask and a nitrate drip still rescue him. Ten seconds and the size of the effect are teaching choices. Fires once (flags_set). Not in stabilizing or improving, where both treatments are already running and the rescue rule would send him straight back (SEED, open question)."
+    },
+    {
      "when": "flag on_niv set",
      "to": "stabilizing"
     },
@@ -256,7 +328,7 @@
      "after_seconds": 300,
      "measured_from": "phase_entry",
      "to": "impending_respiratory_failure",
-     "narration": "He's still pulling hard and he's starting to flag. He's gone quiet on me.",
+     "narration": "He's still pulling hard and he's starting to flag. He's stopped talking to me.",
      "debrief_note": "The right drug and no support for the breathing. The vasodilator is treating the cause and it is not doing the work of breathing for him; five minutes at a respiratory rate of thirty in a man of sixty-five ends the same way whether or not the pressure has come down.",
      "author_rationale": "AUTHOR SIGNATURE REQUIRED. Longer than the other two deadlines on the judgment that a treated afterload buys more time than an untreated one. Five minutes is a teaching tempo."
     }
@@ -383,7 +455,7 @@
   {
    "id": "post_intubation_hypotension",
    "label": "Post-intubation hemodynamic collapse",
-   "clinical_description": "Loss of endogenous sympathetic drive from induction, positive intrathoracic pressure reducing venous return, and ongoing nitrate vasodilation have produced profound hypotension. Now hypotensive and hypoperfused while still congested.",
+   "clinical_description": "Loss of endogenous sympathetic drive from induction and positive intrathoracic pressure reducing venous return have produced profound hypotension, made worse when a nitrate drip is still running. Now hypotensive and hypoperfused while still congested.",
    "vitals": {
     "heart_rate": 128,
     "systolic_bp": 74,
@@ -419,7 +491,7 @@
   {
    "id": "intubated_stabilized",
    "label": "Intubated, hemodynamically supported",
-   "clinical_description": "Perfusing pressure restored on vasopressor with the nitrate stopped. Ventilated and sedated, requiring intensive care.",
+   "clinical_description": "Perfusing pressure restored on vasopressor with any nitrate drip stopped. Ventilated and sedated, requiring intensive care.",
    "vitals": {
     "heart_rate": 96,
     "systolic_bp": 108,
@@ -617,7 +689,7 @@
    ],
    "prompt": {
     "deadline_seconds": 60,
-    "guard": "NOT flag intubated set AND NOT flag nitrate_given set",
+    "guard": "NOT flag intubated set AND NOT flag nitrate_given set AND NOT flag nitrate_bolus_acting set",
     "text": "His pressure is still right up, doctor. Do you want anything for the blood pressure while we're sorting out his breathing?",
     "escalation": {
      "deadline_seconds": 140,
@@ -645,19 +717,19 @@
     },
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [
     "nitro_sl_given"
    ],
    "halt_reason": "You gave sublingual nitroglycerin to a patient who was already hypotensive after intubation; further vasodilation dropped his coronary perfusion pressure and he arrested.",
-   "debrief_note": "A reasonable bridge while an infusion is being mixed, and repeated sublingual dosing is a legitimate strategy when a pump is not immediately available. It is not a substitute for a titratable infusion in a patient who is going to need sustained afterload reduction, because the effect is short-lived and cannot be dialed back if the pressure falls too far. In this case it lifts his saturation by two for a minute and changes nothing else. Only the infusion moves him. Credit here is partial: the right idea, an incomplete execution.",
+   "debrief_note": "A reasonable bridge while an infusion is being mixed, and repeated sublingual dosing is a legitimate strategy when a pump is not immediately available. It is not a substitute for a titratable infusion in a patient who is going to need sustained afterload reduction, because the effect is short-lived and cannot be dialed back if the pressure falls too far. In this case it brings his pressure down by about 20 and lifts his saturation by two for one minute, and only the infusion moves him. It is not scored either way: the infusion is what the case expects.",
    "flags_set_timed": [
     {
      "flag": "nitrate_bolus_acting",
      "duration_seconds": 60,
-     "lapse_note": "The nitro has worn off and his saturation has drifted back down. (Note for the student: this effect is sped up in this case.)"
+     "lapse_note": "The nitro has worn off. His pressure is back up and his saturation has drifted back down. (Note for the student: this effect is sped up in this case.)"
     }
    ],
    "vital_effects": [
@@ -667,6 +739,20 @@
      "key": "nitrate_bolus_spo2",
      "while": "flag nitrate_bolus_acting set",
      "note": "Teaching choice, owner instruction 28 October 2026: a nitrate bolus lifts the saturation by two for one minute, sped up, and moves no phase. Only an infusion or drip sets nitrate_given. A repeat dose refreshes the minute and does not stack."
+    },
+    {
+     "vital": "systolic_bp",
+     "delta": -20,
+     "key": "nitrate_bolus_sbp",
+     "while": "flag nitrate_bolus_acting set",
+     "note": "Teaching choice, owner instruction 29 October 2026: a nitrate bolus also brings the pressure down for its minute, so a learner who gives one sees it work and then wear off. The size is a model's choice. Same key on both boluses, so a repeat refreshes and does not stack."
+    },
+    {
+     "vital": "diastolic_bp",
+     "delta": -8,
+     "key": "nitrate_bolus_dbp",
+     "while": "flag nitrate_bolus_acting set",
+     "note": "Teaching choice, owner instruction 29 October 2026: a nitrate bolus also brings the pressure down for its minute, so a learner who gives one sees it work and then wear off. The size is a model's choice. Same key on both boluses, so a repeat refreshes and does not stack."
     }
    ]
   },
@@ -684,7 +770,7 @@
     },
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -692,7 +778,13 @@
     "nitro_infusion_running"
    ],
    "halt_reason": "You gave a vasodilator to a patient who was already hypotensive after intubation; further vasodilation dropped his coronary perfusion pressure and he arrested.",
-   "debrief_note": "A guideline-listed vasodilator that lowers afterload more than nitroglycerin does. It needs an arterial line and close titration, and nitroglycerin is usually easier to start in the department, but it is not wrong here. After intubation, with the pressure already falling, it is."
+   "debrief_note": "A guideline-listed vasodilator that lowers afterload more than nitroglycerin does. It needs an arterial line and close titration, and nitroglycerin is usually easier to start in the department, but it is not wrong here, and it counts in place of the nitroglycerin infusion. After intubation, with the pressure already falling, it is.",
+   "also_satisfies": [
+    {
+     "id": "nitroglycerin_infusion",
+     "when": "NOT flag intubated set"
+    }
+   ]
   },
   {
    "catalog_id": "nitroglycerin",
@@ -708,17 +800,17 @@
     },
     {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [],
    "halt_reason": "You gave a vasodilator to a patient who was already hypotensive after intubation; further vasodilation dropped his coronary perfusion pressure and he arrested.",
-   "debrief_note": "A high-dose intravenous nitroglycerin bolus is an established emergency strategy for this presentation and lowers the pressure driving the edema within minutes. Follow it with an infusion. In this case the bolus lifts his saturation by two for a minute and only the infusion moves him. After intubation, with the pressure already falling, it is the wrong drug.",
+   "debrief_note": "A high-dose intravenous nitroglycerin bolus is an established emergency strategy for this presentation and lowers the pressure driving the edema within minutes. Follow it with an infusion. In this case the bolus brings his pressure down by about 20 and lifts his saturation by two for one minute, and only the infusion moves him. It is not scored either way: the infusion is what the case expects. After intubation, with the pressure already falling, it is the wrong drug.",
    "flags_set_timed": [
     {
      "flag": "nitrate_bolus_acting",
      "duration_seconds": 60,
-     "lapse_note": "The nitro has worn off and his saturation has drifted back down. (Note for the student: this effect is sped up in this case.)"
+     "lapse_note": "The nitro has worn off. His pressure is back up and his saturation has drifted back down. (Note for the student: this effect is sped up in this case.)"
     }
    ],
    "vital_effects": [
@@ -728,6 +820,20 @@
      "key": "nitrate_bolus_spo2",
      "while": "flag nitrate_bolus_acting set",
      "note": "Teaching choice, owner instruction 28 October 2026: a nitrate bolus lifts the saturation by two for one minute, sped up, and moves no phase. Only an infusion or drip sets nitrate_given. A repeat dose refreshes the minute and does not stack."
+    },
+    {
+     "vital": "systolic_bp",
+     "delta": -20,
+     "key": "nitrate_bolus_sbp",
+     "while": "flag nitrate_bolus_acting set",
+     "note": "Teaching choice, owner instruction 29 October 2026: a nitrate bolus also brings the pressure down for its minute, so a learner who gives one sees it work and then wear off. The size is a model's choice. Same key on both boluses, so a repeat refreshes and does not stack."
+    },
+    {
+     "vital": "diastolic_bp",
+     "delta": -8,
+     "key": "nitrate_bolus_dbp",
+     "while": "flag nitrate_bolus_acting set",
+     "note": "Teaching choice, owner instruction 29 October 2026: a nitrate bolus also brings the pressure down for its minute, so a learner who gives one sees it work and then wear off. The size is a model's choice. Same key on both boluses, so a repeat refreshes and does not stack."
     }
    ]
   },
@@ -850,7 +956,7 @@
    "flags_set": [
     "oxygen_nrb"
    ],
-   "debrief_note": "A reasonable bridge while non-invasive ventilation is set up, and better than leaving him on the cannula. It does not do the thing this patient needs most, which is positive airway pressure. Note also that oxygen is a treatment for hypoxemia, not for dyspnea; a non-hypoxemic breathless heart failure patient does not benefit from high-flow oxygen and there is reason to think hyperoxia is unhelpful in cardiac patients."
+   "debrief_note": "A reasonable bridge while non-invasive ventilation is set up, and better than leaving him on the cannula. It does not do the thing this patient needs most, which is positive airway pressure. Note also that oxygen is a treatment for hypoxemia, not for dyspnea; a non-hypoxemic breathless heart failure patient does not benefit from high-flow oxygen and there is reason to think hyperoxia is unhelpful in cardiac patients. Counted as done once he is on positive pressure or intubated, since either gives him more oxygen than this mask, so nobody is marked down for not adding it on top."
   },
   {
    "catalog_id": "ecg_12_lead",
@@ -925,7 +1031,7 @@
    "flags_set": [],
    "prompt": {
     "deadline_seconds": 210,
-    "text": "Did you want to ask him about his tablets? He said something to the medics about running out.",
+    "text": "Did you want to ask him about his pills? He said something to the medics about running out.",
     "guard": "NOT flag intubated set AND NOT phase is impending_respiratory_failure"
    },
    "debrief_note": "Finding the precipitant is part of the resuscitation, not paperwork for the admitting team. Decompensation in a patient with stable chronic heart failure usually has an identifiable reason: missed diuretic, dietary sodium, new atrial fibrillation, ischemia, infection, anemia, thyroid disease, or a newly started negative inotrope or NSAID. Here it is a loop diuretic he stopped taking five days ago plus a salt load. That answer changes the admission plan, changes the discharge plan, and is the modifiable part of this presentation. A resident who stabilizes the physiology but never asks why it happened has treated the episode and not the patient."
@@ -992,7 +1098,7 @@
      "source": "catalog_default_retained"
     }
    ],
-   "debrief_note": "A reasonable induction agent in a patient with marginal haemodynamics, chosen because it is relatively cardiostable compared with propofol. It is not hemodynamically neutral in a patient this dependent on his own catecholamines, and it will still contribute to post-intubation hypotension by removing endogenous catecholamine drive."
+   "debrief_note": "A reasonable induction agent in a patient with marginal hemodynamics, chosen because it is relatively cardiostable compared with propofol. It is not hemodynamically neutral in a patient this dependent on his own catecholamines, and it will still contribute to post-intubation hypotension by removing endogenous catecholamine drive."
   },
   {
    "catalog_id": "ketamine_iv",
@@ -1076,7 +1182,7 @@
      "source": "case"
     }
    ],
-   "debrief_note": "A paralyzed, unsedated patient is awake and unable to move or signal. This is the canonical follow-up requirement rather than a prerequisite, precisely because it cannot be satisfied before the intubation it follows. Choose the agent with the blood pressure in mind: a propofol infusion in a patient who is already hypotensive will make it worse, and an analgesia-first approach with fentanyl, or ketamine, is usually kinder to the haemodynamics.",
+   "debrief_note": "A paralyzed, unsedated patient is awake and unable to move or signal. This is the canonical follow-up requirement rather than a prerequisite, precisely because it cannot be satisfied before the intubation it follows. Choose the agent with the blood pressure in mind: a propofol infusion in a patient who is already hypotensive will make it worse, and an analgesia-first approach with fentanyl, or ketamine, is usually kinder to the hemodynamics.",
    "ungraded": true
   },
   {
@@ -1146,11 +1252,7 @@
      "value": "critical"
     },
     {
-     "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure",
-     "value": "harmful"
-    },
-    {
-     "when": "phase is stabilizing OR phase is improving",
+     "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding OR phase is impending_respiratory_failure OR phase is stabilizing OR phase is improving",
      "value": "discouraged"
     },
     {
@@ -1179,8 +1281,7 @@
     "deadline_seconds": 40,
     "text": "Pressure is 74 over 46 since the tube went in. Do you want me to start a pressor? I can run norepinephrine through the big cannula in his elbow."
    },
-   "halt_reason": "You started a vasopressor in a patient who was hypertensive and already well perfused; the additional afterload on a failing left ventricle worsened his pulmonary edema and he arrested.",
-   "debrief_note": "The correct hemodynamic support for this patient once he is hypotensive after intubation. He is now hypotensive and hypoperfused because induction removed his sympathetic tone, positive pressure reduced his venous return and the nitrate kept dilating him. The problem is now perfusion pressure, not congestion, and a vasopressor restores it where an inotrope alone would drop the pressure further. Norepinephrine is generally preferred over epinephrine in cardiogenic shock, where a randomized comparison was stopped early for a higher rate of refractory shock in the epinephrine arm. Giving a vasopressor to the same patient while he is hypertensive is a different action entirely, which is why the tag on this entry is phase-dependent.",
+   "debrief_note": "The correct hemodynamic support for this patient once he is hypotensive after intubation. He is now hypotensive and hypoperfused because induction removed his sympathetic tone and positive pressure reduced his venous return. If a nitrate drip was running, it kept dilating him, and it has to be stopped too. The problem is now perfusion pressure, not congestion, and a vasopressor restores it where an inotrope alone would drop the pressure further. Norepinephrine is generally preferred over epinephrine in cardiogenic shock, where a randomized comparison was stopped early for a higher rate of refractory shock in the epinephrine arm. Giving a vasopressor to the same patient while he is hypertensive is a different action entirely, which is why the tag on this entry is phase-dependent. Started before the tube, while he is hypertensive and still unstable, it tips him into impending respiratory failure ten seconds later in this case.",
    "references": [
     "Levy B, Clere-Jehl R, Legras A, et al. Epinephrine versus norepinephrine for cardiogenic shock after acute myocardial infarction. J Am Coll Cardiol. 2018;72(2):173-82. [UNVERIFIED, confirm before release]",
     "Cardenas-Garcia J, Schaub KF, Belchikov YG, Narasimhan M, Koenig SJ, Mayo PH. Safety of peripheral intravenous administration of vasoactive medication. J Hosp Med. 2015;10(9):581-5. [UNVERIFIED, confirm before release]"
@@ -1273,12 +1374,8 @@
    "catalog_id": "crystalloid_bolus_1l",
    "tag": [
     {
-     "when": "phase is post_intubation_hypotension OR phase is intubated_stabilized",
-     "value": "discouraged"
-    },
-    {
      "when": null,
-     "value": "harmful"
+     "value": "discouraged"
     }
    ],
    "flags_set": [
@@ -1291,9 +1388,8 @@
      "source": "catalog_default_retained"
     }
    ],
-   "halt_reason": "You gave a crystalloid bolus to a patient already several liters fluid overloaded with cardiogenic pulmonary edema; the added preload raised his pulmonary venous pressure further, his oxygenation failed, and he arrested.",
-   "debrief_note": "The commonest reflex to a tachycardic, unwell-looking patient, and the wrong one here. Every finding in front of you points away from hypovolemia: raised jugular venous pressure, an S3, bilateral crackles, peripheral edema, four kilograms above his dry weight, and a systolic pressure of 188. This is worth dwelling on in the debrief because the same reflex is correct in the septic patient two beds over, and the discriminating skill is the volume assessment rather than the general rule. Note that this remains harmful in the post-intubation hypotension phase: the hypotension there is vasodilation and reduced venous return in a fluid-overloaded patient, and the treatment is a vasopressor and stopping the nitrate, not volume.",
-   "binding_note": "Bound to normal_saline_1l_bolus and covers the other three crystalloid boluses. The resident sees four separate agents with catalog names; all four carry this action's harmful tag."
+   "debrief_note": "The commonest reflex to a tachycardic, unwell-looking patient, and the wrong one here. Every finding in front of you points away from hypovolemia: raised jugular venous pressure, an S3, bilateral crackles, peripheral edema, four kilograms above his dry weight, and a systolic pressure of 188. This is worth dwelling on in the debrief because the same reflex is correct in the septic patient two beds over, and the discriminating skill is the volume assessment rather than the general rule. In this case a liter given before the tube tips him into impending respiratory failure ten seconds later, before he has stabilized. It does not stop his heart, and the mask and a nitrate drip can still bring him back. After intubation a bolus is still the wrong treatment and is scored down: the hypotension there is lost sympathetic tone and reduced venous return in a fluid-overloaded patient, and the treatment is a vasopressor, with any nitrate drip stopped, not volume.",
+   "binding_note": "Bound to normal_saline_1l_bolus and covers the other three crystalloid boluses. The resident sees four separate agents with catalog names; all four carry this action's tag."
   },
   {
    "catalog_id": "dobutamine_infusion",
@@ -1504,7 +1600,7 @@
   },
   {
    "catalog_id": "labs_cbc",
-   "display_name": "Full blood count",
+   "display_name": "Complete blood count",
    "tag": [
     {
      "when": null,
@@ -2121,7 +2217,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Crackles from bases to apices. Poor air entry, chest quieter than the effort suggests. No wheeze."
+      "findings": "Crackles from bases to apices. Poor air entry, breath sounds softer than the effort suggests. No wheeze."
      }
     },
     {
@@ -3041,7 +3137,7 @@
       "when": "phase is stabilizing OR phase is improving",
       "value": {
        "kind": "panel",
-       "abnormal": true,
+       "abnormal": false,
        "components": [
         {
          "label": "pH (arterial)",
@@ -3059,10 +3155,10 @@
         },
         {
          "label": "pO2",
-         "value": "64",
+         "value": "88",
          "unit": "mmHg",
          "reference_range": "80-100",
-         "abnormal": true
+         "abnormal": false
         },
         {
          "label": "Bicarbonate",
@@ -3310,8 +3406,12 @@
    "authoring_note": "Rules are ordered most specific to least specific: deteriorated phase first, then definitive advice once the key studies have resulted, then a holding response while they are pending, then a default that asks for the workup that has not happened. Unrelated consultants are not authored and inherit the global response.",
    "consult_cardiology": [
     {
-     "when": "phase is post_intubation_hypotension",
+     "when": "(phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set",
      "value": "Cardiology fellow: a pressure drop straight after induction is the induction agent, the positive pressure and any vasodilator still running. Stop the nitrate and start norepinephrine. This is not a catheter laboratory case. Get him an intensive care bed."
+    },
+    {
+     "when": "phase is post_intubation_hypotension",
+     "value": "Cardiology fellow: a pressure drop straight after induction is the induction agent and the positive pressure. Start norepinephrine. This is not a catheter laboratory case. Get him an intensive care bed."
     },
     {
      "when": "study ecg_12_lead resulted AND study labs_troponin_hs resulted",
@@ -3336,8 +3436,12 @@
    ],
    "consult_critical_care": [
     {
-     "when": "phase is post_intubation_hypotension",
+     "when": "(phase is post_intubation_hypotension) AND flag nitro_infusion_running set AND NOT flag nitro_stopped set",
      "value": "Intensivist: yes, we will take him. Stop the nitrate and start norepinephrine through your best peripheral line. No fluid, because he is overloaded. Check your PEEP and make sure he is sedated."
+    },
+    {
+     "when": "phase is post_intubation_hypotension",
+     "value": "Intensivist: yes, we will take him. Start norepinephrine through your best peripheral line. No fluid, because he is overloaded. Check your PEEP and make sure he is sedated."
     },
     {
      "when": "flag on_niv set AND flag nitro_infusion_running set",
@@ -4784,7 +4888,7 @@
      },
      {
       "when": null,
-      "value": "'Now you mention it, yes. My belly's been full and bloated and I get full up after a few mouthfuls. My trousers are tight round the waist and they weren't a fortnight ago.'"
+      "value": "'Now you mention it, yes. My belly's been full and bloated and I get full up after a few mouthfuls. My pants are tight around the waist and they weren't two weeks ago.'"
      }
     ],
     "expanded_variants": [
@@ -4842,7 +4946,7 @@
      },
      {
       "when": null,
-      "value": "'I've not been going as much, now you say it. Which I suppose makes sense with me being off the water tablet.'"
+      "value": "'I've not been going as much, now you say it. Which I suppose makes sense with me being off the water pill.'"
      }
     ],
     "expanded_variants": [
@@ -5066,11 +5170,11 @@
     "answer": [
      {
       "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
-      "value": "'Ran out. Water tablet. Five days.'"
+      "value": "'Ran out. Water pill. Five days.'"
      },
      {
       "when": null,
-      "value": "'I ran out of the water tablet. That'd be about five days ago now. I meant to get to the chemist but my car's been off the road and I couldn't get a lift down there. I've been taking the rest of them, I think, though I've probably missed the odd one with all this going on.'"
+      "value": "'I ran out of the water pill. That'd be about five days ago now. I meant to get to the pharmacy but my car's been off the road and I couldn't get a lift down there. I've been taking the rest of them, I think, though I've probably missed the odd one with all this going on.'"
      }
     ],
     "expanded_variants": [
@@ -5095,7 +5199,7 @@
      "One more thing. Have you missed any doses?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "taking my tablets",
+    "echo": "taking my pills",
     "facts": [
      {
       "id": "which",
@@ -5103,16 +5207,17 @@
        "which one did you run out of",
        "which tablet",
        "what did you stop",
-       "the water tablet"
+       "the water tablet",
+       "the water pill"
       ],
       "value": [
        {
         "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
-        "value": "'The water tablet.'"
+        "value": "'The water pill.'"
        },
        {
         "when": null,
-        "value": "'I ran out of the water tablet. That's the one.'"
+        "value": "'I ran out of the water pill. That's the one.'"
        }
       ],
       "restate": true
@@ -5142,7 +5247,8 @@
        "why did you run out",
        "why didn't you get more",
        "what happened",
-       "could you not get to the chemist"
+       "could you not get to the chemist",
+       "could you not get to the pharmacy"
       ],
       "value": [
        {
@@ -5151,7 +5257,7 @@
        },
        {
         "when": null,
-        "value": "'I meant to get to the chemist but my car's been off the road and I couldn't get a lift down there.'"
+        "value": "'I meant to get to the pharmacy but my car's been off the road and I couldn't get a lift down there.'"
        }
       ]
      },
@@ -5181,11 +5287,11 @@
     "volunteer": [
      {
       "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
-      "value": "'Ran out... water tablet. Five days.'"
+      "value": "'Ran out... water pill. Five days.'"
      },
      {
       "when": null,
-      "value": "'I ran out of the water tablet about five days ago.'"
+      "value": "'I ran out of the water pill about five days ago.'"
      }
     ]
    },
@@ -5263,11 +5369,11 @@
     "answer": [
      {
       "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
-      "value": "'Water tablet. Heart tablets. Diabetes ones. Wife... has the list.'"
+      "value": "'Water pill. Heart pills. Diabetes ones. Wife... has the list.'"
      },
      {
       "when": null,
-      "value": "'There's the water tablet, furosemide. A heart tablet, carvedilol I think it is. There's a newer heart one they started me on a couple of years back, sacubitril something, big tablet. A little white one, spironolactone. Metformin for the diabetes and another new one for the diabetes that they said was good for the heart as well. A statin at night and a baby aspirin in the morning.'"
+      "value": "'There's the water pill, furosemide. A heart pill, carvedilol I think it is. There's a newer heart one they started me on a couple of years back, sacubitril something, big pill. A little white one, spironolactone. Metformin for the diabetes and another new one for the diabetes that they said was good for the heart as well. A statin at night and a baby aspirin in the morning.'"
      }
     ],
     "expanded_variants": [
@@ -5293,7 +5399,7 @@
      "And what do you take?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "my tablets",
+    "echo": "my pills",
     "facts": [
      {
       "id": "list",
@@ -5306,11 +5412,11 @@
       "value": [
        {
         "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
-        "value": "'Water tablet... heart tablets... diabetes ones.'"
+        "value": "'Water pill... heart pills... diabetes ones.'"
        },
        {
         "when": null,
-        "value": "'The water tablet, furosemide. Carvedilol. The sacubitril one. Spironolactone. Metformin and the newer diabetes one. A statin and a baby aspirin.'"
+        "value": "'The water pill, furosemide. Carvedilol. The sacubitril one. Spironolactone. Metformin and the newer diabetes one. A statin and a baby aspirin.'"
        }
       ],
       "restate": true
@@ -5320,7 +5426,8 @@
       "asks": [
        "which are the heart tablets",
        "what do you take for your heart",
-       "the heart ones"
+       "the heart ones",
+       "which are the heart pills"
       ],
       "value": [
        {
@@ -5329,7 +5436,7 @@
        },
        {
         "when": null,
-        "value": "'Carvedilol I think it is, the newer one, sacubitril something, a big tablet, and the little white one, spironolactone.'"
+        "value": "'Carvedilol I think it is, the newer one, sacubitril something, a big pill, and the little white one, spironolactone.'"
        }
       ]
      },
@@ -5378,7 +5485,7 @@
      },
      {
       "when": null,
-      "value": "'I had a heart attack six years ago and they put a stent in. They told me afterwards the heart doesn't pump the way it should since then. I've got the high blood pressure, and the diabetes, tablets not the injections. And they've said my kidneys aren't brilliant, though I've never had to do anything about that.'"
+      "value": "'I had a heart attack six years ago and they put a stent in. They told me afterwards the heart doesn't pump the way it should since then. I've got the high blood pressure, and the diabetes, pills not the injections. And they've said my kidneys aren't brilliant, though I've never had to do anything about that.'"
      }
     ],
     "expanded_variants": [
@@ -5441,7 +5548,7 @@
        },
        {
         "when": null,
-        "value": "'The high blood pressure, and the diabetes, tablets not the injections. And they've said my kidneys aren't brilliant.'"
+        "value": "'The high blood pressure, and the diabetes, pills not the injections. And they've said my kidneys aren't brilliant.'"
        }
       ]
      }
@@ -5908,7 +6015,7 @@
      },
      {
       "when": null,
-      "value": "'Normally I can get round the shops and do the stairs at home, though I'd be puffing by the top. If I'm honest I've been slowing down these last few months. This week I couldn't do the stairs at all.'"
+      "value": "'Normally I can get around the store and do the stairs at home, though I'd be puffing by the top. If I'm honest I've been slowing down these last few months. This week I couldn't do the stairs at all.'"
      }
     ],
     "expanded_variants": [
@@ -5945,7 +6052,7 @@
      },
      {
       "when": null,
-      "value": "'Before this I could get round the shops and do the stairs.'"
+      "value": "'Before this I could get around the store and do the stairs.'"
      }
     ]
    },
@@ -6198,7 +6305,7 @@
    {
     "catalog_id": "dx_sepsis",
     "label": "Sepsis of unclear source",
-    "explanation": "Selecting this usually means the lactate of 2.1 was read as evidence of shock. He is afebrile with a normal white count, warm and hypertensive with brisk capillary refill and clear mentation, and has no identified source. Hyperlactataemia from work of breathing is a genuine and common phenomenon. The clinical cost of this answer is not academic: it is the fluid bolus that follows it."
+    "explanation": "Selecting this usually means the lactate of 2.1 was read as evidence of shock. He is afebrile with a normal white count, warm and hypertensive with brisk capillary refill and clear mentation, and has no identified source. Hyperlactatemia from work of breathing is a genuine and common phenomenon. The clinical cost of this answer is not academic: it is the fluid bolus that follows it."
    }
   ],
   "additional_diagnoses": [
@@ -6257,8 +6364,8 @@
     ]
    },
    {
-    "id": "circulation_haemodynamics",
-    "label": "Circulation and haemodynamics",
+    "id": "circulation_hemodynamics",
+    "label": "Circulation and hemodynamics",
     "actions": [
      "nitroglycerin_infusion",
      "nitroglycerin_sublingual",

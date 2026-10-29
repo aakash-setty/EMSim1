@@ -21,6 +21,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 5, so o
 
 1. 20s `attach_monitor` (first)
 2. 60s `exam_neuro` (first)
+3. 70s `analgesia_given` (first)
 
 **Rule 2: at 240s (measured from phase_entry) → `decline`**
 
@@ -33,6 +34,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 5, so o
 
 1. 20s `attach_monitor` (first)
 2. 60s `exam_neuro` (first)
+3. 70s `analgesia_given` (first)
 
 ### `decline`: Drowsy and vomiting, GCS 12, pupils equal
 

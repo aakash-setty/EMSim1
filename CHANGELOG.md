@@ -5,6 +5,72 @@ is usable with learners.
 
 ---
 
+## Not marking down what did not matter; CHFE and DIPH corrections (29 October 2026, owner's instruction)
+
+- Engine, expectation credit: `catalog/expectation-credit.json` lets one device or test meet its alternatives' expectations (a mask or a tube the cannula, non-invasive ventilation or a tube the mask, two IVs or a central line the IO, either gas or either hCG the other). Built into `actionsBase[].credits`, checked by the validator. Authoring 6.3.
+- Engine, a 30-second grace: a recommended expectation collected on entering a phase counts only if the run stays 30 seconds in it or meets it, so a state that treatment ends at once asks nothing more.
+- Engine, chaining: when an instant rule moves the phase, the new phase's rules are checked at once (up to eight hops), so an act done earlier carries him on. A timed move does not chain. `sim_runner.py` does the same. System design 5.6, README.
+- Engine, `ecg_when`: a phase's monitor trace can change within the phase on a condition. Monitor, validator, field reference, authoring 5.2.
+- Validator: an expected action whose prerequisite only a discouraged act meets is an error (it caught MGCA's CSF studies). One negative test.
+- CHFE: boluses and nitroprusside neutral, nitroprusside credits the infusion, fluid and norepinephrine lead to impending respiratory failure instead of a halt, the bolus lowers the pressure for its minute, the gas fits the monitor, nitrate-conditional text after the tube, US usage. CHFE-SEED.md.
+- DIPH: paralysis hides the seizure, intubation neutral, the monitor narrows after bicarbonate, the gases follow the seizure and the dose, US usage. DIPH-SEED.md.
+- MGCA: adequate antibiotics credit ceftriaxone, second agents and symptomatic drugs neutral, CSF studies neutral, US usage. TSS: one oxygen expectation, norepinephrine neutral while she answers fluid. AFRVR: US usage (fellow for registrar, pants, pills, pharmacy).
+- Authoring: one act by any route, notes agree with tags, text true on every route, exams show what can be seen, gases agree with the monitor, do not halt what only makes him worse. The kit is at 64,999 of 65,000 tokens.
+- None of this is physician reviewed.
+
+## Ambulance Run: a small arcade game on the case list (29 October 2026, owner's instruction)
+
+- An ambulance button in the bottom left corner of the case list opens Ambulance Run. Steer
+  with the left and right arrow keys (or A and D, or by tapping either side of the road). Four
+  lanes. Each obstacle blocks one lane: a runaway stretcher, cones, a pothole, a sofa, ducks,
+  a pizza scooter, a shopping cart, a barrier, an inflatable flamingo, an alligator, a
+  mattress and a hot dog cart. Later rows block two or three lanes, never four. The road
+  starts at about 63 mph and gains about 1 mph a second up to about 161 mph. Hitting
+  anything ends the run. Space replays, P pauses, Esc closes. Sound is off until turned on.
+- The road generator keeps one lane open in every row and never moves it further than you
+  can steer before the next row. `engine/arcade-tests.js` drives 24 roads for seven minutes
+  each along that lane without a crash.
+- Top 10 leaderboard, shared across all accounts. A top 10 score asks for a name (1 to 16
+  letters, numbers, spaces and . _ ! ? ' -). Anyone can see the board. Posting needs a
+  signed-in account. Scores are kept in `public.arcade_runs` through three functions in
+  `supabase/migrations/003_arcade.sql`. The database refuses a score faster than the game
+  allows since the run started. Names are not screened. The local build keeps its top 10 in
+  the browser.
+- Speed, measured in Chromium with the processor slowed six times: 16 frames a second at first,
+  60 after. The blurred backdrop behind the window cost the most. The window now has a solid
+  backdrop and the case list under it is not drawn while it is open. The sky is drawn once,
+  the road is written straight into pixels, and the score and banner change the page only
+  when their text changes.
+- `003_arcade` applied to the live database on 29 October 2026.
+- Not part of any case or any score. Events: `arcade_opened`, `arcade_game_over` (score,
+  seconds), `arcade_score_posted` (score).
+
+## TSS: vomiting and diarrhea back; SCOOT: the ear and the speed; Case Maps rebuilt (29 October 2026, owner's instruction)
+
+- TSS: she has vomiting and watery diarrhea again, as most menstrual toxic shock does. They explain her potassium of 3.3 and bring back the gastroenteritis trap. She still presents fainting, with fever and a rash, and now calls it a stomach flu. No takeout meal: asked what she ate, she says nothing unusual and that her roommate eats what she eats and is well. Rewritten: title, complaint, background, appearance, both handovers, the general status line, eleven interview answers, the monitor, chemistry, liver test, ondansetron and discharge notes, and the hypokalemia and gastroenteritis explanations. The fluid prompt ("she's kept nothing down for two days") is true again. Not physician reviewed (TSS-SEED.md, What a person decided).
+- TSS case discussion: the patient story, the gastrointestinal organ system (six of seven again), a line quoting the first CDC report on onset, and the traps. Generated by `Claude outputs/dbv3/tss_discussion_v1.py`.
+- TSS-SEED.md section 12 (3.1, 3.2, 3.7 and the general status line) copied again from the built case. It still told the story from before 11 October.
+- SCOOT: the exam shows a dark blue-purple color behind the right eardrum in every phase, without naming it. The HEENT and Canadian CT Head Rule debrief notes name it, and the rule is now positive for him. Asked how fast he was going, he says he does not know and the scooter tops out at forty miles an hour (new topic `speed`).
+- Case Maps, Version 22: every panel replayed against today's build. TSS: the strong run now gives two liters and takes the source out, then starts norepinephrine only when the fluid fades and the mean pressure falls under 65 (decision 4). Before, it started norepinephrine at a mean of 76 after one liter. The TSS and CHFE prompts are current. CHFE: the "Nitrate, no mask" path uses a nitroglycerin drip, since a sublingual dose no longer moves him (28 October). Generator files in `Claude outputs/casemaps-gen/v2/`.
+
+## SCOOT: a chest film and four critical actions; asked_all (29 October 2026, owner's instruction)
+
+- SCOOT's chest film is now a picture: the normal male film from "Images Manual - Chest XRay", and once he is intubated the same film with a tube drawn in (a model choice, so the picture agrees with the state). Every other pack already showed a film. Authoring 23 now says how a chest film is chosen and that an intubated state gets its own.
+- Four new critical actions in SCOOT, on the owner's instruction: the Canadian CT Head Rule questions (`cchr_history`, credited once loss of consciousness, memory, vomiting and mechanism have all been asked), asking about blood thinners (`interview_topic_anticoagulants`), a FAST (`ultrasound_fast`, the catalog's negative read), and pain control (`analgesia_given`, credited by acetaminophen, fentanyl or morphine before the tube, with a nurse prompt at 70 s on arrival). Each has a debrief note, the rule is a new teaching point, and the debrief has two new domains. The `ct_head` note no longer says a loss of consciousness and amnesia justify a scan "by any decision rule". Not physician reviewed (SCOOT-SEED.md 2.16).
+- Engine: a case action may carry `asked_all`, a list of interview topics. It is satisfied once every one has been asked or volunteered, in any order. The validator checks each is a topic in the case and warns when the action is not hidden. Authoring 19, the field reference and four validator negative tests.
+- Credits: only what a license requires is listed (see the entry below).
+- Fixed: once SCOOT's head CT resulted, the record stopped drawing. Since the lab grouping of 28 October, an entry carrying `series` was read as a lab series, and the head CT's image payload carries `series` for the CT viewer. An image entry is no longer read that way (`engine/ui.js`, `feedPayload`).
+
+## Credits and licenses; case cards; the menu over the badge (29 October 2026, owner's instruction)
+
+- "Credits and licenses" opens a dialog listing the work by others the simulator uses: the typefaces (Atkinson Hyperlegible Next and Mono, SIL OFL), the patient artwork (Avataaars, MIT), the Colin27 brain template behind the simulated head CT (McGill's notice), three.js, supabase-js and posthog-js, and the Difficult Airway Society eFONA card the cricothyrotomy steps quote. Each item says what it is used for and carries the notice its license asks to be kept, with the full license text where the project ships the work. It opens from the case list's menu and from the footers of the case list and the welcome page. The list is `engine/credits.json`; the build adds each license file's text. Add an entry whenever something from outside the project is added.
+- Only what a license or permission requires is listed (owner, 29 October 2026). Transformers.js and the all-MiniLM-L6-v2 model were taken off: the browser fetches them from their own hosts at run time and the project does not ship them.
+- Not listed, because their source is not recorded: the chest films from "Images Manual - Chest XRay", the welcome page photograph, the room background, and the nurse's portrait. Their sources have to be found before release (authoring section 23).
+- Case cards: the review dot is gone (a screen reader still hears "Unsigned draft" or "Reviewed"), and the age and sex sit under the silhouette.
+- The hero's "cases passed" number is smaller (22 px from 26).
+- The case list's menu now opens above the floating milestone badge rather than under it.
+- Site check: the credits from the welcome page and from the menu, Escape, and the new card layout.
+
 ## Case splash: the words from the mouth, the mode as a switch (29 October 2026, owner's instruction)
 
 - The patient's opening words are a speech bubble beside the patient's head, with a wedge-shaped tail that ends at the corner of the mouth. It is drawn as one SVG outline: white fill, a 1.2 px slate line and a soft shadow. Its text is upright, medium weight, 19.5 px when the figure and the card sit side by side, and the box fits its longest line with the lines balanced. It is measured from the figure's own mouth and eyes, and placed on whichever side of the head has room (above it if neither does). It appears a moment after the patient. The purple quote box in the card is gone. The words stay in the card, hidden on screen, for a screen reader, and the card shows them as before when there is no figure.
@@ -124,6 +190,11 @@ Difficult Airway Society 2025 eFONA card (transverse stab incision). Not physici
   sternomental (14 cm) and thyromental (7 cm) distances; a head, torso and arms under the
   drape; the clavicles to the acromion, the upper trapezius, the deltoid and the hollows above
   the clavicles. The drapes cover the chest and face only. Shapes by eye, recorded in the SEED.
+- 29 October: the bougie (60 cm) and the tube (28 cm, with a 16 mm connector) have a fixed
+  length, so what goes in comes off the outer end. The turn and swing controls are large round
+  buttons. In Learn mode the step card says which instrument to pick up and that instrument
+  pulses in the tray with a "Pick up" tag. Practice mode does not prompt. The cuff has a hold
+  to Deflate button next to Inflate.
 - The build writes `site/px/procsim-<hash>.js` and never deletes an older one. It names any
   older copy so it can be removed before committing `site/`.
 - Analytics events, no content: `procedures_opened`, `procedure_loaded`,

@@ -167,7 +167,17 @@ const MONITOR = (() => {
   function ecgNow() {
     if (typeof PHASE === 'undefined' || typeof ST === 'undefined' || !ST) return resolveSpec(null, 'regular');
     const p = PHASE[ST.phase];
-    return resolveSpec(p && p.ecg, rhythmNow());
+    let e = p && p.ecg;
+    /* 29 October 2026. `ecg_when`: the first rule that holds overrides fields of the
+       phase's block, so a drug can narrow the complex without a phase of its own. */
+    if (p && Array.isArray(p.ecg_when) && typeof test === 'function') {
+      for (const r of p.ecg_when) {
+        let ok = false;
+        try { ok = test(r.when, ST); } catch (err) { ok = false; }
+        if (ok) { e = Object.assign({}, e || {}, r.ecg || {}); break; }
+      }
+    }
+    return resolveSpec(e, rhythmNow());
   }
 
   /* ---------- primitives ----------

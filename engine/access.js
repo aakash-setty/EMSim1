@@ -62,11 +62,14 @@ const ACCESS_UI = (function(){
     /* Saved progress (engine/progress.js) uses the same client and follows the session. */
     const P=(typeof PROGRESS==='object'&&PROGRESS)||{init(){},onSession(){}};
     P.init(client);
-    client.auth.onAuthStateChange((_ev,s)=>{ session=s||null; A.user(session&&session.user&&session.user.id); P.onSession(session); paint(); });
+    /* Ambulance Run (engine/arcade.js) reads and posts the shared leaderboard with the same client. */
+    const AR=(typeof ARCADE==='object'&&ARCADE)||{setClient(){},onSession(){}};
+    AR.setClient(client);
+    client.auth.onAuthStateChange((_ev,s)=>{ session=s||null; A.user(session&&session.user&&session.user.id); P.onSession(session); AR.onSession(session); paint(); });
     client.auth.getSession().then(({data})=>{
         session=(data&&data.session)||null; A.user(session&&session.user&&session.user.id);
-        known=true; P.onSession(session); afterOAuthReturn(oauthReturn); paint(); })
-      .catch(()=>{ session=null; known=true; P.onSession(null); afterOAuthReturn(oauthReturn); paint(); });
+        known=true; P.onSession(session); AR.onSession(session); afterOAuthReturn(oauthReturn); paint(); })
+      .catch(()=>{ session=null; known=true; P.onSession(null); AR.onSession(null); afterOAuthReturn(oauthReturn); paint(); });
     if(CFG.googleSignIn){ $('signingoogle').hidden=false; $('signinor').hidden=false; }
     paint();
   }

@@ -507,8 +507,9 @@ section('the handover screen shows the monitor as it was (AFRVR-32)');
       nothing.vitals.oxygen_saturation===82,String(nothing.vitals.oxygen_saturation));
 }
 section('scoring changes');
+// A phase's recommended actions become expected after 30 s in it (29 October 2026).
 chk('IV access is recommended, not critical (AFRVR-12)',
-    !fold([],5).expected.has('insert_iv')&&fold([],5).recommendedExpected.has('insert_iv'));
+    !fold([],35).expected.has('insert_iv')&&fold([],35).recommendedExpected.has('insert_iv'));
 chk('the monitor stays critical',fold([],5).expected.has('attach_monitor'));
 chk('nitroprusside is discouraged (AFRVR-25)',
     fold(mk([[1,'insert_iv'],[2,'nitroprusside_drip']]),10).discouragedTaken.has('nitroprusside_drip'));

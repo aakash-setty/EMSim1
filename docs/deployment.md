@@ -56,6 +56,7 @@ Claude. The files in git are the record of what is live.
 |---|---|---|
 | Tables, rate limit, bucket | `supabase/migrations/001_access.sql`, applied 29 Sep 2026 | Claude, via the connector |
 | Saved progress (`public.runs`) | `supabase/migrations/002_runs.sql`, applied 28 Oct 2026 | Claude, via the connector |
+| Ambulance Run leaderboard (`public.arcade_runs`) | `supabase/migrations/003_arcade.sql`, applied 29 Oct 2026 | Claude, via the connector |
 | Edge function `case-pack` (Verify JWT on) | `supabase/functions/case-pack/index.ts` | Claude, via the connector |
 | Allowed site address | `DEFAULT_ORIGINS` in the function. The secret `ALLOWED_ORIGINS` overrides it if set | Code change |
 | Rate limits | 20 per hour, 100 per day. Secrets `CASE_LOADS_PER_HOUR` and `CASE_LOADS_PER_DAY` override them | Dashboard, Edge Functions, Secrets |
@@ -257,6 +258,30 @@ CAPTCHA, Paddle, PostHog and Sentry. PostHog and Sentry will each need their hos
 `CSP_BASE` in `engine/build_simulator.py`. Cloudflare R2 is not needed for this: Supabase
 Storage holds the packs. R2 may earn a place later for large video on the marketing page,
 because it does not charge for downloads.
+
+## Ambulance Run leaderboard (29 October 2026)
+
+The game is `engine/arcade.js`, inlined in `site/index.html` like the rest of the engine. Its
+leaderboard is `public.arcade_runs` (`supabase/migrations/003_arcade.sql`). The browser has no
+access to the table, only to three functions:
+
+| Function | Who | What |
+|---|---|---|
+| `arcade_top()` | anyone | The top 10: name, score, time, and whether it is yours |
+| `arcade_start()` | signed-in, confirmed, active profile | Starts a run. The server keeps the start time. One every 2 seconds, 300 a day |
+| `arcade_finish(run, score, name)` | same | Posts a score. Refused if higher than 80 points a second since the start plus 50 (the game's top speed is 72) |
+
+Runs never posted are deleted after 6 hours. Posted scores outside the best 100 are deleted
+when a new one is posted. Names are public and are not screened. To remove one:
+
+```sql
+delete from public.arcade_runs where name = 'THE NAME';
+```
+
+Applied through the Supabase connector on 29 October 2026 and checked as a signed-in user in a
+transaction that was not kept: a second start within 2 seconds, an impossible score, a bad name,
+a second post of the same run and a direct read of the table are all refused. The Supabase
+security advisor flags the three functions as callable. That is by design.
 
 ## Procedures (28 October 2026)
 

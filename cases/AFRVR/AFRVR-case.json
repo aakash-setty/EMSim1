@@ -785,7 +785,7 @@
    "follow_ups_triggered": [
     "anticoagulation_after_cardioversion"
    ],
-   "debrief_note": "Immediate synchronized cardioversion is the right answer for atrial fibrillation with a rapid ventricular response causing hypotension, ischemic chest pain, acute heart failure attributable to the rate, or altered mental status. The AHA tachycardia algorithm lists acute heart failure alongside hypotension, altered mental status, shock and ischemic chest discomfort as reasons for synchronized cardioversion, so a resident who reaches for electricity here is following a real rule. His systolic pressure is 132, he is awake and oriented, and he has no severe chest pain, so the heart failure is the only criterion he meets, and the rate is plausibly driving it. Two things weigh against it. His palpitations began suddenly about eighteen hours ago, but a week of leg swelling before that leaves open the possibility that he was in atrial fibrillation without feeling it. With a CHA2DS2-VASc of at least four, cardioversion without anticoagulation is a real thromboembolic risk, and the 2024 ESC guideline advises against early cardioversion without anticoagulation or transoesophageal imaging once atrial fibrillation has lasted more than 24 hours. If you do shock him, sedate him, synchronize, and start at a high biphasic energy rather than escalating. And cardioversion of an arrhythmia driven by an underlying decompensation tends not to hold. It is tagged discouraged rather than harmful because it is a defensible decision made on incomplete reasoning, not a lethal one.",
+   "debrief_note": "Immediate synchronized cardioversion is the right answer for atrial fibrillation with a rapid ventricular response causing hypotension, ischemic chest pain, acute heart failure attributable to the rate, or altered mental status. The AHA tachycardia algorithm lists acute heart failure alongside hypotension, altered mental status, shock and ischemic chest discomfort as reasons for synchronized cardioversion, so a resident who reaches for electricity here is following a real rule. His systolic pressure is 132, he is awake and oriented, and he has no severe chest pain, so the heart failure is the only criterion he meets, and the rate is plausibly driving it. Two things weigh against it. His palpitations began suddenly about eighteen hours ago, but a week of leg swelling before that leaves open the possibility that he was in atrial fibrillation without feeling it. With a CHA2DS2-VASc of at least four, cardioversion without anticoagulation is a real thromboembolic risk, and the 2024 ESC guideline advises against early cardioversion without anticoagulation or transesophageal imaging once atrial fibrillation has lasted more than 24 hours. If you do shock him, sedate him, synchronize, and start at a high biphasic energy rather than escalating. And cardioversion of an arrhythmia driven by an underlying decompensation tends not to hold. It is tagged discouraged rather than harmful because it is a defensible decision made on incomplete reasoning, not a lethal one.",
    "references": [
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. [UNVERIFIED in this pack, confirm before release]"
    ]
@@ -853,7 +853,7 @@
    "follow_ups_triggered": [
     "second_rate_control_dose"
    ],
-   "debrief_note": "This entry stands for the act of rate control rather than for one drug: digoxin and amiodarone are scored as one choice and carry this note, and metoprolol satisfies the same critical action when it is given after positive pressure is on. That is deliberate, because the defensible answer here is a strategy rather than a named agent, and it should respond to the patient in front of you.\n\nWhy not diltiazem, which is the reflex answer for atrial fibrillation with a rapid ventricular response: non-dihydropyridine calcium channel blockers are negatively inotropic, and the 2023 ACC/AHA/ACCP/HRS atrial fibrillation guideline advises against them in patients with significant left ventricular systolic dysfunction for that reason. Once the POCUS shows an ejection fraction of 30 to 35 percent, that recommendation applies to this patient.\n\nDigoxin is the most comfortable choice in decompensated heart failure with reduced ejection fraction because it slows atrioventricular conduction without negative inotropy, and it is the least satisfying because its onset is slow, its therapeutic window is narrow, and it works poorly against high sympathetic tone. Amiodarone is reasonable when nodal blockade is ineffective or contraindicated and is widely used in decompensated and critically ill patients; it is not a benign drug and it carries a real chance of chemical cardioversion, which matters in a patient who is not anticoagulated and whose arrhythmia duration is unknown. A carefully selected, low-dose beta blocker is defensible once oxygenation is supported and the haemodynamics permit it, and is the least forgiving of the three in a patient with active pulmonary edema, because beta blockade in acute decompensation removes compensation as well as rate. Aggressive beta blockade in this patient is not the goal.\n\nOn the target: guideline evidence supports a lenient resting rate of under 110 beats per minute in many patients with atrial fibrillation, derived largely from RACE II, which enrolled patients with permanent atrial fibrillation rather than acutely decompensated ones. The optimal target in acute decompensated heart failure with reduced ejection fraction is less certain, and the endpoint that matters here is clinical response rather than a number.",
+   "debrief_note": "This entry stands for the act of rate control rather than for one drug: digoxin and amiodarone are scored as one choice and carry this note, and metoprolol satisfies the same critical action when it is given after positive pressure is on. That is deliberate, because the defensible answer here is a strategy rather than a named agent, and it should respond to the patient in front of you.\n\nWhy not diltiazem, which is the reflex answer for atrial fibrillation with a rapid ventricular response: non-dihydropyridine calcium channel blockers are negatively inotropic, and the 2023 ACC/AHA/ACCP/HRS atrial fibrillation guideline advises against them in patients with significant left ventricular systolic dysfunction for that reason. Once the POCUS shows an ejection fraction of 30 to 35 percent, that recommendation applies to this patient.\n\nDigoxin is the most comfortable choice in decompensated heart failure with reduced ejection fraction because it slows atrioventricular conduction without negative inotropy, and it is the least satisfying because its onset is slow, its therapeutic window is narrow, and it works poorly against high sympathetic tone. Amiodarone is reasonable when nodal blockade is ineffective or contraindicated and is widely used in decompensated and critically ill patients; it is not a benign drug and it carries a real chance of chemical cardioversion, which matters in a patient who is not anticoagulated and whose arrhythmia duration is unknown. A carefully selected, low-dose beta blocker is defensible once oxygenation is supported and the hemodynamics permit it, and is the least forgiving of the three in a patient with active pulmonary edema, because beta blockade in acute decompensation removes compensation as well as rate. Aggressive beta blockade in this patient is not the goal.\n\nOn the target: guideline evidence supports a lenient resting rate of under 110 beats per minute in many patients with atrial fibrillation, derived largely from RACE II, which enrolled patients with permanent atrial fibrillation rather than acutely decompensated ones. The optimal target in acute decompensated heart failure with reduced ejection fraction is less certain, and the endpoint that matters here is clinical response rather than a number.",
    "references": [
     "Joglar JA, Chung MK, Armbruster AL, et al. 2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation. Circulation. 2024;149(1):e1-e156. [UNVERIFIED in this pack, confirm before release]",
     "Van Gelder IC, Groenveld HF, Crijns HJGM, et al. Lenient versus strict rate control in patients with atrial fibrillation (RACE II). N Engl J Med. 2010;362(15):1363-73. [UNVERIFIED in this pack, confirm before release]"
@@ -3139,25 +3139,25 @@
    "consult_critical_care": [
     {
      "when": "phase is intubated",
-     "value": "Intensive care registrar: he is tubed, so he is coming to us. Keep him sedated and watch his pressure closely, because positive pressure can drop it. Has he been anticoagulated? Do you know why he failed?"
+     "value": "ICU fellow: he is tubed, so he is coming to us. Keep him sedated and watch his pressure closely, because positive pressure can drop it. Has he been anticoagulated? Do you know why he failed?"
     },
     {
      "when": "flag on_niv set AND study ultrasound_cardiac resulted",
-     "value": "Intensive care registrar: on the mask with an ejection fraction that low, he needs us or a step-down unit that can run it. Is he settling on it? If he is still fast, slow him down first."
+     "value": "ICU fellow: on the mask with an ejection fraction that low, he needs us or a step-down unit that can run it. Is he settling on it? If he is still fast, slow him down first."
     },
     {
      "when": "flag on_niv set",
-     "value": "Intensive care registrar: we will take a patient on the mask, but why is he in pulmonary edema? Put a probe on his heart before you call me back."
+     "value": "ICU fellow: we will take a patient on the mask, but why is he in pulmonary edema? Put a probe on his heart before you call me back."
     },
     {
      "when": null,
-     "value": "Intensive care registrar: he is in respiratory failure and nothing has been done about it. Get positive pressure on him first. The bed comes after that."
+     "value": "ICU fellow: he is in respiratory failure and nothing has been done about it. Get positive pressure on him first. The bed comes after that."
     }
    ],
    "consult_pulmonology": [
     {
      "when": null,
-     "value": "Respiratory registrar: This is not a primary lung problem. I would look at the heart. His sleep apnea can be managed outside the emergency department."
+     "value": "Pulmonology fellow: This is not a primary lung problem. I would look at the heart. His sleep apnea can be managed outside the emergency department."
     }
    ]
   }
@@ -3252,7 +3252,7 @@
    "Do you watch much television?",
    "What do you do to relax?",
    "Do you have a garden?",
-   "Are you comfortable on that trolley?",
+   "Are you comfortable on that stretcher?",
    "Would you like a blanket?",
    "Can I get you anything?",
    "What is your date of birth?",
@@ -4156,7 +4156,7 @@
      },
      {
       "when": null,
-      "value": "'About a week. My socks have been leaving deep marks round the top and my shoes have been tight. Both legs, the same. I thought it was the heat.'"
+      "value": "'About a week. My socks have been leaving deep marks around the top and my shoes have been tight. Both legs, the same. I thought it was the heat.'"
      }
     ],
     "expanded_variants": [
@@ -4210,11 +4210,11 @@
     "answer": [
      {
       "when": "phase is respiratory_failure",
-      "value": "'Trousers... tighter.'"
+      "value": "'Pants... tighter.'"
      },
      {
       "when": null,
-      "value": "'I don't weigh myself, but my trousers have been tight round the waist this last week and I've had to let my belt out a notch. My middle feels bloated.'"
+      "value": "'I don't weigh myself, but my pants have been tight around the waist this last week and I've had to let my belt out a notch. My middle feels bloated.'"
      }
     ],
     "expanded_variants": [
@@ -4239,7 +4239,7 @@
     "adjacent": [
      "leg_swelling"
     ],
-    "volunteer": "'My trousers have got tight round the waist this week too.'"
+    "volunteer": "'My pants have gotten tight around the waist this week too.'"
    },
    {
     "topic": "exercise_tolerance_baseline",
@@ -4701,7 +4701,7 @@
      },
      {
       "when": null,
-      "value": "'Three things. A blood pressure tablet, lisinopril I think it's called, twenty milligrams. A statin at night, atorvastatin. And metformin twice a day for the sugar. That's the lot.'"
+      "value": "'Three things. A blood pressure pill, lisinopril I think it's called, twenty milligrams. A statin at night, atorvastatin. And metformin twice a day for the sugar. That's the lot.'"
      }
     ],
     "expanded_variants": [
@@ -4724,7 +4724,7 @@
      "And what do you take?"
     ],
     "variants_provenance": "Expanded by catalog/expand_interview_variants.py from catalog/interview_phrasings.py in Sep 2026. The added phrasings were written by an AI assistant, not by a physician, and mix lay paraphrase, clinical shorthand and conversational forms. Every sixth new phrasing was withheld into the pack's tuning set rather than added here.",
-    "echo": "my tablets",
+    "echo": "my pills",
     "facts": [
      {
       "id": "list",
@@ -4741,7 +4741,7 @@
        },
        {
         "when": null,
-        "value": "'A blood pressure tablet, lisinopril I think, twenty milligrams. A statin at night, atorvastatin. And metformin twice a day.'"
+        "value": "'A blood pressure pill, lisinopril I think, twenty milligrams. A statin at night, atorvastatin. And metformin twice a day.'"
        }
       ],
       "restate": true
@@ -4780,7 +4780,7 @@
        },
        {
         "when": null,
-        "value": "'That's the lot. Nothing else, no inhalers, nothing from the chemist.'"
+        "value": "'That's the lot. Nothing else, no inhalers, nothing from the pharmacy.'"
        }
       ]
      }
@@ -5318,7 +5318,7 @@
      },
      {
       "when": null,
-      "value": "'My dad had a stroke when he was seventy-four and never really got over it. My brother has something with his heartbeat, he's on tablets for it, I don't know what it's called. My mother was fine until she was ninety.'"
+      "value": "'My dad had a stroke when he was seventy-four and never really got over it. My brother has something with his heartbeat, he's on pills for it, I don't know what it's called. My mother was fine until she was ninety.'"
      }
     ],
     "expanded_variants": [

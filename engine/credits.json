@@ -1,0 +1,104 @@
+{
+  "_about": "Credits and licenses, shown from the menu and the page footers (author instruction, 29 October 2026). Each item names what it is used for, the notice its license asks to be kept, and the license. license_file is a path from the repository root; the build reads that file and shows its full text under the item. List only what a license or permission requires to be credited: work this project ships or copies (fonts, images, bundled libraries) and quoted wording. Something fetched at run time from its own host and not redistributed (Transformers.js and its model) is not listed (owner, 29 October 2026). Add an entry whenever something that needs one is added.",
+  "intro": "EMSim uses the following work by others. Their notices and licenses are reproduced here as their licenses ask.",
+  "groups": [
+    {
+      "title": "Typefaces",
+      "items": [
+        {
+          "name": "Atkinson Hyperlegible Next",
+          "use": "All text in the simulator.",
+          "by": "The Atkinson Hyperlegible Next Project Authors, for the Braille Institute of America",
+          "notice": "Copyright 2020-2024 The Atkinson Hyperlegible Next Project Authors (https://github.com/googlefonts/atkinson-hyperlegible-next)",
+          "license": "SIL Open Font License 1.1",
+          "license_url": "https://openfontlicense.org/",
+          "url": "https://github.com/googlefonts/atkinson-hyperlegible-next",
+          "license_file": "engine/assets/fonts/OFL-Atkinson-Hyperlegible-Next.txt"
+        },
+        {
+          "name": "Atkinson Hyperlegible Mono",
+          "use": "Numbers: the monitor, clocks, timers and lab values.",
+          "by": "The Atkinson Hyperlegible Mono Project Authors, for the Braille Institute of America",
+          "notice": "Copyright 2020-2024 The Atkinson Hyperlegible Mono Project Authors (https://github.com/googlefonts/atkinson-hyperlegible-next-mono)",
+          "license": "SIL Open Font License 1.1",
+          "license_url": "https://openfontlicense.org/",
+          "url": "https://github.com/googlefonts/atkinson-hyperlegible-next-mono",
+          "license_file": "engine/assets/fonts/OFL-Atkinson-Hyperlegible-Mono.txt"
+        }
+      ]
+    },
+    {
+      "title": "Artwork and images",
+      "items": [
+        {
+          "name": "Avataaars",
+          "use": "The patient figures, with hospital gowns, masks, tubes and other additions drawn for this project.",
+          "by": "Pablo Stanley (design) and Fang-Pen Lin (library)",
+          "notice": "Copyright (c) 2017 Pablo Stanley, Fang-Pen Lin",
+          "license": "MIT License",
+          "license_url": "https://opensource.org/license/mit",
+          "url": "https://github.com/fangpenlin/avataaars",
+          "license_file": "engine/assets/avataaars/LICENSE"
+        },
+        {
+          "name": "Colin27 brain template",
+          "use": "The simulated head CT images are computed from this MRI template, converted to CT densities.",
+          "by": "Louis Collins, McConnell Brain Imaging Centre, Montreal Neurological Institute, McGill University",
+          "notice": "Copyright (C) 1993-2009 Louis Collins, McConnell Brain Imaging Centre, Montreal Neurological Institute, McGill University. Permission to use, copy, modify, and distribute this software and its documentation for any purpose and without fee is hereby granted, provided that the above copyright notice appear in all copies. The authors and McGill University make no representations about the suitability of this software for any purpose. It is provided \"as is\" without express or implied warranty.",
+          "license": "McGill University permission notice",
+          "license_url": "",
+          "url": "https://www.mcgill.ca/bic/software/tools-data-analysis/anatomical-mri/atlases/colin-27"
+        }
+      ]
+    },
+    {
+      "title": "Code libraries",
+      "items": [
+        {
+          "name": "three.js",
+          "use": "Draws the procedure simulations in 3D.",
+          "by": "three.js authors",
+          "notice": "Copyright © 2010-2026 three.js authors",
+          "license": "MIT License",
+          "license_url": "https://opensource.org/license/mit",
+          "url": "https://threejs.org/",
+          "license_file": "engine/vendor/three/LICENSE"
+        },
+        {
+          "name": "supabase-js",
+          "use": "Sign-in and saved progress on the website.",
+          "by": "Supabase",
+          "notice": "Copyright (c) 2020 Supabase",
+          "license": "MIT License",
+          "license_url": "https://opensource.org/license/mit",
+          "url": "https://github.com/supabase/supabase-js",
+          "license_file": "engine/vendor/supabase-js/LICENSE"
+        },
+        {
+          "name": "posthog-js",
+          "use": "Anonymous product analytics on the website.",
+          "by": "PostHog",
+          "notice": "Copyright 2020 Posthog / Hiberly, Inc. Copyright 2015 Mixpanel, Inc.",
+          "license": "Apache License 2.0",
+          "license_url": "https://www.apache.org/licenses/LICENSE-2.0",
+          "url": "https://github.com/PostHog/posthog-js",
+          "license_file": "engine/vendor/posthog-js/LICENSE"
+        }
+      ]
+    },
+    {
+      "title": "Quoted guidance",
+      "items": [
+        {
+          "name": "Difficult Airway Society, eFONA action card",
+          "use": "The steps of the cricothyrotomy procedure quote the wording of Plan D: transverse stab incision (DAS 2025).",
+          "by": "Difficult Airway Society",
+          "notice": "© Difficult Airway Society. Quoted for teaching. See the card itself for the authoritative version.",
+          "license": "",
+          "license_url": "",
+          "url": "https://das.uk.com/wp-content/uploads/2025/12/2025-CICO-Transverse-stab-incision-pdf.pdf"
+        }
+      ]
+    }
+  ]
+}

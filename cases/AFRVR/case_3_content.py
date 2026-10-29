@@ -498,25 +498,25 @@ CONSULTANTS = {
 
  "consult_critical_care": [
   {"when": "phase is intubated",
-   "value": ("Intensive care registrar: he is tubed, so he is coming to us. Keep him sedated "
+   "value": ("ICU fellow: he is tubed, so he is coming to us. Keep him sedated "
              "and watch his pressure closely, because positive pressure can drop it. Has he "
              "been anticoagulated? Do you know why he failed?")},
   {"when": "flag on_niv set AND " + DX_KNOWN,
-   "value": ("Intensive care registrar: on the mask with an ejection fraction that low, he "
+   "value": ("ICU fellow: on the mask with an ejection fraction that low, he "
              "needs us or a step-down unit that can run it. Is he settling on it? If he is "
              "still fast, slow him down first.")},
   {"when": "flag on_niv set",
-   "value": ("Intensive care registrar: we will take a patient on the mask, but why is he in "
+   "value": ("ICU fellow: we will take a patient on the mask, but why is he in "
              "pulmonary edema? Put a probe on his heart before you call me back.")},
   {"when": None,
-   "value": ("Intensive care registrar: he is in respiratory failure and nothing has been done "
+   "value": ("ICU fellow: he is in respiratory failure and nothing has been done "
              "about it. Get positive pressure on him first. The bed comes after that.")},
  ],
 
  "consult_pulmonology": [
   {"when": None,
    # Shortened on author instruction, 11 October 2026.
-   "value": "Respiratory registrar: This is not a primary lung problem. I would look at the "
+   "value": "Pulmonology fellow: This is not a primary lung problem. I would look at the "
      "heart. His sleep apnea can be managed outside the emergency department."},
  ],
 }

@@ -417,6 +417,16 @@ for _id in UNGRADED.get("ungraded", []):
     if _id in shared["actionsBase"]:
         shared["actionsBase"][_id]["ungraded"] = True
 
+# Expectation credit (owner, 29 October 2026): one act by any reasonable route. A catalog
+# entry, once taken, also meets the expectation of the entries listed under it, so a learner
+# on a mask is not told they missed the cannula. Catalog data, read generically by the engine
+# from the `credits` field. Authoring 6.3.
+_ec_path = catalog_path("expectation-credit.json")
+CREDIT = json.load(open(_ec_path, encoding="utf-8")) if os.path.exists(_ec_path) else {"credit": {}}
+for _id, _also in CREDIT.get("credit", {}).items():
+    if _id in shared["actionsBase"]:
+        shared["actionsBase"][_id]["credits"] = list(_also)
+
 # Default vital effects (owner, 27 October 2026): a pressor moves the monitor in any case,
 # whether or not the case authors it. The drugs are named in catalog data, not here. Each
 # effect gets its own key per drug and vital, so a repeat dose refreshes rather than stacks
@@ -1033,6 +1043,10 @@ def main():
               # and window. ui.js calls PROCEDURES.init from boot(), so it comes before ui.js.
               # The procedure engine itself is not in this bundle: see load_procedures.
               "\n" + open(os.path.join(HERE, "procedures.js"), encoding="utf-8").read() + "\n" +
+              # arcade.js (29 October 2026) declares `const ARCADE`, the Ambulance Run game. ui.js
+              # calls ARCADE.init from boot() and access.js hands it the Supabase client, so it
+              # comes before ui.js.
+              "\n" + open(os.path.join(HERE, "arcade.js"), encoding="utf-8").read() + "\n" +
               "\n" + open(os.path.join(HERE, "ui.js"), encoding="utf-8").read() + "\n" +
               # pupils.js (19 October 2026) declares `const PUPILVIEW` and reads ST, PT and
               # pupilState at run time, so it comes after ui.js and engine.js.
@@ -1073,6 +1087,26 @@ def main():
         print("  warning: engine/assets/landing-ecg.svg is missing; the demo's ECG sheet is empty")
         ecg_svg = '<p style="padding:20px">The ECG could not be loaded.</p>'
     shell = shell.replace("__LD_ECG__", ecg_svg)
+    # Credits and licenses (author instruction, 29 October 2026): engine/credits.json, with
+    # the full text of each license file an item names, for the dialog in ui.js (CREDITS).
+    credits = {"groups": []}
+    cr_fp = os.path.join(HERE, "credits.json")
+    if os.path.exists(cr_fp):
+        credits = json.load(open(cr_fp, encoding="utf-8"))
+        credits.pop("_about", None)
+        for g in credits.get("groups", []):
+            for it in g.get("items", []):
+                lf = it.pop("license_file", None)
+                if not lf:
+                    continue
+                lp = os.path.join(ROOT, lf)
+                if os.path.exists(lp):
+                    it["license_text"] = open(lp, encoding="utf-8").read().strip()
+                else:
+                    print("  warning: credits: license file missing: " + lf)
+    else:
+        print("  warning: engine/credits.json is missing; the credits dialog is empty")
+    shell = shell.replace("__CREDITS_JSON__", jsafe(credits))
     # The interface fonts (author's choice, 28 October 2026): Atkinson Hyperlegible Next and
     # Atkinson Hyperlegible Mono, from engine/assets/fonts/ (see its README for sources and
     # licenses). They are inlined like every other asset, so the page asks no one for a font,

@@ -30,6 +30,10 @@ model took its own recommendation each time. Each is listed again in section 2.1
 | Calling neurosurgery back after the decline | Critical |
 | Harmful halts | None. Thrombolytics and anticoagulants are left untagged |
 
+On 29 October 2026 he added a chest film and four critical actions: the Canadian CT Head Rule
+questions, asking about blood thinners, a FAST, and pain control (section 2.16). The decision
+that each is critical is his. How each is built and taught is model output.
+
 ## 1. Sources, and how far each was read
 
 | Source | How it was read | What it supplied |
@@ -195,6 +199,10 @@ from guard true.
 | `neurosurgery_updated` (hidden, credited by a neurosurgery call in any phase after arrival) | decline, herniation, temporized | prompt at 40 s, guarded on `neurosurgery_called` |
 | `osmotherapy_for_herniation` (hidden, credited by mannitol or hypertonic saline in herniation) | herniation | prompt at 20 s, escalation at 60 s |
 | `intubate_rapid_sequence` | herniation, temporized | prompt at 30 s while not intubated |
+| `cchr_history` (hidden, credited once loss of consciousness, memory of the event, nausea and vomiting, and mechanism of injury have all been asked, by `asked_all`) | presentation, decline (owner, 29 October 2026) | none |
+| `interview_topic_anticoagulants` (asking about blood thinners) | presentation, decline (owner, 29 October 2026) | none |
+| `ultrasound_fast` | every phase (owner, 29 October 2026) | none |
+| `analgesia_given` (hidden, credited by acetaminophen, fentanyl or morphine before the tube) | presentation, decline (owner, 29 October 2026) | prompt at 70 s on arrival (3:30 in the default mode) |
 
 **Recommended:** `insert_iv`, `c_collar`, `ct_c_spine`, `complete_blood_count_cbc`,
 `coagulation_panel`, `blood_type_and_screen`, `fingerstick_blood_sugar`, the airway,
@@ -217,7 +225,7 @@ and the shared note says "the blood pressure medicine", not one drug.
 
 **Neutral, with a note:** osmotherapy in the decline (accepted, not required, because good
 doctors disagree), osmotherapy in temporized, `tranexamic_acid`, `levetiracetam_bolus`,
-`fos_phenytoin`, `acetaminophen`, `fentanyl_bolus`, `morphine_bolus`, the induction agents
+`fos_phenytoin`, `acetaminophen`, `fentanyl_bolus`, `morphine_bolus` (these three also credit `analgesia_given` before the tube, section 2.16), the induction agents
 and paralytics, `preoxygenate_for_intubation`, `normal_saline_1l_bolus`, the consultations
 other than neurosurgery.
 
@@ -271,7 +279,9 @@ herniation, temporized, after a tube, or at the end (one global rule).
 
 Facts: the crash as told by Marcus (he does not remember it), about a minute out, memory gap
 from leaving Marcus's building, right-sided headache 6 of 10 and worse, queasy on arrival and
-vomiting in the decline, no helmet, scooter does about 20, ambulance ride he barely
+vomiting in the decline, no helmet, does not know how fast he was going and the scooter
+tops out at forty (owner, 29 October 2026, section 2.17. The EMS handover's "about twenty" is
+Marcus's estimate), ambulance ride he barely
 remembers, palms sting, nothing to drink tonight, vapes nicotine sometimes, no drugs, dinner
 at about seven, no medical history, no surgery, no medicines, no allergies, no blood thinners,
 no family bleeding problems, tetanus probably in high school, works at a bike shop, lives
@@ -314,6 +324,11 @@ No additional diagnoses: the catalog has no calvarial skull fracture and no mode
    effaced basal cisterns.
 7. The nurse's decline narration after an early tube does not say he vomited, because a
    sedated, paralyzed patient may not.
+8. A question asked of a patient who cannot answer (after the tube, or in herniation) still
+   counts as asked, for the History score, for `interview_topic_anticoagulants` and for
+   `cchr_history`. That is the engine's rule for every interview credit. Both are tagged
+   critical only in presentation and the decline, so a learner is never expected to ask
+   them of a patient who cannot answer, but one who asks late is credited.
 
 **Open questions for the physician**
 
@@ -327,6 +342,17 @@ No additional diagnoses: the catalog has no calvarial skull fracture and no mode
 5. Should tranexamic acid be recommended (CRASH-3 subgroup) or stay neutral?
 6. Should the herniation phase also require a second call to neurosurgery, separate from the
    decline call back? Built as one hidden target for any call after arrival.
+7. The Canadian CT Head Rule note (sections 2.16 and 2.17). From his story alone the rule
+   was not clear-cut. The blood behind his right eardrum, added on 29 October 2026, is a sign
+   of a basal skull fracture and makes the rule positive. Check the note's reading, and
+   whether going over the handlebars of a moving e-scooter should be taught as a dangerous
+   mechanism.
+8. Which four questions should credit `cchr_history`? Built as loss of consciousness, memory
+   of the event, nausea and vomiting, and mechanism of injury. Age is on the chart, and blood
+   thinners are their own critical action.
+9. Should ibuprofen count as pain control? Built: it does not, and it stays discouraged.
+10. A FAST is critical in every phase, including herniation, for an isolated head injury with
+    normal pressure. Confirm, or limit it to the phases before herniation.
 
 Questions the documents did not answer:
 
@@ -469,6 +495,94 @@ Aakash Setty asked for four changes.
   `title` in the series data, and the image slider is vertical on the right.
 - The windows are renamed Brain, Bleed, Bone and Ischemia (were Brain, Subdural, Bone and
   Stroke). Widths and levels unchanged: W 80 L 40, W 200 L 75, W 2800 L 600, W 40 L 40.
+
+## 2.16 Owner additions, 29 October 2026
+
+Aakash Setty asked: "please pull a normal cxr from the chest xray folder within em-sim and
+implement it to this Chest xr. Please do the same across the other cases if not there yet.
+Please add this to the case writing files as appropriate." And: "additional Critical actions:
+Canadian Head CT rules questions should be asked. Should be part of teaching too. Asking about
+blood thinner. Performing a FAST exam. Pain control. Please reflect this elsewhere as
+appropriate."
+
+- **The chest film.** `xr_chest` shows `scoot-cxr-normal`, the folder's
+  `Normal/Normal_Male.png`, chosen because the patient is a man (the other packs with a normal
+  film use the female one), with DKA's normal read as the debrief comment. Once he is intubated
+  it shows `scoot-cxr-normal-ett`, the same film with a tube drawn in by the MGCA method, and a
+  read that mentions the tube. The tubed film was not asked for. It is a model choice, made so
+  the picture agrees with the state (media/README.md). Every other pack already showed a film:
+  DKA, MGCA, TAKO and TSS the normal female film, AFRVR, CHFE and DIPH their own abnormal ones.
+  Authoring section 23 now says how a chest film is chosen.
+- **Canadian CT Head Rule questions** (`cchr_history`). Hidden, critical in presentation and
+  the decline, neutral after. Credited once loss of consciousness, memory of the event, nausea
+  and vomiting, and mechanism of injury have all been asked, in any order, through a new engine
+  field, `asked_all` (authoring 19). The note teaches who the rule is for, its high and medium
+  risk items, who it excludes, and how it reads for him. A new cross-cutting teaching point and
+  a new debrief domain, "The questions that decide the scan", carry it too. No prompt: asking is
+  the learner's decision, as the scan and the first call are.
+- **Blood thinners** (`interview_topic_anticoagulants`). Critical in presentation and the
+  decline, credited by asking the anticoagulants topic (authoring 6.1). Asking about
+  medications in general does not count, because the lesson is to ask by name. No prompt.
+- **FAST** (`ultrasound_fast`). Critical in every phase. The result is the catalog's negative
+  read, now authored in the case. No prompt.
+- **Pain control** (`analgesia_given`). Hidden, critical in presentation and the decline,
+  credited by acetaminophen, fentanyl or morphine given before the tube (`also_satisfies` with
+  `NOT flag intubated set`). Fentanyl or morphine after the tube still credits the sedation
+  follow-up and not pain control. Ibuprofen stays discouraged and does not count (model
+  default, open question 9). The nurse says "He's asking for something for his headache." at
+  70 s on arrival (1:10 in easy mode, 3:30 in the default mode), guarded on presentation and no
+  tube. On arrival the nurse now prompts the monitor (1:00 in the default mode), the neuro exam
+  (3:00) and his headache (3:30). The cap of five per phase still suppresses nothing.
+- **A correction to the `ct_head` note.** It said a loss of consciousness, amnesia, a headache
+  and a scalp hematoma "each justify a head CT by any decision rule". Under the Canadian CT Head
+  Rule, loss of consciousness and amnesia make a patient eligible for the rule and do not by
+  themselves call for a scan. The note now says the rule applies to him and points to its own
+  note. A model correction, not directed by the owner.
+
+What the rule says for him is not clear-cut, and a physician should decide what the note
+teaches (open question 7). He is 22, has not vomited, and his amnesia before the impact is
+under ten minutes by his account of the ride. So it rests on whether a boggy temporal hematoma
+raises suspicion of a depressed fracture (his CT shows a linear one), and whether going over a
+scooter's handlebars at speed is a dangerous mechanism (the rule's examples are a pedestrian
+struck by a vehicle, an occupant thrown from a vehicle, and a fall from more than 3 feet or 5
+stairs). Settled the same day by the owner's addition of blood behind the right eardrum
+(section 2.17), which is a high-risk item.
+
+Sources for the rule: Stiell IG, Wells GA, Vandemheen K, et al. The Canadian CT Head Rule for
+patients with minor head injury. Lancet 2001;357(9266):1391-6, not opened. Read through Walling
+AD, Am Fam Physician 2001;64(11):1886-8 (https://www.aafp.org/afp/2001/1201/p1886a.html) and the
+Wikipedia summary (https://en.wikipedia.org/wiki/Canadian_CT_head_rule), both through a
+summarizing tool on 29 October 2026. The two summaries disagree on how the original paper
+listed its exclusions (AAFP: skull fractures, unstable vital signs, focal neurologic signs,
+bleeding disorders, pregnancy. Wikipedia: under 16, GCS below 13, a bleeding disorder or
+warfarin, an open skull fracture). The note takes the population (GCS 13 to 15) from both,
+and the exclusions for age under 16 and for warfarin from Wikipedia alone. Check them against
+the paper. The notes on blood thinners, the FAST and pain control are written from memory and marked so.
+
+## 2.17 Owner additions, 29 October 2026, second request
+
+Aakash Setty: "Add blood behind tympanum but don't say that outright. If someone asks how
+fast he was going, you can say I don't know but top speed is 40 mph."
+
+- **The ear.** `exam_heent` now reads "Right eardrum intact, dark blue-purple behind it. Left
+  eardrum normal." in every phase, in place of "No blood behind the eardrums". On arrival it
+  adds "No bruising behind the ears or around the eyes", since Battle's sign and raccoon eyes
+  take hours. The exam never says blood or hemotympanum. The `exam_heent` debrief note names
+  it, and the Canadian CT Head Rule note now says his ears settle the rule: a sign of a basal
+  skull fracture is a high-risk item. Wording by a model.
+- **What the images show.** The CT images and their read show a linear fracture of the
+  temporal squama, not the petrous bone. A hemotympanum points to a fracture through the
+  temporal bone's base, which 5 mm head CT slices can miss. The images cannot be changed, so
+  the read was left as it is. A physician should say whether the read should mention it.
+- **The hearing answer is unchanged**: "No, I can hear fine. No ringing." Blood in the middle
+  ear often muffles hearing on that side. Whether he should say his right ear feels blocked
+  is an open question for the owner.
+- **Speed.** A new topic, `speed`: "'I don't know. I don't remember the ride. It tops out at
+  forty miles an hour.'" Drowsy: "'Don't know... forty, tops.'" "How fast were you going?"
+  and "Were you going fast?" moved to it from `mechanism_of_injury`. The background and the
+  EMS handover keep "about twenty miles an hour", which is Marcus's estimate.
+
+Not physician reviewed.
 
 ## 3. Catalog change requests
 

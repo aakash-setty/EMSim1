@@ -90,14 +90,14 @@ PATIENT = {
    "Inherited from phase 'presentation'. The crew put no oxygen on her and got no line in on the "
    "way. The temperature is the one the department measured, not one the crew reported."),
  "presenting_appearance": (
-   "A young woman lying on the trolley, awake, flushed and pouring off heat, plucking at the "
+   "A young woman lying on the stretcher, awake, flushed and pouring off heat, plucking at the "
    "sheet and at the monitoring leads. She looks past you rather than at you and answers "
    "questions with words that do not go together. She pushes hands away when anyone reaches for "
    "her. Her skin is hot and completely dry."),
  "ems_handover_text": (
    "Eighteen year old female, mom came in from work about an hour ago and found her like this in "
    "her bedroom. Mom says she was asleep when she left this morning. She's been confused the whole "
-   "way in, doesn't know where she is, kept trying to get off the trolley. She's very warm to "
+   "way in, doesn't know where she is, kept trying to get off the stretcher. She's very warm to "
    "touch and she's dry as a bone. Rate was 130 to 140 on our monitor, regular. We didn't get a "
    "line in, she wouldn't have it. No injuries we could find. Mom's just behind us."),
  "arrival_handover": (
@@ -149,6 +149,7 @@ def phase(pid, label, short, desc, hr, sbp, dbp, rr, spo2, temp,
       # The monitor's lead (authoring 5.2), looked up by phase id from ECG below so the
       # picture and the phase's ECG report are authored from one set of numbers.
       **({"ecg": ECG[pid]} if pid in ECG else {}),
+      **({"ecg_when": ECG_WHEN[pid]} if pid in ECG_WHEN else {}),
       "terminal": terminal, "transitions": transitions,
     }
     d.update(kw)
@@ -200,6 +201,17 @@ ECG = {
                     "author_note": ("Handed over between the stabilizing and stabilized figures, "
                                     "as the vitals for this phase are; no tracing is authored for "
                                     "it.")},
+}
+
+# 29 October 2026 (owner: after bicarbonate the nurse says to watch the complexes and nothing
+# changed on the monitor). On arrival, bicarbonate narrows the trace to the figures of the
+# arrival-after-bicarbonate twelve-lead (authoring 5.2, ecg_when). Elsewhere the phase moves.
+ECG_WHEN = {
+ "presentation": [{"when": "flag bicarb_given set",
+                   "ecg": {"qrs_ms": 116, "qtc_ms": 480,
+                           "verify": ("After bicarbonate on arrival: QRS 116 ms, QTc 480 ms, the "
+                                      "figures of the arrival-after-bicarbonate twelve-lead. Model "
+                                      "output. [UNVERIFIED, confirm before release]")}}],
 }
 
 # v0.18a: the actions that end a convulsion in this case. Used by every guard that asks
@@ -307,7 +319,7 @@ PHASES = [
      "after_seconds": 120,
      "measured_from": "phase_entry",
      "to": "wide_complex_tachycardia",
-     "narration": "She's still seizing and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.",
+     "narration": "The complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five, and nothing has gone in to stop the seizure.",
      "debrief_note": (
        "Two minutes of untreated convulsion took her into a wide-complex tachycardia. The chain "
        "is the one the seizure note describes: the convulsion produces a lactic and respiratory "
@@ -329,7 +341,7 @@ PHASES = [
      "measured_from": "phase_entry",
      "to": "wide_complex_tachycardia",
      "flags_set": ["seizure_relapsed"],
-     "narration": "She's still seizing, and the complexes on the monitor have gone broad and fast again. Her pressure's down.",
+     "narration": "The complexes on the monitor have gone broad and fast again. Her pressure's down, and nothing has gone in to stop the seizure.",
      "debrief_note": (
        "Bicarbonate without an anticonvulsant bought time and did not end the problem. She kept "
        "seizing for three minutes, the convulsion went on making heat and acid, and the QRS "
@@ -474,7 +486,7 @@ PHASES = [
      "measured_from": "guard_true",
      "to": "seizing",
      "narration": ("The complexes have narrowed and the rate's come down since the bicarb. "
-                   "She's still seizing, though."),
+                   "Nothing has gone in to stop the seizure, though."),
      "debrief_note": (
        "Sodium bicarbonate narrowed the complexes and ended the wide-complex rhythm, but it is "
        "not an anticonvulsant and she kept seizing. The convulsion goes on producing heat and "
@@ -494,8 +506,8 @@ PHASES = [
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "seizing",
-     "narration": ("The complexes have narrowed again since the bicarb. She's still seizing, "
-                   "though."),
+     "narration": ("The complexes have narrowed again since the bicarb. Nothing has gone in to "
+                   "stop the seizure, though."),
      "debrief_note": (
        "Sodium bicarbonate narrowed the complexes and ended the wide-complex rhythm, but it is "
        "not an anticonvulsant and she kept seizing. The convulsion goes on producing heat and "

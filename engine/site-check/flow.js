@@ -22,6 +22,14 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
    imgs:[...document.querySelectorAll('#landing .ld-shot img')].map(i=>i.naturalWidth)}));
  ok('signed out: the welcome page covers the list', L0.shown&&L0.top&&L0.tiles===N, L0);
  ok('welcome page screenshots load', L0.imgs.length===3&&L0.imgs.every(w=>w>0), L0.imgs);
+ // Credits and licenses (29 October 2026), from the welcome page's footer.
+ await p.click('.ld-foot [data-credits]'); await p.waitForTimeout(300);
+ const cr=await p.evaluate(()=>{ const v=document.getElementById('creditsview');
+   return {open:!v.hidden, items:v.querySelectorAll('.crd-item').length, texts:[...v.querySelectorAll('.crd-full pre')].map(x=>x.textContent.length),
+     ofl:/SIL OPEN FONT LICENSE/i.test(v.textContent), mit:/Pablo Stanley/.test(v.textContent), focus:document.activeElement&&document.activeElement.classList.contains('crd-x')}; });
+ ok('the welcome page opens the credits, every licence with its text', cr.open&&cr.items>=8&&cr.texts.length>=6&&cr.texts.every(n=>n>200)&&cr.ofl&&cr.mit&&cr.focus, cr);
+ await p.keyboard.press('Escape'); await p.waitForTimeout(150);
+ ok('Escape closes the credits', await p.evaluate(()=>document.getElementById('creditsview').hidden));
  await p.click('[data-ldact="sit"]'); await p.waitForTimeout(1300);
  ok('the demo takes an action', await p.evaluate(()=>document.querySelector('[data-ldact="sit"]').classList.contains('done')));
  // The demo's twelve-lead (28 October 2026): Get an ECG prints it over about half the screen and

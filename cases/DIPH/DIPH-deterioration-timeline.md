@@ -52,7 +52,7 @@ Vitals in this phase: HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4
 
 - guard: `NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken) AND NOT flag bicarb_given set`
 - destination vitals: HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0
-- narration: “She's still seizing and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.”
+- narration: “The complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five, and nothing has gone in to stop the seizure.”
 - author rationale: Two minutes of continuous convulsion in a patient who is already acidemic at pH 7.28 with a QRS of 132 milliseconds. The number is a drafting judgment and not the author's: she specifies that the seizure happens and that lorazepam and bicarbonate are given, and does not say how long an untreated seizure is tolerated. It is set at the shorter end of what is defensible because the case has already established the acidemia. Needs the author's signature.
 
 Prompts in this phase that set benzo_given, bicarb_given, which is what the fairness rule requires:
@@ -71,7 +71,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 - guard: `NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken) AND flag bicarb_given set AND NOT flag seizure_relapsed set`
 - destination vitals: HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0
-- narration: “She's still seizing, and the complexes on the monitor have gone broad and fast again. Her pressure's down.”
+- narration: “The complexes on the monitor have gone broad and fast again. Her pressure's down, and nothing has gone in to stop the seizure.”
 - author rationale: Physician review DIPH-09 (Aakash Setty, 27 October 2026), option B. A seizure treated with bicarbonate and no anticonvulsant relapses once into the wide-complex rhythm, three minutes after this phase is entered. It happens once: the transition grants seizure_relapsed, and the guard needs it unset. In the wide-complex phase only a bicarbonate dose given after the relapse (flag bicarb_after_relapse) narrows the rhythm again. Three minutes is invented and needs a signature. No second arrest clock is authored for the relapsed rhythm: she stays in it until fresh bicarbonate is given.
 
 Prompts in this phase that set benzo_given, bicarb_given, seizure_relapsed, which is what the fairness rule requires:
@@ -194,7 +194,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 - guard: `flag bicarb_given set AND NOT flag seizure_relapsed set`
 - destination vitals: HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4
-- narration: “The complexes have narrowed and the rate's come down since the bicarb. She's still seizing, though.”
+- narration: “The complexes have narrowed and the rate's come down since the bicarb. Nothing has gone in to stop the seizure, though.”
 - author rationale: Added in the v0.18a review. Without it a resident who gave bicarbonate but no anticonvulsant stayed in the wide-complex phase with no exit except the handoff, showing a rate of 180 after the drug that treats it. Returning to the seizing phase keeps the rhythm and the seizure consistent with what was given. Ten seconds matches the other bicarbonate transitions. A resident who gives the anticonvulsant a few seconds after the bicarbonate passes through the seizing phase on the way and still reaches stabilizing, ten seconds later. Needs the author's signature.
 
 Prompts in this phase that set bicarb_given, seizure_relapsed, which is what the fairness rule requires:
@@ -209,7 +209,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 - guard: `flag bicarb_given set AND flag bicarb_after_relapse set`
 - destination vitals: HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4
-- narration: “The complexes have narrowed again since the bicarb. She's still seizing, though.”
+- narration: “The complexes have narrowed again since the bicarb. Nothing has gone in to stop the seizure, though.”
 - author rationale: The relapse twin of the rule above (DIPH-09). She does not relapse a second time.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
@@ -253,16 +253,16 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 |---|---|---|---|---|
 | `presentation` | 10s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “Her rate's gone up and the complexes on the monitor have gone broad since the phenytoin. She's still got a pressure but it's down.” |
 | `presentation` | 240s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “She's stiffened up and she's seizing. I'm putting her on her side and I've got the suction. Her sats are dropping.” |
-| `seizing` | 120s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “She's still seizing and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.” |
-| `seizing` | 180s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “She's still seizing, and the complexes on the monitor have gone broad and fast again. Her pressure's down.” |
+| `seizing` | 120s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “The complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five, and nothing has gone in to stop the seizure.” |
+| `seizing` | 180s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “The complexes on the monitor have gone broad and fast again. Her pressure's down, and nothing has gone in to stop the seizure.” |
 | `post_ictal` | 10s | `stabilizing` | HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6 | “The complexes are getting narrower. That's since the bicarb went in.” |
 | `post_ictal` | 10s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “Her rate's gone up and the complexes on the monitor have gone broad since the phenytoin. She's still got a pressure but it's down.” |
 | `post_ictal` | 180s | `wide_complex_tachycardia` | HR 180, BP 95/60, RR 22, SpO2 90%, T 40.0 | “Her rate's gone up and the complexes have gone broad. She's still got a pressure but it's down.” |
 | `wide_complex_tachycardia` | 10s | `stabilizing` | HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6 | “The complexes have narrowed and the rate's come down. That's the bicarb.” |
 | `wide_complex_tachycardia` | 10s | `stabilizing` | HR 115, BP 115/70, RR 18, SpO2 96%, T 39.6 | “The complexes have narrowed and the rate's come down. That's the fresh bicarb.” |
 | `wide_complex_tachycardia` | 10s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “The complexes have narrowed since the bicarb. Now she's stiffened up and she's seizing.” |
-| `wide_complex_tachycardia` | 10s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “The complexes have narrowed and the rate's come down since the bicarb. She's still seizing, though.” |
-| `wide_complex_tachycardia` | 10s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “The complexes have narrowed again since the bicarb. She's still seizing, though.” |
+| `wide_complex_tachycardia` | 10s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “The complexes have narrowed and the rate's come down since the bicarb. Nothing has gone in to stop the seizure, though.” |
+| `wide_complex_tachycardia` | 10s | `seizing` | HR 150, BP 145/90, RR 8, SpO2 84%, T 40.4 | “The complexes have narrowed again since the bicarb. Nothing has gone in to stop the seizure, though.” |
 | `wide_complex_tachycardia` | 120s | `pulseless_vt` | HR 190, BP 0/0, RR 4, SpO2 52%, T 39.8 | “I've lost the pulse. Same rhythm on the monitor and there's no output. I'm starting compressions.” |
 
 Compare each line with the row before it in section 2, not only with the destination: a line saying a number has fallen must be preceded by a phase in which it was higher.

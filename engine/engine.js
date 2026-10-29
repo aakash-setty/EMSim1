@@ -141,6 +141,9 @@ function mergeAction(eff, base, caseAct, extra){
     /* Never scored (owner, 23 October 2026): intubation care. Marked on the catalog entry at
        build time from catalog data, or by the case on a case-only action. Its effects stand. */
     ungraded:!!(base.ungraded||caseAct.ungraded),
+    /* Expectation credit (owner, 29 October 2026), from catalog data: the catalog ids whose
+       expectation this act also meets once taken. Resolved to action ids in buildActions. */
+    credits:(base&&base.credits)||null,
     bound:!!caseAct.catalog_id,
     orphan:!!(extra&&extra.orphan),
     shadowed:(extra&&extra.shadowed)||[],
@@ -209,6 +212,11 @@ function mergeAction(eff, base, caseAct, extra){
        that something the resident does elsewhere in the interface (see handoffIntercept)
        can be an ordinary logged action with a tag, flags and a note. */
     rec.hidden=!!caseAct.hidden;
+    /* 29 October 2026. Credit for a set of interview topics asked together: the action is
+       satisfied once every topic it lists has been asked (or volunteered), in any order and
+       in any phase. For questions that are one clinical act only as a set, such as the
+       questions a decision rule turns on. See satisfy(). */
+    rec.asked_all=caseAct.asked_all;
   }
   /* v0.26. A catalog entry kept off the menus and out of search: the three primary-survey
      exams, performed together through the composite that names them in `performs`. Kept
@@ -238,6 +246,13 @@ function buildActions(pack){
   for(const eff in (pack.orphans||{})){
     const o=pack.orphans[eff];
     out[eff]=mergeAction(eff, null, caseActs[eff], Object.assign({orphan:true},o));
+  }
+  /* Expectation credit: catalog ids to this case's action ids. */
+  const byCat={};
+  for(const id in out){ const c=out[id].catalog_id; if(c) (byCat[c]=byCat[c]||[]).push(id); }
+  for(const id in out){
+    const cr=out[id].credits;
+    out[id].credit_targets=cr?[].concat(...cr.map(c=>byCat[c]||[])).filter(x=>x!==id):[];
   }
   return out;
 }
@@ -509,6 +524,12 @@ function fold(log, now, difficultyMultiplier){
        held the ones that were done, so the debrief could praise a recommended act but
        could not say how many were on offer. The summary scores read both. */
     recommendedExpected:new Set(),
+    /* 29 October 2026 (owner: do not tell a learner they missed something that did not
+       matter). A phase's recommended actions are held here on entry and become expected
+       only if the run stays in that phase for REC_GRACE seconds. A state the learner's own
+       treatment ended in a few seconds asks nothing more of them. One done anyway still
+       counts. */
+    recPending:null,
     /* v0.9. Every interview topic the resident's questions reached, whether or not the
        case also binds it as an action. The summary's History score reads it. */
     askedTopics:new Set(), volunteered:new Set(),
@@ -544,9 +565,17 @@ function fold(log, now, difficultyMultiplier){
   const push=(e)=>{ e._s=evseq++; e.done=false; ev.push(e); };
   const promptCount={};
 
+  const REC_GRACE=30;
+  function confirmRecommended(t){
+    const p=st.recPending; if(!p) return;
+    const long=t-p.t>=REC_GRACE-1e-6;
+    p.ids.forEach(id=>{ if(long||st.satisfied.has(id)) st.recommendedExpected.add(id); });
+    st.recPending=null;
+  }
   function onPhaseEntry(phase,t){
     scheduleDeadlines(phase,t);
     const entrySt=snapshot(st); entrySt.phase=phase;
+    const recIds=[];
     for(const id in ACT){
       const a=ACT[id];
       /* An entry covered through also_covers borrows another action's case fields so
@@ -561,13 +590,14 @@ function fold(log, now, difficultyMultiplier){
         st.expected.add(id);
         (st.expectedByPhase[phase]=st.expectedByPhase[phase]||new Set()).add(id);
       }
-      if(a.tag&&tagOf(id,entrySt)==='recommended') st.recommendedExpected.add(id);
+      if(a.tag&&tagOf(id,entrySt)==='recommended') recIds.push(id);
       if(!a.prompt) continue;
       if(tagOf(id,entrySt)!=='critical') continue;
       push({t:t+a.prompt.deadline_seconds*DM,kind:'prompt',id,phase,level:1});
       if(a.prompt.escalation)
         push({t:t+a.prompt.escalation.deadline_seconds*DM,kind:'prompt',id,phase,level:2});
     }
+    st.recPending={t,ids:recIds};
   }
   function cancelPromptsFor(phase){
     for(const e of ev) if((e.kind==='prompt'||e.kind==='deadline')&&e.phase===phase&&!e.done)
@@ -614,6 +644,7 @@ function fold(log, now, difficultyMultiplier){
       st.vitalEffects=keep;
     }
     cancelPromptsFor(st.phase);
+    confirmRecommended(t);
     st.phase=to;
     st.phaseEntry[to]=t;
     st.phaseSeq.push({id:to,t});
@@ -650,7 +681,8 @@ function fold(log, now, difficultyMultiplier){
     }
     return t-(st.phaseEntry[st.phase]||0) >= tr.after_seconds-DUE_EPS;
   }
-  function checkTransitions(t){
+  function checkTransitions(t,hop){
+    hop=hop||0;
     const p=PHASE[st.phase];
     if(!p||!p.transitions) return;
     for(let i=0;i<p.transitions.length;i++){
@@ -671,6 +703,15 @@ function fold(log, now, difficultyMultiplier){
            say) so that a guard can make it happen only once. */
         (tr.flags_set||[]).forEach(f=>grantFlag(f,t,null));
         enterPhase(tr.to,t);
+        /* 29 October 2026. After an instant move, the phase just entered may already have
+           a rule that holds: a diuretic given before the patient stabilized, so stabilizing
+           should lead straight on to improving. Until now that rule waited for the
+           resident's next order. It is checked here, at the same moment. Only after an
+           instant move: a timed rule is a deterioration or a delayed consequence the
+           resident is meant to meet, and an earlier order must not cancel it unseen (DIPH's
+           seizure fires whatever was given). Bounded, so two rules cannot loop. */
+        if(tr.after_seconds===undefined&&hop<8&&PHASE[st.phase]&&!PHASE[st.phase].terminal)
+          checkTransitions(t,hop+1);
       }
       return;
     }
@@ -805,6 +846,11 @@ function fold(log, now, difficultyMultiplier){
       st.taken.add('interview_topic_'+topic);
       st.satisfied.add('interview_topic_'+topic);
     }
+    for(const id in ACT){
+      const a=ACT[id];
+      if(!a||!Array.isArray(a.asked_all)||!a.asked_all.length||st.satisfied.has(id)) continue;
+      if(a.asked_all.every(x=>st.askedTopics.has(x))){ st.taken.add(id); st.satisfied.add(id); }
+    }
   }
   /* Answers are authored inside single quotes as the patient's speech. Splicing an echo
      or a prefix onto one has to respect that, or the transcript shows stray quotes. */
@@ -911,6 +957,10 @@ function fold(log, now, difficultyMultiplier){
        means. It goes only into `satisfied`: putting it into `taken` as well drew the
        covering action's button as though the resident had pressed that one too. */
     if(a.covered_by) st.satisfied.add(a.covered_by);
+    /* 29 October 2026. One act by any reasonable route (catalog expectation credit): a
+       mask meets the expectation of a cannula, either blood gas the other's. Only the
+       expectation. Flags, phases and the button's own state are untouched. */
+    for(const x of (a.credit_targets||[])) st.satisfied.add(x);
     /* Judged against the state as it stood when the button was pressed, before this
        action's own flags are granted, so an action cannot satisfy its own condition. */
     for(const s of (a.also_satisfies||[])){
@@ -1090,6 +1140,7 @@ function fold(log, now, difficultyMultiplier){
     const f=FU[fid];
     if(fuSatisfied(f,st)) st.fuOutstanding.delete(fid);
   });
+  confirmRecommended(st.earlyExit?st.earlyExit.t:now);
   st.vitalEffects = activeEffects(st, now);
   st.vitals = effectiveVitals(st);
   /* Terminal by the clock. Tested after everything else so `halted`, `complete` and

@@ -580,7 +580,10 @@ function labSeries(id){
 }
 
 function feedPayload(v){
-  if(v&&typeof v==='object'&&v.series) return labSeries(v.series);
+  /* A lab entry carries {series: lab id}. An image may carry a CT `series` too, which is
+     not a lab (29 October 2026: a resulted SCOOT head CT threw here and the record
+     stopped drawing). */
+  if(v&&typeof v==='object'&&v.series&&v.kind!=='image') return labSeries(v.series);
   if(!v||typeof v!=='object') return v?`<div class="fb">${esc(v)}</div>`:'';
   if(v.kind==='image') return imageThumb(v);
   /* The reference range is the third cell. It is hidden while the record is docked,
@@ -2934,14 +2937,12 @@ function renderPicker(){
       cards+=`<button class="wl-case${prog.cls}${ACCESS_UI.loadingIndex()===c.i?' loading':''}" type="button" role="option" data-case="${c.i}"
         data-row="${WL_ROWS.indexOf(c)}" aria-label="${esc(aria)}">
         <span class="dc-head">${c.num?`<span class="wl-no">Case ${c.num}</span>`:''}<span class="dc-sp"></span>
-          ${c.locked&&!ACCESS_UI.signedIn()?`<svg class="wl-lock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>`:''}
-          <span class="wl-state${c.unreviewed?'':' ok'}" title="${c.unreviewed?'Unsigned draft':'Reviewed'}"></span></span>
+          ${c.locked&&!ACCESS_UI.signedIn()?`<svg class="wl-lock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>`:''}</span>
         <span class="dc-main">
-          <span class="wl-face">${face}</span>
+          <span class="dc-who"><span class="wl-face">${face}</span><span class="dc-ag">${c.age!==undefined?esc(String(c.age)):'\u2013'} ${esc(WL_SHORT[c.sex]||'\u2013')}</span></span>
           <span class="wl-body">
             <span class="wl-ttl">${esc(c.complaint)}</span>
             <span class="wl-meta">
-              <span class="ag">${c.age!==undefined?esc(String(c.age)):'\u2013'} ${esc(WL_SHORT[c.sex]||'\u2013')}</span>
               <span class="lv">${c.broken?'<span style="color:var(--harm)">will not run correctly</span>':esc(c.level)}</span>
               <span class="rt">${c.mins?c.mins+' min':''}</span>
             </span>
@@ -2997,6 +2998,7 @@ function wlBind(){
     if(!wlVisible()) return;
     if(ACCESS_UI.modalOpen()) return;   // typing a password must not search or open a case
     if(PROGRESS.modalOpen()) return;    // the milestones dialog is open
+    if(CREDITS.isOpen()) return;        // the credits are open
     if(CHARGE.isOpen()) return;         // a case is downloading behind the charging screen
     const q=el('wl-q');
     if(e.key==='/'&&document.activeElement!==q){ e.preventDefault(); q.focus(); q.select(); return; }
@@ -4643,6 +4645,7 @@ function boot(){
   THEME.bind();
   ACCESS_UI.init();
   if(typeof PROCEDURES==='object') PROCEDURES.init();   /* the Procedures box and window */
+  if(typeof ARCADE==='object') ARCADE.init();           /* Ambulance Run, bottom left of the case list */
   /* The first case that is actually here. In the deployed build every case may be a locked
      stub, and then nothing is bound until one is fetched: begin() renders everything once
      a case is chosen, so the first-render calls below are only for a build that has one. */
@@ -4660,3 +4663,72 @@ function boot(){
   if(CASE){ refold(); renderTabs(); renderTab(); renderRail(); renderNurse(); renderMonitor(); }
 }
 boot();
+
+/* ---------- credits and licenses (author instruction, 29 October 2026) ----------
+   The work by others that the simulator uses, with the notices their licenses ask to be
+   kept and each license's full text. The list is engine/credits.json; the build adds the
+   license texts and inlines it as credits-data. Opened from the case list's menu and from
+   the footers of the case list and the welcome page, by anything carrying data-credits.
+   A dialog: Escape, the cross or the backdrop closes it, Tab stays inside it, and focus goes
+   back where it was. */
+const CREDITS=(function(){
+  let data=null, back=null;
+  const view=()=>document.getElementById('creditsview');
+  function load(){
+    if(data) return data;
+    try{ data=JSON.parse((document.getElementById('credits-data')||{}).textContent||'{}'); }catch(e){ data={}; }
+    if(!Array.isArray(data.groups)) data.groups=[];
+    return data;
+  }
+  const link=(url,text)=>url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(text)}</a>`:esc(text);
+  function html(){
+    const d=load();
+    return `<div class="crd-back" data-crdclose="1"></div>
+      <div class="crd-card" role="dialog" aria-modal="true" aria-labelledby="crd-h">
+        <header class="crd-head"><h2 id="crd-h">Credits and licenses</h2>
+          <button type="button" class="crd-x" data-crdclose="1" aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg></button></header>
+        <div class="crd-body">
+          ${d.intro?`<p class="crd-intro">${esc(d.intro)}</p>`:''}
+          ${d.groups.map(g=>`<section class="crd-sec"><h3>${esc(g.title||'')}</h3>
+            ${(g.items||[]).map(it=>`<article class="crd-item">
+              <div class="crd-top"><b class="crd-name">${link(it.url,it.name||'')}</b>${it.license?`<span class="crd-lic">${link(it.license_url,it.license)}</span>`:''}</div>
+              ${it.by?`<div class="crd-by">${esc(it.by)}</div>`:''}
+              ${it.use?`<p class="crd-use">${esc(it.use)}</p>`:''}
+              ${it.notice?`<p class="crd-notice">${esc(it.notice)}</p>`:''}
+              ${it.license_text?`<details class="crd-full"><summary>Full license text</summary><pre>${esc(it.license_text)}</pre></details>`:''}
+            </article>`).join('')}</section>`).join('')}
+        </div>
+      </div>`;
+  }
+  function isOpen(){ const v=view(); return !!v&&!v.hidden; }
+  function open(){
+    const v=view(); if(!v) return;
+    back=document.activeElement;
+    v.innerHTML=html(); v.hidden=false;
+    const x=v.querySelector('.crd-x'); if(x) x.focus();
+  }
+  function close(){
+    const v=view(); if(!v||v.hidden) return;
+    v.hidden=true; v.innerHTML='';
+    if(back&&back.focus&&document.contains(back)) back.focus({preventScroll:true});
+  }
+  /* Capture, because the welcome page stops clicks from bubbling past it. A menu item's own
+     click still reaches the menu, which closes behind the dialog. */
+  document.addEventListener('click',e=>{
+    const t=e.target.closest&&e.target.closest('[data-credits],[data-crdclose]'); if(!t) return;
+    e.preventDefault();
+    if(t.dataset.credits) open(); else{ e.stopPropagation(); close(); }
+  },true);
+  document.addEventListener('keydown',e=>{
+    if(!isOpen()) return;
+    if(e.key==='Escape'){ e.preventDefault(); e.stopImmediatePropagation(); close(); return; }
+    if(e.key==='Tab'){
+      const f=[...view().querySelectorAll('.crd-card button,.crd-card a[href],.crd-card summary')];
+      if(!f.length) return;
+      const i=f.indexOf(document.activeElement); e.preventDefault();
+      f[i<0?0:(i+(e.shiftKey?f.length-1:1))%f.length].focus();
+    }
+  },true);
+  return {open, close, isOpen};
+})();

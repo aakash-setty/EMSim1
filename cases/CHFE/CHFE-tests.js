@@ -22,7 +22,8 @@ chk('a batch of both reaches stabilizing through the mask phase',
     JSON.stringify(batched.phaseSeq.map(p=>p.id)));
 
 section('harmful halts');
-for(const h of ['metoprolol_iv','diltiazem_iv','crystalloid_bolus_1l','dobutamine_infusion']){
+// 29 October 2026, owner: the crystalloid bolus and norepinephrine no longer halt (section below).
+for(const h of ['metoprolol_iv','diltiazem_iv','dobutamine_infusion']){
   const s=fold(mk([[1,'iv_access_peripheral'],[5,h]]),20);
   chk(h+' halts',s.halted&&s.halted.id===h&&s.phase==='halted');
   chk(h+' has halt reason',!!(s.halted&&s.halted.reason&&s.halted.reason.length>20));
@@ -125,7 +126,7 @@ section('the two treatments are not the same treatment');
       at([IV,[6,'nitroprusside_drip']],10).flags.has('nitrate_given'));
   chk('a bolus does not hold off the four-minute tiring',
       at([IV,MON,[6,'nitroglycerin_sublingual']],250).phase==='impending_respiratory_failure');
-  chk('only the infusion is the scored critical action',
+  chk('only the infusion is the scored critical action (nitroprusside credits it)',
       PROTO.actions.nitroglycerin_infusion.tag.some(r=>r.value==='critical')&&
       !PROTO.actions.nitroglycerin_sublingual.tag.some(r=>r.value==='critical'));
 
@@ -201,7 +202,7 @@ section('the saturation ladder');
       tubed.phase+' '+tubed.vitals[SP]);
 
   /* A terminal phase is a written ending and is exempt from every effect. */
-  const halt=fold(mk([IV,MON,[6,'niv_bipap_cpap'],[8,'crystalloid_bolus_1l']]),20);
+  const halt=fold(mk([IV,MON,[6,'niv_bipap_cpap'],[8,'metoprolol_iv']]),20);
   chk('a halted case reads its authored numbers, effects and all',
       halt.phase==='halted'&&halt.vitals[SP]===PHASE.halted.vitals[SP]);
 }
@@ -320,3 +321,95 @@ section('v0.18a audit fixes');
   s=fold(mk([[1,'iv_access_peripheral'],[2,'epinephrine_push_dose']]),20);
   chk('a push-dose epinephrine bolus does not count as a running pressor',!s.flags.has('pressor_running'));
 }
+
+section('owner corrections, 29 October 2026');
+{
+  const IV=[1,'iv_access_peripheral'], MON=[2,'cardiac_monitor'];
+  const at=(steps,t)=>fold(mk(steps),t);
+  const strong=at([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion']],40);
+
+  /* One act, any route. */
+  chk('the mask counts as the oxygen, so the non-rebreather is not marked missing',
+      strong.satisfied.has('oxygen_nonrebreather'));
+  chk('a tube counts as the oxygen too',
+      at([IV,[3,'etomidate_iv'],[4,'rocuronium_iv'],[5,'intubation_rsi']],10).satisfied.has('oxygen_nonrebreather'));
+  chk('the boluses and nitroprusside are never expected on top of the infusion',
+      ['nitroglycerin_sublingual','nitroglycerin','nitroprusside_drip'].every(id=>!strong.recommendedExpected.has(id)&&!strong.expected.has(id)));
+  chk('every recommended action expected on the mask-and-drip run is one he can do once',
+      [...strong.recommendedExpected].every(id=>!['nitroglycerin_sublingual','nitroglycerin','nitroprusside_drip'].includes(id)));
+  chk('nitroprusside counts in place of the nitroglycerin infusion',
+      at([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroprusside_drip']],30).satisfied.has('nitroglycerin_infusion'));
+
+  /* The bolus brings the pressure down for its minute. */
+  const SB='systolic_bp', DB='diastolic_bp';
+  const bp=(steps,t)=>{ const v=fold(mk(steps),t).vitals; return [v[SB],v[DB]]; };
+  const pre=bp([IV,MON,[6,'niv_bipap_cpap']],18);
+  for(const b of ['nitroglycerin','nitroglycerin_sublingual']){
+    const on=bp([IV,MON,[6,'niv_bipap_cpap'],[20,b]],50), off=bp([IV,MON,[6,'niv_bipap_cpap'],[20,b]],85);
+    chk(b+' lowers the pressure by 20 over 8 while it acts',on[0]===pre[0]-20&&on[1]===pre[1]-8,pre+' -> '+on);
+    chk(b+' wears off after a minute',off[0]===pre[0]&&off[1]===pre[1],String(off));
+  }
+  chk('two boluses do not stack',
+      bp([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin'],[40,'nitroglycerin']],60)[0]===pre[0]-20);
+  const worn=fold(mk([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin']]),85).nurse.filter(e=>/worn off/.test(e.text||''));
+  chk('the nurse says the pressure came back up',worn.length===1&&/pressure is back up/.test(worn[0].text));
+  chk('while a bolus acts, the nurse does not say his pressure is still right up',
+      !fold(mk([IV,MON,[6,'niv_bipap_cpap'],[10,'nitroglycerin'],[60,'nitroglycerin'],[110,'nitroglycerin'],[160,'nitroglycerin']]),200)
+        .nurse.some(e=>/still right up/.test(e.text||'')));
+
+  /* A liter of fluid or norepinephrine before the tube: worse, not dead. */
+  let st=at([IV,MON,[5,'crystalloid_bolus_1l']],14.9);
+  chk('fluid on arrival: no halt, still on arrival for ten seconds',st.phase==='presentation'&&!st.halted,st.phase);
+  st=at([IV,MON,[5,'crystalloid_bolus_1l']],16);
+  chk('then impending respiratory failure, said by the nurse',
+      st.phase==='impending_respiratory_failure'&&!st.halted&&st.nurse.some(e=>/gone to his lungs/.test(e.text||'')),st.phase);
+  chk('the bolus is scored down, not halted',st.discouragedTaken.has('crystalloid_bolus_1l'));
+  st=at([IV,MON,[5,'crystalloid_bolus_1l'],[30,'niv_bipap_cpap'],[35,'nitroglycerin_infusion']],300);
+  chk('the mask and a drip still bring him back, and he stays back',
+      st.phase==='stabilizing'&&st.phaseSeq.filter(p=>p.id==='impending_respiratory_failure').length===1,
+      st.phaseSeq.map(p=>p.id).join(' > '));
+  chk('fluid on the mask tips him over too',
+      at([IV,MON,[6,'niv_bipap_cpap'],[20,'crystalloid_bolus_1l']],31).phase==='impending_respiratory_failure');
+  st=at([IV,MON,[6,'niv_bipap_cpap'],[20,'nitroglycerin_infusion'],[30,'crystalloid_bolus_1l']],120);
+  chk('fluid once he is stabilizing is scored down and moves nothing',
+      st.phase==='stabilizing'&&st.discouragedTaken.has('crystalloid_bolus_1l'),st.phase);
+  st=at([IV,MON,[5,'norepinephrine_infusion']],16);
+  chk('norepinephrine at 188 over 104: impending respiratory failure, no halt',
+      st.phase==='impending_respiratory_failure'&&!st.halted&&st.discouragedTaken.has('norepinephrine_infusion'),st.phase);
+  chk('only metoprolol, diltiazem and dobutamine halt before the tube, with push-dose epinephrine and the post-tube vasodilators',
+      CASE.case_actions.filter(a=>a.tag.some(r=>r.value==='harmful')).map(a=>a.catalog_id).sort().join()===
+      ['diltiazem_iv','dobutamine_infusion','epinephrine_push_dose','metoprolol_iv','nitroglycerin','nitroglycerin_infusion','nitroglycerin_sublingual','nitroprusside_drip'].sort().join());
+
+  /* A diuretic given before he stabilized takes him on to improving at once. */
+  st=at([IV,MON,[6,'niv_bipap_cpap'],[10,'furosemide_iv'],[20,'nitroglycerin_infusion']],20.5);
+  chk('an early diuretic moves him to improving the moment he stabilizes',
+      st.phase==='improving'&&st.phaseSeq.map(p=>p.id).join()==='presentation,niv_supported,stabilizing,improving',
+      st.phaseSeq.map(p=>p.id+'@'+p.t).join(' > '));
+
+  /* The text after intubation does not assume a nitrate. */
+  const tubeNoNitrate=at([IV,[3,'etomidate_iv'],[4,'rocuronium_iv'],[5,'intubation_rsi']],10);
+  const tubeOnDrip=at([IV,[2,'nitroglycerin_infusion'],[3,'etomidate_iv'],[4,'rocuronium_iv'],[5,'intubation_rsi']],10);
+  for(const k of ['consult_cardiology','consult_critical_care']){
+    chk(k+' says stop the nitrate only when a drip is running',
+        !/Stop the nitrate/.test(resolve(CASE.content_keys.consultants[k],tubeNoNitrate))&&
+        /Stop the nitrate/.test(resolve(CASE.content_keys.consultants[k],tubeOnDrip)));
+  }
+  chk('the norepinephrine note makes the nitrate conditional',
+      /If a nitrate drip was running/.test(CASE.case_actions.find(a=>a.catalog_id==='norepinephrine_infusion').debrief_note));
+  chk('the crystalloid note no longer calls it harmful after the tube',
+      !/remains harmful/.test(CASE.case_actions.find(a=>a.catalog_id==='crystalloid_bolus_1l').debrief_note));
+
+  /* The gas agrees with the monitor. */
+  const abg=resolve(CASE.content_keys.labs.labs_abg.rules,strong);
+  const po2=abg.components.find(x=>x.label==='pO2').value;
+  chk('the arterial pO2 in stabilizing fits a saturation of 97',Number(po2)>=80&&strong.vitals.oxygen_saturation===97,po2);
+
+  /* US usage and the house's banned word, in everything a learner can read. */
+  const strip=o=>{ if(Array.isArray(o)) return o.map(strip); if(o&&typeof o==='object'){ const r={};
+    for(const k in o){ if(['variants','expanded_variants','asks','canonical','references','migrations','provenance','review_hints',
+      'authored_against','binding_note','author_note','author_rationale'].includes(k)) continue; r[k]=strip(o[k]); } return r; } return o; };
+  const UK=/trolley|trousers|fortnight|\bround the|\btablets\b|haemo|aemia\b|oedema|dyspnoea|orthopnoea|\bchemist\b|water tablet|Full blood count|\bquiet|colour|litre\b|randomised|anaesth/i;
+  const flat=JSON.stringify(strip(CASE));
+  chk('no British spelling or usage, and no banned word, in learner text',!UK.test(flat),(flat.match(UK)||[''])[0]);
+}
+

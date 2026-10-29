@@ -33,3 +33,15 @@ support is an invented fact and should be removed rather than reconciled.
   this simulator. It was a neutral, uncataloged action.
 - 11 October 2026, Aakash Setty: every consultant answer over 40 words is shortened to 40 or fewer (authoring 9.5), keeping what the consultant thinks, what to do now and the disposition or callback. Wording by a model. Rule order, conditions, tags and debrief notes are unchanged. Not physician reviewed. Twelve of thirteen answers changed (cardiology, critical care, nephrology). Dropped: continuing carvedilol and the repeat echocardiogram (cardiology), the quoted systolic of 188 and saturation of 85 (critical care), and nephrology's list of dialysis indications, which its debrief note still gives. Physician review question CHFE-16 quotes the old wording.
 - 23 October 2026, Aakash Setty: the handover is scored on one or two major diagnoses and nothing minor. Here the primary and hypertensive emergency. Moved to `minor_diagnoses`, credited if named and never penalized if left out: cardiogenic pulmonary edema, acute hypercapnic respiratory failure and hyponatremia. Which diagnosis stayed scored was a model's pick, accepted by the author. Explanations unchanged. Not physician reviewed.
+- 29 October 2026, Aakash Setty: a correct run is not marked down. Sublingual and IV
+  nitroglycerin boluses and nitroprusside are neutral, and nitroprusside counts as the
+  nitroglycerin infusion before the tube. The mask or a tube counts as the non-rebreather
+  (catalog expectation credit). A liter of crystalloid or norepinephrine at 188/104 no longer
+  halts: ten seconds later he moves to impending respiratory failure, said by the nurse, and
+  the mask and a drip still bring him back. Metoprolol, diltiazem and dobutamine still halt.
+  A nitroglycerin bolus lowers his pressure by 20/8 for its minute. The arterial pO2 in
+  stabilizing and improving is 88, to fit a saturation of 97. The post-intubation text, the
+  norepinephrine note and both consultants name the nitrate only if a drip ran. The
+  crystalloid note agrees with its discouraged tag. An early diuretic takes him to improving
+  the moment he stabilizes (engine). US usage in learner text. Values and wording by a
+  model. Not physician reviewed.

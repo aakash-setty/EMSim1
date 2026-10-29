@@ -53,6 +53,8 @@ PUPILS_EQUAL = "Pupils 3 mm, equal and reactive."
 PUPILS_BLOWN = "Right pupil 6 mm and fixed. Left 3 mm and reactive."
 PUPILS_BACK = "Right pupil 4 mm and sluggish. Left 3 mm and reactive."
 PUPILS_BOTH = "Both pupils 6 mm and fixed."
+# Owner, 29 October 2026: blood behind the right eardrum, described and not named.
+EARS = " Right eardrum intact, dark blue-purple behind it. Left eardrum normal."
 
 EXAM = {
  "authoring_note": (
@@ -79,13 +81,13 @@ EXAM = {
    {"when": None, "value": ex("Pulse strong and regular. Capillary refill under 2 seconds.", abnormal=False)}],
 
  "exam_heent": tubed_first([
-   (HERN, None, ex("Boggy right temporal scalp hematoma. " + PUPILS_BLOWN)),
-   (TEMP, None, ex("Boggy right temporal scalp hematoma. " + PUPILS_BACK)),
-   (BRAIN, None, ex("Boggy right temporal scalp hematoma. " + PUPILS_BOTH)),
+   (HERN, None, ex("Boggy right temporal scalp hematoma. " + PUPILS_BLOWN + EARS)),
+   (TEMP, None, ex("Boggy right temporal scalp hematoma. " + PUPILS_BACK + EARS)),
+   (BRAIN, None, ex("Boggy right temporal scalp hematoma. " + PUPILS_BOTH + EARS)),
    ("phase is presentation OR phase is decline OR phase is case_complete", None,
-    ex("Boggy right temporal scalp hematoma, no laceration. " + PUPILS_EQUAL +
-       " No blood behind the eardrums. No fluid from the nose or ears.")),
- ]) + [{"when": None, "value": ex("Boggy right temporal scalp hematoma. " + PUPILS_EQUAL)}],
+    ex("Boggy right temporal scalp hematoma, no laceration. " + PUPILS_EQUAL + EARS +
+       " No fluid from the nose or ears. No bruising behind the ears or around the eyes.")),
+ ]) + [{"when": None, "value": ex("Boggy right temporal scalp hematoma. " + PUPILS_EQUAL + EARS)}],
 
  "exam_neck": [
    {"when": PRES, "value": ex("No midline cervical tenderness. Turns his head without pain.", abnormal=False)},
@@ -207,7 +209,8 @@ IMAGING = {
    "(SCOOT-SEED.md 2.7). The CT/CTA reports the same head findings in words, because its "
    "source images would show them. The MRI shows the clot too, so that an "
    "MRI ordered by mistake does not answer with the catalog's normal read. The C-spine CT "
-   "is the catalog default. The ECG is a generated tracing per phase (media/README.md), "
+   "is the catalog default. The chest film is the owner's normal male film, with a tube "
+   "drawn in once he is intubated, and the FAST is the catalog's negative read. The ECG is a generated tracing per phase (media/README.md), "
    "its read the debrief comment. The brainstem phase has none: a terminal phase cannot "
    "order one."),
 
@@ -228,6 +231,31 @@ IMAGING = {
    "Right temporal biconvex extra-axial collection with signal of acute blood, compressing "
    "the right temporal lobe, with leftward midline shift. Right temporal squamous fracture. "
    "Intracranial and neck arteries normal."))},
+
+ # 29 October 2026, owner instruction: "pull a normal cxr from the chest xray folder". The
+ # folder's Normal_Male.png (media/README.md), captioned only, with the read the debrief
+ # prints. Once he is intubated, the same film with a tube drawn in, so the picture agrees
+ # with the state (a model choice, SCOOT-SEED.md 2.16).
+ "xr_chest": {"changes_with_state": True, "rules": [
+   {"when": TUBED, "value": {
+     "kind": "image", "abnormal": False, "image": "scoot-cxr-normal-ett", "caption": "Chest radiograph",
+     "comment": ("Portable AP chest. Endotracheal tube tip about 3 to 4 cm above the carina. "
+                 "Lungs clear. No consolidation, effusion or pneumothorax. Cardiac silhouette "
+                 "normal in size. No acute bony abnormality."),
+     "verify": ("The tube is drawn on the film (media/README.md). The carina was estimated by "
+                "eye and the film has no recorded pixel spacing, so the distance is an "
+                "estimate. " + VERIFY)}},
+   {"when": None, "value": {
+     "kind": "image", "abnormal": False, "image": "scoot-cxr-normal", "caption": "Chest radiograph",
+     "comment": ("Lungs clear. No consolidation, effusion or pneumothorax. Cardiac silhouette "
+                 "normal in size. No acute bony abnormality."),
+     "verify": VERIFY}}]},
+
+ # 29 October 2026, owner instruction: the FAST is a critical action. The catalog's own
+ # negative read, authored here so the validator sees a result for a critical study.
+ "ultrasound_fast": {"changes_with_state": False, "rules": always(report(
+   "No free fluid in Morison's pouch, splenorenal recess, pelvis or pericardium. Negative "
+   "FAST.", abnormal=False))},
 
  "ecg_12_lead": {"changes_with_state": True, "rules": [
    {"when": HERN, "value": ecg_image("herniation", 56, 430,

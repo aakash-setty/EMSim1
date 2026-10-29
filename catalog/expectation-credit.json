@@ -1,0 +1,17 @@
+{
+ "decided": "Owner (Aakash Setty), 29 October 2026, after reviews of TSS, CHFE and DIPH: 'My main goal is for us to not tell the user they are making mistakes when it was fine what they did or it doesn't matter.' A learner who did the act by another reasonable route, or by a route that does more, is not told they missed it. docs/case-authoring-requirements.md 6.3.",
+ "credit": {
+  "non_rebreather_mask": ["nasal_cannula_oxygen"],
+  "non_invasive_positive_pressure_ventilation": ["nasal_cannula_oxygen", "non_rebreather_mask"],
+  "intubate_rapid_sequence": ["nasal_cannula_oxygen", "non_rebreather_mask"],
+  "insert_iv": ["intraosseous_line"],
+  "intraosseous_line": ["insert_iv"],
+  "central_venous_catheter_triple_lumen": ["insert_iv", "intraosseous_line"],
+  "central_venous_catheter_cordis": ["insert_iv", "intraosseous_line"],
+  "arterial_blood_gas": ["venous_blood_gas"],
+  "venous_blood_gas": ["arterial_blood_gas"],
+  "urine_hcg_qualitative": ["serum_hcg_quantitative"],
+  "serum_hcg_quantitative": ["urine_hcg_qualitative"]
+ },
+ "credit_note": "Catalog ids. The key, once taken, also meets the expectation of each entry listed under it, in every case: it counts as done in the debrief and the scores, and stops that entry's prompt. Nothing else changes: flags, phases and results are the act's own. Oxygen runs one way, so a higher device meets a lower one's expectation and not the reverse, and a tube does not meet the mask's, because avoiding the tube is the point of the mask. Access runs both ways between a cannula and an intraosseous line, and a central line meets both. Either blood gas meets the other, and either pregnancy test meets the other. A case that needs one route specifically and not its alternative says so in the action's note and tags the alternative neutral. Not in this file: equivalence of drugs, which is the case's own choice through also_covers and also_satisfies."
+}

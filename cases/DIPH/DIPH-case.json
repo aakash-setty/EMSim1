@@ -90,8 +90,8 @@
   "weight_kg": 60,
   "background": "No past medical history and no past surgical history. On no regular medication. No known drug allergies. She gets occasional allergic reactions (hives) and keeps her own bottle of Benadryl in her bedroom for them. Family history of hypertension on her mother's side. She is in her final year at school and lives at home with her mother and a younger brother.\n\nNot known to the department and not known to the resident: for the past several months she has been increasingly low. She has been bullied on social media, she broke up with her boyfriend a few weeks ago, and she has stopped speaking to several friends since. About four hours before her mother came home from work she swallowed the contents of her own bottle of diphenhydramine. The bottle is on the floor beside her bed and nobody has looked for it.",
   "presenting_vitals_source": "Inherited from phase 'presentation'. The crew put no oxygen on her and got no line in on the way. The temperature is the one the department measured, not one the crew reported.",
-  "presenting_appearance": "A young woman lying on the trolley, awake, flushed and pouring off heat, plucking at the sheet and at the monitoring leads. She looks past you rather than at you and answers questions with words that do not go together. She pushes hands away when anyone reaches for her. Her skin is hot and completely dry.",
-  "ems_handover_text": "Eighteen year old female, mom came in from work about an hour ago and found her like this in her bedroom. Mom says she was asleep when she left this morning. She's been confused the whole way in, doesn't know where she is, kept trying to get off the trolley. She's very warm to touch and she's dry as a bone. Rate was 130 to 140 on our monitor, regular. We didn't get a line in, she wouldn't have it. No injuries we could find. Mom's just behind us.",
+  "presenting_appearance": "A young woman lying on the stretcher, awake, flushed and pouring off heat, plucking at the sheet and at the monitoring leads. She looks past you rather than at you and answers questions with words that do not go together. She pushes hands away when anyone reaches for her. Her skin is hot and completely dry.",
+  "ems_handover_text": "Eighteen year old female, mom came in from work about an hour ago and found her like this in her bedroom. Mom says she was asleep when she left this morning. She's been confused the whole way in, doesn't know where she is, kept trying to get off the stretcher. She's very warm to touch and she's dry as a bone. Rate was 130 to 140 on our monitor, regular. We didn't get a line in, she wouldn't have it. No injuries we could find. Mom's just behind us.",
   "arrival_handover": "Eighteen year old, her mom found her like this when she got in from work about an hour ago. She's been fighting us the whole way in and she's burning up.",
   "handover_authoring_note": "Section 2.3. Two sentences, 32 words, no vital sign, no past history, no medication, no allergy, no pertinent negative and no word that names a diagnosis. It is deliberately worse than the ems_handover_text above it: the crew knows more than this, and a resident who wants it has to ask for it. 'Burning up' is a lay description of what anyone touching her would feel and is not a temperature."
  },
@@ -129,6 +129,16 @@
     "qtc_ms": 495,
     "verify": "Arrival tracing: QRS 132 ms, QTc 495 ms. Figures from this phase's ecg_12_lead report, whose verify note says every number in it is model output: the source gives no measurements. [UNVERIFIED, confirm before release]"
    },
+   "ecg_when": [
+    {
+     "when": "flag bicarb_given set",
+     "ecg": {
+      "qrs_ms": 116,
+      "qtc_ms": 480,
+      "verify": "After bicarbonate on arrival: QRS 116 ms, QTc 480 ms, the figures of the arrival-after-bicarbonate twelve-lead. Model output. [UNVERIFIED, confirm before release]"
+     }
+    }
+   ],
    "terminal": false,
    "transitions": [
     {
@@ -203,7 +213,7 @@
      "after_seconds": 120,
      "measured_from": "phase_entry",
      "to": "wide_complex_tachycardia",
-     "narration": "She's still seizing and the complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five.",
+     "narration": "The complexes on the monitor have gone broad and fast. Her pressure's down to ninety-five, and nothing has gone in to stop the seizure.",
      "debrief_note": "Two minutes of untreated convulsion took her into a wide-complex tachycardia. The chain is the one the seizure note describes: the convulsion produces a lactic and respiratory acidosis, the acidemia increases the ionized fraction of the drug, the form that binds the cardiac sodium channel, and conduction that was already slowed slows further until the ventricle takes over.\n\nThe action that would have prevented this is a benzodiazepine, and the nurse asked for one twice. Once the wide-complex rhythm is established the treatment is sodium bicarbonate, and the benzodiazepine is still needed.",
      "author_rationale": "Two minutes of continuous convulsion in a patient who is already acidemic at pH 7.28 with a QRS of 132 milliseconds. The number is a drafting judgment and not the author's: she specifies that the seizure happens and that lorazepam and bicarbonate are given, and does not say how long an untreated seizure is tolerated. It is set at the shorter end of what is defensible because the case has already established the acidemia. Needs the author's signature."
     },
@@ -215,7 +225,7 @@
      "flags_set": [
       "seizure_relapsed"
      ],
-     "narration": "She's still seizing, and the complexes on the monitor have gone broad and fast again. Her pressure's down.",
+     "narration": "The complexes on the monitor have gone broad and fast again. Her pressure's down, and nothing has gone in to stop the seizure.",
      "debrief_note": "Bicarbonate without an anticonvulsant bought time and did not end the problem. She kept seizing for three minutes, the convulsion went on making heat and acid, and the QRS widened back into a wide-complex tachycardia. The bicarbonate already given is used up: the rhythm needs a fresh dose.\n\nBicarbonate treats the conduction. A benzodiazepine is what ends the seizure, and the nurse asked for one.",
      "author_rationale": "Physician review DIPH-09 (Aakash Setty, 27 October 2026), option B. A seizure treated with bicarbonate and no anticonvulsant relapses once into the wide-complex rhythm, three minutes after this phase is entered. It happens once: the transition grants seizure_relapsed, and the guard needs it unset. In the wide-complex phase only a bicarbonate dose given after the relapse (flag bicarb_after_relapse) narrows the rhythm again. Three minutes is invented and needs a signature. No second arrest clock is authored for the relapsed rhythm: she stays in it until fresh bicarbonate is given."
     }
@@ -350,7 +360,7 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "seizing",
-     "narration": "The complexes have narrowed and the rate's come down since the bicarb. She's still seizing, though.",
+     "narration": "The complexes have narrowed and the rate's come down since the bicarb. Nothing has gone in to stop the seizure, though.",
      "debrief_note": "Sodium bicarbonate narrowed the complexes and ended the wide-complex rhythm, but it is not an anticonvulsant and she kept seizing. The convulsion goes on producing heat and acid, and both will widen the QRS again. A benzodiazepine is what ends it, with propofol as the next step if it does not.",
      "author_rationale": "Added in the v0.18a review. Without it a resident who gave bicarbonate but no anticonvulsant stayed in the wide-complex phase with no exit except the handoff, showing a rate of 180 after the drug that treats it. Returning to the seizing phase keeps the rhythm and the seizure consistent with what was given. Ten seconds matches the other bicarbonate transitions. A resident who gives the anticonvulsant a few seconds after the bicarbonate passes through the seizing phase on the way and still reaches stabilizing, ten seconds later. Needs the author's signature."
     },
@@ -359,7 +369,7 @@
      "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "seizing",
-     "narration": "The complexes have narrowed again since the bicarb. She's still seizing, though.",
+     "narration": "The complexes have narrowed again since the bicarb. Nothing has gone in to stop the seizure, though.",
      "debrief_note": "Sodium bicarbonate narrowed the complexes and ended the wide-complex rhythm, but it is not an anticonvulsant and she kept seizing. The convulsion goes on producing heat and acid, and both will widen the QRS again. A benzodiazepine is what ends it, with propofol as the next step if it does not.",
      "author_rationale": "The relapse twin of the rule above (DIPH-09). She does not relapse a second time."
     },
@@ -578,7 +588,7 @@
    ],
    "prompt": {
     "deadline_seconds": 20,
-    "text": "She's on the trolley and she's got nothing on her. Do you want her on the monitor?"
+    "text": "She's on the stretcher and she's got nothing on her. Do you want her on the monitor?"
    },
    "nurse_alert": "Monitor's on her. Would you like anything else?",
    "debrief_note": "Nothing is visible until this is done: the monitor shows dashes for every vital and plays no heartbeat until one is attached. That is a property of the simulator and it is also true of the room. In this case it matters more than usual, because the temperature is one of the six numbers on the monitor and 40.1 degrees is half the diagnosis.\n\nThe nurse's line after it, asking whether you want anything else, is there to open the door to the ECG, which is the thing this patient most needs and the thing residents most often leave until the workup comes back."
@@ -713,16 +723,8 @@
    "catalog_id": "intubate_rapid_sequence",
    "tag": [
     {
-     "when": "phase is presentation",
-     "value": "neutral"
-    },
-    {
-     "when": "phase is seizing",
-     "value": "recommended"
-    },
-    {
      "when": null,
-     "value": "recommended"
+     "value": "neutral"
     }
    ],
    "flags_set": [
@@ -745,7 +747,7 @@
     "guard": "phase is seizing AND NOT flag airway_protected set",
     "text": "She's still not protecting anything and I'm bagging her between the jerks. Do you want to tube her?"
    },
-   "debrief_note": "Defensible at almost any point in this case and required in several of them. The author writes that the patient may be intubated for airway protection during the seizure and that she is intubated before going to the unit.\n\nThree separate indications converge here and they are worth separating. Airway protection in a patient who is convulsing or post-ictal. Ventilation, because keeping the carbon dioxide down keeps the pH up and the pH is part of the cardiac toxicity. And control of the hyperthermia: sedation and paralysis stop the muscle activity that is generating the heat, which is why the temperature guidance in this poisoning reads intubate, sedate and paralyze rather than give an antipyretic.\n\nIt is tagged neutral rather than recommended in the arrival phase only because a delirious patient who is maintaining her own airway and saturating at 98 percent has other things needed first, and none of them is the tube. It is not risk-free here. She is compensating for a metabolic acidosis at a respiratory rate of 25, and the apnea of induction followed by a ventilator at a routine rate will drop her pH and can widen the QRS into a dysrhythmia. Give bicarbonate before induction when the QRS is wide, keep the apnea short, set a minute ventilation that matches or exceeds hers, check a gas soon after, and remember that rocuronium hides a recurrent seizure."
+   "debrief_note": "Defensible at almost any point in this case and required in several of them. The author writes that the patient may be intubated for airway protection during the seizure and that she is intubated before going to the unit.\n\nThree separate indications converge here and they are worth separating. Airway protection in a patient who is convulsing or post-ictal. Ventilation, because keeping the carbon dioxide down keeps the pH up and the pH is part of the cardiac toxicity. And control of the hyperthermia: sedation and paralysis stop the muscle activity that is generating the heat, which is why the temperature guidance in this poisoning reads intubate, sedate and paralyze rather than give an antipyretic.\n\nIt is not scored. Whether she needs a tube depends on how fast the seizure stops and what her airway and her gas do after it, and a resident whose first benzodiazepine ended the seizure and who watched her closely has not made an error. On arrival a delirious patient who is maintaining her own airway and saturating at 98 percent has other things needed first, and none of them is the tube. It is not risk-free here. She is compensating for a metabolic acidosis at a respiratory rate of 25, and the apnea of induction followed by a ventilator at a routine rate will drop her pH and can widen the QRS into a dysrhythmia. Give bicarbonate before induction when the QRS is wide, keep the apnea short, set a minute ventilation that matches or exceeds hers, check a gas soon after, and remember that rocuronium hides a recurrent seizure."
   },
   {
    "catalog_id": "etomidate_bolus",
@@ -794,7 +796,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "The paralytic to prefer in this patient. See the note on succinylcholine.",
+   "debrief_note": "The paralytic to prefer in this patient. See the note on succinylcholine. Paralysis stops the jerking and not the seizure: once she is paralyzed you cannot see whether she is still seizing, so give the benzodiazepine anyway, and ask for continuous EEG if she stays paralyzed.",
    "flags_set": [
     "paralytic_given"
    ]
@@ -955,10 +957,10 @@
    "prompt": {
     "deadline_seconds": 15,
     "guard": "(phase is seizing OR phase is wide_complex_tachycardia) AND NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)",
-    "text": "She's seizing. What do you want for it?",
+    "text": "She's had nothing to stop the seizure. What do you want for it?",
     "escalation": {
      "deadline_seconds": 60,
-     "text": "She's still going. I've got lorazepam and midazolam drawn up. Which one?"
+     "text": "She still hasn't had anything for the seizure. I've got lorazepam and midazolam drawn up. Which one?"
     }
    },
    "debrief_note": "First-line for all four of the things wrong with this patient that a drug can touch quickly: the agitation, the seizure, the sympathetic overactivity and, through the first of those, the hyperthermia. Titrate to effect and expect to need more than one dose.\n\nIt is critical while she is seizing and recommended on arrival. The agitation on arrival is not a behavioral problem here: it is generating the heat and the lactate, and both of those are making the cardiac toxicity worse. Sedating her is treating the heart.\n\nIf seizures recur despite adequate benzodiazepine dosing, go to propofol or a barbiturate, secure the airway, and correct the hypoxia, the acidemia and the temperature. Do not reach for phenytoin: see its own note.\n\nMidazolam is scored the same way as lorazepam, including when it is given as an induction agent for intubation, because it ends the seizure either way."
@@ -1011,7 +1013,16 @@
     "bicarbonate_reassessment",
     "repeat_ecg_after_bicarbonate"
    ],
-   "nurse_alert": "Give it a few seconds and watch the complexes.",
+   "nurse_alert": [
+    {
+     "when": "phase is seizing",
+     "value": "It's in. I can't read the complexes through the movement, so a repeat ECG once she's still will show whether they've narrowed."
+    },
+    {
+     "when": null,
+     "value": "Give it a few seconds and watch the complexes."
+    }
+   ],
    "prompt": {
     "deadline_seconds": 25,
     "guard": "phase is seizing OR phase is post_ictal OR phase is wide_complex_tachycardia",
@@ -1391,7 +1402,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "Her potassium is 3.8 before any treatment. Bicarbonate drives potassium intracellularly, so a patient who receives repeated boluses and then an infusion will become hypokalaemic, and hypokalemia prolongs the QT in a patient whose QT is already long. Replacing it is part of running the treatment rather than a separate thought."
+   "debrief_note": "Her potassium is 3.8 before any treatment. Bicarbonate drives potassium intracellularly, so a patient who receives repeated boluses and then an infusion will become hypokalemic, and hypokalemia prolongs the QT in a patient whose QT is already long. Replacing it is part of running the treatment rather than a separate thought."
   },
   {
    "catalog_id": "norepinephrine_drip",
@@ -2142,6 +2153,14 @@
    "authoring_note": "Section 9.2. Thirteen of the fourteen catalog maneuvers are authored; the back examination inherits the catalog default. The routing is the catalog's and not this author's preference: the dry hot skin and the absent sweating go to exam_skin, the agitation and thought content to exam_psych rather than exam_neuro, which owns the level of consciousness, and the absent bowel sounds and the palpable bladder to exam_abd with the bladder repeated on exam_gu because the author lists it in both places.\n\nThe findings themselves are the author's physical examination table, verbatim in substance. Their expansion across phases is not hers.",
    "exam_heent": [
     {
+     "when": "flag paralytic_given set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Pupils 7 mm, equal, sluggish. Eyes still, no roving movements. Dry mucosa."
+     }
+    },
+    {
      "when": "phase is seizing",
      "value": {
       "kind": "exam_findings",
@@ -2276,6 +2295,14 @@
    ],
    "exam_neuro": [
     {
+     "when": "flag paralytic_given set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Paralyzed. No movement of any limb, no response to assess. GCS cannot be assessed."
+     }
+    },
+    {
      "when": "phase is wide_complex_tachycardia AND flag seized set AND NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)",
      "value": {
       "kind": "exam_findings",
@@ -2360,6 +2387,14 @@
      }
     },
     {
+     "when": "flag paralytic_given set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Paralyzed and apneic. Needs a jaw thrust and bag-mask ventilation."
+     }
+    },
+    {
      "when": "phase is seizing",
      "value": {
       "kind": "exam_findings",
@@ -2393,6 +2428,22 @@
     }
    ],
    "exam_breath": [
+    {
+     "when": "flag airway_protected set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "On the ventilator. Equal chest rise. No spontaneous effort."
+     }
+    },
+    {
+     "when": "flag paralytic_given set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "No breathing effort after the paralytic. Chest rises only with the bag."
+     }
+    },
     {
      "when": "phase is seizing",
      "value": {
@@ -2499,6 +2550,14 @@
      }
     },
     {
+     "when": "flag paralytic_given set",
+     "value": {
+      "kind": "general_status",
+      "abnormal": true,
+      "findings": "Paralyzed and not breathing on her own. No visible movement. Hot to touch."
+     }
+    },
+    {
      "when": "phase is wide_complex_tachycardia AND flag seized set AND NOT (flag benzo_given set OR action propofol_bolus taken OR action propofol_infusion taken)",
      "value": {
       "kind": "general_status",
@@ -2579,6 +2638,12 @@
     },
     {
      "when": "phase is pulseless_vt OR phase is halted",
+     "value": {
+      "eyes": "closed"
+     }
+    },
+    {
+     "when": "flag paralytic_given set",
      "value": {
       "eyes": "closed"
      }
@@ -2838,6 +2903,52 @@
     "changes_with_state": true,
     "rules": [
      {
+      "when": "phase is seizing AND flag bicarb_given set",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.16",
+         "unit": "",
+         "reference_range": "7.35-7.45",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "52",
+         "unit": "mmHg",
+         "reference_range": "35-45",
+         "abnormal": true
+        },
+        {
+         "label": "pO2",
+         "value": "61",
+         "unit": "mmHg",
+         "reference_range": "80-100",
+         "abnormal": true
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "18",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": true
+        },
+        {
+         "label": "Lactate",
+         "value": "6.4",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "comment": "Still acidemic while she seizes. The bicarbonate is working on the metabolic part, and the carbon dioxide she is retaining holds the pH down.",
+       "verify": "Model output, consistent with Henderson-Hasselbalch."
+      }
+     },
+     {
       "when": "phase is seizing",
       "value": {
        "kind": "panel",
@@ -2881,6 +2992,98 @@
        ],
        "comment": "A mixed metabolic and respiratory acidosis during the convulsion. This is the worst the pH gets and it is not only a respiratory problem: acidemia increases the ionized fraction of the drug, the form that binds the cardiac sodium channel, so the gas is a cardiac measurement here as well as a respiratory one.",
        "verify": "Model output. The author supplies one gas and it is the arrival one below."
+      }
+     },
+     {
+      "when": "flag bicarb_infusion_running set",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.55",
+         "unit": "",
+         "reference_range": "7.35-7.45",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "32",
+         "unit": "mmHg",
+         "reference_range": "35-45",
+         "abnormal": true
+        },
+        {
+         "label": "pO2",
+         "value": "142",
+         "unit": "mmHg",
+         "reference_range": "80-100",
+         "abnormal": true
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "27",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": true
+        },
+        {
+         "label": "Lactate",
+         "value": "2.2",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "comment": "At the top of the range usually aimed at, about 7.50 to 7.55. Going further buys little and costs potassium and ionized calcium.",
+       "verify": "Model output, consistent with Henderson-Hasselbalch."
+      }
+     },
+     {
+      "when": "flag bicarb_titrated set",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.53",
+         "unit": "",
+         "reference_range": "7.35-7.45",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "30",
+         "unit": "mmHg",
+         "reference_range": "35-45",
+         "abnormal": true
+        },
+        {
+         "label": "pO2",
+         "value": "142",
+         "unit": "mmHg",
+         "reference_range": "80-100",
+         "abnormal": true
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "24",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        },
+        {
+         "label": "Lactate",
+         "value": "2.2",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "comment": "After the second dose. In the range usually aimed at, about 7.50 to 7.55.",
+       "verify": "Model output, consistent with Henderson-Hasselbalch."
       }
      },
      {
@@ -2981,6 +3184,134 @@
     "changes_with_state": true,
     "rules": [
      {
+      "when": "phase is seizing AND flag bicarb_given set",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.11",
+         "unit": "",
+         "reference_range": "7.31-7.41",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "58",
+         "unit": "mmHg",
+         "reference_range": "41-51",
+         "abnormal": true
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "18",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": true
+        }
+       ],
+       "comment": "Still a mixed acidosis while she seizes. The bicarbonate has raised the bicarbonate, and the carbon dioxide she is not breathing off holds the pH down.",
+       "verify": "Model output, consistent with Henderson-Hasselbalch."
+      }
+     },
+     {
+      "when": "phase is seizing",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "6.94",
+         "unit": "",
+         "reference_range": "7.31-7.41",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "58",
+         "unit": "mmHg",
+         "reference_range": "41-51",
+         "abnormal": true
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "12",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": true
+        }
+       ],
+       "comment": "A mixed metabolic and respiratory acidosis during the convulsion.",
+       "verify": "Model output, the venous counterpart of the arterial gas in this phase."
+      }
+     },
+     {
+      "when": "flag bicarb_infusion_running set",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.52",
+         "unit": "",
+         "reference_range": "7.31-7.41",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "34",
+         "unit": "mmHg",
+         "reference_range": "41-51",
+         "abnormal": true
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "27",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": true
+        }
+       ],
+       "comment": "In the range usually aimed at for sodium-channel blockade, about 7.50 to 7.55.",
+       "verify": "Model output, consistent with Henderson-Hasselbalch."
+      }
+     },
+     {
+      "when": "flag bicarb_titrated set",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.47",
+         "unit": "",
+         "reference_range": "7.31-7.41",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "34",
+         "unit": "mmHg",
+         "reference_range": "41-51",
+         "abnormal": true
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "24",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": false
+        }
+       ],
+       "comment": "Rising with the second dose and close to the range usually aimed at, about 7.50 to 7.55.",
+       "verify": "Model output, consistent with Henderson-Hasselbalch."
+      }
+     },
+     {
       "when": "flag bicarb_given set",
       "value": {
        "kind": "panel",
@@ -3008,7 +3339,7 @@
          "abnormal": true
         }
        ],
-       "comment": "Adequate for following the pH and the bicarbonate.",
+       "comment": "After one dose. Short of the range usually aimed at, about 7.50 to 7.55.",
        "verify": "Model output."
       }
      },
@@ -3756,7 +4087,7 @@
    "consult_critical_care": [
     {
      "when": "phase is wide_complex_tachycardia",
-     "value": "Intensivist: she is coming to us, but she is not safe to move in this rhythm. Sodium bicarbonate now, a benzodiazepine if she is still seizing, pads on, and call toxicology. Ring me when the complexes narrow."
+     "value": "Intensivist: she is coming to us, but she is not safe to move in this rhythm. Sodium bicarbonate now, a benzodiazepine if she is still seizing, pads on, and call toxicology. Call me when the complexes narrow."
     },
     {
      "when": "phase is seizing",
@@ -3782,21 +4113,21 @@
    "consult_psychiatry": [
     {
      "when": "flag bicarb_given set AND flag cooling_started set",
-     "value": "Psychiatry registrar: thank you for waiting until she is treated. She needs a monitored medical bed and we will assess her there. Someone should be with her continuously, and not her mother."
+     "value": "Psychiatry resident: thank you for waiting until she is treated. She needs a monitored medical bed and we will assess her there. Someone should be with her continuously, and not her mother."
     },
     {
      "when": null,
-     "value": "Psychiatry registrar: she is not ready for me. She is delirious, so I cannot assess capacity or risk. Call me when she is on a monitored bed and awake, and keep someone with her."
+     "value": "Psychiatry resident: she is not ready for me. She is delirious, so I cannot assess capacity or risk. Call me when she is on a monitored bed and awake, and keep someone with her."
     }
    ],
    "consult_neurology": [
     {
      "when": "study ct_head resulted AND study ecg_12_lead resulted",
-     "value": "Neurology registrar: the scan is clear and the tracing is not. This is a toxic seizure, so benzodiazepines and fix the physiology. If it recurs, levetiracetam or propofol, and no phenytoin."
+     "value": "Neurology resident: the scan is clear and the tracing is not. This is a toxic seizure, so benzodiazepines and fix the physiology. If it recurs, levetiracetam or propofol, and no phenytoin."
     },
     {
      "when": null,
-     "value": "Neurology registrar: this is a provoked seizure until proven otherwise. Benzodiazepines, fix the cause, and get a head CT if you have not. No phenytoin in an unknown overdose."
+     "value": "Neurology resident: this is a provoked seizure until proven otherwise. Benzodiazepines, fix the cause, and get a head CT if you have not. No phenytoin in an unknown overdose."
     }
    ],
    "consult_cardiology": [
@@ -3824,11 +4155,11 @@
    "consult_renal": [
     {
      "when": "study creatine_kinase_ck resulted",
-     "value": "Renal registrar: that creatine kinase is early and her creatinine is normal, so keep her filled and measure the urine output. Dialysis does not remove diphenhydramine."
+     "value": "Nephrology fellow: that creatine kinase is early and her creatinine is normal, so keep her filled and measure the urine output. Dialysis does not remove diphenhydramine."
     },
     {
      "when": null,
-     "value": "Renal registrar: nothing for me yet. Send a creatine kinase and a creatinine and call me back if either is bad. Dialysis does not remove diphenhydramine, if that is what you were going to ask."
+     "value": "Nephrology fellow: nothing for me yet. Send a creatine kinase and a creatinine and call me back if either is bad. Dialysis does not remove diphenhydramine, if that is what you were going to ask."
     }
    ]
   }
@@ -3925,7 +4256,7 @@
    "Do you follow any sports?",
    "What do you do to relax?",
    "Do you have a garden?",
-   "Are you comfortable on that trolley?",
+   "Are you comfortable on that stretcher?",
    "Would you like a blanket?",
    "Is the bed at the right height?",
    "What is your date of birth?",
@@ -4041,7 +4372,7 @@
       "value": [
        {
         "when": null,
-        "value": "'That's what I keep thinking about. I left at half seven this morning and she was asleep. So it could have been any time in there.'"
+        "value": "'That's what I keep thinking about. I left at seven thirty this morning and she was asleep. So it could have been any time in there.'"
        }
       ]
      },
@@ -4056,7 +4387,7 @@
       "value": [
        {
         "when": null,
-        "value": "'She was on the floor in her bedroom, sat up against the bed. She looked at me and she didn't know me. That's when I called the ambulance.'"
+        "value": "'She was on the floor in her bedroom, sitting up against the bed. She looked at me and she didn't know me. That's when I called the ambulance.'"
        }
       ]
      }
@@ -4114,7 +4445,7 @@
     "answer": [
      {
       "when": null,
-      "value": "'This morning. I looked in before I left for work, about half seven, and she was asleep in bed. She was fine last night. Quiet, but she's been quiet for months.'"
+      "value": "'This morning. I looked in before I left for work, about seven thirty, and she was asleep in bed. She was fine last night. Withdrawn, but she's been withdrawn for months.'"
      }
     ],
     "echo": "when she was last herself",
@@ -4142,7 +4473,7 @@
     "adjacent": [
      "what_she_was_doing"
     ],
-    "volunteer": "'She was fine when I looked in at half seven this morning.'"
+    "volunteer": "'She was fine when I looked in at seven thirty this morning.'"
    },
    {
     "topic": "progression",
@@ -4205,11 +4536,11 @@
     "answer": [
      {
       "when": null,
-      "value": "'She was off school today, she said she had a headache last night and wanted a day at home. That's been happening a lot lately. She's missed a lot of school these last few weeks, she just stays in her room. So she was in on her own from half seven. Her brother got back about three, he was upstairs on his computer, he says he didn't hear anything.'"
+      "value": "'She stayed home from school today, she said she had a headache last night and wanted a day at home. That's been happening a lot lately. She's missed a lot of school these last few weeks, she just stays in her room. So she was in on her own from seven thirty. Her brother got back about three, he was upstairs on his computer, he says he didn't hear anything.'"
      }
     ],
     "echo": "what she was doing today",
-    "volunteer": "'She'd stayed off school today, so she was home on her own.'"
+    "volunteer": "'She'd stayed home from school today, so she was home on her own.'"
    },
    {
     "topic": "bottle_or_pills_found",
@@ -4239,7 +4570,7 @@
     "answer": [
      {
       "when": null,
-      "value": "She stops. 'I didn't look. I just saw her on the floor and I called the ambulance, I didn't look at anything else.' She takes out her phone. 'Let me ring her brother, he's still at home.'\n\nShe steps out and comes back a couple of minutes later, holding the phone.\n\n'He's found a bottle. It was on the floor by the bed, half under it. It's her Benadryl, the big bottle she keeps in her room for her allergies, and it's empty. I bought it about a month ago and she'd hardly touched it.'"
+      "value": "She stops. 'I didn't look. I just saw her on the floor and I called the ambulance, I didn't look at anything else.' She takes out her phone. 'Let me call her brother, he's still at home.'\n\nShe steps out and comes back a couple of minutes later, holding the phone.\n\n'He's found a bottle. It was on the floor by the bed, half under it. It's her Benadryl, the big bottle she keeps in her room for her allergies, and it's empty. I bought it about a month ago and she'd hardly touched it.'"
      }
     ],
     "echo": "whether there was anything near her",
@@ -4320,7 +4651,7 @@
     "answer": [
      {
       "when": null,
-      "value": "'I didn't think that at all until you asked. She's never done anything like this.' Pause. 'If it was the Benadryl, then whatever was in that bottle. I don't know when. She'd been on her own since half seven this morning.'"
+      "value": "'I didn't think that at all until you asked. She's never done anything like this.' Pause. 'If it was the Benadryl, then whatever was in that bottle. I don't know when. She'd been on her own since seven thirty this morning.'"
      }
     ],
     "echo": "what she might have taken"
@@ -4354,7 +4685,7 @@
     "answer": [
      {
       "when": null,
-      "value": "'Not much. Paracetamol and ibuprofen in the kitchen drawer, and her Benadryl, which she keeps in her room. I take something for my blood pressure, ramipril, and that's in my bedroom and the packet's still full, I checked it before we left. There's nothing strong in the house. Nobody's got anything for pain or anything like that.'"
+      "value": "'Not much. Tylenol and ibuprofen in the kitchen drawer, and her Benadryl, which she keeps in her room. I take something for my blood pressure, ramipril, and that's in my bedroom and the bottle's still full, I checked it before we left. There's nothing strong in the house. Nobody's got anything for pain or anything like that.'"
      }
     ],
     "echo": "what's in the house",
@@ -4829,7 +5160,7 @@
     "answer": [
      {
       "when": null,
-      "value": "'There was something online. In the spring. Some girls in her year set up an account and were putting things on it about her, and it went round the whole school. I only found out because another mom told me. The school said they dealt with it.'\n\n'She stopped talking to the two friends she had left after that. I don't know if they were part of it or if she just cut everyone off.'"
+      "value": "'There was something online. In the spring. Some girls in her year set up an account and were putting things on it about her, and it went around the whole school. I only found out because another mom told me. The school said they dealt with it.'\n\n'She stopped talking to the two friends she had left after that. I don't know if they were part of it or if she just cut everyone off.'"
      }
     ],
     "echo": "what's been going on at school",
@@ -4860,7 +5191,7 @@
     "answer": [
      {
       "when": null,
-      "value": "'She was seeing a boy for about a year and they broke up three or four weeks ago. She wouldn't talk about it. She cried for two days and then she just went quiet on it.'"
+      "value": "'She was seeing a boy for about a year and they broke up three or four weeks ago. She wouldn't talk about it. She cried for two days and then she just stopped talking about it.'"
      }
     ],
     "echo": "the break-up",
@@ -4950,7 +5281,7 @@
     "answer": [
      {
       "when": null,
-      "value": "'She has a drink at a party like they all do. Not at home and not on her own. Drugs, no. I've never seen anything and I've never smelt anything on her.' She pauses. 'I'd have said the same thing about the Benadryl an hour ago.'"
+      "value": "'She has a drink at a party like they all do. Not at home and not on her own. Drugs, no. I've never seen anything and I've never smelled anything on her.' She pauses. 'I'd have said the same thing about the Benadryl an hour ago.'"
      }
     ],
     "echo": "drink and drugs",

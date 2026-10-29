@@ -155,6 +155,14 @@ const setTable=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows}
  await p.mouse.move(20,820); await wait(500);
  ok('two Next up cards, two different cases', await p.evaluate(()=>{ const n=[...document.querySelectorAll('#wl-home .cx-next [data-hmopencase]')].map(b=>b.dataset.hmopencase);
    return n.length===2&&new Set(n).size===2; }));
+ ok('case cards: no review dot, the age and sex under the silhouette', await p.evaluate(()=>{ const c=[...document.querySelectorAll('#pk-list .wl-case')];
+   return c.length>0&&!document.querySelector('#pk-list .wl-state')&&c.every(x=>x.querySelector('.dc-who .wl-face + .dc-ag')); }));
+ await p.click('#wl-menubtn'); await wait(150); await p.click('#wl-menu [data-credits]'); await wait(300);
+ ok('the menu opens the credits over the case list, above the milestone badge', await p.evaluate(()=>{ const v=document.getElementById('creditsview');
+   const b=document.querySelector('#db-ms .ms-badge'), r=b&&b.getBoundingClientRect();
+   const top=r?document.elementFromPoint(r.left+r.width/2,r.top+r.height/2):null;
+   return !v.hidden&&v.querySelectorAll('.crd-item').length>=8&&(!top||!!top.closest('#creditsview')); }));
+ await p.keyboard.press('Escape'); await wait(150);
  ok('each category is its own coloured panel, with a heading', await p.evaluate(()=>{ const s=[...document.querySelectorAll('#pk-list .wl-sec')];
    return s.length>1&&s.every(x=>/\bcat-\d\b/.test(x.className)&&x.querySelector('h3.wl-group')&&getComputedStyle(x).getPropertyValue('--cat').trim()); }));
  await p.click('[data-fbclose]'); await wait(200);
