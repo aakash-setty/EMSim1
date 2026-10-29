@@ -1217,6 +1217,16 @@ body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-fl
 .ar-banner.on{opacity:1}
 .ar-over{position:absolute; inset:0; display:grid; place-items:center; padding:14px; background:rgba(5,10,28,.42)}
 .ar-over[hidden]{display:none}
+.ar-over.crash{place-items:start center; padding-top:46px; background:linear-gradient(rgba(5,10,28,.6),rgba(5,10,28,0) 55%)}
+.ar-crashp{padding:10px 14px; animation:arin .25s ease-out}
+.ar-crashp .ar-big{font-size:18px!important; margin-bottom:4px}
+.ar-crashp p{margin-bottom:8px}
+.ar-sc2{font-family:var(--mono); font-size:16px; color:#fff}
+.ar-bst{display:block; font-size:12px; color:#9fb0d0}
+@keyframes arin{from{opacity:0; transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){.ar-crashp{animation:none}}
+.ar-stage:has(.ar-over.crash:not([hidden])) .ar-hud{display:none}
+@media (max-width:760px){ .ar-over.crash{padding-top:6px} .ar-crashp{padding:8px 10px} .ar-crashp p{font-size:12.5px!important; margin-bottom:6px} .ar-crashp .ar-big{font-size:15px!important} }
 .ar-panel{width:min(360px,100%); text-align:center; color:#fff; background:rgba(7,14,36,.9); border:2px solid #d33a2c; border-radius:6px; padding:16px 18px}
 .ar-panel p{margin:0 0 10px; font-size:13.5px; line-height:1.45; color:#dfe6f5}
 .ar-big{font-family:var(--mono); font-weight:800; text-transform:uppercase; letter-spacing:.12em; font-size:22px!important; color:#fff!important}
@@ -10550,7 +10560,7 @@ const ARCADE = (function(){
   const RULES = {
     lanes: 4,           // lanes, numbered 0 (left) to 3
     laneW: 3.2,         // m
-    v0: 28,             // m/s at the start (about 63 mph)
+    v0: 42,             // m/s at the start (about 94 mph; was 28, owner: "starts too slow")
     accel: 0.45,        // m/s gained each second
     vmax: 72,           // m/s cap (about 161 mph). Points are meters, so at most 72 a second
     laneRate: 6.5,      // lanes a second while changing lane
@@ -10892,6 +10902,166 @@ const ARCADE = (function(){
     bx(x,yb,s,-0.1,2.15,0.2,0.22,'#e8e8e8');
     if(!crashed){ ctx.fillStyle=on?'rgba(255,60,50,.22)':'rgba(60,140,255,.22)'; ctx.beginPath(); ctx.ellipse(x+(on?-0.5:0.5)*s,yb-2.26*s,0.75*s,0.3*s,0,0,6.3); ctx.fill(); }
   }
+  /* ---- after a crash (29 October 2026, owner request) ----
+     The crash plays out under the score panel, in one of four scenes, never the same twice in
+     a row: 1 the crew gets out and puts out the fire, 2 the crew runs around, pulls out the
+     stretcher, one rides and the other pushes them off the screen, 3 an alien beams the
+     ambulance away, 4 the burning ambulance falls into a sinkhole. Each lasts about seven
+     seconds and then holds. Drawn in meters at the ambulance's depth, like everything else. */
+  const SCENES=['crew','stretcher','alien','sinkhole'];
+  let crash=null, lastScene=-1;
+  function startCrash(){
+    let k=Math.floor(Math.random()*SCENES.length); if(k===lastScene) k=(k+1)%SCENES.length;
+    lastScene=k; crash={t:0, scene:SCENES[k]};
+  }
+  const hz=i=>{ const x=Math.sin(i*127.1+311.7)*43758.5453; return x-Math.floor(x); };
+  const lerp=(a,b,f)=>a+(b-a)*clamp(f,0,1);
+  const ease=f=>{ f=clamp(f,0,1); return f*f*(3-2*f); };
+  /* A crew member: navy uniform with a yellow stripe. pose: stand, walk, run, cheer, lie, push. */
+  function person(x,yb,s,ph,pose,skin,flip){
+    const d=flip?-1:1;
+    if(pose==='lie'){
+      bx(x,yb,s,-0.85,0.05,0.62,0.24,'#1d3557'); bx(x,yb,s,-0.25,0.05,0.5,0.26,'#1d3557'); bx(x,yb,s,-0.25,0.14,0.5,0.05,'#f2c12e');
+      ell(x+0.42*s,yb-0.2*s,0.14*s,0.13*s,skin); bx(x,yb,s,0.3,0.24,0.22,0.06,'#20242a');
+      bx(x,yb,s,-0.15,0.3,0.1,0.35+0.08*Math.sin(ph*9),'#1d3557'); return;   // one arm up, waving
+    }
+    const step=(pose==='walk'||pose==='run'||pose==='push')?Math.sin(ph*(pose==='run'?16:9)):0;
+    const lean=pose==='push'?0.18*d:(pose==='run'?0.08*d:0);
+    const hop=pose==='cheer'?Math.abs(Math.sin(ph*7))*0.22:(pose==='run'?Math.abs(step)*0.06:0);
+    const b=yb-hop*s;
+    bx(x,b,s,-0.2+lean*0.3,0,0.17,0.82+0.1*step,'#16233b'); bx(x,b,s,0.03+lean*0.3,0,0.17,0.82-0.1*step,'#16233b');
+    bx(x,b,s,-0.24+lean,0.8,0.48,0.62,'#1d3557'); bx(x,b,s,-0.24+lean,1.06,0.48,0.07,'#f2c12e');
+    ell(x+(lean)*s,b-1.58*s,0.15*s,0.16*s,skin); bx(x,b,s,-0.14+lean,1.64,0.28,0.08,'#20242a');
+    if(pose==='cheer'||pose==='run'){
+      const w=pose==='run'?0.15*Math.sin(ph*18):0;
+      bx(x,b,s,-0.36+lean,1.32+w,0.11,0.48,'#1d3557'); bx(x,b,s,0.25+lean,1.32-w,0.11,0.48,'#1d3557');
+    } else if(pose==='push'){
+      bx(x,b,s,lean+0.18*d-(d<0?0.42:0),1.12,0.42,0.1,'#1d3557');
+    } else {
+      bx(x,b,s,-0.35+lean,0.86-0.05*step,0.11,0.5,'#1d3557'); bx(x,b,s,0.24+lean,0.86+0.05*step,0.11,0.5,'#1d3557');
+    }
+  }
+  /* Flames on the ambulance, level 0 to 1. */
+  function fire(x,yb,s,lv,t){
+    if(lv<=0.02) return;
+    for(let i=0;i<14;i++){
+      const u=hz(i), fl=(t*2.6+u)%1, fx=x+(u-0.5)*1.7*s, fy=yb-(2.25+fl*1.6*lv)*s;
+      const r=(0.45-fl*0.32)*s*lv*(0.7+0.6*hz(i+40));
+      ell(fx,fy,r,r*1.3, fl<0.35?'#fff3b0':fl<0.7?'#ffb52e':'#ff5a1f');
+    }
+  }
+  function smoke(x,yb,s,amt,t){
+    if(amt<=0.02) return;
+    for(let i=0;i<8;i++){
+      const u=hz(i+9), f=(t*0.35+u)%1, r=(0.3+f*0.9)*s*amt;
+      ctx.globalAlpha=0.55*(1-f)*amt; ell(x+(u-0.5)*1.2*s+f*0.8*s, yb-(2.4+f*4)*s, r, r*0.8, '#6f7680');
+    }
+    ctx.globalAlpha=1;
+  }
+  function boom(x,y,s,f){
+    if(f>=1) return; const k=1-f;
+    for(let i=0;i<10;i++){ const a=i*0.63, r=(i%2?1.1:1.8)*s*(0.6+f); ell(x+Math.cos(a)*r*0.8, y+Math.sin(a)*r*0.5, 0.5*s*k+1, 0.35*s*k+1, i%2?'#ffd23b':'#ff7a2a'); }
+    ell(x,y,0.8*s*k+1,0.6*s*k+1,'#fff3b0');
+  }
+  function stretcher(x,yb,s){
+    for(const w of [-0.75,0.6]) bx(x,yb,s,w,0,0.16,0.14,'#20242a');
+    bx(x,yb,s,-0.7,0.1,0.06,0.42,'#9aa3ad'); bx(x,yb,s,0.62,0.1,0.06,0.42,'#9aa3ad');
+    bx(x,yb,s,-0.9,0.5,1.8,0.1,'#c8cfd6'); bx(x,yb,s,-0.88,0.58,1.76,0.14,'#f6f7f9');
+  }
+  /* The ambulance with its rear doors open: the box goes dark inside. */
+  function doorsOpen(x,yb,s,f){
+    if(f<=0) return;
+    const w=0.8*ease(f);
+    bx(x,yb,s,-0.82,0.42,1.64,1.6,'#2a2f36'); bx(x,yb,s,-0.7,0.42,1.4,0.18,'#4b525c');
+    bx(x,yb,s,-1.0-w,0.42,w,1.6,'#e9ecf0'); bx(x,yb,s,1.0,0.42,w,1.6,'#e9ecf0');
+    bx(x,yb,s,-1.0-w,0.95,w,0.16,'#d33a2c'); bx(x,yb,s,1.0,0.95,w,0.16,'#d33a2c');
+  }
+  function drawCrash(ax,yb,s,t){
+    const c=crash||{t:9,scene:'crew'}, ct=c.t, SK=['#c98e6b','#8d5a3b'];
+    const amb=(yOff,scale)=>drawAmbulance(ax, yb+(yOff||0), s*(scale||1), t, true);
+    if(c.scene==='crew'){
+      amb(); doorsOpen(ax,yb,s,(ct-0.9)/0.4);
+      const out=ease((ct-1.2)/0.9);
+      const lv=ct<0.3?ct/0.3:1-ease((ct-2.4)/2.6);
+      fire(ax,yb,s,lv,ct); smoke(ax,yb,s,ct>2.4?Math.min(1,(ct-2.4)/1.5)*(1-ease((ct-7)/3)):0,ct);
+      if(ct>1.2){
+        const pa=ax+lerp(-0.2,-1.9,out)*s, pb=ax+lerp(0.2,1.9,out)*s, moving=out<1;
+        const cheer=ct>5.4;
+        person(pa,yb+0.4*s,s,ct,cheer?'cheer':moving?'walk':'stand',SK[0],false);
+        person(pb,yb+0.4*s,s,ct+0.3,cheer?'cheer':moving?'walk':'stand',SK[1],true);
+        /* The extinguisher and its spray, from the right-hand crew member. */
+        bx(pb,yb+0.4*s,s,-0.42,0.85,0.16,0.42,'#d33a2c'); bx(pb,yb+0.4*s,s,-0.38,1.27,0.08,0.08,'#20242a');
+        if(ct>2.2&&ct<5.2) for(let i=0;i<16;i++){
+          const f=(ct*3+hz(i))%1, sx=pb-0.45*s, sy0=yb+0.4*s-1.2*s;
+          const tx=ax+0.2*s+(hz(i+3)-0.5)*1.2*s, ty=yb-(2.4+hz(i+5)*0.8)*s;
+          ctx.globalAlpha=0.8*(1-f*0.6); ell(lerp(sx,tx,f), lerp(sy0,ty,f), (0.12+f*0.3)*s, (0.1+f*0.22)*s, '#f2f5fa'); }
+        ctx.globalAlpha=1;
+      }
+      boom(ax,yb-1.6*s,s,ct/0.7);
+    }
+    else if(c.scene==='stretcher'){
+      const lv=ct<0.3?ct/0.3:1;
+      amb(); doorsOpen(ax,yb,s,(ct-0.9)/0.4); fire(ax,yb,s,lv,ct); smoke(ax,yb,s,Math.min(1,ct/3),ct);
+      const fy=yb+0.45*s;
+      /* 1.2 to 3.6: they run around in a panic. 3.6 to 4.4: the stretcher comes out.
+         4.4 to 4.9: one jumps on. Then the other pushes them off to the right. */
+      let sxp=null, riderOn=false;
+      if(ct>=3.6) sxp=ax+lerp(0,1.4,ease((ct-3.6)/0.8))*s;
+      if(ct>=4.9){ const ft=ct-4.9; sxp=ax+1.4*s+(1.2*ft*ft+0.6*ft)*s; }
+      if(sxp!=null) stretcher(sxp,fy,s);
+      if(ct>1.2&&ct<3.6){
+        const k=(ct-1.2);
+        const pa=ax+Math.sin(k*3.1)*2.1*s, pb=ax+Math.sin(k*3.1+Math.PI)*2.1*s;
+        person(pa,fy,s,ct,'run',SK[0],Math.cos(k*3.1)<0); person(pb,fy,s,ct+0.4,'run',SK[1],Math.cos(k*3.1+Math.PI)<0);
+      } else if(ct>=3.6){
+        /* The rider: waits, jumps in an arc, lies down. */
+        if(ct<4.4) person(ax-1.6*s,fy,s,ct,'stand',SK[0],false);
+        else if(ct<4.9){ const f=(ct-4.4)/0.5; person(lerp(ax-1.6*s,sxp,f), fy-Math.sin(f*Math.PI)*1.4*s, s, ct,'cheer',SK[0],false); }
+        else riderOn=true;
+        if(riderOn) person(sxp,fy-0.72*s,s,ct,'lie',SK[0],false);
+        /* The pusher stands behind the foot end. */
+        const px0=sxp!=null?sxp-1.25*s:ax-0.2*s;
+        person(px0,fy,s,ct,ct>=4.9?'push':'walk',SK[1],false);
+      }
+      boom(ax,yb-1.6*s,s,ct/0.7);
+    }
+    else if(c.scene==='alien'){
+      const ufoY=lerp(-30, yb-6.2*s, ease((ct-0.8)/1.2)) + (ct>4.4? -ease((ct-4.4)/0.6)*260:0);
+      const ufoX=ax + (ct>4.4? ease((ct-4.4)/0.6)*220:0) + Math.sin(ct*2.2)*0.2*s;
+      const beam=ct>2.0&&ct<4.5;
+      const lift=ease((ct-2.4)/2.0), sc2=1-0.75*lift;
+      if(beam){ ctx.globalAlpha=0.28+0.08*Math.sin(ct*20); ctx.fillStyle='#8dff7a'; ctx.beginPath();
+        ctx.moveTo(ufoX-0.6*s,ufoY+0.3*s); ctx.lineTo(ufoX+0.6*s,ufoY+0.3*s); ctx.lineTo(ax+1.7*s,yb+0.2*s); ctx.lineTo(ax-1.7*s,yb+0.2*s); ctx.closePath(); ctx.fill(); ctx.globalAlpha=1; }
+      if(ct<4.4){
+        const yy=lerp(yb, ufoY+1.4*s, lift);
+        if(beam&&Math.floor(ct*14)%3===0) ctx.globalAlpha=0.6;
+        drawAmbulance(ax, yy, s*sc2, t, true); ctx.globalAlpha=1;
+        fire(ax,yy,s*sc2,(ct<0.3?ct/0.3:1)*(1-ease((ct-2.0)/0.6)),ct);
+      } else { ell(ax,yb-0.08*s,1.1*s,0.22*s,'rgba(20,22,26,.55)'); }
+      /* The saucer. */
+      ell(ufoX,ufoY,1.7*s,0.42*s,'#9aa6b4'); ell(ufoX,ufoY-0.3*s,0.75*s,0.48*s,'#7fd4ff'); ell(ufoX-0.15*s,ufoY-0.45*s,0.22*s,0.14*s,'#d6f3ff');
+      ell(ufoX,ufoY-0.2*s,0.28*s,0.24*s,'#5fd35a'); px(ufoX-0.1*s,ufoY-0.3*s,1,1,'#111'); px(ufoX+0.08*s,ufoY-0.3*s,1,1,'#111');
+      for(let i=0;i<5;i++) ell(ufoX+(i-2)*0.65*s, ufoY+0.08*s, 0.12*s, 0.08*s, Math.floor(ct*6+i)%2?'#ffe14d':'#ff5a5a');
+      boom(ax,yb-1.6*s,s,ct/0.7);
+    }
+    else { // sinkhole
+      const hw=lerp(0.2,1.65,ease((ct-1.5)/0.6))*s, hh=hw*0.32, hy=yb-0.05*s;
+      if(ct>0.8){ ctx.strokeStyle='#2b2f35'; ctx.lineWidth=1; ctx.beginPath();
+        for(let i=0;i<7;i++){ const a=i*0.9+0.3, r=(1.2+hz(i)*1.2)*s*ease((ct-0.8)/0.7); ctx.moveTo(ax,hy); ctx.lineTo(ax+Math.cos(a)*r, hy+Math.sin(a)*r*0.3); }
+        ctx.stroke(); }
+      if(ct>1.5) ell(ax,hy,hw,hh,'#121417');
+      if(ct>1.5) ell(ax,hy+hh*0.25,hw*0.86,hh*0.7,'#06070a');
+      const drop=ct<2.2?0:Math.pow(clamp((ct-2.2)/1.3,0,1),1.8)*3.4*s;
+      if(drop<3.3*s){
+        ctx.save(); if(ct>1.5){ ctx.beginPath(); ctx.rect(0,0,W,hy+hh*0.3); ctx.clip(); }
+        drawAmbulance(ax, yb+drop, s, t, true); fire(ax,yb+drop,s,ct<0.3?ct/0.3:1,ct);
+        ctx.restore();
+      }
+      if(ct>3.4){ const g2=0.4+0.3*Math.sin(ct*9); ctx.globalAlpha=g2; ell(ax,hy+hh*0.2,hw*0.5,hh*0.4,'#ff7a2a'); ctx.globalAlpha=1;
+        smoke(ax,yb+1.6*s,s,Math.min(1,(ct-3.4)/1.2),ct); }
+      boom(ax,yb-1.6*s,s,ct/0.7);
+    }
+  }
   function draw(){
     if(!ctx) return;
     const t=g?g.t:performance.now()/1000, dist=g?g.dist:performance.now()/1000*18;
@@ -10903,18 +11073,14 @@ const ARCADE = (function(){
     things.sort((a,b)=>b.z-a.z);
     const pz=RULES.playerZ;
     let drew=false;
-    const drawP=()=>{ if(!g) return; const s=sc(pz); const x=CX+((g.x-(RULES.lanes-1)/2)*RULES.laneW)*s; drawAmbulance(x, sy(pz), s, t, g.over); drew=true; };
+    const drawP=()=>{ if(!g) return; const s=sc(pz); const x=CX+((g.x-(RULES.lanes-1)/2)*RULES.laneW)*s;
+      if(g.over) drawCrash(x, sy(pz), s, performance.now()/1000); else drawAmbulance(x, sy(pz), s, t, false); drew=true; };
     for(const o of things){
       if(!drew && o.z<pz) drawP();
       /* Drawn a third larger than life so they read at a distance. Hits go by lane, not by size. */
       const fn=DRAW[o.kind]; if(fn) fn(laneX(o.lane,o.z), sy(o.z), sc(o.z)*(o.kind==='ducks'?1.7:1.35));
     }
     if(!drew) drawP();
-    if(g&&g.over){
-      const s=sc(pz), x=CX+((g.x-(RULES.lanes-1)/2)*RULES.laneW)*s, y=sy(pz)-1.6*s;
-      for(let i=0;i<10;i++){ const a=i*0.63, r=(i%2?1.1:1.8)*s; ell(x+Math.cos(a)*r*0.8, y+Math.sin(a)*r*0.5, 0.5*s, 0.35*s, i%2?'#ffd23b':'#ff7a2a'); }
-      ell(x,y,0.8*s,0.6*s,'#fff3b0');
-    }
   }
 
   /* ================= the window ================= */
@@ -10986,7 +11152,7 @@ const ARCADE = (function(){
   function paintOver(){
     const o=$('ar-over'); if(!o) return;
     if(mode==='play'){ o.hidden=true; o.innerHTML=''; return; }
-    o.hidden=false;
+    o.hidden=false; o.classList.toggle('crash', mode==='over');
     if(mode==='title'){
       o.innerHTML=`<div class="ar-panel"><p class="ar-big">Ambulance Run</p>
         <p>Clear the road. Steer around whatever is in your lane. It gets faster.</p>
@@ -11005,9 +11171,8 @@ const ARCADE = (function(){
       } else if(q && SITE){
         form=`<p class="ar-note">That is a top 10 score. Sign in to post scores.</p>`;
       }
-      o.innerHTML=`<div class="ar-panel"><p class="ar-big">Crash</p>
-        <p>You hit ${esc(what||'something')}.</p>
-        <p class="ar-final">Score <b>${fmt(s)}</b>${best&&s<best?` <span>Best this visit ${fmt(best)}</span>`:''}</p>
+      o.innerHTML=`<div class="ar-panel ar-crashp"><p class="ar-big">Crash</p>
+        <p>You hit ${esc(what||'something')}. Score <b class="ar-sc2">${fmt(s)}</b>${best&&s<best?`<span class="ar-bst">Best this visit ${fmt(best)}</span>`:''}</p>
         ${form}<p class="ar-msg">${esc(postMsg)}</p>
         <button class="ar-go" type="button" id="ar-go">Play again</button></div>`;
       const fm=$('ar-form');
@@ -11058,7 +11223,7 @@ const ARCADE = (function(){
   function resume(){ if(mode!=='paused') return; mode='play'; lastT=performance.now(); paintOver(); sirenOn(); }
   function startOrResume(){ if(mode==='paused') resume(); else startGame(); }
   function gameOver(){
-    mode='over'; sirenOff(); crashSound();
+    mode='over'; sirenOff(); crashSound(); startCrash();
     const s=scoreOf(g); best=Math.max(best,s);
     A.track('arcade_game_over',{score:s, seconds:Math.round(g.t)});
     paintOver(); paintHud();
@@ -11078,6 +11243,7 @@ const ARCADE = (function(){
       if(g.over){ banner=''; paintBanner(); gameOver(); }
       else if(Math.floor(now/120)!==Math.floor((now-dt*1000)/120)) paintHud();
     }
+    if(mode==='over'&&crash) crash.t+=dt;
     draw();
     raf=requestAnimationFrame(loop);
   }
@@ -11106,7 +11272,9 @@ const ARCADE = (function(){
   /* access.js hands over the Supabase client and each session change. */
   function setClient(c){ client=c; }
   function onSession(s){ session=s||null; if(open&&mode!=='play') paintOver(); }
-  return {init, setClient, onSession, show, hide, rules, _state:()=>({mode, g, top, runId})};
+  return {init, setClient, onSession, show, hide, rules, _state:()=>({mode, g, top, runId, crash}),
+    /* For tests and screenshots: replay a crash scene from its start. */
+    _scene:(n,t)=>{ if(crash&&SCENES.includes(n)){ crash.scene=n; crash.t=t||0; } }};
 })();
 
 

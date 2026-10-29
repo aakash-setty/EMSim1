@@ -25,7 +25,8 @@ is usable with learners.
   lanes. Each obstacle blocks one lane: a runaway stretcher, cones, a pothole, a sofa, ducks,
   a pizza scooter, a shopping cart, a barrier, an inflatable flamingo, an alligator, a
   mattress and a hot dog cart. Later rows block two or three lanes, never four. The road
-  starts at about 63 mph and gains about 1 mph a second up to about 161 mph. Hitting
+  starts at about 94 mph (raised from 63 mph the same day: it started too slow) and gains
+  about 1 mph a second up to about 161 mph. Hitting
   anything ends the run. Space replays, P pauses, Esc closes. Sound is off until turned on.
 - The road generator keeps one lane open in every row and never moves it further than you
   can steer before the next row. `engine/arcade-tests.js` drives 24 roads for seven minutes
@@ -42,6 +43,10 @@ is usable with learners.
   the road is written straight into pixels, and the score and banner change the page only
   when their text changes.
 - `003_arcade` applied to the live database on 29 October 2026.
+- After a crash the scene keeps playing under a smaller score panel at the top. One of four
+  scenes, never the same twice in a row: the crew gets out and puts out the fire; the crew
+  runs around, pulls out the stretcher, and one rides while the other pushes them off the
+  screen; an alien beams the ambulance away; the burning ambulance falls into a sinkhole.
 - Not part of any case or any score. Events: `arcade_opened`, `arcade_game_over` (score,
   seconds), `arcade_score_posted` (score).
 

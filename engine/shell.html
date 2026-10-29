@@ -1213,6 +1213,16 @@ body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-fl
 .ar-banner.on{opacity:1}
 .ar-over{position:absolute; inset:0; display:grid; place-items:center; padding:14px; background:rgba(5,10,28,.42)}
 .ar-over[hidden]{display:none}
+.ar-over.crash{place-items:start center; padding-top:46px; background:linear-gradient(rgba(5,10,28,.6),rgba(5,10,28,0) 55%)}
+.ar-crashp{padding:10px 14px; animation:arin .25s ease-out}
+.ar-crashp .ar-big{font-size:18px!important; margin-bottom:4px}
+.ar-crashp p{margin-bottom:8px}
+.ar-sc2{font-family:var(--mono); font-size:16px; color:#fff}
+.ar-bst{display:block; font-size:12px; color:#9fb0d0}
+@keyframes arin{from{opacity:0; transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){.ar-crashp{animation:none}}
+.ar-stage:has(.ar-over.crash:not([hidden])) .ar-hud{display:none}
+@media (max-width:760px){ .ar-over.crash{padding-top:6px} .ar-crashp{padding:8px 10px} .ar-crashp p{font-size:12.5px!important; margin-bottom:6px} .ar-crashp .ar-big{font-size:15px!important} }
 .ar-panel{width:min(360px,100%); text-align:center; color:#fff; background:rgba(7,14,36,.9); border:2px solid #d33a2c; border-radius:6px; padding:16px 18px}
 .ar-panel p{margin:0 0 10px; font-size:13.5px; line-height:1.45; color:#dfe6f5}
 .ar-big{font-family:var(--mono); font-weight:800; text-transform:uppercase; letter-spacing:.12em; font-size:22px!important; color:#fff!important}
