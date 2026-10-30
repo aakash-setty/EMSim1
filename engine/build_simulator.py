@@ -1049,6 +1049,9 @@ def main():
               # and window. ui.js calls PROCEDURES.init from boot(), so it comes before ui.js.
               # The procedure engine itself is not in this bundle: see load_procedures.
               "\n" + open(os.path.join(HERE, "procedures.js"), encoding="utf-8").read() + "\n" +
+              # tutorial.js (30 October 2026) declares `const TUTORIAL`, How it works. ui.js
+              # calls TUTORIAL.init from boot().
+              "\n" + open(os.path.join(HERE, "tutorial.js"), encoding="utf-8").read() + "\n" +
               # arcade.js (29 October 2026) declares `const ARCADE`, the Ambulance Run game. ui.js
               # calls ARCADE.init from boot() and access.js hands it the Supabase client, so it
               # comes before ui.js.
@@ -1072,6 +1075,11 @@ def main():
         shot = os.path.join(HERE, "assets", "landing", key + ".jpg")
         uri = ("data:image/jpeg;base64," + base64.b64encode(open(shot, "rb").read()).decode()) if os.path.exists(shot) else ""
         shell = shell.replace("__LANDING_SHOT_" + key.upper() + "__", uri)
+    # 30 October 2026. The How it works tutorial's screenshots (engine/assets/tutorial/README.md).
+    for key in ("overview", "mode", "monitor", "basket", "history", "record", "nurse", "handoff"):
+        shot = os.path.join(HERE, "assets", "tutorial", key + ".webp")
+        uri = ("data:image/webp;base64," + base64.b64encode(open(shot, "rb").read()).decode()) if os.path.exists(shot) else ""
+        shell = shell.replace("__TUT_SHOT_" + key.upper() + "__", uri)
     # The welcome page's logo slot: engine/assets/logo.svg or logo.png when one exists,
     # otherwise the placeholder mark.
     logo_html = '<span class="ld-mark" aria-hidden="true"></span>'

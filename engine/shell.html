@@ -1186,6 +1186,46 @@ body.px-on .px-float,body.px-on .ms-float{visibility:hidden}
 @media (prefers-reduced-motion:reduce){.ar-box:hover{transform:none}.ar-box:hover .ar-l1,.ar-box:hover .ar-l2{animation:none}}
 body.px-on .ar-float,body.ar-on .ar-float{visibility:hidden}
 body.ar-on{overflow:hidden}
+/* ---- How it works (engine/tutorial.js, 30 October 2026) ---- */
+.tut-open{display:inline-flex; align-items:center; gap:8px; margin-top:16px; padding:8px 14px 8px 10px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.45); background:rgba(10,24,34,.42); color:#fff; font:inherit; font-size:14px; font-weight:650;
+  cursor:pointer; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); transition:background .2s ease, border-color .2s ease}
+.tut-open:hover{background:rgba(10,24,34,.62); border-color:rgba(255,255,255,.8)}
+.tut-open:focus-visible{outline:2px solid #fff; outline-offset:3px}
+.tut-open svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7}
+.tut-open svg path{fill:currentColor; stroke:none}
+.tut-len{font-family:var(--mono); font-size:11.5px; font-weight:500; opacity:.75}
+.tut-open.tut-new{border-color:#ffd36b; box-shadow:0 0 0 0 rgba(255,211,107,.55); animation:tutping 2.4s ease-out 1s 3}
+.tut-open.tut-new::after{content:"New here?"; margin-left:2px; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  color:#1b2a33; background:#ffd36b; border-radius:999px; padding:2px 8px}
+@keyframes tutping{0%{box-shadow:0 0 0 0 rgba(255,211,107,.55)}70%{box-shadow:0 0 0 12px rgba(255,211,107,0)}100%{box-shadow:0 0 0 0 rgba(255,211,107,0)}}
+@media (prefers-reduced-motion:reduce){.tut-open.tut-new{animation:none}}
+body.tut-on{overflow:hidden}
+.tut-card{width:min(980px,100%); background:var(--solid); display:flex; flex-direction:column}
+.tut-in{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:22px; padding:24px 24px 8px; align-items:start; min-height:380px}
+.tut-fig{margin:0; border-radius:12px; overflow:hidden; border:1px solid var(--rule2); background:#f3f6f8; align-self:center}
+.tut-fig img{display:block; width:100%; height:auto}
+.tut-fig.wide{grid-column:1 / -1; display:flex; justify-content:center}
+.tut-fig.wide img{width:auto; max-width:100%; max-height:min(46vh,560px)}
+.tut-fig img{max-height:min(58vh,620px); object-fit:contain}
+.tut-in:has(.tut-fig.wide){grid-template-columns:1fr}
+.tut-step{margin:0 0 6px; font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink3)}
+.tut-txt h2{margin:0 0 10px; font-family:var(--title); font-size:21px; line-height:1.25; padding-right:30px}
+.tut-body{font-size:14.5px; line-height:1.55; color:var(--ink2)}
+.tut-body p{margin:0 0 10px}
+.tut-body b{color:var(--ink)}
+.tut-key{margin:6px 0 0; padding-left:22px; display:grid; grid-template-columns:1fr 1fr; gap:4px 18px; font-size:13.5px}
+.tut-key li::marker{color:#d33a2c; font-weight:800}
+.tut-list{margin:6px 0 0; padding-left:18px; display:grid; gap:4px; font-size:13.8px}
+.tut-tip{display:inline-block; padding:4px 10px; border-radius:8px; background:var(--actl); color:var(--act); font-weight:650}
+.tut-body kbd{font-family:var(--mono); font-size:12px; padding:1px 6px; border:1px solid var(--rule); border-bottom-width:2px; border-radius:5px; background:var(--solid)}
+.tut-foot{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 24px 20px}
+.tut-dots{display:flex; gap:6px}
+.tut-dot{width:9px; height:9px; padding:0; border-radius:50%; border:0; background:var(--rule); cursor:pointer}
+.tut-dot.on{background:var(--act); width:22px; border-radius:999px}
+.tut-dot:focus-visible{outline:2px solid var(--act); outline-offset:2px}
+.tut-btns{display:flex; gap:8px}
+@media (max-width:760px){ .tut-in{grid-template-columns:1fr; padding:18px 16px 6px; min-height:0} .tut-key{grid-template-columns:1fr} .tut-foot{padding:10px 16px 16px} }
 /* Speed: no blur behind the game window, and the case list under it is not drawn while it is open. */
 #ar-modal .ms-back{-webkit-backdrop-filter:none; backdrop-filter:none; background:rgba(8,20,30,.82)}
 body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-float, body.ar-on .ms-float{visibility:hidden}
@@ -3319,6 +3359,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
           <circle cx="8" cy="3" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="8" cy="13" r="1.5"/></svg>
       </button>
       <div class="wl-menu" id="wl-menu" role="menu">
+        <a href="#" role="menuitem" data-tutorial="1">How it works</a>
         <a href="#" role="menuitem" data-nav="about">About this project</a>
         <a href="#" role="menuitem" data-nav="authoring">Write a case</a>
         <a href="#" role="menuitem" data-nav="catalog">Action catalog</a>
@@ -3340,6 +3381,9 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   <!-- Ambulance Run: a button in the bottom left corner and its window (engine/arcade.js, 29 October 2026). -->
   <div class="ar-float" id="ar-float" hidden></div>
   <div class="ms-modal" id="ar-modal" hidden></div>
+  <!-- How it works (engine/tutorial.js, 30 October 2026) and its screenshots. -->
+  <div class="ms-modal tut-modal" id="tut-modal" hidden></div>
+  <template id="tut-imgs"><img id="tut-overview" src="__TUT_SHOT_OVERVIEW__" alt=""><img id="tut-mode" src="__TUT_SHOT_MODE__" alt=""><img id="tut-monitor" src="__TUT_SHOT_MONITOR__" alt=""><img id="tut-basket" src="__TUT_SHOT_BASKET__" alt=""><img id="tut-history" src="__TUT_SHOT_HISTORY__" alt=""><img id="tut-record" src="__TUT_SHOT_RECORD__" alt=""><img id="tut-nurse" src="__TUT_SHOT_NURSE__" alt=""><img id="tut-handoff" src="__TUT_SHOT_HANDOFF__" alt=""></template>
 
   <div class="db-scroll" id="db-scroll">
     <section class="wl-hero">
@@ -3351,6 +3395,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
           <h1>__PRODUCT__: Emergency Medicine Case&nbsp;Simulator</h1>
           <p class="wl-lede">Run a resuscitation in the browser. Take a history, examine, order, treat,
             hand over, then read what your timing cost. Most of __PRODUCT__ is free to use.</p>
+          <button type="button" class="tut-open" data-tutorial="1"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M10 8.6v6.8l5.4-3.4z"/></svg><span>How it works</span><span class="tut-len">2 min</span></button>
         </div>
         <div class="db-stats" id="db-stats" hidden></div>
       </div>

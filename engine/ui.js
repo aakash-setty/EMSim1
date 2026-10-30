@@ -4666,6 +4666,7 @@ function boot(){
   ACCESS_UI.init();
   if(typeof PROCEDURES==='object') PROCEDURES.init();   /* the Procedures box and window */
   if(typeof ARCADE==='object') ARCADE.init();           /* Ambulance Run, bottom left of the case list */
+  if(typeof TUTORIAL==='object') TUTORIAL.init();       /* How it works, from the banner and the menu */
   /* The first case that is actually here. In the deployed build every case may be a locked
      stub, and then nothing is bound until one is fetched: begin() renders everything once
      a case is chosen, so the first-render calls below are only for a build that has one. */

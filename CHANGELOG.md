@@ -5,6 +5,22 @@ is usable with learners.
 
 ---
 
+## How it works: a tutorial (30 October 2026, owner's instruction)
+
+- A "How it works" button in the case list's banner, marked "New here?" until it has been
+  opened once in the browser, and the same entry in the menu, open a nine-screen tutorial
+  (`engine/tutorial.js`). Each screen is a real, blurred screenshot of the case screen and a
+  few plain sentences, chosen for what trips a first run: the clock is real and nothing can
+  break; Normal or Easy (first time, choose Easy); the monitor is blank until attached and the
+  top Stabilization group acts on the click; everywhere else a click only selects until Submit
+  Order, with no doses to type; ask in your own words and examine; results take time and show
+  the moment they were ordered; the nurse, search with /, voice orders, the six-minute pause
+  and pausing by switching away; only a handoff ends the case; the debrief points to what to
+  review and does not rank. Arrow keys, Esc, dots to jump, Skip, and "Choose a case" at the
+  end. Events `tutorial_opened`, `tutorial_closed` (screen reached).
+- Screenshots: `engine/assets/tutorial/` (CHFE, case text blurred before capture; method in its
+  README). The debrief screen reuses the welcome page's picture. The page grew by about 230 KB.
+
 ## Case cards: the level as a rhythm strip (30 October 2026, owner's instruction)
 
 - The level words ("Medical student to junior resident") are replaced on the case cards by a
