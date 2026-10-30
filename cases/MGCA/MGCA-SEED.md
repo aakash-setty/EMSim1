@@ -92,3 +92,4 @@ you should confirm you accept it for this case.
   learner text. Which items to make neutral was a model's reading of the instruction. Not
   physician reviewed.
 - 30 October 2026, Aakash Setty: every case answers a greeting or an open question ("What's going on?") with a clear history of the present illness, the `presenting_story` topic (authoring 8.2). This case's answer was written by a model from its own onset, progression and character answers and its arrival handover, and stops short of what the case keeps behind its own questions. The wording is not physician reviewed.
+- 30 October 2026, Aakash Setty: an intubated patient must never be narrated as awake, and the monitor shows the ventilator's rate (16) while she is ventilated, in every case. The neuro exam gained a rule for the intubated patient ("Sedated. Pupils equal."); before, an intubated patient in the improving phases read as alert and oriented. Model-written, not physician reviewed.

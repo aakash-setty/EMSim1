@@ -51,3 +51,4 @@ support is an invented fact and should be removed rather than reconciled.
   while on. It shares the positive-pressure key, so the mask and BiPAP do not stack. Values
   and wording by a model. Not physician reviewed.
 - 30 October 2026, Aakash Setty: every case answers a greeting or an open question ("What's going on?") with a clear history of the present illness, the `presenting_story` topic (authoring 8.2). This case's answer was written by a model from its own onset, progression and character answers and its arrival handover, and stops short of what the case keeps behind its own questions. The wording is not physician reviewed.
+- 30 October 2026, Aakash Setty: an intubated patient must never be narrated as awake, and the monitor shows the ventilator's rate (16) while she is ventilated, in every case. Its two intubated phases are marked `ventilated`, so the monitor keeps those phases' own rates. No text changed.

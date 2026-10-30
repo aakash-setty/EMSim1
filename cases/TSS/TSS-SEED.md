@@ -24,6 +24,7 @@ Aakash Setty, 6 October 2026, in answer to four questions asked before drafting:
 He also approved, in outline, the patient, the story and the three learning goals in the
 case plan written in the same conversation. Everything else below is model output.
 - 30 October 2026, Aakash Setty: every case answers a greeting or an open question ("What's going on?") with a clear history of the present illness, the `presenting_story` topic (authoring 8.2). This case's answer was written by a model from its own onset, progression and character answers and its arrival handover, and stops short of what the case keeps behind its own questions. The wording is not physician reviewed.
+- 30 October 2026, Aakash Setty: an intubated patient must never be narrated as awake, and the monitor shows the ventilator's rate (16) while she is ventilated, in every case. Four timed lines gained a ventilated version (no "she says", "more awake" or "opening her eyes"). The abdominal exam was normal text flagged abnormal: it now reads "Soft. Mild diffuse tenderness, no guarding or rebound. Bowel sounds active.", the 6 October wording the 30 October review recommended, and its debrief note matches. Model-written, not physician reviewed.
 
 ## 1. Learning goals, and what in the case makes the learner act on each
 

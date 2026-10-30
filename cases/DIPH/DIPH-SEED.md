@@ -663,3 +663,4 @@ now five seconds after the order rather than ten. See review packet section 2.9 
   and fellow for registrar, seven thirty, Tylenol, call, smelled, stretcher. Values by a
   model. No physician review decision (DIPH-01 to DIPH-46) is changed, and the arrival
   gas DIPH-06 confirmed is unchanged. Not physician reviewed.
+- 30 October 2026, Aakash Setty: an intubated patient must never be narrated as awake, and the monitor shows the ventilator's rate (16) while she is ventilated, in every case. Her mother answers the history and goes on answering after the tube; the case now says so in `interview.answers_while_ventilated`, which the new validator check reads.

@@ -81,7 +81,7 @@ The SEED is `cases/<PREFIX>/<PREFIX>-SEED.md`. It is the record a physician sign
 - `metadata.case_number`, a whole number shown as "Case N" on the list, the splash and the learner's history. Take one more than the highest in the case index. Never change or reuse one. **Engine.** The build stops on a duplicate.
 - `metadata.complaint`, three or four words in clinical register, which the welcome list prints. Optional. A case without one falls back to its title, which is usually too long for a list.
 - `metadata.category`, the body system or problem class, which groups the welcome list. Optional. A case without one is grouped under "Cases".
-- `metadata.target_level`, a list from `medical_student`, `intern`, `junior_resident`, `senior_resident`, lowest first. **Default.** Those four words. The welcome list prints whatever is there, and three or more read as a range.
+- `metadata.target_level`, a list from `medical_student`, `intern`, `junior_resident`, `senior_resident`, lowest first. **Default.** Those four words. The case list draws them as a four-beat rhythm strip.
 - `metadata.estimated_runtime_seconds`, `metadata.library` (2.0), `metadata.chief_complaint_patient_voice`.
 - The scored diagnosis lives in `handoff.correct_diagnosis.catalog_id` (10.1), as a diagnosis catalog id. **Engine.** An id that does not resolve means the handoff cannot be scored. The validator reports it.
 

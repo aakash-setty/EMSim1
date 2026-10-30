@@ -49,7 +49,7 @@ for(let s=1; s<=24; s++){
       /* Obstacles of one row are made together at one distance; key them by it when first seen. */
       if(g2.t>130) for(const o of g2.obs) if(!seen.has(o)){ seen.add(o); obs++; rowsAt.add(g2.t.toFixed(4)+':'+o.z.toFixed(3)); } }
     const per=obs/rowsAt.size;
-    chk('late rows block about 1.8 lanes on average', per>1.7&&per<1.9, per.toFixed(2)); }
+    chk('late rows block about 1.85 lanes on average', per>1.75&&per<1.95, per.toFixed(2)); }
   chk('no row blocks every lane', worst<=RULES.lanes-1, 'worst '+worst);
   chk('some rows block more than one lane', multi>0, multi+' of '+total);
 }

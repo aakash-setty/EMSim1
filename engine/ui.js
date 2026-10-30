@@ -2867,11 +2867,30 @@ function wlModel(){
       age:p.age, sex:(p.sex||'').toLowerCase(),
       category:k.category||'Cases',
       level:lv.charAt(0).toUpperCase()+lv.slice(1),
+      lvIdx:(Array.isArray(k.target_level)?k.target_level:[k.target_level||''])
+        .map(x=>LEVEL_STEPS.indexOf(String(x))).filter(n=>n>=0),
       mins:k.runtime_seconds?Math.round(k.runtime_seconds/60):null,
       unreviewed:k.unreviewed!==false,
       locked:!!c.locked,
       broken:c.locked?(c.buildNoteCount||0):(c.buildNotes||[]).length};
   });
+}
+/* The level as a rhythm strip (owner, 30 October 2026: "a creative system to visually show
+   difficulty" in "a minimal amount of space"). Four beats, one per step of training, each
+   spike taller than the last. The beats in the case's range are drawn in ink and the rest
+   are faint, so a glance gives both how hard and how wide. The words stay in the tooltip and
+   in the card's spoken label. */
+const LEVEL_STEPS=['medical_student','intern','junior_resident','senior_resident'];
+const LEVEL_SHORT=['Medical student','Intern','Junior resident','Senior resident'];
+function levelStrip(idx, words){
+  if(!idx||!idx.length) return words?`<span class="lv-txt">${esc(words)}</span>`:'';
+  const H=[3.6,5.6,7.8,10.2], base=11.5;
+  let seg='';
+  for(let i=0;i<4;i++){
+    const x=i*13+2, on=idx.includes(i);
+    seg+=`<path class="lv-b${on?' on':''}" d="M${x} ${base}h3l1.2 1.4 1.6 -${H[i]+1.4} 1.6 ${H[i]+3} 1.1 -1.6h3.5"/>`;
+  }
+  return `<span class="lv-strip" title="${esc(words)}" aria-hidden="true"><svg viewBox="0 0 54 14" width="62" height="16">${seg}</svg></span>`;
 }
 function wlCats(m){ const o=[]; for(const c of m) if(!o.includes(c.category)) o.push(c.category); return o.sort(); }
 
@@ -2944,7 +2963,7 @@ function renderPicker(){
           <span class="wl-body">
             <span class="wl-ttl">${esc(c.complaint)}</span>
             <span class="wl-meta">
-              <span class="lv">${c.broken?'<span style="color:var(--harm)">will not run correctly</span>':esc(c.level)}</span>
+              <span class="lv">${c.broken?'<span style="color:var(--harm)">will not run correctly</span>':levelStrip(c.lvIdx,c.level)}</span>
               <span class="rt">${c.mins?c.mins+' min':''}</span>
             </span>
           </span>

@@ -24,9 +24,10 @@ const ARCADE = (function(){
   const RULES = {
     lanes: 3,           // lanes, numbered 0 (left) to 2 (owner, 30 October 2026: was 4)
     laneW: 4.0,         // m, so the road stays about as wide as it was
-    v0: 42,             // m/s at the start (about 94 mph; was 28, owner: "starts too slow")
-    accel: 0.45,        // m/s gained each second
-    vmax: 72,           // m/s cap (about 161 mph). Points are meters, so at most 72 a second
+    v0: 46,             // m/s at the start (about 103 mph). Owner: 28, then 42, then 46 on 30 October ("harder")
+    accel: 0.55,        // m/s gained each second (was 0.45)
+    vmax: 76,           // m/s cap (about 170 mph; was 72). Points are meters, so at most 76 a second.
+                        // The database allows 80 (003_arcade.sql); arcade-tests.js checks it
     laneRate: 6.5,      // lanes a second while changing lane
     playerZ: 8,         // m from the camera to the back of the ambulance
     carLen: 4.6,        // m
@@ -53,9 +54,10 @@ const ARCADE = (function(){
   /* A small seeded generator, so tests repeat. */
   function rng(seed){ let a=(seed>>>0)||1; return ()=>{ a=(a+0x6D2B79F5)>>>0; let t=a; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^t>>>7,t|61); return ((t^t>>>14)>>>0)/4294967296; }; }
   const speedAt = t => Math.min(RULES.vmax, RULES.v0 + RULES.accel*t);
-  /* Meters between rows: 54 at the start, closing by 0.16 m a second to 30 at 150 s
+  /* Meters between rows: 50 at the start, closing by 0.18 m a second to 30 at about 111 s
+     (30 October 2026, harder; was 54 and 0.16)
      (owner, 29 October 2026: close more slowly, start with more coming). */
-  const rowGap = t => Math.max(30, 54 - 0.16*t);
+  const rowGap = t => Math.max(30, 50 - 0.18*t);
 
   function newGame(seed){
     const g={t:0, v:RULES.v0, dist:0, x:1, target:1, obs:[], rowZ:RULES.firstRowZ, path:1,
@@ -80,7 +82,8 @@ const ARCADE = (function(){
        the same obstacles a second as on four lanes (owner, 30 October 2026). With three lanes
        a row blocks one or two, so two-lane rows carry it: 15% at the start, 50% at 90 s, 80%
        from 120 s. */
-    const p2=0.15+0.35*clamp(t/90,0,1)+0.30*clamp((t-40)/80,0,1);
+    /* 30 October 2026, harder: 25% at the start (was 15%), 85% from 120 s (was 80%). */
+    const p2=0.25+0.30*clamp(t/90,0,1)+0.30*clamp((t-40)/80,0,1);
     const u=r(), n = Math.min(RULES.lanes-1, u<p2 ? 2 : 1);
     const open=[...Array(L).keys()].filter(i=>i!==g.path);
     for(let k=0;k<n;k++){

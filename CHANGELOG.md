@@ -5,6 +5,50 @@ is usable with learners.
 
 ---
 
+## Case cards: the level as a rhythm strip (30 October 2026, owner's instruction)
+
+- The level words ("Medical student to junior resident") are replaced on the case cards by a
+  small rhythm strip: four beats, one per step of training (medical student, intern, junior
+  resident, senior resident), each spike taller than the last. The beats in the case's range
+  are in ink, the rest faint. The words remain in the tooltip, in the card's spoken label and
+  in search. About 62 by 16 pixels, about the width of one word.
+
+## Ambulance Run: harder (30 October 2026, owner's instruction)
+
+- Start 103 mph (was 94), about 1.2 mph faster each second (was 1.0), top speed 170 mph (was
+  161). Rows start 50 m apart (was 54) and close to 30 m by about 111 s (was 150 s). Rows
+  blocking two lanes: 25% at the start (was 15%), 85% from 120 s (was 80%). Obstacles a second:
+  1.15 at the start (was 0.89), about 4.7 at the end (was 4.3).
+- Still fair: one lane per row is always reachable, checked by `engine/arcade-tests.js`. The top
+  speed stays under the 80 points a second the database accepts.
+
+## The monitor gives nothing away; the ventilated patient in every case; TSS abdomen (30 October 2026, owner's instruction)
+
+- Monitor, every case: the phase's name under the clock ("hypotensive", "on a vasopressor") is
+  gone, and so is the flash when the phase changed. Both told the learner the state before the
+  numbers did.
+- On the ventilator, every case: a shared default (`ventilation`: flag `intubated`, which the
+  catalog's intubation sets in every case, rate 16) makes the monitor show the ventilator's
+  rate instead of the patient's own. A phase marked `ventilated` keeps its own (AFRVR, CHFE).
+  A timed transition may carry `narration_ventilated`, spoken instead while ventilated.
+- Lines that described a ventilated patient as awake now have a ventilated version: TSS (four,
+  including "she's opening her eyes to my voice"), DKA (three), TAKO and SCOOT (one each).
+- DKA and TAKO had nothing for the intubated patient (interview, airway, breathing and neuro
+  exams, general status, figure); they do now. MGCA's neuro exam and SCOOT's figure gained a
+  rule. DIPH records that her mother keeps answering after the tube.
+- TSS: the abdominal exam was normal text flagged abnormal. It now reads mild diffuse
+  tenderness with active bowel sounds, as the 30 October review recommended, and its note
+  matches.
+- Validator: a new check stops the build when a case has no rule for the ventilated patient in
+  the interview, airway, breathing or neuro exam, general status or figure, or when a timed
+  line that describes an awake patient can play after intubation without
+  `narration_ventilated`. Flags set by catalog defaults now count as settable (the catalog's
+  intubation is a button in every case). Authoring 8.5 states the rule.
+- Checked in the built simulator: TSS intubated in profound shock, then fluid, norepinephrine
+  and the tampon out, monitor at 16 and the ventilated lines; DKA intubated, then insulin, the
+  ventilated potassium line, the sedated exams and the intubated interview answer. All model
+  text, not physician reviewed. Backups: `Claude outputs/vent-2026-10-30/`.
+
 ## Case list: no category dots, no colored rule (30 October 2026, owner's instruction)
 
 - The colored square before each category name, the colored dots in the category filter chips, and the colored rule down the left edge of each category panel are gone. The panels keep their tint and colored heading. `engine/ui.js`, `engine/shell.html`.
