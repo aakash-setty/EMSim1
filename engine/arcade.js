@@ -1,6 +1,6 @@
 /* ---------- Ambulance Run (29 October 2026) ----------
    A small arcade game on the case list, opened from the ambulance button in the bottom left
-   corner. Steer an ambulance down a four lane road with the arrow keys. Things block one lane
+   corner. Steer an ambulance down a three lane road with the arrow keys. Things block one lane
    each. The road speeds up. Hitting anything ends the run.
 
    Owner request, 29 October 2026: "Create a small ambulance obstacle avoidance game ... the
@@ -22,8 +22,8 @@
 const ARCADE = (function(){
   /* ================= the rules ================= */
   const RULES = {
-    lanes: 4,           // lanes, numbered 0 (left) to 3
-    laneW: 3.2,         // m
+    lanes: 3,           // lanes, numbered 0 (left) to 2 (owner, 30 October 2026: was 4)
+    laneW: 4.0,         // m, so the road stays about as wide as it was
     v0: 42,             // m/s at the start (about 94 mph; was 28, owner: "starts too slow")
     accel: 0.45,        // m/s gained each second
     vmax: 72,           // m/s cap (about 161 mph). Points are meters, so at most 72 a second
@@ -76,10 +76,12 @@ const ARCADE = (function(){
     const t=g.t, r=g.rand, L=RULES.lanes;
     const gap=g.lastGap||rowGap(t), reach=Math.min(L-1, reachFor(gap, speedAt(t+ (z-RULES.playerZ)/speedAt(t))));
     if(g.rows>0) g.path=clamp(g.path+Math.round((r()*2-1)*reach), 0, L-1);
-    /* Lanes blocked per row: 1.15 on average at the start, rising to 1.8 at 120 s and no more.
-       Two lanes: 15% at the start, 50% from 90 s. Three lanes: from 40 s, 15% from 120 s. */
-    const p2=0.15+0.35*clamp(t/90,0,1), p3=0.15*clamp((t-40)/80,0,1);
-    const u=r(), n = u<p3 ? 3 : u<p3+p2 ? 2 : 1;
+    /* Lanes blocked per row: 1.15 on average at the start, rising to 1.8 at 120 s and no more,
+       the same obstacles a second as on four lanes (owner, 30 October 2026). With three lanes
+       a row blocks one or two, so two-lane rows carry it: 15% at the start, 50% at 90 s, 80%
+       from 120 s. */
+    const p2=0.15+0.35*clamp(t/90,0,1)+0.30*clamp((t-40)/80,0,1);
+    const u=r(), n = Math.min(RULES.lanes-1, u<p2 ? 2 : 1);
     const open=[...Array(L).keys()].filter(i=>i!==g.path);
     for(let k=0;k<n;k++){
       const j=Math.floor(r()*open.length), lane=open.splice(j,1)[0];

@@ -5,6 +5,21 @@ is usable with learners.
 
 ---
 
+## Ambulance Run: three lanes (30 October 2026, owner's instruction)
+
+- The road has three lanes instead of four, each 4.0 m wide instead of 3.2, so the road is
+  about as wide as before. Obstacles a second are unchanged: rows come at the same spacing and
+  still average 1.15 obstacles at the start and 1.8 from 120 s. With three lanes a row blocks
+  one or two, never three, so two-lane rows go from 15% at the start to 80% from 120 s. Each
+  lane is therefore busier than on four lanes. One lane per row stays open and reachable.
+
+## Welcome page: two screenshots retaken (29 October 2026, owner's instruction)
+
+- The debrief and case list screenshots show the current screens. The debrief is a short TSS
+  run with case text blurred, chosen because TSS is the one case with a written discussion.
+  The case list shows the current layout, with the Procedures box and the ambulance button.
+  Method in `engine/assets/landing/README.md`. The case screen shot is unchanged.
+
 ## Not marking down what did not matter; CHFE and DIPH corrections (29 October 2026, owner's instruction)
 
 - Engine, expectation credit: `catalog/expectation-credit.json` lets one device or test meet its alternatives' expectations (a mask or a tube the cannula, non-invasive ventilation or a tube the mask, two IVs or a central line the IO, either gas or either hCG the other). Built into `actionsBase[].credits`, checked by the validator. Authoring 6.3.
