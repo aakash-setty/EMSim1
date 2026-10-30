@@ -157,19 +157,10 @@ the kit check fails. Look things up with `python3 engine/lookup.py` (actions, di
 fields, mechanisms, prerequisites, flags) instead of opening the catalogs.
 
 
-## Procedures
+## Procedures and the arcade game
 
-Hands-on skills on a three-dimensional model, separate from cases. Each is a data pack in
-`procedures/<P>/`, played by `engine/procsim-*.js` with three.js. How to write one and how
-it ships: `docs/procedure-authoring.md`. Check a pack with
-`python3 engine/validate_procedure.py procedures/<P>` and test every pack with
-`node engine/procsim-tests.js`. The build validates them and stops on an error.
-
-## Ambulance Run
-
-A small arcade game on the case list (`engine/arcade.js`), not part of any case. Test its
-rules with `node engine/arcade-tests.js`. The shared leaderboard is
-`supabase/migrations/003_arcade.sql` and `docs/deployment.md`, Ambulance Run leaderboard.
+Procedures: `docs/procedure-authoring.md`, tested by `node engine/procsim-tests.js`. Ambulance
+Run: `engine/arcade.js`, tested by `node engine/arcade-tests.js`.
 
 ## Things that have gone wrong before
 

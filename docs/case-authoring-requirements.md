@@ -385,7 +385,7 @@ Each topic carries `topic`, `canonical`, `variants`, `answer` (an ordered rule l
 
 ### 8.2 Topic coverage
 
-**Truth. Every case opens with `presenting_story`.** A greeting or an open question ("Hi", "Hello", "What's going on?", "What happened?", "What brings you in today?") gets a brief history of the present illness: two to four sentences in the voice of whoever is answering, saying what happened, when, and the main complaint. It never gives away a disclosure the case holds behind its own question. Without it the first thing a resident types is answered by the fallback or by the wrong topic. Map it to the shared concept `presenting_story` in `TOPIC_MAP`, and add greetings to its variants, which the shared library does not carry. The validator warns when the topic is missing.
+**Truth. Every case opens with `presenting_story`, its first topic.** "Hi" or "What's going on?" gets a clear history of the present illness: two to four sentences from the onset and progression answers: complaint, onset, course, why now. Nothing unknowable or naming the diagnosis, no disclosure kept behind its own question. Add a short form under the onset topic's drowsy condition. Variants as in `engine/new_case.py`. **Engine.** The validator stops when it is missing or another topic uses an open question.
 
 **Truth. Author every topic a resident would plausibly ask.** That usually means: onset, timing and progression, character, location, radiation, severity, aggravating and relieving factors, each associated symptom as its own topic, past medical and surgical history, medications, allergies, social history with substance use, family history, last oral intake, pregnancy where applicable, and code status where the presentation makes it live. Where breathlessness is the complaint, home oxygen too (owner, 28 October 2026). Author a topic even where it is clinically irrelevant here, because the denial is the teaching and the fallback reads as the software failing. This is the one list in the document whose cost of omission is friction.
 
@@ -404,6 +404,8 @@ Each topic carries `topic`, `canonical`, `variants`, `answer` (an ordered rule l
 - **Truth.** Do not author the scaffolding into answers. "Like I said", "Sorry, do you mean", "No, that's everything" come from `interviewDefaults` and may be overridden per case under `interview`.
 
 ### 8.5 Alertness and distress
+
+**Truth. Every case can be intubated, so every case describes the ventilated patient:** the intubation flag in the global answer rules, airway, breathing and neuro exams, general status and `patient_visual`, and `narration_ventilated` on timed lines where the patient talks or wakes. **Engine.** The validator stops on a gap.
 
 **Engine.** A patient at alertness 2 or 3 cannot give a history. Author it once as a global rule in `interview.global_answer_rules`, which precedes every topic. There is no alertness predicate, so the rule enumerates the phases, and the validator checks that every non-terminal phase at level 2 or 3 is covered. The list may be empty in a case with no such phase.
 

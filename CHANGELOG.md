@@ -5,6 +5,38 @@ is usable with learners.
 
 ---
 
+## Case list: no category dots, no colored rule (30 October 2026, owner's instruction)
+
+- The colored square before each category name, the colored dots in the category filter chips, and the colored rule down the left edge of each category panel are gone. The panels keep their tint and colored heading. `engine/ui.js`, `engine/shell.html`.
+
+## Stabilization tab: group order (30 October 2026, owner's instruction)
+
+- Every case: Stabilization, Oxygen, Fluids, Vascular Access, Pacer/Defib, Nursing, Intubation
+  (was Stabilization, Nursing, Vascular Access, Oxygen, Intubation, Fluids, Pacer/Defib).
+
+## Every case answers "What's going on?" with a clear HPI (30 October 2026, owner's instruction)
+
+- Seven of the eight cases had no `presenting_story` topic, so a greeting or an open question
+  got the fallback or the nearest topic. AFRVR, CHFE, DKA, MGCA, SCOOT, TAKO and TSS now open
+  with one: two to four sentences giving the complaint, its onset, its course and why the
+  patient came in, with a short form in the phases where the case's onset answer is short.
+  Written by a model from each case's own answers. Not physician reviewed. Each SEED records it.
+- SCOOT's crash topic now asks "How did the crash happen?". TAKO's "What happened today?" moved
+  to the story. AFRVR and CHFE onset gained "What were you doing when it started?".
+- Authoring 8.2 rewritten. The validator now stops the build when the topic is missing or
+  another topic claims an open question. `engine/new_case.py` starts every case with the topic.
+- Checked in the built simulator: in all eight cases, "Hi", "Hello", "What's going on?", "What
+  happened?", "What brings you in today?", "Tell me what happened." and "What seems to be the
+  problem?" reach the story, and "When did this start?" still reaches onset. Lexical matcher
+  only: the semantic model could not be downloaded in the test browser.
+- Generators updated so a rebuild keeps the topic: AFRVR, DKA, SCOOT, TAKO and TSS
+  `case_4_interview.py`. CHFE and MGCA have none.
+
+## CHFE: shorter ultrasound reads, the non-rebreather lifts the saturation (30 October 2026, owner's instruction)
+
+- CHFE's bedside lung and cardiac ultrasound reads are chart lines now, each under 40 words, with the same findings and numbers.
+- CHFE's non-rebreather raises the saturation by two while it is on. It shares the positive-pressure key, so it does not stack with BiPAP: the one put on last sets the number. Four new case tests. Not physician reviewed.
+
 ## Ambulance Run: three lanes (30 October 2026, owner's instruction)
 
 - The road has three lanes instead of four, each 4.0 m wide instead of 3.2, so the road is

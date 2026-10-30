@@ -120,7 +120,7 @@ EXAM = {
    "Clear, equal air entry. No crackles or wheeze.", abnormal=False)),
 
  "exam_abd": always(ex(
-   "Soft, non-tender, no guarding or rebound. Bowel sounds present.")),
+   "Soft. Mild diffuse tenderness, no guarding or rebound. Bowel sounds active.")),
 
  "exam_gu": [
    {"when": OUT, "value": ex(

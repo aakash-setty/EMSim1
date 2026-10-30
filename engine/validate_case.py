@@ -540,6 +540,86 @@ def check_ungraded(case, errors, warnings):
                           f"post-intubation care: set \"graded\": false (authoring 22.2)")
 
 
+# 30 October 2026, owner: an intubated patient was narrated as awake and the monitor kept her
+# own breathing rate. Every case can be intubated (the catalog's button is in every case), so
+# every case must say what the ventilated patient looks like, and no timed nurse line may
+# describe an awake patient when the patient could be on the ventilator.
+AWAKE_WORDS = re.compile(r"\b(eyes|talk(s|ing|ed)?|speak(s|ing)?|says|said|answer(s|ing)?|voice|awake|"
+                         r"alert|complain(s|ing)?|moan(s|ing)?|groan(s|ing)?|sit(s|ting)? up|nod(s|ding)?|"
+                         r"tell(s|ing)? (me|us)|sentence|drifting off|keep awake)\b", re.I)
+
+def check_ventilated(case, errors, warnings):
+    ug, _ = _load(catalog_path("ungraded-intubation-care.json"))
+    intub = set((ug or {}).get("intubation_actions", []))
+    binding, _ = load_binding()
+    bound = {r["case_id"]: (r.get("catalog_id") or r["case_id"]) for r in (binding or {}).get("rows", [])}
+    vent = case.get("ventilation") or {"when": "flag intubated set"}
+    if case.get("ventilation") is not None:
+        v = case["ventilation"]
+        if not isinstance(v, dict) or not isinstance(v.get("when"), str) or not isinstance(v.get("respiratory_rate"), (int, float)):
+            errors.append("[ventilated] ventilation needs a when condition and a numeric respiratory_rate")
+    flags = set(re.findall(r"flag (\w+) set", vent.get("when", "")))
+    for a in case.get("case_actions", []):
+        if bound.get(a["catalog_id"], a["catalog_id"]) in intub or a["catalog_id"] in intub:
+            flags |= set(a.get("flags_set") or [])
+    # A flag every intubation requires first (sedation, the paralytic) is set whenever the
+    # patient is ventilated, so a rule on it covers the ventilated patient too.
+    implied = set()
+    cat, _ = load_catalog()
+    for e in ((cat or {}).get("entries") or []):
+        if e.get("id") in intub:
+            for pr in e.get("default_prerequisites") or []:
+                implied |= set(re.findall(r"flag (\w+) set", pr.get("when") or ""))
+    vphases = {ph["id"] for ph in case.get("phases", []) if ph.get("ventilated")}
+    def covers_vent(w):
+        return names_vent(w) or any(re.search(r"flag %s set" % re.escape(f), w or "") for f in implied)
+    def names_vent(w):
+        w = w or ""
+        return any(re.search(r"flag %s set" % re.escape(f), w) for f in flags) or \
+               any(re.search(r"phase is %s\b" % re.escape(ph), w) for ph in vphases)
+    def excludes_vent(w):
+        w = w or ""
+        return any(re.search(r"NOT \(?flag %s set" % re.escape(f), w) for f in flags)
+    # 1. Somewhere to stand: the ventilated patient in each place a learner looks.
+    ck = case.get("content_keys", {})
+    places = {"exam_airway": (ck.get("exam") or {}).get("exam_airway") or [],
+              "exam_breath": (ck.get("exam") or {}).get("exam_breath") or [],
+              "exam_neuro": (ck.get("exam") or {}).get("exam_neuro") or [],
+              "general_status": (ck.get("general_status") or {}).get("rules") or [],
+              "patient_visual": (ck.get("patient_visual") or {}).get("rules") or []}
+    iv = case.get("interview") or {}
+    if not iv.get("answers_while_ventilated"):
+        places["interview global_answer_rules"] = iv.get("global_answer_rules") or []
+    for name, rules in places.items():
+        if rules and not any(covers_vent(r.get("when")) and not excludes_vent(r.get("when")) for r in rules):
+            errors.append(f"[ventilated] {name} has no rule for the intubated, ventilated patient "
+                          f"(a condition naming {', '.join(sorted(flags)) or 'the ventilation flag'}"
+                          f"{' or a ventilated phase' if vphases else ''})")
+    # 2. Timed nurse lines that describe an awake patient.
+    for ph in case.get("phases", []):
+        if ph.get("terminal") or ph.get("ventilated"):
+            continue
+        trs = ph.get("transitions", []) or []
+        leaves = any(t.get("after_seconds") is None and names_vent(t.get("when")) and not excludes_vent(t.get("when"))
+                     for t in trs)
+        if leaves:
+            continue
+        vent_branch = set()   # destinations already taken by a rule for the ventilated patient
+        for t in trs:
+            n = t.get("narration")
+            if t.get("after_seconds") is not None and names_vent(t.get("when")) and not excludes_vent(t.get("when")):
+                vent_branch.add(t.get("to"))
+                continue
+            if not n or t.get("after_seconds") is None or not AWAKE_WORDS.search(n):
+                continue
+            if excludes_vent(t.get("when")) or t.get("narration_ventilated") or t.get("to") in vent_branch \
+               or re.search(r"intubat|ventilat|sedat", n, re.I):
+                continue
+            errors.append(f"[ventilated] {ph['id']} -> {t.get('to')}: the narration describes an awake "
+                          f"patient (\"{AWAKE_WORDS.search(n).group(0)}\") and can play after intubation. "
+                          f"Add narration_ventilated, or exclude the ventilated patient in its guard")
+
+
 def check_patient(case, errors, warnings):
     art = _patient_art()
     av = (case.get("patient") or {}).get("avatar")
@@ -727,6 +807,12 @@ def run_checks(case):
     timed_flags = {}          # flag -> [(action id, duration)], grants that lapse
     repeat_flags = {}         # flag -> [(action id, N, counter)], grants on the Nth dose
     perm_flags = set()        # flags some action grants for good
+    # 30 October 2026. Every catalog action is a button in every case, bound or not, and sets
+    # its catalog default flags when pressed (the intubation sets `intubated` in DKA too).
+    _cat, _ = load_catalog()
+    for e in ((_cat or {}).get("entries") or []):
+        settable_flags.update(e.get("flags_set_default") or [])
+        perm_flags.update(e.get("flags_set_default") or [])
     for a in case["case_actions"]:
         settable_flags.update(a.get("flags_set", []) or [])
         perm_flags.update(a.get("flags_set", []) or [])
@@ -1737,6 +1823,7 @@ def run_checks(case):
     check_patient(case, errors, warnings)
     check_pupils(case, errors, warnings)
     check_ungraded(case, errors, warnings)
+    check_ventilated(case, errors, warnings)
     check_expectation_credit(errors)
     check_expected_behind_discouraged(case, errors)
     check_default_effects(case, errors, warnings, notes)
@@ -1931,9 +2018,31 @@ def run_checks(case):
                  f"{sum(len(t['variants']) for t in iv['topics'])}")
 
     # 23 October 2026, authoring 8.2: a greeting or an open question gets a brief HPI.
-    if not any(t.get("topic") == "presenting_story" for t in iv["topics"]):
-        warnings.append("[interview] no presenting_story topic; a greeting or \"What brings you "
-                        "in today?\" gets the fallback instead of a brief history (authoring 8.2)")
+    # 30 October 2026 (owner): required, and no other topic may claim an open question.
+    ps = [t for t in iv["topics"] if t.get("topic") == "presenting_story"]
+    if not ps:
+        errors.append("[interview] no presenting_story topic; a greeting or \"What's going on?\" "
+                      "gets the fallback or the wrong topic instead of a brief history (authoring 8.2)")
+    else:
+        if iv["topics"][0].get("topic") != "presenting_story":
+            warnings.append("[interview] presenting_story should be the first topic (authoring 8.2)")
+        dflt = [r for r in ps[0].get("answer", []) if r.get("when") is None]
+        txt = str(dflt[-1].get("value", "")) if dflt else ""
+        nsent = len([x for x in re.split(r"(?<=[.!?])['\"]?\s+", txt.strip()) if x.strip()])
+        if not 2 <= nsent <= 4:
+            warnings.append(f"[interview] presenting_story: the default answer has {nsent} sentences; "
+                            "8.2 asks for two to four")
+    OPEN_QUESTIONS = {"hi", "hello", "what's going on?", "what is going on?", "what happened?",
+                      "what brings you in?", "what brings you in today?", "what happened today?",
+                      "what's wrong?", "tell me what happened."}
+    for t in iv["topics"]:
+        if t.get("topic") == "presenting_story":
+            continue
+        taken = [q for q in [t.get("canonical", "")] + list(t.get("variants", [])) + list(t.get("expanded_variants") or [])
+                 if str(q).strip().lower() in OPEN_QUESTIONS]
+        if taken:
+            errors.append(f"[interview] {t['topic']} claims the open question(s) {taken}; those "
+                          "belong to presenting_story (authoring 8.2)")
 
     # -- M2: the summary's inputs (v0.9) ------------------------------------
     # key_topics, key_exams and additional_diagnoses are all optional; when present

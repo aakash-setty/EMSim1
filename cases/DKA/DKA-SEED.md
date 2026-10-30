@@ -50,6 +50,7 @@ starts only once a repeat level is 3.5 or more. The 2024 consensus report, as re
 a summarizing tool, gave a lower replacement rate. The table's rate (20 to 40 mEq an hour)
 is now the case's, by this decision, and the report's figure is mentioned in the debrief as
 a difference between sources.
+- 30 October 2026, Aakash Setty: every case answers a greeting or an open question ("What's going on?") with a clear history of the present illness, the `presenting_story` topic (authoring 8.2). This case's answer was written by a model from its own onset, progression and character answers and its arrival handover, and stops short of what the case keeps behind its own questions. The wording is not physician reviewed.
 
 ## 1. Sources, and how far each was read
 

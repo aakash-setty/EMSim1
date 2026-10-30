@@ -161,6 +161,7 @@ PHASES = [
     {"when": ANY_INSULIN,
      "after_seconds": 10, "measured_from": "guard_true", "to": "potassium_falling",
      "narration": EARLY_INSULIN_NARRATION,
+     "narration_ventilated": "Her rate has gone up. She's sedated, so she can't tell us how she feels.",
      "debrief_note": (
        "Insulin was given before her potassium was replaced. It was 3.1 on arrival. "
        "Insulin moves potassium into cells, and hers fell to 2.6. She became weak and her "
@@ -202,6 +203,7 @@ PHASES = [
     {"when": EARLY,
      "after_seconds": 5, "measured_from": "guard_true", "to": "potassium_falling",
      "narration": EARLY_INSULIN_NARRATION,
+     "narration_ventilated": "Her rate has gone up. She's sedated, so she can't tell us how she feels.",
      "debrief_note": (
        "Insulin was ordered while the potassium was still running in, before any repeat "
        "level. The infusion finished first, and then the insulin did what it does at a "
@@ -220,6 +222,7 @@ PHASES = [
      "after_seconds": 10, "measured_from": "guard_true", "to": "treated",
      "narration": ("Her sugar is coming down on the insulin, 266 on the meter, and she "
                    "says the sick feeling is easing. Her rate is settling."),
+     "narration_ventilated": "Her sugar is coming down on the insulin, 266 on the meter. Her rate is settling.",
      "debrief_note": (
        "Insulin was started after the potassium had run in and the level was back to 3.5 "
        "or more. Her glucose is falling and the ketones are clearing.\n\n"
@@ -258,6 +261,8 @@ PHASES = [
      "after_seconds": 20, "measured_from": "guard_true", "to": "recovering",
      "narration": ("The potassium has run through. She says her arms feel stronger and "
                    "her rate has come back down. Do you want a repeat level?"),
+     "narration_ventilated": ("The potassium has run through and her rate has come back down. Do you want "
+                              "a repeat level?"),
      "debrief_note": (
        "You held the insulin and replaced the potassium, and she recovered. Seeing that a "
        "treatment is hurting the patient and withdrawing it is a skill.\n\n"

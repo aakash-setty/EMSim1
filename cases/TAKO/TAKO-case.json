@@ -184,7 +184,8 @@
      "to": "obstructed",
      "narration": "Her pressure has dropped since that vasodilator and her rate is up. She says she feels faint.",
      "debrief_note": "A nitrate dropped her pressure. Nitrates lower the filling of the heart and the resistance it pumps against. In outflow obstruction a smaller, emptier ventricle obstructs more.\n\nThe warning was there before the drug: a pressure of 96 over 60 and a new murmur. A borderline pressure is a reason to hold a nitrate in any chest pain patient.",
-     "author_rationale": "A delayed consequence of the learner's own action. She would have reached this phase anyway at 180 seconds. The nitrate brings it forward and gives it a cause. Model output."
+     "author_rationale": "A delayed consequence of the learner's own action. She would have reached this phase anyway at 180 seconds. The nitrate brings it forward and gives it a cause. Model output.",
+     "narration_ventilated": "Her pressure has dropped since that vasodilator and her rate is up."
     },
     {
      "when": "flag inotrope_given set OR flag nitrate_given set",
@@ -1294,6 +1295,14 @@
    "authoring_note": "Section 9.2. Routing follows the catalog map: neck veins on exam_neck, the murmur on exam_card, capillary refill on exam_circ, lung sounds on exam_pulm. The murmur's response to posture is written into the cardiac finding because the catalog has no maneuver for it.",
    "exam_airway": [
     {
+     "when": "flag intubated set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Endotracheal tube in place and secured."
+     }
+    },
+    {
      "when": "(phase is shock_worse OR phase is shock_untreated)",
      "value": {
       "kind": "exam_findings",
@@ -1311,6 +1320,14 @@
     }
    ],
    "exam_breath": [
+    {
+     "when": "flag intubated set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Ventilated. Chest rising equally."
+     }
+    },
     {
      "when": "(phase is shock_worse OR phase is shock_untreated)",
      "value": {
@@ -1476,6 +1493,14 @@
    ],
    "exam_neuro": [
     {
+     "when": "flag intubated set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Sedated. Pupils equal and reactive."
+     }
+    },
+    {
      "when": "(phase is shock_worse OR phase is shock_untreated)",
      "value": {
       "kind": "exam_findings",
@@ -1515,6 +1540,14 @@
    "authoring_note": "Section 9.3. Consistent with exam_neuro and each phase's appearance values.",
    "rules": [
     {
+     "when": "flag intubated set",
+     "value": {
+      "kind": "general_status",
+      "abnormal": true,
+      "findings": "Intubated and sedated."
+     }
+    },
+    {
      "when": "(phase is shock_worse OR phase is shock_untreated)",
      "value": {
       "kind": "general_status",
@@ -1551,6 +1584,15 @@
   "patient_visual": {
    "authoring_note": "MODEL-AUTHORED. Sweating is drawn until she is steadied. Nothing else is authored.",
    "rules": [
+    {
+     "when": "flag intubated set",
+     "value": {
+      "eyes": "closed",
+      "addons": [
+       "intubated"
+      ]
+     }
+    },
     {
      "when": null,
      "value": {}
@@ -2198,12 +2240,21 @@
   },
   "global_answer_rules": [
    {
+    "when": "flag intubated set",
+    "value": "She is intubated and sedated and cannot answer.",
+    "note": "30 October 2026: the catalog's intubation is available in every case."
+   },
+   {
     "when": "phase is case_complete",
     "value": "She has gone to the catheterization laboratory.",
     "note": "No live phase is at alertness 2 or 3. This rule exists because the list may not be empty."
    }
   ],
   "out_of_scope_fallback": [
+   {
+    "when": "flag intubated set",
+    "value": "She is intubated and sedated and cannot answer."
+   },
    {
     "when": "phase is obstructed OR phase is shock_worse OR phase is shock_untreated",
     "value": "She shakes her head. 'I can't think. I'm sorry.'"
@@ -2297,6 +2348,54 @@
   ],
   "topics": [
    {
+    "topic": "presenting_story",
+    "canonical": "What happened?",
+    "variants": [
+     "Hi",
+     "Hello",
+     "Hi there",
+     "Hey",
+     "Hi, I'm one of the doctors.",
+     "Hello, I'm the doctor.",
+     "What's going on?",
+     "What is going on?",
+     "What is going on today?",
+     "What's been going on?",
+     "What happened?",
+     "What happened today?",
+     "What brings you in?",
+     "What brings you in today?",
+     "What brought you here?",
+     "What brings you to the emergency department?",
+     "What's wrong?",
+     "What's the matter?",
+     "What seems to be the problem?",
+     "Tell me what happened.",
+     "Can you tell me what happened?",
+     "Tell me what's going on.",
+     "What's the story?",
+     "How can I help you today?",
+     "Why are you here today?",
+     "Talk me through what happened."
+    ],
+    "answer": [
+     {
+      "when": "phase is obstructed OR phase is shock_worse OR phase is shock_untreated",
+      "value": "'Chest pain... an hour. Crushing. I feel faint.'"
+     },
+     {
+      "when": "phase is steadied",
+      "value": "'This pain came on in the middle of my chest about an hour ago, like something heavy sitting on it. It's easing now, but it's not gone.'"
+     },
+     {
+      "when": null,
+      "value": "'About an hour ago this pain came on in the middle of my chest, all at once, like something heavy sitting on it. It hasn't let up, and now I can't get my breath.'"
+     }
+    ],
+    "echo": "what happened",
+    "authoring_note": "Authoring 8.2: a greeting or an open question gets a brief history of the present illness. Added 30 October 2026 on the owner's instruction. The answer was written by a model from this case's own onset, progression and character answers and its arrival handover, and stops short of every disclosure the case keeps behind its own question. Not physician reviewed. Variants copied from DIPH and catalog/interview_phrasings.py (questions, not facts)."
+   },
+   {
     "topic": "onset",
     "canonical": "When did this start?",
     "variants": [
@@ -2357,7 +2456,6 @@
     "variants": [
      "What were you doing when it started?",
      "What brought this on?",
-     "What happened today?",
      "Were you exerting yourself?",
      "Were you upset when it started?",
      "Has anything stressful happened?",

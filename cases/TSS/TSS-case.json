@@ -202,7 +202,8 @@
      "to": "fluid_responsive",
      "narration": "That fluid is in. Her pressure is better and she says she feels a bit better.",
      "debrief_note": "The first bolus helped, as it should. She was dry from two days of fever and barely drinking, and she is leaking fluid out of her vessels.\n\nRead the response as information, not as a result. A patient who is still tachycardic with a temperature over 39 after a liter was not only dehydrated. The target is about 30 mL/kg, which for her is close to two liters, followed by a reassessment.",
-     "author_rationale": "A delayed consequence of the learner's own action. Ten seconds stands for the time a liter takes to run in, heavily compressed. The size of the response is a teaching choice. Model output."
+     "author_rationale": "A delayed consequence of the learner's own action. Ten seconds stands for the time a liter takes to run in, heavily compressed. The size of the response is a teaching choice. Model output.",
+     "narration_ventilated": "That fluid is in. Her pressure is better."
     },
     {
      "when": "NOT flag fluids_given set",
@@ -331,7 +332,8 @@
      "to": "stabilizing",
      "narration": "The vasopressor is working. Her pressure is up and she's more awake.",
      "debrief_note": "The vasopressor restored her pressure, and it is holding because the source is out. Ten seconds is a compression of the several minutes a titration takes.",
-     "author_rationale": "A delayed consequence of the learner's own action. Model output."
+     "author_rationale": "A delayed consequence of the learner's own action. Model output.",
+     "narration_ventilated": "The vasopressor is working. Her pressure is up."
     },
     {
      "when": "flag pressor_running set AND flag fluids_given set",
@@ -340,7 +342,8 @@
      "to": "supported",
      "narration": "The vasopressor has brought her pressure up and she's more awake. I've had to go up on it twice to get there.",
      "debrief_note": "The vasopressor restored a borderline pressure. She needs a rising dose to stay there, which is what an untreated source looks like from the infusion pump.",
-     "author_rationale": "A delayed consequence of the learner's own action. Model output."
+     "author_rationale": "A delayed consequence of the learner's own action. Model output.",
+     "narration_ventilated": "The vasopressor has brought her pressure up. I've had to go up on it twice to get there."
     },
     {
      "when": "NOT flag pressor_running set OR NOT flag fluids_given set",
@@ -450,7 +453,8 @@
      "to": "stabilizing",
      "narration": "She's coming back. Her pressure is up on the vasopressor, her rate is down, and she's opening her eyes to my voice.",
      "debrief_note": "She recovered a pressure once all three things were done: fluid, a vasopressor and removal of the source. She spent time at a mean pressure in the 40s on the way, and her kidneys and liver will show it over the next days.",
-     "author_rationale": "A delayed consequence of the learner's own action. That recovery from this phase is always possible is a teaching choice: the case has no death, so a learner who gets here can still find the answer. Model output."
+     "author_rationale": "A delayed consequence of the learner's own action. That recovery from this phase is always possible is a teaching choice: the case has no death, so a learner who gets here can still find the answer. Model output.",
+     "narration_ventilated": "She's coming back. Her pressure is up on the vasopressor and her heart rate is down. She's still sedated on the ventilator."
     }
    ],
    "authoring_note": "No clock leaves this phase. A learner who does nothing further stays here until they hand over or end the case. That is a decision: the design guide asks that failure be recoverable, and this case has no arrest."
@@ -1625,7 +1629,7 @@
      "value": "neutral"
     }
    ],
-   "debrief_note": "A soft, non-tender abdomen. There is no abdominal source here, which is one more reason to keep looking."
+   "debrief_note": "A soft abdomen, mildly tender all over with active bowel sounds, as two days of vomiting and diarrhea would leave it. No guarding or rebound, so no abdominal source here, which is one more reason to keep looking."
   },
   {
    "catalog_id": "exam_gu",
@@ -1886,7 +1890,7 @@
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
-      "findings": "Soft, non-tender, no guarding or rebound. Bowel sounds present."
+      "findings": "Soft. Mild diffuse tenderness, no guarding or rebound. Bowel sounds active."
      }
     }
    ],
@@ -3586,6 +3590,50 @@
    "How much does it cost to park here?"
   ],
   "topics": [
+   {
+    "topic": "presenting_story",
+    "canonical": "What happened?",
+    "variants": [
+     "Hi",
+     "Hello",
+     "Hi there",
+     "Hey",
+     "Hi, I'm one of the doctors.",
+     "Hello, I'm the doctor.",
+     "What's going on?",
+     "What is going on?",
+     "What is going on today?",
+     "What's been going on?",
+     "What happened?",
+     "What happened today?",
+     "What brings you in?",
+     "What brings you in today?",
+     "What brought you here?",
+     "What brings you to the emergency department?",
+     "What's wrong?",
+     "What's the matter?",
+     "What seems to be the problem?",
+     "Tell me what happened.",
+     "Can you tell me what happened?",
+     "Tell me what's going on.",
+     "What's the story?",
+     "How can I help you today?",
+     "Why are you here today?",
+     "Talk me through what happened."
+    ],
+    "answer": [
+     {
+      "when": "phase is hypotensive",
+      "value": "'Fever... throwing up. Two days. I fainted.'"
+     },
+     {
+      "when": null,
+      "value": "'Thursday night I started shivering and aching, and by Friday I had a fever and was throwing up, with diarrhea too. Yesterday I went red all over. This morning I fainted in the shower, so my roommate drove me in.'"
+     }
+    ],
+    "echo": "what happened",
+    "authoring_note": "Authoring 8.2: a greeting or an open question gets a brief history of the present illness. Added 30 October 2026 on the owner's instruction. The answer was written by a model from this case's own onset, progression and character answers and its arrival handover, and stops short of every disclosure the case keeps behind its own question. Not physician reviewed. Variants copied from DIPH and catalog/interview_phrasings.py (questions, not facts)."
+   },
    {
     "topic": "onset",
     "canonical": "When did this start?",

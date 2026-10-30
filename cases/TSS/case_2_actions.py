@@ -636,8 +636,9 @@ EXAM_NOTES = {
   "exam_card": "A fast regular rhythm and a flow murmur. No sign of a failing heart.",
   "exam_pulm": "Clear lungs. This is not a pneumonia, and she can take fluid.",
   "exam_abd": (
-    "A soft, non-tender abdomen. There is no abdominal source here, which is one more "
-    "reason to keep looking."),
+    "A soft abdomen, mildly tender all over with active bowel sounds, as two days of "
+    "vomiting and diarrhea would leave it. No guarding or rebound, so no abdominal source "
+    "here, which is one more reason to keep looking."),
   "exam_gu": (
     "The examination that finds the diagnosis. A pelvic examination is part of looking for a "
     "source in a febrile woman in shock, and it is the one most often left out. Do it with a "

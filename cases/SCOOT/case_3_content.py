@@ -163,7 +163,8 @@ PATIENT_VISUAL = {
    "closed in the decline (owner, 19 October 2026). At GCS 12 he opens them only to voice "
    "(E3), so at rest they are shut. The airway device follows the last airway button pressed."),
  "verify": "Check that the closed eyes in the decline and the obtunded face in herniation read as intended.",
- "rules": [{"when": DECL, "value": {"eyes": "closed"}},
+ "rules": [{"when": "flag intubated set", "value": {"eyes": "closed", "addons": ["intubated"]}},
+           {"when": DECL, "value": {"eyes": "closed"}},
            {"when": None, "value": {}}],
 }
 

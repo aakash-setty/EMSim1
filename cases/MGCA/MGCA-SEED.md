@@ -91,3 +91,4 @@ you should confirm you accept it for this case.
   discouraged until she improves (a validator rule now refuses this pattern). US usage in
   learner text. Which items to make neutral was a model's reading of the instruction. Not
   physician reviewed.
+- 30 October 2026, Aakash Setty: every case answers a greeting or an open question ("What's going on?") with a clear history of the present illness, the `presenting_story` topic (authoring 8.2). This case's answer was written by a model from its own onset, progression and character answers and its arrival handover, and stops short of what the case keeps behind its own questions. The wording is not physician reviewed.

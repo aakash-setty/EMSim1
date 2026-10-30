@@ -826,6 +826,14 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | rule 1 (default) | plausible |
 
 
+### `interview_topic/presenting_story`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| respiratory_failure | rule 0 (phase is respiratory_failure) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
 ### `interview_topic/onset`
 
 | phase | resolves to | reachable? |

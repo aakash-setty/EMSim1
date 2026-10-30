@@ -507,10 +507,12 @@ Single unconditional rule; nothing to enumerate.
 
 ### `patient_visual`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| decline | rule 0 (phase is decline) &rarr; figure: eyes closed | plausible |
-| «any other phase» | rule 1 (default) &rarr; figure: eyes open | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| decline | no | rule 1 (phase is decline) &rarr; figure: eyes closed | plausible |
+| decline | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| «any other phase» | no | rule 2 (default) &rarr; figure: eyes open | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
 
 
 ### `pupils`
@@ -594,6 +596,14 @@ Single unconditional rule; nothing to enumerate.
 
 
 ### `interview/out_of_scope_fallback`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| decline | rule 0 (phase is decline) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
+### `interview_topic/presenting_story`
 
 | phase | resolves to | reachable? |
 |---|---|---|

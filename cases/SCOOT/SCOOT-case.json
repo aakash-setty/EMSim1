@@ -228,7 +228,8 @@
      "to": "herniation",
      "narration": "His right pupil has gone big and it isn't reacting, and his heart rate has dropped. He's not answering me.",
      "debrief_note": "His brain herniated. The hematoma kept growing, pushed the right temporal lobe inward against the nerve that works the right pupil and against the brainstem, and the blown pupil and the slow pulse are what that looks like.\n\nNeurosurgery had not been called with his scan in the two minutes since he dropped his GCS. The scan was the step, or the call once the scan was back. An epidural hematoma over 30 mL is evacuated whatever the GCS, and the decision to operate belongs to the neurosurgeon. The emergency physician's decision is to call them, and the moment to call is when the CT is back, not when a pupil changes. [UNVERIFIED: Bullock et al. 2006, read through a summarizing tool]",
-     "author_rationale": "Deterioration on inaction. An untreated expanding temporal epidural hematoma progresses to uncal herniation. Guarded on the flag the neurosurgery consult sets. The consult cannot be made until a head CT has resulted (a prerequisite, authoring 9.5), so a learner who called with the scan before or during the decline never herniates. 120 seconds is the owner's choice (Aakash Setty, 19 October 2026: the pupil blows at 6:00). The prompt for that call lands at 25 seconds (75 in the default mode) with an escalation at 35 (105), after the repeat-exam prompt at 15 (45). The CT prompt at 50 (150) lands here only in easy mode, and there is none on arrival. In the default mode a learner with no scan hears the neurosurgery prompt and is sent for the scan by its prerequisite. Model output."
+     "author_rationale": "Deterioration on inaction. An untreated expanding temporal epidural hematoma progresses to uncal herniation. Guarded on the flag the neurosurgery consult sets. The consult cannot be made until a head CT has resulted (a prerequisite, authoring 9.5), so a learner who called with the scan before or during the decline never herniates. 120 seconds is the owner's choice (Aakash Setty, 19 October 2026: the pupil blows at 6:00). The prompt for that call lands at 25 seconds (75 in the default mode) with an escalation at 35 (105), after the repeat-exam prompt at 15 (45). The CT prompt at 50 (150) lands here only in easy mode, and there is none on arrival. In the default mode a learner with no scan hears the neurosurgery prompt and is sent for the scan by its prerequisite. Model output.",
+     "narration_ventilated": "His right pupil has gone big and it isn't reacting, and his heart rate has dropped."
     }
    ]
   },
@@ -1739,6 +1740,15 @@
    "verify": "Check that the closed eyes in the decline and the obtunded face in herniation read as intended.",
    "rules": [
     {
+     "when": "flag intubated set",
+     "value": {
+      "eyes": "closed",
+      "addons": [
+       "intubated"
+      ]
+     }
+    },
+    {
      "when": "phase is decline",
      "value": {
       "eyes": "closed"
@@ -2079,8 +2089,52 @@
   ],
   "topics": [
    {
-    "topic": "mechanism_of_injury",
+    "topic": "presenting_story",
     "canonical": "What happened?",
+    "variants": [
+     "Hi",
+     "Hello",
+     "Hi there",
+     "Hey",
+     "Hi, I'm one of the doctors.",
+     "Hello, I'm the doctor.",
+     "What's going on?",
+     "What is going on?",
+     "What is going on today?",
+     "What's been going on?",
+     "What happened?",
+     "What happened today?",
+     "What brings you in?",
+     "What brings you in today?",
+     "What brought you here?",
+     "What brings you to the emergency department?",
+     "What's wrong?",
+     "What's the matter?",
+     "What seems to be the problem?",
+     "Tell me what happened.",
+     "Can you tell me what happened?",
+     "Tell me what's going on.",
+     "What's the story?",
+     "How can I help you today?",
+     "Why are you here today?",
+     "Talk me through what happened."
+    ],
+    "answer": [
+     {
+      "when": "phase is decline",
+      "value": "'The scooter... I don't... remember. My head...'"
+     },
+     {
+      "when": null,
+      "value": "'I came off my scooter. I don't remember it, but Marcus says I hit a pothole and went over the handlebars onto the right side of my head. My head's been pounding ever since, and it's getting worse.'"
+     }
+    ],
+    "echo": "what happened",
+    "authoring_note": "Authoring 8.2: a greeting or an open question gets a brief history of the present illness. Added 30 October 2026 on the owner's instruction. The answer was written by a model from this case's own onset, progression and character answers and its arrival handover, and stops short of every disclosure the case keeps behind its own question. Not physician reviewed. Variants copied from DIPH and catalog/interview_phrasings.py (questions, not facts)."
+   },
+   {
+    "topic": "mechanism_of_injury",
+    "canonical": "How did the crash happen?",
     "variants": [
      "How did you get hurt?",
      "Tell me about the accident.",

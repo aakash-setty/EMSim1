@@ -361,15 +361,20 @@ Single unconditional rule; nothing to enumerate.
 
 ### `exam/exam_airway`
 
-Single unconditional rule; nothing to enumerate.
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| «any phase» | no | rule 1 (default) &rarr; normal: Patent. Speaking in full sentences. | plausible |
+| «any phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place and secured. | plausible |
 
 
 ### `exam/exam_breath`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| treated | rule 0 (phase is treated) &rarr; normal: Breathing easier, rate about 20. No accessory muscle use. | plausible |
-| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Deep, slightly fast breathing. No accessory muscle use. | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| treated | no | rule 1 (phase is treated) &rarr; normal: Breathing easier, rate about 20. No accessory muscle use. | plausible |
+| treated | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| «any other phase» | no | rule 2 (default) &rarr; ABNORMAL: Deep, slightly fast breathing. No accessory muscle use. | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
 
 
 ### `exam/exam_circ`
@@ -438,10 +443,12 @@ Single unconditional rule; nothing to enumerate.
 
 ### `exam/exam_neuro`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| potassium_falling | rule 0 (phase is potassium_falling) &rarr; ABNORMAL: Proximal weakness in arms and legs, 4 of 5. Reflexes reduced. Alert, o... | plausible |
-| «any other phase» | rule 1 (default) &rarr; normal: Alert, oriented, GCS 15. Power 5 of 5. Reflexes normal. | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| potassium_falling | no | rule 1 (phase is potassium_falling) &rarr; ABNORMAL: Proximal weakness in arms and legs, 4 of 5. Reflexes reduced. Alert, o... | plausible |
+| potassium_falling | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal and reactive. | plausible |
+| «any other phase» | no | rule 2 (default) &rarr; normal: Alert, oriented, GCS 15. Power 5 of 5. Reflexes normal. | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal and reactive. | plausible |
 
 
 ### `exam/exam_psych`
@@ -451,16 +458,22 @@ Single unconditional rule; nothing to enumerate.
 
 ### `general_status`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| potassium_falling | rule 0 (phase is potassium_falling) &rarr; ABNORMAL: Lying flat, says her arms and legs are heavy. Alert and frightened. GC... | plausible |
-| treated | rule 1 (phase is treated) &rarr; normal: Sitting up, color better, no longer retching. GCS 15. | plausible |
-| «any other phase» | rule 2 (default) &rarr; ABNORMAL: Tired and dry, vomit bowl in her lap, breathing deeply. Alert and talk... | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| potassium_falling | no | rule 1 (phase is potassium_falling) &rarr; ABNORMAL: Lying flat, says her arms and legs are heavy. Alert and frightened. GC... | plausible |
+| potassium_falling | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| treated | no | rule 2 (phase is treated) &rarr; normal: Sitting up, color better, no longer retching. GCS 15. | plausible |
+| treated | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| «any other phase» | no | rule 3 (default) &rarr; ABNORMAL: Tired and dry, vomit bowl in her lap, breathing deeply. Alert and talk... | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
 
 
 ### `patient_visual`
 
-Single unconditional rule; nothing to enumerate.
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| «any phase» | no | rule 1 (default) &rarr; figure: eyes open | plausible |
+| «any phase» | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
 
 
 ### `labs/basic_chemistry_chem_7`
@@ -833,6 +846,14 @@ _540 combinations, exceeds the 96-row display cap. Axes: phases=['potassium_fall
 
 ### `interview/out_of_scope_fallback`
 
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| «any phase» | no | rule 1 (default) | plausible |
+| «any phase» | yes | rule 0 (flag intubated set) | plausible |
+
+
+### `interview_topic/presenting_story`
+
 Single unconditional rule; nothing to enumerate.
 
 
@@ -1028,7 +1049,9 @@ Single unconditional rule; nothing to enumerate.
 
 ### `interview/global_answer_rules`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| case_complete | rule 0 (phase is case_complete) | plausible |
-| «any other phase» | **NO RULE MATCHES** | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| case_complete | no | rule 1 (phase is case_complete) | plausible |
+| case_complete | yes | rule 0 (flag intubated set) | plausible |
+| «any other phase» | no | **NO RULE MATCHES** | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) | plausible |

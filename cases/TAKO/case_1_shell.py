@@ -176,6 +176,7 @@ PHASES = [
      "after_seconds": 10, "measured_from": "guard_true", "to": "obstructed",
      "narration": ("Her pressure has dropped since that vasodilator and her rate is up. "
                    "She says she feels faint."),
+     "narration_ventilated": "Her pressure has dropped since that vasodilator and her rate is up.",
      "debrief_note": (
        "A nitrate dropped her pressure. Nitrates lower the filling of the heart and the "
        "resistance it pumps against. In outflow obstruction a smaller, emptier ventricle "

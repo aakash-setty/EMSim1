@@ -754,6 +754,14 @@ Single unconditional rule; nothing to enumerate.
 | «any other phase» | yes | rule 0 (flag intubated set) | plausible |
 
 
+### `interview_topic/presenting_story`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| hypotensive | rule 0 (phase is hypotensive) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
 ### `interview_topic/onset`
 
 | phase | resolves to | reachable? |

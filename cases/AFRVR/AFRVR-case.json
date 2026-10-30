@@ -385,7 +385,8 @@
      "to": "case_complete"
     }
    ],
-   "schema_gap_note": "One vitals block for a phase that is reached by two very different routes: elective intubation of a man who was talking to you, and intubation of a man who had already tired. The schema provides one block per phase. The numbers here are the post-intubation state and assume no peri-intubation collapse, which is a deliberate simplification: this case is not about the airway and adding a hypotension branch would make it about the airway."
+   "schema_gap_note": "One vitals block for a phase that is reached by two very different routes: elective intubation of a man who was talking to you, and intubation of a man who had already tired. The schema provides one block per phase. The numbers here are the post-intubation state and assume no peri-intubation collapse, which is a deliberate simplification: this case is not about the airway and adding a hypotension branch would make it about the airway.",
+   "ventilated": true
   },
   {
    "id": "case_complete",
@@ -3272,6 +3273,50 @@
   "out_of_scope_bank_note": "Questions this case has no authored answer to, generated into case_4_interview.py by catalog/expand_interview_variants.py from catalog/interview_out_of_scope.py, filtered to the concepts this case does not cover. The matcher embeds them beside the topic bank.",
   "topics": [
    {
+    "topic": "presenting_story",
+    "canonical": "What happened?",
+    "variants": [
+     "Hi",
+     "Hello",
+     "Hi there",
+     "Hey",
+     "Hi, I'm one of the doctors.",
+     "Hello, I'm the doctor.",
+     "What's going on?",
+     "What is going on?",
+     "What is going on today?",
+     "What's been going on?",
+     "What happened?",
+     "What happened today?",
+     "What brings you in?",
+     "What brings you in today?",
+     "What brought you here?",
+     "What brings you to the emergency department?",
+     "What's wrong?",
+     "What's the matter?",
+     "What seems to be the problem?",
+     "Tell me what happened.",
+     "Can you tell me what happened?",
+     "Tell me what's going on.",
+     "What's the story?",
+     "How can I help you today?",
+     "Why are you here today?",
+     "Talk me through what happened."
+    ],
+    "answer": [
+     {
+      "when": "phase is respiratory_failure",
+      "value": "'Heart racing... since yesterday. Can't... get my breath.'"
+     },
+     {
+      "when": null,
+      "value": "'Since yesterday afternoon my heart's been racing and it won't stop. Then the breathing came on, and it's gotten worse every hour. This morning I couldn't get across the living room without stopping, so my daughter called the ambulance.'"
+     }
+    ],
+    "echo": "what happened",
+    "authoring_note": "Authoring 8.2: a greeting or an open question gets a brief history of the present illness. Added 30 October 2026 on the owner's instruction. The answer was written by a model from this case's own onset, progression and character answers and its arrival handover, and stops short of every disclosure the case keeps behind its own question. Not physician reviewed. Variants copied from DIPH and catalog/interview_phrasings.py (questions, not facts)."
+   },
+   {
     "topic": "onset",
     "canonical": "When did this start?",
     "variants": [
@@ -3289,7 +3334,8 @@
      "How long have you been short of breath?",
      "When did all this kick off?",
      "Tell me when this began.",
-     "Was there a moment it started or did it creep up?"
+     "Was there a moment it started or did it creep up?",
+     "What were you doing when it started?"
     ],
     "answer": [
      {

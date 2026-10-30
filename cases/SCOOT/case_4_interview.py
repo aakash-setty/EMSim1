@@ -43,7 +43,7 @@ topic("mechanism_of_injury",
   "'I don't remember it. Marcus, my buddy, was riding behind me. He says I hit a pothole and "
   "went over the handlebars and landed on the right side of my head.'",
   "'Marcus said... a pothole. I went over. I don't... remember.'",
-  canonical="What happened?",
+  canonical="How did the crash happen?",
   variants=["How did you get hurt?", "Tell me about the accident.", "What happened with the scooter?",
             "How did the crash happen?", "Did you fall off the scooter?", "What did you hit?",
             "Mechanism of injury?", "How did you land?", "Where did you hit your head?",
@@ -343,6 +343,53 @@ VOLUNTEER_SETTINGS = {
 }
 
 # ---------------------------------------------------------------- shared phrasings
+
+# --------------------------------------------------------------- presenting_story
+# Authoring 8.2, owner's instruction 30 October 2026: a greeting or an open question gets a
+# brief history of the present illness. Written by a model from this case's own answers and
+# copied here from the case file, so a rebuild keeps it. Not physician reviewed.
+TOPICS.insert(0, {'topic': 'presenting_story',
+ 'canonical': 'What happened?',
+ 'variants': ['Hi',
+              'Hello',
+              'Hi there',
+              'Hey',
+              "Hi, I'm one of the doctors.",
+              "Hello, I'm the doctor.",
+              "What's going on?",
+              'What is going on?',
+              'What is going on today?',
+              "What's been going on?",
+              'What happened?',
+              'What happened today?',
+              'What brings you in?',
+              'What brings you in today?',
+              'What brought you here?',
+              'What brings you to the emergency department?',
+              "What's wrong?",
+              "What's the matter?",
+              'What seems to be the problem?',
+              'Tell me what happened.',
+              'Can you tell me what happened?',
+              "Tell me what's going on.",
+              "What's the story?",
+              'How can I help you today?',
+              'Why are you here today?',
+              'Talk me through what happened.'],
+ 'answer': [{'when': 'phase is decline',
+             'value': "'The scooter... I don't... remember. My head...'"},
+            {'when': None,
+             'value': "'I came off my scooter. I don't remember it, but Marcus says I hit a "
+                      'pothole and went over the handlebars onto the right side of my head. My '
+                      "head's been pounding ever since, and it's getting worse.'"}],
+ 'echo': 'what happened',
+ 'authoring_note': 'Authoring 8.2: a greeting or an open question gets a brief history of the '
+                   "present illness. Added 30 October 2026 on the owner's instruction. The answer "
+                   "was written by a model from this case's own onset, progression and character "
+                   'answers and its arrival handover, and stops short of every disclosure the case '
+                   'keeps behind its own question. Not physician reviewed. Variants copied from '
+                   'DIPH and catalog/interview_phrasings.py (questions, not facts).'})
+
 TOPIC_MAP = {
  "onset": ["onset"], "timing_progression": ["timing_progression"],
  "character_of_symptoms": ["character_general"], "location_of_pain": ["location_pain"],

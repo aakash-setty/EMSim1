@@ -6416,7 +6416,8 @@
    "seizure_history",
    "previous_self_harm"
   ],
-  "key_topics_note": "Author judgment, unreviewed. Read by the summary's History score, asked over listed. Eleven of forty-two, and they are the ones whose answers change what happens: what was found by the bed, what she took, what else is in the house, when she was last well, the absence of any medical history or medication that could explain this, the mental health history that makes a deliberate ingestion likely, and the absence of any prior seizure. Pregnancy left the list on 27 October 2026 (physician review DIPH-34, Aakash Setty): it is still answered and charted, and the hCG is still a recommended test. Every other topic is answerable and charted and does not count."
+  "key_topics_note": "Author judgment, unreviewed. Read by the summary's History score, asked over listed. Eleven of forty-two, and they are the ones whose answers change what happens: what was found by the bed, what she took, what else is in the house, when she was last well, the absence of any medical history or medication that could explain this, the mental health history that makes a deliberate ingestion likely, and the absence of any prior seizure. Pregnancy left the list on 27 October 2026 (physician review DIPH-34, Aakash Setty): it is still answered and charted, and the hCG is still a recommended test. Every other topic is answerable and charted and does not count.",
+  "answers_while_ventilated": "Her mother answers the history, not the patient, and goes on answering after the tube. The global rules take the mother out of the room only while the team is resuscitating (30 October 2026)."
  },
  "handoff": {
   "correct_disposition": {

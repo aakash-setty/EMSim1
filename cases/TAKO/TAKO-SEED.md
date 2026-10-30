@@ -77,6 +77,8 @@ Each of these changes what a learner sees. None was decided by a person.
     findings said "than before" to a learner who might never have listened earlier.
 12. **Four studies with authored results are bound as neutral case actions** so that
     each has a debrief note: the chemistry, both gases and the capillary glucose.
+- 30 October 2026, Aakash Setty: every case answers a greeting or an open question ("What's going on?") with a clear history of the present illness, the `presenting_story` topic (authoring 8.2). This case's answer was written by a model from its own onset, progression and character answers and its arrival handover, and stops short of what the case keeps behind its own questions. The wording is not physician reviewed.
+  "What happened today?" moved from what_she_was_doing to the story, since it is an open question.
 
 ## 1. Learning goals and where each is acted on
 

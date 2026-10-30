@@ -186,6 +186,7 @@ PHASES = [
      "to": "fluid_responsive",
      "narration": ("That fluid is in. Her pressure is better and she says she feels a bit "
                    "better."),
+     "narration_ventilated": "That fluid is in. Her pressure is better.",
      "debrief_note": (
        "The first bolus helped, as it should. She was dry from two days of fever and barely "
        "drinking, and she is leaking fluid out of her vessels.\n\n"
@@ -293,6 +294,7 @@ PHASES = [
      "measured_from": "guard_true",
      "to": "stabilizing",
      "narration": ("The vasopressor is working. Her pressure is up and she's more awake."),
+     "narration_ventilated": "The vasopressor is working. Her pressure is up.",
      "debrief_note": (
        "The vasopressor restored her pressure, and it is holding because the source is out. "
        "Ten seconds is a compression of the several minutes a titration takes."),
@@ -303,6 +305,8 @@ PHASES = [
      "to": "supported",
      "narration": ("The vasopressor has brought her pressure up and she's more awake. I've "
                    "had to go up on it twice to get there."),
+     "narration_ventilated": ("The vasopressor has brought her pressure up. I've had to go up on it "
+                              "twice to get there."),
      "debrief_note": (
        "The vasopressor restored a borderline pressure. She needs a rising dose to stay "
        "there, which is what an untreated source looks like from the infusion pump."),
@@ -392,6 +396,8 @@ PHASES = [
      "to": "stabilizing",
      "narration": ("She's coming back. Her pressure is up on the vasopressor, her rate is "
                    "down, and she's opening her eyes to my voice."),
+     "narration_ventilated": ("She's coming back. Her pressure is up on the vasopressor and her heart "
+                              "rate is down. She's still sedated on the ventilator."),
      "debrief_note": (
        "She recovered a pressure once all three things were done: fluid, a vasopressor and "
        "removal of the source. She spent time at a mean pressure in the 40s on the way, and "

@@ -194,6 +194,8 @@ PHASES = [
      "after_seconds": 120, "measured_from": "phase_entry", "to": "herniation",
      "narration": ("His right pupil has gone big and it isn't reacting, and his heart rate "
                    "has dropped. He's not answering me."),
+     "narration_ventilated": ("His right pupil has gone big and it isn't reacting, and his heart rate "
+                              "has dropped."),
      "debrief_note": (
        "His brain herniated. The hematoma kept growing, pushed the right temporal lobe "
        "inward against the nerve that works the right pupil and against the brainstem, and "

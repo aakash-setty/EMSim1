@@ -33,6 +33,8 @@ model took its own recommendation each time. Each is listed again in section 2.1
 On 29 October 2026 he added a chest film and four critical actions: the Canadian CT Head Rule
 questions, asking about blood thinners, a FAST, and pain control (section 2.16). The decision
 that each is critical is his. How each is built and taught is model output.
+- 30 October 2026, Aakash Setty: every case answers a greeting or an open question ("What's going on?") with a clear history of the present illness, the `presenting_story` topic (authoring 8.2). This case's answer was written by a model from its own onset, progression and character answers and its arrival handover, and stops short of what the case keeps behind its own questions. The wording is not physician reviewed.
+  The crash topic's question became "How did the crash happen?", because "What happened?" now opens the story.
 
 ## 1. Sources, and how far each was read
 

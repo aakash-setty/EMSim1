@@ -23,7 +23,8 @@ T("onset", "When did this start?",
   "Did it come on suddenly or gradually?", "When did the palpitations start?",
   "How long has your heart been going like this?", "When did the breathing get bad?",
   "How long have you been short of breath?", "When did all this kick off?",
-  "Tell me when this began.", "Was there a moment it started or did it creep up?"],
+  "Tell me when this began.", "Was there a moment it started or did it creep up?",
+  "What were you doing when it started?"],
  "'Yesterday... afternoon.'",
  "'Yesterday afternoon, about three o'clock. I was sat watching the television and it just "
  "started, like something turned over in my chest. It hasn't stopped since. The breathing came on "
@@ -517,6 +518,55 @@ T("code_status_goals_of_care", "Have you thought about what you'd want if you go
  "'I've not thought about it, no. I'd want you to do whatever you need to do. My daughter is "
  "outside, she knows what I'd want. I've not signed anything.'"),
 ]
+
+
+# --------------------------------------------------------------- presenting_story
+# Authoring 8.2, owner's instruction 30 October 2026: a greeting or an open question gets a
+# brief history of the present illness. Written by a model from this case's own answers and
+# copied here from the case file, so a rebuild keeps it. Not physician reviewed.
+TOPICS.insert(0, {'topic': 'presenting_story',
+ 'canonical': 'What happened?',
+ 'variants': ['Hi',
+              'Hello',
+              'Hi there',
+              'Hey',
+              "Hi, I'm one of the doctors.",
+              "Hello, I'm the doctor.",
+              "What's going on?",
+              'What is going on?',
+              'What is going on today?',
+              "What's been going on?",
+              'What happened?',
+              'What happened today?',
+              'What brings you in?',
+              'What brings you in today?',
+              'What brought you here?',
+              'What brings you to the emergency department?',
+              "What's wrong?",
+              "What's the matter?",
+              'What seems to be the problem?',
+              'Tell me what happened.',
+              'Can you tell me what happened?',
+              "Tell me what's going on.",
+              "What's the story?",
+              'How can I help you today?',
+              'Why are you here today?',
+              'Talk me through what happened.'],
+ 'answer': [{'when': 'phase is respiratory_failure',
+             'value': "'Heart racing... since yesterday. Can't... get my breath.'"},
+            {'when': None,
+             'value': "'Since yesterday afternoon my heart's been racing and it won't stop. Then "
+                      "the breathing came on, and it's gotten worse every hour. This morning I "
+                      "couldn't get across the living room without stopping, so my daughter called "
+                      "the ambulance.'"}],
+ 'echo': 'what happened',
+ 'authoring_note': 'Authoring 8.2: a greeting or an open question gets a brief history of the '
+                   "present illness. Added 30 October 2026 on the owner's instruction. The answer "
+                   "was written by a model from this case's own onset, progression and character "
+                   'answers and its arrival handover, and stops short of every disclosure the case '
+                   'keeps behind its own question. Not physician reviewed. Variants copied from '
+                   'DIPH and catalog/interview_phrasings.py (questions, not facts).'})
+
 
 GLOBAL_RULES = [
  {"when": "phase is intubated",

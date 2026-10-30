@@ -1022,12 +1022,10 @@ body[data-right="wide"] .fitem .ft{font-size:11px}
 :root[data-theme="night"] .cat-4{--cat:#F2A065} :root[data-theme="night"] .cat-5{--cat:#AEB8C6}
 :root[data-theme="night"] .cat-6{--cat:#BACB5E} :root[data-theme="night"] .cat-7{--cat:#D99A86}
 .wl-chip{display:inline-flex; align-items:center; gap:7px}
-.wl-cdot{flex:none; width:8px; height:8px; border-radius:50%; background:var(--cat)}
 .wl-chip[class*="cat-"]:hover{border-color:var(--cat); color:var(--cat)}
 .wl-chip[class*="cat-"][aria-pressed="true"],
 :root[data-theme="night"] .wl-chip[class*="cat-"][aria-pressed="true"]{background:var(--cat); border-color:var(--cat); color:#fff}
 :root[data-theme="night"] .wl-chip[class*="cat-"][aria-pressed="true"]{color:#0D1A22}
-.wl-chip[aria-pressed="true"] .wl-cdot{background:currentColor}
 .cx-cat{margin-left:auto; flex:none; max-width:55%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   font-family:var(--sans); font-size:11px; font-weight:650; letter-spacing:0; text-transform:none; color:var(--cat);
   background:color-mix(in srgb,var(--cat) 12%,var(--solid)); border:1px solid color-mix(in srgb,var(--cat) 28%,transparent);
@@ -1369,20 +1367,16 @@ body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-fl
 .wl-chip[aria-pressed="true"]{background:var(--act); border-color:var(--act); color:#fff}
 
 /* ---- the case cards ---- */
-/* Each category is a shaded panel in its own colour, with a coloured rule down its left edge
-   and its name as a heading (author instruction, 28 October 2026). The colours are set
+/* Each category is a shaded panel in its own colour with its name as a heading (author
+   instruction, 28 October 2026). No dot and no rule down the left edge (30 October 2026). The colours are set
    below with the milestones, under "category colours". */
 .wl-list{display:flex; flex-direction:column; gap:16px; outline:none}
-.wl-sec{position:relative; padding:14px 16px 16px 22px; border-radius:18px;
+.wl-sec{position:relative; padding:14px 16px 16px 16px; border-radius:18px;
   background:linear-gradient(120deg, color-mix(in srgb,var(--cat) 11%,transparent),
     color-mix(in srgb,var(--cat) 3%,transparent) 70%);
   border:1px solid color-mix(in srgb,var(--cat) 20%,transparent)}
-.wl-sec::before{content:""; position:absolute; left:0; top:16px; bottom:16px; width:5px; border-radius:0 5px 5px 0;
-  background:var(--cat)}
 .wl-group{display:flex; align-items:center; gap:10px; margin:0 0 12px; font-family:var(--title); font-size:18px;
   font-weight:750; letter-spacing:-.012em; text-transform:none; color:var(--cat); line-height:1.2}
-.wl-catmark{flex:none; width:12px; height:12px; border-radius:4px; background:var(--cat);
-  box-shadow:0 0 0 4px color-mix(in srgb,var(--cat) 20%,transparent)}
 .wl-catn{font-family:var(--mono); font-size:11.5px; font-weight:500; letter-spacing:.02em; color:var(--ink2);
   background:var(--solid); border:1px solid color-mix(in srgb,var(--cat) 25%,transparent); padding:2px 9px; border-radius:999px}
 .wl-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px}
@@ -1539,7 +1533,7 @@ body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-fl
   .ds-tiles{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 14px}
   .ds-tile b{font-size:18px}
   .wl-grid{grid-template-columns:minmax(0,1fr)}
-  .wl-sec{padding:12px 10px 12px 16px}
+  .wl-sec{padding:12px 10px}
   .hm-dials{gap:6px}
   .hm-dial{width:52px}
   .hm-ring{width:48px; height:48px}

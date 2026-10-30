@@ -718,14 +718,14 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| impending_respiratory_failure | rule 1 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Lung: severe. Confluent B lines in every anterior and lateral zone bil... | plausible |
-| improving | rule 6 (phase is improving) &rarr; ABNORMAL: Lung: mild and clearing. Isolated B lines at both bases only, anterior... | plausible |
-| nitrate_responding | rule 4 (phase is nitrate_responding) &rarr; ABNORMAL: Lung: moderate. B lines reduced to two or three per field in the upper... | plausible |
-| niv_supported | rule 3 (phase is niv_supported) &rarr; ABNORMAL: Lung: moderate. Three or more B lines per field remain in every zone, ... | plausible |
-| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; ABNORMAL: Lung: diffuse B lines in all anterior and lateral zones bilaterally. C... | plausible |
-| presentation | rule 2 (phase is presentation) &rarr; ABNORMAL: Lung: three or more B lines per field in all anterior and lateral zone... | plausible |
-| stabilizing | rule 5 (phase is stabilizing) &rarr; ABNORMAL: Lung: mild. B lines now confined to the lower zones at one or two per ... | plausible |
-| «any other phase» | rule 7 (default) &rarr; ABNORMAL: Lung: three or more B lines per field in all anterior and lateral zone... | plausible |
+| impending_respiratory_failure | rule 1 (phase is impending_respiratory_failure) &rarr; ABNORMAL: Lung: severe. Confluent B lines in all zones, white lung anteriorly, s... | plausible |
+| improving | rule 6 (phase is improving) &rarr; ABNORMAL: Lung: mild and clearing. Isolated B lines at the bases, small bilatera... | plausible |
+| nitrate_responding | rule 4 (phase is nitrate_responding) &rarr; ABNORMAL: Lung: moderate. Fewer B lines in the upper zones, still dense at the b... | plausible |
+| niv_supported | rule 3 (phase is niv_supported) &rarr; ABNORMAL: Lung: moderate. B lines in all zones, less dense anteriorly, small bil... | plausible |
+| post_intubation_hypotension | rule 0 (phase is post_intubation_hypotension) &rarr; ABNORMAL: Lung: diffuse B lines in all zones. Heart: severely reduced LV functio... | plausible |
+| presentation | rule 2 (phase is presentation) &rarr; ABNORMAL: Lung: severe. B lines in all zones, small bilateral effusions, sliding... | plausible |
+| stabilizing | rule 5 (phase is stabilizing) &rarr; ABNORMAL: Lung: mild. B lines at the bases only, anterior fields clear, small bi... | plausible |
+| «any other phase» | rule 7 (default) &rarr; ABNORMAL: Lung: severe. B lines in all zones, small bilateral effusions, sliding... | plausible |
 
 
 ### `imaging/ct_pulmonary_angiogram`
@@ -848,6 +848,16 @@ Single unconditional rule; nothing to enumerate.
 
 
 ### `interview/out_of_scope_fallback`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| nitrate_responding | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| niv_supported | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is niv_supported OR phase is nitrate_responding) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
+### `interview_topic/presenting_story`
 
 | phase | resolves to | reachable? |
 |---|---|---|

@@ -235,9 +235,10 @@ function renderMonitor(){
     `<div class="vit"><div class="vitlab">${c[0]}</div>
      <div class="vitval v-${c[3]}${outside(c[3])?' vabn':''}">${c[1]}</div><div class="vitunit">${c[2]}</div></div>`).join('')
     + `<div class="clockbox"><div class="vitlab">elapsed</div>
-       <div class="clock">${mmss(ST.now)}</div>
-       <div class="phasechip">${esc(PROTO.phaseShort[ST.phase]||ST.phase)}</div></div>`;
-  if(LASTPHASE!==null && LASTPHASE!==ST.phase) el('monitor').animate?.([{opacity:.35},{opacity:1}],{duration:420});
+       <div class="clock">${mmss(ST.now)}</div></div>`;
+  /* Owner, 30 October 2026: the phase's name used to sit under the clock, and the monitor
+     flashed when the phase changed. Both told the learner the state before the numbers did.
+     The monitor now shows only what a monitor shows. */
   LASTPHASE=ST.phase;
   /* The trace is live: the monitor module draws it, one lead, at paper speed, from the
      same beat clock the audio sounds. Off means a dark screen, which is the same nothing
@@ -2880,7 +2881,7 @@ function wlChips(m){
   if(cats.length<2){ box.style.display='none'; return; }
   box.style.display='';
   box.innerHTML=[['all','All cases']].concat(cats.map(c=>[c,c]))
-    .map(([k,l],j)=>`<button class="wl-chip${j?' cat-'+((j-1)%8):''}" type="button" data-wlchip="${esc(k)}" aria-pressed="${WL_FILTER===k}">${j?'<i class="wl-cdot" aria-hidden="true"></i>':''}${esc(l)}</button>`)
+    .map(([k,l],j)=>`<button class="wl-chip${j?' cat-'+((j-1)%8):''}" type="button" data-wlchip="${esc(k)}" aria-pressed="${WL_FILTER===k}">${esc(l)}</button>`)
     .join('');
 }
 
@@ -2954,7 +2955,7 @@ function renderPicker(){
     const ci=Math.max(0,allCats.indexOf(g))%8;
     const sub=(inG.length===1?'1 case':inG.length+' cases')+(tracked?' · '+passed+' passed':'');
     html+=`<section class="wl-sec cat-${ci}" role="group" aria-label="${esc(g)}">
-      <h3 class="wl-group"><span class="wl-catmark" aria-hidden="true"></span><span class="wl-catname">${esc(g)}</span><span class="wl-catn">${esc(sub)}</span></h3>
+      <h3 class="wl-group"><span class="wl-catname">${esc(g)}</span><span class="wl-catn">${esc(sub)}</span></h3>
       <div class="wl-grid">${cards}</div></section>`;
   }
   el('pk-list').innerHTML=html;

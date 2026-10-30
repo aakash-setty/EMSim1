@@ -177,7 +177,22 @@ def skeleton(prefix, title):
             "global_answer_rules": [],
             "out_of_scope_fallback": [{"when": None,
                                        "value": todo("10.3", "non-committal reply revealing nothing")}],
-            "topics": [],
+            # Authoring 8.2: the first topic answers a greeting or an open question with a
+            # brief history of the present illness. The validator stops without it.
+            "topics": [{"topic": "presenting_story", "canonical": "What happened?",
+                        "variants": ["Hi", "Hello", "Hi there", "Hey", "Hi, I'm one of the doctors.",
+                                     "Hello, I'm the doctor.", "What's going on?", "What is going on?",
+                                     "What's been going on?", "What happened?", "What happened today?",
+                                     "What brings you in?", "What brings you in today?",
+                                     "What brought you here?", "What's wrong?", "What's the matter?",
+                                     "What seems to be the problem?", "Tell me what happened.",
+                                     "Can you tell me what happened?", "Tell me what's going on.",
+                                     "What's the story?", "How can I help you today?",
+                                     "Why are you here today?", "Talk me through what happened."],
+                        "answer": [{"when": None, "value": todo("8.2",
+                            "two to four sentences, in the answerer's voice: the main complaint, "
+                            "when it started, how it has changed, and why they came in now")}],
+                        "echo": "what happened"}],
             # v0.9. The topics whose answers change management, read by the summary's
             # History score. Without it every topic counts.
             "key_topics": [],

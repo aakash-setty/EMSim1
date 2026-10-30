@@ -3076,6 +3076,14 @@
    ],
    "exam_neuro": [
     {
+     "when": "flag intubated set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Sedated. Pupils equal."
+     }
+    },
+    {
      "when": "phase is frank_septic_shock",
      "value": {
       "kind": "exam_findings",
@@ -6012,6 +6020,50 @@
    }
   ],
   "topics": [
+   {
+    "topic": "presenting_story",
+    "canonical": "What happened?",
+    "variants": [
+     "Hi",
+     "Hello",
+     "Hi there",
+     "Hey",
+     "Hi, I'm one of the doctors.",
+     "Hello, I'm the doctor.",
+     "What's going on?",
+     "What is going on?",
+     "What is going on today?",
+     "What's been going on?",
+     "What happened?",
+     "What happened today?",
+     "What brings you in?",
+     "What brings you in today?",
+     "What brought you here?",
+     "What brings you to the emergency department?",
+     "What's wrong?",
+     "What's the matter?",
+     "What seems to be the problem?",
+     "Tell me what happened.",
+     "Can you tell me what happened?",
+     "Tell me what's going on.",
+     "What's the story?",
+     "How can I help you today?",
+     "Why are you here today?",
+     "Talk me through what happened."
+    ],
+    "answer": [
+     {
+      "when": "phase is adrenal_crisis OR phase is progressive_meningococcemia",
+      "value": "\"Fever... since last night. My legs... hurt so much.\""
+     },
+     {
+      "when": null,
+      "value": "\"Yesterday evening I started feeling achy and cold, like I was coming down with something, and by ten I was shaking so hard my roommate came to check on me. Around three this morning my legs started hurting so badly I couldn't sleep, and this morning they gave out when I tried to stand. Now there's a rash on my ankles.\""
+     }
+    ],
+    "echo": "what happened",
+    "authoring_note": "Authoring 8.2: a greeting or an open question gets a brief history of the present illness. Added 30 October 2026 on the owner's instruction. The answer was written by a model from this case's own onset, progression and character answers and its arrival handover, and stops short of every disclosure the case keeps behind its own question. Not physician reviewed. Variants copied from DIPH and catalog/interview_phrasings.py (questions, not facts)."
+   },
    {
     "topic": "onset",
     "canonical": "When did this start?",

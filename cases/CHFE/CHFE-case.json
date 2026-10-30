@@ -486,7 +486,8 @@
      "to": "case_complete"
     }
    ],
-   "short_label": "hypotensive after intubation"
+   "short_label": "hypotensive after intubation",
+   "ventilated": true
   },
   {
    "id": "intubated_stabilized",
@@ -518,7 +519,8 @@
      "to": "case_complete"
     }
    ],
-   "short_label": "intubated, on a pressor"
+   "short_label": "intubated, on a pressor",
+   "ventilated": true
   },
   {
    "id": "halted",
@@ -956,7 +958,16 @@
    "flags_set": [
     "oxygen_nrb"
    ],
-   "debrief_note": "A reasonable bridge while non-invasive ventilation is set up, and better than leaving him on the cannula. It does not do the thing this patient needs most, which is positive airway pressure. Note also that oxygen is a treatment for hypoxemia, not for dyspnea; a non-hypoxemic breathless heart failure patient does not benefit from high-flow oxygen and there is reason to think hyperoxia is unhelpful in cardiac patients. Counted as done once he is on positive pressure or intubated, since either gives him more oxygen than this mask, so nobody is marked down for not adding it on top."
+   "debrief_note": "A reasonable bridge while non-invasive ventilation is set up, and better than leaving him on the cannula. It does not do the thing this patient needs most, which is positive airway pressure. Note also that oxygen is a treatment for hypoxemia, not for dyspnea. A non-hypoxemic breathless heart failure patient does not benefit from high-flow oxygen and there is reason to think hyperoxia is unhelpful in cardiac patients. Counted as done once he is on positive pressure or intubated, since either gives him more oxygen than this mask, so nobody is marked down for not adding it on top.",
+   "vital_effects": [
+    {
+     "vital": "oxygen_saturation",
+     "delta": 2,
+     "key": "positive_pressure_spo2",
+     "while": "NOT flag intubated set",
+     "note": "Teaching choice, owner instruction 30 October 2026: the mask raises the saturation by two while it is on. It shares the key of positive pressure, so the two do not stack: the one put on last sets the number, as it sets the device on the figure. A model's reading of the instruction."
+    }
+   ]
   },
   {
    "catalog_id": "ecg_12_lead",
@@ -3312,7 +3323,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Lung: diffuse B lines in all anterior and lateral zones bilaterally. Cardiac: severely reduced left ventricular systolic function in a dilated ventricle, unchanged from earlier, no pericardial effusion, right ventricle not dilated. Inferior vena cava remains dilated at 2.2 cm with minimal respiratory variation, unchanged despite the hypotension."
+       "report": "Lung: diffuse B lines in all zones. Heart: severely reduced LV function, EF about 25%, anterior wall akinetic. No effusion. RV normal. IVC still 2.2 cm, minimal collapse."
       }
      },
      {
@@ -3320,7 +3331,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Lung: severe. Confluent B lines in every anterior and lateral zone bilaterally, coalescing into a white lung appearance anteriorly, with small bilateral pleural effusions. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.3 cm with minimal respiratory variation."
+       "report": "Lung: severe. Confluent B lines in all zones, white lung anteriorly, small bilateral effusions. Heart: severely reduced LV function, EF about 25%, anterior wall akinetic. No effusion. RV normal. IVC 2.3 cm, minimal collapse."
       }
      },
      {
@@ -3328,7 +3339,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Lung: three or more B lines per field in all anterior and lateral zones bilaterally, with small bilateral pleural effusions. No lung sliding abnormality, no pneumothorax. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.3 cm with minimal respiratory variation."
+       "report": "Lung: severe. B lines in all zones, small bilateral effusions, sliding present. Heart: severely reduced LV function, EF about 25%, anterior wall akinetic. No effusion. RV normal. IVC 2.3 cm, minimal collapse."
       }
      },
      {
@@ -3336,7 +3347,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Lung: moderate. Three or more B lines per field remain in every zone, less dense anteriorly than at the bases, with small bilateral pleural effusions. No lung sliding abnormality, no pneumothorax. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.3 cm with minimal respiratory variation, unchanged."
+       "report": "Lung: moderate. B lines in all zones, less dense anteriorly, small bilateral effusions. Heart: severely reduced LV function, EF about 25%, anterior wall akinetic. No effusion. RV normal. IVC 2.3 cm, minimal collapse."
       }
      },
      {
@@ -3344,7 +3355,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Lung: moderate. B lines reduced to two or three per field in the upper zones and still dense at the bases, with small bilateral pleural effusions. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.2 cm with minimal respiratory variation."
+       "report": "Lung: moderate. Fewer B lines in the upper zones, still dense at the bases, small bilateral effusions. Heart: severely reduced LV function, EF about 25%, anterior wall akinetic. No effusion. RV normal. IVC 2.2 cm, minimal collapse."
       }
      },
      {
@@ -3352,7 +3363,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Lung: mild. B lines now confined to the lower zones at one or two per field, with the anterior fields clear. Small bilateral pleural effusions unchanged. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.1 cm with minimal respiratory variation."
+       "report": "Lung: mild. B lines at the bases only, anterior fields clear, small bilateral effusions. Heart: severely reduced LV function, EF about 25%, anterior wall akinetic. No effusion. RV normal. IVC 2.1 cm, minimal collapse."
       }
      },
      {
@@ -3360,7 +3371,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Lung: mild and clearing. Isolated B lines at both bases only, anterior and lateral fields clear, small bilateral pleural effusions unchanged. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.0 cm with a little more respiratory variation than on the earlier study."
+       "report": "Lung: mild and clearing. Isolated B lines at the bases, small bilateral effusions. Heart: severely reduced LV function, EF about 25%, anterior wall akinetic. No effusion. RV normal. IVC 2.0 cm, a little more collapse than before."
       }
      },
      {
@@ -3368,7 +3379,7 @@
       "value": {
        "kind": "report",
        "abnormal": true,
-       "report": "Lung: three or more B lines per field in all anterior and lateral zones bilaterally, with small bilateral pleural effusions. No lung sliding abnormality, no pneumothorax. Cardiac: severely reduced left ventricular systolic function, visually consistent with an ejection fraction in the mid twenties, globally hypokinetic with anterior wall akinesis. No pericardial effusion. Right ventricle not dilated and no septal flattening. Inferior vena cava 2.3 cm with minimal respiratory variation."
+       "report": "Lung: severe. B lines in all zones, small bilateral effusions, sliding present. Heart: severely reduced LV function, EF about 25%, anterior wall akinetic. No effusion. RV normal. IVC 2.3 cm, minimal collapse."
       }
      }
     ],
@@ -3692,6 +3703,50 @@
   ],
   "topics": [
    {
+    "topic": "presenting_story",
+    "canonical": "What happened?",
+    "variants": [
+     "Hi",
+     "Hello",
+     "Hi there",
+     "Hey",
+     "Hi, I'm one of the doctors.",
+     "Hello, I'm the doctor.",
+     "What's going on?",
+     "What is going on?",
+     "What is going on today?",
+     "What's been going on?",
+     "What happened?",
+     "What happened today?",
+     "What brings you in?",
+     "What brings you in today?",
+     "What brought you here?",
+     "What brings you to the emergency department?",
+     "What's wrong?",
+     "What's the matter?",
+     "What seems to be the problem?",
+     "Tell me what happened.",
+     "Can you tell me what happened?",
+     "Tell me what's going on.",
+     "What's the story?",
+     "How can I help you today?",
+     "Why are you here today?",
+     "Talk me through what happened."
+    ],
+    "answer": [
+     {
+      "when": "phase is presentation OR phase is niv_supported OR phase is nitrate_responding",
+      "value": "'Breathing... worse for days. Woke up at four... couldn't... get my breath.'"
+     },
+     {
+      "when": null,
+      "value": "'My breathing's been getting worse for three or four days. I was getting winded just walking to the kitchen. Then about four this morning I woke up and couldn't get my breath at all, and it hasn't let up. When I couldn't manage the stairs, my family called the ambulance.'"
+     }
+    ],
+    "echo": "what happened",
+    "authoring_note": "Authoring 8.2: a greeting or an open question gets a brief history of the present illness. Added 30 October 2026 on the owner's instruction. The answer was written by a model from this case's own onset, progression and character answers and its arrival handover, and stops short of every disclosure the case keeps behind its own question. Not physician reviewed. Variants copied from DIPH and catalog/interview_phrasings.py (questions, not facts)."
+   },
+   {
     "topic": "onset",
     "canonical": "When did this start?",
     "variants": [
@@ -3704,7 +3759,8 @@
      "Did this come on suddenly or gradually?",
      "When did the symptoms begin?",
      "How long has your breathing been like this?",
-     "What time did it get bad today?"
+     "What time did it get bad today?",
+     "What were you doing when it started?"
     ],
     "answer": [
      {

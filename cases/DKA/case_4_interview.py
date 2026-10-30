@@ -344,6 +344,51 @@ for _t in TOPICS:
 # build_case.py expands the bank from this at build time (catalog/interview_expand.py), so
 # the expansion is never stored here. A topic absent from the map keeps only its own
 # hand-written variants. Every concept named here counts as covered by this case.
+
+# --------------------------------------------------------------- presenting_story
+# Authoring 8.2, owner's instruction 30 October 2026: a greeting or an open question gets a
+# brief history of the present illness. Written by a model from this case's own answers and
+# copied here from the case file, so a rebuild keeps it. Not physician reviewed.
+TOPICS.insert(0, {'topic': 'presenting_story',
+ 'canonical': 'What happened?',
+ 'variants': ['Hi',
+              'Hello',
+              'Hi there',
+              'Hey',
+              "Hi, I'm one of the doctors.",
+              "Hello, I'm the doctor.",
+              "What's going on?",
+              'What is going on?',
+              'What is going on today?',
+              "What's been going on?",
+              'What happened?',
+              'What happened today?',
+              'What brings you in?',
+              'What brings you in today?',
+              'What brought you here?',
+              'What brings you to the emergency department?',
+              "What's wrong?",
+              "What's the matter?",
+              'What seems to be the problem?',
+              'Tell me what happened.',
+              'Can you tell me what happened?',
+              "Tell me what's going on.",
+              "What's the story?",
+              'How can I help you today?',
+              'Why are you here today?',
+              'Talk me through what happened.'],
+ 'answer': [{'when': None,
+             'value': "'I started throwing up on Sunday night, and the diarrhea came a few hours "
+                      "after. I can't keep anything down, not even water. Since yesterday I've "
+                      "felt so weak and washed out that it scared me.'"}],
+ 'echo': 'what happened',
+ 'authoring_note': 'Authoring 8.2: a greeting or an open question gets a brief history of the '
+                   "present illness. Added 30 October 2026 on the owner's instruction. The answer "
+                   "was written by a model from this case's own onset, progression and character "
+                   'answers and its arrival handover, and stops short of every disclosure the case '
+                   'keeps behind its own question. Not physician reviewed. Variants copied from '
+                   'DIPH and catalog/interview_phrasings.py (questions, not facts).'})
+
 TOPIC_MAP = {
  "onset": ["onset"], "timing_progression": ["timing_progression"], "character_of_symptoms": ["character_general"],
  "location_of_pain": ["location_pain"], "radiation_of_pain": ["radiation_pain"], "severity": ["severity"],

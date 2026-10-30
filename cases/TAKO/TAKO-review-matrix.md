@@ -279,20 +279,26 @@ Single unconditional rule; nothing to enumerate.
 
 ### `exam/exam_airway`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| shock_untreated | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Patent. Barely speaking. | plausible |
-| shock_worse | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Patent. Barely speaking. | plausible |
-| «any other phase» | rule 1 (default) &rarr; normal: Patent. Speaking in short sentences. | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| shock_untreated | no | rule 1 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Patent. Barely speaking. | plausible |
+| shock_untreated | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place and secured. | plausible |
+| shock_worse | no | rule 1 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Patent. Barely speaking. | plausible |
+| shock_worse | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place and secured. | plausible |
+| «any other phase» | no | rule 2 (default) &rarr; normal: Patent. Speaking in short sentences. | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place and secured. | plausible |
 
 
 ### `exam/exam_breath`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| shock_untreated | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Fast, shallow breathing. No accessory muscle use. | plausible |
-| shock_worse | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Fast, shallow breathing. No accessory muscle use. | plausible |
-| «any other phase» | rule 1 (default) &rarr; ABNORMAL: Mildly tachypneic with the pain. No accessory muscle use. | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| shock_untreated | no | rule 1 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Fast, shallow breathing. No accessory muscle use. | plausible |
+| shock_untreated | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| shock_worse | no | rule 1 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Fast, shallow breathing. No accessory muscle use. | plausible |
+| shock_worse | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| «any other phase» | no | rule 2 (default) &rarr; ABNORMAL: Mildly tachypneic with the pain. No accessory muscle use. | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
 
 
 ### `exam/exam_circ`
@@ -357,11 +363,14 @@ Single unconditional rule; nothing to enumerate.
 
 ### `exam/exam_neuro`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| shock_untreated | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Drowsy and confused about the time. GCS 14. Moves all limbs. | plausible |
-| shock_worse | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Drowsy and confused about the time. GCS 14. Moves all limbs. | plausible |
-| «any other phase» | rule 1 (default) &rarr; normal: Alert, oriented. GCS 15. No focal deficit. | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| shock_untreated | no | rule 1 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Drowsy and confused about the time. GCS 14. Moves all limbs. | plausible |
+| shock_untreated | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal and reactive. | plausible |
+| shock_worse | no | rule 1 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Drowsy and confused about the time. GCS 14. Moves all limbs. | plausible |
+| shock_worse | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal and reactive. | plausible |
+| «any other phase» | no | rule 2 (default) &rarr; normal: Alert, oriented. GCS 15. No focal deficit. | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal and reactive. | plausible |
 
 
 ### `exam/exam_psych`
@@ -375,18 +384,26 @@ Single unconditional rule; nothing to enumerate.
 
 ### `general_status`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| obstructed | rule 1 (phase is obstructed) &rarr; ABNORMAL: Gray and sweating, says she feels faint. Fist on her chest. GCS 15. | plausible |
-| shock_untreated | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Gray, cold and confused. Barely speaking. GCS 14. | plausible |
-| shock_worse | rule 0 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Gray, cold and confused. Barely speaking. GCS 14. | plausible |
-| steadied | rule 2 (phase is steadied) &rarr; ABNORMAL: Color better, sitting back, pain easing. GCS 15. | plausible |
-| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Pale and sweating, sitting upright, fist on her chest. Daughter at the... | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| obstructed | no | rule 2 (phase is obstructed) &rarr; ABNORMAL: Gray and sweating, says she feels faint. Fist on her chest. GCS 15. | plausible |
+| obstructed | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| shock_untreated | no | rule 1 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Gray, cold and confused. Barely speaking. GCS 14. | plausible |
+| shock_untreated | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| shock_worse | no | rule 1 ((phase is shock_worse OR phase is shock_untreated)) &rarr; ABNORMAL: Gray, cold and confused. Barely speaking. GCS 14. | plausible |
+| shock_worse | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| steadied | no | rule 3 (phase is steadied) &rarr; ABNORMAL: Color better, sitting back, pain easing. GCS 15. | plausible |
+| steadied | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| «any other phase» | no | rule 4 (default) &rarr; ABNORMAL: Pale and sweating, sitting upright, fist on her chest. Daughter at the... | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
 
 
 ### `patient_visual`
 
-Single unconditional rule; nothing to enumerate.
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| «any phase» | no | rule 1 (default) &rarr; figure: eyes open | plausible |
+| «any phase» | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
 
 
 ### `labs/troponin_t`
@@ -573,12 +590,27 @@ Single unconditional rule; nothing to enumerate.
 
 ### `interview/out_of_scope_fallback`
 
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| obstructed | no | rule 1 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
+| obstructed | yes | rule 0 (flag intubated set) | plausible |
+| shock_untreated | no | rule 1 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
+| shock_untreated | yes | rule 0 (flag intubated set) | plausible |
+| shock_worse | no | rule 1 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
+| shock_worse | yes | rule 0 (flag intubated set) | plausible |
+| «any other phase» | no | rule 2 (default) | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) | plausible |
+
+
+### `interview_topic/presenting_story`
+
 | phase | resolves to | reachable? |
 |---|---|---|
 | obstructed | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_untreated | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
 | shock_worse | rule 0 (phase is obstructed OR phase is shock_worse OR phase is shock_untreated) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+| steadied | rule 1 (phase is steadied) | plausible |
+| «any other phase» | rule 2 (default) | plausible |
 
 
 ### `interview_topic/onset`
@@ -917,7 +949,9 @@ Single unconditional rule; nothing to enumerate.
 
 ### `interview/global_answer_rules`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| case_complete | rule 0 (phase is case_complete) | plausible |
-| «any other phase» | **NO RULE MATCHES** | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| case_complete | no | rule 1 (phase is case_complete) | plausible |
+| case_complete | yes | rule 0 (flag intubated set) | plausible |
+| «any other phase» | no | **NO RULE MATCHES** | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) | plausible |

@@ -159,8 +159,14 @@ shared = {
     # reason Interventions collapses. Exams and Consults stay flat: 14 and 17 entries
     # in a single group each, where an accordion would add a click and hide nothing.
     "collapsibleTabs": ["interventions", "investigations", "stabilization"],
-    "groupOrder": {"stabilization": ["Stabilization", "Nursing", "Vascular Access", "Oxygen",
-                                     "Intubation", "Fluids", "Pacer/Defib"],
+    # 30 October 2026. When the patient is on the ventilator: the catalog's intubation sets
+    # `intubated` in every case. The monitor shows this rate instead of the phase's own while
+    # the condition holds. A case may override it with a top-level `ventilation`.
+    "ventilation": {"when": "flag intubated set", "respiratory_rate": 16},
+    # Owner, 30 October 2026: Stabilization, Oxygen, Fluids, Vascular Access, Pacer/Defib,
+    # Nursing, Intubation.
+    "groupOrder": {"stabilization": ["Stabilization", "Oxygen", "Fluids", "Vascular Access",
+                                     "Pacer/Defib", "Nursing", "Intubation"],
                    # Author instruction, 14 October 2026: Fluids first, the code drugs, then
                    # the drug groups in the order of the exam (heart, lungs, abdomen, GU,
                    # skin, neuro, psych), then the groups that belong to no one system.

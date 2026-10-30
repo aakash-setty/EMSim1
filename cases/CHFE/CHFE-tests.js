@@ -413,3 +413,15 @@ section('owner corrections, 29 October 2026');
   chk('no British spelling or usage, and no banned word, in learner text',!UK.test(flat),(flat.match(UK)||[''])[0]);
 }
 
+section('owner notes, 30 October 2026');
+{
+  const IV=[1,'iv_access_peripheral'], MON=[2,'cardiac_monitor'];
+  const sat=(steps,t)=>fold(mk(steps),t).vitals.oxygen_saturation;
+  const base=sat([IV,MON],20);
+  chk('the non-rebreather raises the saturation by two', sat([IV,MON,[5,'oxygen_nonrebreather']],20)===base+2, base+' -> '+sat([IV,MON,[5,'oxygen_nonrebreather']],20));
+  chk('the mask then BiPAP shows the BiPAP rise, not both', sat([IV,MON,[5,'oxygen_nonrebreather'],[8,'niv_bipap_cpap']],20)===base+4);
+  chk('BiPAP then the mask shows the mask rise', sat([IV,MON,[5,'niv_bipap_cpap'],[8,'oxygen_nonrebreather']],20)===base+2);
+  const us=CASE.content_keys.imaging.pocus_lung_cardiac.rules.map(r=>r.value.report);
+  chk('every bedside ultrasound report is short', us.every(s=>s.split(/\s+/).length<=40), Math.max(...us.map(s=>s.split(/\s+/).length)));
+}
+

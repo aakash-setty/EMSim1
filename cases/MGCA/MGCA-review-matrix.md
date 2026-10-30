@@ -785,14 +785,20 @@ Single unconditional rule; nothing to enumerate.
 
 ### `exam/exam_neuro`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| adrenal_crisis | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Drowsy, rousable to voice, GCS 14. Oriented to person and place only. ... | plausible |
-| frank_septic_shock | rule 0 (phase is frank_septic_shock) &rarr; ABNORMAL: Obtunded, GCS 9 (E2 V2 M5). Pupils 3 mm, equal, sluggish. No focal asy... | plausible |
-| improving | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; normal: Alert and oriented, GCS 15. Attention improved. No focal deficit. | plausible |
-| progressive_meningococcemia | rule 1 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Drowsy, rousable to voice, GCS 14. Oriented to person and place only. ... | plausible |
-| stabilized_shock | rule 2 (phase is improving OR phase is stabilized_shock) &rarr; normal: Alert and oriented, GCS 15. Attention improved. No focal deficit. | plausible |
-| «any other phase» | rule 3 (default) &rarr; ABNORMAL: Alert and oriented, GCS 15, but slow to answer. No neck stiffness, pho... | plausible |
+| phase | intubated | resolves to | reachable? |
+|---|---|---|---|
+| adrenal_crisis | no | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Drowsy, rousable to voice, GCS 14. Oriented to person and place only. ... | plausible |
+| adrenal_crisis | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal. | plausible |
+| frank_septic_shock | no | rule 1 (phase is frank_septic_shock) &rarr; ABNORMAL: Obtunded, GCS 9 (E2 V2 M5). Pupils 3 mm, equal, sluggish. No focal asy... | plausible |
+| frank_septic_shock | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal. | plausible |
+| improving | no | rule 3 (phase is improving OR phase is stabilized_shock) &rarr; normal: Alert and oriented, GCS 15. Attention improved. No focal deficit. | plausible |
+| improving | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal. | plausible |
+| progressive_meningococcemia | no | rule 2 (phase is adrenal_crisis OR phase is progressive_meningococcemia) &rarr; ABNORMAL: Drowsy, rousable to voice, GCS 14. Oriented to person and place only. ... | plausible |
+| progressive_meningococcemia | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal. | plausible |
+| stabilized_shock | no | rule 3 (phase is improving OR phase is stabilized_shock) &rarr; normal: Alert and oriented, GCS 15. Attention improved. No focal deficit. | plausible |
+| stabilized_shock | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal. | plausible |
+| «any other phase» | no | rule 4 (default) &rarr; ABNORMAL: Alert and oriented, GCS 15, but slow to answer. No neck stiffness, pho... | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated. Pupils equal. | plausible |
 
 
 ### `exam/exam_psych`
@@ -1343,6 +1349,15 @@ Single unconditional rule; nothing to enumerate.
 
 
 ### `interview/out_of_scope_fallback`
+
+| phase | resolves to | reachable? |
+|---|---|---|
+| adrenal_crisis | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| progressive_meningococcemia | rule 0 (phase is adrenal_crisis OR phase is progressive_meningococcemia) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
+
+
+### `interview_topic/presenting_story`
 
 | phase | resolves to | reachable? |
 |---|---|---|

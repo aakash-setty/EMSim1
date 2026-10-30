@@ -694,7 +694,8 @@ function fold(log, now, difficultyMultiplier){
           /* The only place a nurse line may describe a trajectory, because one has
              just happened and the monitor is about to show it. Design 2.2. Emitted
              on its own kind so the no-trajectory assertion on prompts stays valid. */
-          if(tr.narration) narrate(t,tr.narration,'deterioration');
+          const line=(tr.narration_ventilated&&isVentilated(st))?tr.narration_ventilated:tr.narration;
+          if(line) narrate(t,line,'deterioration');
           st.timeFires.push({t,from:st.phase,to:tr.to,after:tr.after_seconds,
                              when:tr.when,note:tr.debrief_note||''});
         }
@@ -1208,7 +1209,20 @@ function activeEffects(st, now){
 /* What the monitor should read. Display and audio both take their numbers from here;
    nothing else in the engine does, because vitals do not enter the condition language
    and a study still reports the phase baseline for the moment it was ordered. */
+/* On the ventilator (30 October 2026). The shared default, overridable by a case's own
+   `ventilation`, names the condition under which the patient is intubated and ventilated and
+   the rate the ventilator delivers. While it holds, the monitor shows that rate rather than
+   the phase's own breathing rate, and a timed transition speaks its `narration_ventilated`.
+   A phase marked `ventilated` already describes the ventilated patient and is left alone. */
+function ventilation(){ return (CASE&&CASE.ventilation)||(PROTO&&PROTO.ventilation)||null; }
+function isVentilated(st){ const v=ventilation(); return !!(v&&v.when&&test(v.when,st)); }
 function effectiveVitals(st){
+  const v=effectiveVitalsRaw(st), p=PHASE[st.phase], vent=ventilation();
+  if(!v||!p||p.terminal||p.ventilated||!vent||typeof v.respiratory_rate!=='number'
+     ||typeof vent.respiratory_rate!=='number'||!isVentilated(st)) return v;
+  return Object.assign({}, v, {respiratory_rate: vent.respiratory_rate});
+}
+function effectiveVitalsRaw(st){
   const p=PHASE[st.phase];
   const base=p?p.vitals:null;
   if(!base) return null;

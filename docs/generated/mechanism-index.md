@@ -10,7 +10,7 @@ not another whole pack. Line numbers are recomputed each time this is generated.
 |---|---|---|---|
 | Time-guarded transition, deterioration on inaction | A phase left because the learner did nothing. Negative guard, measured from phase entry | 15.1 | `cases/MGCA/MGCA-case.json:179` (MGCA) |
 | Time-guarded transition, delayed consequence of an action | A positive guard timed from guard_true | 15.1 | `cases/DKA/case_1_shell.py:162` (DKA) |
-| Scheduled natural history (unguarded timed rule) | A timed rule with no guard and an unguarded_rationale | 15.1 | `cases/TAKO/case_1_shell.py:232` (TAKO) |
+| Scheduled natural history (unguarded timed rule) | A timed rule with no guard and an unguarded_rationale | 15.1 | `cases/TAKO/case_1_shell.py:233` (TAKO) |
 | Clock ending the run | A timed transition into a terminal phase, with allow_time_to_terminal | 15.2 | `cases/MGCA/MGCA-case.json:350` (MGCA) |
 | Instant transition into a terminal phase | The alternative to a harmful tag: an action route into an authored terminal phase with a timeout_reason | 4 | `cases/DIPH/case_1_shell.py:585` (DIPH) |
 | Vital effect | A number on the monitor moved by an action, nothing else changes | 16 | `cases/DKA/case_2_actions.py:216` (DKA) |
@@ -22,8 +22,8 @@ not another whole pack. Line numbers are recomputed each time this is generated.
 | Terminal phase inheriting vitals | A handover that shows the patient as they were | 19 | `cases/AFRVR/case_1_shell.py:356` (AFRVR) |
 | Disposition intercept | A disposition with a consequence instead of an ending | 20 | `cases/TSS/case_5_handoff.py:21` (TSS) |
 | Harmful action and the halted phase | A tag that halts the case, its halt_reason, and the halted phase it needs | 21 | `cases/DIPH/case_2_actions.py:390` (DIPH) |
-| Prerequisite override | Waiving a catalog default prerequisite with a reason | 22.1 | `cases/CHFE/CHFE-case.json:1273` (CHFE) |
-| Follow-up with satisfied_when | An obligation discharged by a condition, for a repeat | 22.2 | `cases/TSS/case_2_actions.py:665` (TSS) |
+| Prerequisite override | Waiving a catalog default prerequisite with a reason | 22.1 | `cases/CHFE/CHFE-case.json:1284` (CHFE) |
+| Follow-up with satisfied_when | An obligation discharged by a condition, for a repeat | 22.2 | `cases/TSS/case_2_actions.py:666` (TSS) |
 | Nurse alert | A second nurse line after the catalog's, filed in the chart | 7.1 | `cases/AFRVR/case_2_actions.py:267` (AFRVR) |
 | Narration override | Replacing the catalog's acknowledgement line | 7.1 | `cases/DKA/case_2_actions.py:309` (DKA) |
 | Prompt with escalation | A second warning later, exempt from the cap | 7.2 | `cases/DKA/case_2_actions.py:279` (DKA) |
