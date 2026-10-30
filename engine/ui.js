@@ -234,8 +234,9 @@ function renderMonitor(){
   el('monitor').innerHTML = cells.map(c=>
     `<div class="vit"><div class="vitlab">${c[0]}</div>
      <div class="vitval v-${c[3]}${outside(c[3])?' vabn':''}">${c[1]}</div><div class="vitunit">${c[2]}</div></div>`).join('')
-    + `<div class="clockbox"><div class="vitlab">elapsed</div>
-       <div class="clock">${mmss(ST.now)}</div></div>`;
+    ;
+  /* The clock lives under the nurse now (owner, 30 October 2026), not in the monitor. */
+  const cc=el('caseclockt'); if(cc){ const t=mmss(ST.now); if(cc.textContent!==t) cc.textContent=t; }
   /* Owner, 30 October 2026: the phase's name used to sit under the clock, and the monitor
      flashed when the phase changed. Both told the learner the state before the numbers did.
      The monitor now shows only what a monitor shows. */

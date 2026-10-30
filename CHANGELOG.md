@@ -7,6 +7,10 @@ is usable with learners.
 
 ## How it works: a tutorial (30 October 2026, owner's instruction)
 
+- Revised the same day (owner: "too many words"): eight screens, the mode screen removed and
+  every screen cut to one or two short lines. Back and next are now arrows on the sides of the
+  window, each a full-height click zone (76 px wide, 48 on a phone). The window keeps one size,
+  so the arrows stay put. The last screen keeps "Choose a case".
 - A "How it works" button in the case list's banner, marked "New here?" until it has been
   opened once in the browser, and the same entry in the menu, open a nine-screen tutorial
   (`engine/tutorial.js`). Each screen is a real, blurred screenshot of the case screen and a

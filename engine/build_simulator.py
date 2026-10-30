@@ -1076,7 +1076,7 @@ def main():
         uri = ("data:image/jpeg;base64," + base64.b64encode(open(shot, "rb").read()).decode()) if os.path.exists(shot) else ""
         shell = shell.replace("__LANDING_SHOT_" + key.upper() + "__", uri)
     # 30 October 2026. The How it works tutorial's screenshots (engine/assets/tutorial/README.md).
-    for key in ("overview", "mode", "monitor", "basket", "history", "record", "nurse", "handoff"):
+    for key in ("overview", "monitor", "basket", "history", "record", "nurse", "handoff"):
         shot = os.path.join(HERE, "assets", "tutorial", key + ".webp")
         uri = ("data:image/webp;base64," + base64.b64encode(open(shot, "rb").read()).decode()) if os.path.exists(shot) else ""
         shell = shell.replace("__TUT_SHOT_" + key.upper() + "__", uri)

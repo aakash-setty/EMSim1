@@ -145,7 +145,15 @@ button{font:inherit;color:inherit}
    case did not author. The nurse is not the patient: nothing clinical is read off her,
    she has the same voice in every case, and a face beside a line of dialogue is what
    makes it read as somebody talking rather than as system output. */
-.nurse{min-width:0;display:flex;align-items:flex-start;gap:14px}
+.nurse{min-width:0;display:flex;align-items:flex-start;gap:14px;position:relative}
+/* The case clock sits under the portrait and slides down while the portrait is enlarged. */
+.caseclock{position:absolute;left:0;top:68px;width:62px;display:flex;flex-direction:column;align-items:center;line-height:1.1;
+  transition:transform .55s cubic-bezier(.22,.8,.3,1);pointer-events:none}
+.cclab{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.cct{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.nurse.speaking .caseclock{transform:translate(15px,31px)}
+@media (prefers-reduced-motion:reduce){ .caseclock{transition:none} }
+body.nintro-on .caseclock{visibility:hidden}
 .nurseface{flex:0 0 auto;width:62px;height:62px;margin-top:1px;border-radius:50%;
   object-fit:cover;background:var(--voicel);border:1px solid var(--rule2);
   box-shadow:0 3px 10px -6px var(--shadow);-webkit-user-select:none;user-select:none}
@@ -1201,12 +1209,13 @@ body.ar-on{overflow:hidden}
 @keyframes tutping{0%{box-shadow:0 0 0 0 rgba(255,211,107,.55)}70%{box-shadow:0 0 0 12px rgba(255,211,107,0)}100%{box-shadow:0 0 0 0 rgba(255,211,107,0)}}
 @media (prefers-reduced-motion:reduce){.tut-open.tut-new{animation:none}}
 body.tut-on{overflow:hidden}
-.tut-card{width:min(980px,100%); background:var(--solid); display:flex; flex-direction:column}
-.tut-in{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:22px; padding:24px 24px 8px; align-items:start; min-height:380px}
+.tut-card{width:min(980px,100%); height:min(640px, calc(100vh - 40px)); background:var(--solid); display:flex; flex-direction:column}
+.tut-card .tut-in{flex:1 1 auto; min-height:0}
+.tut-in{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:22px; padding:28px 84px 8px; align-items:center; min-height:380px}
 .tut-fig{margin:0; border-radius:12px; overflow:hidden; border:1px solid var(--rule2); background:#f3f6f8; align-self:center}
 .tut-fig img{display:block; width:100%; height:auto}
 .tut-fig.wide{grid-column:1 / -1; display:flex; justify-content:center}
-.tut-fig.wide img{width:auto; max-width:100%; max-height:min(46vh,560px)}
+.tut-fig.wide img{width:auto; max-width:100%; max-height:min(42vh,400px)}
 .tut-fig img{max-height:min(58vh,620px); object-fit:contain}
 .tut-in:has(.tut-fig.wide){grid-template-columns:1fr}
 .tut-step{margin:0 0 6px; font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink3)}
@@ -1214,18 +1223,33 @@ body.tut-on{overflow:hidden}
 .tut-body{font-size:14.5px; line-height:1.55; color:var(--ink2)}
 .tut-body p{margin:0 0 10px}
 .tut-body b{color:var(--ink)}
-.tut-key{margin:6px 0 0; padding-left:22px; display:grid; grid-template-columns:1fr 1fr; gap:4px 18px; font-size:13.5px}
+.tut-key{margin:6px 0 0; padding-left:22px; display:grid; grid-template-columns:repeat(4,auto); justify-content:start; gap:4px 26px; font-size:13.5px}
 .tut-key li::marker{color:#d33a2c; font-weight:800}
 .tut-list{margin:6px 0 0; padding-left:18px; display:grid; gap:4px; font-size:13.8px}
 .tut-tip{display:inline-block; padding:4px 10px; border-radius:8px; background:var(--actl); color:var(--act); font-weight:650}
 .tut-body kbd{font-family:var(--mono); font-size:12px; padding:1px 6px; border:1px solid var(--rule); border-bottom-width:2px; border-radius:5px; background:var(--solid)}
-.tut-foot{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 24px 20px}
+.tut-foot{display:flex; align-items:center; justify-content:center; gap:18px; padding:12px 84px 20px; min-height:44px}
+/* Back and next: the whole side of the window is the button (owner, 30 October 2026). */
+.tut-arrow{position:absolute; top:56px; bottom:0; width:76px; display:flex; align-items:center; justify-content:center; padding:0;
+  border:0; background:transparent; color:var(--act); cursor:pointer; z-index:2; transition:background .15s ease}
+.tut-arrow.prev{left:0; border-bottom-left-radius:22px}
+.tut-arrow.next{right:0; border-bottom-right-radius:22px}
+.tut-arrow.prev:hover{background:linear-gradient(90deg,var(--actl),transparent)}
+.tut-arrow.next:hover{background:linear-gradient(270deg,var(--actl),transparent)}
+.tut-arrow svg{width:46px; height:46px; padding:11px; border-radius:50%; background:var(--solid); fill:none; stroke:currentColor;
+  stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; box-shadow:0 4px 16px -4px rgba(10,30,45,.35), 0 0 0 1px var(--rule2);
+  transition:transform .15s ease}
+.tut-arrow:hover svg{transform:scale(1.08)}
+.tut-arrow:focus-visible{outline:none}
+.tut-arrow:focus-visible svg{outline:2px solid var(--act); outline-offset:2px}
 .tut-dots{display:flex; gap:6px}
 .tut-dot{width:9px; height:9px; padding:0; border-radius:50%; border:0; background:var(--rule); cursor:pointer}
 .tut-dot.on{background:var(--act); width:22px; border-radius:999px}
 .tut-dot:focus-visible{outline:2px solid var(--act); outline-offset:2px}
 .tut-btns{display:flex; gap:8px}
-@media (max-width:760px){ .tut-in{grid-template-columns:1fr; padding:18px 16px 6px; min-height:0} .tut-key{grid-template-columns:1fr} .tut-foot{padding:10px 16px 16px} }
+@media (max-width:760px){ .tut-in{grid-template-columns:1fr; padding:18px 50px 6px; min-height:0} .tut-key{grid-template-columns:1fr 1fr} .tut-foot{padding:10px 50px 16px}
+  .tut-arrow{width:48px} .tut-arrow svg{width:38px; height:38px; padding:9px}
+  .tut-card{height:min(720px, calc(100vh - 40px))} }
 /* Speed: no blur behind the game window, and the case list under it is not drawn while it is open. */
 #ar-modal .ms-back{-webkit-backdrop-filter:none; backdrop-filter:none; background:rgba(8,20,30,.82)}
 body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-float, body.ar-on .ms-float{visibility:hidden}
@@ -2462,6 +2486,7 @@ details.catfold[open] .dbfold-arrow{transform:rotate(180deg)}
 .homebtn:hover .homeic{background:#185C95;transform:scale(1.04)}
 .homebtn:focus-visible{outline:2px solid var(--act);outline-offset:4px;border-radius:34px}
 body:has(#endview:not(.hidden)) .nurse>.nurseface,
+body:has(#endview:not(.hidden)) .nurse>.caseclock,
 body:has(#endview:not(.hidden)) .nurse>.nursesays{display:none}
 body:has(#endview:not(.hidden)) .homebtn{display:flex}
 
@@ -2621,6 +2646,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
      screen under the nurse rather than as a dark band across the whole header */
   .monwrap{grid-area:mon;justify-self:start;width:fit-content;max-width:100%;padding:6px 12px 5px;border-radius:6px}
   .nurseface{width:48px;height:48px}
+  .caseclock{top:52px;width:48px} .cct{font-size:13px} .cclab{font-size:7.5px}
   .nurse.speaking .nursesays{transform:translateX(24px)}
   .homeic{width:48px;height:48px} .homeic svg{width:24px;height:24px} .homelab{font-size:15px}
   .nurseline{font-size:14px;min-height:2.2em}
@@ -2651,6 +2677,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   .bayin{gap:8px 10px;padding:8px 12px 8px}
   .nurse{gap:9px}
   .nurseface{width:42px;height:42px}
+  .caseclock{top:45px;width:42px} .cct{font-size:12px} .cclab{display:none}
   .nurse.speaking .nursesays{transform:translateX(21px)}
   .nurseline{font-size:13.5px}
   .monwrap{padding:6px 10px 4px}
@@ -3383,7 +3410,7 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
   <div class="ms-modal" id="ar-modal" hidden></div>
   <!-- How it works (engine/tutorial.js, 30 October 2026) and its screenshots. -->
   <div class="ms-modal tut-modal" id="tut-modal" hidden></div>
-  <template id="tut-imgs"><img id="tut-overview" src="__TUT_SHOT_OVERVIEW__" alt=""><img id="tut-mode" src="__TUT_SHOT_MODE__" alt=""><img id="tut-monitor" src="__TUT_SHOT_MONITOR__" alt=""><img id="tut-basket" src="__TUT_SHOT_BASKET__" alt=""><img id="tut-history" src="__TUT_SHOT_HISTORY__" alt=""><img id="tut-record" src="__TUT_SHOT_RECORD__" alt=""><img id="tut-nurse" src="__TUT_SHOT_NURSE__" alt=""><img id="tut-handoff" src="__TUT_SHOT_HANDOFF__" alt=""></template>
+  <template id="tut-imgs"><img id="tut-overview" src="__TUT_SHOT_OVERVIEW__" alt=""><img id="tut-monitor" src="__TUT_SHOT_MONITOR__" alt=""><img id="tut-basket" src="__TUT_SHOT_BASKET__" alt=""><img id="tut-history" src="__TUT_SHOT_HISTORY__" alt=""><img id="tut-record" src="__TUT_SHOT_RECORD__" alt=""><img id="tut-nurse" src="__TUT_SHOT_NURSE__" alt=""><img id="tut-handoff" src="__TUT_SHOT_HANDOFF__" alt=""></template>
 
   <div class="db-scroll" id="db-scroll">
     <section class="wl-hero">
@@ -3464,6 +3491,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
         <span class="homeic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 11.2 12 4l8.5 7.2"/><path d="M6 9.6V20h4.6v-5.6h2.8V20H18V9.6"/></svg></span>
         <span class="homelab">Return to Home</span></button>
       <img class="nurseface" src="__NURSE_AVATAR__" alt="" draggable="false">
+      <!-- The case clock, under the nurse (owner, 30 October 2026; it was in the monitor). -->
+      <div class="caseclock" id="caseclock" role="timer" aria-label="Elapsed time"><span class="cclab">Elapsed</span><span class="cct" id="caseclockt">00:00</span></div>
       <div class="nursesays">
         <div class="nurselab">Nurse</div>
         <div class="nurseline" id="nurseline">Ready when you are.</div>
