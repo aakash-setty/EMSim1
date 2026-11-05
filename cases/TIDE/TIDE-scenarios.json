@@ -163,10 +163,13 @@
    "note": ""
   },
   {
-   "name": "Left alone: arrest at 480 s",
+   "name": "Left alone: arrest at 660 s",
    "steps": [
     {
-     "wait": 185
+     "wait": 125
+    },
+    {
+     "wait": 245
     },
     {
      "wait": 155
@@ -182,7 +185,10 @@
    "name": "Left alone, stopped at the first low pressure",
    "steps": [
     {
-     "wait": 185
+     "wait": 125
+    },
+    {
+     "wait": 245
     }
    ],
    "expect_phase": "low_pressure",
@@ -219,7 +225,10 @@
     "attach_monitor",
     "insert_iv",
     {
-     "wait": 185
+     "wait": 125
+    },
+    {
+     "wait": 245
     },
     "norepinephrine_drip"
    ],
@@ -233,7 +242,10 @@
     "insert_iv",
     "norepinephrine_drip",
     {
-     "wait": 185
+     "wait": 125
+    },
+    {
+     "wait": 245
     }
    ],
    "expect_phase": "on_pressor",
@@ -245,7 +257,10 @@
     "attach_monitor",
     "insert_iv",
     {
-     "wait": 185
+     "wait": 125
+    },
+    {
+     "wait": 245
     },
     "normal_saline_1l_bolus"
    ],

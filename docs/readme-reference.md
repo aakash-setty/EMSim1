@@ -290,7 +290,8 @@ Achieved!*, *Critical Actions Missed* or *Case Failed*, the halt or arrest reaso
 is one, and the critical actions that were completed. Nothing else: the missed list, the
 summary, the handoff verdict and every teaching note are the answer key, and they sit
 behind **Reveal Case Answers** so a resident can replay the case without scrolling past the
-answers to reach the button. A run that halted on a harmful action is grouped with the arrest
+answers to reach the button. Since 5 November 2026 the button unlocks only after two finished
+runs of the case. A run that halted on a harmful action is grouped with the arrest
 as *Case Failed* rather than being scored on its critical actions alone.
 
 Behind the reveal, the Summary is seven scores since v0.9: History, Physical, Stabilization,
@@ -414,9 +415,10 @@ so it cannot express thirty seconds, cannot express an effect that ends when the
 stopped, and cannot express a drug that changes the patient without changing the number
 being watched.
 
-Pressors have a default effect (owner, 27 October 2026). A pressor a case does not author
-moves the monitor by the catalog default in `catalog/default-vital-effects.json`, display
-only. A case's own `vital_effects`, or `[]`, replaces it.
+Pressors have a default effect (owner, 27 October 2026), and so do drugs that lower the
+pressure (5 November 2026). A drug a case does not author moves the monitor by the catalog
+default in `catalog/default-vital-effects.json`, display only. A case's own `vital_effects`,
+or `[]`, replaces it.
 
 Vitals do not enter the condition language, for the same reason time does not. Effects
 are display and audio only, exactly as the phase-boundary ramp is.

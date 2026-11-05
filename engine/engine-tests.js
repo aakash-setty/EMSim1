@@ -363,8 +363,10 @@ section('time-guarded transitions');
   if (!timed.length) {
     chk('case authors no time-guarded transitions, nothing to test', true);
   } else {
+    /* A silent move (silent_rationale, 5 November 2026) carries only a rationale: it changes
+       nothing the learner sees, and the validator checks that. */
     chk('every time-guarded rule carries narration, a note and a rationale',
-        timed.every(([, , t]) => t.narration && t.debrief_note && t.author_rationale));
+        timed.every(([, , t]) => t.silent_rationale ? t.author_rationale : (t.narration && t.debrief_note && t.author_rationale)));
     chk('a time-driven ending never reuses the shared halted phase',
         timed.every(([, , t]) => t.to !== 'halted'));
     /* The mechanism has to actually run, not merely be authored. */
@@ -390,8 +392,9 @@ section('time-guarded transitions');
     /* The one place a nurse line may describe a trajectory is a deterioration, and it
        must not arrive on the prompt channel, or the no-trajectory rule below is
        silently weakened. */
+    const silentFire = f => (PHASE[f.from].transitions || []).some(t => t.to === f.to && t.after_seconds === f.after && t.silent_rationale);
     chk('deterioration narration is on its own channel',
-        idle.nurse.filter(n => n.kind === 'deterioration').length === idle.timeFires.length);
+        idle.nurse.filter(n => n.kind === 'deterioration').length === idle.timeFires.filter(f => !silentFire(f)).length);
     /* The fairness rule the validator enforces on authored deadlines, checked here
        against what actually fires: the prompt cap can suppress a prompt the validator
        thought would be seen. */
@@ -1096,11 +1099,12 @@ section('a flag granted on a condition, and a flag a transition grants (27 Octob
       JSON.stringify(PHASE[START].transitions) === JSON.stringify(saved) && !A.__probe_mark);
 }
 
-section('default pressor effects move the monitor and nothing else (27 October 2026)');
+section('default vital effects move the monitor and nothing else (pressors 27 October, pressure-lowering drugs 5 November 2026)');
 {
-  /* A pressor with no vital_effects of its own takes the catalog default
-     (catalog/default-vital-effects.json). Display only: the run must be identical with and
-     without the defaults in everything but the monitor numbers. */
+  /* A drug in catalog/default-vital-effects.json with no vital_effects of its own takes the
+     catalog default: a pressor raises the pressure, an antihypertensive lowers it. Display
+     only: the run must be identical with and without the defaults in everything but the
+     monitor numbers. */
   const START = CASE.phases[0].id, P0 = PHASE[START];
   const probe = (id, extra) => Object.assign({ id, name: id, tab: 'interventions', group: 'Probe',
     category: 'medication', state_changing: true, repeatable: true, prerequisites: [], flags_set: [], flags_set_timed: [] }, extra);
@@ -1119,6 +1123,21 @@ section('default pressor effects move the monitor and nothing else (27 October 2
     A.__probe_pressor.vital_source = 'default';
   } else chk('this case starts with no usable pressure, so the probe half is not exercised', true);
   delete A.__probe_pressor; delete A.__probe_stop;
+  /* A default that lowers the pressure and wears off, as an antihypertensive bolus does. A
+     60 s window keeps every check inside the first 80 s, where the pressor probe above
+     already relies on the arrival phase's numbers. Fractional times, as README asks. */
+  A.__probe_drop = probe('__probe_drop', { vital_source: 'default',
+    vital_effects: [{ vital: 'systolic_bp', delta: -10, key: '__probe_drop_sbp', onset_seconds: 10, duration_seconds: 60 }] });
+  if (typeof base === 'number' && base - 10 > 0) {
+    const at = (log, t) => fold(mk(log), t).vitals.systolic_bp;
+    chk('a default drop has not started before its onset', at([[1.5, '__probe_drop']], 11.2) === base);
+    chk('and lowers the pressure after it', at([[1.5, '__probe_drop']], 11.6) === base - 10);
+    chk('and is still acting just before it wears off', at([[1.5, '__probe_drop']], 61.4) === base - 10);
+    chk('and the pressure is back once it has worn off', at([[1.5, '__probe_drop']], 61.6) === base);
+    chk('a second dose refreshes it rather than doubling it', at([[1.5, '__probe_drop'], [30.25, '__probe_drop']], 45) === base - 10);
+    chk('and carries it past the first dose\'s end', at([[1.5, '__probe_drop'], [30.25, '__probe_drop']], 75) === base - 10);
+  } else chk('this case starts with no usable pressure, so the drop probe is not exercised', true);
+  delete A.__probe_drop;
 
   const DEF = SHARED.actionsBase || {};
   const own = Object.keys(A).filter(id => A[id].vital_source === 'default');
@@ -1129,7 +1148,8 @@ section('default pressor effects move the monitor and nothing else (27 October 2
       CASE.case_actions.filter(a => a.vital_effects !== undefined).every(a => !A[a.catalog_id] || A[a.catalog_id].vital_source !== 'default'));
   const pressors = Object.keys(A).filter(id => A[id].catalog_id && DEF[A[id].catalog_id] && DEF[A[id].catalog_id].vital_effects_default);
   if (pressors.length) {
-    /* Give every pressor the case offers, with whatever their prerequisites need first. */
+    /* Give every drug with a default that the case offers (pressors and pressure-lowering
+       drugs alike, the name is historical), with whatever their prerequisites need first. */
     const needs = new Set();
     pressors.forEach(id => (A[id].prerequisites || []).forEach(p => (p.when.match(/flag ([a-z0-9_]+)/g) || []).forEach(f => needs.add(f.slice(5)))));
     const setters = Object.keys(A).filter(id => (A[id].flags_set || []).some(f => needs.has(f)) && !pressors.includes(id));
@@ -1143,9 +1163,9 @@ section('default pressor effects move the monitor and nothing else (27 October 2
       expected: [...st.expected].sort(), rec: [...st.recommendedTaken].sort(), disc: [...st.discouragedTaken].sort(),
       nurse: st.nurse.map(n => n.t + n.kind + n.text), fires: st.timeFires, prompts: st.promptFires,
       failed: !!st.failed, halted: !!st.halted, complete: !!st.complete, blocked: st.blocked.length });
-    chk('with every pressor given, the run is identical with and without the defaults, apart from the monitor',
+    chk('with every drug that has a default given, the run is identical with and without the defaults, apart from the monitor',
         pick(withD) === pick(without), pressors.join(', '));
-  } else chk('this case offers no pressor with a default', true);
+  } else chk('this case offers no drug with a default', true);
 }
 
 section('the clock\'s ending');

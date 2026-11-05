@@ -60,7 +60,7 @@
    "line": "Brought in by EMS from home. Handover given on arrival in the resuscitation bay."
   },
   "complaint": "Palpitations and breathlessness",
-  "category": "Cardiovascular",
+  "category": "Cardiopulmonary",
   "library": {
    "tempo": "minutes: a clock runs until positive pressure is on",
    "uncertainty": "the order of two treatments, rate against breathing, and whether a second dose is needed",

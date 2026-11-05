@@ -5,6 +5,60 @@ is usable with learners.
 
 ---
 
+## TIDE: a quiet start, and silent moves (5 November 2026, owner's instruction)
+
+- TIDE opens with a new two-minute phase, `arrival`, identical to `presentation`. In the
+  default mode the nurse asks about oxygen at 1:00 and says nothing else until 4:00: fluid at
+  4:00, support at 4:15, the antibiotic at 4:30, fluid again at 5:30. Without fluid the pressure
+  now drops at 6:00 instead of 3:00, and a do-nothing run arrests at 11:00 instead of 8:00. Easy
+  mode keeps the same phases, so its asks come at 0:20 and from 2:40. Fluid given during
+  arrival moves him on at once, as before. Runtime estimate 12 minutes. Tests, scenarios, SEED
+  and review packet updated.
+- Validator: a timed transition may carry `silent_rationale` instead of a narration and a
+  debrief note, but only into a phase with the same vitals, appearance, rhythm and ECG. It
+  exists to change when the nurse speaks. The engine already said nothing for an empty line.
+  Authoring 15.1, system design, field notes, four validator tests, and the shared engine
+  suite's two narration checks now exempt it. Two rhythm validator tests now set the rhythm on
+  every phase, so they keep testing the field and not a silent move. All nine packs pass.
+- The Case Maps TIDE panel (Version 24) predates this and shows the old clocks.
+
+## Case list: one Cardiopulmonary group (5 November 2026, owner's instruction)
+
+- CHFE, AFRVR, TAKO (were Cardiovascular) and TIDE (was Respiratory) now share the category
+  "Cardiopulmonary", so the case list shows them as one group with one filter chip. Data only,
+  `metadata.category` in each pack. No engine change. The other groups keep their colors' order,
+  so Toxicology and Trauma each move one color along.
+- Found while doing it: the Python sources of AFRVR, DKA, DIPH and TAKO no longer produce their
+  committed case files. Later edits were made to the JSON directly (for example the ventilated
+  patient rules of 30 October in AFRVR and TAKO, and interview changes in DKA, DIPH and TAKO).
+  Running `build_case.py` for those packs would undo those edits. For this change AFRVR's and
+  TAKO's JSON were edited directly, and their sources were given the same category. SCOOT, TSS
+  and TIDE match their sources.
+
+## Pressure-lowering drugs move the monitor, and the answers unlock after two runs (5 November 2026, owner's instruction)
+
+- Default vital effects now cover drugs that lower the pressure, the same way pressors raise
+  it. Labetalol, nicardipine, nitroglycerin, nitroprusside and esmolol drips lower it until
+  their stop order. Labetalol, metoprolol, propranolol and diltiazem boluses, and intravenous
+  and sublingual nitroglycerin, lower it for a few minutes (3 for the intravenous
+  nitroglycerin bolus, 5 for the rest). The beta-blockers and diltiazem also lower the heart
+  rate a little (owner's choice). Display only: no phase, tag, flag, prompt or score changes.
+  A case's own `vital_effects`, or `[]`, still wins. The numbers are teaching defaults, not
+  physician reviewed. Data in `catalog/default-vital-effects.json`, no engine logic changed.
+- CHFE: `nitroglycerin_infusion` and `nitroprusside_drip` opt out with `[]`, because the
+  nitrate moves the phase and the phase's vitals already carry the fall. AFRVR, TAKO and TSS
+  keep the effects they author. Every other binding of these drugs takes the default.
+- Every case: Reveal Case Answers unlocks after two finished runs of the case. Any ending
+  counts once. Until then the button is disabled and a line under it says how many more runs
+  it needs. The count is kept per case in the browser (localStorage, with a copy in memory).
+  Clearing the browser's storage resets it. The tutorial's debrief screen says so.
+- Tests: a default-drop probe in the engine tests (onset, wear-off, a second dose refreshes
+  it), three validator tests for a pressure-lowering drug, and the validator, field notes,
+  authoring 16, system design and readme-reference worded for both kinds of default. All nine
+  packs pass. A scripted browser run checked the lock: locked after one run, open after two,
+  kept after a reload, separate for each case, and working with storage blocked. The site
+  checks were not run.
+
 ## New case: TIDE, severe pneumonia with septic shock (5 November 2026, owner's instruction)
 
 New case, `cases/TIDE`, case 9: a 58-year-old man with severe community-acquired pneumonia,

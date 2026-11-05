@@ -49,7 +49,7 @@ const TUTORIAL = (function(){
     {t:'Only a handoff ends the case', img:'handoff', alt:'The Handoff tab: disposition, diagnoses and the confirm buttons',
      body:`<p>Choose where the patient goes, name your diagnoses, then hand over.</p>`},
     {t:'Then read the debrief', img:'debrief', alt:'The debrief: critical actions completed and missed, with the case discussion',
-     body:`<p>What you did or missed, when, and why it mattered. Replay as often as you like.</p>`},
+     body:`<p>What you did or missed, when, and why it mattered. The answers open after your second run.</p>`},
   ];
 
   function img(id){

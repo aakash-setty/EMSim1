@@ -27,11 +27,12 @@ intubating, and once intubating with nothing running.
 
 ## The six things most likely to be wrong
 
-1. **The clocks.** 180 s to hypotension without fluid, 150 s of fluid response, 150 s to
+1. **The clocks.** A silent 120 s arrival phase with only the oxygen question (owner, 5
+   November 2026), then 240 s to hypotension without fluid, 150 s of fluid response, 150 s to
    worsening shock, 150 s to arrest, 180 s from a held pressure to failing support, 150 s to
    fatigue, 120 s to arrest, 120 s after an unsupported tube. No source supports a figure.
-   The owner set the 10 to 12 minute target and accepted that the case can kill a patient
-   left alone.
+   The owner set the 10 to 12 minute target, asked for the quiet start, and accepted that the
+   case can kill a patient left alone.
 2. **The failing phase is scripted.** It arrives at 180 s on a vasopressor whatever the
    device (owner B5), and the narration says the clock is compressed (owner B1).
 3. **Any intubation without a running drip collapses him** (owner B4). In real patients

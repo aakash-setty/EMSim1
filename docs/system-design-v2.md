@@ -18,7 +18,7 @@ The splash screen shows the arrival vitals (section 17), which is a handover art
 
 The monitor is no longer on when the case opens. Vitals and the heartbeat appear only once an action carrying the catalog's new `reveals_vitals` capability has been taken, which in the shipped catalog is `attach_monitor` and nothing else. Until then every cell reads as a dash and the room is silent. The numbers exist in the fold from the first second and every rule that reads them is unaffected; what is gated is the display.
 
-An action may now carry `vital_effects`, which move one authored vital off the phase baseline for as long as the effect is acting. A phase is a clinical state entered once, so it cannot express "for the next thirty seconds", cannot express an effect that ends when a drip is stopped, and cannot distinguish a drug that changes the number from a drug that changes the patient without changing the number. Section 2.6. Since 27 October 2026 a pressor the case does not author takes a catalog default effect (`catalog/default-vital-effects.json`), display only, which the case's own list or `[]` replaces.
+An action may now carry `vital_effects`, which move one authored vital off the phase baseline for as long as the effect is acting. A phase is a clinical state entered once, so it cannot express "for the next thirty seconds", cannot express an effect that ends when a drip is stopped, and cannot distinguish a drug that changes the number from a drug that changes the patient without changing the number. Section 2.6. Since 27 October 2026 a pressor the case does not author takes a catalog default effect (`catalog/default-vital-effects.json`), display only, which the case's own list or `[]` replaces. Since 5 November 2026 the same holds for drugs that lower the pressure, whose defaults are small falls.
 
 Neither mechanism enters the condition language. Section 4's exclusion of time now covers vitals as well, for the same reason and with the same consequence: the per-key review matrix is unchanged in shape, because the matrix enumerates what a key resolves to in a phase and neither the clock nor a vital is a key.
 
@@ -1076,6 +1076,13 @@ wants to replay the case before reading the answers should not have to scroll pa
 the replay button, and a resident who has just failed should get the verdict before the scoreboard.
 Reveal Case Answers replaces the screen in place with the full debrief below.
 
+**The answers unlock after two finished runs** (owner, 5 November 2026). Every case, both
+builds. Any ending counts once: a handoff, a terminal phase, a harmful action, or ending
+early. On a first run the screen is the same except that Reveal Case Answers is disabled and a
+line under the buttons says how many more runs it needs. The count is kept per case in the
+browser (localStorage, with a copy in memory for a private window). It is a nudge to replay,
+not a security measure: clearing the browser's storage resets it.
+
 **A halt is grouped with the arrest rather than scored against the critical actions.** A resident
 who completed every critical action and then gave something that stopped the case has not had a
 clean run, and a first screen reading "All Critical Actions Achieved!" over a halt reason would be
@@ -1212,7 +1219,7 @@ A case whose timed rules are all delayed consequences has no deterioration on in
 shared suite asserts that doing nothing leaves such a case in its first phase (v0.23).
 
 `measured_from` is `phase_entry` or `guard_true`, and `guard_true` requires
-a guard. An unguarded time transition requires an `unguarded_rationale`. Every time-guarded rule
+a guard. An unguarded time transition requires an `unguarded_rationale`. A timed move into a phase with the same vitals, appearance, rhythm and ECG may be silent, with no narration or note, if it carries a `silent_rationale` (5 November 2026). It exists to change when the nurse speaks, not what the patient does. Every time-guarded rule
 carries a narration, a debrief note and an author rationale. Every flag named in a guard is settable
 by some reachable action. A terminal destination requires `allow_time_to_terminal` and a rationale.
 A non-terminal destination must itself have an exit. No cycle may be composed only of time edges,

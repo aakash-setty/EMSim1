@@ -50,7 +50,7 @@ META = {
    "line": "Brought in by EMS from a funeral reception. Her daughter came in the ambulance.",
  },
  "complaint": "Chest pain",
- "category": "Cardiovascular",
+ "category": "Cardiopulmonary",
  "library": {
    "tempo": "minutes: obstruction and shock run on a clock",
    "uncertainty": "the diagnosis, occlusion against stress cardiomyopathy, and which treatment makes the shock worse",

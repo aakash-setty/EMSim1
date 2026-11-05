@@ -28,7 +28,7 @@ let st = F(TO_PRESSOR.concat([[180.5, 'consult_critical_care'], [190.5, 'hydroco
   TUBE(370.5), [[380.5, 'fentanyl_bolus'], [390.5, 'propofol_infusion'], [400.5, 'xr_chest']]), 420);
 chk('reaches ventilated', st.phase === 'ventilated', st.phase);
 chk('through the drift and the failing phase',
-  seq(st) === 'presentation > fluid_response > low_after_fluid > on_pressor > failing_support > ventilated', seq(st));
+  seq(st) === 'arrival > fluid_response > low_after_fluid > on_pressor > failing_support > ventilated', seq(st));
 chk('the drift at 160.5', Math.abs(enteredAt(st, 'low_after_fluid') - 160.5) < 0.01, enteredAt(st, 'low_after_fluid'));
 chk('the failing phase at 350.5', Math.abs(enteredAt(st, 'failing_support') - 350.5) < 0.01, enteredAt(st, 'failing_support'));
 chk('every critical action expected on the path was done',
@@ -41,14 +41,36 @@ chk('the film shows the tube', last(st, 'xr_chest').body.image === 'tide-cxr-mul
 chk('nothing halted or failed', !st.halted && !st.failed);
 
 section('the do-nothing walk');
-st = F([], 600);
-chk('arrest at 480', seq(st) === 'presentation > low_pressure > worsening_shock > arrest', seq(st));
-chk('entered arrest at 480', Math.abs(enteredAt(st, 'arrest') - 480) < 0.01, enteredAt(st, 'arrest'));
+st = F([], 800);
+chk('arrest at 660', seq(st) === 'arrival > presentation > low_pressure > worsening_shock > arrest', seq(st));
+chk('entered arrest at 660', Math.abs(enteredAt(st, 'arrest') - 660) < 0.01, enteredAt(st, 'arrest'));
+chk('the pressure drops at 360, two minutes of arrival and four of presentation', Math.abs(enteredAt(st, 'low_pressure') - 360) < 0.01, enteredAt(st, 'low_pressure'));
 chk('worsening shock grants severe_shock', st.flags.has('severe_shock'));
-st = F([], 600, 3);
-chk('the same walk in the default mode', seq(st) === 'presentation > low_pressure > worsening_shock > arrest', seq(st));
+st = F([], 800, 3);
+chk('the same walk in the default mode', seq(st) === 'arrival > presentation > low_pressure > worsening_shock > arrest', seq(st));
 const fp = st.promptFires.filter(p => p.id === 'normal_saline_1l_bolus').map(p => p.t);
-chk('the default-mode fluid prompt in phase 1 lands before the drop with room', fp.length && fp[0] <= 160, fp.join());
+chk('the default-mode fluid prompt lands before the drop with room', fp.length && fp[0] <= 340, fp.join());
+
+section('the quiet start (owner, 5 November 2026)');
+{
+  /* Default mode: the oxygen question at 1:00, then nothing at all until 4:00. Easy mode keeps
+     the same phases, so its asks come sooner but still not inside arrival after oxygen. */
+  const n = F([], 400, 3);
+  const firsts = n.promptFires.map(p => p.id + '@' + p.t);
+  chk('default mode: the oxygen question at 60', n.promptFires.length && n.promptFires[0].id === 'hidden_oxygen' && Math.abs(n.promptFires[0].t - 60) < 0.01, firsts.join());
+  chk('default mode: no prompt between 60 and 240', n.promptFires.every(p => p.t <= 60.01 || p.t >= 239.99), firsts.join());
+  chk('default mode: the fluid question at 240', n.promptFires.some(p => p.id === 'normal_saline_1l_bolus' && Math.abs(p.t - 240) < 0.01), firsts.join());
+  chk('default mode: support at 255 and the antibiotic at 270',
+      n.promptFires.some(p => p.id === 'hidden_support' && Math.abs(p.t - 255) < 0.01) &&
+      n.promptFires.some(p => p.id === 'hidden_beta_lactam' && Math.abs(p.t - 270) < 0.01), firsts.join());
+  chk('default mode: the nurse says nothing at all between 61 and 239', n.nurse.every(x => x.t <= 60.01 || x.t >= 239.99),
+      n.nurse.filter(x => x.t > 60.01 && x.t < 239.99).map(x => x.t + ' ' + x.text).join(' | '));
+  chk('the move from arrival to presentation is silent', !n.nurse.some(x => Math.abs(x.t - 120) < 0.01));
+  const e = F([], 400, 1);
+  chk('easy mode: the oxygen question at 20, nothing else until 160', e.promptFires.length && e.promptFires[0].id === 'hidden_oxygen' &&
+      e.promptFires.slice(1).every(p => p.t >= 159.99), e.promptFires.map(p => p.id + '@' + p.t).join());
+  chk('the oxygen question is not asked again in presentation', F([], 400, 3).promptFires.filter(p => p.id === 'hidden_oxygen').length === 1);
+}
 
 section('warnings in the default mode, every clock');
 const warned = (log, id, phase, until) => {
@@ -99,12 +121,12 @@ chk('and the low nurse line', said(st, /dropped into the seventies/));
 chk('the drip carries him: the pressure dips by 14 for a minute', F(TO_PRESSOR.concat(TUBE(365.5)), 375).vitals.systolic_bp === 80);
 
 section('pressure, fluid and the vasopressor');
-chk('a drip on arrival holds him at the drop', seq(F(LINE.concat([[3.5, 'norepinephrine_drip']]), 200)) === 'presentation > on_pressor');
+chk('a drip on arrival holds him at the drop', seq(F(LINE.concat([[3.5, 'norepinephrine_drip']]), 400)) === 'arrival > presentation > on_pressor');
 chk('a drip during the fluid response holds him at the drift',
-  seq(F(LINE.concat([[10.5, 'normal_saline_1l_bolus'], [20.5, 'norepinephrine_drip']]), 200)) === 'presentation > fluid_response > on_pressor');
+  seq(F(LINE.concat([[10.5, 'normal_saline_1l_bolus'], [20.5, 'norepinephrine_drip']]), 200)) === 'arrival > fluid_response > on_pressor');
 chk('fluid late moves pressure-low to the fluid response',
-  seq(F(LINE.concat([[190.5, 'normal_saline_1l_bolus']]), 200)) === 'presentation > low_pressure > fluid_response');
-chk('a drip without fluid from pressure-low', seq(F(LINE.concat([[190.5, 'norepinephrine_drip']]), 200)) === 'presentation > low_pressure > on_pressor');
+  seq(F(LINE.concat([[370.5, 'normal_saline_1l_bolus']]), 380)) === 'arrival > presentation > low_pressure > fluid_response');
+chk('a drip without fluid from pressure-low', seq(F(LINE.concat([[370.5, 'norepinephrine_drip']]), 380)) === 'arrival > presentation > low_pressure > on_pressor');
 for (const d of ['vasopressin_drip', 'epinephrine_drip', 'phenylephrine_drip', 'dopamine_drip']) {
   st = F(LINE.concat([[10.5, 'normal_saline_1l_bolus'], [170.5, d]]), 180);
   chk(d + ' holds him and meets the vasopressor expectation', st.phase === 'on_pressor' && st.satisfied.has('norepinephrine_drip'), st.phase);

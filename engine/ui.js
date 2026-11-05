@@ -2200,7 +2200,7 @@ document.addEventListener('click',e=>{
   /* Replay starts the case again at once. Revealing the answers asks first, offering one
      more try (author instruction, 14 October 2026; until then the question guarded Replay). */
   if(t.id==='restart'){ restart(); return; }
-  if(t.id==='revealanswers'){ askReplay(); return; }
+  if(t.id==='revealanswers'){ if(answersUnlocked()) askReplay(); return; }
   if(t.id==='pickanother'){ toPickerFromDebrief(); return; }
   if(t.id==='homebtn'){ toPickerFromDebrief(); return; }
 });
@@ -2304,6 +2304,33 @@ const GRACE_S = (SHARED.ending&&SHARED.ending.terminalGraceSeconds) || 5;
    called again, and a new run should start from the gate. */
 let REVEALED=false;
 
+/* The answers unlock after two finished runs of a case (owner, 5 November 2026). Global:
+   every case, both builds. A run counts once, whatever ended it: a handoff, a terminal
+   phase, a harmful action or ending early. Until then the end screen keeps its verdict, its
+   dials, the critical actions completed and Replay, and Reveal Case Answers is shown
+   disabled with a line saying how many more runs it needs. The count lives in this browser
+   (localStorage, one key per case), with a copy in memory so a private window still unlocks
+   within the visit. It is a nudge to try again, not a security measure: clearing the
+   browser's storage resets it. */
+const UNLOCK_RUNS=2;
+const RUNS_MEM={};
+function runsKey(){ return 'emsim-finished-runs-'+PACK.prefix; }
+function finishedRuns(){
+  let n=RUNS_MEM[PACK.prefix]||0;
+  try{ const v=parseInt(localStorage.getItem(runsKey())||'0',10); if(v>n) n=v; }catch(e){}
+  return n;
+}
+function countFinishedRun(){
+  const n=finishedRuns()+1; RUNS_MEM[PACK.prefix]=n;
+  try{ localStorage.setItem(runsKey(),String(n)); }catch(e){}
+  return n;
+}
+function answersUnlocked(){ return finishedRuns()>=UNLOCK_RUNS; }
+function lockLine(){
+  const left=Math.max(0,UNLOCK_RUNS-finishedRuns());
+  return `Finish this case ${left===1?'once more':left+' more times'} to unlock the answers.`;
+}
+
 /* Which of the three endings this was, in the order that matters clinically. A run that
    walked into a terminal phase is a failure whatever else was completed, because the
    patient arrested; a run that completed every critical action and did not arrest is the
@@ -2387,9 +2414,12 @@ function gateHTML(){
       </div>
       </div>
       <div class="gatebtns">
-        <button class="btn ghost" id="revealanswers">Reveal Case Answers</button>
+        ${answersUnlocked()
+          ?'<button class="btn ghost" id="revealanswers">Reveal Case Answers</button>'
+          :'<button class="btn ghost" id="revealanswers" disabled aria-describedby="gatelock">Reveal Case Answers</button>'}
         ${CASES.length>1?'<button class="btn ghost" id="pickanother">Choose a different case</button>':''}
       </div>
+      ${answersUnlocked()?'':`<p class="sub gatelock" id="gatelock">${esc(lockLine())}</p>`}
     </div>
   </div>`;
 }
@@ -2412,6 +2442,7 @@ function discussionHTML(){
     ${body?`<div class="cdbody">${body}</div>`:'<p class="sub cdnone">Not written yet for this case.</p>'}</aside>`;
 }
 function revealAnswers(){
+  if(!answersUnlocked()) return;      /* the two-run rule, checked where the answers are drawn */
   REVEALED=true; AN.track('debrief_revealed',{case:PACK.prefix});
   const v=el('endview');
   /* Two columns: the case discussion on the left, the run's own debrief on the right. */
@@ -2456,7 +2487,9 @@ function finish(){
   /* The room goes quiet with the case. A debrief is reading rather than resuscitating,
      and ambience still humming under it is the interface not noticing the case is over.
      setScene('idle') stops the heartbeat and the room together. */
+  const firstEnd=!ENDED;               /* a run counts once toward the unlock */
   refold(); ENDED=true; RUNID++; AUDIO.setScene('idle'); MONITOR.setScene('idle');
+  if(firstEnd) countFinishedRun();
   VOICE.reset(); ASKMIC.abort();
   /* Neither overlay belongs over a debrief. The case is over, so there is nothing to
      resume and nothing left to lose by leaving. */

@@ -18,7 +18,7 @@ META = {
    "sepsis-induced hypoperfusion progressing to septic shock that needs a vasopressor, and "
    "acute hypoxemic respiratory failure that fails high-flow oxygen and needs intubation."),
  "target_level": ["medical_student", "intern", "junior_resident"],
- "estimated_runtime_seconds": 660,
+ "estimated_runtime_seconds": 720,
  "learning_objectives": [
    "Recognize severe community-acquired pneumonia with sepsis and hypoperfusion, and send the patient to the ICU.",
    "Escalate oxygen in steps to high flow or NIV, and judge support by the work of breathing and the trend, not by the saturation alone.",
@@ -44,7 +44,7 @@ META = {
    "line": "Walked in with his wife and was brought straight through from triage to the resuscitation bay.",
  },
  "complaint": "Fever, cough and breathlessness",
- "category": "Respiratory",
+ "category": "Cardiopulmonary",
  "library": {
    "tempo": "minutes: shock on a clock, then breathing on an openly compressed clock",
    "uncertainty": "when the fluid has stopped working, and when noninvasive support has failed",
@@ -73,7 +73,7 @@ PATIENT = {
    "Reviewer note. Height 178 cm, kept here because the engine reads no height field. "
    "Predicted body weight about 73 kg (50 + 0.91 x (178 - 152.4)). Six mL/kg "
    "is about 440 mL. BMI 30.0. Model arithmetic."),
- "presenting_vitals_source": "Inherited from phase 'presentation'.",
+ "presenting_vitals_source": "Inherited from phase 'arrival'.",
  "presenting_appearance": (
    "A heavy-set man sitting forward on the stretcher with his hands on his knees, flushed and "
    "sweating, speaking three or four words at a time. His wife is beside him."),
@@ -141,6 +141,28 @@ SEVERE = ["severe_shock"]
 COMPRESS = "We're moving the clock faster here. Over what would really be a few hours, "
 
 PHASES = [
+ phase("arrival",
+   "Severe pneumonia with sepsis, pressure still held",
+   "on arrival",
+   "The first two minutes. The same patient as presentation, with the same findings. It exists "
+   "only for the nurse's timing: she asks about oxygen at 1:00 in the default mode and nothing "
+   "else until 4:00 (owner, 5 November 2026).",
+   118, 104, 60, 32, 85, 39.2, 2, 0,
+   [HANDOFF_T, TUBE_OK, TUBE_BAD,
+    {"when": FLUID, "to": "fluid_response",
+     "author_rationale": "A first bolus lifts his pressure for a few minutes. Model output."},
+    {"when": None, "after_seconds": 120, "measured_from": "phase_entry", "to": "presentation",
+     "author_rationale": (
+       "No change in the patient. The phase ends so the fluid, support and antibiotic prompts "
+       "start counting from 2:00 instead of from arrival (owner, 5 November 2026)."),
+     "unguarded_rationale": (
+       "Nothing about him changes here, so the move cannot depend on anything the learner "
+       "does. Its only effect is on when the nurse speaks."),
+     "silent_rationale": (
+       "The patient, the monitor and the findings are the same on both sides, so there is "
+       "nothing for the nurse to say. The owner asked for no line between the oxygen question "
+       "at 1:00 and the next one at 4:00 (5 November 2026).")}]),
+
  phase("presentation",
    "Severe pneumonia with sepsis, pressure still held",
    "on arrival",
@@ -150,7 +172,7 @@ PHASES = [
    [HANDOFF_T, TUBE_OK, TUBE_BAD,
     {"when": FLUID, "to": "fluid_response",
      "author_rationale": "A first bolus lifts his pressure for a few minutes. Model output."},
-    {"when": DRIP, "after_seconds": 180, "measured_from": "phase_entry", "to": "on_pressor",
+    {"when": DRIP, "after_seconds": 240, "measured_from": "phase_entry", "to": "on_pressor",
      "narration": "He's still hot and flushed, and the drip is holding his pressure.",
      "debrief_note": (
        "His pressure was falling on its own, and the vasopressor you had already started "
@@ -160,18 +182,18 @@ PHASES = [
        "Outcome chosen at a scheduled time, above the deterioration below with the same "
        "after_seconds. Natural history of sepsis-induced hypotension met by a drip already "
        "running. Model output.")},
-    {"when": "NOT " + FLUID, "after_seconds": 180, "measured_from": "phase_entry",
+    {"when": "NOT " + FLUID, "after_seconds": 240, "measured_from": "phase_entry",
      "to": "low_pressure",
      "narration": "His knees have gone blotchy and his pressure has dropped.",
      "debrief_note": (
        "Without fluid his pressure fell below a mean of 65 and his knees mottled. He was "
        "tachycardic, hot, with a lactate near 4 and a vena cava that collapsed with each "
        "breath, and hypotension was on its way. Fluid would have delayed it, not prevented "
-       "it. Three minutes stands for much longer. [UNVERIFIED: SSC 2026, read through "
+       "it. Six minutes from arrival stand for much longer. [UNVERIFIED: SSC 2026, read through "
        "summaries]"),
      "author_rationale": (
        "Deterioration on inaction. Sepsis-induced hypotension in severe pneumonia over hours, "
-       "compressed to three minutes. The guard is the missing fluid, which is the treatment "
+       "compressed to six minutes from arrival (two in arrival, four here). The guard is the missing fluid, which is the treatment "
        "the prompt asks for. Model output.")}]),
 
  phase("fluid_response",

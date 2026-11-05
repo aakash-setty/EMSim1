@@ -433,10 +433,10 @@ for _id, _also in CREDIT.get("credit", {}).items():
     if _id in shared["actionsBase"]:
         shared["actionsBase"][_id]["credits"] = list(_also)
 
-# Default vital effects (owner, 27 October 2026): a pressor moves the monitor in any case,
-# whether or not the case authors it. The drugs are named in catalog data, not here. Each
-# effect gets its own key per drug and vital, so a repeat dose refreshes rather than stacks
-# and two different pressors add up. A drip's default ends when one of its stop orders
+# Default vital effects (owner, 27 October 2026 for pressors, 5 November 2026 for drugs that
+# lower the pressure): the drug moves the monitor in any case, whether or not the case authors
+# it. The drugs are named in catalog data, not here. Each effect gets its own key per drug and
+# vital, so a repeat dose refreshes rather than stacks and two different drugs add up. A drip's default ends when one of its stop orders
 # (catalog `stops`) is given after it. A case action's own vital_effects, even [], wins.
 _dv_path = catalog_path("default-vital-effects.json")
 DEFAULT_FX = json.load(open(_dv_path, encoding="utf-8")) if os.path.exists(_dv_path) else {"effects": {}}

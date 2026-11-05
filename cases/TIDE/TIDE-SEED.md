@@ -25,6 +25,7 @@ Aakash Setty, 4 November 2026, in conversation:
 | Clinical corrections | Agreed: hydrocortisone recommended once on a vasopressor, the corrected citations (CAPE COD, ED-AWARENESS), the awareness question as a nurse line with no vital change, the no-oxygen arrest path cut, gases made Henderson-Hasselbalch consistent |
 | Honest time (B1) | "Follow your suggestion": the narration into the failing phase says the clock is moving faster, and the debrief gives the real timescale |
 | B2 to B6 | Agreed as drafted: the antibiotic is scored and prompted but changes nothing visible, a late pressor costs a higher lactate, any intubation without a running drip collapses him, the same failure clock on every device, a learner who never starts a pressor never meets the intubation decision |
+| A quiet start (5 November 2026) | "Delay the case by 1 minute... after 1 min asks about oxygen started, add extra 3 minutes prior to next prompt/case progression." With his answers: the oxygen question stays at 1:00 in the default mode, the next question comes at 4:00, the pressure drops at 6:00 without fluid, and Easy mode keeps the same phases. Built as a silent two-minute `arrival` phase, with a new validator rule allowing a silent move (he chose that over a nurse line at 2:00) |
 | Open questions | "Build the entire case now... ask any other questions as needed." The model took its drafted default for each smaller question (case map, section 8) and lists them in section 7 below for confirmation |
 
 Everything else is model output. The case map the decisions refer to is the private
@@ -99,8 +100,8 @@ lactate is higher from then on, and the debrief names the delay.
 living on. His pressure falls fast. A drip started then rescues him, and without one he
 arrests.
 
-**Left alone.** His pressure falls on its own after three minutes, falls further, and he
-arrests at eight. The case can kill him without the learner touching him: a decision the owner
+**Left alone.** His pressure falls on its own after six minutes, falls further, and he
+arrests at eleven. The case can kill him without the learner touching him: a decision the owner
 made by accepting the clocks.
 
 ## 3.4 The action spine, with every route
@@ -190,7 +191,8 @@ empyema, decompensated heart failure (both entries), pulmonary embolism, COPD ex
 
 | Phase | Short label | What now | Leaves by |
 |---|---|---|---|
-| presentation | on arrival | Oxygen up to high flow, line, cultures, antibiotic, first fluid | fluid → fluid_response. 180 s without fluid → low_pressure (with a drip already running → on_pressor) |
+| arrival | on arrival | The same patient. The nurse asks about oxygen at 1:00 (default mode) and nothing else | fluid → fluid_response. 120 s → presentation always, silently |
+| presentation | on arrival | Oxygen up to high flow, line, cultures, antibiotic, first fluid | fluid → fluid_response. 240 s without fluid → low_pressure (with a drip already running → on_pressor) |
 | fluid_response | after fluid | Reassess, expect it not to last, line up a pressor | 150 s → low_after_fluid always, or on_pressor if a drip is running |
 | low_pressure | pressure low | Fluid now | fluid → fluid_response, drip → on_pressor, 150 s → worsening_shock |
 | low_after_fluid | pressure low again | Start the vasopressor | drip → on_pressor, 150 s → worsening_shock |
@@ -209,8 +211,10 @@ Two timed rules pending at once: presentation, fluid_response and on_pressor eac
 guarded rules above a fallback at the same second (outcome chosen at a scheduled time). No
 phase has two independent clocks, so there is no race table.
 
-Do-nothing: presentation 180 s → low_pressure 150 s → worsening_shock 150 s → arrest at 480 s.
-Treated well reaches handoff at about 520 s of scenario clock.
+Do-nothing: arrival 120 s → presentation 240 s → low_pressure 150 s → worsening_shock 150 s →
+arrest at 660 s. Treated well reaches handoff at about 520 s of scenario clock when the fluid goes
+in during arrival, since fluid leaves arrival at once. Default mode, nothing given: oxygen asked
+at 1:00, fluid at 4:00, support at 4:15, antibiotic at 4:30, fluid again at 5:30, the drop at 6:00.
 
 Prompt cap per phase: 4, for presentation, which has four prompts (oxygen 20 s, more support
 35 s, fluid 40 s, antibiotic 50 s). Each deterioration's prompt is the earliest in its phase.
@@ -272,7 +276,7 @@ or a change.
 12. His wife answers. He manages a few words until phase 7.
 13. Catalog requests: titrate a vasopressor, MRSA nares PCR, sputum culture, Legionella
     antigen, respiratory viral PCR, passive leg raise.
-14. Public fields: complaint "Fever, cough and breathlessness", category "Respiratory".
+14. Public fields: complaint "Fever, cough and breathlessness", category "Cardiopulmonary" (owner, 5 November 2026: respiratory and cardiovascular cases share one group on the case list).
 15. Published simulation sources not searched.
 16. Dexamethasone is neutral, methylprednisolone meets the steroid expectation.
 17. Vasopressin, epinephrine and phenylephrine drips meet the vasopressor expectation.

@@ -363,6 +363,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `phases[].transitions[].measured_from` | engine+validator+tools | no | 15.1 | phase_entry (default) or guard_true |
 | `phases[].transitions[].narration` | engine+validator+tools | nurse+chart | 15.1 | Spoken ONLY on a timed rule. An instant transition says nothing; use nurse_alert on the action instead. Must be true of the vitals shown next, with effects included |
 | `phases[].transitions[].narration_ventilated` | engine+validator | nurse+chart | 8.5 | Spoken instead of narration while ventilated |
+| `phases[].transitions[].silent_rationale` | engine+validator+tools | no | 15.1 | Read by the validator and the tests, never by the engine. A timed rule into a phase with the same vitals, appearance, rhythm and ECG may then omit narration and debrief_note. Nothing is said. The validator rejects it where the monitor would change |
 | `phases[].transitions[].terminal_opt_in_rationale` | validator | never |  | Reviewer note. Nothing reads it |
 | `phases[].transitions[].to` | generic | no | 4 | Target phase id |
 | `phases[].transitions[].unguarded_rationale` | validator | never |  | Reviewer note. Nothing reads it |
@@ -420,4 +421,4 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `ventilation.respiratory_rate` | engine+build+validator+tools | monitor | 8.5 | {when, respiratory_rate}. Default: flag intubated set, 16 |
 | `ventilation.when` | generic | monitor | 8.5 | {when, respiratory_rate}. Default: flag intubated set, 16 |
 
-397 fields across 9 packs, as of the last generation.
+398 fields across 9 packs, as of the last generation.

@@ -13,7 +13,7 @@
   "author": "Drafted by Claude at the request of Aakash Setty on 4 November 2026, from his case structure and his answers of the same day. Authoring requirements section 1 applies.",
   "warning": "A physician decided the things in TIDE-SEED.md section 0. Everything else is model output and awaits sign-off.",
   "author_only_fields_pending_signoff": [
-   "Every vital sign in every phase and every clock: 180 s to hypotension without fluid, 150 s for the fluid response to fade, 150 s to progressive shock, 150 s to arrest, 180 s from a held pressure to failing support, 150 s to fatigue, 120 s to arrest, 120 s after an unsupported tube.",
+   "Every vital sign in every phase and every clock: 120 s of arrival with only the oxygen question, then 240 s to hypotension without fluid, 150 s for the fluid response to fade, 150 s to progressive shock, 150 s to arrest, 180 s from a held pressure to failing support, 150 s to fatigue, 120 s to arrest, 120 s after an unsupported tube.",
    "That failing support is scripted and arrives whatever the device (owner B5) and that the narration says the clock is compressed (owner B1).",
    "That the antibiotic moves nothing (owner B2).",
    "That any intubation without a running vasopressor drip collapses him (owner B4), and that with one he dips and recovers.",
@@ -127,7 +127,7 @@
    "intern",
    "junior_resident"
   ],
-  "estimated_runtime_seconds": 660,
+  "estimated_runtime_seconds": 720,
   "learning_objectives": [
    "Recognize severe community-acquired pneumonia with sepsis and hypoperfusion, and send the patient to the ICU.",
    "Escalate oxygen in steps to high flow or NIV, and judge support by the work of breathing and the trend, not by the saturation alone.",
@@ -147,7 +147,7 @@
    "line": "Walked in with his wife and was brought straight through from triage to the resuscitation bay."
   },
   "complaint": "Fever, cough and breathlessness",
-  "category": "Respiratory",
+  "category": "Cardiopulmonary",
   "library": {
    "tempo": "minutes: shock on a clock, then breathing on an openly compressed clock",
    "uncertainty": "when the fluid has stopped working, and when noninvasive support has failed",
@@ -164,7 +164,7 @@
   "weight_kg": 95,
   "background": "Fifty-eight. Hypertension and type 2 diabetes, on lisinopril and metformin. Smokes about three quarters of a pack a day since he was eighteen, about thirty pack-years. Never told he has COPD. No immune problems, no steroids, no hospital stay or antibiotics in the last three months, no prior MRSA or Pseudomonas. No allergies. Works for the city water department. Lives with his wife. Full code.\n\nFever and shaking chills since Saturday, four days ago, with a cough that brought up rusty brown phlegm and a sharp right-sided pain when he breathes in. Breathless since last night and much worse today. His wife drove him in.",
   "predicted_body_weight_note": "Reviewer note. Height 178 cm, kept here because the engine reads no height field. Predicted body weight about 73 kg (50 + 0.91 x (178 - 152.4)). Six mL/kg is about 440 mL. BMI 30.0. Model arithmetic.",
-  "presenting_vitals_source": "Inherited from phase 'presentation'.",
+  "presenting_vitals_source": "Inherited from phase 'arrival'.",
   "presenting_appearance": "A heavy-set man sitting forward on the stretcher with his hands on his knees, flushed and sweating, speaking three or four words at a time. His wife is beside him.",
   "ems_handover_text": "Fifty-eight year old man, four days of fever, cough with rusty sputum and right-sided pleuritic pain, breathless since last night. Triage saturation 85 percent on room air, rate 32, pulse 118, pressure 104 over 60, temperature 39.2.",
   "arrival_handover": "Fifty-eight year old man with four days of fever and cough, much more short of breath since last night, his wife drove him in. Triage had him at eighty-five percent on room air, so I brought him straight back.",
@@ -185,6 +185,67 @@
   "no_time_jump": "Owner decision of 4 November 2026: no two-hour jump. Phase 7 arrives on an openly compressed clock."
  },
  "phases": [
+  {
+   "id": "arrival",
+   "label": "Severe pneumonia with sepsis, pressure still held",
+   "short_label": "on arrival",
+   "clinical_description": "The first two minutes. The same patient as presentation, with the same findings. It exists only for the nurse's timing: she asks about oxygen at 1:00 in the default mode and nothing else until 4:00 (owner, 5 November 2026).",
+   "vitals": {
+    "heart_rate": 118,
+    "systolic_bp": 104,
+    "diastolic_bp": 60,
+    "respiratory_rate": 32,
+    "oxygen_saturation": 85,
+    "temperature_c": 39.2
+   },
+   "appearance": {
+    "distress_level": 2,
+    "alertness_level": 0,
+    "pupil_size": "normal",
+    "pupil_reactivity": "reactive"
+   },
+   "rhythm": "regular",
+   "ecg": {
+    "pattern": "organised",
+    "p_waves": true,
+    "pr_ms": 140,
+    "qrs_ms": 84,
+    "qtc_ms": 430,
+    "author_note": "Sinus tachycardia. PR, QRS and QTc match the twelve-lead tracing of the phase (media/README.md). Model output."
+   },
+   "terminal": false,
+   "transitions": [
+    {
+     "when": "action handoff_submit taken",
+     "to": "case_complete",
+     "author_note": "First in every list."
+    },
+    {
+     "when": "flag intubated set AND flag pressor_running set",
+     "to": "ventilated",
+     "author_rationale": "Intubated with a vasopressor drip running. The drip carries him through induction with a brief dip (an effect on the tube). Owner decision B4, 4 November 2026."
+    },
+    {
+     "when": "flag intubated set",
+     "to": "post_induction_collapse",
+     "author_rationale": "Intubated with no vasopressor running. Induction and positive pressure remove the tone and venous return he was living on, and in septic shock the pressure falls. Applied in every phase, MAP 75 included, by owner decision B4 of 4 November 2026. Post-intubation hypotension is common but not certain. The case makes it certain, and the nurse and the debrief say it was a risk taken (open question 7)."
+    },
+    {
+     "when": "flag fluid_given set",
+     "to": "fluid_response",
+     "author_rationale": "A first bolus lifts his pressure for a few minutes. Model output."
+    },
+    {
+     "when": null,
+     "after_seconds": 120,
+     "measured_from": "phase_entry",
+     "to": "presentation",
+     "author_rationale": "No change in the patient. The phase ends so the fluid, support and antibiotic prompts start counting from 2:00 instead of from arrival (owner, 5 November 2026).",
+     "unguarded_rationale": "Nothing about him changes here, so the move cannot depend on anything the learner does. Its only effect is on when the nurse speaks.",
+     "silent_rationale": "The patient, the monitor and the findings are the same on both sides, so there is nothing for the nurse to say. The owner asked for no line between the oxygen question at 1:00 and the next one at 4:00 (5 November 2026)."
+    }
+   ]
+  },
   {
    "id": "presentation",
    "label": "Severe pneumonia with sepsis, pressure still held",
@@ -237,7 +298,7 @@
     },
     {
      "when": "flag pressor_running set",
-     "after_seconds": 180,
+     "after_seconds": 240,
      "measured_from": "phase_entry",
      "to": "on_pressor",
      "narration": "He's still hot and flushed, and the drip is holding his pressure.",
@@ -246,12 +307,12 @@
     },
     {
      "when": "NOT flag fluid_given set",
-     "after_seconds": 180,
+     "after_seconds": 240,
      "measured_from": "phase_entry",
      "to": "low_pressure",
      "narration": "His knees have gone blotchy and his pressure has dropped.",
-     "debrief_note": "Without fluid his pressure fell below a mean of 65 and his knees mottled. He was tachycardic, hot, with a lactate near 4 and a vena cava that collapsed with each breath, and hypotension was on its way. Fluid would have delayed it, not prevented it. Three minutes stands for much longer. [UNVERIFIED: SSC 2026, read through summaries]",
-     "author_rationale": "Deterioration on inaction. Sepsis-induced hypotension in severe pneumonia over hours, compressed to three minutes. The guard is the missing fluid, which is the treatment the prompt asks for. Model output."
+     "debrief_note": "Without fluid his pressure fell below a mean of 65 and his knees mottled. He was tachycardic, hot, with a lactate near 4 and a vena cava that collapsed with each breath, and hypotension was on its way. Fluid would have delayed it, not prevented it. Six minutes from arrival stand for much longer. [UNVERIFIED: SSC 2026, read through summaries]",
+     "author_rationale": "Deterioration on inaction. Sepsis-induced hypotension in severe pneumonia over hours, compressed to six minutes from arrival (two in arrival, four here). The guard is the missing fluid, which is the treatment the prompt asks for. Model output."
     }
    ]
   },
@@ -879,7 +940,7 @@
    "catalog_id": "attach_monitor",
    "tag": [
     {
-     "when": "phase is presentation",
+     "when": "(phase is arrival OR phase is presentation)",
      "value": "critical"
     },
     {
@@ -956,7 +1017,7 @@
    "catalog_id": "hidden_oxygen",
    "tag": [
     {
-     "when": "phase is presentation",
+     "when": "(phase is arrival OR phase is presentation)",
      "value": "critical"
     },
     {
@@ -969,7 +1030,7 @@
    "expectation_label": "Oxygen, any device",
    "prompt": {
     "deadline_seconds": 20,
-    "guard": "phase is presentation",
+    "guard": "phase is arrival",
     "text": "He's working really hard to breathe and his lips look dusky. Should we do something?"
    },
    "debrief_note": "Not an order. Credited by any oxygen device. On arrival he was at 85 percent on room air, breathing 32 times a minute in three or four words a breath."
@@ -978,7 +1039,7 @@
    "catalog_id": "hidden_support",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
      "value": "critical"
     },
     {
@@ -1072,7 +1133,7 @@
    "catalog_id": "high_flow_nasal_cannula",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
      "value": "recommended"
     },
     {
@@ -1125,7 +1186,7 @@
    "catalog_id": "non_invasive_positive_pressure_ventilation",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
      "value": "recommended"
     },
     {
@@ -1539,7 +1600,7 @@
      "value": "discouraged"
     },
     {
-     "when": "phase is presentation OR phase is low_pressure",
+     "when": "(phase is arrival OR phase is presentation) OR phase is low_pressure",
      "value": "critical"
     },
     {
@@ -1585,7 +1646,7 @@
    ],
    "prompt": {
     "deadline_seconds": 40,
-    "guard": "NOT flag fluid_given set",
+    "guard": "NOT flag fluid_given set AND NOT phase is arrival",
     "text": "He's hot and his heart's racing. What do you want to give him?",
     "escalation": {
      "deadline_seconds": 70,
@@ -2119,7 +2180,7 @@
    "catalog_id": "hidden_beta_lactam",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated",
      "value": "critical"
     },
     {
@@ -2141,7 +2202,7 @@
    "catalog_id": "hidden_atypical",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated",
      "value": "critical"
     },
     {
@@ -2392,7 +2453,7 @@
    "catalog_id": "blood_culture_x_2",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
      "value": "recommended"
     },
     {
@@ -2406,7 +2467,7 @@
    "catalog_id": "lactate",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
      "value": "recommended"
     },
     {
@@ -2426,7 +2487,7 @@
    "catalog_id": "venous_blood_gas",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support",
      "value": "recommended"
     },
     {
@@ -2454,7 +2515,7 @@
    "catalog_id": "complete_blood_count_cbc",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
      "value": "recommended"
     },
     {
@@ -2468,7 +2529,7 @@
    "catalog_id": "basic_chemistry_chem_7",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
      "value": "recommended"
     },
     {
@@ -2482,7 +2543,7 @@
    "catalog_id": "influenza_a_and_b_antigen_test",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
      "value": "recommended"
     },
     {
@@ -2496,7 +2557,7 @@
    "catalog_id": "xr_chest",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated",
      "value": "recommended"
     },
     {
@@ -2510,7 +2571,7 @@
    "catalog_id": "ultrasound_lung",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
      "value": "recommended"
     },
     {
@@ -2530,7 +2591,7 @@
    "catalog_id": "ultrasound_cardiac",
    "tag": [
     {
-     "when": "phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
+     "when": "(phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor",
      "value": "recommended"
     },
     {
@@ -8504,7 +8565,7 @@
   ],
   "key_exams_note": "Every exam is neutral, so the Physical score reads this list: the work of breathing, the lungs, the perfusion, the mottling and the mental state. Model judgment.",
   "intended_path": [
-   "presentation",
+   "arrival",
    "fluid_response",
    "low_after_fluid",
    "on_pressor",

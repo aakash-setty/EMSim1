@@ -132,6 +132,7 @@ FIELDS = {
 "phases[].transitions[].flags_set": ("no", "15.1", "Flags granted for good as the transition fires, before the new phase is entered. Use it to make a timed event happen once"),
 "phases[].transitions[].allow_time_to_terminal": ("no", "15.2", "Validator opt-in for a clock ending the run"),
 "phases[].transitions[].*": ("never", "15.1", "author_rationale, unguarded_rationale, terminal_opt_in_rationale, author_note: read by the validator and the reviewer, never by the engine"),
+"phases[].transitions[].silent_rationale": ("no", "15.1", "Read by the validator and the tests, never by the engine. A timed rule into a phase with the same vitals, appearance, rhythm and ECG may then omit narration and debrief_note. Nothing is said. The validator rejects it where the monitor would change"),
 
 # ---------------------------------------------------------------- case_actions
 "case_actions[].catalog_id": ("button", "6.1", "The case id of the action. Usually the catalog id; the binding map says otherwise. Used in conditions and content keys. Underscores removed as a fallback button name"),
@@ -163,7 +164,7 @@ FIELDS = {
 "case_actions[].prompt.escalation.text": ("nurse+chart+sound", "7.2", "A second line later. Does not count against the cap"),
 "case_actions[].prompt.escalation.deadline_seconds": ("no", "7.2", "From phase entry, multiplied like the first"),
 "case_actions[].follow_ups_triggered": ("no", "22.2", "Ids in follow_ups that this press schedules. THIS is the field the engine reads; follow_ups[].triggered_by is read by the validator only. Author both"),
-"case_actions[].vital_effects": ("monitor", "16", "Absent: a pressor takes the catalog default from catalog/default-vital-effects.json (display only). Present, even [], it replaces the default whole. [] means no effect, for a phase whose vitals already carry the rise"),
+"case_actions[].vital_effects": ("monitor", "16", "Absent: a pressor or a pressure-lowering drug takes the catalog default from catalog/default-vital-effects.json (display only). Present, even [], it replaces the default whole. [] means no effect, for a phase whose vitals already carry the change"),
 "case_actions[].vital_effects[].vital": ("monitor", "16", "One of the six vitals"),
 "case_actions[].vital_effects[].delta": ("monitor", "16", "Added to the phase baseline while the effect acts. Terminal phases ignore it"),
 "case_actions[].vital_effects[].key": ("no", "16", "Effects sharing a key do not stack. Two routes to one drug must share one key"),

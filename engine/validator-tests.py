@@ -289,10 +289,12 @@ expect("a rhythm that is not a string is rejected",
 # for the same reason.
 expect_clean("regular passes",
              lambda c: c["phases"][0].__setitem__("rhythm", "regular"), "rhythm")
+# Set on every phase, so a case with a silent move (5 November 2026) does not see the rhythm
+# change across it, which is a different rule's business.
 expect_clean("irregularly_irregular passes",
-             lambda c: c["phases"][0].__setitem__("rhythm", "irregularly_irregular"), "rhythm")
+             lambda c: [p.__setitem__("rhythm", "irregularly_irregular") for p in c["phases"]], "rhythm")
 expect_clean("a phase with no rhythm at all passes",
-             lambda c: c["phases"][0].pop("rhythm", None), "rhythm")
+             lambda c: [p.pop("rhythm", None) for p in c["phases"]], "rhythm")
 
 print("\n-- the monitor waveform (v0.16) --")
 # The same stance as the rhythm: the renderer falls back silently, so the validator has
@@ -732,7 +734,7 @@ expect_clean("a flag a transition grants counts as settable",
 expect_clean("a guard on a flag only a transition grants needs no warning prompt",
              lambda c: tr_flags(c, ["x_once"]), "on 'x_once'")
 
-print("\n-- default pressor effects (27 October 2026) --")
+print("\n-- default vital effects (pressors 27 October, pressure-lowering drugs 5 November 2026) --")
 
 
 def pressor(c, effects=None, drives=True):
@@ -758,6 +760,58 @@ expect_clean("a pressor on the default that drives nothing does not",
              lambda c: pressor(c, drives=False), "[default effect] norepinephrine_drip", "warnings")
 expect("vital_effects that is not a list is rejected",
        lambda c: pressor(c, {"vital": "systolic_bp"}), "vital_effects must be a list")
+
+
+def lowering(c, effects=None, drives=True):
+    """Nitroprusside as a case action, the same pattern for a drug whose default lowers the
+    pressure (5 November 2026)."""
+    a = next((x for x in c["case_actions"] if x["catalog_id"] == "nitroprusside_drip"), None)
+    if a is None:
+        a = {"catalog_id": "nitroprusside_drip", "tag": [{"when": None, "value": "neutral"}], "debrief_note": "x"}
+        c["case_actions"].append(a)
+    a["flags_set"] = ["x_lowering_on"]
+    a.pop("vital_effects", None)
+    if effects is not None:
+        a["vital_effects"] = effects
+    if drives:
+        to = next(p for p in c["phases"][1:] if not p.get("terminal"))["id"]
+        c["phases"][0]["transitions"].append({"when": "flag x_lowering_on set", "to": to})
+
+
+expect("a pressure-lowering drug on the default that drives a phase change warns",
+       lambda c: lowering(c), "[default effect] nitroprusside_drip", "warnings")
+expect_clean("the same drug with vital_effects [] does not",
+             lambda c: lowering(c, []), "[default effect] nitroprusside_drip", "warnings")
+expect_clean("a pressure-lowering drug on the default that drives nothing does not",
+             lambda c: lowering(c, drives=False), "[default effect] nitroprusside_drip", "warnings")
+
+print("\n-- silent moves (5 November 2026) --")
+
+
+def quiet_first(c, change=False, narrate=False):
+    """A new first phase, a copy of the old one, that hands over to it silently after 60 s."""
+    import copy
+    first = c["phases"][0]
+    q = copy.deepcopy(first)
+    q["id"] = "x_quiet"
+    tr = {"when": None, "after_seconds": 60, "measured_from": "phase_entry", "to": first["id"],
+          "author_rationale": "x", "unguarded_rationale": "x", "silent_rationale": "x"}
+    if narrate:
+        tr["narration"] = "x"
+    q["transitions"] = [tr]
+    if change:
+        q["vitals"] = dict(q["vitals"], heart_rate=(q["vitals"].get("heart_rate") or 80) + 10)
+    c["phases"].insert(0, q)
+
+
+expect_clean("a silent move into an identical phase needs no narration or note",
+             lambda c: quiet_first(c), "x_quiet/transitions[0]: missing")
+expect("a silent move into a phase whose vitals differ is rejected",
+       lambda c: quiet_first(c, change=True), "silent_rationale on a move into a phase")
+expect("a silent move that also narrates warns",
+       lambda c: quiet_first(c, narrate=True), "silent_rationale and a narration", "warnings")
+expect("a timed move with no silent_rationale still needs its narration",
+       lambda c: (quiet_first(c), c["phases"][0]["transitions"][0].pop("silent_rationale")), "missing narration")
 
 print("\n-- asked_all (29 October 2026) --")
 

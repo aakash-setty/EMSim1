@@ -12,7 +12,8 @@ For lab, imaging and exam keys the resolved payload is shown inline. **Bold** co
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation)) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation)) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -50,7 +51,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| presentation | rule 0 (phase is presentation) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation)) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation)) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -58,12 +60,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -81,12 +84,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -94,12 +98,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -211,11 +216,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | fluid_twice | resolves to | reachable? |
 |---|---|---|---|
+| arrival | no | rule 1 ((phase is arrival OR phase is presentation) OR phase is low_pressure) | plausible |
+| arrival | yes | rule 0 (flag fluid_twice set) | plausible |
 | fluid_response | no | rule 2 (phase is fluid_response) | plausible |
 | fluid_response | yes | rule 0 (flag fluid_twice set) | plausible |
-| low_pressure | no | rule 1 (phase is presentation OR phase is low_pressure) | plausible |
+| low_pressure | no | rule 1 ((phase is arrival OR phase is presentation) OR phase is low_pressure) | plausible |
 | low_pressure | yes | rule 0 (flag fluid_twice set) | plausible |
-| presentation | no | rule 1 (phase is presentation OR phase is low_pressure) | plausible |
+| presentation | no | rule 1 ((phase is arrival OR phase is presentation) OR phase is low_pressure) | plausible |
 | presentation | yes | rule 0 (flag fluid_twice set) | plausible |
 | «any other phase» | no | rule 3 (default) | plausible |
 | «any other phase» | yes | rule 0 (flag fluid_twice set) | plausible |
@@ -371,14 +378,15 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| failing_support | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| ventilated | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| failing_support | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| ventilated | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -386,14 +394,15 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| failing_support | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| ventilated | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| failing_support | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| ventilated | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support OR phase is ventilated) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -476,12 +485,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -489,12 +499,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -502,13 +513,14 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| failing_support | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
+| failing_support | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is failing_support) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -525,12 +537,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -538,12 +551,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -551,12 +565,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -564,13 +579,14 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
-| ventilated | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
+| ventilated | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor OR phase is ventilated) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -578,12 +594,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -591,12 +608,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| fluid_response | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_after_fluid | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| low_pressure | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| on_pressor | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
-| worsening_shock | rule 0 (phase is presentation OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| arrival | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| fluid_response | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_after_fluid | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| low_pressure | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| on_pressor | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| presentation | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
+| worsening_shock | rule 0 ((phase is arrival OR phase is presentation) OR phase is fluid_response OR phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is on_pressor) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 

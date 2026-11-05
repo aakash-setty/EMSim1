@@ -77,7 +77,7 @@
    "line": "Brought in by EMS. Handover given on arrival in the resuscitation bay."
   },
   "complaint": "Worsening breathlessness",
-  "category": "Cardiovascular",
+  "category": "Cardiopulmonary",
   "library": {
    "tempo": "minutes: a clock runs on the mask and the nitrate",
    "uncertainty": "which treatment does what: positive pressure, vasodilation, diuresis",
@@ -703,7 +703,9 @@
    "references": [
     "Cotter G, Metzkor E, Kaluski E, et al. Randomised trial of high-dose isosorbide dinitrate plus low-dose furosemide versus high-dose furosemide plus low-dose isosorbide dinitrate in severe pulmonary edema. Lancet. 1998;351(9100):389-93. [PubMed record checked]",
     "Heidenreich PA, et al. 2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure. Circulation. 2022;145(18):e895-e1032. [UNVERIFIED, confirm before release]"
-   ]
+   ],
+   "vital_effects": [],
+   "author_note": "Opted out of the catalog's default pressure drop (owner, 5 November 2026): the nitrate moves the phase, and the phase's own vitals already carry the fall."
   },
   {
    "catalog_id": "nitroglycerin_sublingual",
@@ -786,7 +788,9 @@
      "id": "nitroglycerin_infusion",
      "when": "NOT flag intubated set"
     }
-   ]
+   ],
+   "vital_effects": [],
+   "author_note": "Opted out of the catalog's default pressure drop (owner, 5 November 2026): the nitrate moves the phase, and the phase's own vitals already carry the fall."
   },
   {
    "catalog_id": "nitroglycerin",

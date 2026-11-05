@@ -1,5 +1,5 @@
 {
- "note": "Default vital effects (owner, 27 October 2026). A sandbox nicety: a pressor given in any case moves the monitor, whether or not the case authors it. These effects only change the numbers on the monitor. Vitals are never read by a condition, so no phase, tag, flag, prompt, score or debrief line changes. A case action that carries its own vital_effects replaces the whole default, and \"vital_effects\": [] means no effect. A drip's default lasts until its stop order is given after it, and starts again if the drip is restarted. Onset 20 s for drips and 10 s for boluses. The numbers are teaching defaults chosen by a model and accepted by the owner, not physiology claims, and not physician reviewed.",
+ "note": "Default vital effects (owner, 27 October 2026 for pressors, 5 November 2026 for drugs that lower the pressure). A sandbox nicety: a pressor or an antihypertensive given in any case moves the monitor, whether or not the case authors it. Pressors raise the pressure. Antihypertensives, nitrates, beta-blockers and diltiazem lower it a little, and the beta-blockers and diltiazem lower the heart rate a little too. These effects only change the numbers on the monitor. Vitals are never read by a condition, so no phase, tag, flag, prompt, score or debrief line changes. A case action that carries its own vital_effects replaces the whole default, and \"vital_effects\": [] means no effect. A drip's default lasts until its stop order is given after it, and starts again if the drip is restarted. A bolus or a tablet wears off: 5 minutes for most, 10 for a vasopressin bolus and 3 for an intravenous nitroglycerin bolus. Onset 20 s for drips and 10 s for boluses. The numbers are teaching defaults chosen by a model and accepted by the owner, not physiology claims, and not physician reviewed.",
  "effects": {
   "norepinephrine_drip": [
    {"vital": "systolic_bp", "delta": 15, "onset_seconds": 20},
@@ -28,7 +28,46 @@
    {"vital": "diastolic_bp", "delta": 8, "onset_seconds": 10, "duration_seconds": 300}],
   "vasopressin_bolus": [
    {"vital": "systolic_bp", "delta": 12, "onset_seconds": 10, "duration_seconds": 600},
-   {"vital": "diastolic_bp", "delta": 6, "onset_seconds": 10, "duration_seconds": 600}]
+   {"vital": "diastolic_bp", "delta": 6, "onset_seconds": 10, "duration_seconds": 600}],
+  "labetalol_drip": [
+   {"vital": "systolic_bp", "delta": -12, "onset_seconds": 20},
+   {"vital": "diastolic_bp", "delta": -6, "onset_seconds": 20},
+   {"vital": "heart_rate", "delta": -6, "onset_seconds": 20}],
+  "nicardipine_drip": [
+   {"vital": "systolic_bp", "delta": -15, "onset_seconds": 20},
+   {"vital": "diastolic_bp", "delta": -8, "onset_seconds": 20}],
+  "nitroglycerin_drip": [
+   {"vital": "systolic_bp", "delta": -12, "onset_seconds": 20},
+   {"vital": "diastolic_bp", "delta": -5, "onset_seconds": 20}],
+  "nitroprusside_drip": [
+   {"vital": "systolic_bp", "delta": -18, "onset_seconds": 20},
+   {"vital": "diastolic_bp", "delta": -10, "onset_seconds": 20}],
+  "esmolol_drip": [
+   {"vital": "systolic_bp", "delta": -8, "onset_seconds": 20},
+   {"vital": "diastolic_bp", "delta": -4, "onset_seconds": 20},
+   {"vital": "heart_rate", "delta": -10, "onset_seconds": 20}],
+  "labetalol_bolus": [
+   {"vital": "systolic_bp", "delta": -12, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "diastolic_bp", "delta": -6, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "heart_rate", "delta": -6, "onset_seconds": 10, "duration_seconds": 300}],
+  "metoprolol_bolus": [
+   {"vital": "systolic_bp", "delta": -8, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "diastolic_bp", "delta": -4, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "heart_rate", "delta": -10, "onset_seconds": 10, "duration_seconds": 300}],
+  "propranolol_bolus": [
+   {"vital": "systolic_bp", "delta": -8, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "diastolic_bp", "delta": -4, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "heart_rate", "delta": -10, "onset_seconds": 10, "duration_seconds": 300}],
+  "diltiazem_bolus": [
+   {"vital": "systolic_bp", "delta": -10, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "diastolic_bp", "delta": -6, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "heart_rate", "delta": -10, "onset_seconds": 10, "duration_seconds": 300}],
+  "nitroglycerin": [
+   {"vital": "systolic_bp", "delta": -10, "onset_seconds": 10, "duration_seconds": 180},
+   {"vital": "diastolic_bp", "delta": -4, "onset_seconds": 10, "duration_seconds": 180}],
+  "nitroglycerin_sublingual": [
+   {"vital": "systolic_bp", "delta": -10, "onset_seconds": 10, "duration_seconds": 300},
+   {"vital": "diastolic_bp", "delta": -4, "onset_seconds": 10, "duration_seconds": 300}]
  },
  "not_included": {
   "dobutamine_drip": "An inotrope, not a pressor. It often lowers the pressure, so a default rise would teach the wrong thing.",

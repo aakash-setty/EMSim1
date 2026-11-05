@@ -7,7 +7,10 @@ agrees with Henderson-Hasselbalch (pH = 6.1 + log10(HCO3 / (0.03 x pCO2))).
 """
 import math
 
-P1 = "phase is presentation"
+# The arrival phase (5 November 2026) is the same patient as presentation, so every
+# rule for one is a rule for both. Only the nurse prompts tell them apart.
+P1 = "(phase is arrival OR phase is presentation)"
+ARRIVAL = "phase is arrival"
 P2 = "phase is fluid_response"
 P3 = "phase is low_pressure"
 P4 = "phase is low_after_fluid"

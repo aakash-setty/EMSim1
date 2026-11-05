@@ -403,12 +403,13 @@ def check_pupils(case, errors, warnings):
 
 
 def check_default_effects(case, errors, warnings, notes):
-    """Default vital effects (owner, 27 October 2026, authoring 16). A pressor with no
-    vital_effects of its own moves the monitor by the catalog default in
-    catalog/default-vital-effects.json. That is display only, so it cannot break a case. It
-    can make the numbers read wrong: where the action's flag also drives a phase change, the
-    phase's own vitals usually already carry the rise, and the default adds it a second time.
-    "vital_effects": [] says the phase carries it."""
+    """Default vital effects (owner, 27 October 2026 for pressors, 5 November 2026 for drugs
+    that lower the pressure, authoring 16). A drug listed in catalog/default-vital-effects.json
+    with no vital_effects of its own moves the monitor by the catalog default. That is display
+    only, so it cannot break a case. It can make the numbers read wrong: where the action's
+    flag also drives a phase change, the phase's own vitals usually already carry the rise or
+    the fall, and the default adds it a second time. "vital_effects": [] says the phase carries
+    it."""
     dv, _ = _load(catalog_path("default-vital-effects.json"))
     if not dv:
         return
@@ -432,12 +433,12 @@ def check_default_effects(case, errors, warnings, notes):
         if any(f"action {cid} taken" in w for w in whens):
             drives.append("action " + cid)
         if drives:
-            warnings.append(f"[default effect] {cid} moves the monitor by the catalog's default pressor "
+            warnings.append(f"[default effect] {cid} moves the monitor by the catalog's default "
                             f"effect and also drives a phase change ({', '.join(drives)}). If the phase's "
-                            f"vitals already carry the rise, the monitor shows it twice: set "
+                            f"vitals already carry the change, the monitor shows it twice: set "
                             f"\"vital_effects\": [] or author the effect")
     if on_default:
-        notes.append("default pressor effects (display only): " + ", ".join(on_default))
+        notes.append("default vital effects (display only): " + ", ".join(on_default))
 
 
 def check_case_number(case, errors, warnings):
@@ -1107,9 +1108,23 @@ def run_checks(case):
             if mf == "guard_true" and tr.get("when") is None:
                 errors.append(f"[time] {loc}: measured_from guard_true requires a guard")
 
-            for f in ("narration", "debrief_note", "author_rationale"):
+            # A silent move (owner, 5 November 2026): a timed rule into a phase where the
+            # patient is the same, whose only job is to change when the nurse speaks, may
+            # omit its narration and note if it says why. It must change nothing a learner
+            # could see, so the destination's vitals and appearance must equal the source's.
+            silent = bool(tr.get("silent_rationale"))
+            for f in (("author_rationale",) if silent else ("narration", "debrief_note", "author_rationale")):
                 if not tr.get(f):
                     errors.append(f"[time] {loc}: missing {f}")
+            if silent:
+                dsrc = next((x for x in case["phases"] if x["id"] == tr["to"]), None)
+                same = dsrc is not None and all(dsrc.get(k) == ph.get(k) for k in ("vitals", "appearance", "rhythm", "ecg"))
+                if not same:
+                    errors.append(f"[time] {loc}: silent_rationale on a move into a phase whose vitals, "
+                                  f"appearance or rhythm differ. A change the monitor shows needs a narration")
+                if tr.get("narration"):
+                    warnings.append(f"[time] {loc}: silent_rationale and a narration. The narration is spoken, "
+                                    f"so the move is not silent")
 
             if tr.get("when") is None and not tr.get("unguarded_rationale"):
                 errors.append(f"[time] {loc}: a transition nothing can prevent is a scripted "

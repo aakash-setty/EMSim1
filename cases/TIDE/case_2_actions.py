@@ -18,7 +18,11 @@ def act(cid, tag, **kw):
 
 ALWAYS = lambda v: [{"when": None, "value": v}]
 
-P1 = "phase is presentation"
+# The arrival phase (5 November 2026) is the same patient as presentation, so every
+# rule for one is a rule for both. Only the nurse prompts tell them apart: the oxygen prompt is
+# guarded to arrival, and the support, fluid and antibiotic prompts leave arrival out.
+P1 = "(phase is arrival OR phase is presentation)"
+ARRIVAL = "phase is arrival"
 P2 = "phase is fluid_response"
 P3 = "phase is low_pressure"
 P4 = "phase is low_after_fluid"
@@ -87,7 +91,7 @@ DEVICE_NOTE = ("Teaching choice. Every non-terminal phase's saturation is author
 act("hidden_oxygen", [{"when": P1, "value": "critical"}, {"when": None, "value": "neutral"}],
     hidden=True, display_name="Oxygen started",
     expectation_label="Oxygen, any device",
-    prompt={"deadline_seconds": 20, "guard": P1,
+    prompt={"deadline_seconds": 20, "guard": ARRIVAL,   # the only question in arrival (owner, 5 November 2026)
             "text": "He's working really hard to breathe and his lips look dusky. Should we do something?"},
     debrief_note=(
       "Not an order. Credited by any oxygen device. On arrival he was at 85 percent on room "
@@ -97,8 +101,7 @@ act("hidden_support",
     [{"when": PRE_TUBE, "value": "critical"}, {"when": None, "value": "neutral"}],
     hidden=True, display_name="High-flow oxygen or NIV",
     expectation_label="High-flow oxygen or NIV",
-    prompt={"deadline_seconds": 45, "guard": P1 + " OR " + P2 + " OR " + P3 + " OR " + P4
-                                              + " OR " + P5 + " OR " + P6,
+    prompt={"deadline_seconds": 45, "guard": " OR ".join(["phase is presentation", P2, P3, P4, P5, P6]),
             "text": "He's still working hard to breathe. Do you want more support for him?"},
     debrief_note=(
       "Not an order. Credited by high-flow nasal oxygen or NIV.\n\n"
@@ -306,7 +309,7 @@ act("normal_saline_1l_bolus",
       {"vital": "respiratory_rate", "delta": 4, "key": "fluid_rr",
        "while": "flag fluid_stacked set AND NOT " + INTUB + " AND NOT " + P8,
        "note": "As above."}],
-    prompt={"deadline_seconds": 40, "guard": "NOT flag fluid_given set",
+    prompt={"deadline_seconds": 40, "guard": "NOT flag fluid_given set AND NOT " + ARRIVAL,
             "text": "He's hot and his heart's racing. What do you want to give him?",
             "escalation": {"deadline_seconds": 70,
                            "text": "Nothing's running for his pressure yet. Do you want something hung?"}},
@@ -434,7 +437,7 @@ act("hidden_beta_lactam",
     [{"when": PRE_TUBE + " OR " + P7 + " OR " + P10, "value": "critical"}, {"when": None, "value": "neutral"}],
     hidden=True, display_name="Beta-lactam with pneumococcal activity",
     expectation_label="Antibiotic: a beta-lactam",
-    prompt={"deadline_seconds": 50, "guard": PRE_TUBE + " OR " + P7,
+    prompt={"deadline_seconds": 50, "guard": " OR ".join(["phase is presentation", P2, P3, P4, P5, P6, P7]),
             "text": "He's had a fever for four days and nothing's running for it yet. Anything you want to start?"},
     debrief_note="Not an order. Credited by ceftriaxone, cefotaxime or a broader beta-lactam. " + ABX_NOTE)
 act("hidden_atypical",

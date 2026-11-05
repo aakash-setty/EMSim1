@@ -110,7 +110,7 @@ DEBRIEF = {
  "key_exams_note": (
    "Every exam is neutral, so the Physical score reads this list: the work of breathing, the "
    "lungs, the perfusion, the mottling and the mental state. Model judgment."),
- "intended_path": ["presentation", "fluid_response", "low_after_fluid", "on_pressor",
+ "intended_path": ["arrival", "fluid_response", "low_after_fluid", "on_pressor",
                    "failing_support", "ventilated", "case_complete"],
  "intended_path_note": (
    "Oxygen to high flow, cultures, antibiotics, a bolus, the drift, norepinephrine, the ICU, "
@@ -153,7 +153,7 @@ PROVENANCE = {
    "A physician decided the things in TIDE-SEED.md section 0. Everything else is model output "
    "and awaits sign-off."),
  "author_only_fields_pending_signoff": [
-   "Every vital sign in every phase and every clock: 180 s to hypotension without fluid, 150 s for the fluid response to fade, 150 s to progressive shock, 150 s to arrest, 180 s from a held pressure to failing support, 150 s to fatigue, 120 s to arrest, 120 s after an unsupported tube.",
+   "Every vital sign in every phase and every clock: 120 s of arrival with only the oxygen question, then 240 s to hypotension without fluid, 150 s for the fluid response to fade, 150 s to progressive shock, 150 s to arrest, 180 s from a held pressure to failing support, 150 s to fatigue, 120 s to arrest, 120 s after an unsupported tube.",
    "That failing support is scripted and arrives whatever the device (owner B5) and that the narration says the clock is compressed (owner B1).",
    "That the antibiotic moves nothing (owner B2).",
    "That any intubation without a running vasopressor drip collapses him (owner B4), and that with one he dips and recovers.",
