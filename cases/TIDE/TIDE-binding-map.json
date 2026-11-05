@@ -1,0 +1,546 @@
+{
+ "map_version": "0.1",
+ "case_id": "tide-01",
+ "status": "DRAFT. The coverage row is a model judgment that the four crystalloid boluses are one act here, and needs a physician's review.",
+ "how_to_read": {
+  "catalog_id equals case_id": "exact; nothing to review",
+  "catalog_id null": "unmatched; not in the catalog",
+  "also_covers / also_covers_group": "this case action claims several catalog entries"
+ },
+ "rows": [
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor"
+  },
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv"
+  },
+  {
+   "case_id": "second_iv",
+   "catalog_id": "second_iv"
+  },
+  {
+   "case_id": "intraosseous_line",
+   "catalog_id": "intraosseous_line"
+  },
+  {
+   "case_id": "central_venous_catheter_triple_lumen",
+   "catalog_id": "central_venous_catheter_triple_lumen"
+  },
+  {
+   "case_id": "central_venous_catheter_cordis",
+   "catalog_id": "central_venous_catheter_cordis"
+  },
+  {
+   "case_id": "arterial_line",
+   "catalog_id": "arterial_line"
+  },
+  {
+   "case_id": "hidden_oxygen",
+   "catalog_id": null,
+   "note": "Hidden target. Credited by any oxygen device. Critical on arrival, with the oxygen prompt. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
+  },
+  {
+   "case_id": "hidden_support",
+   "catalog_id": null,
+   "note": "Hidden target. Credited by high flow or NIV. Critical in phases 1 to 6, with its prompt. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
+  },
+  {
+   "case_id": "nasal_cannula_oxygen",
+   "catalog_id": "nasal_cannula_oxygen"
+  },
+  {
+   "case_id": "non_rebreather_mask",
+   "catalog_id": "non_rebreather_mask"
+  },
+  {
+   "case_id": "high_flow_nasal_cannula",
+   "catalog_id": "high_flow_nasal_cannula"
+  },
+  {
+   "case_id": "non_invasive_positive_pressure_ventilation",
+   "catalog_id": "non_invasive_positive_pressure_ventilation"
+  },
+  {
+   "case_id": "bag_valve_mask",
+   "catalog_id": "bag_valve_mask"
+  },
+  {
+   "case_id": "preoxygenate_for_intubation",
+   "catalog_id": "preoxygenate_for_intubation"
+  },
+  {
+   "case_id": "intubate_rapid_sequence",
+   "catalog_id": "intubate_rapid_sequence"
+  },
+  {
+   "case_id": "etomidate_bolus",
+   "catalog_id": "etomidate_bolus"
+  },
+  {
+   "case_id": "ketamine_bolus",
+   "catalog_id": "ketamine_bolus"
+  },
+  {
+   "case_id": "propofol_bolus",
+   "catalog_id": "propofol_bolus"
+  },
+  {
+   "case_id": "midazolam_bolus",
+   "catalog_id": "midazolam_bolus"
+  },
+  {
+   "case_id": "rocuronium_bolus",
+   "catalog_id": "rocuronium_bolus"
+  },
+  {
+   "case_id": "succinylcholine_bolus",
+   "catalog_id": "succinylcholine_bolus"
+  },
+  {
+   "case_id": "position_for_intubation",
+   "catalog_id": "position_for_intubation"
+  },
+  {
+   "case_id": "prepare_endotracheal_tube",
+   "catalog_id": "prepare_endotracheal_tube"
+  },
+  {
+   "case_id": "suction",
+   "catalog_id": "suction"
+  },
+  {
+   "case_id": "hidden_sedation",
+   "catalog_id": null,
+   "note": "Hidden target. Credited by a sedative or analgesic after the tube. Ungraded intubation care. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
+  },
+  {
+   "case_id": "fentanyl_bolus",
+   "catalog_id": "fentanyl_bolus"
+  },
+  {
+   "case_id": "propofol_infusion",
+   "catalog_id": "propofol_infusion"
+  },
+  {
+   "case_id": "stop_propofol",
+   "catalog_id": "stop_propofol"
+  },
+  {
+   "case_id": "ketamine_infusion",
+   "catalog_id": "ketamine_infusion"
+  },
+  {
+   "case_id": "morphine_bolus",
+   "catalog_id": "morphine_bolus"
+  },
+  {
+   "case_id": "lorazepam_bolus",
+   "catalog_id": "lorazepam_bolus"
+  },
+  {
+   "case_id": "place_orogastric_tube",
+   "catalog_id": "place_orogastric_tube"
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "also_covers_group": "crystalloid_bolus",
+   "note": "Saline or a balanced crystalloid, either volume. One count per bolus (known gap 9)."
+  },
+  {
+   "case_id": "normal_saline_infusion",
+   "catalog_id": "normal_saline_infusion"
+  },
+  {
+   "case_id": "lactated_ringer_s_infusion",
+   "catalog_id": "lactated_ringer_s_infusion"
+  },
+  {
+   "case_id": "d5_ns_bolus",
+   "catalog_id": "d5_ns_bolus"
+  },
+  {
+   "case_id": "d5_1_2_ns_infusion",
+   "catalog_id": "d5_1_2_ns_infusion"
+  },
+  {
+   "case_id": "hidden_reassessed",
+   "catalog_id": null,
+   "note": "Hidden target. Credited by a circulation exam, an ultrasound or a lactate after fluid. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
+  },
+  {
+   "case_id": "norepinephrine_drip",
+   "catalog_id": "norepinephrine_drip"
+  },
+  {
+   "case_id": "vasopressin_drip",
+   "catalog_id": "vasopressin_drip"
+  },
+  {
+   "case_id": "epinephrine_drip",
+   "catalog_id": "epinephrine_drip"
+  },
+  {
+   "case_id": "phenylephrine_drip",
+   "catalog_id": "phenylephrine_drip"
+  },
+  {
+   "case_id": "dopamine_drip",
+   "catalog_id": "dopamine_drip"
+  },
+  {
+   "case_id": "stop_norepinephrine",
+   "catalog_id": "stop_norepinephrine"
+  },
+  {
+   "case_id": "stop_vasopressin",
+   "catalog_id": "stop_vasopressin"
+  },
+  {
+   "case_id": "stop_epinephrine",
+   "catalog_id": "stop_epinephrine"
+  },
+  {
+   "case_id": "stop_phenylephrine",
+   "catalog_id": "stop_phenylephrine"
+  },
+  {
+   "case_id": "stop_dopamine",
+   "catalog_id": "stop_dopamine"
+  },
+  {
+   "case_id": "hidden_push_dose",
+   "catalog_id": null,
+   "note": "Hidden target. Credited by a push-dose vasopressor bolus. Recommended after an unsupported tube. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
+  },
+  {
+   "case_id": "epinephrine_bolus",
+   "catalog_id": "epinephrine_bolus"
+  },
+  {
+   "case_id": "phenylephrine_bolus",
+   "catalog_id": "phenylephrine_bolus"
+  },
+  {
+   "case_id": "vasopressin_bolus",
+   "catalog_id": "vasopressin_bolus"
+  },
+  {
+   "case_id": "hydrocortisone_bolus",
+   "catalog_id": "hydrocortisone_bolus"
+  },
+  {
+   "case_id": "methylprednisolone_bolus",
+   "catalog_id": "methylprednisolone_bolus"
+  },
+  {
+   "case_id": "dexamethasone",
+   "catalog_id": "dexamethasone"
+  },
+  {
+   "case_id": "hidden_beta_lactam",
+   "catalog_id": null,
+   "note": "Hidden target. Credited by ceftriaxone, cefotaxime, ampicillin or a broader beta-lactam. Carries the antibiotic prompt. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
+  },
+  {
+   "case_id": "hidden_atypical",
+   "catalog_id": null,
+   "note": "Hidden target. Credited by azithromycin, levofloxacin or moxifloxacin. Not a button.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "Noted."
+  },
+  {
+   "case_id": "ceftriaxone",
+   "catalog_id": "ceftriaxone"
+  },
+  {
+   "case_id": "cefotaxime",
+   "catalog_id": "cefotaxime"
+  },
+  {
+   "case_id": "ampicillin",
+   "catalog_id": "ampicillin"
+  },
+  {
+   "case_id": "azithromycin",
+   "catalog_id": "azithromycin"
+  },
+  {
+   "case_id": "levofloxacin",
+   "catalog_id": "levofloxacin"
+  },
+  {
+   "case_id": "moxifloxacin",
+   "catalog_id": "moxifloxacin"
+  },
+  {
+   "case_id": "piperacillin_tazobactam",
+   "catalog_id": "piperacillin_tazobactam"
+  },
+  {
+   "case_id": "cefepime",
+   "catalog_id": "cefepime"
+  },
+  {
+   "case_id": "meropenem",
+   "catalog_id": "meropenem"
+  },
+  {
+   "case_id": "vancomycin",
+   "catalog_id": "vancomycin"
+  },
+  {
+   "case_id": "doxycycline",
+   "catalog_id": "doxycycline"
+  },
+  {
+   "case_id": "clindamycin",
+   "catalog_id": "clindamycin"
+  },
+  {
+   "case_id": "metronidazole",
+   "catalog_id": "metronidazole"
+  },
+  {
+   "case_id": "cefazolin",
+   "catalog_id": "cefazolin"
+  },
+  {
+   "case_id": "oseltamivir",
+   "catalog_id": "oseltamivir"
+  },
+  {
+   "case_id": "blood_culture_x_2",
+   "catalog_id": "blood_culture_x_2"
+  },
+  {
+   "case_id": "lactate",
+   "catalog_id": "lactate"
+  },
+  {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas"
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas"
+  },
+  {
+   "case_id": "complete_blood_count_cbc",
+   "catalog_id": "complete_blood_count_cbc"
+  },
+  {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7"
+  },
+  {
+   "case_id": "influenza_a_and_b_antigen_test",
+   "catalog_id": "influenza_a_and_b_antigen_test"
+  },
+  {
+   "case_id": "xr_chest",
+   "catalog_id": "xr_chest"
+  },
+  {
+   "case_id": "ultrasound_lung",
+   "catalog_id": "ultrasound_lung"
+  },
+  {
+   "case_id": "ultrasound_cardiac",
+   "catalog_id": "ultrasound_cardiac"
+  },
+  {
+   "case_id": "plasma_procalcitonin",
+   "catalog_id": "plasma_procalcitonin"
+  },
+  {
+   "case_id": "urine_rapid_antigen_test_for_s_pneumoniae",
+   "catalog_id": "urine_rapid_antigen_test_for_s_pneumoniae"
+  },
+  {
+   "case_id": "covid_19_test",
+   "catalog_id": "covid_19_test"
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead"
+  },
+  {
+   "case_id": "fingerstick_blood_sugar",
+   "catalog_id": "fingerstick_blood_sugar"
+  },
+  {
+   "case_id": "troponin_t",
+   "catalog_id": "troponin_t"
+  },
+  {
+   "case_id": "nt_probnp",
+   "catalog_id": "nt_probnp"
+  },
+  {
+   "case_id": "ct_chest",
+   "catalog_id": "ct_chest"
+  },
+  {
+   "case_id": "ct_pulmonary_embolus",
+   "catalog_id": "ct_pulmonary_embolus"
+  },
+  {
+   "case_id": "furosemide_40_mg_iv",
+   "catalog_id": "furosemide_40_mg_iv"
+  },
+  {
+   "case_id": "metoprolol_bolus",
+   "catalog_id": "metoprolol_bolus"
+  },
+  {
+   "case_id": "esmolol_drip",
+   "catalog_id": "esmolol_drip"
+  },
+  {
+   "case_id": "labetalol_bolus",
+   "catalog_id": "labetalol_bolus"
+  },
+  {
+   "case_id": "labetalol_drip",
+   "catalog_id": "labetalol_drip"
+  },
+  {
+   "case_id": "propranolol_bolus",
+   "catalog_id": "propranolol_bolus"
+  },
+  {
+   "case_id": "diltiazem_bolus",
+   "catalog_id": "diltiazem_bolus"
+  },
+  {
+   "case_id": "nitroglycerin",
+   "catalog_id": "nitroglycerin"
+  },
+  {
+   "case_id": "nitroglycerin_sublingual",
+   "catalog_id": "nitroglycerin_sublingual"
+  },
+  {
+   "case_id": "nitroglycerin_drip",
+   "catalog_id": "nitroglycerin_drip"
+  },
+  {
+   "case_id": "na_bicarbonate_bolus",
+   "catalog_id": "na_bicarbonate_bolus"
+  },
+  {
+   "case_id": "na_bicarbonate_infusion",
+   "catalog_id": "na_bicarbonate_infusion"
+  },
+  {
+   "case_id": "acetaminophen",
+   "catalog_id": "acetaminophen"
+  },
+  {
+   "case_id": "albuterol",
+   "catalog_id": "albuterol"
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care"
+  },
+  {
+   "case_id": "consult_pulmonology",
+   "catalog_id": "consult_pulmonology"
+  },
+  {
+   "case_id": "consult_infectious_disease",
+   "catalog_id": "consult_infectious_disease"
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "note": "The catalog has no handoff action.",
+   "unmatched_placement": {
+    "tab": "handoff",
+    "group": "Not in the catalog"
+   },
+   "unmatched_narration": "I'll get the notes together for the ICU."
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway"
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath"
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ"
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm"
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card"
+  },
+  {
+   "case_id": "exam_neck",
+   "catalog_id": "exam_neck"
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin"
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro"
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent"
+  },
+  {
+   "case_id": "exam_msk",
+   "catalog_id": "exam_msk"
+  },
+  {
+   "case_id": "exam_psych",
+   "catalog_id": "exam_psych"
+  }
+ ]
+}

@@ -313,7 +313,7 @@ PATIENT_EYES = {"open", "closed"}
 PATIENT_BUILDS = {"thin", "average", "obese"}
 PATIENT_AGE_GROUPS = {"young", "middle", "older"}
 PATIENT_WOB = {"normal", "increased", "severe"}
-PATIENT_ADDONS = {"gaze_left", "gaze_right", "nystagmus", "nasal_cannula", "nonrebreather", "bipap_mask", "intubated",
+PATIENT_ADDONS = {"gaze_left", "gaze_right", "nystagmus", "nasal_cannula", "high_flow_cannula", "nonrebreather", "bipap_mask", "intubated",
                   "bag_valve_mask", "defib_pads", "central_line", "jaundice", "sweating", "agitation",
                   "hospital_bed", "hospital_bed_flat"}
 PATIENT_VISUAL_KEYS = {"eyes", "seizure", "work_of_breathing", "expression", "addons"}

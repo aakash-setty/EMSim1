@@ -402,7 +402,7 @@ function patientVisual(st){
    and a tube, from the rules or the button, replaces every other device. With no device
    pressed the rules' choice stands, so CHFE's patient still arrives on the EMS cannula.
    Only a press that went through counts: a blocked one never reaches st.takenAt. */
-const AIRWAY=['nasal_cannula','nonrebreather','bipap_mask','bag_valve_mask','intubated'];
+const AIRWAY=['nasal_cannula','high_flow_cannula','nonrebreather','bipap_mask','bag_valve_mask','intubated'];
 function deviceNow(st){
   let best=null, bestAt=0, tube=false;
   for(const id in DEVICE_BY_ID){

@@ -1,0 +1,488 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "tide-01",
+ "note": "End-to-end paths. Steps cost eight seconds each on the runner's clock. The runner ignores effects, prompts, follow-ups and also_satisfies, and asserts the final phase only. TIDE-tests.js folds the real routes through the engine with fractional times and is the authority.",
+ "scenarios": [
+  {
+   "name": "Intended path: high flow, cultures, antibiotics, a bolus, the drift, norepinephrine, ICU and steroid, the failing phase, BiPAP preoxygenation and a tube with the drip running, sedation, film, handoff",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "norepinephrine_drip",
+    "consult_critical_care",
+    "hydrocortisone_bolus",
+    {
+     "wait": 170
+    },
+    "non_invasive_positive_pressure_ventilation",
+    "preoxygenate_for_intubation",
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence",
+    "fentanyl_bolus",
+    "propofol_infusion",
+    "xr_chest",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": ""
+  },
+  {
+   "name": "Same path, stopping in the ventilated phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 185
+    },
+    "non_invasive_positive_pressure_ventilation",
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence"
+   ],
+   "expect_phase": "ventilated",
+   "note": ""
+  },
+  {
+   "name": "The saturation looks fine: never decides to intubate",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 185
+    },
+    {
+     "wait": 155
+    },
+    {
+     "wait": 125
+    }
+   ],
+   "expect_phase": "arrest",
+   "note": ""
+  },
+  {
+   "name": "Never decides to intubate, stopped in the tiring phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 185
+    },
+    {
+     "wait": 155
+    }
+   ],
+   "expect_phase": "tiring",
+   "note": ""
+  },
+  {
+   "name": "Fluid only, no pressor: arrest",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "lactated_ringer_s_1l_bolus",
+    "normal_saline_500ml_bolus",
+    {
+     "wait": 155
+    },
+    {
+     "wait": 155
+    }
+   ],
+   "expect_phase": "arrest",
+   "note": "Covered siblings through the crystalloid group."
+  },
+  {
+   "name": "Fluid only, stopped at worsening shock",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    {
+     "wait": 155
+    }
+   ],
+   "expect_phase": "worsening_shock",
+   "note": ""
+  },
+  {
+   "name": "Left alone: arrest at 480 s",
+   "steps": [
+    {
+     "wait": 185
+    },
+    {
+     "wait": 155
+    },
+    {
+     "wait": 155
+    }
+   ],
+   "expect_phase": "arrest",
+   "note": ""
+  },
+  {
+   "name": "Left alone, stopped at the first low pressure",
+   "steps": [
+    {
+     "wait": 185
+    }
+   ],
+   "expect_phase": "low_pressure",
+   "note": ""
+  },
+  {
+   "name": "Late pressor rescues, then he fails his support",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    {
+     "wait": 155
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 185
+    }
+   ],
+   "expect_phase": "failing_support",
+   "note": ""
+  },
+  {
+   "name": "Pressor without fluid from the first low pressure",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 185
+    },
+    "norepinephrine_drip"
+   ],
+   "expect_phase": "on_pressor",
+   "note": ""
+  },
+  {
+   "name": "Pressor started on arrival, no fluid: the drip holds him at the drop",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "norepinephrine_drip",
+    {
+     "wait": 185
+    }
+   ],
+   "expect_phase": "on_pressor",
+   "note": ""
+  },
+  {
+   "name": "Fluid late, from the first low pressure",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    {
+     "wait": 185
+    },
+    "normal_saline_1l_bolus"
+   ],
+   "expect_phase": "fluid_response",
+   "note": ""
+  },
+  {
+   "name": "Pressor during the fluid response: the drift lands on the pressor",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    "norepinephrine_drip",
+    {
+     "wait": 155
+    }
+   ],
+   "expect_phase": "on_pressor",
+   "note": ""
+  },
+  {
+   "name": "Intubated while the pressure is low again, no drip: collapse",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence"
+   ],
+   "expect_phase": "post_induction_collapse",
+   "note": ""
+  },
+  {
+   "name": "Collapse rescued by a drip",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence",
+    "phenylephrine_bolus",
+    "norepinephrine_drip"
+   ],
+   "expect_phase": "ventilated",
+   "note": ""
+  },
+  {
+   "name": "Collapse with no drip: arrest",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence",
+    {
+     "wait": 125
+    }
+   ],
+   "expect_phase": "arrest",
+   "note": ""
+  },
+  {
+   "name": "Intubated on arrival without a drip: collapse",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence"
+   ],
+   "expect_phase": "post_induction_collapse",
+   "note": ""
+  },
+  {
+   "name": "Early intubation with the drip running skips the failing phase",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "norepinephrine_drip",
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence"
+   ],
+   "expect_phase": "ventilated",
+   "note": ""
+  },
+  {
+   "name": "Mask only: he still reaches the failing phase on the same clock",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "non_rebreather_mask",
+    "ceftriaxone",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 185
+    }
+   ],
+   "expect_phase": "failing_support",
+   "note": ""
+  },
+  {
+   "name": "No antibiotic changes nothing physiological",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 185
+    }
+   ],
+   "expect_phase": "failing_support",
+   "note": "The antibiotic moves no phase (owner B2)."
+  },
+  {
+   "name": "Vasopressin alone counts as the vasopressor",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "vasopressin_drip"
+   ],
+   "expect_phase": "on_pressor",
+   "note": ""
+  },
+  {
+   "name": "Dopamine holds his pressure and is discouraged",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "dopamine_drip"
+   ],
+   "expect_phase": "on_pressor",
+   "note": ""
+  },
+  {
+   "name": "Tube in the tiring phase with the drip running",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "high_flow_nasal_cannula",
+    "blood_culture_x_2",
+    "lactate",
+    "ceftriaxone",
+    "azithromycin",
+    "normal_saline_1l_bolus",
+    {
+     "wait": 155
+    },
+    "norepinephrine_drip",
+    {
+     "wait": 185
+    },
+    {
+     "wait": 155
+    },
+    "etomidate_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence"
+   ],
+   "expect_phase": "ventilated",
+   "note": ""
+  },
+  {
+   "name": "Handoff at once",
+   "steps": [
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": ""
+  }
+ ]
+}

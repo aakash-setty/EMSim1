@@ -791,8 +791,11 @@ alias("non_rebreather_mask", "non rebreather", "nonrebreather", "non rebreather 
 for p in ["oxygen", "o2", "supplemental oxygen", "supplemental o2", "some oxygen", "some o2", "titrate oxygen", "titrate o2", "put on oxygen",
           "put on o2", "oxygen therapy", "oxygen on"]:
     ambiguous(p, "nasal_cannula_oxygen", "non_rebreather_mask")
-for p in ["high flow nasal cannula", "hfnc", "high flow", "high flow oxygen", "high flow o2", "heated high flow", "optiflow", "airvo", "vapotherm"]:
-    unavailable(p, "High-flow nasal cannula is not in the catalog. Nasal cannula and the non-rebreather are.")
+# 4 November 2026: High-Flow Nasal Cannula is in the catalog. These phrases were unavailable before.
+alias("high_flow_nasal_cannula", "high flow nasal cannula", "hfnc", "high flow", "high flow oxygen", "high flow o2",
+      "heated high flow", "optiflow", "airvo", "vapotherm", "high flow nc", "high flow cannula", "high flow nasal oxygen",
+      "hfno", "put on high flow", "start high flow", "high flow at 60", "high flow 60 liters", "60 liters high flow",
+      "sixty liters high flow", "high flow nasal", "heated humidified high flow")
 for p in ["venturi mask", "venti mask", "simple mask", "face mask", "face mask oxygen", "face mask o2"]:
     unavailable(p, "The only oxygen mask in the catalog is the non-rebreather.")
 alias("non_invasive_positive_pressure_ventilation", "bipap", "bi pap", "cpap", "c pap", "niv", "nippv", "nppv", "noninvasive ventilation",

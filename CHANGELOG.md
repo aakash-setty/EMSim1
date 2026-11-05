@@ -5,6 +5,41 @@ is usable with learners.
 
 ---
 
+## New case: TIDE, severe pneumonia with septic shock (5 November 2026, owner's instruction)
+
+New case, `cases/TIDE`, case 9: a 58-year-old man with severe community-acquired pneumonia,
+sepsis with poor perfusion, high flow that fails once his pressure is held, and intubation that
+collapses him unless a vasopressor is running. Built from the owner's pasted structure and his
+answers of 4 November, recorded in `TIDE-SEED.md`. It touches no shared file. Its ECG tracings
+are borrowed from TSS and SCOOT until tracings for it can be drawn. Model-written, not
+physician reviewed.
+
+## High-flow nasal cannula in the catalog (4 November 2026, owner's instruction)
+
+- New catalog entry `high_flow_nasal_cannula`, "High-Flow Nasal Cannula", in Stabilization,
+  Oxygen, between the non-rebreather and NIV. Author-supplied, not from a screenshot. No
+  prerequisite and no default flag, like the other oxygen devices. Added for the severe
+  pneumonia case now being mapped.
+- Expectation credit: it meets the nasal cannula's and the non-rebreather's expectations.
+  High flow and NIV do not credit each other, because they are alternatives and not a ladder.
+- Voice: the high-flow phrases that used to answer "not in the catalog" now order it.
+- Figure: a new airway add-on, `high_flow_cannula` (wide prongs, cheek straps, heated circuit),
+  put on by the button like the other devices. Added to the add-on lists in the engine, the
+  build, the validator and authoring requirements 5.3.
+- `engine/gen_docs.py`: the action index printed the equivalence groups' note strings one
+  character per item. They print as sentences now, which also brings the kit back under budget.
+- All eight packs rebound and tested: every engine suite, scenario set and validator test
+  passes. Nothing here is physician reviewed.
+
+## The case clock moves under the nurse (30 October 2026, owner's instruction)
+
+- Every case: the elapsed time is no longer in the monitor. It sits under the nurse's portrait,
+  smaller ("Elapsed" over the time), and slides down while her portrait is enlarged so it is
+  never covered. Hidden in the end view, where the Return to Home button takes the portrait's
+  place. On a phone the monitor's five cells now sit three over two.
+- The tutorial's screenshots still show the clock in the monitor. Retake them with
+  `Claude outputs/tutorial/caps_tutorial.py` when convenient.
+
 ## How it works: a tutorial (30 October 2026, owner's instruction)
 
 - Revised the same day (owner: "too many words"): eight screens, the mode screen removed and

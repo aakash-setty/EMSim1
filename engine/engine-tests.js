@@ -2027,7 +2027,7 @@ else {
     /* v0.17p. The device follows the button in every case, by catalog id through the bindings. */
     const eff = cid => (PACK.bindings || {})[cid] || cid;
     const dev = (SHARED.patient || {}).deviceActions || {};
-    const airway = ['nasal_cannula', 'nonrebreather', 'bipap_mask', 'bag_valve_mask', 'intubated'];
+    const airway = ['nasal_cannula', 'high_flow_cannula', 'nonrebreather', 'bipap_mask', 'bag_valve_mask', 'intubated'];
     const shown = log => (patientVisual(fold(mk(log), log.length + 2)).value.addons || []).filter(a => airway.includes(a));
     const blocked = log => fold(mk(log), log.length + 2).blocked.length > 0;
     for (const cid in dev) {

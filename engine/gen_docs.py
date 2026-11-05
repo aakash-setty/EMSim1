@@ -219,6 +219,8 @@ def action_index():
     cat = load_json(os.path.join(ROOT, "catalog", "action-catalog.json"))
     groups = {}
     for gname, members in (cat.get("equivalence_groups") or {}).items():
+        if isinstance(members, str):
+            continue
         ids = members.get("members", members) if isinstance(members, dict) else members
         for m in ids:
             groups[m] = gname
@@ -249,6 +251,11 @@ def action_index():
     if cat.get("equivalence_groups"):
         out.append("\n## Equivalence groups\n\nBind a case action to a group with `also_covers_group` so a tag covers every member (authoring 2.5).\n\n")
         for gname, members in cat["equivalence_groups"].items():
+            if isinstance(members, str):
+                # A "_note" key holds prose, not members. Printed whole (4 November 2026):
+                # it was being spelled out one character per item.
+                out.append(f"- {members}\n")
+                continue
             ids = members.get("members", members) if isinstance(members, dict) else members
             out.append(f"- `{gname}`: " + ", ".join(f"`{m}`" for m in ids) + "\n")
     return "".join(out)

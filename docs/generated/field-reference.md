@@ -219,6 +219,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `interview.authoring_notes.facts` | generic | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.facts_not_used` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.interview_during_niv` | none | never |  | Reviewer note. Nothing reads it |
+| `interview.authoring_notes.model_added` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.near_the_10_4_line` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.no_global_rule` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.pertinent_negatives` | none | never |  | Reviewer note. Nothing reads it |
@@ -295,9 +296,11 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `patient.arrival_handover` | engine+validator+tools | history | 2.3 | The two sentences the learner reads at the top of the History tab. The only history given without asking |
 | `patient.arrival_handover_authoring_note` | none | never |  | Reviewer note. Nothing reads it |
 | `patient.avatar.<key>` | generic | figure | 5.3 | One avataaars option. Unknown keys and values fall back with no error |
+| `patient.avatar_note` | none | never |  | Reviewer note. Nothing reads it |
 | `patient.background` | generic | never | 2.3 | Not shown. The interview answers are built from it; the review packet quotes it |
 | `patient.ems_handover_text` | tools | never | 2.3 | The full handover for the reviewer. Not shown; arrival_handover is |
 | `patient.handover_authoring_note` | none | never |  | Reviewer note. Nothing reads it |
+| `patient.predicted_body_weight_note` | none | never |  | Reviewer note. Nothing reads it |
 | `patient.presenting_appearance` | tools | never | 2.3 | For the seed. Nothing reads it; patient_visual and the phase appearance draw the figure |
 | `patient.presenting_vitals_source` | none | never | 2.3 | Reviewer note |
 | `patient.sex` | generic | history+list+figure | 2.3 | History line, case list, figure base, and pronouns in shared nurse strings |
@@ -310,8 +313,10 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `phase_notes.engine_limitation_on_state_4` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.no_clock` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.no_halted_phase` | none | never |  | Reviewer note. Nothing reads it |
+| `phase_notes.no_time_jump` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.order_is_carried_by_phases` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.rate_control_delay` | none | never |  | Reviewer note. Nothing reads it |
+| `phase_notes.severe_shock_flag` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.the_cardiologist` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.the_deterioration_path` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.the_intended_path_goes_through_hypotension` | none | never |  | Reviewer note. Nothing reads it |
@@ -411,5 +416,8 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `tag_vocabulary.note` | generic | never |  | Reviewer note. Nothing reads it |
 | `tag_vocabulary.values` | engine+build+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `tag_vocabulary.values_used_by_this_case` | none | never |  | Reviewer note. Nothing reads it |
+| `ventilation.note` | generic | never |  | Reviewer note. Nothing reads it |
+| `ventilation.respiratory_rate` | engine+build+validator+tools | monitor | 8.5 | {when, respiratory_rate}. Default: flag intubated set, 16 |
+| `ventilation.when` | generic | monitor | 8.5 | {when, respiratory_rate}. Default: flag intubated set, 16 |
 
-389 fields across 8 packs, as of the last generation.
+397 fields across 9 packs, as of the last generation.

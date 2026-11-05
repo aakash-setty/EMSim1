@@ -487,14 +487,15 @@ shared["patient"] = {
     "always": ["hospital_bed"],
     "eyes": ["open", "closed"],
     "work_of_breathing": ["normal", "increased", "severe"],
-    "addons": ["gaze_left", "gaze_right", "nystagmus", "nasal_cannula", "nonrebreather", "bipap_mask", "intubated",
+    "addons": ["gaze_left", "gaze_right", "nystagmus", "nasal_cannula", "high_flow_cannula", "nonrebreather", "bipap_mask", "intubated",
                "bag_valve_mask", "defib_pads", "central_line", "jaundice", "sweating", "agitation",
                "hospital_bed", "hospital_bed_flat"],
     "visualDefault": {"eyes": "open", "seizure": False, "work_of_breathing": "normal"},
     # v0.17p. The airway add-on each catalog entry puts on the figure. The engine resolves the
     # case id through the pack's bindings, and the last one pressed replaces any airway the
     # case's rules drew; intubation replaces every other device.
-    "deviceActions": {"nasal_cannula_oxygen": "nasal_cannula", "non_rebreather_mask": "nonrebreather",
+    "deviceActions": {"nasal_cannula_oxygen": "nasal_cannula", "high_flow_nasal_cannula": "high_flow_cannula",
+                      "non_rebreather_mask": "nonrebreather",
                       "non_invasive_positive_pressure_ventilation": "bipap_mask",
                       "bag_valve_mask": "bag_valve_mask", "intubate_rapid_sequence": "intubated"},
     # 11 October 2026. Things put on the patient that stay on once placed and replace

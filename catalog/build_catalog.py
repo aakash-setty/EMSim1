@@ -107,7 +107,9 @@ for d in STAB_TOP:
 # about whether attaching the monitor was the right thing to do.
 
 STAB = {
-    "Oxygen": ["Nasal Cannula Oxygen", "Non-Rebreather Mask",
+    # High-Flow Nasal Cannula: author-supplied, not in screenshots (owner, 4 November 2026,
+    # for the severe pneumonia case). Sets no default flag, like the other oxygen devices.
+    "Oxygen": ["Nasal Cannula Oxygen", "Non-Rebreather Mask", "High-Flow Nasal Cannula",
                "Non-Invasive Positive Pressure Ventilation", "Bag Valve Mask"],
     # Volume and agent are both explicit. A generic "crystalloid bolus" hid the
     # choice a resident actually makes, and it also made a harmful tag easy to
@@ -168,6 +170,10 @@ for group, items in STAB.items():
             kw.update(flags_set_default=[sid(d)], repeatable=True,
                       narration_template="{name} are in place.")
         add(d, "stabilization", group, **kw)
+
+for e in ENTRIES:
+    if e["id"] == "high_flow_nasal_cannula":
+        e["source"] = "author-supplied, not in screenshots (4 November 2026)"
 
 # add flags to top-level stabilization entries that need them
 for e in ENTRIES:
@@ -766,6 +772,11 @@ CATALOG = {
         "case. Not transcribed from any screenshot; carries source=author-supplied. It is "
         "an intravenous push and is not in NON_IV, so it inherits the vascular-access "
         "prerequisite like every other intravenous drug.",
+        "High-Flow Nasal Cannula added to the Oxygen group on author instruction (4 November "
+        "2026) for the severe pneumonia case. Not from a screenshot; carries "
+        "source=author-supplied. No prerequisite and no default flag, like the other oxygen "
+        "devices. It meets the expectations of the nasal cannula and the non-rebreather "
+        "(expectation-credit.json). NIV and HFNC do not credit each other.",
         "Skin Biopsy of the Rash removed on author instruction (11 October 2026): not used in "
         "this simulator. MGCA and TSS no longer reference it.",
         "v0.26 layout on author instruction (11 October 2026), placement only: airway, "

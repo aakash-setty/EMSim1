@@ -1,0 +1,403 @@
+{
+ "case_prefix": "TIDE",
+ "status": "HELD OUT. This set is quoted, never tuned against. Nothing here may appear in a variant bank or an out-of-scope bank.",
+ "authoring_note": "Written by a language model on 4 November 2026, before the first build, in a terser register than the variant bank. The same model wrote the bank, which section 8.6 warns against. The expected topic on each row is a drafting judgment. Some null questions may be covered by the shared out-of-scope bank (travel abroad is close to the travel topic, and is expected to match it).",
+ "management_changing": [
+  "onset",
+  "cough_sputum",
+  "fever_and_chills",
+  "chest_pain",
+  "past_medical_history",
+  "current_medications",
+  "allergies",
+  "recent_antibiotics_healthcare",
+  "code_status"
+ ],
+ "questions": [
+  {
+   "register": "paraphrase",
+   "q": "How long has he been unwell?",
+   "expect": "onset"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Since when has he had the fever?",
+   "expect": "onset"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did this come on over days or all at once?",
+   "expect": "timing_progression"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is the breathing worse than yesterday?",
+   "expect": "timing_progression"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What's he coughing up?",
+   "expect": "cough_sputum"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is the cough bringing anything up?",
+   "expect": "cough_sputum"
+  },
+  {
+   "register": "paraphrase",
+   "q": "sputum color?",
+   "expect": "cough_sputum"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any blood when he coughs?",
+   "expect": "hemoptysis"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does it hurt when he takes a deep breath?",
+   "expect": "chest_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Where's the chest pain?",
+   "expect": "chest_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How long has he been this breathless?",
+   "expect": "breathing"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Can he talk in full sentences normally?",
+   "expect": "breathing"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he been running a temperature?",
+   "expect": "fever_and_chills"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any rigors?",
+   "expect": "fever_and_chills"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is he more muddled than usual?",
+   "expect": "confusion"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did he faint at all?",
+   "expect": "dizziness_syncope"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is he peeing much?",
+   "expect": "urine_output"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he vomited?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any stomach ache?",
+   "expect": "abdominal_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any loose bowel movements?",
+   "expect": "diarrhea"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Got a headache?",
+   "expect": "headache"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any swelling in his ankles?",
+   "expect": "leg_swelling"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does he get breathless when he lies down?",
+   "expect": "orthopnea"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has his heart been pounding?",
+   "expect": "palpitations"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does he have any lung problems like emphysema?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "pmhx?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he ever had surgery?",
+   "expect": "past_surgical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What tablets is he on?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is he taking prednisone?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has penicillin ever given him a reaction?",
+   "expect": "allergies"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any recent hospital stays or antibiotics?",
+   "expect": "recent_antibiotics_healthcare"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he ever grown MRSA?",
+   "expect": "recent_antibiotics_healthcare"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does he have oxygen at home?",
+   "expect": "home_oxygen"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How many packs a day?",
+   "expect": "social_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does he drink alcohol?",
+   "expect": "social_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he had the flu jab?",
+   "expect": "vaccinations"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Anyone else at home coughing?",
+   "expect": "sick_contacts"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Been on a cruise or in a hotel?",
+   "expect": "travel_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any heart attacks in the family?",
+   "expect": "family_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is he normally active?",
+   "expect": "functional_baseline"
+  },
+  {
+   "register": "paraphrase",
+   "q": "When did he last eat something?",
+   "expect": "last_oral_intake"
+  },
+  {
+   "register": "paraphrase",
+   "q": "If he needs a breathing tube, would he want it?",
+   "expect": "code_status"
+  },
+  {
+   "register": "paraphrase",
+   "q": "If his heart stopped, would he want CPR?",
+   "expect": "code_status"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does he check his blood sugars?",
+   "expect": "diabetes_control"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What's brought you in today?",
+   "expect": "presenting_story"
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any problems with his hearing?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Has he ever had a colonoscopy?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he wear glasses?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any rash anywhere?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any kidney stones?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Has he had a tetanus shot?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Who is his primary care doctor?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he have pets?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any joint pains?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Has he lost weight?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any trouble swallowing?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any blood in his urine?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any numbness or tingling?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any seizures?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Has he ever had a stroke?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any heartburn?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he snore?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any problems with his memory before this?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any mood problems?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he have a pharmacy he uses?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Is he on any supplements like fish oil?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any trouble with his prostate?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any nosebleeds?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "When did he last see a dentist?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he have any tattoos?",
+   "expect": null
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he ever been abroad?",
+   "expect": "travel_history"
+  },
+  {
+   "register": "out_of_scope",
+   "q": "What's his favorite food?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any ringing in his ears?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any back pain?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any eye problems?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any hair loss?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Any lumps anywhere?",
+   "expect": null
+  }
+ ]
+}
