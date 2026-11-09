@@ -514,17 +514,9 @@ The Summary prints one score per category and the arithmetic beside it. **Engine
 
 ### 10.5 The case discussion
 
-The left column of the revealed debrief. **Engine.** `cases/<PREFIX>/<PREFIX>-discussion.html`, read at build time, with no scripts and no `on*` attributes. Markers are stripped as in 10.3. Generate it from a script in `Claude outputs/` and edit the script, not the HTML. AFRVR and TSS are the models (`Claude outputs/dbv2/afrvr_discussion_v2.py`, `dbv3/tss_discussion_v1.py`).
+The left column of the revealed debrief. **Engine.** `cases/<PREFIX>/<PREFIX>-discussion.html`, read at build time, with no scripts and no `on*` attributes. Markers are stripped as in 10.3, so every note in square brackets starts with one of its four words. The debrief styles `cd-goals`, `cd-home`, `cd-fig`, `cd-svg` and `cd-refs`, and `cd-key`, `cd-point` and `cd-table` in older packs. Generate the file from a script in `Claude outputs/` and edit the script, not the HTML.
 
-**Default, the form the owner settled on (23 and 28 October 2026)**, for a reader short on attention:
-
-- A learning-goals box of up to six short lines, then "The patient" with one bold line and three or four sentences.
-- Four to seven numbered sections. Each opens with one bold line (`p.cd-key`) and then short bullets that lead with a bold phrase. A reader who reads only the bold lines gets the case.
-- Three or four figures. Each has its point in bold above it (`p.cd-point`), few elements, labels of 14 to 16 px, and numbers taken from the case's own phases and results. Say in the caption when a number is illustrative.
-- A "Traps" list, then the references folded away (`details.cd-refs`).
-- About 3,000 px tall at 620 px wide.
-
-**Truth.** The discussion agrees with the case's own debrief notes (the antibiotic regimen, which treatments score). A definition is read in its source, not recalled. Mark anything unchecked `[UNVERIFIED]` and list it for sign-off. Render it after ending a case and look at every figure before handing over.
+**Form, figures, voice and checks.** `docs/case-discussion-guide.md`, with a prompt to start from. Read it when you write the discussion, after the case passes its tests. TSS is the model (`Claude outputs/tss-discussion/tss_discussion_v2.py`). AFRVR uses an earlier form.
 
 ---
 
@@ -896,7 +888,7 @@ The third is "do it again after". Author a case action whose only job is to be t
 {"kind": "image", "abnormal": true, "image": "diph-ecg-arrival", "caption": "Twelve-lead ECG"}
 ```
 
-**Engine.** The file lives in `media/` inside the pack, named for the id, as `.jpg`, `.jpeg`, `.png`, `.webp` or `.gif`. Every file in `media/` is inlined into the build whether or not a payload names it, so put a file there when the case shows it and not before, resized and recompressed. An image payload carries no `report` text or `components`. A missing `caption` warns. The image opens full size the moment it results and the clock keeps running.
+**Engine.** The file lives in `media/` inside the pack, named for the id, as `.jpg`, `.jpeg`, `.png`, `.webp` or `.gif`. Every file in `media/` is inlined into the build whether or not a payload names it, so put a file there when the case shows it and not before, resized and recompressed. An image payload carries no `report` text or `components`. A missing `caption` warns. It lands in the chart as a thumbnail and opens full size when clicked. The clock keeps running.
 
 - **Truth. A caption is a caption, not a reading.** "Twelve-lead ECG", or the machine measurements a real tracing prints, which a learner would have at the bedside. "Wide-complex tachycardia with a terminal R in aVR" is the answer.
 - **Truth.** Nothing in the tool chain can see what an image shows. It is the only authored content whose correctness rests entirely on a person having looked at it. Before using one, write down: that the picture matches the phase, that no number the case needs the learner to read has been lost from the interface (if so, it belongs in the caption), and that some studies showing themselves in text while others do not is a choice you can defend.

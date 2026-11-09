@@ -1445,7 +1445,7 @@ body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-fl
   background:var(--solid); border:1px solid color-mix(in srgb,var(--cat) 25%,transparent); padding:2px 9px; border-radius:999px}
 .wl-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px}
 .wl-case{position:relative; display:flex; flex-direction:column; gap:9px; width:100%; text-align:left;
-  padding:11px 13px 10px; border-radius:14px; border:1px solid var(--rule2); border-top:3px solid var(--rule);
+  padding:13px 13px 10px; border-radius:14px; border:1px solid var(--rule2);
   background:var(--solid); cursor:pointer; font:inherit; color:inherit;
   box-shadow:0 10px 24px -22px var(--shadow);
   transition:transform .16s var(--ease), box-shadow .16s ease, border-color .16s ease}
@@ -1453,9 +1453,6 @@ body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-fl
 .wl-case:active{transform:translateY(0)}
 .wl-case.sel{border-color:var(--act); box-shadow:0 0 0 3px var(--actl)}
 .wl-case:focus-visible{outline:2px solid var(--act); outline-offset:2px}
-.wl-case.t-tried{border-top-color:var(--warn)}
-.wl-case.t-passed{border-top-color:var(--act)}
-.wl-case.t-mastered{border-top-color:var(--ok)}
 .wl-case.loading{opacity:.55; pointer-events:none}
 .dc-head{display:flex; align-items:center; gap:8px; min-height:14px}
 .dc-head .wl-no{font-family:var(--mono); font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink3)}
@@ -1506,6 +1503,30 @@ body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-fl
 .dc-go{margin-left:auto; display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600;
   color:var(--act); background:var(--actl); padding:4px 10px; border-radius:999px; white-space:nowrap}
 .dc-go .ic{width:10px; height:10px}
+/* Not started against begun (author instruction, 9 November 2026). An unopened case is a
+   clean card with a dashed empty mark where the score ring will sit and a plain "Start". A
+   case you have worked on gets a footer tinted in its tier colour that runs to the card's
+   edges, like a chart that has been written in. No card has a colour band across its top
+   (same day). */
+/* The footer sits on the card's bottom edge, so a tinted one meets the corners in a tall row. */
+.wl-case .dc-foot{margin-top:auto}
+.dc-mark{flex:none; width:24px; height:24px; margin:4px; border-radius:50%;
+  border:1.5px dashed color-mix(in srgb,var(--ink3) 60%,transparent)}
+.dc-new .dc-st b{color:var(--ink3); font-weight:500}
+.dc-start{margin-left:auto; display:inline-flex; align-items:center; gap:3px; font-size:12px; font-weight:600;
+  color:var(--ink2); transition:color .16s ease}
+.dc-start .ic{width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round;
+  stroke-linejoin:round; transition:transform .16s var(--ease)}
+.wl-case.t-new:hover .dc-start,.wl-case.t-new.sel .dc-start{color:var(--act)}
+.wl-case.t-new:hover .dc-start .ic{transform:translateX(2px)}
+.wl-case.t-first{--tier:var(--act)}
+.t-first .dc-st b{color:var(--act)}
+.wl-case.t-tried{--tier:var(--warn)} .wl-case.t-passed{--tier:var(--act)} .wl-case.t-mastered{--tier:var(--ok)}
+.wl-case.t-tried .dc-foot,.wl-case.t-passed .dc-foot,.wl-case.t-mastered .dc-foot,.wl-case.t-first .dc-foot{
+  margin:auto -13px -10px; padding:8px 13px 9px; border-radius:0 0 13px 13px;
+  background:color-mix(in srgb,var(--tier) 8%,var(--solid));
+  border-top:1px solid color-mix(in srgb,var(--tier) 24%,transparent)}
+@media (prefers-reduced-motion:reduce){.dc-start .ic{transition:none}}
 .wl-empty{grid-column:1/-1; padding:30px 4px; color:var(--ink3); font-size:13.5px}
 .wl-empty b{display:block; color:var(--ink2); font-weight:600; font-size:14px; margin-bottom:4px}
 
@@ -2458,6 +2479,8 @@ details.catfold[open] .dbfold-arrow{transform:rotate(180deg)}
 .cdisc li{margin:0 0 4px}
 .cdisc .cd-goals{background:var(--actl);border:1px solid var(--actb);border-radius:5px;padding:4px 16px 8px;margin:4px 0 6px}
 .cdisc .cd-goals h3{margin-top:12px;color:var(--act)}
+.cdisc .cd-home{background:var(--okl);border:1px solid var(--ok);border-left-width:4px;border-radius:5px;padding:4px 16px 8px;margin:18px 0 6px}
+.cdisc .cd-home h3{margin-top:12px;color:var(--ok)}
 .cd-fig{margin:14px 0 16px;padding:12px 12px 10px;background:#FBFCFD;border:1px solid var(--rule2);border-radius:5px}
 .cd-svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto;font-family:var(--sans)}
 .cd-fig figcaption{font-size:12.5px;color:var(--ink2);margin-top:8px;line-height:1.45}
@@ -2470,6 +2493,8 @@ details.catfold[open] .dbfold-arrow{transform:rotate(180deg)}
    for a short attention span, the point readable before the drawing). */
 .cdisc .cd-key{font-weight:600;font-size:15.5px;line-height:1.45;margin:0 0 8px}
 .cd-point{font-weight:700;font-size:16.5px;line-height:1.35;color:var(--ink);margin:2px 0 12px}
+/* Discussion v2 (5 November 2026): a small label over Why and In this case, and the
+   one-line takeaway that closes each section. */
 .cdisc details.cd-refs{padding-top:12px}
 .cdisc details.cd-refs summary{cursor:pointer;font-weight:600;color:var(--ink2)}
 .cdisc ul li b{color:var(--ink)}

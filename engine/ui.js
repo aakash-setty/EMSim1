@@ -4297,7 +4297,12 @@ const CTVIEW=(function(){
    Two studies landing together queue rather than race, and nothing opens while the case is
    over, paused, or asking whether to leave. */
 let IMG_SEEN=new Set(), IMG_QUEUE=[];
+/* 9 November 2026, owner's instruction: a picture no longer opens itself. It lands in the
+   chart as a thumbnail and opens when the resident clicks it there. The queue is kept, off,
+   so the behaviour can come back with one line. */
+const AUTO_OPEN_IMAGES=false;
 function autoOpenImages(){
+  if(!AUTO_OPEN_IMAGES) return;
   if(!ST||ENDED||PAUSED||LEAVING) return;
   if(!el('leaveview').classList.contains('hidden')) return;
   Object.keys(ST.orders).forEach(id=>ST.orders[id].forEach(rec=>{

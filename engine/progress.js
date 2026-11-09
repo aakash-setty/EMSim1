@@ -410,7 +410,29 @@ const PROGRESS = (function(){
   function cardInfo(prefix){
     if(!on()||listState!=='ready') return {cls:'', html:'', aria:''};
     const D=derive(), p=D.per[prefix]; if(!p) return {cls:'', html:'', aria:''};
+    return cardParts(p);
+  }
+  /* The card's footer from one case's derived record (split out on 9 November 2026 so the
+     site check can draw every state without a signed-in history).
+     Not started is drawn as an untouched card: an empty dashed mark where
+     the score ring will be, and a plain "Start" (author instruction, 9 November 2026: the
+     empty grey ring read as a score of nought). Every other tier gets a
+     tinted footer, so a case you have worked on looks written in. */
+  function cardParts(p){
     const T=TIERS[p.tier];
+    if(p.tier==='new'&&!p.open){
+      return {cls:' t-new', aria:T.label+'.',
+        html:`<span class="dc-foot dc-new"><span class="dc-mark" aria-hidden="true"></span>
+          <span class="dc-st"><b>${T.label}</b></span>
+          <span class="dc-start">Start<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></span></span>`};
+    }
+    /* Opened and left, never finished: begun, so it is drawn as begun, not as not started. */
+    if(p.tier==='new'){
+      return {cls:' t-open t-first', aria:'In progress at '+mmssP(p.open.sim_seconds)+'. Not yet finished.',
+        html:`<span class="dc-foot"><span class="dc-ring">${ringSvg(0,14,3.5,'dc-svg')}</span>
+          <span class="dc-st"><b>In progress</b></span>
+          <span class="dc-go">${icon('play','ic')}Resume · ${escP(mmssP(p.open.sim_seconds))}</span></span>`};
+    }
     const sub=[p.best!==null?'Best '+p.best+'%':'', p.attempts?plural(p.attempts,'attempt'):''].filter(Boolean).join(' · ');
     const html=`<span class="dc-foot">
         <span class="dc-ring">${ringSvg(p.best!==null?p.best/100:0,14,3.5,'dc-svg')}${p.tier==='mastered'?icon('star','dc-star'):''}</span>
@@ -815,7 +837,7 @@ const PROGRESS = (function(){
   }
 
   return {init, onSession, refresh, touch, start, detach, finish, flush, kept, onSplash, rowBadge, cardInfo,
-          active:()=>on()&&!!cur&&!cur.gone, enabled:on, modalOpen:()=>!!modal,
+          _card:cardParts, active:()=>on()&&!!cur&&!cur.gone, enabled:on, modalOpen:()=>!!modal,
           /* for the site check */ _state:()=>({uid, listState, runs:runs.length, cur:cur&&{...cur}, dirty, saveFailed, tab, feedback}),
           _derive:()=>derive()};
 })();

@@ -5,6 +5,141 @@ is usable with learners.
 
 ---
 
+## No colour band on the cards, and pictures open only when clicked (9 November 2026, owner's instruction)
+
+- The case cards lose the colour band across their top, for every state. The tinted footer alone marks a case you have worked on. `engine/shell.html`.
+- An ECG, film or CT no longer opens full size the moment it results. It lands in the chart as a thumbnail ("Click to open") and opens when clicked. `AUTO_OPEN_IMAGES=false` in `engine/ui.js`, with the queue kept so it can return with one line. Authoring (images) and system design updated. Checked in a browser on TSS: the ECG resulted with the viewer closed, one thumbnail in the chart, and the click opened it.
+- Backup in `Claude outputs/card-band-images/backup-before/`.
+
+## Case cards: not started looks untouched, begun looks written in (9 November 2026, owner's instruction)
+
+- Not started: no colour band, a dashed empty mark where the score ring will be, "Not started" in grey and a plain "Start" that turns blue on hover. The empty grey ring read as a score of nought.
+- Attempted, passed and mastered keep their top band and gain a tinted footer that runs to the card's edges, in the tier colour.
+- A run opened and never finished now shows "In progress" with Resume and the band in blue. Before, it said "Not started" beside an In progress pill.
+- `engine/progress.js`: the footer is built by `cardParts(p)`, exported as `PROGRESS._card` so a check can draw every state without a signed-in history. CSS in `engine/shell.html` beside the card styles. Day and night checked in a browser. Backup in `Claude outputs/card-states/backup-before/`.
+
+## TIDE discussion rewritten to the guide (5 November 2026, owner's instruction)
+
+- Owner: "fix TIDE as needed per the guide now".
+- TIDE discussion v6 (`Claude outputs/tide-discussion/tide_discussion_v6.py`). Every bullet now
+  teaches a definition, threshold, rule or pitfall instead of reporting what the case did: shunt
+  and why oxygen helps it less, the severe pneumonia criteria, the definition of shock, lactate
+  thresholds, fluid dosing in obesity, hydrocortisone, Winter's formula, the ROX thresholds,
+  delayed intubation, the shock index before intubation, and BiPAP preoxygenation. Take home
+  gains the antibiotic line. Numbers are now read from `TIDE-case.json` and `case_3_content.py`
+  and asserted (the first lactate match was a later phase, and the assert caught it).
+- Facts checked against sources on 5 November 2026: Heffner 2012 reports a shock index of 0.8
+  or more (retrospective). Roca 2019 gives 2.85, 3.47 and 3.85 at 2, 6 and 12 hours. PREOXI was
+  randomized, 9.1% against 18.5%. All read through abstracts or excerpts and marked UNVERIFIED.
+- `docs/case-discussion-guide.md`: do not carry teaching points about the simulator into the
+  discussion. Every evidence statement ends in what to do. Bullets may be one or two sentences.
+- 3,967 px, over the guide's 3,600. Model-written. Not reviewed by a physician.
+- Backups in `Claude outputs/tide-discussion/backup-before-v6/`. TIDE passes. kit_check 0 errors.
+
+## TSS discussion teaches the definition of shock, and the guide says teach, do not narrate (5 November 2026, owner's instruction)
+
+- Owner: one teaching point should be the definition of shock, and the bullets focused too much
+  on the case's states instead of teaching.
+- TSS discussion v2 (`Claude outputs/tss-discussion/tss_discussion_v2.py`). Section 2 is now
+  "What shock is": oxygen delivery against oxygen use, shock below the critical point, and no
+  blood pressure in the definition (ESICM 2014). Septic shock under Sepsis-3 is named as the
+  one form that needs low pressure. Bullets in every section rewritten to teach a definition,
+  mechanism, threshold, rule or pitfall. Take-home line 1 no longer states signs as shock.
+- `docs/case-discussion-guide.md`: new sections "Teach, do not narrate" (with before and after
+  examples) and "Precision". TSS is now the model. The prompt asks for the points each section
+  teaches. Authoring 10.5 pointer updated.
+- Model-written. Not reviewed by a physician. Backups in `Claude outputs/tss-discussion/backup-before-v2/`.
+- Tests: TSS passes. kit_check 0 errors (64,668).
+
+## TSS case discussion rebuilt in the new form (5 November 2026, owner's instruction)
+
+- Owner: "please rebuild the TSS case discussion". Built from `docs/case-discussion-guide.md`
+  with `Claude outputs/tss-discussion/tss_discussion_v1.py`, which reads its numbers from
+  `TSS-case.json` and `case_3_content.py` and asserts them.
+- "The case" with the right care in four steps and the traps, the six goals, then four sections:
+  what the toxin does (a usual antigen against a superantigen switching on up to one in five
+  T cells), a young patient hides shock (young against older pressure, with the heart rate),
+  where each treatment acts (source and clindamycin at the start of the chain, fluid and
+  norepinephrine at the end), and what fluid can do. Take-home box. 3,232 px, down from the
+  six-section version.
+- Authoring 10.5 notes that TSS follows the TIDE model.
+- Model-written. Not reviewed by a physician. The superantigen figure (up to 20% of T cells,
+  EMBO J 2007) was read only through a search excerpt and is marked UNVERIFIED.
+- Backup of the old discussion in `Claude outputs/tss-discussion/backup-before/`. TSS passes.
+  kit_check 0 errors.
+
+## Take-home box, and a guide for writing case discussions (5 November 2026, owner's instruction)
+
+- Owner: put the take-home lines in a highlighted box, and work out a good prompt for writing
+  a discussion for a new case.
+- `engine/shell.html`: new `.cd-home`, a green box with a heavier left border, day and night.
+  TIDE wraps "Take home" in it. Figure 4's caption now starts "Schematic." like the rest.
+- New `docs/case-discussion-guide.md`: what a discussion is for, the form, which figures worked
+  and which the owner rejected, the voice rules, the truth rules (markers must start with one of
+  the four stripped words), the checks, and a starter prompt with a plan step before anything is
+  drawn. It is read only when writing a discussion and is not in the reading kit.
+- Authoring 10.5 cut to the engine rules and a pointer to the guide. Kit 64,965 to 64,670.
+- Model-written. Not reviewed by a physician. Backups in `Claude outputs/discussion-v5b/backup-before/`.
+- Tests: all nine packs pass. kit_check 0 errors.
+
+## Case discussions open with the case and its treatment (5 November 2026, owner's fourth note)
+
+- Owner: start with a brief explanation of the case and the correct treatment, make the first
+  diagram about the pathology, and let the rest follow the learning goals.
+- TIDE discussion v5 (`Claude outputs/tide-discussion/tide_discussion_v5.py`). "The case": what
+  happens, the correct treatment in three numbered steps from the case's intended path, and the
+  traps. Then the goals box. Section 1 is new, "What pneumonia does to him": an open air sac
+  against one filled with pus, and the chain from pneumonia to low pressure. Sections 2 to 5 are
+  the v4 sections. 3,502 px.
+- Authoring 10.5 updated for this order. Model-written. Not reviewed by a physician.
+- Backups in `Claude outputs/discussion-v5/backup-before/`. TIDE passes. kit_check 0 errors, 64,965 of 65,000.
+
+## Case discussions: diagrams that show why, short text (5 November 2026, owner's third note)
+
+- Owner: diagrams 1 and 3 "don't feel insightful", and the text under each is too big a paragraph.
+- TIDE discussion v4 (`Claude outputs/tide-discussion/tide_discussion_v4.py`). Diagram 1 now
+  shows heart rate rising as vessel tone falls, so the pressure holds, then falls. Diagram 3
+  shows two patients with the same saturation at very different cost in oxygen and effort.
+- Under each diagram: one or two sentences, then short bullets in this patient. 2,760 px.
+- Authoring 10.5 says so: the figure shows why, not a trend, and about 70 words per section.
+- Model-written. Not reviewed by a physician. Backups in `Claude outputs/discussion-v4/backup-before/`.
+- Tests: TIDE passes (the only pack touched). kit_check 0 errors.
+
+## Case discussions: a few big ideas, drawn once (5 November 2026, owner's second note)
+
+- Owner, on the first rewrite: "way too much information", the diagrams "are not illustrative
+  of major big picture concepts", and the text "sounds very AI-like". The diagrams should
+  describe concepts and the text below should talk about them in context of the case.
+- Authoring 10.5 rewritten again: three or four sections, each a schematic of a general idea
+  (no case numbers on it) and one plain paragraph in this patient. A voice rule bans bold
+  lead-ins, Why and Takeaway labels, slogans, "X, not Y" lines and triplets. About 2,500 to
+  3,000 px. The section is shorter than before.
+- TIDE discussion v3 (`Claude outputs/tide-discussion/tide_discussion_v3.py`): compensated
+  shock, fluid against norepinephrine, effort against capacity with a late saturation drop,
+  and what intubation takes away. 2,739 px, down from about 4,960.
+- Found while rendering: notes in square brackets that start with an author name are shown
+  to the learner. Only UNVERIFIED, PubMed, VERIFY and MODEL OUTPUT are stripped. All notes
+  now start with UNVERIFIED, and the script refuses any other.
+- `engine/shell.html`: removed `.cd-lab` and `.cd-take`, added earlier today, now unused.
+- Model-written. Not reviewed by a physician. Backups in `Claude outputs/discussion-v3/backup-before/`.
+- Tests: all nine packs pass. kit_check 0 errors.
+
+## Case discussions teach the fundamentals (5 November 2026, owner's instruction)
+
+- Owner: the discussion "is not insightful enough. It should focus on the learning goals and
+  talk about fundamentals that are critical + big takeaways." Authoring 10.5 rewritten: one
+  section per learning goal, each with a big idea, Why (mechanism, definition, decision rule,
+  threshold), In this case (the case's own numbers) and a one-line takeaway, then Big
+  takeaways. An insight test for every bullet. Effect sizes read in their source, with the
+  kind of evidence named. About 4,000 to 5,000 px, up from 3,000, to make room for the why.
+- TIDE's discussion rewritten in that form (`Claude outputs/tide-discussion/tide_discussion_v2.py`).
+  New figure: on high flow his saturation fell 4 points while his P/F ratio halved and his CO2
+  rose past what Winter's formula predicts for his bicarbonate. Kumar 2006 and Heffner 2012
+  were checked against their abstracts. The rest is marked for sign-off. Model-written, not
+  physician reviewed.
+- `engine/shell.html`: two discussion styles, `p.cd-lab` (the small Why and In this case label)
+  and `p.cd-take` (the takeaway). AFRVR and TSS keep the earlier form until rewritten.
+
 ## TIDE: a quiet start, and silent moves (5 November 2026, owner's instruction)
 
 - TIDE opens with a new two-minute phase, `arrival`, identical to `presentation`. In the

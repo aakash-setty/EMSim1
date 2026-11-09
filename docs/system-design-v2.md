@@ -490,7 +490,7 @@ outside it, or on Escape.
 `series`, a CT stack in the pack's media as `<stem>.series.json` and `<stem>.series.gz`
 (authoring 23). The build carries it on the pack as `series`, the engine passes it to
 `PROTO.series`, and nothing in the fold reads it: the result is still the image payload, it
-still freezes at order and still auto-opens on arrival. What changes is the viewer. Opening a
+still freezes at order, and it opens only when its thumbnail is clicked (9 November 2026, it no longer opens on arrival). What changes is the viewer. Opening a
 thumbnail whose payload names a series opens the CT viewer (`CTVIEW` in ui.js), which decodes
 the voxels once per page with `DecompressionStream`, draws one slice at a time through a
 window lookup table, and handles the wheel, drag, right-drag, the arrow and number keys, zoom
