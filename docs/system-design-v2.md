@@ -1170,6 +1170,26 @@ Sessions are logs, so tracking improvement across repeat attempts of the same ca
 
 ---
 
+### 11.x The run record (10 November 2026)
+
+`runItems(st)` returns what a finished run was, item by item, for the program view. It reads
+only the folded state, so it agrees with the debrief by construction, and it names no case.
+One item per graded thing: each critical and each recommended action that was expected
+(`r` done or missed, `p` prompted, `et` the case time it became expected, `dt` the case time
+it was first done), each discouraged action taken, the harmful action that halted the run,
+the primary diagnosis and the disposition with their verdicts. `dt` is null when a covering
+action discharged the item, because no press carries its id. Each action item carries the
+catalog's tab, category and group, so results can be gathered by kind of order.
+
+The result is `met`, `met_prompted` or `not_met`, with `why` listing the reasons for the
+last. It is deliberately coarse and it is separate from the overall score, which stays the
+learner's number. Rejected: sending the overall percentage to programs. A run can score
+high on it while missing what a reader would care about, and a percentage reads as more
+precise than a case is.
+
+The record is computed in the browser. `docs/deployment.md`, "Programs and analytics",
+says what the server checks and what it does not.
+
 ## 12. Engine components
 
 Case-agnostic. No clinical knowledge, no case names, no drug behavior. An `if` statement about a specific drug in engine code means that logic belongs in a case file.
@@ -1684,8 +1704,22 @@ three seconds. An item that sits in two groups is shown in its own group. An ite
 folder here draws (most of Stabilization) is shown on its own tab instead. A result that no
 menu draws (a stop order) has no Find button.
 
-The Labs/Imaging and Actions tabs are still on the rail. The owner plans to remove them in
-a later step. Nothing here depends on them staying.
+The Labs/Imaging and Actions tabs left the rail on 10 November 2026 (`railHidden` in the
+shared payload). Their tab ids stay: actions keep `tab: investigations` or `tab:
+interventions`, so the debrief's per-tab rows, voice and the record are unchanged. Place
+Order carries the pending-results badge the Labs/Imaging button used to carry.
+
+### 19.5 Relists
+
+A catalog entry may carry more than one placement. A placement on the entry's own tab adds a
+group (`groups`), as before. A placement on another tab is a relist: `action_base` emits it as
+`relist: [[tab, group], ...]`, and the interface draws the same button there too. The entry
+keeps its first placement's tab for everything else. A pick is one pick wherever it was made.
+Where a button is drawn under a second name, its subgroup heading is dropped, unless that
+placement names a subgroup of its own (`subgroupIn`, 11 November 2026), which then applies in
+that group only. The Crash Cart is sectioned this way. The relists are
+listed in `RELIST` in `catalog/build_catalog.py`. Stabilization's Crash Cart and Miscellaneous
+groups are made only of relists (10 November 2026).
 
 ---
 

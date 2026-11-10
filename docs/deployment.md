@@ -57,6 +57,7 @@ Claude. The files in git are the record of what is live.
 | Tables, rate limit, bucket | `supabase/migrations/001_access.sql`, applied 29 Sep 2026 | Claude, via the connector |
 | Saved progress (`public.runs`) | `supabase/migrations/002_runs.sql`, applied 28 Oct 2026 | Claude, via the connector |
 | Ambulance Run leaderboard (`public.arcade_runs`) | `supabase/migrations/003_arcade.sql`, applied 29 Oct 2026 | Claude, via the connector |
+| Programs, members, entitlements, run records, analytics | `supabase/migrations/004_programs.sql`, applied 10 Nov 2026 | Claude, via the connector |
 | Edge function `case-pack` (Verify JWT on) | `supabase/functions/case-pack/index.ts` | Claude, via the connector |
 | Allowed site address | `DEFAULT_ORIGINS` in the function. The secret `ALLOWED_ORIGINS` overrides it if set | Code change |
 | Rate limits | 20 per hour, 100 per day. Secrets `CASE_LOADS_PER_HOUR` and `CASE_LOADS_PER_DAY` override them | Dashboard, Edge Functions, Secrets |
@@ -136,6 +137,8 @@ email or name. Events never carry case text, typed questions, orders, diagnoses 
 | `case_opened`, `case_started` | `case`, `mode` |
 | `case_finished` | `case`, `mode`, `outcome` (all, missed, failed), `ended_by`, `sim_seconds`, `critical_done`, `critical_total`, `actions`, `interview_questions`, `exams`, `voice_orders`, `search_opens` |
 | `debrief_revealed` | `case` |
+| `program_joined`, `analytics_opened` | `staff` on the second |
+| `run_record_refused`, `run_record_failed` | `case`, and `reason` on the first: the database's answer |
 | `run_saved` | `case`. The first save of a new run |
 | `run_resumed` | `case`, `sim_seconds` |
 | `run_discarded` | `case`, `reason`: start_over, version, deleted |
@@ -175,13 +178,149 @@ The browser code is `engine/progress.js`. The local build has none of it.
   improved" and the run is deleted (owner decision). Any change to the engine or the catalog
   therefore ends every run in progress when it is deployed.
 - **Delete.** Learners can delete any run or attempt from the home panel. Deleting an account
-  deletes its runs.
-- **Who sees it.** Each learner sees only their own rows (row-level security, and column
-  grants so the browser cannot set the owner, the case of an existing run or any timestamp).
-  Programs never see progress. The scores are computed in the learner's browser, so they are
-  a record for the learner, not evidence for anyone else.
+  deletes its runs. Since 10 November 2026 a member of a program cannot delete a finished
+  attempt. They can still discard a run in progress. See "Programs and analytics".
+- **Who sees it.** Each learner sees only their own rows in `public.runs` (row-level
+  security, and column grants so the browser cannot set the owner, the case of an existing
+  run or any timestamp). The 28 September 2026 rule that programs never see progress was
+  replaced on 10 November 2026: a finished run now also leaves a run record, which a
+  program's admins and WeSim staff read through `program_analytics`. The scores and the
+  record are computed in the learner's browser. They are not evidence about anyone.
 - **Limits.** 256 KB of saved state per run, 50 runs in progress and 2000 rows per learner.
 - **Free or paid.** Not decided. `profiles.plan` is not read.
+
+## Programs and analytics (10 November 2026)
+
+WeSim LLC sells case packages to residency programs. A program's residents register under
+it and its admins see how the group is doing. Individual accounts continue beside programs.
+
+**Status.** The database half, `supabase/migrations/004_programs.sql`, was applied to the
+live project on 10 November 2026 with the owner's approval. The owner's account is the one
+row in `public.staff`. Entitlements are off. The security advisors show nothing new beyond
+what the design intends: the new tables have row-level security and no policies, because
+only the functions read them, and the functions are callable by signed-in accounts, because
+each one checks who is calling. The site code is in the repository and waits for a commit
+and push. Until then the live site does not use any of this.
+
+Owner decisions (10 November 2026):
+
+- Programs may see their residents' results. This replaces the 28 September 2026 rule.
+- A program admin always sees who has finished what, by name. Results by name are one
+  switch per program, `programs.show_named_results`, set by staff. It is on for now. Off,
+  results are shown for the group only.
+- WeSim staff see every program and every account, by name, for now. The owner intends to
+  remove named access for staff once the analytics are settled.
+- Individual subscriptions continue. Runs finished before an account joined a program are
+  not part of the program's data.
+- A member of a program cannot delete a finished run, for now.
+- The product name stays EMSim.
+
+### How a resident joins
+
+Staff create the program (Analytics, Programs, New program). The database gives it an
+eight-character join code. The program hands the code to its residents, or the link
+`https://<site>/?join=<CODE>`. A resident signs up as anyone does, chooses Join a program
+in the account line, and enters the code, their name and their year. The dialog says what
+the program will see. One program per account. A resident who joins is a resident. To make
+someone a program admin, staff open the program, find them under Residents and choose Make
+admin. An admin can remove a resident from their own program. The resident's finished runs
+stay in the program's data.
+
+### Who is staff
+
+A row in `public.staff`. There is no page for it. Claude adds one through the connector:
+`insert into public.staff (user_id) select id from auth.users where email = '<address>';`
+
+### Which cases an account can open
+
+`app_settings.enforce_entitlements` is off, so every confirmed account opens every case, as
+before. Staff can turn it on from Analytics, Programs. On, `claim_case_load` allows a case
+only when one of these holds: the case is ticked as free, the account is staff, the
+account's `profiles.plan` is `paid`, or the account belongs to an active program that has
+every case or that case. Otherwise it answers `not_entitled`, which the edge function turns
+into `no_access`. Turning it on today would lock every individual account out of every case
+that is not ticked as free, because nothing sets `plan` to `paid` yet.
+
+### The run record
+
+When a case ends, `engine/engine.js` `runItems()` lists what the run was: each critical and
+recommended action that was expected (done or missed, prompted or not, when it became
+expected and when it was done), each discouraged or harmful action taken, the primary
+diagnosis and the disposition with their verdicts, and the phases reached. It gives the
+run one of three results:
+
+- `met`: every critical action done with no prompt, nothing harmful, the case not lost, and
+  a diagnosis and a disposition that are correct or defensible.
+- `met_prompted`: the same, with a prompt before one or more critical actions.
+- `not_met`: anything else, with the reasons.
+
+`engine/progress.js` sends the record to `record_run` after the finished row is saved,
+with a trail of the action ids and case times. The trail leaves out everything typed: the
+words of a question and the pause notes. The database stores one record per finished run,
+with the account's program and year at that moment and the attempt number.
+
+**The record is not verified.** The browser works it out and the server stores it. The
+server checks its shape and its size, and refuses a record that claims `met` for a run
+whose outcome says a critical action was missed. It does not replay the run. `verified` is
+false on every row. A learner who alters their own page can alter their own record.
+
+This also means WeSim now keeps, for every account including individuals, which actions
+were ordered in each finished case and when. The site's privacy wording has not been
+changed to say so.
+
+### The screens
+
+Analytics in the account line, for program admins and staff only. One view, five tabs, plus
+Programs for staff. Every number comes from `program_analytics`, which checks the caller.
+
+| Tab | Shows |
+|---|---|
+| Overview | Residents registered, how many have finished a case, active in 30 days, runs, results by year of training and by month |
+| Residents | Each member by name: cases finished, runs, runs in progress, case minutes, last finished. Results by name when the switch allows. The join code and link |
+| Cases | Each case: learners, results, harmful actions, cases lost, median case time. A case opens to its actions, diagnoses and dispositions |
+| Missed and unsafe | Critical actions missed, critical actions done only after a prompt, discouraged and harmful actions taken, wrong or missing handoffs |
+| Gap map | Topic (the case's category) by ordering tab: the share of expected critical actions done with no prompt |
+| Programs (staff) | Every program with its code, numbers and switches. New program. The entitlement switch and the free cases |
+
+First attempts only is on by default. A rate over fewer than five is shown as a count.
+Staff can look at one program or at every account.
+
+### Test data (10 November 2026, owner's request)
+
+Staff have a Test data button at the right of the tabs, and the same choice in the picker.
+It swaps the real numbers for a made-up program: 36 residents in three years, 2 admins, and
+a few hundred runs over about eight months, across every case in the library. A notice
+above the tabs says nothing is real. Every tab works on it, with First attempts only, the
+period, and a Results by name switch to see what a program sees with the switch off.
+
+It is built in the browser by `engine/program.js` (`testStore`, `aggregate`) from a fixed
+seed, so it is the same on every visit. Nothing is read from or written to the database and
+no real account is in it. `aggregate` gathers the made-up runs the way `program_analytics`
+does, so a screen that works on test data is drawing the same shape as the real thing.
+
+What is real in it: the case list and the catalog's action and diagnosis names. What is
+not: the residents, the runs, and which actions each case expects. Those are drawn at random
+from the catalog, so they do not fit the case. The rates are invented. They are not an
+estimate of how residents do, and nothing should be concluded from them.
+
+Program admins do not have the button. If a program should be shown a demonstration, that
+is a decision for the owner.
+
+Known limits: an action id that is not in the shared catalog (the older packs bind their
+own ids) is shown as the id with spaces, not its display name. Case minutes are case-clock
+minutes, not time at the keyboard. There are no assignments or due dates yet. There is no
+resident page showing what the program sees beyond the join dialog's wording.
+
+### Checks
+
+- `supabase/tests/programs-test.mjs`: migrations 001, 002 and 004 in an in-process
+  Postgres (PGlite), with stand-ins for `auth` and `storage`, then 78 checks as each kind
+  of account. `npm install @electric-sql/pglite`, then
+  `node supabase/tests/programs-test.mjs supabase/migrations`. PGlite is not the Supabase
+  database, so advisors still have to be read after the migration is applied.
+- `engine/site-check/program.js`: 56 checks in Chromium against the mock, test data
+  included. Part of `run.sh`.
+- `engine/engine-tests.js`, section "the run record": for every pack.
 
 ## Adding a user
 

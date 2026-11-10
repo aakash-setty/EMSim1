@@ -115,6 +115,17 @@ def action_base(ce):
             if p.get("tab") == tab and p.get("group") and p.get("group") != group]
     if more:
         rec["groups"] = [group] + more
+    # A placement on another tab (a relist, 10 November 2026): the same button drawn there
+    # too. The action keeps its own tab for scoring, voice and the record.
+    other = [[p["tab"], p.get("group")] for p in (ce.get("placements") or [])[1:]
+             if p.get("tab") != tab and p.get("group")]
+    if other:
+        rec["relist"] = other
+    # A subgroup named on a later placement applies in that group only (11 November 2026).
+    sub_in = {p["group"]: p["subgroup"] for p in (ce.get("placements") or [])[1:]
+              if p.get("group") and p.get("subgroup")}
+    if sub_in:
+        rec["subgroupIn"] = sub_in
     # v0.26. A subgroup inside the first placement's group, a composite's constituents,
     # and an entry hidden from the menus. See catalog/build_catalog.py, "v0.26 layout".
     if pl.get("subgroup"):
@@ -156,6 +167,9 @@ shared = {
     # bar finds. `folders` is what it draws underneath as drop-down directories, with the
     # same groups, baskets and Submit Order as those tabs. Stabilization is searched and not
     # drawn, because it keeps its own tab.
+    # Tabs kept for their actions and their debrief rows, and not drawn on the rail. Owner,
+    # 10 November 2026: everything on them is ordered from Place Order.
+    "railHidden": ["investigations", "interventions"],
     "orderTab": {"id": "orders",
                  "search": ["stabilization", "investigations", "interventions"],
                  "folders": ["investigations", "interventions"]},
@@ -175,8 +189,9 @@ shared = {
     "ventilation": {"when": "flag intubated set", "respiratory_rate": 16},
     # Owner, 30 October 2026: Stabilization, Oxygen, Fluids, Vascular Access, Pacer/Defib,
     # Nursing, Intubation. Nursing moved to Actions on 9 November 2026.
+    # Crash Cart and Miscellaneous last, in that order (owner, 11 November 2026).
     "groupOrder": {"stabilization": ["Stabilization", "Oxygen", "Fluids", "Vascular Access",
-                                     "Pacer/Defib", "Intubation"],
+                                     "Pacer/Defib", "Intubation", "Crash Cart", "Miscellaneous"],
                    # Author instruction, 14 October 2026: Fluids first, the code drugs, then
                    # the drug groups in the order of the exam (heart, lungs, abdomen, GU,
                    # skin, neuro, psych), then the groups that belong to no one system.
@@ -204,6 +219,8 @@ shared = {
     "subgroupOrder": {"Imaging": ["CT", "X-ray", "Ultrasound", "MRI"],
                       # Owner, 9 November 2026. On Stabilization and on Actions alike.
                       "Fluids": ["Boluses", "Infusions"],
+                      "Crash Cart": ["Defibrillator", "Airway and breathing", "Access and fluids",
+                                     "Arrest and rhythm drugs", "Metabolic and reversal drugs"],
                       "Intubation": ["Medications"],
                       "Lab Work": ["Blood, lavender or pink top (EDTA)", "Blood, light blue top (citrate)",
                                    "Blood, green top (lithium heparin)", "CSF", "Urine",
@@ -221,7 +238,11 @@ shared = {
     # v0.26c. A colour chip beside a subgroup heading: the tube top. Display only.
     "subgroupSwatch": {"Blood, lavender or pink top (EDTA)": "#A98BD8",
                        "Blood, light blue top (citrate)": "#8CC8EE",
-                       "Blood, green top (lithium heparin)": "#4FAE6E"},
+                       "Blood, green top (lithium heparin)": "#4FAE6E",
+                       # The crash cart's sections (11 November 2026). Display only.
+                       "Defibrillator": "#D4483F", "Airway and breathing": "#3F8C95",
+                       "Access and fluids": "#3F88A6", "Arrest and rhythm drugs": "#B05D70",
+                       "Metabolic and reversal drugs": "#B5774B"},
     "subgroupTabs": ["Imaging"],
     # Temporary, for validating cases (author instruction, 14 October 2026): the Note button
     # in the header and the notes at the bottom of the debrief. False removes both.
@@ -231,7 +252,18 @@ shared = {
     "medOverlayCases": "all",   # every case, 28 October 2026, author instruction (was AFRVR, TSS). A list of prefixes limits it
     # Author instruction, 13 October 2026. The buttons of these groups come in this order,
     # by catalog id, instead of alphabetically. Anything not named follows, alphabetically.
-    "buttonOrder": {"Examination": ["exam_neck", "exam_heent", "exam_card", "exam_pulm",
+    "buttonOrder": {
+                    # The crash cart as it is laid out: the defibrillator, then airway,
+                    # access, then the drugs, first line first (10 November 2026).
+                    "Crash Cart": ["place_pads_for_monitoring", "defibrillate",
+                                   "synchronized_cardioversion", "cardiac_pacing",
+                                   "bag_valve_mask", "non_rebreather_mask", "suction",
+                                   "prepare_endotracheal_tube", "intraosseous_line",
+                                   "normal_saline_1l_bolus", "epinephrine_bolus",
+                                   "amiodarone_bolus_infusion", "lidocaine_bolus",
+                                   "atropine_bolus", "adenosine_bolus", "calcium_chloride_bolus",
+                                   "na_bicarbonate_bolus", "d50_bolus", "naloxone_bolus",
+                                   "magnesium_sulfate", "dopamine_drip"],"Examination": ["exam_neck", "exam_heent", "exam_card", "exam_pulm",
                                     "exam_abd", "exam_back", "exam_gu", "exam_msk",
                                     "exam_skin", "exam_neuro", "exam_psych"],
                     # 20 October 2026: the CTs head to foot. MRI, plain films and the

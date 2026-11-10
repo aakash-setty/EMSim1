@@ -5,6 +5,45 @@ is usable with learners.
 
 ---
 
+## Crash Cart in sections, above Miscellaneous (11 November 2026, owner's instruction)
+
+- Crash Cart moves to the end of Stabilization, just above Miscellaneous.
+- It is drawn in five sections, each with a colour chip: Defibrillator, Airway and breathing, Access and fluids, Arrest and rhythm drugs, Metabolic and reversal drugs. The sections are not physician reviewed.
+- New: a later catalog placement may name its own subgroup, which applies in that group only (`subgroupIn`, system design 19.5). `RELIST` in `catalog/build_catalog.py` is now keyed by tab, group and subgroup. Lidocaine keeps its Medications heading under Intubation, and the saline keeps Boluses under Fluids.
+- All nine packs pass. kit_check 0 errors. Checked in Chromium. Backup in `Claude outputs/cart-sections/backup-before/`.
+
+## Analytics: Test data, and the database is live (10 November 2026, owner's instruction)
+
+- `supabase/migrations/004_programs.sql` is applied to the live project, with the owner's approval. The owner's account is in `public.staff`. Entitlements stay off. Checked on the live database: the signed-in role can call `program_analytics` and cannot read `run_records`, the signed-out role cannot call it, and `claim_case_load` still answers `ok`. The security advisors were read: nothing beyond what the design intends.
+- New Test data button in the Analytics view, staff only, and the same choice in the picker. It shows a made-up program of 36 residents and 2 admins with a few hundred runs across every case, so the screens can be tried and developed before real data exists. Built in the browser from a fixed seed by `testStore` and `aggregate` in `engine/program.js`. Nothing is read from or written to the database. A notice says nothing is real, and that the actions each case expects are drawn at random from the catalog.
+- In test data the Programs tab and the member tools are hidden, and a Results by name switch shows what a program sees with the switch off.
+- `engine/site-check/program.js` grows to 56 checks. `kit_check.py` 0 errors. No engine, case or catalog change, so the packs were not rerun.
+- Not run, as before: the rest of `engine/site-check/run.sh`.
+
+## Labs/Imaging and Actions leave the rail. Crash Cart and Miscellaneous on Stabilization (10 November 2026, owner's instruction)
+
+- The rail drops Labs/Imaging and Actions. Everything on them is ordered from Place Order. Shared `railHidden` in `engine/build_simulator.py`, read by `tabList` in `engine/ui.js`. The tab ids stay, so debrief rows ("Labs/Imaging", "Actions"), voice and the record are unchanged. The pending-results badge moves to Place Order.
+- New mechanism, relists: a catalog placement on another tab draws the same button there too (system design 19.5). `RELIST` in `catalog/build_catalog.py`, `relist` in `action_base`, read by `actionsFor`. A relisted button drops its subgroup heading (`subOf` in `engine/ui.js`).
+- Stabilization gains Crash Cart (second) and Miscellaneous (last). Miscellaneous: cooling and warming measures. Crash Cart, 21 relists in cart order: pads, defibrillate, synchronized cardioversion, pacing, BVM, non-rebreather, suction, endotracheal tube, IO line, NS 1 L, epinephrine, amiodarone, lidocaine, atropine, adenosine, calcium chloride, sodium bicarbonate, D50, naloxone, magnesium, dopamine. Chosen by a model from hospital crash cart checklists. Not physician reviewed.
+- `engine/engine-tests.js`: the group-order check counts groups filled only by relists.
+- A case's own display name follows its button into Crash Cart. In CHFE, epinephrine reads "Push-dose epinephrine, 10 to 20 mcg".
+- All nine packs pass. kit_check 0 errors. Checked in Chromium on all nine cases. Not updated: the tutorial pictures still show the old rail. Backup in `Claude outputs/rail-cart/backup-before/`.
+
+## WeSim LLC, programs and analytics (10 November 2026, owner's instruction)
+
+- The site's legal line reads "© 2026 WeSim LLC. All rights reserved." (`engine/site-config.json`, 9 November 2026). The product name stays EMSim. `LICENSE` is unchanged and still names the owner: changing it should follow a written assignment to the LLC.
+- Owner decisions, 10 November 2026: programs may see their residents' results, which replaces the 28 September 2026 rule. Completion is always by name. Results by name are one switch per program, on for now. WeSim staff see everything for now. Individual accounts continue. A member of a program cannot delete a finished run.
+- New `supabase/migrations/004_programs.sql`: programs with join codes, members, case entitlements (off), staff, run records, run items, and the functions the site calls. **Not applied to the live project.** The connector refused the deployment and the owner has to allow it.
+- New engine function `runItems(st)` in `engine/engine.js`: the graded items of a finished run and a three-word result (met, met with prompts, not met). General, reads only the folded state, names no case. `engine/ui.js` sends it at the end of a case with a trail of action ids and case times that leaves out everything typed. `engine/progress.js` stores it through `record_run`.
+- New `engine/program.js`: Join a program, the program chip, and the Analytics view (Overview, Residents, Cases, Missed and unsafe, Gap map, and Programs for staff). It adds its own styles and markup, so `engine/shell.html` is unchanged. `engine/access.js` hands it the client and leaves it a slot in the account line. `engine/build_simulator.py` bundles it.
+- A member of a program sees "Attempts cannot be deleted while you are in a program" in place of Delete this attempt.
+- The record is computed in the browser and not verified by the server. The analytics footer says so.
+- No case field, catalog entry or authoring rule changed.
+- Checks run: all nine packs pass `engine/test_packs.py` (the new engine section included). `kit_check.py` 0 errors. `supabase/tests/programs-test.mjs` 78 checks in PGlite. `engine/site-check/program.js` 40 checks in Chromium against the mock and the built site with its headers.
+- Checks not run: `engine/site-check/run.sh` as a whole (no Deno or Playwright in the sandbox on the owner's machine), so `flow.js`, `deep.js`, `google.js` and `progress.js` have not been run against this build. Nothing was run against the live database.
+- Seen while testing: the engine check "every ordered group on stabilization exists" failed once in three runs of TSS on the same build and passed the other two. It does not touch this change. It is an intermittent check to look at.
+- Details and what is left: `docs/deployment.md`, "Programs and analytics". Backups in `Claude outputs/program-analytics/backup-before/`.
+
 ## Nursing moves to Actions, Fluids split, handover label in sentence case (9 November 2026, owner's instruction)
 
 - The Nursing group moves from Stabilization to Actions, last in Actions' group order, with a new group icon. Start Chest Compressions leaves Nursing for the top Stabilization folder instead (owner, 10 November 2026), but, unlike the rest of that folder, it waits for Submit Order (owner, 10 November 2026). New shared list `immediateExcept` in `engine/build_simulator.py`, read by `actionButton` in `engine/ui.js`. Catalog placement only: same ids, flags and narration. `catalog/build_catalog.py`, regenerated `action-catalog.json` and `voice-aliases.json`, every pack rebound.

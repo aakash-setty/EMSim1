@@ -304,7 +304,10 @@ section('tab presentation');
      was made in the catalog and not here, and it silently loses its position. */
   for (const tab of Object.keys(PROTO.groupOrder || {})) {
     /* A group shown on this tab as well as its own (PROTO.groupAlsoOn) counts as here. */
-    const have = Object.keys(groupsOf(tab)).concat(((PROTO.groupAlsoOn || {})[tab] || []).map(x => x[1]));
+    /* So does a group that only relisted entries fill (catalog placements on another tab). */
+    const relisted = [].concat(...Object.values(SHARED.actionsBase || {})
+      .map(b => (b.relist || []).filter(r => r[0] === tab).map(r => r[1])));
+    const have = Object.keys(groupsOf(tab)).concat(((PROTO.groupAlsoOn || {})[tab] || []).map(x => x[1]), relisted);
     const ghost = PROTO.groupOrder[tab].filter(g => !have.includes(g));
     chk('every ordered group on ' + tab + ' exists', ghost.length === 0, ghost.join(', '));
   }

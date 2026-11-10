@@ -621,6 +621,11 @@
         {
           "tab": "stabilization",
           "group": "Oxygen"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Airway and breathing"
         }
       ],
       "category": "stabilization",
@@ -673,6 +678,11 @@
         {
           "tab": "stabilization",
           "group": "Oxygen"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Airway and breathing"
         }
       ],
       "category": "stabilization",
@@ -691,6 +701,11 @@
           "tab": "stabilization",
           "group": "Fluids",
           "subgroup": "Boluses"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Access and fluids"
         }
       ],
       "category": "stabilization",
@@ -882,6 +897,11 @@
         {
           "tab": "stabilization",
           "group": "Pacer/Defib"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Defibrillator"
         }
       ],
       "category": "stabilization",
@@ -899,6 +919,11 @@
         {
           "tab": "stabilization",
           "group": "Pacer/Defib"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Defibrillator"
         }
       ],
       "category": "stabilization",
@@ -922,6 +947,11 @@
         {
           "tab": "stabilization",
           "group": "Pacer/Defib"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Defibrillator"
         }
       ],
       "category": "stabilization",
@@ -960,6 +990,11 @@
         {
           "tab": "stabilization",
           "group": "Pacer/Defib"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Defibrillator"
         }
       ],
       "category": "stabilization",
@@ -1045,6 +1080,11 @@
         {
           "tab": "stabilization",
           "group": "Vascular Access"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Access and fluids"
         }
       ],
       "category": "stabilization",
@@ -1102,6 +1142,11 @@
         {
           "tab": "stabilization",
           "group": "Intubation"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Airway and breathing"
         }
       ],
       "category": "stabilization",
@@ -1119,6 +1164,11 @@
         {
           "tab": "stabilization",
           "group": "Intubation"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Airway and breathing"
         }
       ],
       "category": "stabilization",
@@ -1200,6 +1250,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Intubation"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Arrest and rhythm drugs"
         }
       ],
       "category": "stabilization",
@@ -1503,6 +1558,10 @@
         {
           "tab": "interventions",
           "group": "Nursing"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Miscellaneous"
         }
       ],
       "category": "stabilization",
@@ -1523,6 +1582,10 @@
         {
           "tab": "interventions",
           "group": "Nursing"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Miscellaneous"
         }
       ],
       "category": "stabilization",
@@ -4323,6 +4386,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Resuscitation"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Arrest and rhythm drugs"
         }
       ],
       "category": "medication",
@@ -4347,6 +4415,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Resuscitation"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Arrest and rhythm drugs"
         }
       ],
       "category": "medication",
@@ -4421,6 +4494,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Vasoactive Agents"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Arrest and rhythm drugs"
         }
       ],
       "category": "medication",
@@ -4853,6 +4931,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Cardiac"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Arrest and rhythm drugs"
         }
       ],
       "category": "medication",
@@ -4877,6 +4960,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Cardiac"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Arrest and rhythm drugs"
         }
       ],
       "category": "medication",
@@ -5080,6 +5168,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Miscellaneous"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Arrest and rhythm drugs"
         }
       ],
       "category": "medication",
@@ -6303,6 +6396,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Tox"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Metabolic and reversal drugs"
         }
       ],
       "category": "medication",
@@ -6352,6 +6450,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Tox"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Metabolic and reversal drugs"
         }
       ],
       "category": "medication",
@@ -6491,6 +6594,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Miscellaneous"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Metabolic and reversal drugs"
         }
       ],
       "category": "medication",
@@ -6533,6 +6641,11 @@
         {
           "tab": "interventions",
           "group": "Meds - Miscellaneous"
+        },
+        {
+          "tab": "stabilization",
+          "group": "Crash Cart",
+          "subgroup": "Metabolic and reversal drugs"
         }
       ],
       "category": "medication",

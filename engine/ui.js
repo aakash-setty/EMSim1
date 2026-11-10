@@ -789,11 +789,13 @@ const TABICON={
    Filtering here rather than only in the build keeps an older build working: a
    shared payload that still lists the tab will not produce a dead button. */
 const HIDDEN_TABS=new Set(['patient']);
-const tabList=()=>PROTO.tabOrder.filter(id=>!HIDDEN_TABS.has(id));
+/* PROTO.railHidden (owner, 10 November 2026): Labs/Imaging and Actions are ordered from Place
+   Order. Their actions keep those tab ids, so scoring, voice and the record are unchanged. */
+const tabList=()=>PROTO.tabOrder.filter(id=>!HIDDEN_TABS.has(id)&&!(PROTO.railHidden||[]).includes(id));
 function renderTabs(){
   el('tabbar').innerHTML=tabList().map(id=>{
     let badge='';
-    if(id==='investigations'&&ST.pending.length) badge=`<span class="badge">${ST.pending.length}</span>`;
+    if(id===ORDERS_TAB&&ST.pending.length) badge=`<span class="badge">${ST.pending.length}</span>`;
     const lab=esc(PROTO.tabLabel[id]);
     /* Place Order is drawn as a clipboard on its side: a board, with the clip standing off
        its right edge (owner's instruction, 9 November 2026). */
@@ -848,6 +850,9 @@ function actionsFor(tab,unfiltered){
       else if(x&&x.from&&a.tab===x.from[0]&&mine.includes(x.from[1])&&(!x.from[2]||a.subgroup===x.from[2])
               &&!gs.includes(x.into)) gs.push(x.into);
     }
+    /* A relist: the catalog places the same entry on another tab as well. */
+    const rl=((SHARED.actionsBase||{})[a.catalog_id||catIdOf(id)]||{}).relist||[];
+    for(const [t,g] of rl) if(t===tab&&!gs.includes(g)) gs.push(g);
     if(!gs.length) continue;
     if(hits&&!hits.has(id)) continue;
     for(const g of gs) (out[g]=out[g]||[]).push(id);
@@ -1041,11 +1046,23 @@ function actionButton(id,tab,grp){
    the folder or, for a group in PROTO.subgroupTabs, as sub-tabs with one showing at a
    time. While a filter is set every matching subgroup shows under its heading, because a
    search result hidden behind a sub-tab is not a result. */
+/* A subgroup belongs to the group it was placed under. Where the same button is listed again
+   under another name (a second group, or a relist) it is drawn plain: the Crash Cart's saline
+   is not under a "Boluses" heading. A group drawn on a second tab under its own name, or a
+   subgroup moved into another group on purpose (groupAlsoOn), keeps its heading. */
+function subOf(id,tab,g){
+  const a=ACT[id], base=(SHARED.actionsBase||{})[a.catalog_id||catIdOf(id)]||{};
+  if(g===a.group) return a.subgroup||null;
+  /* A later placement may name its own subgroup for that group (the crash cart's sections). */
+  if((base.subgroupIn||{})[g]) return base.subgroupIn[g];
+  if(!a.subgroup||(a.groups||[]).includes(g)) return null;
+  return (base.relist||[]).some(([t,x])=>t===tab&&x===g)?null:a.subgroup;
+}
 function groupBody(tab,g,ids,filtering){
   const grid=list=>`<div class="grid">${list.map(id=>actionButton(id,tab,g)).join('')}</div>`;
-  const plain=ids.filter(id=>!ACT[id].subgroup);
+  const plain=ids.filter(id=>!subOf(id,tab,g));
   const by={};
-  for(const id of ids){ const s=ACT[id].subgroup; if(s) (by[s]=by[s]||[]).push(id); }
+  for(const id of ids){ const s=subOf(id,tab,g); if(s) (by[s]=by[s]||[]).push(id); }
   const order=((PROTO.subgroupOrder||{})[g]||[]);
   const rank=s=>{ const i=order.indexOf(s); return i<0?500:i; };
   const subs=Object.keys(by).sort((a,b)=>rank(a)-rank(b)||a.localeCompare(b));

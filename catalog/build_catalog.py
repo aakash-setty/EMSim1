@@ -575,6 +575,38 @@ for e in ENTRIES:
             raise SystemExit("fluid that is neither a bolus nor an infusion: " + e["display_name"])
         p["subgroup"] = "Boluses" if last == "bolus" else "Infusions"
 
+# ---- Owner's instruction, 10 November 2026. Relists: extra placements, same ids. ----
+# Two new Stabilization folders. Each entry keeps its own home; these add a second button.
+# Crash Cart is what an adult crash cart commonly stocks, as far as the catalog has it.
+# Contents vary by hospital. Chosen by a model from hospital crash cart checklists, NOT
+# PHYSICIAN REVIEWED. The order the buttons are drawn in is `buttonOrder` in
+# engine/build_simulator.py.
+# A relist may name a subgroup, drawn as a heading inside that group only (11 November 2026:
+# the crash cart in sections). Keyed (tab, group, subgroup or None).
+RELIST = {
+    ("stabilization", "Crash Cart", "Defibrillator"): [
+        "place_pads_for_monitoring", "defibrillate", "synchronized_cardioversion", "cardiac_pacing"],
+    ("stabilization", "Crash Cart", "Airway and breathing"): [
+        "bag_valve_mask", "non_rebreather_mask", "suction", "prepare_endotracheal_tube"],
+    ("stabilization", "Crash Cart", "Access and fluids"): [
+        "intraosseous_line", "normal_saline_1l_bolus"],
+    ("stabilization", "Crash Cart", "Arrest and rhythm drugs"): [
+        "epinephrine_bolus", "amiodarone_bolus_infusion", "lidocaine_bolus", "atropine_bolus",
+        "adenosine_bolus", "magnesium_sulfate", "dopamine_drip"],
+    ("stabilization", "Crash Cart", "Metabolic and reversal drugs"): [
+        "calcium_chloride_bolus", "na_bicarbonate_bolus", "d50_bolus", "naloxone_bolus"],
+    ("stabilization", "Miscellaneous", None): ["cooling_measures", "warming_measures"],
+}
+_byid = {e["id"]: e for e in ENTRIES}
+for (tab, group, subgroup), ids in RELIST.items():
+    for i in ids:
+        if i not in _byid:
+            raise SystemExit("relist names an id the catalog lacks: " + i)
+        pl = {"tab": tab, "group": group}
+        if subgroup:
+            pl["subgroup"] = subgroup
+        _byid[i]["placements"].append(pl)
+
 # ---- v0.26c, author instruction (11 October 2026): labs by tube and source ----
 # Lab Work and Other Labs become one Lab Work folder, sectioned by what is drawn or
 # collected: blood by tube top, blood gas, blood cultures, CSF, urine, point of care, other.

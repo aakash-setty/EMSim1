@@ -5,7 +5,11 @@ the hash check, rate limit and suspension messages, sign-out, and the Content-Se
 from `vercel.json`. `progress.js` (28 October 2026) checks saved progress against the mock's
 `public.runs`: autosave, leave and resume to the same state, finishing into a score
 summary, delete, Start over, the case-has-changed notice, a reload, a failing save and
-phone width. The SQL rules themselves are checked separately against PostgreSQL 16
+phone width. `program.js` (10 November 2026) checks programs and analytics: joining with a
+code, the run record a finished case sends, no delete for a member, the analytics view for
+a program admin and for staff, and the join link. It serves the case pack itself, so it does
+not need the edge function. The SQL rules for programs are checked by
+`supabase/tests/programs-test.mjs`. The SQL rules themselves are checked separately against PostgreSQL 16
 (`Claude outputs/progress/runs-sql-tests.sh`). The edge function runs for real under Deno; Supabase Auth, the database
 call and Storage are mocked in `mock.js`. The SQL is not covered here; it was checked
 against PostgreSQL 16 separately when it was written.

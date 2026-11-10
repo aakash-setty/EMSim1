@@ -30,7 +30,7 @@ const PROGRAM = (function(){
 
   let client=null, uid=null, info=null, infoState='idle';   /* idle | loading | ready | error */
   let view={open:false, tab:'overview', scope:null, first:true, days:null, data:null, state:'idle', err:'',
-            overview:null, openCase:null, confirm:null, note:''};
+            overview:null, openCase:null, confirm:null, note:'', prev:null, testNamed:true};
   let join={open:false, busy:false, err:''};
 
   const on = () => SITE && !!client && !!uid;
@@ -60,6 +60,157 @@ const PROGRAM = (function(){
   const pct = (a,b) => b>0 ? Math.round(100*a/b) : null;
   /* A rate with the count it rests on. Under MIN_N the count is all that is shown. */
   const rate = (a,b) => b>=MIN_N ? `<b>${pct(a,b)}%</b> <span class="pg-n">${a} of ${b}</span>` : `<span class="pg-n">${a} of ${b}</span>`;
+
+  /* ---- test data (10 November 2026, owner's request) ----
+     A made-up program with made-up residents and made-up runs, so the screens can be tried
+     and developed before real data exists. It is built in this browser, from a fixed seed,
+     so it is the same every time. Nothing is read from or written to the database, and no
+     real account appears in it. Staff only.
+
+     What is real in it: the case list and the catalog's action and diagnosis names. What is
+     not: everything else. The actions each case "expects" are drawn at random from the
+     catalog, so they do not fit the case. The screens say so.
+
+     How the numbers are made, so that the screens have shapes to show. The rates are
+     invented and are not an estimate of how real residents do: each resident has
+     a skill that rises with the year of training and an appetite for doing cases. Each
+     expected action has its own difficulty. A weaker resident misses more, needs more
+     prompts, acts later, and takes more discouraged actions. A second attempt is better
+     than a first. aggregate() then gathers the runs exactly as program_analytics does in
+     the database, so First attempts only, the period and results by name all work. */
+  const TEST_ID='test';
+  let TEST=null;
+  function seeded(seed){
+    let a=seed>>>0;
+    return ()=>{ a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; };
+  }
+  function testStore(){
+    if(TEST) return TEST;
+    const R=seeded(20261110);
+    const clamp=(x,lo,hi)=>Math.max(lo,Math.min(hi,x));
+    const bell=()=>(R()+R()+R())/3;                       /* 0 to 1, bunched in the middle */
+    const take=(list,n)=>{ const l=list.slice(), out=[]; while(l.length&&out.length<n) out.push(l.splice(Math.floor(R()*l.length),1)[0]); return out; };
+    const GIVEN=['Avery','Blake','Casey','Devon','Emery','Finley','Harper','Jordan','Kendall','Logan','Morgan','Parker','Quinn','Reese','Riley','Rowan','Sage','Skyler','Taylor','Tatum'];
+    const FAMILY=['Abara','Bianchi','Castillo','Dubois','Eriksen','Farouk','Greene','Haddad','Ito','Jensen','Kowalski','Lindqvist','Mensah','Nakamura','Okafor','Petrov','Quintero','Rahman','Silva','Tanaka','Ueda','Vargas','Whitfield','Yilmaz'];
+    const base=(typeof SHARED==='object'&&SHARED&&SHARED.actionsBase)||{};
+    const byTab={}; Object.keys(base).forEach(id=>{ const a=base[id]; if(a.hidden||/^stop_|^hidden_/.test(id)) return; (byTab[a.tab]=byTab[a.tab]||[]).push(id); });
+    const dxAll=((typeof SHARED==='object'&&SHARED&&SHARED.diagnoses)||[]).map(d=>d.id);
+    const DISP=['icu','step_down','ward','discharge_home'];
+    const now=Date.now(), DAY=86400000;
+
+    const people=[];
+    const names=take(GIVEN.flatMap(g=>FAMILY.map(f=>g+' '+f)),38);
+    for(let y=1;y<=3;y++) for(let k=0;k<12;k++){
+      people.push({user_id:'test-'+y+'-'+k, name:names[people.length], pgy:y, role:'resident',
+        joined_at:new Date(now-(250-Math.floor(R()*20))*DAY).toISOString(),
+        skill:clamp(0.36+0.13*y+(bell()-0.5)*0.5,0.08,0.97), keen:clamp(0.25+bell()*0.9,0.1,1)});
+    }
+    people.push({user_id:'test-a-0',name:names[36],pgy:null,role:'admin',joined_at:new Date(now-260*DAY).toISOString(),skill:0,keen:0});
+    people.push({user_id:'test-a-1',name:names[37],pgy:null,role:'admin',joined_at:new Date(now-260*DAY).toISOString(),skill:0,keen:0});
+
+    const cases=allPrefixes().map(prefix=>{
+      const item=(k,id,late)=>({k,id,tab:(base[id]||{}).tab||null,cat:(base[id]||{}).category||null,grp:(base[id]||{}).group||null,
+                                hard:(R()<0.2?0.45+R()*0.35:0.03+R()*0.2), et:late?take([120,240,360],1)[0]:0});
+      const crit=[].concat(take(byTab.stabilization||[],2),take(byTab.investigations||[],3),take(byTab.interventions||[],3),take(byTab.consultations||[],1));
+      const rest=id=>!crit.includes(id);
+      return {prefix, tough:(R()-0.5)*0.24,
+        critical:crit.map((id,i)=>item('critical',id,i%3===2)),
+        recommended:[].concat(take((byTab.investigations||[]).filter(rest),2),take((byTab.exam||[]).filter(rest),2)).map(id=>item('recommended',id,false)),
+        discouraged:take((byTab.interventions||[]).filter(rest),3).map(id=>item('discouraged',id,false)),
+        harmful:item('harmful',take((byTab.interventions||[]).filter(rest),1)[0],false),
+        dx:take(dxAll,4), disp:take(DISP,4)};
+    });
+
+    const records=[], open=[];
+    people.filter(p=>p.role==='resident').forEach(p=>{
+      cases.forEach(c=>{
+        if(R()>p.keen*0.9){ if(R()<0.06) open.push({user_id:p.user_id,case_prefix:c.prefix}); return; }
+        let when=now-Math.floor((0.02+R()*0.96)*235)*DAY - Math.floor(R()*DAY);
+        const tries=1+(R()<0.34?1:0)+(R()<0.09?1:0);
+        for(let n=1;n<=tries;n++){
+          const skill=clamp(p.skill-c.tough+(n-1)*0.17,0.03,0.99), items=[], why=[];
+          let missed=0, prompted=0;
+          c.critical.forEach(i=>{
+            const pOwn=clamp(skill+0.45-i.hard*0.9,0.03,0.995), own=R()<pOwn, done=own||R()<0.93;
+            if(!done) missed++; else if(!own) prompted++;
+            items.push({k:'critical',id:i.id,tab:i.tab,cat:i.cat,grp:i.grp,r:done?'done':'missed',p:!own,et:i.et,
+              dt:done?Math.round((i.et+(own?12+R()*(1.15-skill)*260*(0.5+i.hard):170+R()*150))*10)/10:null});
+          });
+          c.recommended.forEach(i=>{
+            const done=R()<clamp(skill+0.05-i.hard,0.03,0.97);
+            items.push({k:'recommended',id:i.id,tab:i.tab,cat:i.cat,grp:i.grp,r:done?'done':'missed',p:false,et:0,dt:done?Math.round((20+R()*400)*10)/10:null});
+          });
+          c.discouraged.forEach(i=>{ if(R()<(1-skill)*(0.1+i.hard*0.5))
+            items.push({k:'discouraged',id:i.id,tab:i.tab,cat:i.cat,grp:i.grp,r:'taken',p:false,et:null,dt:Math.round((30+R()*500)*10)/10}); });
+          const harm=R()<(1-skill)*0.07, lost=!harm&&missed>=2&&R()<(1-skill)*0.3;
+          if(harm) items.push({k:'harmful',id:c.harmful.id,tab:c.harmful.tab,cat:c.harmful.cat,grp:c.harmful.grp,r:'taken',p:false,et:null,dt:Math.round((40+R()*400)*10)/10});
+          let dxR='none', dxId=null, dR='none', dId=null;
+          if(!harm&&!lost){
+            const a=R(), b=R(), pd=0.6+skill*0.38, pp=0.75+skill*0.24;
+            if(a<pd){ dxR='correct'; dxId=c.dx[0]; } else if(a<pd+(1-pd)*0.5){ dxR='defensible'; dxId=c.dx[1]; } else { dxR='incorrect'; dxId=c.dx[2+Math.floor(R()*2)]; }
+            if(b<pp){ dR='correct'; dId=c.disp[0]; } else if(b<pp+(1-pp)*0.4){ dR='defensible'; dId=c.disp[1]; } else { dR='incorrect'; dId=c.disp[2+Math.floor(R()*2)]; }
+          }
+          items.push({k:'diagnosis',id:dxId,tab:null,cat:null,grp:null,r:dxR,p:false,et:null,dt:null});
+          items.push({k:'disposition',id:dId,tab:null,cat:null,grp:null,r:dR,p:false,et:null,dt:null});
+          if(lost) why.push('case_lost'); if(harm) why.push('harmful_action'); if(missed) why.push('critical_missed');
+          if(!harm&&!lost){ if(dxR==='incorrect') why.push('diagnosis'); if(dR==='incorrect') why.push('disposition'); }
+          records.push({user_id:p.user_id,pgy:p.pgy,case_prefix:c.prefix,attempt_no:n,
+            result:why.length?'not_met':(prompted?'met_prompted':'met'),why,items,
+            sim_seconds:Math.round(harm||lost?120+R()*420:420+R()*(1.3-skill)*700),finished_at:Math.min(when,now-3600000)});
+          when+=Math.floor((1+R()*24)*DAY);
+        }
+      });
+    });
+    TEST={people,records,open};
+    return TEST;
+  }
+  /* The same gathering program_analytics does in the database, over a list of run records. */
+  function aggregate(store,opt){
+    const now=Date.now();
+    const rec=store.records.filter(r=>opt.days===null||opt.days===undefined||r.finished_at>now-opt.days*86400000);
+    const sel=rec.filter(r=>!opt.first||r.attempt_no===1);
+    const count=(l,f)=>l.reduce((n,x)=>n+(f(x)?1:0),0);
+    const mixOf=l=>({n:l.length,met:count(l,r=>r.result==='met'),met_prompted:count(l,r=>r.result==='met_prompted'),not_met:count(l,r=>r.result==='not_met'),
+                     harmful:count(l,r=>r.why.includes('harmful_action')),lost:count(l,r=>r.why.includes('case_lost'))});
+    const groups=(l,key)=>{ const m=new Map(); l.forEach(x=>{ const k=key(x); if(!m.has(k)) m.set(k,[]); m.get(k).push(x); }); return [...m.values()]; };
+    const median=l=>{ if(!l.length) return null; const a=l.slice().sort((x,y)=>x-y), h=a.length>>1; return a.length%2?a[h]:(a[h-1]+a[h])/2; };
+    const uniq=l=>new Set(l).size;
+    const its=[]; sel.forEach(r=>r.items.forEach(i=>its.push({run:r,i})));
+    const key=x=>x.run.case_prefix+'|'+x.i.k+'|'+x.i.id;
+    return {generated_at:new Date().toISOString(), first_only:!!opt.first, days:opt.days===undefined?null:opt.days, named:!!opt.named, staff:true, test:true,
+      program:{id:TEST_ID,name:'Test program',status:'active',join_code:null,show_named_results:!!opt.named,all_cases:true,seats:null,cases:[]},
+      totals:{people:store.people.length,residents:count(store.people,p=>p.role!=='admin'),
+        active_30d:uniq(rec.filter(r=>r.finished_at>now-30*86400000).map(r=>r.user_id)),with_a_finished_run:uniq(rec.map(r=>r.user_id)),
+        runs:rec.length,first_attempts:count(rec,r=>r.attempt_no===1),open_runs:store.open.length},
+      members:store.people.slice().sort((a,b)=>a.name<b.name?-1:1).map(p=>{
+        const mine=rec.filter(r=>r.user_id===p.user_id), cs=[...new Set(mine.map(r=>r.case_prefix))];
+        return {user_id:p.user_id,name:p.name,pgy:p.pgy,role:p.role,joined_at:p.joined_at,cases_finished:cs.length,runs:mine.length,
+          open:count(store.open,o=>o.user_id===p.user_id),case_minutes:Math.round(mine.reduce((n,r)=>n+r.sim_seconds,0)/60),
+          last_finished:mine.length?new Date(Math.max.apply(null,mine.map(r=>r.finished_at))).toISOString():null,cases:cs,
+          results:opt.named?mixOf(sel.filter(r=>r.user_id===p.user_id)):null}; }),
+      cases:groups(sel,r=>r.case_prefix).map(l=>Object.assign({case_prefix:l[0].case_prefix,learners:uniq(l.map(r=>r.user_id)),
+        median_seconds:median(l.map(r=>r.sim_seconds)),open:count(store.open,o=>o.case_prefix===l[0].case_prefix)},mixOf(l)))
+        .sort((a,b)=>a.case_prefix<b.case_prefix?-1:1),
+      items:groups(its.filter(x=>x.i.k==='critical'||x.i.k==='recommended'),key).map(l=>({case_prefix:l[0].run.case_prefix,kind:l[0].i.k,item_id:l[0].i.id,
+        tab:l[0].i.tab,cat:l[0].i.cat,grp:l[0].i.grp,n:l.length,done:count(l,x=>x.i.r==='done'),prompted:count(l,x=>x.i.r==='done'&&x.i.p),
+        learners_missed:uniq(l.filter(x=>x.i.r==='missed').map(x=>x.run.user_id)),
+        median_delay:median(l.filter(x=>x.i.r==='done'&&x.i.dt!==null&&x.i.et!==null).map(x=>x.i.dt-x.i.et))})),
+      safety:groups(its.filter(x=>x.i.k==='discouraged'||x.i.k==='harmful'),key).map(l=>({case_prefix:l[0].run.case_prefix,kind:l[0].i.k,item_id:l[0].i.id,
+        tab:l[0].i.tab,cat:l[0].i.cat,grp:l[0].i.grp,runs:l.length,learners:uniq(l.map(x=>x.run.user_id))})),
+      handoff:groups(its.filter(x=>x.i.k==='diagnosis'||x.i.k==='disposition'),x=>key(x)+'|'+x.i.r).map(l=>({case_prefix:l[0].run.case_prefix,kind:l[0].i.k,
+        item_id:l[0].i.id,result:l[0].i.r,n:l.length})),
+      months:groups(sel,r=>new Date(r.finished_at).toISOString().slice(0,7)).map(l=>Object.assign({month:new Date(l[0].finished_at).toISOString().slice(0,7)},mixOf(l)))
+        .sort((a,b)=>a.month<b.month?-1:1),
+      years:groups(sel,r=>String(r.pgy)).map(l=>Object.assign({pgy:l[0].pgy,learners:uniq(l.map(r=>r.user_id))},mixOf(l))).sort((a,b)=>(a.pgy||99)-(b.pgy||99))};
+  }
+  const inTest = () => view.scope===TEST_ID;
+  function toggleTest(){
+    if(!isStaff()) return;
+    if(inTest()) view.scope=view.prev||'all';
+    else { view.prev=view.scope; view.scope=TEST_ID; if(view.tab==='programs') view.tab='overview'; A.track('analytics_test_data',{}); }
+    view.openCase=null; view.confirm=null; view.note='';
+    fetchAll();
+  }
 
   /* ---- session ---- */
   function init(cl){
@@ -149,10 +300,14 @@ const PROGRAM = (function(){
     if(!isStaff()) view.scope=m.program_id;
     if(view.tab==='programs'&&!isStaff()) view.tab='overview';
     $('pgview').classList.remove('hidden');
+    $('pg-close').focus();
     A.track('analytics_opened',{staff:isStaff()});
     paint(); fetchAll();
   }
-  function close(){ view.open=false; view.data=null; const v=$('pgview'); if(v) v.classList.add('hidden'); }
+  function close(){
+    view.open=false; view.data=null; const v=$('pgview'); if(v) v.classList.add('hidden');
+    const o=$('pg-open'); if(o) o.focus();
+  }
   async function fetchAll(){
     view.state='loading'; view.err=''; paint();
     try{
@@ -160,6 +315,7 @@ const PROGRAM = (function(){
         const o=await client.rpc('staff_overview'); if(o.error) throw o.error;
         view.overview=o.data;
       }
+      if(inTest()){ view.data=aggregate(testStore(),{first:view.first,days:view.days,named:view.testNamed}); view.state='ready'; paint(); return; }
       const r=await client.rpc('program_analytics',
         {p_program: view.scope==='all'?null:view.scope, p_first:view.first, p_days:view.days});
       if(r.error) throw r.error;
@@ -215,7 +371,7 @@ const PROGRAM = (function(){
     head.push('');
     const rows=(d.members||[]).map(m=>{
       const r=m.results||{}, who=m.name||('Account '+String(m.user_id).slice(0,8));
-      const tools= (m.role==='individual') ? '' :
+      const tools= (m.role==='individual'||d.test) ? '' :
         (view.confirm===m.user_id
           ? `<span class="pg-sure">Remove ${esc(who)}? <button type="button" data-pgrm="${esc(m.user_id)}">Remove</button> <button type="button" data-pgno="1">Keep</button></span>`
           : ((m.role==='resident'?`<button type="button" class="pg-link" data-pgask="${esc(m.user_id)}">Remove</button>`:'')+
@@ -333,10 +489,11 @@ const PROGRAM = (function(){
   function paint(){
     const v=$('pgview'); if(!v||!view.open) return;
     const d=view.data, o=view.overview||{};
-    const tabs=TABS.filter(t=>t[0]!=='programs'||isStaff());
+    const tabs=TABS.filter(t=>t[0]!=='programs'||(isStaff()&&!inTest()));
     const scope = isStaff()
       ? `<select id="pg-scope" aria-label="Whose data"><option value="all"${view.scope==='all'?' selected':''}>Every account</option>
-          ${(o.programs||[]).map(p=>`<option value="${esc(p.id)}"${view.scope===p.id?' selected':''}>${esc(p.name)}</option>`).join('')}</select>`
+          ${(o.programs||[]).map(p=>`<option value="${esc(p.id)}"${view.scope===p.id?' selected':''}>${esc(p.name)}</option>`).join('')}
+          <option value="${TEST_ID}"${inTest()?' selected':''}>Test data (made up)</option></select>`
       : `<span class="pg-scope">${esc((member()||{}).program||'')}</span>`;
     let body;
     if(view.state==='error') body=`<p class="pg-empty">${esc(view.err)}</p>`;
@@ -348,7 +505,12 @@ const PROGRAM = (function(){
         <select id="pg-days" aria-label="Period"><option value="">All time</option><option value="30"${view.days===30?' selected':''}>Last 30 days</option>
           <option value="90"${view.days===90?' selected':''}>Last 90 days</option><option value="365"${view.days===365?' selected':''}>Last year</option></select>
         <span class="pg-msg" role="status">${esc(view.note)}</span></div>
-      <div class="pg-tabs" role="tablist">${tabs.map(t=>`<button type="button" role="tab" aria-selected="${view.tab===t[0]}" data-pgtab="${t[0]}"${view.tab===t[0]?' class="on"':''}>${t[1]}</button>`).join('')}</div>
+      <div class="pg-tabs" role="tablist">${tabs.map(t=>`<button type="button" role="tab" aria-selected="${view.tab===t[0]}" data-pgtab="${t[0]}"${view.tab===t[0]?' class="on"':''}>${t[1]}</button>`).join('')}
+        ${isStaff()?`<button type="button" class="pg-testtab${inTest()?' on':''}" data-pgtest="1" aria-pressed="${inTest()}">Test data</button>`:''}</div>
+      ${inTest()?`<div class="pg-testbar" role="note"><b>Test data.</b> Every resident, run and result on these tabs is made up in this browser. Nothing is real and nothing is saved.
+          The actions each case expects are drawn at random from the catalog, so they do not fit the case.
+          <span class="pg-testtools"><label class="pg-sw"><input type="checkbox" id="pg-testnamed" ${view.testNamed?'checked':''}> Results by name</label>
+          <button type="button" class="pg-link" data-pgtest="1">Back to real data</button></span></div>`:''}
       <div class="pg-pane${view.state==='loading'?' busy':''}">${body}</div>
       <p class="pg-foot">These numbers describe performance in simulated cases, for teaching and feedback. Each record is worked out in the learner's own browser and is not checked by the server. Nothing clinical in the cases has been reviewed by a physician unless that case says so. Do not use these numbers alone to decide promotion, remediation or dismissal.</p>`;
   }
@@ -368,6 +530,7 @@ const PROGRAM = (function(){
       const t=e.target.closest('button'); if(!t) return;
       if(t.id==='pg-close'){ close(); return; }
       const ds=t.dataset;
+      if(ds.pgtest){ toggleTest(); return; }
       if(ds.pgtab){ view.tab=ds.pgtab; view.note=''; paint(); return; }
       if(ds.pgcase){ view.openCase=view.openCase===ds.pgcase?null:ds.pgcase; paint(); return; }
       if(ds.pgask){ view.confirm=ds.pgask; paint(); return; }
@@ -380,7 +543,9 @@ const PROGRAM = (function(){
     });
     v.addEventListener('change', async e=>{
       const t=e.target, ds=t.dataset||{};
-      if(t.id==='pg-scope'){ view.scope=t.value; fetchAll(); return; }
+      if(t.id==='pg-scope'){ if(t.value===TEST_ID&&!inTest()){ toggleTest(); return; }
+        view.scope=t.value; view.openCase=null; fetchAll(); return; }
+      if(t.id==='pg-testnamed'){ view.testNamed=t.checked; fetchAll(); return; }
       if(t.id==='pg-first'){ view.first=t.checked; fetchAll(); return; }
       if(t.id==='pg-days'){ view.days=t.value?Number(t.value):null; fetchAll(); return; }
       if(t.id==='pg-enforce'){ await call('staff_set_settings',{p_enforce:t.checked,p_free:null},t.checked?'Cases are now limited by entitlement.':'Every account can open every case.'); fetchAll(); return; }
@@ -399,10 +564,15 @@ const PROGRAM = (function(){
       await call('staff_save_program',{p_id:null,p_name:name,p_named:true,p_all_cases:true,p_cases:null,p_seats:seats>0?seats:null,p_status:null},'Program created.');
       fetchAll();
     });
-    v.addEventListener('keydown', e=>{ if(e.key==='Escape'){ e.stopPropagation(); close(); } });
+    /* Escape closes whichever of the two is open. The listener is on the document because a
+       repaint replaces the element that had the focus, and the key then goes to the body. */
+    document.addEventListener('keydown', e=>{
+      if(e.key!=='Escape') return;
+      if(join.open){ e.stopPropagation(); closeJoin(); }
+      else if(view.open){ e.stopPropagation(); close(); }
+    }, true);
     $('pgj-form').addEventListener('submit', e=>{ e.preventDefault(); submitJoin(); });
     $('pgj-no').onclick=closeJoin;
-    $('pgjoin').addEventListener('keydown', e=>{ if(e.key==='Escape'){ e.stopPropagation(); closeJoin(); } });
   }
 
   function build(){
@@ -417,13 +587,17 @@ const PROGRAM = (function(){
 .pg-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
 .pg-head h1{font-size:22px;font-weight:650;letter-spacing:-.01em;margin:0;flex:1}
 .pg-bar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:12px;font-size:13.5px}
-.pg-bar select{font:inherit;font-size:13.5px;color:var(--ink);background:var(--solid);border:1px solid var(--rule);border-radius:6px;padding:6px 8px}
+.pg-bar select{width:auto;flex:0 0 auto;font:inherit;font-size:13.5px;color:var(--ink);background:var(--solid);border:1px solid var(--rule);border-radius:6px;padding:6px 8px}
 .pg-scope{font-weight:600}
 .pg-msg{color:var(--ok);font-size:13px}
 .pg-sw{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;cursor:pointer}
 .pg-tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--rule);margin-bottom:16px}
 .pg-tabs button{font:inherit;font-size:13.5px;color:var(--ink2);background:none;border:0;border-bottom:2px solid transparent;padding:9px 12px;cursor:pointer}
 .pg-tabs button.on{color:var(--act);border-bottom-color:var(--act);font-weight:600}
+.pg-testtab{margin-left:auto;border:1px solid var(--rule)!important;border-radius:999px;padding:5px 14px!important;align-self:center;margin-bottom:5px}
+.pg-tabs button.pg-testtab.on{background:var(--warnl);color:var(--warn);border-color:var(--warn)!important}
+.pg-testbar{background:var(--warnl);border:1px solid var(--warn);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px;line-height:1.5}
+.pg-testtools{display:inline-flex;align-items:center;gap:14px;margin-left:10px;white-space:nowrap}
 .pg-pane{background:var(--solid);border:1px solid var(--rule2);border-radius:10px;padding:18px 20px;min-height:200px}
 .pg-pane.busy{opacity:.55}
 .pg-pane h3{font-size:15px;font-weight:650;margin:22px 0 8px}
@@ -494,5 +668,6 @@ const PROGRAM = (function(){
   }
 
   return {init, onSession, paintAccount, isMember:()=>!!member(), enabled:on,
-          /* for the site check */ _state:()=>({uid, infoState, info, view:{open:view.open,tab:view.tab,scope:view.scope,state:view.state,first:view.first}})};
+          /* for the site check */ _state:()=>({uid, infoState, info, view:{open:view.open,tab:view.tab,scope:view.scope,state:view.state,first:view.first,test:inTest()}}),
+          _test:()=>{ const t=testStore(); return {people:t.people.length, records:t.records.length, open:t.open.length}; }};
 })();

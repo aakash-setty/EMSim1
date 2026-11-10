@@ -86,6 +86,7 @@ const setRuns=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows})
  ok('an admin gets the Analytics button', await p.evaluate(()=>!!document.getElementById('pg-open')));
  await p.click('#pg-open'); await wait(1000);
  ok('the view opens on Overview with the program name', await p.evaluate(()=>!document.getElementById('pgview').classList.contains('hidden'))&&/Mock EM/.test(await txt('.pg-bar')||''), await txt('.pg-bar'));
+ ok('an admin has no Test data button', await p.evaluate(()=>!document.querySelector('[data-pgtest]')));
  ok('an admin has no Programs tab and no program picker', await p.evaluate(()=>!document.querySelector('[data-pgtab="programs"]')&&!document.getElementById('pg-scope')));
  ok('the overview counts the run', /Finished runs/.test(await txt('.pg-tiles')||'')&&/First attempts/.test(await txt('.pg-pane')||''), await txt('.pg-tiles'));
  await p.click('[data-pgtab="people"]'); await wait(200);
@@ -94,7 +95,7 @@ const setRuns=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows})
  await p.click('[data-pgcase="CHFE"]'); await wait(200);
  ok('Cases opens a case to its actions, by display name', await p.evaluate(()=>document.querySelectorAll('.pg-detail table').length>=1&&!/_/.test(document.querySelector('.pg-detail tbody td').textContent)), (await txt('.pg-detail')||'').slice(0,200));
  await p.click('[data-pgtab="missed"]'); await wait(200);
- ok('Missed and unsafe lists a missed critical action', /Critical actions missed/.test(await txt('.pg-pane')||'')&&await p.evaluate(()=>document.querySelectorAll('.pg-pane table tbody tr').length>=1));
+ ok('Missed and unsafe lists a missed critical action', /critical actions missed/i.test(await txt('.pg-pane')||'')&&await p.evaluate(()=>document.querySelectorAll('.pg-pane table tbody tr').length>=1));
  await p.click('[data-pgtab="map"]'); await wait(200);
  ok('the gap map draws a topic row, and a small cell shows a count and no percentage',
     await p.evaluate(()=>document.querySelectorAll('.pg-map tbody tr').length>=1&&document.querySelectorAll('.pg-cell.few').length>=1&&!document.querySelector('.pg-cell.few b')));
@@ -118,7 +119,7 @@ const setRuns=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows})
  await p.reload(); await wait(1800);
  await p.click('#pg-open'); await wait(1000);
  ok('staff get a picker of whose data, starting at every account, and a Programs tab',
-    await p.evaluate(()=>{ const s=document.getElementById('pg-scope'); return !!s&&s.value==='all'&&s.options.length===2&&!!document.querySelector('[data-pgtab="programs"]'); }));
+    await p.evaluate(()=>{ const s=document.getElementById('pg-scope'); return !!s&&s.value==='all'&&s.options.length===3&&!!document.querySelector('[data-pgtab="programs"]'); }));
  await p.click('[data-pgtab="programs"]'); await wait(200);
  ok('Programs lists the program with its code and switches', /Mock EM/.test(await txt('.pg-pane')||'')&&/MCKCDE23/.test(await txt('.pg-pane')||'')&&await p.evaluate(()=>!!document.querySelector('[data-pgnamed]')&&!!document.getElementById('pg-enforce')));
  await p.fill('#pg-newname','Second Program'); await p.fill('#pg-newseats','12'); await p.click('#pg-new button[type=submit]'); await wait(1000);
@@ -131,6 +132,43 @@ const setRuns=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows})
  ok('the results-by-name switch is saved for that program', st.programs[0].show_named_results===false&&/group only/.test(await txt('.pg-msg')||''), await txt('.pg-msg'));
  await p.selectOption('#pg-scope','aaaaaaaa-0000-0000-0000-000000000001'); await wait(900);
  ok('staff can open one program', await p.evaluate(()=>PROGRAM._state().view.scope==='aaaaaaaa-0000-0000-0000-000000000001'&&PROGRAM._state().view.state==='ready'));
+ // ---- test data (10 November 2026): made up in the browser, staff only
+ const before=(await pg()).calls.length;
+ await p.click('.pg-testtab'); await wait(500);
+ ok('Test data opens with a notice that nothing is real', await p.evaluate(()=>PROGRAM._state().view.test&&PROGRAM._state().view.tab==='overview')&&/made up in this browser/.test(await txt('.pg-testbar')||''), await txt('.pg-testbar'));
+ ok('in test data there is no Programs tab', await p.evaluate(()=>!document.querySelector('[data-pgtab="programs"]')));
+ const sizes=await p.evaluate(()=>PROGRAM._test());
+ ok('the made-up program has 38 people and several hundred runs', sizes.people===38&&sizes.records>250, sizes);
+ ok('the overview shows 36 residents', /36/.test(await p.evaluate(()=>document.querySelector('.pg-tile b').textContent)));
+ await p.click('[data-pgtab="people"]'); await wait(200);
+ ok('Residents lists all 38 with results by name and no Remove', await p.evaluate(()=>document.querySelectorAll('.pg-pane tbody tr').length===38&&document.querySelectorAll('.pg-pane tbody .pg-mix').length>=30&&!document.querySelector('[data-pgask]')&&!document.querySelector('[data-pgrole]')));
+ await p.uncheck('#pg-testnamed'); await wait(400);
+ ok('Results by name off: names and completion stay, results by name go', await p.evaluate(()=>document.querySelectorAll('.pg-pane tbody tr').length===38&&!document.querySelector('.pg-pane tbody .pg-mix'))&&/Results by name are off/.test(await txt('.pg-pane')||''));
+ await p.check('#pg-testnamed'); await wait(300);
+ await p.click('[data-pgtab="cases"]'); await wait(200);
+ const nCases=await p.evaluate(()=>CASES.length);
+ ok('Cases lists every case in the library', await p.evaluate(n=>document.querySelectorAll('.pg-pane tr.pg-row').length===n,nCases));
+ await p.click('.pg-pane tr.pg-row [data-pgcase]'); await wait(200);
+ ok('a case opens to nine critical actions with catalog names and a median time', await p.evaluate(()=>{ const rows=[...document.querySelectorAll('.pg-detail table')[0].querySelectorAll('tbody tr')];
+   return rows.filter(r=>r.children[1].textContent==='critical').length===9&&rows.some(r=>/^\d+:\d\d$/.test(r.children[4].textContent)); }));
+ await p.click('[data-pgtab="missed"]'); await wait(200);
+ ok('Missed and unsafe has rows in all four lists', await p.evaluate(()=>[...document.querySelectorAll('.pg-pane table')].length===4&&[...document.querySelectorAll('.pg-pane table')].every(t=>t.querySelectorAll('tbody tr').length>0)));
+ await p.click('[data-pgtab="map"]'); await wait(200);
+ ok('the gap map has percentages in more than one topic', await p.evaluate(()=>document.querySelectorAll('.pg-map tbody tr').length>=2&&document.querySelectorAll('.pg-cell b').length>=6));
+ await p.click('[data-pgtab="overview"]'); await wait(200);
+ const runsFirst=await p.evaluate(()=>document.querySelectorAll('.pg-tile b')[4].textContent);
+ ok('by year: PGY-1 does worse than PGY-3 on first attempts', await p.evaluate(()=>{ const rows=[...document.querySelectorAll('.pg-pane table')[0].querySelectorAll('tbody tr')];
+   const share=r=>{ const m=r.children[3].innerText.match(/(\d+) \/ (\d+) \/ (\d+)/); return +m[1]/(+m[1]+ +m[2]+ +m[3]); };
+   return rows.length===3&&share(rows[0])<share(rows[2]); }));
+ await p.selectOption('#pg-days','30'); await wait(400);
+ ok('the period narrows the made-up runs', Number(await p.evaluate(()=>document.querySelectorAll('.pg-tile b')[4].textContent))<Number(runsFirst), runsFirst);
+ await p.selectOption('#pg-days',''); await wait(300);
+ ok('test data sent nothing to the database', (await pg()).calls.length===before);
+ await p.click('.pg-testbar [data-pgtest]'); await wait(900);
+ ok('Back to real data returns to the real program', await p.evaluate(()=>!PROGRAM._state().view.test&&PROGRAM._state().view.scope==='aaaaaaaa-0000-0000-0000-000000000001'&&!document.querySelector('.pg-testbar')));
+ await p.selectOption('#pg-scope','test'); await wait(500);
+ ok('the picker also reaches test data', await p.evaluate(()=>PROGRAM._state().view.test));
+ await p.selectOption('#pg-scope','all'); await wait(900);
  await p.click('#pg-close'); await wait(200);
 
  // ---- a failure is said, not hidden
