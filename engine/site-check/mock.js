@@ -72,11 +72,91 @@ async function runsRoute(req,res,u){
     return wantRows?ret(hit):send(204);
   }
   if(req.method==='DELETE'){
-    const hit=mine.filter(match); RUNS=RUNS.filter(r=>!hit.includes(r));
+    // 004_programs.sql: a program member can discard a run in progress and nothing else.
+    const hit=mine.filter(match).filter(r=>r.status==='in_progress'||!PG.member); RUNS=RUNS.filter(r=>!hit.includes(r));
     S.calls.runsDelete=(S.calls.runsDelete||0)+1;
     return wantRows?ret(hit):send(204);
   }
   send(405,{});
+}
+// Programs and analytics (10 November 2026): the functions of supabase/migrations/004_programs.sql
+// that the browser calls, for the one signed-in user. The real rules are tested against a real
+// Postgres by supabase/tests/programs-test.mjs. This is only enough for the pages to be driven.
+// POST /__pg {reset:true} starts again; POST /__pg {staff:true} or {member:{...}} sets the account;
+// GET /__pg returns the state, with every record_run and staff call that arrived.
+const pgFresh=()=>({staff:false, member:null, records:[], calls:[],
+  programs:[{id:'aaaaaaaa-0000-0000-0000-000000000001',name:'Mock EM',status:'active',join_code:'MCKCDE23',show_named_results:true,all_cases:true,seats:null,cases:[],created_at:new Date().toISOString()}]});
+let PG=pgFresh();
+function pgAnalytics(a){
+  const prog=a.p_program?PG.programs.find(p=>p.id===a.p_program):null;
+  const named=PG.staff||!prog||prog.show_named_results;
+  const rec=PG.records.filter(r=>!a.p_program||r.program_id===a.p_program);
+  const sel=rec.filter(r=>!a.p_first||r.attempt_no===1);
+  const mixOf=l=>({n:l.length,met:l.filter(r=>r.result==='met').length,met_prompted:l.filter(r=>r.result==='met_prompted').length,not_met:l.filter(r=>r.result==='not_met').length,
+    harmful:l.filter(r=>r.why.includes('harmful_action')).length,lost:l.filter(r=>r.why.includes('case_lost')).length});
+  const by=(l,f)=>{ const m=new Map(); l.forEach(x=>{ const k=f(x); if(!m.has(k)) m.set(k,[]); m.get(k).push(x); }); return [...m.values()]; };
+  const its=sel.flatMap(r=>r.items.map(i=>Object.assign({case_prefix:r.case_prefix},i)));
+  const me=PG.member;
+  return {generated_at:new Date().toISOString(), first_only:!!a.p_first, days:a.p_days, named, staff:PG.staff,
+    program:prog?Object.assign({},prog):null,
+    totals:{people:me?1:0,residents:me&&me.role!=='admin'?1:0,active_30d:rec.length?1:0,with_a_finished_run:rec.length?1:0,runs:rec.length,first_attempts:rec.filter(r=>r.attempt_no===1).length,open_runs:RUNS.filter(r=>r.status==='in_progress').length},
+    members:me?[{user_id:USER.id,name:me.display_name,pgy:me.pgy,role:me.role,joined_at:new Date().toISOString(),cases_finished:new Set(rec.map(r=>r.case_prefix)).size,runs:rec.length,
+      open:RUNS.filter(r=>r.status==='in_progress').length,case_minutes:0,last_finished:rec.length?new Date().toISOString():null,cases:[...new Set(rec.map(r=>r.case_prefix))],results:named?mixOf(sel):null}]:[],
+    cases:by(sel,r=>r.case_prefix).map(l=>Object.assign({case_prefix:l[0].case_prefix,learners:1,median_seconds:60,open:0},mixOf(l))),
+    items:by(its.filter(i=>i.k==='critical'||i.k==='recommended'),i=>i.case_prefix+'|'+i.k+'|'+i.id).map(l=>({case_prefix:l[0].case_prefix,kind:l[0].k,item_id:l[0].id,tab:l[0].tab,cat:l[0].cat,grp:l[0].grp,
+      n:l.length,done:l.filter(i=>i.r==='done').length,prompted:l.filter(i=>i.r==='done'&&i.p).length,learners_missed:l.some(i=>i.r==='missed')?1:0,median_delay:null})),
+    safety:by(its.filter(i=>i.k==='discouraged'||i.k==='harmful'),i=>i.case_prefix+'|'+i.k+'|'+i.id).map(l=>({case_prefix:l[0].case_prefix,kind:l[0].k,item_id:l[0].id,tab:l[0].tab,cat:l[0].cat,grp:l[0].grp,runs:l.length,learners:1})),
+    handoff:by(its.filter(i=>i.k==='diagnosis'||i.k==='disposition'),i=>i.case_prefix+'|'+i.k+'|'+i.id+'|'+i.r).map(l=>({case_prefix:l[0].case_prefix,kind:l[0].k,item_id:l[0].id,result:l[0].r,n:l.length})),
+    months:sel.length?[Object.assign({month:new Date().toISOString().slice(0,7)},mixOf(sel))]:[],
+    years:by(sel,r=>String(r.pgy)).map(l=>Object.assign({pgy:l[0].pgy,learners:1},mixOf(l)))};
+}
+const pgDenied={code:'42501',message:'not allowed'};
+const PG_FNS={
+  my_program:()=>({staff:PG.staff,enforce:false,free_cases:[],member:PG.member}),
+  join_program:a=>{
+    if(PG.member) return 'already_member';
+    const g=PG.programs.find(p=>p.join_code===String(a.p_code||'').replace(/[^A-Za-z0-9]/g,'').toUpperCase());
+    if(!g) return 'bad_code';
+    PG.member={program_id:g.id,program:g.name,status:g.status,role:'resident',display_name:String(a.p_name||'').trim(),pgy:a.p_pgy,show_named_results:g.show_named_results,all_cases:g.all_cases,cases:[],join_code:null};
+    return 'ok'; },
+  record_run:a=>{
+    const run=RUNS.find(r=>r.id===a.p_run&&r.user_id===USER.id&&r.status==='finished');
+    if(!run) return 'no_run';
+    if(PG.records.some(r=>r.run_id===a.p_run)) return 'exists';
+    const rec=a.p_record;
+    if(!rec||!Array.isArray(rec.items)||!['met','met_prompted','not_met'].includes(rec.result)) return 'bad_record';
+    if(rec.result!=='not_met'&&run.outcome!=='all') return 'mismatch';
+    PG.records.push({run_id:a.p_run,case_prefix:run.case_prefix,program_id:PG.member?PG.member.program_id:null,pgy:PG.member?PG.member.pgy:null,
+      attempt_no:1+PG.records.filter(r=>r.case_prefix===run.case_prefix).length,result:rec.result,why:rec.why||[],items:rec.items,phases:rec.phases,trail:a.p_trail});
+    return 'ok'; },
+  program_analytics:a=>{
+    const admin=PG.member&&PG.member.role==='admin'&&a.p_program===PG.member.program_id;
+    if(!PG.staff&&!admin) return {__error:pgDenied};
+    return pgAnalytics(a); },
+  staff_overview:()=>PG.staff?{settings:{enforce_entitlements:false,free_cases:[]},accounts:1,individuals:PG.member?0:1,records:PG.records.length,
+    programs:PG.programs.map(p=>Object.assign({residents:PG.member&&PG.member.role==='resident'?1:0,admins:PG.member&&PG.member.role==='admin'?1:0,runs:PG.records.filter(r=>r.program_id===p.id).length,last_finished:null},p))}:{__error:pgDenied},
+  staff_save_program:a=>{
+    if(!PG.staff) return {__error:pgDenied};
+    let g=PG.programs.find(p=>p.id===a.p_id);
+    if(!g){ g={id:crypto.randomUUID(),name:a.p_name,status:'active',join_code:'NEWCDE'+String(PG.programs.length+22).slice(-2),show_named_results:true,all_cases:true,seats:a.p_seats||null,cases:[],created_at:new Date().toISOString()}; PG.programs.push(g); }
+    if(typeof a.p_named==='boolean') g.show_named_results=a.p_named;
+    if(typeof a.p_all_cases==='boolean') g.all_cases=a.p_all_cases;
+    if(Array.isArray(a.p_cases)) g.cases=a.p_cases;
+    if(a.p_status) g.status=a.p_status;
+    return g.id; },
+  staff_new_code:()=>PG.staff?'FRESHCD2':{__error:pgDenied},
+  program_set_member:a=>{ if(a.p_role==='remove') PG.member=null; else if(PG.member) PG.member.role=a.p_role; return 'ok'; },
+  staff_set_settings:()=>PG.staff?null:{__error:pgDenied},
+};
+async function pgRoute(req,res,fn){
+  const send=(code,obj)=>{res.writeHead(code,{'Content-Type':'application/json'});res.end(JSON.stringify(obj===undefined?null:obj));};
+  if(req.headers.authorization!=='Bearer good-token') return send(401,{code:'42501',message:'sign in first'});
+  const a=JSON.parse((await body(req)).toString()||'{}');
+  if(fn!=='my_program'&&fn!=='program_analytics'&&fn!=='staff_overview') PG.calls.push({fn,args:fn==='record_run'?{p_run:a.p_run}:a});
+  if(PG.fail) return send(500,{code:'XX000',message:'mock failure'});
+  const out=PG_FNS[fn](a);
+  if(out&&out.__error) return send(403,out.__error);
+  send(200,out);
 }
 http.createServer(async (req,res)=>{
   const u=new URL(req.url,'http://x'); S.log.push(req.method+' '+u.pathname);
@@ -123,6 +203,8 @@ http.createServer(async (req,res)=>{
     S.lastRpc={body:b,auth:req.headers.authorization,apikey:req.headers.apikey};
     res.writeHead(200,{'Content-Type':'application/json'}); res.end(JSON.stringify(S.rpc)); return;
   }
+  if(u.pathname==='/__pg'){ if(req.method==='POST'){ const b=JSON.parse((await body(req)).toString()||'{}'); if(b.reset) PG=pgFresh(); else Object.assign(PG,b); } res.end(JSON.stringify(PG)); return; }
+  if(u.pathname.startsWith('/rest/v1/rpc/')&&PG_FNS[u.pathname.slice(13)]) return pgRoute(req,res,u.pathname.slice(13));
   if(u.pathname==='/rest/v1/runs') return runsRoute(req,res,u);
   if(u.pathname.startsWith('/storage/v1/object/')){
     // Packs live at case-packs/<PREFIX>/<sha256>.json. Uploads (from publish_packs.js) go to an

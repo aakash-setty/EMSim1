@@ -189,6 +189,11 @@ stop action for an infusion, and whether a default result exists (D).
 | `stop_phenylephrine` | Stop Phenylephrine | interventions / Meds - Vasoactive Agents | medication |  |  | 0 |  |  |  |
 | `stop_vasopressin` | Stop Vasopressin | interventions / Meds - Vasoactive Agents | medication |  |  | 0 |  |  |  |
 | `vasopressin_drip` | Vasopressin drip | interventions / Meds - Vasoactive Agents | medication |  |  | 1 |  | stop_vasopressin |  |
+| `airborne_precautions` | Airborne Precautions | interventions / Nursing | stabilization |  | airborne_precautions | 0 |  |  |  |
+| `contact_precautions` | Contact Precautions | interventions / Nursing | stabilization |  | contact_precautions | 0 |  |  |  |
+| `cooling_measures` | Cooling Measures | interventions / Nursing | stabilization |  | cooling_measures | 0 |  |  |  |
+| `droplet_precautions` | Droplet Precautions | interventions / Nursing | stabilization |  | droplet_precautions | 0 |  |  |  |
+| `warming_measures` | Warming Measures | interventions / Nursing | stabilization |  | warming_measures | 0 |  |  |  |
 | `c_collar` | C-Collar | interventions / Procedures | procedure |  |  | 0 |  |  |  |
 | `decontaminate_hazmat_activation` | Decontaminate (Hazmat activation) | interventions / Procedures | procedure |  |  | 0 |  |  |  |
 | `don_personal_protective_equipment` | Don Personal Protective Equipment | interventions / Procedures | procedure |  |  | 0 |  |  |  |
@@ -276,6 +281,7 @@ stop action for an infusion, and whether a default result exists (D).
 | `exam_abc` | Airway, Breathing and Circulation Exam | stabilization /  | exam |  |  | 0 |  |  | D |
 | `insert_iv` | Insert IV | stabilization /  | stabilization |  | iv_access | 0 |  |  |  |
 | `place_pads_for_monitoring` | Place Defibrillator Pads | stabilization /  | stabilization |  | pacing_pads_placed | 0 |  |  |  |
+| `start_chest_compressions` | Start Chest Compressions | stabilization /  | stabilization |  |  | 0 |  |  |  |
 | `d5_1_2_ns_infusion` | D5 1/2 NS infusion | stabilization / Fluids | stabilization |  |  | 1 |  |  |  |
 | `d5_ns_bolus` | D5 NS bolus | stabilization / Fluids | stabilization |  |  | 1 |  |  |  |
 | `lactated_ringer_s_1l_bolus` | Lactated Ringer's 1L bolus | stabilization / Fluids | stabilization |  |  | 1 | crystalloid_bolus |  |  |
@@ -298,12 +304,6 @@ stop action for an infusion, and whether a default result exists (D).
 | `rocuronium_bolus` | Rocuronium bolus | stabilization / Intubation | stabilization |  | paralytic_given | 1 |  |  |  |
 | `succinylcholine_bolus` | Succinylcholine bolus | stabilization / Intubation | stabilization |  | paralytic_given | 1 |  |  |  |
 | `suction` | Suction | stabilization / Intubation | stabilization |  |  | 0 |  |  |  |
-| `airborne_precautions` | Airborne Precautions | stabilization / Nursing | stabilization |  | airborne_precautions | 0 |  |  |  |
-| `contact_precautions` | Contact Precautions | stabilization / Nursing | stabilization |  | contact_precautions | 0 |  |  |  |
-| `cooling_measures` | Cooling Measures | stabilization / Nursing | stabilization |  | cooling_measures | 0 |  |  |  |
-| `droplet_precautions` | Droplet Precautions | stabilization / Nursing | stabilization |  | droplet_precautions | 0 |  |  |  |
-| `start_chest_compressions` | Start Chest Compressions | stabilization / Nursing | stabilization |  |  | 0 |  |  |  |
-| `warming_measures` | Warming Measures | stabilization / Nursing | stabilization |  | warming_measures | 0 |  |  |  |
 | `bag_valve_mask` | Bag Valve Mask | stabilization / Oxygen | stabilization |  |  | 0 |  |  |  |
 | `high_flow_nasal_cannula` | High-Flow Nasal Cannula | stabilization / Oxygen | stabilization |  |  | 0 |  |  |  |
 | `nasal_cannula_oxygen` | Nasal Cannula Oxygen | stabilization / Oxygen | stabilization |  |  | 0 |  |  |  |

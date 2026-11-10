@@ -182,15 +182,29 @@ const PROGRESS = (function(){
                outcome:res.outcome, ended_by:res.ended_by,
                score_pct:(typeof res.score_pct==='number')?Math.max(0,Math.min(100,Math.round(res.score_pct))):null,
                summary:res.summary};
+    let doneId=null;
     try{
-      let error;
+      let error, data;
       if(run.id&&!run.gone){
         ({error}=await client.from('runs').update(row).eq('id',run.id).eq('status','in_progress'));
+        doneId=run.id;
       } else {
-        ({error}=await client.from('runs').insert(Object.assign({case_prefix:run.prefix, version_key:run.key}, row)));
+        ({data,error}=await client.from('runs').insert(Object.assign({case_prefix:run.prefix, version_key:run.key}, row)).select('id').single());
+        doneId=data&&data.id;
       }
       if(error) throw error;
-    }catch(e){ A.track('run_save_failed',{case:run.prefix, at:'finish'}); }
+    }catch(e){ doneId=null; A.track('run_save_failed',{case:run.prefix, at:'finish'}); }
+    /* The run record (10 November 2026): the graded items and the trail of action ids, for
+       the program view (supabase/migrations/004_programs.sql, record_run). The database
+       stores it once per finished run. A failure here costs the learner nothing: their
+       history is the row above. */
+    if(doneId&&res.record){
+      try{
+        const r=await client.rpc('record_run',{p_run:doneId, p_record:res.record, p_trail:res.trail||null});
+        if(r.error) throw r.error;
+        if(r.data!=='ok') A.track('run_record_refused',{case:run.prefix, reason:String(r.data).slice(0,24)});
+      }catch(e){ A.track('run_record_failed',{case:run.prefix}); }
+    }
     await refresh();
     if(before&&listState==='ready'){
       feedback=diff(before,derive(),run.prefix); paintHome();
@@ -710,7 +724,9 @@ const PROGRESS = (function(){
             <span class="bar"><i style="width:${typeof x.pct==='number'?x.pct:0}%"></i></span>
             <span class="p hm-mono">${typeof x.pct==='number'?escP(x.pct)+'%':'–'}</span>
             <span class="d">${escP(x.detail||'')}</span></div>`).join('')}
-          <div class="hm-ra"><button class="hm-link" type="button" data-hmdel="${escP(r.id)}">Delete this attempt</button></div>
+          ${(typeof PROGRAM==='object'&&PROGRAM&&PROGRAM.isMember())
+            ? '<div class="hm-ra"><span class="hm-why">Attempts cannot be deleted while you are in a program.</span></div>'
+            : `<div class="hm-ra"><button class="hm-link" type="button" data-hmdel="${escP(r.id)}">Delete this attempt</button></div>`}
           ${confirmDel===r.id?confirmHTML(r.id,'Delete this attempt from your history?'):''}
         </div>`:''}
       </div>`;

@@ -557,6 +557,24 @@ for e in ENTRIES:
     if p["tab"] == "investigations" and p["group"] == "Imaging":
         p["subgroup"] = _imaging_subgroup(e)
 
+# ---- Owner's instruction, 9 November 2026. Placement only. Same ids, flags and narration. ----
+# The Nursing group moves from Stabilization to Actions (tab id "interventions"). Chest
+# compressions leave Nursing for the top Stabilization folder (owner, 10 November 2026),
+# where they wait for Submit Order (immediateExcept in engine/build_simulator.py). Fluids are split into Boluses and
+# Infusions, by the last word of the name. Fluids also show on Actions (groupAlsoOn in
+# engine/build_simulator.py) and keep the split there.
+for e in ENTRIES:
+    p = e["placements"][0]
+    if e["id"] == "start_chest_compressions":
+        p["group"] = None
+    elif p["tab"] == "stabilization" and p["group"] == "Nursing":
+        p["tab"] = "interventions"
+    if p["tab"] == "stabilization" and p["group"] == "Fluids":
+        last = e["display_name"].split()[-1].lower()
+        if last not in ("bolus", "infusion"):
+            raise SystemExit("fluid that is neither a bolus nor an infusion: " + e["display_name"])
+        p["subgroup"] = "Boluses" if last == "bolus" else "Infusions"
+
 # ---- v0.26c, author instruction (11 October 2026): labs by tube and source ----
 # Lab Work and Other Labs become one Lab Work folder, sectioned by what is drawn or
 # collected: blood by tube top, blood gas, blood cultures, CSF, urine, point of care, other.

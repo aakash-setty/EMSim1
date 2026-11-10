@@ -404,6 +404,25 @@ body.nintro-on .nurse .nurseface{visibility:hidden}
    countdown bar it refers to */
 .tabbtn .badge{position:absolute;top:5px;right:12px;background:var(--warn);color:#fff;
   border-radius:9px;font-family:var(--mono);font-size:9.5px;font-weight:600;padding:0 4px;line-height:14px}
+/* PLACE ORDER (9 November 2026, owner's instruction). A clipboard on its side: the button
+   is the board, and the clip stands off its right edge. The board is inset from the rail
+   on the right so the clip has room, because the rail hides anything past its own edge. */
+.tabbtn.placeorder{width:auto;align-self:stretch;margin:7px 17px 7px 7px;padding:9px 8px 8px 3px;
+  background:#F4E8D2;border:1.5px solid #B48E57;border-radius:7px;color:#6B4E22;
+  box-shadow:0 1px 2px rgba(60,40,10,.14)}
+.tabbtn.placeorder .lb{font-weight:600}
+.tabbtn.placeorder:hover{background:#F9F0DF;color:#4E3712}
+.tabbtn.placeorder[aria-selected="true"]{background:var(--actl);border-color:var(--act);color:var(--act)}
+.tabbtn.placeorder[aria-selected="true"]::before{display:none}
+.tabbtn.placeorder:focus-visible{outline:2px solid var(--act);outline-offset:2px}
+/* The clip: a steel plate across the board's edge, and a tab with a hanging hole past it. */
+.poclip{position:absolute;right:-6px;top:50%;width:10px;height:30px;margin-top:-15px;
+  background:linear-gradient(90deg,#DCE1E6,#AEB6BF 55%,#8C959D);border:1px solid #6F7780;border-radius:3px;
+  box-shadow:0 1px 1px rgba(0,0,0,.18)}
+.poclip::after{content:"";position:absolute;left:100%;top:50%;width:7px;height:16px;margin-top:-8px;
+  box-sizing:border-box;background:#C5CCD3;border:1px solid #6F7780;border-left:0;border-radius:0 6px 6px 0}
+.poclip::before{content:"";position:absolute;left:calc(100% + 1px);top:50%;width:3px;height:6px;margin-top:-3px;
+  background:#fff;border-radius:2px;z-index:1;box-shadow:inset 0 0 0 1px rgba(60,66,74,.5)}
 
 /* ============================================================
    THE PATIENT. A drawn figure standing in the room, in the gap between the
@@ -1509,7 +1528,7 @@ body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-fl
    edges, like a chart that has been written in. No card has a colour band across its top
    (same day). */
 /* The footer sits on the card's bottom edge, so a tinted one meets the corners in a tall row. */
-.wl-case .dc-foot{margin-top:auto}
+.wl-case .dc-foot{margin-top:auto; align-self:stretch; box-sizing:border-box; width:100%}
 .dc-mark{flex:none; width:24px; height:24px; margin:4px; border-radius:50%;
   border:1.5px dashed color-mix(in srgb,var(--ink3) 60%,transparent)}
 .dc-new .dc-st b{color:var(--ink3); font-weight:500}
@@ -1523,6 +1542,10 @@ body.ar-on #picker > .db-scroll, body.ar-on #picker > .db-top, body.ar-on .px-fl
 .t-first .dc-st b{color:var(--act)}
 .wl-case.t-tried{--tier:var(--warn)} .wl-case.t-passed{--tier:var(--act)} .wl-case.t-mastered{--tier:var(--ok)}
 .wl-case.t-tried .dc-foot,.wl-case.t-passed .dc-foot,.wl-case.t-mastered .dc-foot,.wl-case.t-first .dc-foot{
+  /* An explicit width as well as the negative margins: some browsers size a flex item inside
+     a <button> to its content instead of stretching it, and the tint stopped short of the
+     card's right edge (seen 9 November 2026). */
+  align-self:stretch; box-sizing:border-box; width:calc(100% + 26px);
   margin:auto -13px -10px; padding:8px 13px 9px; border-radius:0 0 13px 13px;
   background:color-mix(in srgb,var(--tier) 8%,var(--solid));
   border-top:1px solid color-mix(in srgb,var(--tier) 24%,transparent)}
@@ -2076,10 +2099,10 @@ p{margin:0 0 10px;max-width:72ch}
    The left edge is the state: nothing means untouched, amber means ordered and
    waiting, blue means the result is back, green means done, red means it was
    the wrong thing to do. */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:6px}
 .ab{position:relative;display:block;width:100%;text-align:left;background:rgba(255,255,255,.78);
   border:1px solid var(--rule);border-left:3px solid var(--rule);border-radius:3px;
-  padding:9px 22px 9px 11px;cursor:pointer;line-height:1.35;font-size:14px;
+  padding:5px 22px 5px 11px;cursor:pointer;line-height:1.35;font-size:14px;
   transition:background .12s ease,border-color .12s ease,box-shadow .12s ease}
 .ab:hover{background:#fff;border-color:var(--actb);border-left-color:var(--act);
   box-shadow:0 2px 8px -4px var(--shadow)}
@@ -2112,7 +2135,7 @@ p{margin:0 0 10px;max-width:72ch}
 .ab.hasres{border-left-color:var(--act);background:var(--actl)}
 .ab.picked,.ab.picked:hover{background:var(--actl);border-color:var(--act);
   border-left-color:var(--act);box-shadow:inset 0 0 0 1px var(--act);font-weight:500}
-.ab.picked::after{content:"\2713";position:absolute;top:5px;right:8px;
+.ab.picked::after{content:"\2713";position:absolute;top:50%;margin-top:-6px;right:8px;
   font-size:12px;line-height:1;color:var(--act);font-weight:700}
 .ab.unread{box-shadow:inset 0 0 0 1px var(--act)}
 /* Lab buttons carry their specimen on the left edge, whatever their state: blood dark red,
@@ -2170,6 +2193,50 @@ p{margin:0 0 10px;max-width:72ch}
 .basket{background:var(--actl);border:1px solid var(--actb);border-radius:3px;
   padding:9px 12px;margin-bottom:16px;font-size:13.5px;color:#124A78}
 .basket.empty{background:var(--sunk);border-color:var(--rule2);color:var(--ink3)}
+/* PLACE ORDER, the panel. A large search bar, its results, then the folders. */
+.ordsearch{position:relative;margin:2px 0 8px}
+.ordsearch .ord-ic{position:absolute;left:14px;top:50%;width:20px;height:20px;margin-top:-10px;
+  stroke:var(--act);fill:none;stroke-width:2;stroke-linecap:round;pointer-events:none}
+#orderbox{display:block;width:100%;margin:0;font-size:17px;line-height:1.3;padding:13px 42px 13px 44px;
+  border:2px solid var(--act);border-radius:9px;background:#fff;color:var(--ink);
+  box-shadow:0 2px 8px rgba(20,40,70,.10)}
+#orderbox:focus{outline:3px solid var(--actl);outline-offset:0;border-color:var(--act)}
+#orderbox::placeholder{color:var(--ink3)}
+.ordx{position:absolute;right:6px;top:50%;width:30px;height:30px;margin-top:-15px;background:none;border:0;
+  border-radius:5px;cursor:pointer;color:var(--ink3);font-size:21px;line-height:1;padding:0}
+.ordx:hover{color:var(--harm);background:var(--harml)}
+.ordx[hidden]{display:none}
+.ordhint{margin:0 0 10px}
+.ordresults{margin:0 0 6px}
+.ordresults:empty{display:none}
+.ordresults .srch-sec{margin-left:2px}
+.ordresults .srch-done{margin:0 0 10px}
+.ordresults .srch-none{padding:6px 2px 10px}
+.ord-hit{display:flex;align-items:stretch;gap:6px;border:1px solid var(--rule);border-radius:5px;
+  background:var(--pane2);margin:0 0 6px}
+.ord-hit:hover{border-color:var(--actb)}
+.ord-hit .srch-hit{flex:1 1 auto;min-width:0;width:auto;padding:9px 12px;font-size:14.5px}
+.ord-find{flex:0 0 auto;align-self:center;margin-right:8px;font:inherit;font-size:11px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);background:none;
+  border:1px solid var(--rule);border-radius:4px;padding:4px 9px;cursor:pointer}
+.ord-find:hover,.ord-find:focus-visible{color:var(--act);border-color:var(--act);background:var(--actl);outline:none}
+.ordbrowse{margin-top:18px;padding-top:16px;border-top:1px solid var(--rule2)}
+.ordbrowse-h{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);
+  margin-right:auto}
+.dirhdr{display:flex;width:100%;align-items:center;gap:10px;text-align:left;background:none;border:0;
+  border-bottom:2px solid var(--rule);padding:10px 4px 9px;margin:6px 0 10px;cursor:pointer;
+  font:inherit;font-size:17px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.dirhdr:hover{border-bottom-color:var(--act);color:var(--act)}
+.dirhdr .chev{font-family:var(--mono);font-size:13px;color:var(--ink3);width:14px}
+.dirhdr[aria-expanded="true"] .chev{color:var(--act)}
+.dirhdr .dir-ic{width:20px;height:20px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+.dirhdr .n{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:var(--ink3);font-weight:400}
+.dirbody{margin:0 0 14px 8px;padding-left:12px;border-left:2px solid var(--rule2)}
+/* The button Find has just shown. */
+@keyframes abfound{0%,100%{box-shadow:0 0 0 3px var(--warn)}50%{box-shadow:0 0 0 7px rgba(217,145,30,.28)}}
+.ab.found{border-color:var(--warn);animation:abfound .75s ease-in-out 4}
+@media (prefers-reduced-motion:reduce){.ab.found{animation:none;box-shadow:0 0 0 3px var(--warn)}}
 /* The general appearance line is the one exam finding the learner cannot skip,
    so it keeps a surface of its own at the top of the tab. When it is abnormal
    it takes a red keyline rather than red text: a whole sentence set in red
@@ -2992,7 +3059,8 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 .gatetitle{font-weight:750; letter-spacing:-.015em}
 .cx-title{font-weight:750; letter-spacing:-.01em}
 .tr-head h2{font-size:19px; font-weight:750; letter-spacing:-.01em}
-.splashcard .cc,.handover,.ld-say{font-style:italic}
+/* Owner, 10 November 2026: the handover is set upright, not in italic. */
+.splashcard .cc,.ld-say{font-style:italic}
 .splashcard .cc{font-size:19px}
 .handover{font-size:15.5px}
 .handover .who{font-style:normal}
@@ -3119,6 +3187,12 @@ table.dom td.n{font-family:var(--mono);text-align:right;white-space:nowrap;font-
 :root[data-theme="night"] .homebtn:hover .homeic{background:var(--fill-act-h)}
 :root[data-theme="night"] .voicebtn.live,:root[data-theme="night"] .vrec.live:hover{background:var(--fill-harm);border-color:var(--fill-harm)}
 :root[data-theme="night"] .tabbtn .badge{background:var(--fill-warn)}
+:root[data-theme="night"] .tabbtn.placeorder{background:rgba(214,178,120,.16);border-color:#9C7E52;color:#E3CDA4;box-shadow:none}
+:root[data-theme="night"] .tabbtn.placeorder:hover{background:rgba(214,178,120,.24);color:#F1E2C4}
+:root[data-theme="night"] .tabbtn.placeorder[aria-selected="true"]{background:var(--actl);border-color:var(--act);color:var(--act)}
+:root[data-theme="night"] .poclip::before{background:#10181d}
+:root[data-theme="night"] #orderbox{background:rgba(255,255,255,.06);box-shadow:none}
+:root[data-theme="night"] .ord-hit{background:rgba(255,255,255,.045)}
 
 /* ---- the history thread: the same glass, smoked ---- */
 :root[data-theme="night"] .imsg-glass{

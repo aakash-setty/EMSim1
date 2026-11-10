@@ -5,11 +5,38 @@ is usable with learners.
 
 ---
 
+## Nursing moves to Actions, Fluids split, handover label in sentence case (9 November 2026, owner's instruction)
+
+- The Nursing group moves from Stabilization to Actions, last in Actions' group order, with a new group icon. Start Chest Compressions leaves Nursing for the top Stabilization folder instead (owner, 10 November 2026), but, unlike the rest of that folder, it waits for Submit Order (owner, 10 November 2026). New shared list `immediateExcept` in `engine/build_simulator.py`, read by `actionButton` in `engine/ui.js`. Catalog placement only: same ids, flags and narration. `catalog/build_catalog.py`, regenerated `action-catalog.json` and `voice-aliases.json`, every pack rebound.
+- CHFE's two case-only nursing actions (BP cycling, urine output) were placed under Stabilization > Nursing in `cases/CHFE/CHFE-binding-map.json`. Their placement now reads Actions > Nursing. Placement only, in a frozen pack.
+- Consequence for scoring: the debrief scores each ordering tab by the action's tab. A tagged nursing action now counts in the Actions row, not Stabilization. DIPH's cooling measures (critical) is the one tagged case.
+- Fluids are split into Boluses and Infusions, by the last word of the name, on Stabilization and on Actions (and so on Place Order). `subgroupOrder` in `engine/build_simulator.py`. The catalog build stops if a fluid is neither.
+- The handover text on the History tab is no longer italic (owner, 10 November 2026, correcting the first reading of the instruction). Its label, "Handover from the paramedics", keeps its capitals. `engine/shell.html`.
+- All nine packs pass `engine/test_packs.py`. `kit_check.py` 0 errors. Checked in Chromium: no Nursing on Stabilization in any of the nine cases, both Fluids folders split, Find on Droplet Precautions lands in Actions > Nursing, no page errors. Backup in `Claude outputs/nursing-fluids/backup-before/`.
+
+## Shorter order buttons (9 November 2026, owner's instruction)
+
+- Every action button keeps its 14px text and loses vertical padding: 9px to 5px top and bottom, about 39px to 31px tall. The gap between buttons goes from 8px to 6px. The selected check mark is now centered on the button's height. `engine/shell.html` (`.ab`, `.grid`, `.ab.picked::after`).
+- Exam buttons with an icon are unchanged in height, because the icon tile sets it.
+- Checked in Chromium on case 1. Backup in `Claude outputs/button-padding/backup-before/`.
+
+## Place Order tab (9 November 2026, owner's instruction)
+
+- New rail button after Exam, "Place Order", drawn as a clipboard on its side with the clip standing off its right edge. Tab id `orders`. `engine/build_simulator.py` (`TAB_ORDER`, `TAB_LABEL`, new shared `orderTab`), `engine/ui.js`, `engine/shell.html`.
+- The panel has a large search bar that finds anything on Stabilization, Labs/Imaging and Actions, matched as the global search matches. Pressing a result orders it at once (owner's answer). Enter orders the top result.
+- Under the search, Labs/Imaging and Actions are drop-down directories holding the same groups, basket and Submit Order as their tabs. Stabilization is searched and not drawn (owner's answer).
+- Each result has a small Find button. It clears the search, opens the folders down to the item, scrolls to it and marks it. A Stabilization item is shown on the Stabilization tab.
+- The Labs/Imaging and Actions tabs are unchanged and stay for now (owner's answer). The global search is unchanged.
+- `renderActionTab` now draws its groups through `groupListHTML`, which Place Order shares. `actionsFor` and `searchHits` take optional arguments. No case field, catalog entry or authoring rule changed. System design 19.4 added.
+- Tested: all nine packs pass `engine/test_packs.py`. Scripted in Chromium on case 1 of `build/simulator.html`: search, order by press and by Enter, Find into Lab Work, into "Additional tests", into the CT sub-tab and onto Stabilization, select and Submit Order from a folder, collapse a directory, old tabs and global search, day and night. No page errors. Not checked: phones, Safari, voice orders, the tutorial pictures (they do not show the new button).
+- Backup in `Claude outputs/place-order/backup-before/`.
+
 ## No colour band on the cards, and pictures open only when clicked (9 November 2026, owner's instruction)
 
 - The case cards lose the colour band across their top, for every state. The tinted footer alone marks a case you have worked on. `engine/shell.html`.
 - An ECG, film or CT no longer opens full size the moment it results. It lands in the chart as a thumbnail ("Click to open") and opens when clicked. `AUTO_OPEN_IMAGES=false` in `engine/ui.js`, with the queue kept so it can return with one line. Authoring (images) and system design updated. Checked in a browser on TSS: the ECG resulted with the viewer closed, one thumbnail in the chart, and the click opened it.
 - Backup in `Claude outputs/card-band-images/backup-before/`.
+- Same day: the tinted footer stopped short of the card's right edge in the owner's browser (sized to its text, not stretched). The footer now carries an explicit width as well as its negative margins. Chromium measured the same before and after, so the fix could not be checked in the browser that showed it.
 
 ## Case cards: not started looks untouched, begun looks written in (9 November 2026, owner's instruction)
 

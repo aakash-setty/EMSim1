@@ -1659,6 +1659,34 @@ Two defects that any implementation will hit, stated as requirements rather than
 - **Selecting must not move anything.** If the pending-order bar or a Clear control appears on the first selection, the grid shifts under the cursor and the next click lands on the wrong item. Render the bar and the controls unconditionally, disabled when empty.
 - **The selected marker must not change the button's height**, for the same reason. Use an absolutely positioned marker rather than a label in flow.
 
+### 19.4 The Place Order tab
+
+Added 9 November 2026 on the owner's instruction. It is the fourth button on the rail, after
+Exam, drawn as a clipboard on its side. Its id is `orders`. It holds no actions of its own.
+`orderTab` in the shared payload (`engine/build_simulator.py`) names what it reads:
+
+- `search`: the tabs its search bar finds. Stabilization, Labs/Imaging and Actions.
+- `folders`: the tabs it draws underneath as drop-down directories. Labs/Imaging and Actions.
+  Stabilization is searched and not drawn, because it keeps its own tab.
+
+The search matches exactly as the global search does (`searchHits` with a tab list), without
+the chart lines. **Pressing a result orders it at once**, as the global search does, and
+Enter orders the top result. If the same item was waiting in the basket it leaves the
+basket, so Submit Order cannot send it a second time.
+
+The folders are the ordering tabs' own groups, drawn by the same function
+(`groupListHTML`) from the same state. A click there selects, and Submit Order sends, as
+section 19 describes. A group opened here is open on the old tab, and a pick is one pick.
+
+Each result carries a small **Find** button. It clears the search, opens the directory, the
+group and any sub-tab or closed subgroup down to the item, scrolls to it and marks it for
+three seconds. An item that sits in two groups is shown in its own group. An item that no
+folder here draws (most of Stabilization) is shown on its own tab instead. A result that no
+menu draws (a stop order) has no Find button.
+
+The Labs/Imaging and Actions tabs are still on the rail. The owner plans to remove them in
+a later step. Nothing here depends on them staying.
+
 ---
 
 ## 20. Interview matching

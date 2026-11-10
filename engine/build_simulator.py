@@ -73,13 +73,16 @@ CE = {x["id"]: x for x in catalog["entries"]}
 # learner had asked for any of it; the two-sentence EMS or triage handover now sits at
 # the top of History. See docs/arrival-and-history-change.md.
 # v0.26, author instruction: Stabilization is the top tab and the one a case opens on.
-TAB_ORDER = ["stabilization", "history", "exam",
+# 9 November 2026, owner's instruction: Place Order ("orders") sits after Exam. It holds no
+# actions of its own. It searches and draws the tabs named in "orderTab" below. The two
+# ordering tabs it draws stay for now and are to be removed in a later step.
+TAB_ORDER = ["stabilization", "history", "exam", "orders",
              "investigations", "interventions", "consultations", "handoff"]
 TAB_LABEL = {"history": "History", "exam": "Exam",
              # Renamed on the author's instruction, 14 October 2026. The ids are unchanged.
              "investigations": "Labs/Imaging", "stabilization": "Stabilization",
              "interventions": "Actions", "consultations": "Consults",
-             "handoff": "Handoff"}
+             "handoff": "Handoff", "orders": "Place Order"}
 
 
 def orphan_category(eff):
@@ -149,6 +152,13 @@ shared = {
     "diagnoses": [{"id": d["id"], "label": d["display_name"],
                    "syn": d.get("synonyms") or []} for d in dxcat["entries"]],
     "orderableTabs": ["investigations", "stabilization", "interventions"],
+    # The Place Order tab (9 November 2026, owner's instruction). `search` is what its search
+    # bar finds. `folders` is what it draws underneath as drop-down directories, with the
+    # same groups, baskets and Submit Order as those tabs. Stabilization is searched and not
+    # drawn, because it keeps its own tab.
+    "orderTab": {"id": "orders",
+                 "search": ["stabilization", "investigations", "interventions"],
+                 "folders": ["investigations", "interventions"]},
     # What the microphone may say, which is wider than what may be batched into an order.
     # An exam and a consultation are single acts that take effect when they are confirmed,
     # exactly as the tab's own button does, so they need no basket; they are excluded from
@@ -164,9 +174,9 @@ shared = {
     # the condition holds. A case may override it with a top-level `ventilation`.
     "ventilation": {"when": "flag intubated set", "respiratory_rate": 16},
     # Owner, 30 October 2026: Stabilization, Oxygen, Fluids, Vascular Access, Pacer/Defib,
-    # Nursing, Intubation.
+    # Nursing, Intubation. Nursing moved to Actions on 9 November 2026.
     "groupOrder": {"stabilization": ["Stabilization", "Oxygen", "Fluids", "Vascular Access",
-                                     "Pacer/Defib", "Nursing", "Intubation"],
+                                     "Pacer/Defib", "Intubation"],
                    # Author instruction, 14 October 2026: Fluids first, the code drugs, then
                    # the drug groups in the order of the exam (heart, lungs, abdomen, GU,
                    # skin, neuro, psych), then the groups that belong to no one system.
@@ -175,7 +185,9 @@ shared = {
                                      "Meds - OB/GYN", "Meds - Allergy",
                                      "Meds - Sedation/Analgesia", "Meds - Psych",
                                      "Meds - Antibiotics", "Meds - Tox",
-                                     "Meds - Miscellaneous", "Blood Bank", "Procedures"]},
+                                     "Meds - Miscellaneous", "Blood Bank", "Procedures",
+                                     # Owner, 9 November 2026: moved here from Stabilization.
+                                     "Nursing"]},
     # A group drawn on a second tab as well as its own (author instruction, 14 October
     # 2026: fluids can be ordered from Actions as well as Stabilization). The buttons are
     # the same actions, and a pick on either tab is one pick: it shows on both and is
@@ -190,6 +202,8 @@ shared = {
     # A group listed in subgroupTabs draws its subgroups as sub-tabs, one showing at a
     # time. Any other group draws them as headings inside the one folder.
     "subgroupOrder": {"Imaging": ["CT", "X-ray", "Ultrasound", "MRI"],
+                      # Owner, 9 November 2026. On Stabilization and on Actions alike.
+                      "Fluids": ["Boluses", "Infusions"],
                       "Intubation": ["Medications"],
                       "Lab Work": ["Blood, lavender or pink top (EDTA)", "Blood, light blue top (citrate)",
                                    "Blood, green top (lithium heparin)", "CSF", "Urine",
@@ -227,6 +241,9 @@ shared = {
     # v0.26b. Groups on an ordering tab whose buttons act on the click, with no basket and
     # no Submit Order: the first acts of any resuscitation. Author instruction.
     "immediateGroups": {"stabilization": ["Stabilization"]},
+    # Entries in an immediate group that still wait for Submit Order, by catalog id
+    # (owner, 10 November 2026: chest compressions).
+    "immediateExcept": ["start_chest_compressions"],
     # Groups that render already open the first time their tab is opened. Stabilization
     # holds the three acts that come first in any resuscitation, and one of them now
     # gates the monitor, so making the resident click a header to find them buries the
@@ -1046,6 +1063,10 @@ def main():
               # build. access.js hands it the Supabase client; ui.js calls it. Inert in the
               # local build, where ACCESS.mode is "local".
               "\n" + open(os.path.join(HERE, "progress.js"), encoding="utf-8").read() + "\n" +
+              # program.js (10 November 2026) declares `const PROGRAM`: joining a residency
+              # program and the analytics screens. access.js hands it the Supabase client and
+              # leaves it a slot in the account line. Inert in the local build.
+              "\n" + open(os.path.join(HERE, "program.js"), encoding="utf-8").read() + "\n" +
               # procedures.js (28 October 2026) declares `const PROCEDURES`, the Procedures box
               # and window. ui.js calls PROCEDURES.init from boot(), so it comes before ui.js.
               # The procedure engine itself is not in this bundle: see load_procedures.

@@ -1506,3 +1506,92 @@ function overallScore(st){
           critical:{done:critDone,total:crit.length,points:OVERALL.critical*critFrac},
           parts};
 }
+
+/* ---------- the run record (10 November 2026) ----------
+   What a finished run was, item by item, for the program view (docs/deployment.md,
+   "Programs and analytics"). The overall score is one number for the learner. A program
+   needs the facts under it: which expected action was done, whether the nurse had to ask,
+   how long it took, what was done that should not have been, and how the handoff read.
+
+   Everything here is read from the folded state, so it is the same answer the debrief
+   gives. Ids are catalog ids and the case's own phase ids. No text the learner typed and
+   no label is included.
+
+   One item per graded thing:
+     k        critical | recommended | discouraged | harmful | diagnosis | disposition
+     id       the action, diagnosis or disposition id
+     tab, cat, grp   where the catalog files the action (ordering tab, category, group)
+     r        done | missed for an expected action. taken for a discouraged or harmful one.
+              correct | defensible | incorrect | none for the diagnosis and the disposition
+     p        true when the nurse prompted for it
+     et       case seconds at which it first became expected (entry to the phase)
+     dt       case seconds at which it was first done, or taken. null when a covering
+              action discharged it, because no press carries its id
+
+   The result is one of three words, deliberately coarse:
+     met            every critical action done with no prompt, nothing harmful, the case not
+                    lost, and a primary diagnosis and a disposition that are correct or
+                    defensible
+     met_prompted   the same, with a prompt before one or more critical actions
+     not_met        anything else. `why` lists the reasons. */
+function runItems(st){
+  const r3=x=>(typeof x==='number'&&isFinite(x))?Math.round(x*1000)/1000:null;
+  const firstT={};
+  st.timeline.forEach(x=>{
+    if((x.type==='state-changing'||x.type==='observational')&&firstT[x.id]===undefined) firstT[x.id]=x.t;
+  });
+  const expT={};
+  st.phaseSeq.forEach(p=>{
+    const s=st.expectedByPhase[p.id];
+    if(s) s.forEach(id=>{ if(expT[id]===undefined) expT[id]=p.t; });
+  });
+  const where=id=>{ const a=ACT[id]||{}; return {tab:a.tab||null, cat:a.category||null, grp:a.group||null}; };
+  const items=[];
+  const expectedRow=(k,id)=>{
+    const done=st.satisfied.has(id);
+    items.push(Object.assign({k,id},where(id),{r:done?'done':'missed', p:st.prompted.has(id),
+      et:r3(expT[id]), dt:done?r3(firstT[id]):null}));
+  };
+  [...st.expected].forEach(id=>expectedRow('critical',id));
+  [...st.recommendedExpected].filter(id=>!st.expected.has(id)).forEach(id=>expectedRow('recommended',id));
+  [...st.discouragedTaken].forEach(id=>
+    items.push(Object.assign({k:'discouraged',id},where(id),{r:'taken',p:false,et:null,dt:r3(firstT[id])})));
+  if(st.halted)
+    items.push(Object.assign({k:'harmful',id:st.halted.id},where(st.halted.id),{r:'taken',p:false,et:null,dt:r3(st.halted.t)}));
+
+  const h=st.handoff, H=(CASE&&CASE.handoff)||{};
+  let dxR='none', dxId=null, dispR='none', dispId=null;
+  if(h){
+    const first=scoreDiagnoses(st).rows[0];
+    if(first){
+      dxId=first.id;
+      dxR=first.verdict==='primary_correct'?'correct':(first.verdict==='primary_defensible'?'defensible':'incorrect');
+    }
+    dispId=h.disposition||null;
+    if(dispId){
+      const ok=H.correct_disposition&&dispId===H.correct_disposition.id;
+      const alt=(H.alternative_dispositions||[]).find(a=>a.id===dispId);
+      dispR=ok?'correct':((alt&&alt.verdict==='acceptable_with_qualification')?'defensible':'incorrect');
+    }
+  }
+  const blank={tab:null,cat:null,grp:null,p:false,et:null,dt:null};
+  items.push(Object.assign({k:'diagnosis',id:dxId},blank,{r:dxR}));
+  items.push(Object.assign({k:'disposition',id:dispId},blank,{r:dispR}));
+
+  const crit=items.filter(i=>i.k==='critical');
+  const why=[];
+  if(st.failed) why.push('case_lost');
+  if(st.halted) why.push('harmful_action');
+  if(crit.some(i=>i.r==='missed')) why.push('critical_missed');
+  if(!st.failed&&!st.halted){
+    if(dxR==='incorrect'||dxR==='none') why.push('diagnosis');
+    if(dispR==='incorrect'||dispR==='none') why.push('disposition');
+  }
+  const prompted=crit.some(i=>i.r==='done'&&i.p);
+  const result=why.length?'not_met':(prompted?'met_prompted':'met');
+  return {v:1, result, why, items,
+          phases:st.phaseSeq.map(p=>({id:p.id,t:r3(p.t)})),
+          counts:{critical:crit.length, critical_done:crit.filter(i=>i.r==='done').length,
+                  critical_prompted:crit.filter(i=>i.r==='done'&&i.p).length,
+                  discouraged:st.discouragedTaken.size, harmful:st.halted?1:0}};
+}

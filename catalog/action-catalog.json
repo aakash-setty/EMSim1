@@ -586,7 +586,7 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Nursing"
+          "group": null
         }
       ],
       "category": "stabilization",
@@ -689,7 +689,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Fluids"
+          "group": "Fluids",
+          "subgroup": "Boluses"
         }
       ],
       "category": "stabilization",
@@ -712,7 +713,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Fluids"
+          "group": "Fluids",
+          "subgroup": "Boluses"
         }
       ],
       "category": "stabilization",
@@ -735,7 +737,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Fluids"
+          "group": "Fluids",
+          "subgroup": "Boluses"
         }
       ],
       "category": "stabilization",
@@ -758,7 +761,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Fluids"
+          "group": "Fluids",
+          "subgroup": "Boluses"
         }
       ],
       "category": "stabilization",
@@ -781,7 +785,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Fluids"
+          "group": "Fluids",
+          "subgroup": "Boluses"
         }
       ],
       "category": "stabilization",
@@ -804,7 +809,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Fluids"
+          "group": "Fluids",
+          "subgroup": "Infusions"
         }
       ],
       "category": "stabilization",
@@ -827,7 +833,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Fluids"
+          "group": "Fluids",
+          "subgroup": "Infusions"
         }
       ],
       "category": "stabilization",
@@ -850,7 +857,8 @@
       "placements": [
         {
           "tab": "stabilization",
-          "group": "Fluids"
+          "group": "Fluids",
+          "subgroup": "Infusions"
         }
       ],
       "category": "stabilization",
@@ -1433,7 +1441,7 @@
       "display_name": "Droplet Precautions",
       "placements": [
         {
-          "tab": "stabilization",
+          "tab": "interventions",
           "group": "Nursing"
         }
       ],
@@ -1453,7 +1461,7 @@
       "display_name": "Contact Precautions",
       "placements": [
         {
-          "tab": "stabilization",
+          "tab": "interventions",
           "group": "Nursing"
         }
       ],
@@ -1473,7 +1481,7 @@
       "display_name": "Airborne Precautions",
       "placements": [
         {
-          "tab": "stabilization",
+          "tab": "interventions",
           "group": "Nursing"
         }
       ],
@@ -1493,7 +1501,7 @@
       "display_name": "Warming Measures",
       "placements": [
         {
-          "tab": "stabilization",
+          "tab": "interventions",
           "group": "Nursing"
         }
       ],
@@ -1513,7 +1521,7 @@
       "display_name": "Cooling Measures",
       "placements": [
         {
-          "tab": "stabilization",
+          "tab": "interventions",
           "group": "Nursing"
         }
       ],

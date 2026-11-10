@@ -48,6 +48,8 @@ SITE_CONFIGURED=$(cat "$T/configured") node engine/site-check/deep.js
 node engine/site-check/google.js
 # Saved progress (28 October 2026): autosave, resume, finish, delete, the version notice.
 node engine/site-check/progress.js
+# Programs and analytics (10 November 2026): joining, the run record, the two analytics screens.
+node engine/site-check/program.js
 # The pack publisher (run by the GitHub Action) against the mock bucket: uploads all, then
 # finds them all present, then refuses a pack that reads back altered.
 curl -s -XPOST http://localhost:54321/__ctl -d '{"storeOnly":true,"tamper":false}' > /dev/null

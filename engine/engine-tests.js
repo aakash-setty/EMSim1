@@ -1691,6 +1691,39 @@ section('the seven-category summary (v0.9)');
       JSON.stringify(summaryScores(fold([], 10))) === JSON.stringify(rows));
 }
 
+section('the run record (10 November 2026)');
+{
+  const none = runItems(fold([], 10));
+  const kinds = ['critical', 'recommended', 'discouraged', 'harmful', 'diagnosis', 'disposition'];
+  chk('every item has a known kind and a result', none.items.every(i => kinds.includes(i.k) && typeof i.r === 'string'));
+  chk('one diagnosis item and one disposition item, always',
+      none.items.filter(i => i.k === 'diagnosis').length === 1 && none.items.filter(i => i.k === 'disposition').length === 1);
+  chk('nothing done is not met, and says a critical action or the handoff is why',
+      none.result === 'not_met' && none.why.length > 0, none.result + ' ' + none.why.join(','));
+  chk('the critical items are exactly the expected set',
+      none.items.filter(i => i.k === 'critical').map(i => i.id).sort().join() === [...fold([], 10).expected].sort().join());
+  chk('counts agree with the overall score',
+      none.counts.critical === overallScore(fold([], 10)).critical.total &&
+      none.counts.critical_done === overallScore(fold([], 10)).critical.done);
+  chk('an expected action carries the time it became expected',
+      none.items.filter(i => i.k === 'critical').every(i => typeof i.et === 'number'));
+  chk('a missed action has no done time', none.items.filter(i => i.r === 'missed').every(i => i.dt === null));
+  const done = fold(mk([[1.25, 'insert_iv'], { t: 30, actionId: 'handoff_submit',
+    payload: { disposition: CASE.handoff.correct_disposition.id, diagnoses: [PROTO.correctDxId] } }]), 60);
+  const rec = runItems(done);
+  chk('a correct handoff reads correct on both handoff items',
+      rec.items.find(i => i.k === 'diagnosis').r === 'correct' && rec.items.find(i => i.k === 'disposition').r === 'correct');
+  chk('the diagnosis item names the primary diagnosis', rec.items.find(i => i.k === 'diagnosis').id === PROTO.correctDxId);
+  const wrong = runItems(fold(mk([{ t: 30, actionId: 'handoff_submit',
+    payload: { disposition: CASE.handoff.correct_disposition.id, diagnoses: ['dx_nowhere'] } }]), 60));
+  chk('an unlisted primary diagnosis is incorrect', wrong.items.find(i => i.k === 'diagnosis').r === 'incorrect');
+  chk('phases start with the first phase at time zero', rec.phases[0].id === CASE.phases[0].id && rec.phases[0].t === 0);
+  chk('the record holds ids and numbers only: no label, no narration',
+      rec.items.every(i => Object.keys(i).sort().join() === 'cat,dt,et,grp,id,k,p,r,tab'));
+  chk('the record is deterministic', JSON.stringify(runItems(done)) === JSON.stringify(rec));
+  chk('met only with no reason against it', (rec.result === 'not_met') === (rec.why.length > 0));
+}
+
 section('the overall score (11 October 2026)');
 {
   const none = overallScore(fold([], 10));

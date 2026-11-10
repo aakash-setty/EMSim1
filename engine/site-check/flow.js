@@ -52,7 +52,7 @@ const ctl=b=>fetch('http://localhost:54321/__ctl',{method:'POST',body:JSON.strin
    title:document.getElementById('ld-overtitle').textContent, scroll:getComputedStyle(document.getElementById('landing')).overflowY}));
  ok('High-lateral is right: the sheet closes, the page scrolls again, the demo ends on Good call', e1.closed&&e1.over&&/High-lateral/.test(e1.title)&&e1.scroll==='auto', e1);
  ok('no review tools (speed control) in the site', await p.evaluate(()=>typeof REVIEW_SPEED==='undefined'&&!document.getElementById('reviewspeed')));
- ok('legal line and product name', /2026 Aakash Setty/.test(s0.legal)&&/EMSim/.test(s0.h1)&&s0.title==='EMSim');
+ ok('legal line and product name', /2026 WeSim LLC/.test(s0.legal)&&/EMSim/.test(s0.h1)&&s0.title==='EMSim');
  // the page must sit on the list without errors (setInterval guard)
  await p.waitForTimeout(1200);
  ok('no errors idling on the list', errs.length===0, errs);

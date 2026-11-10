@@ -771,6 +771,7 @@ const TABICON={
   consultations:'<path d="M21 16.9v2.5a1.5 1.5 0 0 1-1.6 1.5A17.6 17.6 0 0 1 3 4.6 1.5 1.5 0 0 1 4.5 3h2.5'
       +'a1.5 1.5 0 0 1 1.5 1.3c.1 1 .3 1.9.6 2.8a1.5 1.5 0 0 1-.3 1.6L7.6 10a14 14 0 0 0 6.4 6.4l1.3-1.2'
       +'a1.5 1.5 0 0 1 1.6-.3c.9.3 1.8.5 2.8.6a1.5 1.5 0 0 1 1.3 1.5z"/>',
+  orders:'<path d="M6.5 7h8M6.5 11.5h8M6.5 16h4"/><path d="M17 13.5v6M14 16.5h6"/>',
   handoff:'<path d="M9.5 4.5H7A1.8 1.8 0 0 0 5.2 6.3v12.9A1.8 1.8 0 0 0 7 21h10a1.8 1.8 0 0 0 1.8-1.8V6.3'
       +'A1.8 1.8 0 0 0 17 4.5h-2.5"/><rect x="9.2" y="2.6" width="5.6" height="3.6" rx="1.1"/>'
       +'<path d="M9.3 13.4l2 2 3.6-3.8"/>'
@@ -794,9 +795,12 @@ function renderTabs(){
     let badge='';
     if(id==='investigations'&&ST.pending.length) badge=`<span class="badge">${ST.pending.length}</span>`;
     const lab=esc(PROTO.tabLabel[id]);
-    return `<button class="tabbtn" role="tab" aria-selected="${id===TAB&&LEFT_OPEN}" data-tab="${esc(id)}"
+    /* Place Order is drawn as a clipboard on its side: a board, with the clip standing off
+       its right edge (owner's instruction, 9 November 2026). */
+    const po=id===ORDERS_TAB;
+    return `<button class="tabbtn${po?' placeorder':''}" role="tab" aria-selected="${id===TAB&&LEFT_OPEN}" data-tab="${esc(id)}"
       title="${lab}"><svg viewBox="0 0 24 24" aria-hidden="true">${TABICON[id]||TABICON.patient}</svg>
-      <span class="lb">${lab}</span>${badge}</button>`;
+      <span class="lb">${lab}</span>${badge}${po?'<span class="poclip" aria-hidden="true"></span>':''}</button>`;
   }).join('');
 }
 
@@ -827,8 +831,8 @@ function renderPayload(v){
 }
 
 /* ---------- action buttons ---------- */
-function actionsFor(tab){
-  const f=filterOf(tab), out={};
+function actionsFor(tab,unfiltered){
+  const f=unfiltered?'':filterOf(tab), out={};
   const hits=f?filterHits(f):null;
   const also=(PROTO.groupAlsoOn||{})[tab]||[];
   for(const id in ACT){
@@ -924,6 +928,7 @@ const GROUP_ICON={interventions:{
   'Meds - Tox':{bg:'#E9E2DC',fg:'#85705F',d:'<path d="M9.5 3.5h5M10.5 3.5v5L6 17.5a2 2 0 0 0 1.8 3h8.4a2 2 0 0 0 1.8-3l-4.5-9v-5"/><path d="M8 14h8"/>'},
   'Meds - Miscellaneous':{bg:'#E7E8EA',fg:'#6F7780',d:'<rect x="3.8" y="8.5" width="16.4" height="7" rx="3.5" transform="rotate(-35 12 12)"/><path d="M9.9 9 14.1 15"/>'},
   'Blood Bank':{bg:'#F2D7DC',fg:'#A2495C',d:'<path d="M12 3.5s-5.5 6.2-5.5 10.2a5.5 5.5 0 0 0 11 0C17.5 9.7 12 3.5 12 3.5z"/><path d="M12 10.5v6M9 13.5h6"/>'},
+  'Nursing':{bg:'#E3EEF0',fg:'#4E8088',d:'<path d="M12 21s-7-4.3-7-9.6A4 4 0 0 1 12 9a4 4 0 0 1 7 2.4c0 5.3-7 9.6-7 9.6z"/><path d="M12 12.2v4.6M9.7 14.5h4.6"/>'},
   'Procedures':{bg:'#DFE4EA',fg:'#5E6F83',d:'<path d="M4 20 15.5 8.5"/><path d="M15.5 8.5l2-2a2.1 2.1 0 0 1 3 3l-2 2-3-3z"/><path d="M7 17l-1.5-1.5M9.5 14.5 8 13"/>'},
 }};
 function groupIconHTML(tab,g){
@@ -1017,7 +1022,8 @@ function actionButton(id,tab,grp){
   if(a.specimen) cls+=' spec-'+a.specimen;
   if(tab&&pickedAnywhere(id)) cls+=' picked';
   /* v0.26b. A button in one of PROTO.immediateGroups acts on the click, like an exam. */
-  const now=!!(grp&&((PROTO.immediateGroups||{})[tab]||[]).includes(grp));
+  const now=!!(grp&&((PROTO.immediateGroups||{})[tab]||[]).includes(grp))
+            &&!(PROTO.immediateExcept||[]).includes(catIdOf(id));
   const ic=BUTTON_ICON[catIdOf(id)];
   if(ic) cls+=' hasic';
   const label=ic?`<span class="abic" style="--icbg:${ic.bg};--icfg:${ic.fg}" aria-hidden="true"><svg viewBox="0 0 24 24">${ic.d}</svg></span><span>${esc(buttonLabel(a.name))}</span>`
@@ -1080,22 +1086,13 @@ function groupBody(tab,g,ids,filtering){
   }
   return html;
 }
-function renderActionTab(tab,intro){
-  const groups=actionsFor(tab);
+/* One tab's groups, as the accordion (or as plain headings on a flat tab). Shared by the
+   ordering tabs and by the folders on Place Order, which draw the same groups from the
+   same state: a group opened in one place is open in the other, and a pick is one pick. */
+function groupListHTML(tab,groups,forced){
   const names=groupNames(tab,groups);
   const collapsible=(PROTO.collapsibleTabs||[]).includes(tab);
   const open=expandedOf(tab);
-  /* A filter forces every surviving group open for as long as it is set. Typing a
-     filter and being shown nine collapsed headers is not a search result.
-
-     This used to be done by adding the matched groups to the expanded set AFTER the
-     markup had been built, which had two faults: the effect landed one render late, so
-     a filter set in a single stroke showed collapsed headers until something else
-     repainted the tab, and the set kept every group that had ever matched a filter, so
-     clearing the box left the accordion open on groups the learner had never touched.
-     Forcing it here instead leaves the learner's own accordion state alone: clear the
-     filter and the tab is exactly as they left it. */
-  const forced=collapsible&&!!filterOf(tab);
   let html='';
   for(const g of names){
     const picked=groups[g].filter(id=>pickedAnywhere(id)).length;
@@ -1116,7 +1113,24 @@ function renderActionTab(tab,intro){
     html+=groupBody(tab,g,groups[g],forced);
     if(collapsible) html+='</div>';
   }
-  if(!names.length) html='<p class="sub">Nothing matches that filter.</p>';
+  return html;
+}
+function renderActionTab(tab,intro){
+  const groups=actionsFor(tab);
+  const collapsible=(PROTO.collapsibleTabs||[]).includes(tab);
+  /* A filter forces every surviving group open for as long as it is set. Typing a
+     filter and being shown nine collapsed headers is not a search result.
+
+     This used to be done by adding the matched groups to the expanded set AFTER the
+     markup had been built, which had two faults: the effect landed one render late, so
+     a filter set in a single stroke showed collapsed headers until something else
+     repainted the tab, and the set kept every group that had ever matched a filter, so
+     clearing the box left the accordion open on groups the learner had never touched.
+     Forcing it here instead leaves the learner's own accordion state alone: clear the
+     filter and the tab is exactly as they left it. */
+  const forced=collapsible&&!!filterOf(tab);
+  let html=groupListHTML(tab,groups,forced);
+  if(!html) html='<p class="sub">Nothing matches that filter.</p>';
   const orderable=PROTO.orderableTabs.includes(tab);
   const basket=[...basketOf(tab)], everything=allPicked();
   const elsewhere=PROTO.orderableTabs.filter(t=>t!==tab&&basketOf(t).size)
@@ -1139,6 +1153,140 @@ function renderActionTab(tab,intro){
           +(elsewhere?' Also selected on '+elsewhere+'.':'')
         : 'Nothing selected. Click items to add them, then Submit Order.'}</div>`:''}
     ${html}</div>`;
+}
+
+/* ---------- Place Order (owner's instruction, 9 November 2026) ----------
+   One tab to order from. A search bar at the top finds anything on the tabs named in
+   PROTO.orderTab.search, matched exactly as the global search matches, and pressing a
+   result orders it at once, as the global search does. Underneath, each tab named in
+   PROTO.orderTab.folders is a drop-down directory holding that tab's own groups: the same
+   buttons, the same basket and the same Submit Order. Each result carries a small Find
+   button, which clears the search, opens the folders down to the item and marks it.
+   An item that is searched and not drawn here (Stabilization) is shown on its own tab. */
+const ORDERS_TAB=(SHARED.orderTab&&SHARED.orderTab.id)||'orders';
+let ORDER_Q='', ORDER_DONE='', ORDER_FOUND=null, ORDER_FOUND_T=0, ORDER_FOUND_TIMER=0;
+const ORDER_DIR_CLOSED=new Set();
+const orderCfg=()=>(PROTO&&PROTO.orderTab)||{search:[],folders:[]};
+/* Where an action is drawn: on one of the Place Order folders if it is in one, or else on
+   its own tab. Its own group is preferred when it sits in two (the ultrasounds). Null for
+   an action no menu draws (a stop order, which is the cross on its drip). */
+function orderWhereMap(){
+  const maps={};
+  const mapOf=tab=>maps[tab]||(maps[tab]=actionsFor(tab,true));
+  return id=>{
+    const a=ACT[id]; if(!a) return null;
+    const own=(a.groups||[a.group]).filter(Boolean);
+    const look=(tab,here)=>{
+      const groups=mapOf(tab);
+      const names=groupNames(tab,groups).filter(g=>groups[g].includes(id));
+      if(!names.length) return null;
+      return {tab,group:names.find(g=>own.includes(g))||names[0],here};
+    };
+    for(const tab of orderCfg().folders){ const w=look(tab,true); if(w) return w; }
+    return (PROTO.tabLabel||{})[a.tab]?look(a.tab,false):null;
+  };
+}
+function orderResultsHTML(){
+  const hits=searchHits(ORDER_Q,orderCfg().search);
+  if(!hits) return ORDER_DONE?`<div class="srch-done">${esc(ORDER_DONE)}</div>`:'';
+  if(!hits.acts.length) return '<div class="srch-none">Nothing matches that. Try fewer words.</div>';
+  const where=orderWhereMap();
+  return '<div class="srch-sec">'+(hits.acts[0].synonym?'Orders, by another name':'Orders')+'</div>'+hits.acts.map(a=>
+    `<div class="ord-hit"><button class="srch-hit" type="button" data-ogo="${esc(a.id)}"><b>${searchMark(a.name,hits.q)}</b>
+        <span class="sh-meta">${esc(PROTO.tabLabel[a.tab]||a.tab)}${a.group?' &middot; '+esc(a.group):''}${
+          a.synonym?' &middot; matched as a synonym':''}${
+          ST&&ST.taken.has(a.id)?' &middot; already taken':''}</span></button>${
+      where(a.id)?`<button class="ord-find" type="button" data-ofind="${esc(a.id)}"
+        title="Show where this is in the folders" aria-label="Find ${esc(a.name)} in the folders">Find</button>`:''}</div>`).join('');
+}
+function tabOrders(){
+  const cfg=orderCfg(), everything=allPicked();
+  let dirs='';
+  for(const tab of cfg.folders){
+    const groups=actionsFor(tab,true);
+    const n=new Set([].concat(...Object.keys(groups).map(g=>groups[g]))).size;
+    const open=!ORDER_DIR_CLOSED.has(tab);
+    dirs+=`<button class="dirhdr" type="button" data-odir="${esc(tab)}" aria-expanded="${open}">
+      <span class="chev">${open?'▼':'▶'}</span>
+      <svg class="dir-ic" viewBox="0 0 24 24" aria-hidden="true">${TABICON[tab]||''}</svg>
+      <span>${esc(PROTO.tabLabel[tab]||tab)}</span><span class="n">${n}</span></button>`;
+    if(open) dirs+=`<div class="dirbody" data-dirof="${esc(tab)}">${groupListHTML(tab,groups,false)}</div>`;
+  }
+  return `<div class="panel orders"><h2>${esc(PROTO.tabLabel[ORDERS_TAB]||'Place Order')}</h2>
+    <div class="ordsearch">
+      <svg class="ord-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <input type="text" id="orderbox" class="ordbox" placeholder="Search for an order" value="${esc(ORDER_Q)}"
+        autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search for an order">
+      <button class="ordx" id="orderclear" type="button" title="Clear the search" aria-label="Clear the search"${ORDER_Q?'':' hidden'}>×</button>
+    </div>
+    <p class="sub ordhint">Pressing a result orders it at once. Find shows where it sits in the folders below.</p>
+    <div id="orderresults" class="ordresults">${orderResultsHTML()}</div>
+    <div class="ordbrowse">
+      <div class="toolbar">
+        <span class="ordbrowse-h">Browse</span>
+        <button class="btn" id="submitorder" data-tabof="${esc(ORDERS_TAB)}" ${everything.length?'':'disabled'}>
+          Submit Order${everything.length?' ('+everything.length+')':''}</button>
+        <button class="btn ghost" id="clearorder" data-tabof="${esc(ORDERS_TAB)}" ${everything.length?'':'disabled'}>Clear</button>
+      </div>
+      <div class="basket${everything.length?'':' empty'}">${everything.length
+        ? 'Selected, not yet sent: '+everything.map(x=>esc(dispName(x.id))).join(', ')+'.'
+        : 'Nothing selected. Click items in the folders to add them, then Submit Order.'}</div>
+      ${dirs}
+    </div></div>`+blockPanel();
+}
+function focusOrderBox(){
+  const go=()=>{ const x=el('orderbox'); if(x&&TAB===ORDERS_TAB&&LEFT_OPEN){ try{ x.focus({preventScroll:true}); }catch(e){ x.focus(); }
+    x.setSelectionRange(x.value.length,x.value.length); } };
+  go(); requestAnimationFrame(go); setTimeout(go,60);
+}
+function orderSearchInput(v){
+  ORDER_Q=v; ORDER_DONE='';
+  const r=el('orderresults'); if(r) r.innerHTML=orderResultsHTML();
+  const x=el('orderclear'); if(x) x.hidden=!v;
+}
+/* A result pressed is the order given, as in the global search. If the same item was
+   also waiting in the basket it leaves the basket, or Submit Order would send it twice. */
+function orderPick(id){
+  const a=ACT[id]; if(!a) return;
+  AN.count('placeorder_search_orders');
+  (PROTO.orderableTabs||[]).forEach(x=>basketOf(x).delete(id)); delete PICKSEQ[id];
+  log({actionId:id});
+  ORDER_DONE='Ordered: '+(a.name||id)+'.';
+  ORDER_Q='';
+  render(); focusOrderBox();
+}
+function orderFind(id){
+  const a=ACT[id], w=orderWhereMap()(id); if(!a||!w) return;
+  AN.count('placeorder_finds');
+  expandedOf(w.tab).add(w.group);
+  const s=a.subgroup;
+  if(s){
+    if((PROTO.subgroupTabs||[]).includes(w.group)) SUBTAB[w.tab+'|'+w.group]=s;
+    if((((PROTO.subgroupCollapsed||{})[w.group])||[]).includes(s)) SUBOPEN.add(w.tab+'|'+w.group+'|'+s);
+    const ex=(PROTO.subgroupExtra||{})[s];
+    if(ex&&ex.ids.includes(catIdOf(id))) SUBOPEN.add(w.tab+'|'+w.group+'|'+s+'|'+ex.label);
+  }
+  ORDER_Q=''; ORDER_DONE='';
+  if(w.here) ORDER_DIR_CLOSED.delete(w.tab);
+  else { FILTERS[w.tab]=''; TAB=w.tab; }
+  ORDER_FOUND={id,group:w.group}; ORDER_FOUND_T=Date.now()+3000;
+  clearTimeout(ORDER_FOUND_TIMER);
+  ORDER_FOUND_TIMER=setTimeout(()=>{ ORDER_FOUND=null;
+    document.querySelectorAll('.ab.found').forEach(b=>b.classList.remove('found')); },3000);
+  renderTabs(); renderTab(); showFound(true);
+}
+/* Marks the found button after every repaint of the tab while the mark is live, so a
+   result arriving a second later does not wipe it. */
+function showFound(scroll){
+  if(!ORDER_FOUND||Date.now()>ORDER_FOUND_T) return;
+  const box=el('tabpanel'); if(!box) return;
+  const all=[...box.querySelectorAll('.ab[data-act]')].filter(b=>b.dataset.act===ORDER_FOUND.id);
+  const inGroup=b=>{ const gb=b.closest('.groupbody'), h=gb&&gb.previousElementSibling;
+    return !!(h&&h.dataset&&h.dataset.group===ORDER_FOUND.group); };
+  const b=all.find(inGroup)||all[0];
+  if(!b) return;
+  b.classList.add('found');
+  if(scroll) b.scrollIntoView({block:'center',behavior:'smooth'});
 }
 
 /* Put one orderable tab back to its opening state: no filter, every group collapsed, and
@@ -1167,7 +1315,7 @@ function scrollTabTop(){
 function renderTab(){
   const box=el('tabpanel');
   const R={
-    history:tabHistory, handoff:tabHandoff,
+    history:tabHistory, handoff:tabHandoff, [ORDERS_TAB]:tabOrders,
     exam:()=>generalStatusPanel()
              +renderActionTab('exam','Repeat any maneuver; it returns the current state.')
              +readoutPanel('exam','Findings'),
@@ -1185,6 +1333,7 @@ function renderTab(){
   const active=document.activeElement, keepId=active&&active.id, keepPos=active&&active.selectionStart;
   { const th=el('imsgthread'); if(th) THREAD_TOP=th.scrollTop; }
   box.innerHTML=(R[TAB]||tabHistory)();
+  showFound(false);
   /* The thread follows the newest message when one arrives, and otherwise keeps the
      place a reader scrolled back to. */
   { const th=el('imsgthread');
@@ -1193,7 +1342,7 @@ function renderTab(){
       th.scrollTop = (n!==THREAD_N) ? th.scrollHeight : THREAD_TOP;
       THREAD_N=n;
     } }
-  if(keepId==='filterbox'||keepId==='dxbox'||keepId==='askbox'){
+  if(keepId==='filterbox'||keepId==='dxbox'||keepId==='askbox'||keepId==='orderbox'){
     const back=el(keepId);
     if(back){ back.focus(); try{ back.setSelectionRange(keepPos,keepPos); }catch(e){} }
   } else if(TAB==='history'&&!DEVNOTES.typing()){   /* never take the caret out of a note */
@@ -2035,7 +2184,8 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-act],[data-ask],[data-disp],[data-dx],[data-dxrm],[data-dxup],'
     +'#askbtn,#submitho,#earlyexit,#restart,#revealanswers,#soundbtn,#submitorder,#clearorder,#clearfilter,'
     +'[data-group],[data-mode],[data-case],#beginbtn,#backtopicker,#pickanother,#homebtn,'
-    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart],[data-subtab],#askmic,[data-subfold],[data-cfilter],[data-stop]');
+    +'#rp-toggle,#lp-collapse,#railmenu,#searchbtn,#searchclose,[data-sgo],[data-schart],[data-subtab],#askmic,[data-subfold],[data-cfilter],[data-stop],'
+    +'[data-ogo],[data-ofind],[data-odir],#orderclear');
   if(t&&t.id==='soundbtn'){ AUDIO.toggle(); renderSound(); return; }
   AUDIO.unlock();
   /* Panel controls run before the ENDED guard and before the null check: the
@@ -2085,7 +2235,9 @@ document.addEventListener('click',e=>{
     /* Choosing a section is a request to work in it, so the workspace opens and
        an expanded chart steps back to its dock. */
     setPanels(true,false);
-    render(); return;
+    render();
+    if(TAB===ORDERS_TAB) focusOrderBox();
+    return;
   }
   if(ENDED&&!t.id) return;
   /* The red cross on a running drip's button: the stop order, given at once rather than put
@@ -2125,6 +2277,13 @@ document.addEventListener('click',e=>{
     SUBTAB[t.dataset.tabof+'|'+t.dataset.subgroup]=t.dataset.subtab;
     renderTab(); return;
   }
+  if(t.dataset.ogo!==undefined){ orderPick(t.dataset.ogo); return; }
+  if(t.dataset.ofind!==undefined){ orderFind(t.dataset.ofind); return; }
+  if(t.dataset.odir!==undefined){
+    const d=t.dataset.odir; ORDER_DIR_CLOSED.has(d)?ORDER_DIR_CLOSED.delete(d):ORDER_DIR_CLOSED.add(d);
+    renderTab(); return;
+  }
+  if(t.id==='orderclear'){ orderSearchInput(''); const b=el('orderbox'); if(b){ b.value=''; b.focus(); } return; }
   if(t.dataset.group){
     const set=expandedOf(t.dataset.tabof);
     set.has(t.dataset.group)?set.delete(t.dataset.group):set.add(t.dataset.group);
@@ -2206,9 +2365,15 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target.id==='askbox'&&e.target.value.trim()) ask(e.target.value.trim());
+  /* Place Order's search: Enter orders the top result, Escape empties the box. */
+  if(e.target.id==='orderbox'){
+    if(e.key==='Enter'){ const f=el('orderresults')&&el('orderresults').querySelector('[data-ogo]'); if(f) f.click(); }
+    else if(e.key==='Escape'&&e.target.value){ e.target.value=''; orderSearchInput(''); }
+  }
 });
 document.addEventListener('input',e=>{
   if(e.target.id==='askbox'){ ASKTEXT=e.target.value; return; }
+  if(e.target.id==='orderbox'){ orderSearchInput(e.target.value); return; }
   if(e.target.id==='filterbox'){
     FILTERS[e.target.dataset.tabof||TAB]=e.target.value.toLowerCase();
     renderTab(); return;
@@ -2503,7 +2668,16 @@ function finish(){
     PROGRESS.finish({mode:MODE, sim_seconds:ST.now||0, outcome:endingKind(), ended_by:endedBy(),
       score_pct:ov.scored?ov.pct:null,
       summary:{v:1, scored:!!ov.scored, critical:{done:ov.critical.done,total:ov.critical.total},
-               rows:summaryScores(ST).map(r=>({id:r.id,label:r.label,pct:r.pct,detail:r.detail||''}))}});
+               rows:summaryScores(ST).map(r=>({id:r.id,label:r.label,pct:r.pct,detail:r.detail||''}))},
+      /* The run record (10 November 2026): the graded items, by id, for the program view,
+         and the trail of what was ordered and when. The trail keeps ids and case times.
+         It leaves out everything typed: the words of a question and the pause notes. */
+      record:(function(){ try{ return runItems(ST); }catch(e){ return null; } })(),
+      trail:LOG.map(e=>{ const o={t:Math.round((Number(e.t)||0)*1000)/1000, a:e.actionId||null};
+        if(e.kind) o.k=String(e.kind); if(e.topic) o.topic=String(e.topic);
+        if(e.payload&&typeof e.payload==='object') o.h={disposition:e.payload.disposition||null,
+          diagnoses:Array.isArray(e.payload.diagnoses)?e.payload.diagnoses.slice(0,12):[]};
+        return o; })});
   }catch(err){}
   const v=el('endview'); v.classList.remove('hidden');
   REVEALED=false;
@@ -2536,6 +2710,7 @@ function restart(){
   REFLECT_DONE=false; REFLECT_NOTE=''; REFLECT_NOTE2=''; REFLECT_OPEN=false;
   el('reflectview').classList.add('hidden');
   SEARCH_Q=''; SEARCH_DONE=''; closeSearch();
+  ORDER_Q=''; ORDER_DONE=''; ORDER_FOUND=null; ORDER_DIR_CLOSED.clear();
   Object.keys(BASKET).forEach(k=>delete BASKET[k]); PICKSEQ={}; PICKN=0;
   Object.keys(EXPANDED).forEach(k=>delete EXPANDED[k]);
   Object.keys(SUBTAB).forEach(k=>delete SUBTAB[k]); SUBOPEN.clear();
@@ -3799,13 +3974,17 @@ function searchMark(text,q){
   return String(text).split(new RegExp('('+ts.join('|')+')','ig'))
     .map((part,i)=>i%2?'<mark>'+esc(part)+'</mark>':esc(part)).join('');
 }
-function searchHits(){
-  const q=searchNorm(SEARCH_Q).split(' ').filter(Boolean);
+/* With no arguments, the global search: every tab, and the chart. Place Order passes its
+   own text and the tabs it searches, and gets actions only. */
+function searchHits(text,tabs){
+  const raw=text===undefined?SEARCH_Q:text;
+  const q=searchNorm(raw).split(' ').filter(Boolean);
   if(!q.length) return null;
   const acts=[], lines=[];
   for(const id in ACT){
     const a=ACT[id];
     if(!(PROTO.tabLabel||{})[a.tab]||a.hidden||a.menu_hidden) continue;
+    if(tabs&&!tabs.includes(a.tab)) continue;
     const gl=(a.groups||[a.group]).filter(Boolean);
     const groups=gl.join(' ');
     const sc=searchScore(q,a.name,groups+' '+gl.map(groupLabel).join(' ')+' '+id.replace(/_/g,' ')+' '+(PROTO.tabLabel[a.tab]||''));
@@ -3819,10 +3998,11 @@ function searchHits(){
      guess belongs in an order the resident confirms, not in a search result. */
   if(!acts.length&&typeof VOICE!=='undefined'){
     const seen=new Set();
-    for(const r of VOICE.parse(SEARCH_Q)){
+    for(const r of VOICE.parse(raw)){
       const ids=r.kind==='ok'?[r.id]:(r.kind==='ambiguous'?r.ids:[]);
       for(const id of ids){
         if(seen.has(id)||!ACT[id]||r.uncertain) continue;
+        if(tabs&&!tabs.includes(ACT[id].tab)) continue;
         seen.add(id);
         const a=ACT[id];
         acts.push({id,tab:a.tab,name:a.name,group:(a.groups||[a.group]).filter(Boolean).map(groupLabel).join(', '),
@@ -3830,7 +4010,7 @@ function searchHits(){
       }
     }
   }
-  for(const it of feedItems()){
+  if(!tabs) for(const it of feedItems()){
     const title=it.name||it.title||'', body=typeof it.body==='string'?it.body:'';
     const sc=searchScore(q,title,body);
     if(sc>=0) lines.push({t:it.t,title,score:sc});

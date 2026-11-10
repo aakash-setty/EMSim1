@@ -65,11 +65,14 @@ const ACCESS_UI = (function(){
     /* Ambulance Run (engine/arcade.js) reads and posts the shared leaderboard with the same client. */
     const AR=(typeof ARCADE==='object'&&ARCADE)||{setClient(){},onSession(){}};
     AR.setClient(client);
-    client.auth.onAuthStateChange((_ev,s)=>{ session=s||null; A.user(session&&session.user&&session.user.id); P.onSession(session); AR.onSession(session); paint(); });
+    /* Programs and analytics (engine/program.js) use the same client and follow the session. */
+    const PG=(typeof PROGRAM==='object'&&PROGRAM)||{init(){},onSession(){}};
+    PG.init(client);
+    client.auth.onAuthStateChange((_ev,s)=>{ session=s||null; A.user(session&&session.user&&session.user.id); P.onSession(session); AR.onSession(session); PG.onSession(session); paint(); });
     client.auth.getSession().then(({data})=>{
         session=(data&&data.session)||null; A.user(session&&session.user&&session.user.id);
-        known=true; P.onSession(session); AR.onSession(session); afterOAuthReturn(oauthReturn); paint(); })
-      .catch(()=>{ session=null; known=true; P.onSession(null); AR.onSession(null); afterOAuthReturn(oauthReturn); paint(); });
+        known=true; P.onSession(session); AR.onSession(session); PG.onSession(session); afterOAuthReturn(oauthReturn); paint(); })
+      .catch(()=>{ session=null; known=true; P.onSession(null); AR.onSession(null); PG.onSession(null); afterOAuthReturn(oauthReturn); paint(); });
     if(CFG.googleSignIn){ $('signingoogle').hidden=false; $('signinor').hidden=false; }
     paint();
   }
@@ -130,12 +133,14 @@ const ACCESS_UI = (function(){
     const box=$('wl-acct');
     const who=session&&session.user ? (session.user.email||'Signed in') : null;
     box.innerHTML = (who
-        ? `<span class="who">Signed in as ${escA(who)}</span><button type="button" id="acct-out">Sign out</button>`
+        ? `<span class="who">Signed in as ${escA(who)}</span><span id="acct-prog"></span><button type="button" id="acct-out">Sign out</button>`
         : `<span class="who">Sign in to open a case.</span>`+
           (configured()?`<button type="button" id="acct-in">Sign in</button>`:''))+
       `<span class="msg" role="status">${escA(msg)}</span>`;
     const bi=$('acct-in'); if(bi) bi.onclick=()=>showDialog(-1);
     const bo=$('acct-out'); if(bo) bo.onclick=signOut;
+    /* The program chip, Join a program and Analytics: engine/program.js fills the slot. */
+    if(typeof PROGRAM==='object'&&PROGRAM) PROGRAM.paintAccount();
     if(typeof wlVisible==='function' && wlVisible() && typeof renderPicker==='function') renderPicker();
   }
   function escA(t){ return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }

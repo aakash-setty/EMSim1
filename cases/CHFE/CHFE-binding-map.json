@@ -297,7 +297,7 @@
    "catalog_id": null,
    "note": "No monitoring-frequency action. Catalog agrees this is unmatched.",
    "unmatched_placement": {
-    "tab": "stabilization",
+    "tab": "interventions",
     "group": "Nursing"
    }
   },
@@ -306,7 +306,7 @@
    "catalog_id": null,
    "note": "No monitoring action. Catalog agrees this is unmatched.",
    "unmatched_placement": {
-    "tab": "stabilization",
+    "tab": "interventions",
     "group": "Nursing"
    }
   },
