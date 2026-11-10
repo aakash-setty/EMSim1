@@ -121,7 +121,7 @@ def action_base(ce):
              if p.get("tab") != tab and p.get("group")]
     if other:
         rec["relist"] = other
-    # A subgroup named on a later placement applies in that group only (11 November 2026).
+    # A subgroup named on a later placement applies in that group only (10 November 2026).
     sub_in = {p["group"]: p["subgroup"] for p in (ce.get("placements") or [])[1:]
               if p.get("group") and p.get("subgroup")}
     if sub_in:
@@ -189,7 +189,7 @@ shared = {
     "ventilation": {"when": "flag intubated set", "respiratory_rate": 16},
     # Owner, 30 October 2026: Stabilization, Oxygen, Fluids, Vascular Access, Pacer/Defib,
     # Nursing, Intubation. Nursing moved to Actions on 9 November 2026.
-    # Crash Cart and Miscellaneous last, in that order (owner, 11 November 2026).
+    # Crash Cart and Miscellaneous last, in that order (owner, 10 November 2026).
     "groupOrder": {"stabilization": ["Stabilization", "Oxygen", "Fluids", "Vascular Access",
                                      "Pacer/Defib", "Intubation", "Crash Cart", "Miscellaneous"],
                    # Author instruction, 14 October 2026: Fluids first, the code drugs, then
@@ -239,7 +239,7 @@ shared = {
     "subgroupSwatch": {"Blood, lavender or pink top (EDTA)": "#A98BD8",
                        "Blood, light blue top (citrate)": "#8CC8EE",
                        "Blood, green top (lithium heparin)": "#4FAE6E",
-                       # The crash cart's sections (11 November 2026). Display only.
+                       # The crash cart's sections (10 November 2026). Display only.
                        "Defibrillator": "#D4483F", "Airway and breathing": "#3F8C95",
                        "Access and fluids": "#3F88A6", "Arrest and rhythm drugs": "#B05D70",
                        "Metabolic and reversal drugs": "#B5774B"},

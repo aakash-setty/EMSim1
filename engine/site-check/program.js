@@ -96,9 +96,10 @@ const setRuns=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows})
  ok('Cases opens a case to its actions, by display name', await p.evaluate(()=>document.querySelectorAll('.pg-detail table').length>=1&&!/_/.test(document.querySelector('.pg-detail tbody td').textContent)), (await txt('.pg-detail')||'').slice(0,200));
  await p.click('[data-pgtab="missed"]'); await wait(200);
  ok('Missed and unsafe lists a missed critical action', /critical actions missed/i.test(await txt('.pg-pane')||'')&&await p.evaluate(()=>document.querySelectorAll('.pg-pane table tbody tr').length>=1));
- await p.click('[data-pgtab="map"]'); await wait(200);
- ok('the gap map draws a topic row, and a small cell shows a count and no percentage',
-    await p.evaluate(()=>document.querySelectorAll('.pg-map tbody tr').length>=1&&document.querySelectorAll('.pg-cell.few').length>=1&&!document.querySelector('.pg-cell.few b')));
+ await p.click('[data-pgtab="prio"]'); await wait(200);
+ ok('Teaching priorities, with one run: no skill area is rated, and each is listed as too few to rate',
+    await p.evaluate(()=>document.querySelectorAll('.pg-pr').length===0)&&/too few chances to rate/i.test(await txt('.pg-pane')||''), (await txt('.pg-pane')||'').slice(0,300));
+ ok('there is no gap map any more', await p.evaluate(()=>!document.querySelector('[data-pgtab="map"]')&&!document.querySelector('.pg-map')));
  ok('the footer says what the numbers are', /simulated cases/.test(await txt('.pg-foot')||'')&&/not checked by the server/.test(await txt('.pg-foot')||''));
  await p.uncheck('#pg-first'); await wait(800);
  ok('First attempts only can be turned off', await p.evaluate(()=>PROGRAM._state().view.first===false&&PROGRAM._state().view.state==='ready'));
@@ -153,13 +154,40 @@ const setRuns=rows=>fetch(M+'/__runs',{method:'POST',body:JSON.stringify({rows})
    return rows.filter(r=>r.children[1].textContent==='critical').length===9&&rows.some(r=>/^\d+:\d\d$/.test(r.children[4].textContent)); }));
  await p.click('[data-pgtab="missed"]'); await wait(200);
  ok('Missed and unsafe has rows in all four lists', await p.evaluate(()=>[...document.querySelectorAll('.pg-pane table')].length===4&&[...document.querySelectorAll('.pg-pane table')].every(t=>t.querySelectorAll('tbody tr').length>0)));
- await p.click('[data-pgtab="map"]'); await wait(200);
- ok('the gap map has percentages in more than one topic', await p.evaluate(()=>document.querySelectorAll('.pg-map tbody tr').length>=2&&document.querySelectorAll('.pg-cell b').length>=6));
+ await p.click('[data-pgtab="prio"]'); await wait(200);
+ const pr=await p.evaluate(()=>{ const rows=[...document.querySelectorAll('.pg-pr')];
+   const share=r=>parseInt(r.querySelector('.pg-prv b').textContent,10), lost=r=>parseInt(r.querySelector('.pg-prv .pg-n').textContent,10);
+   return {n:rows.length, shares:rows.map(share), lost:rows.map(lost), lead:document.querySelector('.pg-lead').innerText, first:rows[0].querySelector('.pg-prn').textContent,
+     who:rows[0].querySelector('.pg-prw').textContent, bars:rows.every(r=>r.querySelectorAll('.pg-prbar i').length>=1)}; });
+ ok('Teaching priorities ranks skill areas by the number of chances lost', pr.n>=6&&pr.lost.every((v,i)=>i===0||v<=pr.lost[i-1])&&pr.bars, pr.lost);
+ ok('the lead sentence names the first skill area', pr.lead.includes(pr.first), pr.lead);
+ ok('each row says how many learners and cases it rests on', /\d+ of \d+ learners, \d+ cases?/.test(pr.who), pr.who);
+ await p.click('[data-pgsort="rate"]'); await wait(200);
+ ok('it can be ordered by the share lost instead', await p.evaluate(()=>{ const v=[...document.querySelectorAll('.pg-pr')].map(r=>{ const m=r.querySelector('.pg-prv .pg-n').textContent.match(/(\d+) of (\d+)/); return +m[1]/+m[2]; });
+   return v.every((x,i)=>i===0||x<=v[i-1]+1e-9)&&document.querySelector('[data-pgsort="rate"]').getAttribute('aria-pressed')==='true'; }));
+ await p.click('[data-pgsort="count"]'); await wait(200);
+ await p.click('.pg-pr [data-pgskill]'); await wait(200);
+ ok('a skill area opens to its actions, by case', await p.evaluate(()=>{ const d=document.querySelector('.pg-prs .pg-detail'); return !!d&&d.querySelectorAll('tbody tr').length>=1&&d.querySelectorAll('thead th').length===5; }));
+ await p.click('.pg-pr.on [data-pgskill]'); await wait(200);
+ const dr=await p.evaluate(()=>{ const rows=[...document.querySelectorAll('.pg-dr')];
+   return {n:rows.length, dots:rows.map(r=>[...r.querySelectorAll('.dot')].map(d=>d.textContent).join('')), verdicts:rows.map(r=>r.querySelector('.pg-verdict').textContent),
+     kinds:[...new Set(rows.map(r=>r.querySelector('.pg-verdict').className.replace('pg-verdict ','')))], inside:rows.every(r=>[...r.querySelectorAll('.dot')].every(d=>{ const l=parseFloat(d.style.left); return l>=0&&l<=100; }))}; });
+ ok('Does it close with training: one row per rated skill area, a numbered dot per year, inside the axis', dr.n===pr.n&&dr.dots.filter(x=>x==='123').length>=4&&dr.inside, dr.dots);
+ ok('each row carries a verdict in words, and more than one kind of verdict appears', dr.verdicts.every(v=>v.length>10)&&dr.kinds.length>=2, dr.kinds);
+ ok('the thresholds are said to be choices, not a standard', /not a standard/.test(await txt('.pg-pane')||''));
  await p.click('[data-pgtab="overview"]'); await wait(200);
+ const ch=await p.evaluate(()=>{ const s=[...document.querySelectorAll('.pg-two > section')].map(e=>e.getBoundingClientRect());
+   return {n:s.length, sameTop:s.length===2&&Math.abs(s[0].top-s[1].top)<2, leftOf:s.length===2&&s[0].right<=s[1].left,
+     years:document.querySelectorAll('.pg-ych .pg-yrow').length, months:document.querySelectorAll('.pg-mch .pg-mcol').length,
+     segs:[...document.querySelectorAll('.pg-ych .pg-stack i')].every(i=>/of \d+ \(\d+%\)/.test(i.title)),
+     tables:document.querySelectorAll('.pg-two details table').length, open:document.querySelectorAll('.pg-two details[open]').length}; });
+ ok('by year and by month are two charts side by side', ch.n===2&&ch.sameTop&&ch.leftOf, ch);
+ ok('three year bars and a column per month, each segment saying its count and share', ch.years===3&&ch.months>=6&&ch.segs, ch);
+ ok('each chart keeps its table, closed until asked for', ch.tables===2&&ch.open===0, ch);
  const runsFirst=await p.evaluate(()=>document.querySelectorAll('.pg-tile b')[4].textContent);
- ok('by year: PGY-1 does worse than PGY-3 on first attempts', await p.evaluate(()=>{ const rows=[...document.querySelectorAll('.pg-pane table')[0].querySelectorAll('tbody tr')];
-   const share=r=>{ const m=r.children[3].innerText.match(/(\d+) \/ (\d+) \/ (\d+)/); return +m[1]/(+m[1]+ +m[2]+ +m[3]); };
-   return rows.length===3&&share(rows[0])<share(rows[2]); }));
+ ok('by year: PGY-1 does worse than PGY-3 on first attempts', await p.evaluate(()=>{ const rows=[...document.querySelectorAll('.pg-ych .pg-yrow')];
+   const share=r=>{ const a=r.querySelector('.pg-stack i.a'); const m=a&&a.title.match(/\((\d+)%\)/); return m?+m[1]:0; };
+   return rows.length===3&&/PGY-1/.test(rows[0].textContent)&&/PGY-3/.test(rows[2].textContent)&&share(rows[0])<share(rows[2]); }));
  await p.selectOption('#pg-days','30'); await wait(400);
  ok('the period narrows the made-up runs', Number(await p.evaluate(()=>document.querySelectorAll('.pg-tile b')[4].textContent))<Number(runsFirst), runsFirst);
  await p.selectOption('#pg-days',''); await wait(300);

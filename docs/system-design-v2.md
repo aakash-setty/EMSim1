@@ -1716,7 +1716,7 @@ group (`groups`), as before. A placement on another tab is a relist: `action_bas
 `relist: [[tab, group], ...]`, and the interface draws the same button there too. The entry
 keeps its first placement's tab for everything else. A pick is one pick wherever it was made.
 Where a button is drawn under a second name, its subgroup heading is dropped, unless that
-placement names a subgroup of its own (`subgroupIn`, 11 November 2026), which then applies in
+placement names a subgroup of its own (`subgroupIn`, 10 November 2026), which then applies in
 that group only. The Crash Cart is sectioned this way. The relists are
 listed in `RELIST` in `catalog/build_catalog.py`. Stabilization's Crash Cart and Miscellaneous
 groups are made only of relists (10 November 2026).

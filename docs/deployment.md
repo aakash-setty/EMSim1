@@ -275,11 +275,11 @@ Programs for staff. Every number comes from `program_analytics`, which checks th
 
 | Tab | Shows |
 |---|---|
-| Overview | Residents registered, how many have finished a case, active in 30 days, runs, results by year of training and by month |
+| Overview | Residents registered, how many have finished a case, active in 30 days, runs. Results by year of training and by month as two charts side by side, each with its table behind "Show as a table" |
 | Residents | Each member by name: cases finished, runs, runs in progress, case minutes, last finished. Results by name when the switch allows. The join code and link |
 | Cases | Each case: learners, results, harmful actions, cases lost, median case time. A case opens to its actions, diagnoses and dispositions |
 | Missed and unsafe | Critical actions missed, critical actions done only after a prompt, discouraged and harmful actions taken, wrong or missing handoffs |
-| Gap map | Topic (the case's category) by ordering tab: the share of expected critical actions done with no prompt |
+| Teaching priorities | Replaces the gap map (owner, 10 November 2026: "not insightful"). Critical actions by skill area, which is the group the order menus file an action under. First, where chances are lost: missed, or done only after a prompt, with the learners and cases each row rests on. Ordered by chances lost, or by share. A skill area opens to its actions. Second, whether the gap closes with training: one dot per year of training on a 0 to 100 percent line, with a verdict in words |
 | Programs (staff) | Every program with its code, numbers and switches. New program. The entitlement switch and the free cases |
 
 First attempts only is on by default. A rate over fewer than five is shown as a count.
@@ -306,6 +306,19 @@ estimate of how residents do, and nothing should be concluded from them.
 Program admins do not have the button. If a program should be shown a demonstration, that
 is a decision for the owner.
 
+Teaching priorities reads a second function, `program_skills`
+(`supabase/migrations/005_program_skills.sql`). **It is written and tested and NOT applied
+to the live project**: the connector refused it as a production deployment on 10 November
+2026 and the owner has to allow it. Until it is applied the tab still draws the first list
+from `program_analytics`, without the learner counts, and says the comparison by year is
+not available. Test data does not need it.
+
+The list opens ordered by the number of chances lost, not the share. The highest shares
+tend to sit on the fewest chances, so a skill area seen in one case can top a list by rate
+and mean little. The 85 percent line that calls a skill area closed and the 15-point rule
+that calls it closing are `CLOSED` and `GAIN` in `engine/program.js`. They are choices made
+to sort the list, not a standard, and the page says so.
+
 Known limits: an action id that is not in the shared catalog (the older packs bind their
 own ids) is shown as the id with spaces, not its display name. Case minutes are case-clock
 minutes, not time at the keyboard. There are no assignments or due dates yet. There is no
@@ -313,12 +326,12 @@ resident page showing what the program sees beyond the join dialog's wording.
 
 ### Checks
 
-- `supabase/tests/programs-test.mjs`: migrations 001, 002 and 004 in an in-process
-  Postgres (PGlite), with stand-ins for `auth` and `storage`, then 78 checks as each kind
+- `supabase/tests/programs-test.mjs`: migrations 001, 002, 004 and 005 in an in-process
+  Postgres (PGlite), with stand-ins for `auth` and `storage`, then 88 checks as each kind
   of account. `npm install @electric-sql/pglite`, then
   `node supabase/tests/programs-test.mjs supabase/migrations`. PGlite is not the Supabase
   database, so advisors still have to be read after the migration is applied.
-- `engine/site-check/program.js`: 56 checks in Chromium against the mock, test data
+- `engine/site-check/program.js`: 67 checks in Chromium against the mock, test data
   included. Part of `run.sh`.
 - `engine/engine-tests.js`, section "the run record": for every pack.
 

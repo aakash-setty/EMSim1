@@ -133,6 +133,16 @@ const PG_FNS={
     const admin=PG.member&&PG.member.role==='admin'&&a.p_program===PG.member.program_id;
     if(!PG.staff&&!admin) return {__error:pgDenied};
     return pgAnalytics(a); },
+  // 005_program_skills.sql: critical actions gathered by the catalog group, and by group and year.
+  program_skills:a=>{
+    const admin=PG.member&&PG.member.role==='admin'&&a.p_program===PG.member.program_id;
+    if(!PG.staff&&!admin) return {__error:pgDenied};
+    const rows=PG.records.filter(r=>(!a.p_program||r.program_id===a.p_program)&&(!a.p_first||r.attempt_no===1))
+      .flatMap(r=>r.items.filter(i=>i.k==='critical').map(i=>({grp:i.grp||'Other',pgy:r.pgy,c:r.case_prefix,done:i.r==='done',p:i.r==='done'&&!!i.p})));
+    const by=f=>{ const m=new Map(); rows.forEach(x=>{ const k=f(x); if(!m.has(k)) m.set(k,[]); m.get(k).push(x); }); return [...m.values()]; };
+    const sum=l=>({grp:l[0].grp,n:l.length,done:l.filter(x=>x.done).length,prompted:l.filter(x=>x.p).length,learners:1});
+    return {skills:by(x=>x.grp).map(l=>Object.assign(sum(l),{learners_lost:l.some(x=>!x.done||x.p)?1:0,cases:new Set(l.map(x=>x.c)).size})),
+            skill_years:by(x=>x.grp+'|'+x.pgy).map(l=>Object.assign(sum(l),{pgy:l[0].pgy}))}; },
   staff_overview:()=>PG.staff?{settings:{enforce_entitlements:false,free_cases:[]},accounts:1,individuals:PG.member?0:1,records:PG.records.length,
     programs:PG.programs.map(p=>Object.assign({residents:PG.member&&PG.member.role==='resident'?1:0,admins:PG.member&&PG.member.role==='admin'?1:0,runs:PG.records.filter(r=>r.program_id===p.id).length,last_finished:null},p))}:{__error:pgDenied},
   staff_save_program:a=>{
@@ -152,7 +162,7 @@ async function pgRoute(req,res,fn){
   const send=(code,obj)=>{res.writeHead(code,{'Content-Type':'application/json'});res.end(JSON.stringify(obj===undefined?null:obj));};
   if(req.headers.authorization!=='Bearer good-token') return send(401,{code:'42501',message:'sign in first'});
   const a=JSON.parse((await body(req)).toString()||'{}');
-  if(fn!=='my_program'&&fn!=='program_analytics'&&fn!=='staff_overview') PG.calls.push({fn,args:fn==='record_run'?{p_run:a.p_run}:a});
+  if(fn!=='my_program'&&fn!=='program_analytics'&&fn!=='program_skills'&&fn!=='staff_overview') PG.calls.push({fn,args:fn==='record_run'?{p_run:a.p_run}:a});
   if(PG.fail) return send(500,{code:'XX000',message:'mock failure'});
   const out=PG_FNS[fn](a);
   if(out&&out.__error) return send(403,out.__error);

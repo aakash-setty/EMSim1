@@ -24,13 +24,14 @@ const PROGRAM = (function(){
   const esc = t => String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const JOIN_KEY = 'emsim-join-code';
   const YEARS = [['','Prefer not to say'],['0','Medical student'],['1','PGY-1'],['2','PGY-2'],['3','PGY-3'],['4','PGY-4'],['5','PGY-5 or later']];
-  const TABS = [['overview','Overview'],['people','Residents'],['cases','Cases'],['missed','Missed and unsafe'],['map','Gap map'],['programs','Programs']];
-  const AREAS = [['stabilization','Stabilization'],['interventions','Actions'],['investigations','Labs and imaging'],['consultations','Consults'],['exam','Examination']];
+  const TABS = [['overview','Overview'],['people','Residents'],['cases','Cases'],['missed','Missed and unsafe'],['prio','Teaching priorities'],['programs','Programs']];
+  const CLOSED = 85;               /* a skill area done unprompted this often is called closed */
+  const GAIN = 15;                 /* points gained from the first year to the last to call it closing */
   const MIN_N = 5;                 /* below this, a rate is not shown as a rate */
 
   let client=null, uid=null, info=null, infoState='idle';   /* idle | loading | ready | error */
   let view={open:false, tab:'overview', scope:null, first:true, days:null, data:null, state:'idle', err:'',
-            overview:null, openCase:null, confirm:null, note:'', prev:null, testNamed:true};
+            overview:null, openCase:null, confirm:null, note:'', prev:null, testNamed:true, prioSort:'count', openSkill:null};
   let join={open:false, busy:false, err:''};
 
   const on = () => SITE && !!client && !!uid;
@@ -177,6 +178,8 @@ const PROGRAM = (function(){
     const uniq=l=>new Set(l).size;
     const its=[]; sel.forEach(r=>r.items.forEach(i=>its.push({run:r,i})));
     const key=x=>x.run.case_prefix+'|'+x.i.k+'|'+x.i.id;
+    const crit=its.filter(x=>x.i.k==='critical'), area=x=>x.i.grp||'Other';
+    const skillOf=l=>({n:l.length,done:count(l,x=>x.i.r==='done'),prompted:count(l,x=>x.i.r==='done'&&x.i.p),learners:uniq(l.map(x=>x.run.user_id))});
     return {generated_at:new Date().toISOString(), first_only:!!opt.first, days:opt.days===undefined?null:opt.days, named:!!opt.named, staff:true, test:true,
       program:{id:TEST_ID,name:'Test program',status:'active',join_code:null,show_named_results:!!opt.named,all_cases:true,seats:null,cases:[]},
       totals:{people:store.people.length,residents:count(store.people,p=>p.role!=='admin'),
@@ -197,6 +200,9 @@ const PROGRAM = (function(){
         median_delay:median(l.filter(x=>x.i.r==='done'&&x.i.dt!==null&&x.i.et!==null).map(x=>x.i.dt-x.i.et))})),
       safety:groups(its.filter(x=>x.i.k==='discouraged'||x.i.k==='harmful'),key).map(l=>({case_prefix:l[0].run.case_prefix,kind:l[0].i.k,item_id:l[0].i.id,
         tab:l[0].i.tab,cat:l[0].i.cat,grp:l[0].i.grp,runs:l.length,learners:uniq(l.map(x=>x.run.user_id))})),
+      skills:groups(crit,area).map(l=>Object.assign({grp:area(l[0]),learners_lost:uniq(l.filter(x=>x.i.r!=='done'||x.i.p).map(x=>x.run.user_id)),
+        cases:uniq(l.map(x=>x.run.case_prefix))},skillOf(l))),
+      skill_years:groups(crit,x=>area(x)+'|'+x.run.pgy).map(l=>Object.assign({grp:area(l[0]),pgy:l[0].run.pgy},skillOf(l))),
       handoff:groups(its.filter(x=>x.i.k==='diagnosis'||x.i.k==='disposition'),x=>key(x)+'|'+x.i.r).map(l=>({case_prefix:l[0].run.case_prefix,kind:l[0].i.k,
         item_id:l[0].i.id,result:l[0].i.r,n:l.length})),
       months:groups(sel,r=>new Date(r.finished_at).toISOString().slice(0,7)).map(l=>Object.assign({month:new Date(l[0].finished_at).toISOString().slice(0,7)},mixOf(l)))
@@ -319,7 +325,22 @@ const PROGRAM = (function(){
       const r=await client.rpc('program_analytics',
         {p_program: view.scope==='all'?null:view.scope, p_first:view.first, p_days:view.days});
       if(r.error) throw r.error;
-      view.data=r.data; view.state='ready';
+      const d=r.data;
+      /* Teaching priorities reads program_skills (005). If that is not there yet, the skill
+         areas are gathered here from the items, without learners and without the years. */
+      try{
+        const k=await client.rpc('program_skills',
+          {p_program: view.scope==='all'?null:view.scope, p_first:view.first, p_days:view.days});
+        if(k.error) throw k.error;
+        d.skills=(k.data&&k.data.skills)||[]; d.skill_years=(k.data&&k.data.skill_years)||[];
+      }catch(e){
+        const m=new Map();
+        (d.items||[]).filter(i=>i.kind==='critical').forEach(i=>{ const g=i.grp||'Other';
+          const o=m.get(g)||{grp:g,n:0,done:0,prompted:0,learners:null,learners_lost:null,set:new Set()};
+          o.n+=i.n; o.done+=i.done; o.prompted+=i.prompted; o.set.add(i.case_prefix); m.set(g,o); });
+        d.skills=[...m.values()].map(o=>{ o.cases=o.set.size; delete o.set; return o; }); d.skill_years=null;
+      }
+      view.data=d; view.state='ready';
     }catch(e){
       view.state='error';
       view.err=(e&&e.code==='42501')?'This account cannot see these numbers.':'The numbers could not be loaded. Check your connection and try again.';
@@ -343,6 +364,27 @@ const PROGRAM = (function(){
     ? `<div class="pg-tw"><table class="pg-t"><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`
     : `<p class="pg-empty">${empty}</p>`;
 
+  /* The two overview charts. Each bar is one group's runs split into the three results, as
+     shares, with the number of runs beside it so a tall share of a small group is not
+     mistaken for much. A segment says what it is when the pointer rests on it. */
+  const PARTS=[['met','Met','a'],['met_prompted','Met with prompts','b'],['not_met','Not met','c']];
+  const seg=(o,horizontal)=>{ const n=(o.met||0)+(o.met_prompted||0)+(o.not_met||0);
+    return PARTS.map(p=>{ const v=o[p[0]]||0, sh=n?100*v/n:0; if(!v) return '';
+      return `<i class="${p[2]}" style="flex:${v} 0 0" title="${p[1]}: ${v} of ${n} (${Math.round(sh)}%)">${sh>=(horizontal?11:16)?`<em>${Math.round(sh)}%</em>`:''}</i>`; }).join(''); };
+  function yearChart(years){
+    if(!years.length) return '<p class="pg-empty">No finished runs yet.</p>';
+    return `<div class="pg-ych" role="img" aria-label="Results by year of training, as shares of each year's runs">${years.map(y=>
+      `<div class="pg-yrow"><span class="pg-yl">${esc(yearName(y.pgy))}<small>${y.n} ${y.n===1?'run':'runs'}, ${y.learners} ${y.learners===1?'learner':'learners'}</small></span>
+        <span class="pg-stack h">${seg(y,true)}</span></div>`).join('')}</div>`;
+  }
+  function monthChart(months){
+    if(!months.length) return '<p class="pg-empty">No finished runs yet.</p>';
+    const name=m=>{ const d=new Date(m+'-15T00:00:00Z'); return isNaN(d)?m:d.toLocaleDateString(undefined,{month:'short',timeZone:'UTC'}); };
+    return `<div class="pg-mch" role="img" aria-label="Results by month, as shares of each month's runs">${months.map((m,i)=>
+      `<div class="pg-mcol"><span class="pg-stack v">${seg(m,false)}</span>
+        <span class="pg-ml">${esc(name(m.month))}${(i===0||/-01$/.test(m.month))?`<small>${esc(m.month.slice(0,4))}</small>`:''}</span><span class="pg-n">${m.n}</span></div>`).join('')}</div>
+      <p class="pg-key">The number under each month is its runs.</p>`;
+  }
   function tOverview(d){
     const t=d.totals||{}, sum={met:0,met_prompted:0,not_met:0};
     (d.cases||[]).forEach(c=>{ sum.met+=c.met; sum.met_prompted+=c.met_prompted; sum.not_met+=c.not_met; });
@@ -357,12 +399,14 @@ const PROGRAM = (function(){
       </div>
       <h3>Results, ${d.first_only?'first attempts':'all attempts'}</h3>
       <p class="pg-big">${mix(sum)}</p>${KEY}
-      <h3>By year of training</h3>
-      ${table(['Year','Learners','Runs','Results'],(d.years||[]).map(y=>
-        `<tr><td>${esc(yearName(y.pgy))}</td><td>${y.learners}</td><td>${y.n}</td><td>${mix(y)}</td></tr>`),'No finished runs yet.')}
-      <h3>By month</h3>
-      ${table(['Month','Runs','Results'],(d.months||[]).map(m=>
-        `<tr><td>${esc(m.month)}</td><td>${m.n}</td><td>${mix(m)}</td></tr>`),'No finished runs yet.')}`;
+      <div class="pg-two">
+        <section><h3>By year of training</h3>${yearChart(d.years||[])}
+          <details class="pg-ast"><summary>Show as a table</summary>${table(['Year','Learners','Runs','Results'],(d.years||[]).map(y=>
+            `<tr><td>${esc(yearName(y.pgy))}</td><td>${y.learners}</td><td>${y.n}</td><td>${mix(y)}</td></tr>`),'No finished runs yet.')}</details></section>
+        <section><h3>By month</h3>${monthChart(d.months||[])}
+          <details class="pg-ast"><summary>Show as a table</summary>${table(['Month','Runs','Results'],(d.months||[]).map(m=>
+            `<tr><td>${esc(m.month)}</td><td>${m.n}</td><td>${mix(m)}</td></tr>`),'No finished runs yet.')}</details></section>
+      </div>`;
   }
   function tPeople(d){
     const total=allPrefixes().length;
@@ -438,27 +482,79 @@ const PROGRAM = (function(){
       ${table(['Given','Part','Case','Runs'],wrong.map(i=>
         `<tr><td>${esc(i.kind==='diagnosis'?dxName(i.item_id):(i.item_id?words(i.item_id):'None given'))}</td><td>${esc(i.kind)}</td><td>${esc(caseName(i.case_prefix))}</td><td>${i.n}</td></tr>`),'Every handoff was correct or defensible.')}`;
   }
-  function tMap(d){
-    const cells={}, cats=[];
-    (d.items||[]).filter(i=>i.kind==='critical').forEach(i=>{
-      const cat=caseCat(i.case_prefix), tab=AREAS.some(a=>a[0]===i.tab)?i.tab:null;
-      if(!tab) return;
-      if(!cats.includes(cat)) cats.push(cat);
-      const k=cat+'|'+tab, c=cells[k]=cells[k]||{n:0,unp:0};
-      c.n+=i.n; c.unp+=i.done-i.prompted;
-    });
-    cats.sort();
-    if(!cats.length) return '<p class="pg-empty">No finished runs yet.</p>';
-    const cell=(cat,tab)=>{
-      const c=cells[cat+'|'+tab];
-      if(!c) return '<td class="pg-cell none"></td>';
-      if(c.n<MIN_N) return `<td class="pg-cell few"><span class="pg-n">${c.unp} of ${c.n}</span></td>`;
-      const p=pct(c.unp,c.n), band=p>=85?'hi':(p>=60?'mid':'lo');
-      return `<td class="pg-cell ${band}"><b>${p}%</b><span class="pg-n">${c.unp} of ${c.n}</span></td>`;
+  /* Teaching priorities (10 November 2026). The gap map it replaces crossed the case's topic
+     with the ordering tab, and neither is something a program teaches to. This asks the two
+     questions a program can act on, by skill area (the group the catalog files an action
+     under):
+       1. Where are critical actions lost most? A chance is one critical action expected in
+          one run. It is lost when the action was missed or was done only after the nurse
+          prompted for it. The list opens ordered by the number of chances lost, not the
+          share, because the highest shares tend to sit on the fewest chances: one case and
+          a dozen runs can top a list by rate and mean very little.
+       2. Does the gap close with training? The same rate for each year. A gap that is still
+          open in the last year is the program's to teach. One that closes is being learned.
+     A skill area opens to the actions in it. CLOSED and GAIN are this file's own
+     thresholds, chosen to sort the list, not taken from any standard. */
+  function tPriorities(d){
+    const sk=(d.skills||[]).map(x=>Object.assign({},x,{unp:x.done-x.prompted,missed:x.n-x.done,lost:x.n-(x.done-x.prompted)}));
+    if(!sk.length) return '<p class="pg-empty">No finished runs yet.</p>';
+    const byRate=(a,b)=>(b.lost/b.n-a.lost/a.n)||(b.lost-a.lost), byCount=(a,b)=>(b.lost-a.lost)||(b.lost/b.n-a.lost/a.n);
+    const rated=sk.filter(x=>x.n>=MIN_N).sort(view.prioSort==='count'?byCount:byRate);
+    const few=sk.filter(x=>x.n<MIN_N).sort((a,b)=>b.lost-a.lost);
+    const hasYears=Array.isArray(d.skill_years);
+    const yearsOf=g=>(d.skill_years||[]).filter(y=>y.grp===g&&y.pgy!==null&&y.pgy!==undefined&&y.n>=MIN_N)
+      .map(y=>({pgy:y.pgy,n:y.n,rate:100*(y.done-y.prompted)/y.n})).sort((a,b)=>a.pgy-b.pgy);
+    const verdict=ys=>{
+      if(ys.length<2) return {k:'none',t:'Too few runs in two years to compare'};
+      const first=ys[0], last=ys[ys.length-1], gain=Math.round(last.rate-first.rate), at=`${Math.round(last.rate)}% unprompted in ${yearName(last.pgy)}`;
+      if(last.rate>=CLOSED) return {k:'ok',t:`Closed by ${yearName(last.pgy)}. ${at}`};
+      if(gain>=GAIN) return {k:'warn',t:`Closing, not closed. Up ${gain} points, ${at}`};
+      return {k:'harm',t:`Persists. ${gain>=0?'Up '+gain:'Down '+(-gain)} points, ${at}`};
     };
-    return `<p class="pg-note">Each cell is the share of expected critical actions done with no prompt, across the cases in that topic. A topic rests on the cases the library has in it, which may be one. A cell with fewer than ${MIN_N} shows the count only.</p>
-      <div class="pg-tw"><table class="pg-t pg-map"><thead><tr><th>Topic</th>${AREAS.map(a=>`<th>${a[1]}</th>`).join('')}</tr></thead>
-      <tbody>${cats.map(cat=>`<tr><th scope="row">${esc(cat)}</th>${AREAS.map(a=>cell(cat,a[0])).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const detail=g=>{
+      const its=(d.items||[]).filter(i=>i.kind==='critical'&&(i.grp||'Other')===g).sort((a,b)=>((b.n-b.done+b.prompted)/b.n)-((a.n-a.done+a.prompted)/a.n));
+      return `<div class="pg-detail">${table(['Action','Case','Missed','Only after a prompt','Median time to act'],its.map(i=>
+        `<tr><td>${esc(actName(i.item_id))}</td><td>${esc(caseName(i.case_prefix))}</td><td>${rate(i.n-i.done,i.n)}</td><td>${rate(i.prompted,i.n)}</td>
+         <td>${i.median_delay===null||i.median_delay===undefined?'':mmss(i.median_delay)}</td></tr>`),'Nothing recorded.')}</div>`;
+    };
+    const who=x=>(x.learners?`${x.learners_lost} of ${x.learners} ${x.learners===1?'learner':'learners'}, `:'')+`${x.cases} ${x.cases===1?'case':'cases'}`;
+    const row=x=>{
+      const on=view.openSkill===x.grp, pm=100*x.missed/x.n, pp=100*x.prompted/x.n;
+      return `<div class="pg-pr${on?' on':''}">
+        <button type="button" class="pg-link pg-prn" data-pgskill="${esc(x.grp)}" aria-expanded="${on}">${esc(x.grp)}</button>
+        <span class="pg-prbar" role="img" aria-label="${Math.round(pm+pp)} percent of chances lost">${x.missed?`<i class="c" style="width:${pm.toFixed(1)}%" title="Missed: ${x.missed} of ${x.n}"></i>`:''}${x.prompted?`<i class="b" style="width:${pp.toFixed(1)}%" title="Done only after a prompt: ${x.prompted} of ${x.n}"></i>`:''}</span>
+        <span class="pg-prv"><b>${Math.round(pm+pp)}%</b> <span class="pg-n">${x.lost} of ${x.n} chances</span></span>
+        <span class="pg-prw pg-n">${esc(who(x))}</span></div>${on?detail(x.grp):''}`;
+    };
+    const top=rated[0];
+    const lead= top&&top.lost ? (()=>{ const v=verdict(yearsOf(top.grp));
+        return `<p class="pg-lead"><b>${esc(top.grp)}</b> ${view.prioSort==='count'?'is where the most chances are lost':'has the highest share lost'}: ${top.lost} of ${top.n} chances (${Math.round(100*top.lost/top.n)}%), across ${esc(who(top))}.${hasYears&&v.k!=='none'?' '+esc(v.t)+'.':''}</p>`; })()
+      : '<p class="pg-lead">No critical action was lost in any skill area with enough runs to rate.</p>';
+    const order=rated.map(x=>({x,ys:yearsOf(x.grp)})).map(o=>Object.assign(o,{v:verdict(o.ys)}))
+      .sort((a,b)=>(a.ys.length<2)-(b.ys.length<2)||((a.ys[a.ys.length-1]||{rate:101}).rate-(b.ys[b.ys.length-1]||{rate:101}).rate));
+    const dots=o=>{
+      const lo=Math.min.apply(null,o.ys.map(y=>y.rate)), hi=Math.max.apply(null,o.ys.map(y=>y.rate));
+      return `<div class="pg-dr"><span class="pg-prn">${esc(o.x.grp)}</span>
+        <span class="pg-track" role="img" aria-label="${esc(o.ys.map(y=>yearName(y.pgy)+' '+Math.round(y.rate)+' percent').join(', '))}">
+          <i class="goal" style="left:${CLOSED}%"></i>${o.ys.length>1?`<i class="span" style="left:${lo.toFixed(1)}%;width:${(hi-lo).toFixed(1)}%"></i>`:''}
+          ${o.ys.map((y,i)=>`<i class="dot y${Math.max(0,Math.min((y.pgy||1)-1,3))}" style="left:${y.rate.toFixed(1)}%" title="${esc(yearName(y.pgy))}: ${Math.round(y.rate)}% unprompted, ${y.n} chances">${y.pgy}</i>`).join('')}</span>
+        <span class="pg-verdict ${o.v.k}">${esc(o.v.t)}</span></div>`;
+    };
+    return `${lead}
+      <h3>Where critical actions are lost</h3>
+      <p class="pg-note">A chance is one critical action expected in one run. It is lost when the action was missed, or done only after the nurse prompted for it. Skill areas are the groups the order menus use. Choose one to see its actions.</p>
+      <div class="pg-sort" role="group" aria-label="Order"><span>Order by</span>
+        <button type="button" data-pgsort="count"${view.prioSort==='count'?' class="on"':''} aria-pressed="${view.prioSort==='count'}">Chances lost</button>
+        <button type="button" data-pgsort="rate"${view.prioSort==='rate'?' class="on"':''} aria-pressed="${view.prioSort==='rate'}">Share lost</button></div>
+      <p class="pg-key"><span class="pg-mix k"><i class="c" style="width:100%"></i></span> Missed
+        <span class="pg-mix k"><i class="b" style="width:100%"></i></span> Done only after a prompt</p>
+      <div class="pg-prs">${rated.map(row).join('')}</div>
+      ${few.length?`<p class="pg-note">Too few chances to rate (under ${MIN_N}): ${few.map(x=>`${esc(x.grp)} (${x.lost} of ${x.n})`).join(', ')}.</p>`:''}
+      <h3>Does it close with training?</h3>
+      ${hasYears?`<p class="pg-note">Each dot is one year of training: the share of chances done with no prompt. The line marks ${CLOSED}%. A skill area still left of it in the last year is one the program has not closed. A year with fewer than ${MIN_N} chances is left out. The ${CLOSED}% line and the ${GAIN}-point rule are choices made to sort this list, not a standard.</p>
+        <div class="pg-axis"><span></span><span class="pg-ticks"><i style="left:0">0%</i><i style="left:50%">50%</i><i style="left:100%">100%</i></span><span></span></div>
+        <div class="pg-drs">${order.map(dots).join('')}</div>`
+      :`<p class="pg-note">The comparison by year needs the database function program_skills, which is not answering. The list above was gathered without it.</p>`}`;
   }
   function tPrograms(){
     const o=view.overview||{}, ps=o.programs||[], st=o.settings||{}, all=allPrefixes();
@@ -498,7 +594,7 @@ const PROGRAM = (function(){
     let body;
     if(view.state==='error') body=`<p class="pg-empty">${esc(view.err)}</p>`;
     else if(!d) body='<p class="pg-empty">Loading.</p>';
-    else body=({overview:tOverview,people:tPeople,cases:tCases,missed:tMissed,map:tMap,programs:tPrograms})[view.tab](d);
+    else body=({overview:tOverview,people:tPeople,cases:tCases,missed:tMissed,prio:tPriorities,programs:tPrograms})[view.tab](d);
     $('pg-body').innerHTML=
       `<div class="pg-bar">${scope}
         <label class="pg-sw"><input type="checkbox" id="pg-first" ${view.first?'checked':''}> First attempts only</label>
@@ -533,6 +629,8 @@ const PROGRAM = (function(){
       if(ds.pgtest){ toggleTest(); return; }
       if(ds.pgtab){ view.tab=ds.pgtab; view.note=''; paint(); return; }
       if(ds.pgcase){ view.openCase=view.openCase===ds.pgcase?null:ds.pgcase; paint(); return; }
+      if(ds.pgskill){ view.openSkill=view.openSkill===ds.pgskill?null:ds.pgskill; paint(); return; }
+      if(ds.pgsort){ view.prioSort=ds.pgsort; paint(); return; }
       if(ds.pgask){ view.confirm=ds.pgask; paint(); return; }
       if(ds.pgno){ view.confirm=null; paint(); return; }
       if(ds.pgrm){ view.confirm=null; await call('program_set_member',{p_user:ds.pgrm,p_role:'remove'},'Removed. Their finished runs stay in the program.'); fetchAll(); return; }
@@ -628,11 +726,47 @@ const PROGRAM = (function(){
 .pg-tools{white-space:nowrap;text-align:right}
 .pg-sure button{font:inherit;font-size:12.5px;margin-left:4px}
 .pg-code{font-family:var(--mono);letter-spacing:.04em;overflow-wrap:anywhere}
-.pg-map th[scope=row]{font-size:13px;color:var(--ink);white-space:normal}
-.pg-cell{text-align:center;min-width:104px}
-.pg-cell b{display:block;font-size:16px}
-.pg-cell.hi{background:var(--okl)!important} .pg-cell.mid{background:var(--warnl)!important} .pg-cell.lo{background:var(--harml)!important}
-.pg-cell.few{background:var(--sunk)!important}
+.pg-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin-top:22px}
+.pg-two h3{margin-top:0}
+.pg-stack{display:flex;gap:2px;border-radius:4px;overflow:hidden}
+.pg-stack i{display:flex;align-items:center;justify-content:center;min-width:0;font-style:normal}
+.pg-stack i.a{background:var(--ok)} .pg-stack i.b{background:var(--warn)} .pg-stack i.c{background:var(--harm)}
+.pg-stack em{font-style:normal;font-size:11.5px;font-weight:600;color:#fff;font-family:var(--mono)}
+.pg-stack.h{flex:1;height:26px}
+.pg-stack.v{flex-direction:column-reverse;height:150px;width:100%;max-width:44px}
+.pg-yrow{display:flex;align-items:center;gap:12px;margin:10px 0}
+.pg-yl{flex:0 0 132px;font-size:13.5px;font-weight:600}
+.pg-yl small,.pg-ml small{display:block;font-weight:400;font-size:11.5px;color:var(--ink3)}
+.pg-mch{display:flex;align-items:flex-end;gap:8px;margin-top:10px}
+.pg-mcol{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.pg-ml{font-size:12px;text-align:center;min-height:34px}
+.pg-ast{margin-top:10px;font-size:12.5px;color:var(--ink2)}
+.pg-ast summary{cursor:pointer}
+.pg-lead{font-size:15.5px;line-height:1.5;margin:0 0 18px;max-width:820px}
+.pg-sort{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2);margin:6px 0}
+.pg-sort button{font:inherit;font-size:12.5px;color:var(--ink2);background:var(--solid);border:1px solid var(--rule);border-radius:999px;padding:3px 11px;cursor:pointer}
+.pg-sort button.on{color:var(--act);border-color:var(--act);background:var(--actl)}
+.pg-pr,.pg-dr,.pg-axis{display:grid;grid-template-columns:minmax(150px,230px) minmax(120px,1fr) minmax(150px,190px) minmax(0,200px);gap:14px;align-items:center;padding:7px 0;border-bottom:1px solid var(--rule2)}
+.pg-dr,.pg-axis{grid-template-columns:minmax(150px,230px) minmax(160px,1fr) minmax(0,330px)}
+.pg-axis{border:0;padding:0 0 2px}
+.pg-prn{font-size:13.5px;overflow-wrap:anywhere}
+.pg-prbar{display:flex;gap:2px;height:14px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.pg-prbar i{display:block;height:100%} .pg-prbar .c{background:var(--harm)} .pg-prbar .b{background:var(--warn)}
+.pg-prv b{font-size:14px;font-family:var(--mono)}
+.pg-pr.on{border-bottom:0}
+.pg-track,.pg-ticks{position:relative;display:block;height:24px}
+.pg-track{background:linear-gradient(var(--rule),var(--rule)) center/100% 1px no-repeat}
+.pg-track i{position:absolute;top:50%;font-style:normal}
+.pg-track .goal{width:0;height:24px;margin-top:-12px;border-left:1px dashed var(--ink3)}
+.pg-track .span{height:3px;margin-top:-1.5px;background:var(--ink3);border-radius:2px}
+.pg-track .dot{width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:2px solid var(--solid);display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;font-family:var(--mono);color:#fff;background:var(--act)}
+.pg-track .dot.y0{background:#7FB2DC;color:#0F3554} .pg-track .dot.y1{background:#3F86C4} .pg-track .dot.y2{background:#155A94} .pg-track .dot.y3{background:#0C3C66}
+.pg-ticks{height:16px}
+.pg-ticks i{position:absolute;top:0;transform:translateX(-50%);font-style:normal;font-size:11px;color:var(--ink3);font-family:var(--mono)}
+.pg-verdict{font-size:12.5px;line-height:1.35;padding-left:10px;border-left:3px solid var(--rule)}
+.pg-verdict.ok{border-color:var(--ok)} .pg-verdict.warn{border-color:var(--warn)} .pg-verdict.harm{border-color:var(--harm)}
+@media (max-width:860px){.pg-two{grid-template-columns:1fr}.pg-pr,.pg-dr,.pg-axis{grid-template-columns:1fr;gap:4px}.pg-axis{display:none}}
 .pg-pick{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px;font-size:12.5px}
 .pg-new{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0 4px}
 .pg-new label{font-size:13px;font-weight:600}

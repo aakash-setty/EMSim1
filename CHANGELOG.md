@@ -5,7 +5,15 @@ is usable with learners.
 
 ---
 
-## Crash Cart in sections, above Miscellaneous (11 November 2026, owner's instruction)
+## Analytics: two charts on the overview, and Teaching priorities replaces the gap map (10 November 2026, owner's instruction)
+
+- Overview: results by year of training and by month are now two charts side by side. Each bar is a group's runs split into met, met with prompts and not met, as shares, with the number of runs beside it. A segment says its count and share when the pointer rests on it. Each chart keeps its table behind "Show as a table".
+- The gap map is gone (owner: "not insightful"). It crossed the case's topic with the ordering tab, and neither is something a program teaches to. Teaching priorities replaces it: critical actions by skill area, the group the order menus use. One list of where chances are lost (missed, or done only after a prompt) with the learners and cases behind each row, and one of whether each gap closes with the year of training.
+- The first list opens ordered by chances lost, not share, because the highest shares sit on the fewest chances. The 85 percent line and the 15-point rule are this file's own choices and the page says so.
+- New `supabase/migrations/005_program_skills.sql`, function `program_skills`. **Not applied to the live project**: the connector refused the deployment and the owner has to allow it. Without it the tab draws the first list from `program_analytics` and says the comparison by year is not available. Test data does not need it.
+- `engine/site-check/program.js` 67 checks. `supabase/tests/programs-test.mjs` 88 checks. `kit_check.py` 0 errors. No engine, case or catalog change, so the packs were not rerun. The rest of `engine/site-check/run.sh` was not run.
+
+## Crash Cart in sections, above Miscellaneous (10 November 2026, owner's instruction)
 
 - Crash Cart moves to the end of Stabilization, just above Miscellaneous.
 - It is drawn in five sections, each with a colour chip: Defibrillator, Airway and breathing, Access and fluids, Arrest and rhythm drugs, Metabolic and reversal drugs. The sections are not physician reviewed.

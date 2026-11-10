@@ -21,9 +21,9 @@ await db.exec(`
   grant usage on schema public, auth to anon, authenticated, service_role;
   grant execute on function auth.uid() to anon, authenticated, service_role;
 `);
-for (const f of ['001_access.sql', '002_runs.sql', '004_programs.sql', '004_programs.sql'])
+for (const f of ['001_access.sql', '002_runs.sql', '004_programs.sql', '004_programs.sql', '005_program_skills.sql', '005_program_skills.sql'])
   await db.exec(fs.readFileSync(dir + '/' + f, 'utf8'));
-ok('001, 002 and 004 apply, and 004 applies twice', true);
+ok('001, 002, 004 and 005 apply, and 004 and 005 apply twice', true);
 for (const id of Object.values(U)) await db.query('insert into auth.users (id) values ($1)', [id]);
 await db.query('insert into public.staff (user_id) values ($1)', [U.staff]);
 
@@ -153,6 +153,32 @@ ok('a discouraged action is counted by learner', a && a.safety.some(s => s.item_
 ok('the handoff lists the diagnosis chosen', a && a.handoff.some(h => h.kind === 'diagnosis' && h.item_id === 'dx_right' && h.n === 2));
 ok('nothing from the other program or the individual', a && !JSON.stringify(a).includes(U.other) && !JSON.stringify(a).includes(U.ind));
 ok('by year: PGY-1 and PGY-2', a && a.years.map(y => y.pgy).join() === '1,2', JSON.stringify(a && a.years));
+// ---- program_skills (005)
+r = await as(U.c, `select public.program_skills($1, true, null)`, [P1]);
+ok('a resident cannot read skills', r.code === '42501', r.err);
+r = await as(U.other, `select public.program_skills($1, true, null)`, [P1]);
+ok("another program's admin cannot read this program's skills", r.code === '42501', r.err);
+r = await as(U.admin, `select public.program_skills(null, true, null)`);
+ok('a program admin cannot read skills for every account', r.code === '42501', r.err);
+r = await as('', `select public.program_skills(null, true, null)`);
+ok('signed out, skills are refused', !!r.err);
+r = await as(U.admin, `select public.program_skills($1, true, null)`, [P1]);
+let k = r.v;
+const g2 = k && k.skills.find(x => x.grp === 'G2');
+ok('skills: G2 had two chances, both done, one only after a prompt, one of two learners lost one, one case',
+   g2 && g2.n === 2 && g2.done === 2 && g2.prompted === 1 && g2.learners === 2 && g2.learners_lost === 1 && g2.cases === 1, JSON.stringify(k && k.skills));
+ok('skills count critical actions only', k && k.skills.length === 2 && k.skills.reduce((n, x) => n + x.n, 0) === 4, JSON.stringify(k && k.skills));
+ok('skills by year: G2 once in PGY-1 with a prompt and once in PGY-2 without',
+   k && k.skill_years.find(x => x.grp === 'G2' && x.pgy === 1).prompted === 1 && k.skill_years.find(x => x.grp === 'G2' && x.pgy === 2).prompted === 0, JSON.stringify(k && k.skill_years));
+r = await as(U.admin, `select public.program_skills($1, false, null)`, [P1]);
+k = r.v;
+const g1 = k && k.skills.find(x => x.grp === 'G');
+ok('skills, all attempts: the missed action is a lost chance', g1 && g1.n === 3 && g1.done === 2 && g1.learners_lost === 1, JSON.stringify(g1));
+r = await as(U.staff, `select public.program_skills(null, false, null)`);
+ok('staff read skills for every account', r.v && r.v.skills.reduce((n, x) => n + x.n, 0) === 9, JSON.stringify(r.v && r.v.skills));
+r = await as(U.staff, `select public.program_skills(null, false, 0)`);
+ok('skills for a period of zero days are empty', r.v && r.v.skills.length === 0 && r.v.skill_years.length === 0);
+
 r = await as(U.admin, `select public.program_analytics($1, false, null)`, [P1]);
 a = r.v;
 ok('all attempts: three runs, one not met with a harmful action', a && a.cases[0].n === 3 && a.cases[0].not_met === 1 && a.cases[0].harmful === 0 && a.safety.some(s => s.kind === 'harmful'), JSON.stringify(a && a.cases));

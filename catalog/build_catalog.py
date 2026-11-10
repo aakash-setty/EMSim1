@@ -581,7 +581,7 @@ for e in ENTRIES:
 # Contents vary by hospital. Chosen by a model from hospital crash cart checklists, NOT
 # PHYSICIAN REVIEWED. The order the buttons are drawn in is `buttonOrder` in
 # engine/build_simulator.py.
-# A relist may name a subgroup, drawn as a heading inside that group only (11 November 2026:
+# A relist may name a subgroup, drawn as a heading inside that group only (10 November 2026:
 # the crash cart in sections). Keyed (tab, group, subgroup or None).
 RELIST = {
     ("stabilization", "Crash Cart", "Defibrillator"): [
