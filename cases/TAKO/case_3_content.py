@@ -150,6 +150,15 @@ PATIENT_VISUAL = {
  "also": [{"when": "NOT " + STEADY + " AND NOT phase is case_complete", "addons": ["sweating"]}],
 }
 
+# ---- Skin signs on the figure (owner, 11 November 2026) ----
+# Drawn from the drawn skin tone (engine/patient.js: pallor, flushed, cyanosis). Each
+# condition copies this case's own general status or examination condition for the line
+# that names the sign. "Gray" is drawn as pallor and "dusky" or "cyanosed" lips as
+# cyanosis. Mottling and purpura are not drawn: the text puts them on the knees, thighs,
+# forearms and legs, which the figure does not show. MODEL-AUTHORED, not physician reviewed.
+PATIENT_VISUAL.setdefault("also", []).extend([{"when": "NOT flag intubated set AND NOT " + STEADY + " AND NOT phase is case_complete", "addons": ["pallor"]}])
+PATIENT_VISUAL["verify"] = (PATIENT_VISUAL.get("verify") or "") + (" Skin signs (11 November 2026): pallor until she is steadied, from 'pale' on arrival and 'gray' once obstructed or in shock. None once 'color better'.")
+
 # ============================================================== LABORATORY
 LACTATE = {"presentation": "2.6", "obstructed": "3.4", "shock_worse": "5.8", "shock_untreated": "5.8", "steadied": "3.6"}
 ORDER = ["obstructed", "shock_worse", "shock_untreated", "steadied"]

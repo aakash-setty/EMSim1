@@ -170,6 +170,9 @@ CASE = {
      "Pregnancy left the list on 27 October 2026 (physician review DIPH-34, Aakash Setty): it "
      "is still answered and charted, and the hCG is still a recommended test. Every other topic "
      "is answerable and charted and does not count."),
+   # 30 October 2026, folded in on 11 November 2026. The ventilated-patient fix wrote this
+   # straight into DIPH-case.json, so a rebuild dropped it.
+   "answers_while_ventilated": "Her mother answers the history, not the patient, and goes on answering after the tube. The global rules take the mother out of the room only while the team is resuscitating (30 October 2026).",
  },
  "handoff": HANDOFF,
  "debrief_configuration": DEBRIEF,

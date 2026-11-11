@@ -1,0 +1,150 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "alley-intoxicated-01",
+ "note": "End-to-end paths. The runner charges 8 seconds per action, ignores timed flags, effects and also_satisfies, and asserts the final phase only. ALLEY-tests.js is the authority.",
+ "scenarios": [
+  {
+   "name": "Intended path: workup, the eyes, fomepizole, bicarbonate, poison center, nephrology, ICU",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "venous_blood_gas",
+    "basic_chemistry_chem_7",
+    "ethanol_level_etoh",
+    "osmolality",
+    {
+     "wait": 6
+    },
+    "exam_heent",
+    "exam_neuro",
+    "exam_abd",
+    "fomepizole",
+    "na_bicarbonate_bolus",
+    "folinic_acid",
+    "consult_toxicology",
+    "consult_renal",
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": "The path the case is built around."
+  },
+  {
+   "name": "Fomepizole only: frozen at arrival",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fomepizole",
+    {
+     "wait": 300
+    }
+   ],
+   "expect_phase": "held_early",
+   "note": "The antidote stops production and changes nothing visible."
+  },
+  {
+   "name": "Does nothing: the floor",
+   "steps": [
+    {
+     "wait": 600
+    }
+   ],
+   "expect_phase": "untreated_floor",
+   "note": "Second tier at 360 s, worst at 540 s, then held by design."
+  },
+  {
+   "name": "Late rescue from the floor",
+   "steps": [
+    {
+     "wait": 600
+    },
+    "insert_iv",
+    "fomepizole"
+   ],
+   "expect_phase": "held_late",
+   "note": "Fomepizole on the floor freezes him at the worst tier."
+  },
+  {
+   "name": "Lorazepam for withdrawal on arrival halts",
+   "steps": [
+    "insert_iv",
+    "lorazepam_bolus"
+   ],
+   "expect_phase": "halted",
+   "note": "A sedative before treatment takes away his compensation."
+  },
+  {
+   "name": "Discharge ends the run",
+   "steps": [
+    "attach_monitor",
+    "attempt_discharge"
+   ],
+   "expect_phase": "discharged",
+   "note": "Owner, 11 November 2026: a case failure."
+  },
+  {
+   "name": "Hallway on arrival costs a tier",
+   "steps": [
+    "attach_monitor",
+    "attempt_observation",
+    "away_from_u0",
+    {
+     "wait": 6
+    }
+   ],
+   "expect_phase": "drifting",
+   "note": "The runner does not implement also_satisfies, so the hidden target is a step."
+  },
+  {
+   "name": "CT before the antidote costs a tier",
+   "steps": [
+    "attach_monitor",
+    "ct_head",
+    "away_from_u0",
+    {
+     "wait": 6
+    }
+   ],
+   "expect_phase": "drifting",
+   "note": "As above."
+  },
+  {
+   "name": "CT after the antidote costs nothing",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "fomepizole",
+    "ct_head",
+    {
+     "wait": 20
+    }
+   ],
+   "expect_phase": "held_early",
+   "note": "Time away no longer matters once production has stopped."
+  },
+  {
+   "name": "Intubation is blocked",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "intubate_rapid_sequence"
+   ],
+   "expect_phase": "presentation",
+   "note": "Blocked by a prerequisite that never holds."
+  },
+  {
+   "name": "Known gap: a bicarbonate bolus at 180 seconds lapses at the instant of the drift",
+   "steps": [
+    "insert_iv",
+    {
+     "wait": 164
+    },
+    "na_bicarbonate_bolus",
+    {
+     "wait": 190
+    }
+   ],
+   "expect_phase": "drifting",
+   "note": "Two timed events at one instant. The engine tests check fractional times either side."
+  }
+ ]
+}

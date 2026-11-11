@@ -10,16 +10,16 @@ not another whole pack. Line numbers are recomputed each time this is generated.
 |---|---|---|---|
 | Time-guarded transition, deterioration on inaction | A phase left because the learner did nothing. Negative guard, measured from phase entry | 15.1 | `cases/MGCA/MGCA-case.json:179` (MGCA) |
 | Time-guarded transition, delayed consequence of an action | A positive guard timed from guard_true | 15.1 | `cases/DKA/case_1_shell.py:162` (DKA) |
-| Scheduled natural history (unguarded timed rule) | A timed rule with no guard and an unguarded_rationale | 15.1 | `cases/TAKO/case_1_shell.py:233` (TAKO) |
+| Scheduled natural history (unguarded timed rule) | A timed rule with no guard and an unguarded_rationale | 15.1 | `cases/TAKO/case_1_shell.py:237` (TAKO) |
 | Clock ending the run | A timed transition into a terminal phase, with allow_time_to_terminal | 15.2 | `cases/MGCA/MGCA-case.json:350` (MGCA) |
-| Instant transition into a terminal phase | The alternative to a harmful tag: an action route into an authored terminal phase with a timeout_reason | 4 | `cases/DIPH/case_1_shell.py:585` (DIPH) |
+| Instant transition into a terminal phase | The alternative to a harmful tag: an action route into an authored terminal phase with a timeout_reason | 4 | `cases/DIPH/case_1_shell.py:589` (DIPH) |
 | Vital effect | A number on the monitor moved by an action, nothing else changes | 16 | `cases/DKA/case_2_actions.py:216` (DKA) |
 | Vital effect with onset | A drug that takes time to start | 16.1 | `cases/AFRVR/case_2_actions.py:44` (AFRVR) |
 | Expiring flag | A flag that lapses and a transition that fires when it does | 17 | `cases/MGCA/MGCA-case.json:917` (MGCA) |
 | Flag on the Nth administration | A repeat dose that works where the first did not | 18 | `cases/AFRVR/case_2_actions.py:274` (AFRVR) |
 | Conditional credit (also_satisfies) | The same act credited as another action when a condition holds | 19 | `cases/DKA/case_2_actions.py:98` (DKA) |
 | Hidden target action | A case-only action with no button that other actions credit | 19 | `cases/DKA/case_2_actions.py:390` (DKA) |
-| Terminal phase inheriting vitals | A handover that shows the patient as they were | 19 | `cases/AFRVR/case_1_shell.py:356` (AFRVR) |
+| Terminal phase inheriting vitals | A handover that shows the patient as they were | 19 | `cases/AFRVR/case_1_shell.py:359` (AFRVR) |
 | Disposition intercept | A disposition with a consequence instead of an ending | 20 | `cases/TSS/case_5_handoff.py:21` (TSS) |
 | Harmful action and the halted phase | A tag that halts the case, its halt_reason, and the halted phase it needs | 21 | `cases/DIPH/case_2_actions.py:390` (DIPH) |
 | Prerequisite override | Waiving a catalog default prerequisite with a reason | 22.1 | `cases/CHFE/CHFE-case.json:1288` (CHFE) |
@@ -32,8 +32,8 @@ not another whole pack. Line numbers are recomputed each time this is generated.
 | Collateral historian | Someone other than the patient answering | 8.5 | `cases/DIPH/case_4_interview.py:469` (DIPH) |
 | Global answer rule for reduced alertness | The patient cannot give a history | 8.5 | `cases/DIPH/case_4_interview.py:439` (DIPH) |
 | Image payload | A study shown as a picture from media/ | 11.4 | `cases/DIPH/case_3_content.py:90` (DIPH) |
-| Consultant with a pending tier | Advice that depends on a study, with the window when it is ordered but not back | 11.5 | `cases/DIPH/case_3_content.py:852` (DIPH) |
+| Consultant with a pending tier | Advice that depends on a study, with the window when it is ordered but not back | 11.5 | `cases/DIPH/case_3_content.py:868` (DIPH) |
 | Patient figure rules (patient_visual) | What is visible on the figure, by state | 6.0c | `cases/DIPH/case_3_content.py:279` (DIPH) |
-| ECG trace block | What the monitor lead draws in a phase | 6.0b | `cases/DIPH/case_1_shell.py:169` (DIPH) |
+| ECG trace block | What the monitor lead draws in a phase | 6.0b | `cases/DIPH/case_1_shell.py:173` (DIPH) |
 | Case-only action with voice phrases | A button the catalog lacks, placed by the binding map, reachable by voice | 7.1 | `cases/TAKO/case_2_actions.py:93` (TAKO) |
 | Additional and minor diagnoses | The one other major diagnosis, scored, and the minor ones, never scored | 12.1 | `cases/AFRVR/case_5_handoff.py:183` (AFRVR) |

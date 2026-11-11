@@ -124,7 +124,12 @@
   "presenting_appearance": "A woman in a black dress, sitting upright on the stretcher, pale and sweating, one fist against her breastbone. She answers in short sentences. Her daughter is beside her holding her other hand.",
   "ems_handover_text": "Sixty-eight year old woman, crushing central chest pain for about an hour, came on at her husband's funeral reception. Radiates to the left arm and jaw, with sweating and nausea. Hypertension and high cholesterol. Rate 115, pressure 96 over 60 with us. We gave nothing, she didn't have a line when we left. Daughter thinks it's stress.",
   "arrival_handover": "Sixty-eight year old lady, chest pain for about an hour, came on at her husband's funeral. Her daughter's with her and says she's been in a state all week.",
-  "handover_authoring_note": "Section 2.3. Two sentences, 29 words. No vital sign, no past history, no medication, no pertinent negative. It carries the misleading frame on purpose: the crew repeats the daughter's explanation, as crews do."
+  "handover_authoring_note": "Section 2.3. Two sentences, 29 words. No vital sign, no past history, no medication, no pertinent negative. It carries the misleading frame on purpose: the crew repeats the daughter's explanation, as crews do.",
+  "avatar": {
+   "clotheType": "ShirtScoopNeck",
+   "clotheColor": "Black"
+  },
+  "avatar_note": "Clothing matches 'a woman in a black dress' in the presenting appearance."
  },
  "phase_notes": {
   "count_justification": "Four clinical phases and one terminal: arrival, the obstruction declaring itself, worse on the wrong treatment or none, and steadied. No halted phase and no arrest.",
@@ -183,9 +188,9 @@
      "measured_from": "guard_true",
      "to": "obstructed",
      "narration": "Her pressure has dropped since that vasodilator and her rate is up. She says she feels faint.",
+     "narration_ventilated": "Her pressure has dropped since that vasodilator and her rate is up.",
      "debrief_note": "A nitrate dropped her pressure. Nitrates lower the filling of the heart and the resistance it pumps against. In outflow obstruction a smaller, emptier ventricle obstructs more.\n\nThe warning was there before the drug: a pressure of 96 over 60 and a new murmur. A borderline pressure is a reason to hold a nitrate in any chest pain patient.",
-     "author_rationale": "A delayed consequence of the learner's own action. She would have reached this phase anyway at 180 seconds. The nitrate brings it forward and gives it a cause. Model output.",
-     "narration_ventilated": "Her pressure has dropped since that vasodilator and her rate is up."
+     "author_rationale": "A delayed consequence of the learner's own action. She would have reached this phase anyway at 180 seconds. The nitrate brings it forward and gives it a cause. Model output."
     },
     {
      "when": "flag inotrope_given set OR flag nitrate_given set",
@@ -1604,8 +1609,15 @@
      "addons": [
       "sweating"
      ]
+    },
+    {
+     "when": "NOT flag intubated set AND NOT phase is steadied AND NOT phase is case_complete",
+     "addons": [
+      "pallor"
+     ]
     }
-   ]
+   ],
+   "verify": " Skin signs (11 November 2026): pallor until she is steadied, from 'pale' on arrival and 'gray' once obstructed or in shock. None once 'color better'."
   },
   "labs": {
    "authoring_note": "Section 11.4. The pattern a reviewer should check: a raised troponin, a very high natriuretic peptide, and mild prerenal changes from five days of poor intake. Every value needs a signature.",

@@ -93,7 +93,11 @@
   "presenting_appearance": "A young woman lying on the stretcher, awake, flushed and pouring off heat, plucking at the sheet and at the monitoring leads. She looks past you rather than at you and answers questions with words that do not go together. She pushes hands away when anyone reaches for her. Her skin is hot and completely dry.",
   "ems_handover_text": "Eighteen year old female, mom came in from work about an hour ago and found her like this in her bedroom. Mom says she was asleep when she left this morning. She's been confused the whole way in, doesn't know where she is, kept trying to get off the stretcher. She's very warm to touch and she's dry as a bone. Rate was 130 to 140 on our monitor, regular. We didn't get a line in, she wouldn't have it. No injuries we could find. Mom's just behind us.",
   "arrival_handover": "Eighteen year old, her mom found her like this when she got in from work about an hour ago. She's been fighting us the whole way in and she's burning up.",
-  "handover_authoring_note": "Section 2.3. Two sentences, 32 words, no vital sign, no past history, no medication, no allergy, no pertinent negative and no word that names a diagnosis. It is deliberately worse than the ems_handover_text above it: the crew knows more than this, and a resident who wants it has to ask for it. 'Burning up' is a lay description of what anyone touching her would feel and is not a temperature."
+  "handover_authoring_note": "Section 2.3. Two sentences, 32 words, no vital sign, no past history, no medication, no allergy, no pertinent negative and no word that names a diagnosis. It is deliberately worse than the ems_handover_text above it: the crew knows more than this, and a resident who wants it has to ask for it. 'Burning up' is a lay description of what anyone touching her would feel and is not a temperature.",
+  "avatar": {
+   "skinColor": "Light"
+  },
+  "avatar_note": "Skin tone authored so the flushing in the presenting appearance shows on the figure (owner, 11 November 2026)."
  },
  "phase_notes": {
   "count_justification": "Six clinical phases, which was the ceiling the authoring document set at the time, and three terminals. The six are the author's timed scenario crossed with the two axes the case turns on: whether the seizure has been treated and whether the sodium-channel blockade has been treated. Arrival, seizing, post-ictal, the wide-complex branch for a blockade nobody treated, and the two resolution phases.\n\nThere is deliberately no intubated phase, which every other pack has. Two reasons. The six slots are spent on the axes above. And an intubated phase would sit at alertness 3 and end the interview, which would be wrong here: the historian is the patient's mother and she is not the one who has been intubated. Intubation instead sets a flag, moves the saturation through a vital effect, and changes the airway and general-status content.",
@@ -2625,7 +2629,7 @@
   },
   "patient_visual": {
    "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drives the figure in the room (engine/patient.js). Derived from this case's own phase descriptions, alertness levels, general status lines and action flags, and adds no clinical fact of its own: eyes closed where the phase is unresponsive, sedated or arrested; work of breathing where the phase description names it; the mask and the tube where the flag the resident's own action sets is set. The respiratory rate is not authored here, the figure breathes at the monitor's rate. Verify each rule against the phase and flag it names, as for any other content key.",
-   "verify": "Three choices to check. (1) The convulsion is drawn with the eyes OPEN, on the understanding that the eyes are usually open in a generalized tonic-clonic seizure and that closed eyes during the event point toward a functional seizure; change it if that is not what should be taught. (2) Once airway_protected is set the figure is intubated, still and eyes closed even in the seizing phase, on the assumption of induction and paralysis; a paralyzed patient may still be seizing electrically and the figure cannot show that. (3) Since physician review DIPH-29 (27 October 2026) the wide-complex phase is drawn convulsing when she reached it still seizing (flag seized set, nothing has ended the seizure) and eyes closed, obtunded, otherwise. (4) post_ictal has no rule of its own: it is alertness level 1 and is drawn drowsy, with heavy lids and a nodding head, by the figure itself. Agitation is drawn on arrival, from 'agitated ... plucking at the leads', until the airway is protected. She is 'hot and dry', so she is never drawn sweating.",
+   "verify": "Three choices to check. (1) The convulsion is drawn with the eyes OPEN, on the understanding that the eyes are usually open in a generalized tonic-clonic seizure and that closed eyes during the event point toward a functional seizure; change it if that is not what should be taught. (2) Once airway_protected is set the figure is intubated, still and eyes closed even in the seizing phase, on the assumption of induction and paralysis; a paralyzed patient may still be seizing electrically and the figure cannot show that. (3) Since physician review DIPH-29 (27 October 2026) the wide-complex phase is drawn convulsing when she reached it still seizing (flag seized set, nothing has ended the seizure) and eyes closed, obtunded, otherwise. (4) post_ictal has no rule of its own: it is alertness level 1 and is drawn drowsy, with heavy lids and a nodding head, by the figure itself. Agitation is drawn on arrival, from 'agitated ... plucking at the leads', until the airway is protected. She is 'hot and dry', so she is never drawn sweating. Skin signs (11 November 2026): flushed on arrival and after the seizure, where the status reads flushed; none once the flush is fading. Cyanosis while seizing ('cyanosed lips'). Pallor in the wide-complex tachycardia ('gray'). Not drawn under the intubated or paralyzed status lines, which name no color.",
    "rules": [
     {
      "when": "flag airway_protected set",
@@ -2681,6 +2685,24 @@
      "when": "phase is presentation AND NOT flag airway_protected set",
      "addons": [
       "agitation"
+     ]
+    },
+    {
+     "when": "(phase is presentation OR phase is post_ictal) AND NOT flag airway_protected set AND NOT flag paralytic_given set",
+     "addons": [
+      "flushed"
+     ]
+    },
+    {
+     "when": "phase is seizing AND NOT flag airway_protected set AND NOT flag paralytic_given set",
+     "addons": [
+      "cyanosis"
+     ]
+    },
+    {
+     "when": "phase is wide_complex_tachycardia AND (flag airway_protected set OR NOT flag paralytic_given set)",
+     "addons": [
+      "pallor"
      ]
     }
    ]

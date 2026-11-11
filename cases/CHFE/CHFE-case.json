@@ -3557,7 +3557,7 @@
   },
   "patient_visual": {
    "authoring_note": "MODEL-AUTHORED, NOT PHYSICIAN-AUTHORED. Drives the figure in the room (engine/patient.js). Derived from this case's own phase descriptions, alertness levels, general status lines and action flags, and adds no clinical fact of its own: eyes closed where the phase is unresponsive, sedated or arrested; work of breathing where the phase description names it; the mask and the tube where the flag the resident's own action sets is set. The respiratory rate is not authored here, the figure breathes at the monitor's rate. Verify each rule against the phase and flag it names, as for any other content key.",
-   "verify": "The mask follows flag on_niv and the tube follows flag intubated, so both appear when the resident's action takes effect and not when a phase happens to change. The non-rebreather follows flag oxygen_nrb and replaces the cannula; NIV replaces both. The nasal cannula itself is still drawn from the arrival phase alone, from the EMS handover. Intubated is always drawn eyes closed, which assumes sedation. Sweating is drawn in the two phases whose general status line says so.",
+   "verify": "The mask follows flag on_niv and the tube follows flag intubated, so both appear when the resident's action takes effect and not when a phase happens to change. The non-rebreather follows flag oxygen_nrb and replaces the cannula; NIV replaces both. The nasal cannula itself is still drawn from the arrival phase alone, from the EMS handover. Intubated is always drawn eyes closed, which assumes sedation. Sweating is drawn in the two phases whose general status line says so. Skin signs (11 November 2026, MODEL-AUTHORED): pallor and cyanosis in impending_respiratory_failure, from 'gray, sweating, dusky lips' and the nurse's 'gone gray around the lips'. Mottling (presentation, post_intubation_hypotension) is on the knees and forearms and is not drawn.",
    "rules": [
     {
      "when": "flag intubated set OR phase is post_intubation_hypotension OR phase is intubated_stabilized",
@@ -3671,6 +3671,13 @@
      "when": "phase is presentation OR phase is impending_respiratory_failure",
      "addons": [
       "sweating"
+     ]
+    },
+    {
+     "when": "phase is impending_respiratory_failure AND NOT flag intubated set",
+     "addons": [
+      "pallor",
+      "cyanosis"
      ]
     }
    ]

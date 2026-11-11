@@ -213,6 +213,15 @@ PATIENT_VISUAL = {
  ]
 }
 
+# ---- Skin signs on the figure (owner, 11 November 2026) ----
+# Drawn from the drawn skin tone (engine/patient.js: pallor, flushed, cyanosis). Each
+# condition copies this case's own general status or examination condition for the line
+# that names the sign. "Gray" is drawn as pallor and "dusky" or "cyanosed" lips as
+# cyanosis. Mottling and purpura are not drawn: the text puts them on the knees, thighs,
+# forearms and legs, which the figure does not show. MODEL-AUTHORED, not physician reviewed.
+PATIENT_VISUAL.setdefault("also", []).extend([{"when": "phase is respiratory_failure AND NOT flag intubated set", "addons": ["pallor", "cyanosis"]}])
+PATIENT_VISUAL["verify"] = (PATIENT_VISUAL.get("verify") or "") + (" Skin signs (11 November 2026): pallor and cyanosis in respiratory_failure, from 'gray, sweaty' and 'dusky lips and nailbeds'.")
+
 LABS = {
  "authoring_note": ("Section 9.4. Structured payloads with abnormal flags set by the author, not "
    "computed by the renderer. Reference intervals are assay- and institution-specific and every "

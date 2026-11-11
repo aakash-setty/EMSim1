@@ -214,9 +214,9 @@
      "measured_from": "guard_true",
      "to": "potassium_falling",
      "narration": "She says her arms and legs feel heavy and her heart is fluttering. Her rate has gone up.",
+     "narration_ventilated": "Her rate has gone up. She's sedated, so she can't tell us how she feels.",
      "debrief_note": "Insulin was given before her potassium was replaced. It was 3.1 on arrival. Insulin moves potassium into cells, and hers fell to 2.6. She became weak and her ECG changed.\n\nThis is the decision the case is built around. In ketoacidosis the body is short of potassium even when the blood level looks normal, and vomiting and diarrhea had already taken hers low. The potassium result comes before the insulin. Under 3.5, replace it and hold insulin until it is back to 3.5 or more. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]",
-     "author_rationale": "A delayed consequence of the learner's own action. Insulin moves potassium into cells within minutes, and the 2024 consensus report says to delay insulin when the potassium is under 3.5 mmol/L to avoid arrhythmia and respiratory muscle weakness. The size of the fall (3.1 to 2.6) and the ten seconds are teaching choices. Ten seconds stands for about an hour. Model output.",
-     "narration_ventilated": "Her rate has gone up. She's sedated, so she can't tell us how she feels."
+     "author_rationale": "A delayed consequence of the learner's own action. Insulin moves potassium into cells within minutes, and the 2024 consensus report says to delay insulin when the potassium is under 3.5 mmol/L to avoid arrhythmia and respiratory muscle weakness. The size of the fall (3.1 to 2.6) and the ten seconds are teaching choices. Ten seconds stands for about an hour. Model output."
     },
     {
      "when": "flag potassium_iv_given set",
@@ -270,10 +270,10 @@
      "measured_from": "guard_true",
      "to": "potassium_falling",
      "narration": "She says her arms and legs feel heavy and her heart is fluttering. Her rate has gone up.",
+     "narration_ventilated": "Her rate has gone up. She's sedated, so she can't tell us how she feels.",
      "debrief_note": "Insulin was ordered while the potassium was still running in, before any repeat level. The infusion finished first, and then the insulin did what it does at a low potassium. It moved potassium into cells and her level fell to 2.6.\n\nPotassium that has been started is not potassium that has been replaced. Insulin waits for the infusion to finish and for a level of 3.5 or more. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]",
      "author_rationale": "A delayed consequence of the learner's own action. Insulin moves potassium into cells within minutes, and the 2024 consensus report says to delay insulin when the potassium is under 3.5 mmol/L to avoid arrhythmia and respiratory muscle weakness. The size of the fall (3.1 to 2.6) and the ten seconds are teaching choices. Ten seconds stands for about an hour. Model output. This rule closes a race. Insulin ordered more than ten seconds after potassium used to be outrun by the potassium rule and reach the treated phase. The guard is a hidden action credited when rapid insulin is ordered in the arrival phase, so it holds on entry and this rule fires five seconds later, ahead of the ten second rule below. Five seconds is the validator's floor for a delayed consequence and is not a clinical claim.",
-     "author_note": "Above the insulin rule on purpose. See the race table in DKA-SEED.md.",
-     "narration_ventilated": "Her rate has gone up. She's sedated, so she can't tell us how she feels."
+     "author_note": "Above the insulin rule on purpose. See the race table in DKA-SEED.md."
     },
     {
      "when": "flag insulin_running set",
@@ -281,9 +281,9 @@
      "measured_from": "guard_true",
      "to": "treated",
      "narration": "Her sugar is coming down on the insulin, 266 on the meter, and she says the sick feeling is easing. Her rate is settling.",
+     "narration_ventilated": "Her sugar is coming down on the insulin, 266 on the meter. Her rate is settling.",
      "debrief_note": "Insulin was started after the potassium had run in and the level was back to 3.5 or more. Her glucose is falling and the ketones are clearing.\n\nFrom here the work is watching. Glucose every hour, potassium every one to two hours at first with 20 to 30 mEq in each liter of fluid, and a plan for when the glucose gets under 250. [UNVERIFIED: Umpierrez et al. 2024, read through a summarizing tool]",
-     "author_rationale": "A delayed consequence of the learner's own action. Ten seconds stands for about an hour. Model output.",
-     "narration_ventilated": "Her sugar is coming down on the insulin, 266 on the meter. Her rate is settling."
+     "author_rationale": "A delayed consequence of the learner's own action. Ten seconds stands for about an hour. Model output."
     }
    ]
   },
@@ -365,9 +365,9 @@
      "measured_from": "guard_true",
      "to": "recovering",
      "narration": "The potassium has run through. She says her arms feel stronger and her rate has come back down. Do you want a repeat level?",
+     "narration_ventilated": "The potassium has run through and her rate has come back down. Do you want a repeat level?",
      "debrief_note": "You held the insulin and replaced the potassium, and she recovered. Seeing that a treatment is hurting the patient and withdrawing it is a skill.\n\nPotassium that was already running when she became weak counted. An infusion that is running is still running, so holding the insulin was the step that was missing.\n\nInsulin restarts once a repeat potassium is 3.5 or more. In the simulator a held insulin stays off until it is ordered again.",
-     "author_rationale": "A delayed consequence of the learner's own actions. Twenty seconds stands for several hours of infusion, measured from the moment both the hold and the potassium are in. Model output.",
-     "narration_ventilated": "The potassium has run through and her rate has come back down. Do you want a repeat level?"
+     "author_rationale": "A delayed consequence of the learner's own actions. Twenty seconds stands for several hours of infusion, measured from the moment both the hold and the potassium are in. Model output."
     }
    ]
   },

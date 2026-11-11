@@ -339,6 +339,22 @@ PATIENT_VISUAL = {
  ]
 }
 
+# ---- Skin signs on the figure (owner, 11 November 2026) ----
+# Drawn from the drawn skin tone (engine/patient.js: pallor, flushed, cyanosis). Each
+# condition copies this case's own general status or examination condition for the line
+# that names the sign. "Gray" is drawn as pallor and "dusky" or "cyanosed" lips as
+# cyanosis. Mottling and purpura are not drawn: the text puts them on the knees, thighs,
+# forearms and legs, which the figure does not show. MODEL-AUTHORED, not physician reviewed.
+PATIENT_VISUAL.setdefault("also", []).extend([
+  {"when": "(phase is presentation OR phase is post_ictal) AND NOT flag airway_protected set AND NOT flag paralytic_given set",
+   "addons": ["flushed"]},
+  {"when": "phase is seizing AND NOT flag airway_protected set AND NOT flag paralytic_given set",
+   "addons": ["cyanosis"]},
+  {"when": "phase is wide_complex_tachycardia AND (flag airway_protected set OR NOT flag paralytic_given set)",
+   "addons": ["pallor"]},
+])
+PATIENT_VISUAL["verify"] = (PATIENT_VISUAL.get("verify") or "") + (" Skin signs (11 November 2026): flushed on arrival and after the seizure, where the status reads flushed; none once the flush is fading. Cyanosis while seizing ('cyanosed lips'). Pallor in the wide-complex tachycardia ('gray'). Not drawn under the intubated or paralyzed status lines, which name no color.")
+
 LABS = {
  "authoring_note": (
    "Section 9.4. Structured payloads with abnormal flags set by the author of the case file "

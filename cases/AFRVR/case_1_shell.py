@@ -348,7 +348,10 @@ PHASES = [
       "intubation of a man who was talking to you, and intubation of a man who had already tired. "
       "The schema provides one block per phase. The numbers here are the post-intubation state and "
       "assume no peri-intubation collapse, which is a deliberate simplification: this case is not "
-      "about the airway and adding a hypotension branch would make it about the airway.")),
+      "about the airway and adding a hypotension branch would make it about the airway."),
+    # 30 October 2026 (the monitor shows the ventilator's rate), written straight into the JSON
+    # then and folded in here on 11 November 2026.
+    ventilated=True),
 
   phase("case_complete", "Handoff confirmed", "handed over",
     "Terminal phase entered when the resident confirms a handoff. The debrief is generated from here.",

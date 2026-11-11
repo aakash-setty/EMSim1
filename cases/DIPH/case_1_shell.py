@@ -109,6 +109,10 @@ PATIENT = {
    "than the ems_handover_text above it: the crew knows more than this, and a resident who wants "
    "it has to ask for it. 'Burning up' is a lay description of what anyone touching her would "
    "feel and is not a temperature."),
+ # Owner, 11 November 2026: a lighter-skinned patient, so the flushing this case turns on
+ # reads on the figure. The rest of her appearance is the engine's varied pick.
+ "avatar": {"skinColor": "Light"},
+ "avatar_note": "Skin tone authored so the flushing in the presenting appearance shows on the figure (owner, 11 November 2026).",
 }
 
 # ---------------------------------------------------------------- phases

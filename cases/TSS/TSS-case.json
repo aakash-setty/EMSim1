@@ -201,9 +201,9 @@
      "measured_from": "guard_true",
      "to": "fluid_responsive",
      "narration": "That fluid is in. Her pressure is better and she says she feels a bit better.",
+     "narration_ventilated": "That fluid is in. Her pressure is better.",
      "debrief_note": "The first bolus helped, as it should. She was dry from two days of fever and barely drinking, and she is leaking fluid out of her vessels.\n\nRead the response as information, not as a result. A patient who is still tachycardic with a temperature over 39 after a liter was not only dehydrated. The target is about 30 mL/kg, which for her is close to two liters, followed by a reassessment.",
-     "author_rationale": "A delayed consequence of the learner's own action. Ten seconds stands for the time a liter takes to run in, heavily compressed. The size of the response is a teaching choice. Model output.",
-     "narration_ventilated": "That fluid is in. Her pressure is better."
+     "author_rationale": "A delayed consequence of the learner's own action. Ten seconds stands for the time a liter takes to run in, heavily compressed. The size of the response is a teaching choice. Model output."
     },
     {
      "when": "NOT flag fluids_given set",
@@ -331,9 +331,9 @@
      "measured_from": "guard_true",
      "to": "stabilizing",
      "narration": "The vasopressor is working. Her pressure is up and she's more awake.",
+     "narration_ventilated": "The vasopressor is working. Her pressure is up.",
      "debrief_note": "The vasopressor restored her pressure, and it is holding because the source is out. Ten seconds is a compression of the several minutes a titration takes.",
-     "author_rationale": "A delayed consequence of the learner's own action. Model output.",
-     "narration_ventilated": "The vasopressor is working. Her pressure is up."
+     "author_rationale": "A delayed consequence of the learner's own action. Model output."
     },
     {
      "when": "flag pressor_running set AND flag fluids_given set",
@@ -341,9 +341,9 @@
      "measured_from": "guard_true",
      "to": "supported",
      "narration": "The vasopressor has brought her pressure up and she's more awake. I've had to go up on it twice to get there.",
+     "narration_ventilated": "The vasopressor has brought her pressure up. I've had to go up on it twice to get there.",
      "debrief_note": "The vasopressor restored a borderline pressure. She needs a rising dose to stay there, which is what an untreated source looks like from the infusion pump.",
-     "author_rationale": "A delayed consequence of the learner's own action. Model output.",
-     "narration_ventilated": "The vasopressor has brought her pressure up. I've had to go up on it twice to get there."
+     "author_rationale": "A delayed consequence of the learner's own action. Model output."
     },
     {
      "when": "NOT flag pressor_running set OR NOT flag fluids_given set",
@@ -452,9 +452,9 @@
      "measured_from": "guard_true",
      "to": "stabilizing",
      "narration": "She's coming back. Her pressure is up on the vasopressor, her rate is down, and she's opening her eyes to my voice.",
+     "narration_ventilated": "She's coming back. Her pressure is up on the vasopressor and her heart rate is down. She's still sedated on the ventilator.",
      "debrief_note": "She recovered a pressure once all three things were done: fluid, a vasopressor and removal of the source. She spent time at a mean pressure in the 40s on the way, and her kidneys and liver will show it over the next days.",
-     "author_rationale": "A delayed consequence of the learner's own action. That recovery from this phase is always possible is a teaching choice: the case has no death, so a learner who gets here can still find the answer. Model output.",
-     "narration_ventilated": "She's coming back. Her pressure is up on the vasopressor and her heart rate is down. She's still sedated on the ventilator."
+     "author_rationale": "A delayed consequence of the learner's own action. That recovery from this phase is always possible is a teaching choice: the case has no death, so a learner who gets here can still find the answer. Model output."
     }
    ],
    "authoring_note": "No clock leaves this phase. A learner who does nothing further stays here until they hand over or end the case. That is a decision: the design guide asks that failure be recoverable, and this case has no arrest."
@@ -2081,7 +2081,7 @@
    ]
   },
   "patient_visual": {
-   "authoring_note": "MODEL-AUTHORED. The figure cannot show a rash or a flush, so the erythroderma is carried by the general status line and the skin examination only. Alertness and distress are drawn from the phase's own appearance values. The only rule here is the tube.",
+   "authoring_note": "MODEL-AUTHORED. Alertness and distress are drawn from the phase's own appearance values. The only rule here is the tube. The erythroderma is drawn as a flush and the gray of shock as pallor (11 November 2026, below).",
    "rules": [
     {
      "when": "flag intubated set",
@@ -2096,7 +2096,22 @@
      "when": null,
      "value": {}
     }
-   ]
+   ],
+   "also": [
+    {
+     "when": "flag intubated set OR NOT (phase is profound_shock OR phase is case_complete)",
+     "addons": [
+      "flushed"
+     ]
+    },
+    {
+     "when": "NOT flag intubated set AND (phase is hypotensive OR phase is profound_shock)",
+     "addons": [
+      "pallor"
+     ]
+    }
+   ],
+   "verify": " Skin signs (11 November 2026): the erythroderma is drawn as flushed in every phase whose status line names it, intubated included; not in profound_shock, whose line reads 'gray and mottled'. Pallor in hypotensive and profound_shock ('gray'), so hypotensive is gray and flushed together."
   },
   "labs": {
    "authoring_note": "Section 9.4. Structured payloads with model-set abnormal flags. The pattern is the point: kidney, liver, platelets and muscle are all involved, which is what separates toxic shock from a viral illness. Every value needs a physician's signature.",

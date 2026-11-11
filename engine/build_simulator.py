@@ -527,6 +527,49 @@ shared["patient"] = {
                    "eyeType": "Default", "eyebrowType": "Default", "mouthType": "Serious",
                    "skinColor": "Brown"},
     },
+    # Varied appearance (owner, 10 November 2026). The interface picks every key a case does
+    # not author in patient.avatar from these lists, seeded by the case id (PATIENT.varied),
+    # so the same case always draws the same patient and the library is not one face.
+    # Deliberately left out: the palette's "Yellow" and "Tanned" skins, which read as
+    # jaundice and as an orange cast on a well patient; hats, the hijab, the turban, the eye
+    # patch and sunglasses, which would say something about the patient no case authored;
+    # unnatural hair colours; the flower crown and the mullet; graphic shirts and overalls;
+    # the hospital gown, because patients arrive in their own clothes. Hair colour follows
+    # the skin tone only so far as is common, and greys with age in the renderer. The
+    # in-between tones are mixes of their neighbours in the palette. Not reviewed by anyone
+    # for representativeness: a model's choice, for the owner to adjust.
+    "variety": {
+        # Mixed into every case's seed. Chosen by searching for the value that spreads the nine
+        # cases of 10 November 2026 across all eight tones, nine hairstyles and eight shirt
+        # colours. A new case lands wherever the hash puts it. Changing this reshuffles every
+        # patient in the library.
+        "salt": "v15306",
+        "skin": [
+            {"tone": "Pale",     "hair": ["Blonde", "BlondeGolden", "Auburn", "Red", "Brown", "BrownDark", "Black"]},
+            {"tone": "Light",    "hair": ["Blonde", "Auburn", "Brown", "BrownDark", "Black"]},
+            {"tone": "#DEA272",  "hair": ["Brown", "BrownDark", "Black"]},
+            {"tone": "Brown",    "hair": ["BrownDark", "Black"]},
+            {"tone": "#BF7442",  "hair": ["BrownDark", "Black"]},
+            {"tone": "DarkBrown", "hair": ["BrownDark", "Black"]},
+            {"tone": "#88502F",  "hair": ["Black"]},
+            {"tone": "Black",    "hair": ["Black"]},
+        ],
+        "top": {
+            "male": ["ShortHairShortFlat", "ShortHairShortRound", "ShortHairShortWaved",
+                     "ShortHairShortCurly", "ShortHairTheCaesar", "ShortHairTheCaesarSidePart",
+                     "ShortHairSides", "ShortHairFrizzle", "ShortHairDreads01", "NoHair"],
+            "female": ["LongHairStraight", "LongHairStraight2", "LongHairBob", "LongHairBun",
+                       "LongHairCurly", "LongHairCurvy", "LongHairNotTooLong", "LongHairBigHair",
+                       "LongHairFro", "LongHairDreads", "LongHairMiaWallace"],
+        },
+        # Blank is listed more than once so most men are clean-shaven.
+        "facialHair": {"male": ["Blank", "Blank", "Blank", "BeardLight", "BeardMedium", "MoustacheMagnum"],
+                       "female": ["Blank"]},
+        "accessories": ["Blank", "Blank", "Blank", "Prescription01", "Prescription02", "Round"],
+        "clothes": ["ShirtCrewNeck", "ShirtScoopNeck", "ShirtVNeck", "CollarSweater", "Hoodie"],
+        "clotheColor": ["Black", "Blue02", "Blue03", "Gray01", "Gray02", "Heather",
+                        "PastelBlue", "PastelGreen", "PastelRed", "Red", "White"],
+    },
     # Two appearance keys that are not avataaars options. build is authored in patient.avatar.
     # ageGroup is derived from patient.age by the interface (under 40, 40 to 59, 60 and over)
     # and may be overruled there.
@@ -537,7 +580,7 @@ shared["patient"] = {
     "eyes": ["open", "closed"],
     "work_of_breathing": ["normal", "increased", "severe"],
     "addons": ["gaze_left", "gaze_right", "nystagmus", "nasal_cannula", "high_flow_cannula", "nonrebreather", "bipap_mask", "intubated",
-               "bag_valve_mask", "defib_pads", "central_line", "jaundice", "sweating", "agitation",
+               "bag_valve_mask", "defib_pads", "central_line", "jaundice", "pallor", "flushed", "cyanosis", "sweating", "agitation",
                "hospital_bed", "hospital_bed_flat"],
     "visualDefault": {"eyes": "open", "seizure": False, "work_of_breathing": "normal"},
     # v0.17p. The airway add-on each catalog entry puts on the figure. The engine resolves the

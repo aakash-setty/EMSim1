@@ -92,6 +92,10 @@ PATIENT = {
    "Section 2.3. Two sentences, 29 words. No vital sign, no past history, no medication, "
    "no pertinent negative. It carries the misleading frame on purpose: the crew repeats "
    "the daughter's explanation, as crews do."),
+ # 10 November 2026: the figure's other keys now vary by case. The clothing is authored so
+ # the drawing matches the presenting appearance, "a woman in a black dress".
+ "avatar": {"clotheType": "ShirtScoopNeck", "clotheColor": "Black"},
+ "avatar_note": "Clothing matches 'a woman in a black dress' in the presenting appearance.",
 }
 
 

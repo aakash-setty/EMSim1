@@ -138,6 +138,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `content_keys.patient_visual.rules[].when` | generic | figure | 5.3 | First-match rule list giving the whole visible state (eyes, seizure, work_of_breathing, addons, expression). Distress, alertness and rate come from the phase |
 | `content_keys.patient_visual.verify` | generic | never |  | Reviewer note. Nothing reads it |
 | `content_keys.pupils.authoring_note` | engine+validator+tools | never |  | Reviewer note. Nothing reads it |
+| `content_keys.pupils.iris` | engine+validator | figure | 5.3 | Iris colour, a hex value. Brown when absent |
 | `content_keys.pupils.rules[].value.affected_mm` | engine+validator | figure | 5.3 | For blown only: the affected pupil's diameter, in place of 8 mm |
 | `content_keys.pupils.rules[].value.affected_reaction` | engine+validator | figure | 5.3 | For blown only: the affected pupil's reaction, in place of none |
 | `content_keys.pupils.rules[].value.reaction` | engine+validator | figure | 5.3 | Optional: brisk, sluggish or none, overriding the state's |
@@ -232,8 +233,11 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `interview.authoring_notes.the_decline` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.the_diabetes` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.the_disclosure` | none | never |  | Reviewer note. Nothing reads it |
+| `interview.authoring_notes.the_drink` | none | never |  | Reviewer note. Nothing reads it |
+| `interview.authoring_notes.the_eyes` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.the_insulin` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.the_tampon` | none | never |  | Reviewer note. Nothing reads it |
+| `interview.authoring_notes.timing` | engine+tools | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.variants_provenance` | none | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.voice` | generic | never |  | Reviewer note. Nothing reads it |
 | `interview.authoring_notes.who_is_answering` | none | never |  | Reviewer note. Nothing reads it |
@@ -311,6 +315,7 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `phase_notes.deterioration_path` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.deterioration_paths` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.engine_limitation_on_state_4` | none | never |  | Reviewer note. Nothing reads it |
+| `phase_notes.floor` | engine+validator+tools | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.no_clock` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.no_halted_phase` | none | never |  | Reviewer note. Nothing reads it |
 | `phase_notes.no_time_jump` | none | never |  | Reviewer note. Nothing reads it |
@@ -421,4 +426,4 @@ field. Free-form blocks (`phase_notes`, `interview.authoring_notes`, `provenance
 | `ventilation.respiratory_rate` | engine+build+validator+tools | monitor | 8.5 | {when, respiratory_rate}. Default: flag intubated set, 16 |
 | `ventilation.when` | generic | monitor | 8.5 | {when, respiratory_rate}. Default: flag intubated set, 16 |
 
-398 fields across 9 packs, as of the last generation.
+403 fields across 10 packs, as of the last generation.

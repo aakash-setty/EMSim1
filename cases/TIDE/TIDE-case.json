@@ -3409,7 +3409,7 @@
   },
   "patient_visual": {
    "authoring_note": "MODEL-AUTHORED. Devices are not drawn from rules: the figure shows the last airway button pressed (authoring 5.3).",
-   "verify": "Check the drawn work of breathing in each phase. [UNVERIFIED]",
+   "verify": "Check the drawn work of breathing in each phase. [UNVERIFIED] Skin signs (11 November 2026): flushed wherever the skin examination reads 'hot, flushed and sweaty'. Cyanosis on arrival only, from the prompt's 'lips look dusky' before oxygen. Note for review: exam_heent says 'lips dusky' in every phase without a tube, which is drawn only on arrival.",
    "rules": [
     {
      "when": "flag intubated set",
@@ -3454,6 +3454,20 @@
        "sweating"
       ]
      }
+    }
+   ],
+   "also": [
+    {
+     "when": "NOT (phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is tiring OR phase is post_induction_collapse OR phase is arrest OR phase is case_complete) AND NOT flag severe_shock set",
+     "addons": [
+      "flushed"
+     ]
+    },
+    {
+     "when": "phase is arrival AND NOT flag intubated set",
+     "addons": [
+      "cyanosis"
+     ]
     }
    ]
   },

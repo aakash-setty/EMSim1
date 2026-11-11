@@ -1938,3 +1938,25 @@ echo or a prefix onto an answer.
 runtime from anything but authored text and authored scaffolding, and the log records the
 matched topic and fact rather than the words, so a change to the scaffolding does not change
 what a past run is recorded as having asked.
+
+---
+
+## Varied patients and skin signs (10 November 2026)
+
+**Appearance.** `figureAppearance` in `engine/ui.js` composes the figure as: the standard
+base by sex, then `PATIENT.varied(sex, case_id, SHARED.patient.variety)`, then the case's own
+`patient.avatar`. `varied` picks skin tone, hair colour, hairstyle, facial hair, glasses and
+clothes from the pool in `engine/build_simulator.py`, each from its own hash of a shared salt
+and the case id, so a case always draws the same patient. The pool leaves out the palette's
+Yellow and Tanned skins, headwear, sunglasses, unnatural hair colours and the hospital gown,
+and limits hair colour by skin tone. The salt was chosen to spread the nine cases of this
+date across all eight tones. Changing it reshuffles every patient.
+
+**Skin signs.** A sign that recolours the skin is computed from the drawn tone, in hue,
+saturation and lightness, scaled by how light the skin is (`jaundiceTone`, `pallorTone` in
+`engine/patient.js`). Jaundice yellows light skin strongly and dark skin slightly, and the
+yellow sclera is drawn on every tone. Pallor drains saturation and adds a grey cast,
+washed out on light skin and ashen on dark, and moves lightness only a little, so tones stay
+in their order. engine-tests check both on every tone in the pool. No case turns pallor on
+yet. Glasses come off under the BiPAP mask, the non-rebreather, the bag-valve mask and the
+endotracheal tube.

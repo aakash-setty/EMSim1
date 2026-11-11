@@ -5,6 +5,16 @@ is usable with learners.
 
 ---
 
+## Varied patients, skin signs on every tone (10 November 2026, owner's instruction)
+
+- Every case drew the same man or woman, skin tone "Brown". Now each case draws its own patient: skin tone, hair colour and style, facial hair, glasses and clothes are picked from `SHARED.patient.variety` (`engine/build_simulator.py`) by `PATIENT.varied` (`engine/patient.js`), seeded by the case id. The same case always draws the same patient. A case's `patient.avatar` still wins key by key.
+- The pool leaves out the palette's "Yellow" and "Tanned" skins, which read as jaundice and an orange cast on a well patient, and headwear, sunglasses, unnatural hair colours and the hospital gown. Eight tones: five from the palette and three mixes between them. A salt is chosen so the nine current cases use all eight tones. The pool is a model's choice, not reviewed for representativeness.
+- Jaundice is now computed from the drawn tone: strong on light skin, slight on dark, yellow sclera on every tone. New add-on `pallor`: drained and grey-cast, washed out on light skin and ashen on dark, keeping the tones in order. Added to the add-on vocabulary, `validate_case.py` and authoring requirements. No case turns pallor on yet.
+- Glasses come off under the non-rebreather and the endotracheal tube, as they already did under the BiPAP mask and the bag-valve mask.
+- TAKO: `patient.avatar` gains a black scoop-neck top for "a woman in a black dress". Edited in `case_1_shell.py` and, directly, in `TAKO-case.json`, because rebuilding TAKO from its Python drops content (below).
+- Found, not fixed: DKA and TAKO cannot be rebuilt from their Python without losing content. Their case files carry the 30 October ventilated-patient edits (exam findings, a patient_visual rule, interview rules), applied straight to the JSON by `Claude outputs/vent-2026-10-30/patch_ventilated.py` and never folded into `case_*.py`. SCOOT, TIDE and TSS rebuild identically. TAKO was rebuilt once by mistake today and restored from backup. That rebuild also rewrote `TAKO-binding-map.json` and `TAKO-matcher-tune-questions.json` from the Python, which should be unchanged, but this was not verified against git.
+- engine-tests: per case, the drawn appearance is drawable, stable and keeps authored keys; the pool has no Yellow or Tanned; pallor and jaundice change every pooled tone; pallor keeps them in order of lightness. All nine packs pass. kit_check 0 errors. Checked in Chromium: a sheet of every tone plain, pale and jaundiced, the nine patients, and nine add-on combinations. Backup in `Claude outputs/patient-variety/backup-before/`.
+
 ## Analytics: two charts on the overview, and Teaching priorities replaces the gap map (10 November 2026, owner's instruction)
 
 - Overview: results by year of training and by month are now two charts side by side. Each bar is a group's runs split into met, met with prompts and not met, as shares, with the number of runs beside it. A segment says its count and share when the pointer rests on it. Each chart keeps its table behind "Show as a table".

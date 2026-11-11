@@ -173,15 +173,26 @@ GENERAL_STATUS = {
 # ============================================================== THE FIGURE
 PATIENT_VISUAL = {
  "authoring_note": (
-   "MODEL-AUTHORED. The figure cannot show a rash or a flush, so the erythroderma is "
-   "carried by the general status line and the skin examination only. Alertness and "
-   "distress are drawn from the phase's own appearance values. The only rule here is the "
-   "tube."),
+   "MODEL-AUTHORED. Alertness and distress are drawn from the phase's own appearance "
+   "values. The only rule here is the tube. The erythroderma is drawn as a flush and the "
+   "gray of shock as pallor (11 November 2026, below)."),
  "rules": [
    {"when": TUBED, "value": {"eyes": "closed", "addons": ["intubated"]}},
    {"when": None, "value": {}},
  ],
 }
+
+# ---- Skin signs on the figure (owner, 11 November 2026) ----
+# Drawn from the drawn skin tone (engine/patient.js: pallor, flushed, cyanosis). Each
+# condition copies this case's own general status or examination condition for the line
+# that names the sign. "Gray" is drawn as pallor and "dusky" or "cyanosed" lips as
+# cyanosis. Mottling and purpura are not drawn: the text puts them on the knees, thighs,
+# forearms and legs, which the figure does not show. MODEL-AUTHORED, not physician reviewed.
+PATIENT_VISUAL.setdefault("also", []).extend([
+  {"when": TUBED + " OR NOT (phase is profound_shock OR phase is case_complete)", "addons": ["flushed"]},
+  {"when": "NOT " + TUBED + " AND (phase is hypotensive OR phase is profound_shock)", "addons": ["pallor"]},
+])
+PATIENT_VISUAL["verify"] = (PATIENT_VISUAL.get("verify") or "") + (" Skin signs (11 November 2026): the erythroderma is drawn as flushed in every phase whose status line names it, intubated included; not in profound_shock, whose line reads 'gray and mottled'. Pallor in hypotensive and profound_shock ('gray'), so hypotensive is gray and flushed together.")
 
 # ============================================================== LABORATORY
 # Lactate and the gases follow the phase, because a learner who repeats them should see

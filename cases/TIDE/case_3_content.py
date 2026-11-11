@@ -157,6 +157,19 @@ PATIENT_VISUAL = {
  ],
 }
 
+# ---- Skin signs on the figure (owner, 11 November 2026) ----
+# Drawn from the drawn skin tone (engine/patient.js: pallor, flushed, cyanosis). Each
+# condition copies this case's own general status or examination condition for the line
+# that names the sign. "Gray" is drawn as pallor and "dusky" or "cyanosed" lips as
+# cyanosis. Mottling and purpura are not drawn: the text puts them on the knees, thighs,
+# forearms and legs, which the figure does not show. MODEL-AUTHORED, not physician reviewed.
+PATIENT_VISUAL.setdefault("also", []).extend([
+  {"when": "NOT (phase is low_pressure OR phase is low_after_fluid OR phase is worsening_shock OR phase is tiring OR phase is post_induction_collapse OR phase is arrest OR phase is case_complete) AND NOT flag severe_shock set",
+   "addons": ["flushed"]},
+  {"when": "phase is arrival AND NOT " + INTUB, "addons": ["cyanosis"]},
+])
+PATIENT_VISUAL["verify"] = (PATIENT_VISUAL.get("verify") or "") + (" Skin signs (11 November 2026): flushed wherever the skin examination reads 'hot, flushed and sweaty'. Cyanosis on arrival only, from the prompt's 'lips look dusky' before oxygen. Note for review: exam_heent says 'lips dusky' in every phase without a tube, which is drawn only on arrival.")
+
 # ================================================================ LABORATORY
 
 def hh(hco3, pco2):

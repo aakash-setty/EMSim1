@@ -294,7 +294,11 @@ function figureAppearance(){
      is drawn from patient.age, which every case has; avatar.ageGroup may overrule it. */
   PATIENT.setBases((SHARED.patient||{}).base);
   const p=CASE.patient||{};
-  const av=Object.assign({ageGroup:PATIENT.ageGroupFor(p.age)},p.avatar||{});
+  /* Owner, 10 November 2026: patients differ between cases. The keys the case does not
+     author are picked from SHARED.patient.variety, seeded by the case id, so a case always
+     draws the same person. Authored avatar keys still win. */
+  const vary=PATIENT.varied?PATIENT.varied(p.sex,CASE.case_id||(PACK&&PACK.prefix)||'',(SHARED.patient||{}).variety):{};
+  const av=Object.assign({ageGroup:PATIENT.ageGroupFor(p.age)},vary,p.avatar||{});
   return PATIENT.baseFor(p.sex,av);
 }
 function figureState(st,shown){

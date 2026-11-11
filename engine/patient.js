@@ -197,6 +197,83 @@ const PATIENT=(function(){
     const x=p(a), y=p(b);
     return '#'+x.map((v,i)=>('0'+Math.round(v+(y[i]-v)*t).toString(16)).slice(-2)).join('');
   }
+  /* ---------- skin signs on any skin (10 November 2026) ----------
+     A sign that recolours the skin is computed from the tone the patient is drawn in, not
+     mixed toward one fixed colour by one fixed amount. The same mix that reads as jaundice
+     on a pale face turns a dark one an implausible olive, and a fixed lightening for pallor
+     barely shows on a light one. So each sign works in hue, saturation and lightness and
+     scales with how light the skin is. Display only: no sign is inferred here. */
+  function toHsl(hex){
+    hex=String(hex).replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join('');
+    const r=parseInt(hex.substr(0,2),16)/255, g=parseInt(hex.substr(2,2),16)/255, b=parseInt(hex.substr(4,2),16)/255;
+    const mx=Math.max(r,g,b), mn=Math.min(r,g,b), l=(mx+mn)/2, d=mx-mn;
+    let h=0, s=0;
+    if(d){ s=d/(1-Math.abs(2*l-1));
+      h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4; h*=60; if(h<0) h+=360; }
+    return [h,s,l];
+  }
+  function fromHsl(h,s,l){
+    s=Math.max(0,Math.min(1,s)); l=Math.max(0,Math.min(1,l));
+    const c=(1-Math.abs(2*l-1))*s, x=c*(1-Math.abs((h/60)%2-1)), m=l-c/2;
+    const [r,g,b]=h<60?[c,x,0]:h<120?[x,c,0]:h<180?[0,c,x]:h<240?[0,x,c]:h<300?[x,0,c]:[c,0,x];
+    return '#'+[r,g,b].map(v=>('0'+Math.round((v+m)*255).toString(16)).slice(-2)).join('');
+  }
+  /* 0 on the darkest tone in the palette, 1 on the lightest. */
+  function lightness01(hex){ return Math.max(0,Math.min(1,(toHsl(hex)[2]-0.28)/(0.86-0.28))); }
+  /* Jaundice: toward yellow, strongly on light skin and slightly on dark, where in life it
+     is hard to see on the skin and the eyes carry the sign. The yellow sclera is drawn on
+     every tone at full strength. */
+  function jaundiceTone(hex){ return mix(hex,'#E2B31C',0.12+0.30*lightness01(hex)); }
+  /* Pallor: the colour drains out. Saturation falls and the tone takes a cool grey cast,
+     which reads as washed out on light skin and as ashen on dark skin. The lightness moves
+     only a little, so the patient stays recognisably the same person: a dark-skinned
+     patient who goes pale is not drawn as a light-skinned one. */
+  function pallorTone(hex){
+    const [h,s,l]=toHsl(hex), k=lightness01(hex);
+    const drained=fromHsl(h,s*0.50,l+(0.92-l)*(0.08+0.10*k));
+    return mix(drained,'#9AA3AD',0.22-0.10*k);
+  }
+
+  /* Flushing: toward red, strongly on light skin and slightly on dark, where in life a flush
+     is hard to see and shows mostly as warmth and a deeper tone. The cheeks carry a little
+     more of it (the flushed layer below). */
+  function flushTone(hex){ return mix(hex,'#D9473F',0.08+0.24*lightness01(hex)); }
+  /* Cyanosis: a blue-grey cast, small on dark skin. The lips carry the sign on every tone
+     (the cyanosis layer below), as the lips and the tongue do in life. */
+  function cyanosisTone(hex){
+    const [h,s,l]=toHsl(hex), k=lightness01(hex);
+    return mix(fromHsl(h,s*0.75,l),'#6E7FA8',0.06+0.18*k);
+  }
+
+  /* ---------- varied appearance (10 November 2026) ----------
+     Every case used to draw the same man or woman. This picks the keys a case does not
+     author from a curated pool (SHARED.patient.variety), seeded by a string the interface
+     passes (the case id), so the same case always draws the same patient and two cases
+     usually differ. It names no case and reads nothing clinical. A case's patient.avatar
+     still wins key by key. */
+  function hash32(str){
+    let h=0x811c9dc5;
+    for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; }
+    /* FNV alone leaves keys that differ only at the end correlated (every pale patient
+       came out auburn). A finaliser mixes every bit into every other. */
+    h^=h>>>16; h=Math.imul(h,0x85ebca6b)>>>0; h^=h>>>13; h=Math.imul(h,0xc2b2ae35)>>>0; h^=h>>>16;
+    return h>>>0;
+  }
+  function pick(list,seed,key){ return (list&&list.length)?list[hash32(seed+'|'+key)%list.length]:undefined; }
+  function varied(sex,seed,pool){
+    if(!pool||!seed) return {};
+    seed=(pool.salt||'')+'|'+seed;           /* one shared salt: changing it reshuffles everyone */
+    const out={}, sx=sex==='female'?'female':'male';
+    const skin=pick(pool.skin,seed,'skin');
+    if(skin){ out.skinColor=skin.tone; const hc=pick(skin.hair,seed,'hair'); if(hc){ out.hairColor=hc; out.facialHairColor=hc; } }
+    const top=pick((pool.top||{})[sx],seed,'top'); if(top) out.topType=top;
+    const fh=pick((pool.facialHair||{})[sx],seed,'facialHair'); if(fh) out.facialHairType=fh;
+    const ac=pick(pool.accessories,seed,'accessories'); if(ac) out.accessoriesType=ac;
+    const cl=pick(pool.clothes,seed,'clothes'); if(cl) out.clotheType=cl;
+    const cc=pick(pool.clotheColor,seed,'clotheColor'); if(cc) out.clotheColor=cc;
+    return out;
+  }
+
   /* ---------- the feature registry ---------- */
   const FEATURES={};
   function register(name,def){
@@ -632,6 +709,7 @@ const PATIENT=(function(){
      bag hanging from it and narrow green oxygen tubing. The mouth shows through. The bag
      swells a little as the patient breathes out and sags as they breathe in. */
   register('nonrebreather',{label:'oxygen mask with a reservoir bag over the nose and mouth',priority:54,
+    hide:['accessories'],        /* glasses come off under a mask (10 November 2026, now that patients wear them) */
     layers:{
       face:'<path d="M110 138 C96 132 84 126 68 122 M154 138 C168 132 180 126 196 122" fill="none" stroke="#e9efe9" stroke-width="2.2" stroke-linecap="round"/>',
       front:'<g data-nrb-bag="1"><path d="M123 182 C117 184 115 192 115 204 L115 238 C115 250 121 256 132 256 C143 256 149 250 149 238 L149 204 C149 192 147 184 141 182 Z" fill="#dff3ea" fill-opacity=".55" stroke="#7fb9a3" stroke-width="1.2"/>'
@@ -654,7 +732,7 @@ const PATIENT=(function(){
      make an intubated patient grimace or mouth-breathe. Whether the eyes are closed is
      the case's to say, not this add-on's. */
   register('intubated',{label:'breathing tube in the mouth, taped in place and connected to ventilator tubing',priority:56,
-    hide:['mouth'],
+    hide:['mouth','accessories'],   /* and the glasses come off for an intubated patient */
     layers:{
       front:'<ellipse cx="134" cy="157" rx="8.5" ry="5.2" fill="#000" fill-opacity=".65"/>'
         +'<path d="M100 143 H164 a3 3 0 0 1 3 3 v4 a3 3 0 0 1 -3 3 H100 a3 3 0 0 1 -3 -3 v-4 a3 3 0 0 1 3 -3 Z" fill="#fff" fill-opacity=".93" stroke="#c9d3da" stroke-width=".8"/>'
@@ -708,9 +786,10 @@ const PATIENT=(function(){
   /* Jaundice. The skin itself is recoloured toward yellow, and the eyes gain a yellowed
      sclera, which the stock eyes do not have at all: they are dots on skin. The sclera is
      the point. On the darker skins of the palette the skin change is slight, as it is in
-     life, and the eyes are where it shows. Hidden whenever the eyes are not plainly open. */
+     life, and the eyes are where it shows (jaundiceTone). Hidden whenever the eyes are not
+     plainly open. */
   register('jaundice',{label:'skin and the whites of the eyes are yellow',priority:70,
-    skin:function(hex){ return mix(hex,'#E2B31C',0.40); },
+    skin:jaundiceTone,
     layers:{skin:'<clipPath id="@@lid"><rect x="80" y="109.4" width="110" height="24"/></clipPath><g data-icterus="1"><ellipse cx="106" cy="112" rx="10" ry="6.6" fill="#F3DD6B"/><ellipse cx="158" cy="112" rx="10" ry="6.6" fill="#F3DD6B"/>'
       +'<ellipse cx="106" cy="112" rx="10" ry="6.6" fill="none" stroke="#000" stroke-opacity=".18" stroke-width=".8"/><ellipse cx="158" cy="112" rx="10" ry="6.6" fill="none" stroke="#000" stroke-opacity=".18" stroke-width=".8"/></g>'},
     enter:function(inst,m){ m.g=inst.svg.querySelector('[data-icterus]'); const c=inst.svg.querySelector('clipPath[id$="lid"]'); m.clip=c?'url(#'+c.id+')':''; },
@@ -725,6 +804,35 @@ const PATIENT=(function(){
       /* the sclera rides with the eyes rig so gaze and nystagmus do not leave it behind */
       const e=f.ch.eyes, tf='translate('+(e.x*0.35).toFixed(2)+' '+(e.y*0.35).toFixed(2)+')';
       if(f.mem.tf!==tf){ f.mem.g.setAttribute('transform',tf); f.mem.tf=tf; }
+    }});
+
+  /* Pallor (10 November 2026). The skin drains of colour on any tone (pallorTone): washed
+     out on light skin, ashen on dark. Applied before jaundice, so a patient with both is
+     a pale yellow. */
+  register('pallor',{label:'pale, the colour drained from the skin',priority:69,skin:pallorTone});
+
+  /* Flushing (11 November 2026). The skin reddens on any tone (flushTone), and the cheeks a
+     little more, under the features. The cheeks fade with the tone: a flush on dark skin is
+     slight. Applied after pallor, so a grey patient who is also flushed is a dusky red. */
+  register('flushed',{label:'flushed, the skin red',priority:71,skin:flushTone,
+    layers:{skin:'<radialGradient id="@@fl"><stop offset="0" stop-color="#D9473F" stop-opacity=".55"/><stop offset="1" stop-color="#D9473F" stop-opacity="0"/></radialGradient>'
+      +'<g data-flush="1"><ellipse cx="99" cy="134" rx="17" ry="11" fill="url(#@@fl)"/><ellipse cx="165" cy="134" rx="17" ry="11" fill="url(#@@fl)"/></g>'},
+    enter:function(inst,m){
+      const g=inst.svg.querySelector('[data-flush]');
+      if(g) g.setAttribute('opacity',(0.30+0.70*lightness01(inst._skin)).toFixed(2));
+    }});
+
+  /* Cyanosis (11 November 2026). A blue-grey cast to the skin (cyanosisTone) and a blue-grey
+     tint over the lips that is the same on every tone, because the lips are where central
+     cyanosis is seen on any skin. Drawn under the mouth, so a mask or a tube covers it. */
+  register('cyanosis',{label:'blue-grey lips, cyanosed',priority:72,skin:cyanosisTone,
+    layers:{skin:'<radialGradient id="@@cy"><stop offset="0" stop-color="#4E5F92" stop-opacity=".62"/><stop offset=".55" stop-color="#5A6B9C" stop-opacity=".40"/><stop offset="1" stop-color="#5A6B9C" stop-opacity="0"/></radialGradient>'
+      +'<ellipse data-cyan="1" cx="132" cy="155" rx="22" ry="13" fill="url(#@@cy)"/>'},
+    tick:function(f){
+      /* the tint rides with the mouth rig, so a mouth that moves does not leave it behind */
+      const g=f.mem.g||(f.mem.g=f.inst.svg.querySelector('[data-cyan]')); if(!g) return;
+      const m=f.ch.mouth, tf='translate('+m.x.toFixed(2)+' '+m.y.toFixed(2)+')';
+      if(f.mem.tf!==tf){ g.setAttribute('transform',tf); f.mem.tf=tf; }
     }});
 
   /* Sweating. A sheen on the forehead and beads that form, run a short way and fade, each on
@@ -930,6 +1038,7 @@ const PATIENT=(function(){
 
   return {
     mount:mount, register:register, registerPart:registerPart, baseFor:baseFor, ageGroupFor:ageGroupFor,
+    varied:varied, _tones:{jaundice:jaundiceTone, pallor:pallorTone, flushed:flushTone, cyanosis:cyanosisTone},
     setBases:function(b){ if(b&&typeof b==='object') BASES=b; },
     normalizeAppearance:normalizeAppearance, normalizeState:normalizeState,
     setPaused:function(b){ PAUSED=!!b; },

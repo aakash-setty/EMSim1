@@ -17,6 +17,27 @@ from case_4_interview import (TOPICS, GLOBAL_RULES, OUT_OF_SCOPE, AUTHORING_NOTE
 from case_4_interview import TOPIC_MAP, EXTRA_COVERED
 from case_5_handoff import HANDOFF, DEBRIEF, PROVENANCE
 
+# ---- 30 October 2026, folded in on 11 November 2026 ----
+# The ventilated-patient fix (owner, 30 October 2026) was applied straight to the case JSON by
+# Claude outputs/vent-2026-10-30/patch_ventilated.py and never reached these sources, so a
+# rebuild dropped it. The same rules, first in each list, exactly as that patch wrote them.
+# Model-written, not physician reviewed.
+_TUBED = "flag intubated set"
+def _first(lst, rule):
+    if not lst or lst[0].get("when") != _TUBED:
+        lst.insert(0, rule)
+def _ex(text):
+    return {"kind": "exam_findings", "abnormal": True, "findings": text}
+_first(EXAM["exam_airway"], {"when": _TUBED, "value": _ex("Endotracheal tube in place and secured.")})
+_first(EXAM["exam_breath"], {"when": _TUBED, "value": _ex("Ventilated. Chest rising equally.")})
+_first(EXAM["exam_neuro"], {"when": _TUBED, "value": _ex("Sedated. Pupils equal and reactive.")})
+_first(GENERAL_STATUS["rules"], {"when": _TUBED, "value": {"kind": "general_status", "abnormal": True,
+                                                           "findings": "Intubated and sedated."}})
+_first(PATIENT_VISUAL["rules"], {"when": _TUBED, "value": {"eyes": "closed", "addons": ["intubated"]}})
+_first(GLOBAL_RULES, {"when": _TUBED, "value": "She is intubated and sedated and cannot answer.",
+                      "note": "30 October 2026: the catalog's intubation is available in every case."})
+_first(OUT_OF_SCOPE, {"when": _TUBED, "value": "She is intubated and sedated and cannot answer."})
+
 PACK = sys.argv[1] if len(sys.argv) > 1 else HERE
 
 # The interview bank, expanded from the shared phrasing library at build time. The

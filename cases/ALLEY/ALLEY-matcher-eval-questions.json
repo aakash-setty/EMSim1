@@ -1,0 +1,203 @@
+{
+ "case_prefix": "ALLEY",
+ "status": "HELD OUT. This set is quoted, never tuned against. Nothing here may appear in a variant bank or an out-of-scope bank.",
+ "authoring_note": "Written by a language model on 11 November 2026, before the first build, in a separate pass after the hand-written variants. The same model wrote both, which section 8.6 warns against. The expected topic on each row is a drafting judgment.",
+ "management_changing": [
+  "alcohol",
+  "vision",
+  "intent",
+  "fall_head_injury"
+ ],
+ "questions": [
+  {
+   "register": "paraphrase",
+   "q": "What've you had to drink today?",
+   "expect": "alcohol"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you drink something other than booze?",
+   "expect": "alcohol"
+  },
+  {
+   "register": "shorthand",
+   "q": "etoh today?",
+   "expect": "alcohol"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What exactly was in the jug?",
+   "expect": "alcohol"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Were you drinking antifreeze or anything like that?",
+   "expect": "alcohol"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is your eyesight okay right now?",
+   "expect": "vision"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are things looking fuzzy?",
+   "expect": "vision"
+  },
+  {
+   "register": "shorthand",
+   "q": "blurry vision?",
+   "expect": "vision"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Can you see my hand?",
+   "expect": "vision"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you do this to hurt yourself?",
+   "expect": "intent"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you want to kill yourself?",
+   "expect": "intent"
+  },
+  {
+   "register": "shorthand",
+   "q": "SI/HI?",
+   "expect": "intent"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did you fall down at all?",
+   "expect": "fall_head_injury"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did somebody beat you up?",
+   "expect": "fall_head_injury"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you take any street drugs?",
+   "expect": "substance_use"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any meds you take every day?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "shorthand",
+   "q": "nkda?",
+   "expect": "allergies"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do any medicines give you a bad reaction?",
+   "expect": "allergies"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any medical problems?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "When did you start feeling sick?",
+   "expect": "onset"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Have you been throwing up?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is your belly sore?",
+   "expect": "abdominal_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is your head killing you?",
+   "expect": "headache"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Are you having trouble catching your breath right now?",
+   "expect": "breathing"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any chest pain at all?",
+   "expect": "chest_pain"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you ever get the shakes when you stop drinking?",
+   "expect": "withdrawal"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What was the last thing you ate, and when?",
+   "expect": "last_oral_intake"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Where are you staying these days?",
+   "expect": "social_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any fevers?",
+   "expect": "fever_and_chills"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Ever had a seizure from drinking?",
+   "expect": "seizures"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Do you feel dizzy?",
+   "expect": "dizziness_syncope"
+  },
+  {
+   "register": "conversational",
+   "q": "Hey buddy, what's going on today?",
+   "expect": "presenting_story"
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "What's your favorite sports team?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you have any pets?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "How tall are you?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Do you play an instrument?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Any hearing problems?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope_general",
+   "q": "Have you ever broken a bone?",
+   "expect": null
+  }
+ ]
+}

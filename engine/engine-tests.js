@@ -2080,6 +2080,47 @@ else {
     chk(PACK.prefix + ': every authored visual state is drawable', bad.length === 0, bad.join('; '));
     const av = PATIENT.normalizeAppearance(PATIENT.baseFor((CASE.patient || {}).sex, (CASE.patient || {}).avatar));
     chk(PACK.prefix + ': the appearance is drawable', av.problems.length === 0, av.problems.join('; '));
+    /* 10 November 2026. The appearance actually drawn: the varied pick under the case's own
+       avatar. Drawable, the same on every call, and the authored keys win. */
+    {
+      /* As figureAppearance in ui.js composes it: varied pick, then the case's avatar. */
+      const pt = CASE.patient || {}, pool = (SHARED.patient || {}).variety;
+      const compose = () => PATIENT.baseFor(pt.sex, Object.assign({ ageGroup: PATIENT.ageGroupFor(pt.age) },
+        PATIENT.varied(pt.sex, CASE.case_id || PACK.prefix, pool), pt.avatar || {}));
+      const fa = compose(), fb = compose();
+      const fn = PATIENT.normalizeAppearance(fa);
+      chk(PACK.prefix + ': the varied appearance is drawable', fn.problems.length === 0, fn.problems.join('; '));
+      chk(PACK.prefix + ': the varied appearance is stable', JSON.stringify(fa) === JSON.stringify(fb));
+      const authored = (CASE.patient || {}).avatar || {};
+      const lost = Object.keys(authored).filter(k => k !== 'authoring_note' && k !== 'verify' && fa[k] !== authored[k]);
+      chk(PACK.prefix + ': authored avatar keys win over the varied pick', lost.length === 0, lost.join(', '));
+    }
+    {
+      /* The pool never draws a well patient in a tone that reads as a sign. */
+      const pool = ((SHARED.patient || {}).variety || {}).skin || [];
+      const signLike = pool.map(x => x.tone).filter(t => t === 'Yellow' || t === 'Tanned');
+      chk('the varied skin tones leave out Yellow and Tanned', pool.length > 0 && signLike.length === 0, signLike.join(', '));
+      /* Pallor and jaundice change every tone in the pool, and pallor keeps the tones in
+         order of lightness, so a dark-skinned patient who goes pale is still drawn dark. */
+      const tones = pool.map(x => /^#/.test(x.tone) ? x.tone : PATIENT.vocabulary().colors.skin[x.tone]);
+      const L = h => { h = h.replace('#', ''); const v = [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16) / 255);
+        return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+      const T = PATIENT._tones || {};
+      chk('pallor and jaundice change every pooled tone',
+          !!T.pallor && tones.every(t => T.pallor(t).toLowerCase() !== t.toLowerCase() && T.jaundice(t).toLowerCase() !== t.toLowerCase()));
+      /* 11 November 2026: flushing and cyanosis too, and each is stronger on lighter skin,
+         as it is seen in life, so the lightest pooled tone moves furthest. */
+      const dist = (a, b) => { const p = h => [0, 2, 4].map(i => parseInt(h.replace('#', '').substr(i, 2), 16));
+        const x = p(a), y = p(b); return Math.hypot(x[0] - y[0], x[1] - y[1], x[2] - y[2]); };
+      for (const sign of ['flushed', 'cyanosis']) {
+        chk(sign + ' changes every pooled tone', !!T[sign] && tones.every(t => T[sign](t).toLowerCase() !== t.toLowerCase()));
+        const byL = tones.slice().sort((p, q) => L(p) - L(q));
+        chk(sign + ' moves the lightest tone further than the darkest',
+            dist(byL[byL.length - 1], T[sign](byL[byL.length - 1])) > dist(byL[0], T[sign](byL[0])));
+      }
+      const order = a => a.map((x, i) => [x, i]).sort((p, q) => p[0] - q[0]).map(x => x[1]).join(',');
+      chk('pallor keeps the pooled tones in order of lightness', order(tones.map(L)) === order(tones.map(t => L(T.pallor(t)))));
+    }
     /* v0.17p. The device follows the button in every case, by catalog id through the bindings. */
     const eff = cid => (PACK.bindings || {})[cid] || cid;
     const dev = (SHARED.patient || {}).deviceActions || {};
