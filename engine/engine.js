@@ -374,6 +374,18 @@ function selectCase(ref){
 /* 19 October 2026. The pupils, for the magnified view of the figure's eyes (engine/pupils.js).
    Optional: content_keys.pupils is a guarded rule list, first match wins, and a case without
    it has no view. The value is {state, size_mm?, reaction?, side?}; iris is the block's. */
+/* 11 November 2026. The normal range of each vital for a patient of this age, for the
+   monitor's bold numbers and the arrival card. Display only: no condition reads a vital.
+   The table is SHARED.vital_normals. Without it, or without an age, the adult row. */
+function vitalNormals(age){
+  const T=(typeof SHARED==='object'&&SHARED&&SHARED.vital_normals)||null;
+  const adult=(T&&T.adult)||{hr:[60,100],sbp:[90,139],dbp:[60,89],spo2:[94,100],rr:[12,20],temp:[36.0,37.9]};
+  if(!T||typeof age!=='number'||!(age>=0)||age>=(T.adult_from_age||18)) return adult;
+  const b=(T.bands||[]).find(x=>age<x.below_age);
+  if(!b) return adult;
+  const floor=age<1?70:age<10?70+2*Math.floor(age):90;
+  return {hr:b.hr, sbp:[floor,b.sbp_max], dbp:b.dbp, spo2:adult.spo2, rr:b.rr, temp:adult.temp};
+}
 function pupilState(st){
   if(!PUPILS) return null;
   const v=resolve(PUPILS.rules,st);

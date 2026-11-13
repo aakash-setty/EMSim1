@@ -1,0 +1,502 @@
+{
+ "binding_version": "0.1",
+ "case_id": "sweet-anaphylaxis-01",
+ "catalog_version": "0.3-draft",
+ "status": "DRAFT. Every mapped row is an author judgement and needs review.",
+ "counts": {
+  "exact": 68,
+  "mapped": 0,
+  "unmatched": 11
+ },
+ "group_coverage": {
+  "normal_saline_500ml_bolus": [
+   "lactated_ringer_s_500ml_bolus"
+  ],
+  "normal_saline_1l_bolus": [
+   "lactated_ringer_s_1l_bolus"
+  ]
+ },
+ "blocking": [],
+ "rows": [
+  {
+   "case_id": "attach_monitor",
+   "catalog_id": "attach_monitor",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "insert_iv",
+   "catalog_id": "insert_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "second_iv",
+   "catalog_id": "second_iv",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intraosseous_line",
+   "catalog_id": "intraosseous_line",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "central_venous_catheter_triple_lumen",
+   "catalog_id": "central_venous_catheter_triple_lumen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "central_venous_catheter_cordis",
+   "catalog_id": "central_venous_catheter_cordis",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lay_back_legs_raised",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Case-only button, owner's defaults of 11 November 2026 (B4). A catalog entry 'Supine, legs elevated' is requested so that it does not point at the answer."
+  },
+  {
+   "case_id": "lower_head_of_bed",
+   "catalog_id": "lower_head_of_bed",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "epinephrine_intramuscular",
+   "catalog_id": "epinephrine_intramuscular",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "epinephrine_drip",
+   "catalog_id": "epinephrine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "stop_epinephrine",
+   "catalog_id": "stop_epinephrine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "epinephrine_bolus",
+   "catalog_id": "epinephrine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "consult_critical_care",
+   "catalog_id": "consult_critical_care",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "norepinephrine_drip",
+   "catalog_id": "norepinephrine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "vasopressin_drip",
+   "catalog_id": "vasopressin_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "phenylephrine_drip",
+   "catalog_id": "phenylephrine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "dopamine_drip",
+   "catalog_id": "dopamine_drip",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "normal_saline_500ml_bolus",
+   "catalog_id": "normal_saline_500ml_bolus",
+   "status": "exact",
+   "note": "Either crystalloid, 500 mL. The catalog's crystalloid_bolus group is split by volume here so the 1 L bag can carry its own nurse line (25 mL/kg at 40 kg).",
+   "also_covers": [
+    "lactated_ringer_s_500ml_bolus"
+   ]
+  },
+  {
+   "case_id": "normal_saline_1l_bolus",
+   "catalog_id": "normal_saline_1l_bolus",
+   "status": "exact",
+   "note": "Either crystalloid, 1 L.",
+   "also_covers": [
+    "lactated_ringer_s_1l_bolus"
+   ]
+  },
+  {
+   "case_id": "normal_saline_infusion",
+   "catalog_id": "normal_saline_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lactated_ringer_s_infusion",
+   "catalog_id": "lactated_ringer_s_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d5_1_2_ns_infusion",
+   "catalog_id": "d5_1_2_ns_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "d5_ns_bolus",
+   "catalog_id": "d5_ns_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "bolus_here_p3",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by a bolus given while floppy. Read by a transition."
+  },
+  {
+   "case_id": "bolus_here_p4",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by a bolus at the edge of arrest. Read by the rescue."
+  },
+  {
+   "case_id": "fluid_here_p5",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by a bolus once the infusion runs. Read by a transition."
+  },
+  {
+   "case_id": "epi_here_p4",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by IM or IV epinephrine at the edge of arrest. Read by the rescue."
+  },
+  {
+   "case_id": "bridge_here_p7",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by IM or IV epinephrine after the tube. Read by a transition."
+  },
+  {
+   "case_id": "drip_restarted",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by the infusion pressed again after a stop. Read by a transition."
+  },
+  {
+   "case_id": "non_rebreather_mask",
+   "catalog_id": "non_rebreather_mask",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "nasal_cannula_oxygen",
+   "catalog_id": "nasal_cannula_oxygen",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "high_flow_nasal_cannula",
+   "catalog_id": "high_flow_nasal_cannula",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "non_invasive_positive_pressure_ventilation",
+   "catalog_id": "non_invasive_positive_pressure_ventilation",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "bag_valve_mask",
+   "catalog_id": "bag_valve_mask",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "albuterol",
+   "catalog_id": "albuterol",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ipratropium",
+   "catalog_id": "ipratropium",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "diphenhydramine",
+   "catalog_id": "diphenhydramine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "famotidine_bolus",
+   "catalog_id": "famotidine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "methylprednisolone_bolus",
+   "catalog_id": "methylprednisolone_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "dexamethasone",
+   "catalog_id": "dexamethasone",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "hydrocortisone_bolus",
+   "catalog_id": "hydrocortisone_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "prednisone",
+   "catalog_id": "prednisone",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "glucagon",
+   "catalog_id": "glucagon",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ondansetron",
+   "catalog_id": "ondansetron",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lorazepam_bolus",
+   "catalog_id": "lorazepam_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "morphine_bolus",
+   "catalog_id": "morphine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "midazolam_bolus",
+   "catalog_id": "midazolam_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fentanyl_bolus",
+   "catalog_id": "fentanyl_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "haloperidol",
+   "catalog_id": "haloperidol",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "olanzapine",
+   "catalog_id": "olanzapine",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ziprasidone",
+   "catalog_id": "ziprasidone",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "intubate_rapid_sequence",
+   "catalog_id": "intubate_rapid_sequence",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "cricothyrotomy",
+   "catalog_id": "cricothyrotomy",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "fingerstick_blood_sugar",
+   "catalog_id": "fingerstick_blood_sugar",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "venous_blood_gas",
+   "catalog_id": "venous_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "arterial_blood_gas",
+   "catalog_id": "arterial_blood_gas",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "lactate",
+   "catalog_id": "lactate",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "complete_blood_count_cbc",
+   "catalog_id": "complete_blood_count_cbc",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "basic_chemistry_chem_7",
+   "catalog_id": "basic_chemistry_chem_7",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "xr_chest",
+   "catalog_id": "xr_chest",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ecg_12_lead",
+   "catalog_id": "ecg_12_lead",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "reassessed_after_epi",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Hidden target. Credited by an airway, breathing, circulation or lung exam after an ED dose."
+  },
+  {
+   "case_id": "exam_airway",
+   "catalog_id": "exam_airway",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_breath",
+   "catalog_id": "exam_breath",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_circ",
+   "catalog_id": "exam_circ",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_pulm",
+   "catalog_id": "exam_pulm",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_heent",
+   "catalog_id": "exam_heent",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_skin",
+   "catalog_id": "exam_skin",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_neuro",
+   "catalog_id": "exam_neuro",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "exam_card",
+   "catalog_id": "exam_card",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "interview_topic_epi_given",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Satisfied by asking what was given before arrival."
+  },
+  {
+   "case_id": "interview_topic_allergies",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "Satisfied by asking about allergies."
+  },
+  {
+   "case_id": "handoff_submit",
+   "catalog_id": null,
+   "status": "unmatched",
+   "note": "The catalog has no handoff action; listed in its own known_gaps."
+  },
+  {
+   "case_id": "propofol_infusion",
+   "catalog_id": "propofol_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_infusion",
+   "catalog_id": "ketamine_infusion",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "ketamine_bolus",
+   "catalog_id": "ketamine_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "etomidate_bolus",
+   "catalog_id": "etomidate_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "rocuronium_bolus",
+   "catalog_id": "rocuronium_bolus",
+   "status": "exact",
+   "note": null
+  },
+  {
+   "case_id": "succinylcholine_bolus",
+   "catalog_id": "succinylcholine_bolus",
+   "status": "exact",
+   "note": null
+  }
+ ]
+}

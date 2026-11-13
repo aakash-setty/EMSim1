@@ -75,7 +75,7 @@ FIELDS = {
 "metadata.arrival.line": ("history", "2.3", "Internal description, but it is printed as the handover if patient.arrival_handover is missing. Do not rely on it staying hidden"),
 
 # ---------------------------------------------------------------- patient
-"patient.age": ("history+list+figure", "2.3", "History line, case list, and the figure's age group (young under 40, middle 40 to 59, older from 60)"),
+"patient.age": ("history+list+figure", "2.3", "History line, case list, and the figure's age group (child under 16, young under 40, middle 40 to 59, older from 60)"),
 "patient.sex": ("history+list+figure", "2.3", "History line, case list, figure base, and pronouns in shared nurse strings"),
 "patient.weight_kg": ("history", "2.3", "Printed on the History line"),
 "patient.arrival_handover": ("history", "2.3", "The two sentences the learner reads at the top of the History tab. The only history given without asking"),

@@ -1,0 +1,319 @@
+{
+ "case_prefix": "SWEET",
+ "status": "HELD OUT. This set is quoted, never tuned against. Nothing here may appear in a variant bank or an out-of-scope bank.",
+ "authoring_note": "Written by a language model on 11 November 2026, before the first build, in a separate pass after the hand-written variants. The same model wrote both, which section 8.6 warns against. The expected topic on each row is a drafting judgment.",
+ "management_changing": [
+  "epi_given",
+  "allergies",
+  "asthma",
+  "current_medications",
+  "weight"
+ ],
+ "questions": [
+  {
+   "register": "paraphrase",
+   "q": "Did the ambulance crew give him epi already?",
+   "expect": "epi_given"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has anyone given him adrenaline today?",
+   "expect": "epi_given"
+  },
+  {
+   "register": "shorthand",
+   "q": "epi given prehospital?",
+   "expect": "epi_given"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How long ago was the shot in his leg?",
+   "expect": "epi_given"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did the medics treat him on the way?",
+   "expect": "epi_given"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What is he allergic to?",
+   "expect": "allergies"
+  },
+  {
+   "register": "shorthand",
+   "q": "known allergies?",
+   "expect": "allergies"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he got a nut allergy?",
+   "expect": "allergies"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he reacted like this before?",
+   "expect": "allergies"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does he have any history of wheezing or asthma?",
+   "expect": "asthma"
+  },
+  {
+   "register": "shorthand",
+   "q": "hx asthma?",
+   "expect": "asthma"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does he ever need a puffer?",
+   "expect": "asthma"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is he on any medications at home?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "shorthand",
+   "q": "home meds?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Does he take any heart or blood pressure pills?",
+   "expect": "current_medications"
+  },
+  {
+   "register": "paraphrase",
+   "q": "How many kilograms is your son?",
+   "expect": "weight"
+  },
+  {
+   "register": "shorthand",
+   "q": "wt?",
+   "expect": "weight"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Roughly what does he weigh?",
+   "expect": "weight"
+  },
+  {
+   "register": "paraphrase",
+   "q": "What exactly did he eat?",
+   "expect": "what_he_ate"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Was there anything with nuts in it?",
+   "expect": "what_he_ate"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is his tongue or throat swelling?",
+   "expect": "swelling"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is he having a hard time swallowing?",
+   "expect": "swelling"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is he itching anywhere?",
+   "expect": "rash"
+  },
+  {
+   "register": "paraphrase",
+   "q": "When did all this start?",
+   "expect": "onset"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he been getting worse since he got here?",
+   "expect": "timing_progression"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Did he faint at all?",
+   "expect": "dizziness_syncope"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he thrown up?",
+   "expect": "nausea_vomiting"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Any problems with his heart that you know of?",
+   "expect": "heart_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Has he had all his vaccines?",
+   "expect": "immunizations"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Is he usually healthy?",
+   "expect": "past_medical_history"
+  },
+  {
+   "register": "paraphrase",
+   "q": "Who's with him today?",
+   "expect": "companion"
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he play any sports?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "What's his favorite subject at school?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Has he ever broken a bone?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Do you have insurance information?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he have any pets?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "What's his favorite food?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he wear glasses?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Is he left-handed?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he sleep well?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "How are his grades?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he have a girlfriend?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Has he traveled recently?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does anyone smoke at home?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he play video games a lot?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "What's his blood type?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Has he ever had a blood transfusion?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he snore at night?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Has he ever had stitches?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he have braces?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he get headaches often?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Is he toilet trained?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Has he had any recent dental work?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he have any learning difficulties?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he wet the bed?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Who is his pediatrician?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "What does his dad do for work?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "What team does he support?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Is he good at math?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "Does he have a phone?",
+   "expect": null
+  },
+  {
+   "register": "out_of_scope",
+   "q": "What music does he like?",
+   "expect": null
+  }
+ ]
+}

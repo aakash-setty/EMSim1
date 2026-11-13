@@ -420,7 +420,13 @@ section('time-guarded transitions');
       const flags = [...(t.when.match(/NOT\s+flag ([a-z0-9_]+) set/g) || [])]
         .map(x => x.replace(/^NOT\s+flag /, '').replace(' set', ''));
       for (const f of flags) {
-        const setters = Object.keys(A).filter(id => (A[id].flags_set || []).includes(f));
+        /* 11 November 2026. The same setters the validator counts: a flag granted for a
+           while (flags_set_timed) or only when a condition holds (flags_set_if) is still
+           the act's flag. Reading flags_set alone reported SWEET's epinephrine bridge,
+           whose prompt fires on arrival, as a deterioration nobody was warned about. */
+        const setters = Object.keys(A).filter(id => (A[id].flags_set || []).includes(f) ||
+          (A[id].flags_set_timed || []).some(x => x.flag === f) ||
+          (A[id].flags_set_if || []).some(x => x.flag === f));
         /* A flag only a transition grants (27 October 2026) is bookkeeping, not something
            the resident can do or be warned about. The validator skips it the same way. */
         if (!setters.length && CASE.phases.some(p => (p.transitions || [])
@@ -1996,6 +2002,24 @@ section('voice orders');
   }
 }
 
+section('normal ranges by age');
+if (typeof vitalNormals !== 'function') chk('vitalNormals is in the engine block', false);
+else {
+  const A = vitalNormals(undefined), T = SHARED.vital_normals || {};
+  chk('no age, an adult and an unknown table all read the adult row',
+      vitalNormals(40) === A && vitalNormals(18) === A && JSON.stringify(A.hr) === '[60,100]' && A.sbp[0] === 90);
+  chk('a 12-year-old reads the adolescent band, hypotension under 90',
+      JSON.stringify(vitalNormals(12).hr) === '[60,100]' && vitalNormals(12).sbp[0] === 90 &&
+      JSON.stringify(vitalNormals(12).rr) === '[12,20]');
+  chk('a 7-year-old reads school age, systolic floor 70 plus twice the age',
+      JSON.stringify(vitalNormals(7).hr) === '[75,118]' && vitalNormals(7).sbp[0] === 84);
+  chk('an infant reads the infant band, systolic floor 70', vitalNormals(0.5).sbp[0] === 70 && vitalNormals(0.5).hr[1] === 190);
+  chk('bands are in increasing age and end at the adult age',
+      (T.bands || []).every((b, i, a) => i === 0 || b.below_age > a[i - 1].below_age) &&
+      (T.bands || []).slice(-1)[0].below_age === T.adult_from_age);
+  chk('every band carries every range', (T.bands || []).every(b => b.hr && b.rr && b.dbp && typeof b.sbp_max === 'number'));
+}
+
 section('the patient in the room');
 if (typeof PATIENT === 'undefined') chk('patient block is fenced in the build', false);
 else {
@@ -2055,8 +2079,12 @@ else {
         [0, 1, 2, 3].map(n => PATIENT.normalizeState({ alertness: n }).state.alertness).join() === '0,1,2,3' &&
         PATIENT.normalizeState({ alertness: -2 }).state.alertness === 0);
     chk('the two reduced-alertness eye drawings exist', ['Drowsy', 'Heavy'].every(e => voc.parts.eyeType.includes(e)));
-    chk('age bands: under 40 young, 40 to 59 middle, 60 and over older',
-        [18, 39, 40, 59, 60, 100].map(PATIENT.ageGroupFor).join() === 'young,young,middle,middle,older,older');
+    chk('age bands: under 16 child, under 40 young, 40 to 59 middle, 60 and over older',
+        [2, 12, 15, 16, 18, 39, 40, 59, 60, 100].map(PATIENT.ageGroupFor).join() ===
+        'child,child,child,young,young,young,middle,middle,older,older');
+    chk('a child is drawn with the child feature and no age lines', (() => {
+      const r = PATIENT.normalizeAppearance({ ageGroup: 'child' });
+      return r.problems.length === 0 && r.appearance.ageGroup === 'child'; })());
     chk('build and age group are validated like any other avatar key',
         PATIENT.normalizeAppearance({ build: 'obese', ageGroup: 'older' }).problems.length === 0 &&
         PATIENT.normalizeAppearance({ build: 'huge', ageGroup: 'ancient' }).problems.length === 2);

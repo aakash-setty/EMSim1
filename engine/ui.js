@@ -193,8 +193,9 @@ function rampedVitals(){
    paused: numbers wobbling behind a Paused overlay say the case is still going. */
 function jitter(v,amp){ return PAUSED ? v
   : v + Math.round((Math.sin(Date.now()/1300+v)+Math.sin(Date.now()/770+v*2))/2*amp); }
-/* Normal ranges for the monitor's bold or plain numbers, inclusive (28 October 2026). */
-const VITAL_NORMAL={hr:[60,100], sbp:[90,139], dbp:[60,89], spo2:[94,100], rr:[12,20], temp:[36.0,37.9]};
+/* Normal ranges for the monitor's bold or plain numbers, inclusive (28 October 2026). By the
+   patient's age since 11 November 2026: vitalNormals() in engine.js, SHARED.vital_normals. */
+const vitalNormalsNow=()=>vitalNormals(((typeof CASE==='object'&&CASE&&CASE.patient)||{}).age);
 function renderMonitor(){
   const p=PHASE[ST.phase];
   const v=rampedVitals()||targetVitals()||{};
@@ -223,13 +224,15 @@ function renderMonitor(){
      so the expanded record used to show a second copy of the same five numbers on the same
      screen. Removed in v0.17o on the author's instruction. */
   /* A number outside its normal range is bold and one inside it is not (author instruction,
-     28 October 2026), judged on the number the monitor shows. The ranges are adult teaching
-     thresholds held here for every case, not clinical claims about any one patient. */
+     28 October 2026), judged on the number the monitor shows. The ranges follow the patient's
+     age (11 November 2026). They are teaching thresholds, not clinical claims about any one
+     patient. */
+  const VN=vitalNormalsNow();
   const outside=k=>{
     if(!on) return false;
     const n=parseFloat(cells.find(c=>c[3]===k)[1]);
-    if(k==='bp'){ const s=+v.systolic_bp, d=+v.diastolic_bp; return s<VITAL_NORMAL.sbp[0]||s>VITAL_NORMAL.sbp[1]||d<VITAL_NORMAL.dbp[0]||d>VITAL_NORMAL.dbp[1]; }
-    const r=VITAL_NORMAL[k]; return !!r&&!isNaN(n)&&(n<r[0]||n>r[1]);
+    if(k==='bp'){ const s=+v.systolic_bp, d=+v.diastolic_bp; return s<VN.sbp[0]||s>VN.sbp[1]||d<VN.dbp[0]||d>VN.dbp[1]; }
+    const r=VN[k]; return !!r&&!isNaN(n)&&(n<r[0]||n>r[1]);
   };
   el('monitor').innerHTML = cells.map(c=>
     `<div class="vit"><div class="vitlab">${c[0]}</div>
@@ -3653,18 +3656,19 @@ function layoutSplashSay(){
    numbers whichever case is selected and shows them before the clock has started. A
    half-authored case with null vitals hides the section rather than printing dashes:
    the picker offers skeletons on purpose and an empty panel teaches nothing. */
-/* Adult resting ranges for the arrival card. Every current case is an adult (18 to 68).
-   A pediatric case would need age-based ranges before this is used for it.
-   HR 60 to 100, systolic 90 to 139 and diastolic under 90, SpO2 94 or more, RR 12 to 20,
-   temperature 36.0 to 37.9. */
+/* Resting ranges for the arrival card, by the patient's age (11 November 2026), the same
+   table the monitor reads. For an adult: HR 60 to 100, systolic 90 to 139 and diastolic
+   under 90, SpO2 94 or more, RR 12 to 20, temperature 36.0 to 37.9. A low adult diastolic
+   is not red here, as before. */
 function splashVitalAbnormal(v){
-  const n=x=>typeof x==='number';
+  const n=x=>typeof x==='number', R=vitalNormalsNow(), out=(x,r)=>n(x)&&(x<r[0]||x>r[1]);
+  const kid=R!==vitalNormals(undefined);
   return {
-    hr:   n(v.heart_rate) && (v.heart_rate<60 || v.heart_rate>100),
-    bp:   (n(v.systolic_bp) && (v.systolic_bp<90 || v.systolic_bp>=140)) || (n(v.diastolic_bp) && v.diastolic_bp>=90),
-    spo2: n(v.oxygen_saturation) && v.oxygen_saturation<94,
-    rr:   n(v.respiratory_rate) && (v.respiratory_rate<12 || v.respiratory_rate>20),
-    t:    n(v.temperature_c) && (v.temperature_c<36 || v.temperature_c>=38)
+    hr:   out(v.heart_rate,R.hr),
+    bp:   out(v.systolic_bp,R.sbp) || (n(v.diastolic_bp) && (v.diastolic_bp>R.dbp[1] || (kid && v.diastolic_bp<R.dbp[0]))),
+    spo2: n(v.oxygen_saturation) && v.oxygen_saturation<R.spo2[0],
+    rr:   out(v.respiratory_rate,R.rr),
+    t:    out(v.temperature_c,R.temp)
   };
 }
 function renderSplashVitals(){
@@ -3674,7 +3678,7 @@ function renderSplashVitals(){
   const num=x=>typeof x==='number';
   if(!v||!num(v.heart_rate)){ sec.classList.add('hidden'); box.innerHTML=''; return; }
   sec.classList.remove('hidden');
-  /* v0.18g. Values outside the adult resting range are red, as on a triage sheet. */
+  /* v0.18g. Values outside the resting range for the age are red, as on a triage sheet. */
   const ab=splashVitalAbnormal(v);
   const cells=[
     ['HR', num(v.heart_rate)?String(v.heart_rate):'\u2013', '/minute', ab.hr],

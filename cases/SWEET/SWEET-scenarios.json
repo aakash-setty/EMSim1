@@ -1,0 +1,123 @@
+{
+ "scenarios_version": "0.1",
+ "case_id": "sweet-anaphylaxis-01",
+ "note": "End-to-end paths. The runner charges 8 seconds per action, ignores timed flags, effects and also_satisfies, and asserts the final phase only. So it cannot see the epinephrine bridge or the second IM dose. SWEET-tests.js is the authority.",
+ "scenarios": [
+  {
+   "name": "Intended path: dose, legs up, a bolus, PICU called, infusion, a second bolus",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "second_iv",
+    "epinephrine_intramuscular",
+    "lay_back_legs_raised",
+    "normal_saline_500ml_bolus",
+    {
+     "wait": 110
+    },
+    "consult_critical_care",
+    "epinephrine_drip",
+    "normal_saline_500ml_bolus",
+    {
+     "wait": 260
+    },
+    "handoff_submit"
+   ],
+   "expect_phase": "case_complete",
+   "note": "Still struggling 120 s after the dose, talking again 60 s after the order with help, settling 180 s later."
+  },
+  {
+   "name": "Does nothing: the terminal phase",
+   "steps": [
+    {
+     "wait": 700
+    }
+   ],
+   "expect_phase": "bradycardic_arrest",
+   "note": "180, 330, 480, 660."
+  },
+  {
+   "name": "IM only, no infusion",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "epinephrine_intramuscular",
+    {
+     "wait": 300
+    }
+   ],
+   "expect_phase": "worsening",
+   "note": "Still struggling at about 144, floppy 150 s later."
+  },
+  {
+   "name": "Infusion without help runs in 120 seconds",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "second_iv",
+    "epinephrine_intramuscular",
+    {
+     "wait": 120
+    },
+    "epinephrine_drip",
+    {
+     "wait": 125
+    }
+   ],
+   "expect_phase": "responding",
+   "note": "Ordered in phase 2 with no PICU call."
+  },
+  {
+   "name": "Intubated without the infusion",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "epinephrine_intramuscular",
+    {
+     "wait": 130
+    },
+    "ketamine_bolus",
+    "rocuronium_bolus",
+    "intubate_rapid_sequence",
+    {
+     "wait": 160
+    }
+   ],
+   "expect_phase": "bradycardic_arrest",
+   "note": "Collapse after induction, no bridge in 150 s."
+  },
+  {
+   "name": "Infusion stopped",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "second_iv",
+    "epinephrine_intramuscular",
+    {
+     "wait": 110
+    },
+    "consult_critical_care",
+    "epinephrine_drip",
+    {
+     "wait": 70
+    },
+    "stop_epinephrine",
+    {
+     "wait": 130
+    }
+   ],
+   "expect_phase": "worsening",
+   "note": "Relapse 120 s after the stop."
+  },
+  {
+   "name": "Lorazepam on arrival",
+   "steps": [
+    "attach_monitor",
+    "insert_iv",
+    "lorazepam_bolus"
+   ],
+   "expect_phase": "persistent",
+   "note": "One phase worse at once, scored as discouraged."
+  }
+ ]
+}

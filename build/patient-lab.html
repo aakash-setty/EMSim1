@@ -181,12 +181,13 @@ const PATIENT=(function(){
     clotheType:'ShirtVNeck', clotheColor:'Gray01', graphicType:'Bat',
     eyeType:'Default', eyebrowType:'Default', mouthType:'Serious', skinColor:'Brown',
     build:'average',               /* thin | average | obese */
-    ageGroup:'young'               /* young 18 to 39 | middle 40 to 59 | older 60 and over */
+    ageGroup:'young'               /* child under 16 | young 16 to 39 | middle 40 to 59 | older 60 and over */
   };
-  const BUILDS=['thin','average','obese'], AGE_GROUPS=['young','middle','older'];
+  const BUILDS=['thin','average','obese'], AGE_GROUPS=['child','young','middle','older'];
   /* The author's bands are 18-40, 40-60 and 60-100; a patient of exactly 40 is drawn middle
-     and of exactly 60 older. Under 18 draws as young: there is no child figure. */
-  function ageGroupFor(age){ return typeof age!=='number'?'young':age>=60?'older':age>=40?'middle':'young'; }
+     and of exactly 60 older. Under 16 draws as a child (owner, 11 November 2026: a child
+     figure before the first pediatric case). 16 and 17 draw as young. */
+  function ageGroupFor(age){ return typeof age!=='number'?'young':age>=60?'older':age>=40?'middle':age<16?'child':'young'; }
   let BASES={male:{}, female:{topType:'LongHairStraight'}};
   function baseFor(sex,avatar){
     const out={}, b=BASES[sex]||BASES.male||{};
@@ -335,26 +336,28 @@ const PATIENT=(function(){
   /* Jaundice: toward yellow, strongly on light skin and slightly on dark, where in life it
      is hard to see on the skin and the eyes carry the sign. The yellow sclera is drawn on
      every tone at full strength. */
-  function jaundiceTone(hex){ return mix(hex,'#E2B31C',0.12+0.30*lightness01(hex)); }
+  /* Owner, 11 November 2026: every sign is a small shift of the patient's own tone, never a
+     repaint. The strengths below are deliberately low. */
+  function jaundiceTone(hex){ return mix(hex,'#E2B31C',0.06+0.16*lightness01(hex)); }
   /* Pallor: the colour drains out. Saturation falls and the tone takes a cool grey cast,
      which reads as washed out on light skin and as ashen on dark skin. The lightness moves
      only a little, so the patient stays recognisably the same person: a dark-skinned
      patient who goes pale is not drawn as a light-skinned one. */
   function pallorTone(hex){
     const [h,s,l]=toHsl(hex), k=lightness01(hex);
-    const drained=fromHsl(h,s*0.50,l+(0.92-l)*(0.08+0.10*k));
-    return mix(drained,'#9AA3AD',0.22-0.10*k);
+    const drained=fromHsl(h,s*0.78,l+(0.92-l)*(0.03+0.05*k));
+    return mix(drained,'#9AA3AD',0.08-0.03*k);
   }
 
   /* Flushing: toward red, strongly on light skin and slightly on dark, where in life a flush
      is hard to see and shows mostly as warmth and a deeper tone. The cheeks carry a little
      more of it (the flushed layer below). */
-  function flushTone(hex){ return mix(hex,'#D9473F',0.08+0.24*lightness01(hex)); }
+  function flushTone(hex){ return mix(hex,'#D9473F',0.04+0.10*lightness01(hex)); }
   /* Cyanosis: a blue-grey cast, small on dark skin. The lips carry the sign on every tone
      (the cyanosis layer below), as the lips and the tongue do in life. */
   function cyanosisTone(hex){
     const [h,s,l]=toHsl(hex), k=lightness01(hex);
-    return mix(fromHsl(h,s*0.75,l),'#6E7FA8',0.06+0.18*k);
+    return mix(fromHsl(h,s*0.90,l),'#6E7FA8',0.03+0.07*k);
   }
 
   /* ---------- varied appearance (10 November 2026) ----------
@@ -543,7 +546,8 @@ const PATIENT=(function(){
     if(st.eyes==='closed') want.push('eyes_closed');
     if(st.seizure) want.push('seizure');
     if(this.appearance.build!=='average') want.push('habitus');
-    if(this.appearance.ageGroup!=='young') want.push('age_lines');
+    if(this.appearance.ageGroup==='middle'||this.appearance.ageGroup==='older') want.push('age_lines');
+    if(this.appearance.ageGroup==='child') want.push('child');
     st.addons.forEach(n=>{ if(want.indexOf(n)<0) want.push(n); });
     const next=want.map(n=>FEATURES[n]).filter(Boolean).sort((p,q)=>p.priority-q.priority);
     this.active.forEach(f=>{ if(next.indexOf(f)<0) this.unmountFeature(f); });
@@ -881,6 +885,19 @@ const PATIENT=(function(){
       const o=f.inst.appearance.build==='obese';
       f.ch.torso.sx*=o?1.14:0.87; f.ch.head.sx*=o?1.06:0.93;
     }});
+  /* A child (11 November 2026). The same artwork in child proportions: narrower, smaller
+     shoulders that sit a little lower, a head a touch smaller but large for the body, eyes a
+     little larger, and no facial hair whatever the variety pool picked. A drawing choice by
+     a model, not reviewed. Multiplies with habitus and breathing, as every channel does. */
+  register('child',{builtin:true,priority:2,hide:['facialHair'],
+    layers:{underFace:function(inst){
+      return '<path d="M80 126 C78 158 96 182 132 185 C168 182 186 158 184 126 Z" fill="'+inst._skin+'" data-skin="1"/>'; }},
+    tick:function(f){
+      f.ch.torso.sx*=0.80; f.ch.torso.sy*=0.88;
+      f.ch.head.sx*=0.95; f.ch.head.sy*=0.90; f.ch.head.y+=10;
+      f.ch.eyes.sx*=1.12; f.ch.eyes.sy*=1.12;
+      f.ch.nose.sx*=0.82; f.ch.nose.sy*=0.82;
+    }});
   /* Age. The hair greys in build(). Here, the lines: at middle age a forehead line and the
      folds from nose to mouth, faintly; at older age those deeper, a second and third
      forehead line, crow's feet and the lower lids. */
@@ -927,18 +944,18 @@ const PATIENT=(function(){
      little more, under the features. The cheeks fade with the tone: a flush on dark skin is
      slight. Applied after pallor, so a grey patient who is also flushed is a dusky red. */
   register('flushed',{label:'flushed, the skin red',priority:71,skin:flushTone,
-    layers:{skin:'<radialGradient id="@@fl"><stop offset="0" stop-color="#D9473F" stop-opacity=".55"/><stop offset="1" stop-color="#D9473F" stop-opacity="0"/></radialGradient>'
+    layers:{skin:'<radialGradient id="@@fl"><stop offset="0" stop-color="#D9473F" stop-opacity=".40"/><stop offset="1" stop-color="#D9473F" stop-opacity="0"/></radialGradient>'
       +'<g data-flush="1"><ellipse cx="99" cy="134" rx="17" ry="11" fill="url(#@@fl)"/><ellipse cx="165" cy="134" rx="17" ry="11" fill="url(#@@fl)"/></g>'},
     enter:function(inst,m){
       const g=inst.svg.querySelector('[data-flush]');
-      if(g) g.setAttribute('opacity',(0.30+0.70*lightness01(inst._skin)).toFixed(2));
+      if(g) g.setAttribute('opacity',(0.20+0.45*lightness01(inst._skin)).toFixed(2));
     }});
 
   /* Cyanosis (11 November 2026). A blue-grey cast to the skin (cyanosisTone) and a blue-grey
      tint over the lips that is the same on every tone, because the lips are where central
      cyanosis is seen on any skin. Drawn under the mouth, so a mask or a tube covers it. */
   register('cyanosis',{label:'blue-grey lips, cyanosed',priority:72,skin:cyanosisTone,
-    layers:{skin:'<radialGradient id="@@cy"><stop offset="0" stop-color="#4E5F92" stop-opacity=".62"/><stop offset=".55" stop-color="#5A6B9C" stop-opacity=".40"/><stop offset="1" stop-color="#5A6B9C" stop-opacity="0"/></radialGradient>'
+    layers:{skin:'<radialGradient id="@@cy"><stop offset="0" stop-color="#4E5F92" stop-opacity=".40"/><stop offset=".55" stop-color="#5A6B9C" stop-opacity=".24"/><stop offset="1" stop-color="#5A6B9C" stop-opacity="0"/></radialGradient>'
       +'<ellipse data-cyan="1" cx="132" cy="155" rx="22" ry="13" fill="url(#@@cy)"/>'},
     tick:function(f){
       /* the tint rides with the mouth rig, so a mouth that moves does not leave it behind */

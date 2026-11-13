@@ -571,10 +571,10 @@ shared["patient"] = {
                         "PastelBlue", "PastelGreen", "PastelRed", "Red", "White"],
     },
     # Two appearance keys that are not avataaars options. build is authored in patient.avatar.
-    # ageGroup is derived from patient.age by the interface (under 40, 40 to 59, 60 and over)
-    # and may be overruled there.
+    # ageGroup is derived from patient.age by the interface (under 16 child, under 40 young,
+    # 40 to 59 middle, 60 and over older) and may be overruled there. Child: owner, 11 Nov 2026.
     "builds": ["thin", "average", "obese"],
-    "ageGroups": ["young", "middle", "older"],
+    "ageGroups": ["child", "young", "middle", "older"],
     # Drawn for every patient in every case, whatever the case's rules choose.
     "always": ["hospital_bed"],
     "eyes": ["open", "closed"],
@@ -611,6 +611,29 @@ shared["reflect"] = {
     "_note": ("Fires once per case at atSeconds of case time, wherever the case has got to. "
               "It does not fire after the case has ended, and the note is not scored, not "
               "logged and not read by the engine."),
+}
+
+# Normal ranges by age, for the monitor's bold numbers and the arrival card's red cells
+# (owner, 11 November 2026: a child figure and pediatric ranges before the first pediatric
+# case). Read by vitalNormals() in engine.js with patient.age. Bands are PALS 2015 awake
+# ranges as reproduced by PedsCases (not the AHA source). The systolic floor is the PALS
+# hypotension threshold, not the bottom of the normal range, as the adult 90 is: 70 plus
+# twice the age from 1 to 10 years, 70 under 1, 90 from 10. Teaching thresholds chosen by a
+# model, not physician reviewed. SpO2 and temperature do not change with age here.
+shared["vital_normals"] = {
+    "adult_from_age": 18,
+    "adult": {"hr": [60, 100], "sbp": [90, 139], "dbp": [60, 89], "spo2": [94, 100],
+              "rr": [12, 20], "temp": [36.0, 37.9]},
+    "bands": [
+        {"label": "infant",     "below_age": 1,  "hr": [100, 190], "rr": [30, 53], "sbp_max": 104, "dbp": [37, 56]},
+        {"label": "toddler",    "below_age": 3,  "hr": [98, 140],  "rr": [22, 37], "sbp_max": 106, "dbp": [42, 63]},
+        {"label": "preschool",  "below_age": 6,  "hr": [80, 120],  "rr": [20, 28], "sbp_max": 112, "dbp": [46, 72]},
+        {"label": "school age", "below_age": 10, "hr": [75, 118],  "rr": [18, 25], "sbp_max": 115, "dbp": [57, 76]},
+        {"label": "preteen",    "below_age": 12, "hr": [75, 118],  "rr": [18, 25], "sbp_max": 120, "dbp": [61, 80]},
+        {"label": "adolescent", "below_age": 18, "hr": [60, 100],  "rr": [12, 20], "sbp_max": 131, "dbp": [64, 83]},
+    ],
+    "_note": ("Inclusive ranges. A number outside its range is bold on the monitor and red on the "
+              "arrival card. No age, or 18 and over, reads the adult row."),
 }
 
 DX_IDS = {d["id"] for d in shared["diagnoses"]}

@@ -1957,6 +1957,12 @@ saturation and lightness, scaled by how light the skin is (`jaundiceTone`, `pall
 `engine/patient.js`). Jaundice yellows light skin strongly and dark skin slightly, and the
 yellow sclera is drawn on every tone. Pallor drains saturation and adds a grey cast,
 washed out on light skin and ashen on dark, and moves lightness only a little, so tones stay
-in their order. engine-tests check both on every tone in the pool. No case turns pallor on
-yet. Glasses come off under the BiPAP mask, the non-rebreather, the bag-valve mask and the
+in their order. engine-tests check both on every tone in the pool.
+
+11 November 2026: `flushed` (toward red, with faint cheeks) and `cyanosis` (a blue-grey cast and
+a soft dusky ring at the lips, the same on every tone) join them, and the owner asked for
+every sign to be a small shift rather than a repaint, so all four strengths were lowered.
+Seven cases draw them from their own status lines (`patient_visual.also`). Mottling and
+purpura are not drawn, because the cases place them on the limbs, which the figure does not
+show. Glasses come off under the BiPAP mask, the non-rebreather, the bag-valve mask and the
 endotracheal tube.

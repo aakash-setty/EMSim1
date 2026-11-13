@@ -5,6 +5,31 @@ is usable with learners.
 
 ---
 
+## SWEET, case 11: refractory anaphylaxis in a 12-year-old (11 November 2026)
+
+- New pack `cases/SWEET/`, from the owner's case structure and his answers the same day. Drafted by a language model, not reviewed, not for learners. The crew's IM dose, one ED IM dose that acts at 10 s and fades by 120 s, then the infusion. A later IM dose works half as long and never brings phase 3 sooner than no dose. SEED and review packet in the pack.
+- `engine/engine-tests.js`: the check that every deterioration follows a prompt that fires now counts a flag granted for a while (`flags_set_timed`) or on a condition (`flags_set_if`) as the action's flag, as `validate_case.py` already did. It had reported a timed flag with a prompt on arrival as unwarned.
+- `engine/gen_docs.py`: a field with no note of its own that borrows an ancestor's prints it once and points to the first borrower after (`As \`...\`.`). The field reference drops about 500 tokens, and the kit stays under its budget with the new case index line (64,724 of 65,000).
+- All eleven packs pass `engine/test_packs.py`. kit_check 0 errors. Backups in `Claude outputs/sweet-build/backup/` and `Claude outputs/pediatric-engine/backup/`.
+
+## A child figure and normal ranges by age (11 November 2026, owner's instruction)
+
+- Before the first pediatric case. Owner: engine change first, then the case.
+- Normal ranges by age: `SHARED.vital_normals` (`engine/build_simulator.py`), read by a new `vitalNormals(age)` in `engine/engine.js`. The monitor's bold numbers and the arrival card's red cells both use it with `patient.age`. Bands are PALS 2015 awake ranges as reproduced by PedsCases, not the AHA source: infant, toddler, preschool, school age, preteen and adolescent, adult from 18. The systolic floor is the PALS hypotension threshold (70 plus twice the age from 1 to 10, 90 from 10), as the adult 90 is. A child's low diastolic is red on the arrival card. An adult's is not, as before. Teaching thresholds chosen by a model, not physician reviewed. Every current case is an adult, so nothing they show changes.
+- A child figure: age group `child` under 16 (`PATIENT.ageGroupFor`). A built-in feature draws the same artwork in child proportions: narrower, lower shoulders, a shorter face with fuller cheeks, larger eyes, a smaller nose, and no facial hair whatever the variety pool picked. 16 and 17 draw as young. Age lines are now drawn for middle and older only. A drawing choice by a model, not reviewed.
+- `validate_case.py` accepts `ageGroup: child`. Authoring requirements 2.3, 5.1, 5.3 and 12 and the field note for `patient.age` say so, with no rise in the kit budget.
+- engine-tests: age bands including child, and a new section on normal ranges by age (adult default, a 12-year-old, a 7-year-old, an infant, band order, every band complete). All ten packs pass. kit_check 0 errors. Checked in Chromium: a sheet of a young man beside five children (both sexes, obese, thin, a beard picked and hidden, a nonrebreather). Backup in `Claude outputs/pediatric-engine/backup/`.
+
+## Skin signs drawn in the cases, subtler; DKA, TAKO, AFRVR and DIPH rebuild again (11 November 2026, owner's instruction)
+
+- New add-ons `flushed` and `cyanosis`, computed from the drawn tone like `pallor` and `jaundice`: stronger on light skin, slight on dark. Cyanosis adds a soft dusky ring at the lips on every tone; flushing adds faint cheeks. Added to the vocabulary, `validate_case.py` and authoring requirements.
+- Owner, same day: the changes were too dramatic. All four signs are now small shifts of the patient's own tone (pallor desaturates a little and greys slightly, never repaints).
+- Seven cases draw the signs from their own status and exam conditions (`patient_visual.also`, model-authored, not physician reviewed, noted in each `verify`): AFRVR respiratory failure pallor and cyanosis; CHFE impending respiratory failure pallor and cyanosis; DIPH flushed on arrival and post-ictal, cyanosis while seizing, pallor in the wide-complex tachycardia; MGCA pallor on arrival and in adrenal crisis; TAKO pallor until steadied; TIDE flushed where the skin exam says flushed, cyanosis on arrival; TSS flushed in every phase but profound shock, pallor when hypotensive and in profound shock. None is drawn under a tube unless the status line names it (TSS's "Intubated and sedated. Flushed."). Mottling and purpura are not drawn: the text places them on the limbs.
+- TIDE, for review: exam_heent says "lips dusky" in every phase without a tube. Cyanosis is drawn only on arrival, before oxygen.
+- DIPH: `patient.avatar.skinColor` is `Light` (owner), so the flush reads.
+- DKA, TAKO, AFRVR and DIPH rebuild from their Python again. The 30 October ventilated-patient edits that went straight into their JSON are folded into the sources: seven intubated rules in DKA and TAKO (`build_case.py`), `ventilated: true` on AFRVR's intubated phase, and DIPH's `interview.answers_while_ventilated`. Each rebuild was checked to give content identical to the committed JSON before any other edit. TAKO's binding map and tuning questions also match the Python, which settles the open question from 10 November.
+- engine-tests: flushing and cyanosis change every pooled tone and move the lightest tone further than the darkest. All ten packs pass (ALLEY included). kit_check 0 errors. Checked in Chromium: the tone sheet with every sign and two combinations, and each case's signed phase in the room. Backup in `Claude outputs/signs-drawn/backup-before/`.
+
 ## Varied patients, skin signs on every tone (10 November 2026, owner's instruction)
 
 - Every case drew the same man or woman, skin tone "Brown". Now each case draws its own patient: skin tone, hair colour and style, facial hair, glasses and clothes are picked from `SHARED.patient.variety` (`engine/build_simulator.py`) by `PATIENT.varied` (`engine/patient.js`), seeded by the case id. The same case always draws the same patient. A case's `patient.avatar` still wins key by key.

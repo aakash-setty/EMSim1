@@ -158,6 +158,7 @@ def field_reference(problems):
     paths = scan_paths()
     rows = []
     seen_notes = set()
+    first_borrower = {}
     for path in sorted(paths):
         leaf = re.split(r"(?<=\])\.|\.", path)[-1]
         # containers whose children are listed are not rows themselves
@@ -175,6 +176,14 @@ def field_reference(problems):
                 note, matched = ("?", "?", "NOT DESCRIBED"), "(missing)"
         seen_notes.add(matched)
         sees, section, text = note
+        # 11 November 2026. A field with no note of its own borrows an ancestor's, and every
+        # child of a rule list printed the same long note again (a fact's id, asks, restate,
+        # value and when, five times over). The first borrower prints it, the rest point to it.
+        if matched not in (path, "(note key)", "(missing)"):
+            if matched in first_borrower:
+                text = "As `" + first_borrower[matched] + "`."
+            else:
+                first_borrower[matched] = path
         reads = who_reads(leaf)
         # cross-check the note against the scan
         if reads != "generic" and matched != "(note key)":

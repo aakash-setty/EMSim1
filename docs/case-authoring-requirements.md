@@ -89,7 +89,7 @@ The SEED is `cases/<PREFIX>/<PREFIX>-SEED.md`. It is the record a physician sign
 
 ### 2.3 Patient, setting and arrival
 
-Age, sex (`male` or `female`, which shared strings read for pronouns), weight, and the background in facts (2.8). The care setting, if it is not a quaternary center with everything on site: **Default**, because the right disposition depends on it. Adults only for now: the arrival card colors vitals by adult resting ranges.
+Age, sex (`male` or `female`, which shared strings read for pronouns), weight, and the background in facts (2.8). The care setting, if it is not a quaternary center with everything on site: **Default**, because the right disposition depends on it. Any age: the monitor and arrival card read normal ranges by age.
 
 **Engine.** `metadata.arrival.mode` is `ems` or `triage`. A walk-in, a police arrival or a transfer is `triage` unless a crew hands over to you directly. `metadata.arrival.location` is `resuscitation_bay`, `trauma_bay` or `patient_room`. The splash renders the room from it. `metadata.arrival.line` is an internal description, read only as a fallback: for the handover when `patient.arrival_handover` is missing, and for the room when `location` is missing. Never leave it as the only one.
 
@@ -210,7 +210,7 @@ Builders supply numbers. The sounds and the face are computed from them, and pos
 
 ### 5.1 Vitals and appearance
 
-**Engine.** Per phase: the six vitals, and in `appearance` a distress level (0 to 3), an alertness level (0 alert, 1 drowsy, 2 obtunded, 3 unresponsive), pupil size (`small`, `normal`, `large`) and pupil reactivity (`reactive`, `sluggish`, `fixed`). The validator refuses values outside physiological ranges. The monitor prints a number in bold only when it is outside the adult normal range in `VITAL_NORMAL` (ui.js), so a phase value just inside a range reads as normal. Saturation drives the pitch of the heartbeat and heart rate its tempo. The respiratory rate moves the figure's chest, and the distress and alertness levels draw its face. Nothing draws skin color or perfusion. A feature outside this set is a request to extend the renderer, not something to describe in prose.
+**Engine.** Per phase: the six vitals, and in `appearance` a distress level (0 to 3), an alertness level (0 alert, 1 drowsy, 2 obtunded, 3 unresponsive), pupil size (`small`, `normal`, `large`) and pupil reactivity (`reactive`, `sluggish`, `fixed`). The validator refuses values outside physiological ranges. The monitor bolds a number only outside the normal range for the patient's age (`SHARED.vital_normals`), so a value just inside reads as normal. Saturation drives the pitch of the heartbeat and heart rate its tempo. The respiratory rate moves the figure's chest, and the distress and alertness levels draw its face. Nothing draws skin color or perfusion. A feature outside this set is a request to extend the renderer, not something to describe in prose.
 
 **Truth. The number is heard as well as read.** A saturation chosen loosely because it was about right is heard.
 
@@ -236,9 +236,9 @@ A phase with no block draws a narrow complex with P waves at the authored rate, 
 
 A drawn patient sits between the panels, sitting up on a stretcher in every case. **Truth.** Avoid status lines and findings that put the patient supine or on her side. Nothing is authored for posture.
 
-`patient.avatar` is the fixed appearance. **Default.** Leave it out. The figure is drawn by `patient.sex`, aged by `patient.age` (young under 40, middle to 59, older from 60), and the engine picks skin tone, hair, glasses and clothes from a shared pool, seeded by the case id. Author `build` (`thin`, `average`, `obese`) where the seed says so, and any other key only where the case text describes it, as TAKO's black dress.
+`patient.avatar` is the fixed appearance. **Default.** Leave it out. The figure is drawn by `patient.sex`, aged by `patient.age` (child under 16, young under 40, middle to 59, older from 60), and the engine picks skin tone, hair, glasses and clothes from a shared pool, seeded by the case id. Author `build` (`thin`, `average`, `obese`) where the seed says so, and any other key only where the case text describes it, as TAKO's black dress.
 
-`content_keys.patient_visual` says what is visible now. It is a guarded rule list, first match wins, and the value is the whole visible state: `eyes` (`open`, `closed`), `seizure`, `work_of_breathing` (`normal`, `increased`, `severe`), `expression`, and `addons` from a fixed list (`gaze_left`, `gaze_right`, `nystagmus`, `nasal_cannula`, `high_flow_cannula`, `nonrebreather`, `bipap_mask`, `intubated`, `bag_valve_mask`, `defib_pads`, `central_line`, `jaundice`, `pallor`, `sweating`, `agitation`, `hospital_bed`, `hospital_bed_flat`). Beside `rules` the block may carry `also`, a list of `{when, addons}` that is additive rather than first-match, for things independent of the main state such as pads or a central line. `also` is not in the review matrix.
+`content_keys.patient_visual` says what is visible now. It is a guarded rule list, first match wins, and the value is the whole visible state: `eyes` (`open`, `closed`), `seizure`, `work_of_breathing` (`normal`, `increased`, `severe`), `expression`, and `addons` from a fixed list (`gaze_left`, `gaze_right`, `nystagmus`, `nasal_cannula`, `high_flow_cannula`, `nonrebreather`, `bipap_mask`, `intubated`, `bag_valve_mask`, `defib_pads`, `central_line`, `jaundice`, `pallor`, `flushed`, `cyanosis`, `sweating`, `agitation`, `hospital_bed`, `hospital_bed_flat`). Beside `rules` the block may carry `also`, a list of `{when, addons}` that is additive rather than first-match, for things independent of the main state such as pads or a central line. `also` is not in the review matrix.
 
 - **Engine.** Closed keys and values. No respiratory rate or distress level here: the shoulders move at the monitor's rate and the resting face comes from the phase's distress level. The alertness level is drawn too, so `eyes` is only needed to override it (closed for a sedated patient whose phase is below level 2, or a seizure, which draws open eyes at any level).
 - **Engine.** The airway device follows the last airway button pressed, not the rules. Author the arrival device in `rules`. After any airway button the figure shows the last one pressed, a tube wins over all, and nothing takes a device off. Do not author flag rules for devices the learner applies.
@@ -630,7 +630,7 @@ Design around these. Each is a deliberate trade.
 - **A vital effect moves the monitor and nothing else**, and a result never sees an effect (section 16).
 - **Deterioration is all-or-nothing per rule** and in steps. There is no gradient and no graded lateness. One vitals block per terminal phase.
 - **Turnaround is compressed** to seconds, and the splash says so to the learner.
-- **Adults only** for now: the arrival card colors vitals by adult ranges.
+- **Children** get ranges by age and a child figure, but no doses.
 - **The interview returns only what is authored.** An unauthored topic is a dead end.
 
 ---
