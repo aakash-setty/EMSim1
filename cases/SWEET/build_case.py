@@ -41,20 +41,21 @@ CASE = {
  "patient": PATIENT,
  "phase_notes": {
    "count_justification": (
-     "Eight live phases and two terminal. The owner's six states, plus two intubated phases "
+     "Ten live phases and two terminal. The owner's six states, plus two intubated phases "
      "because every case can be intubated (authoring 8.5) and the owner's S6 is untrue of an "
-     "intubated child: after the tube without an infusion, and ventilated with one."),
+     "intubated child: after the tube without an infusion, and ventilated with one. Two more "
+     "for a stopped infusion (relapse, vent_relapse), so that the infusion order can stay a "
+     "positive guard everywhere else and still run in 10 seconds."),
    "refractory_by_design": (
-     "IM epinephrine never ends the reaction. The first ED dose works from 10 to 120 seconds "
-     "and a later dose from 10 to 60, then he is worse (owner, 11 November 2026). The "
+     "IM epinephrine never ends the reaction. The first ED dose works from 10 to 60 seconds "
+     "and a later dose from 10 to 40, then he is worse (owner, 11 and 13 November 2026). The "
      "epinephrine infusion is the only thing that moves him to responding."),
    "infusion_preparation": (
-     "Pressing the infusion orders it. It runs 120 seconds later, or 60 once PICU has been "
-     "called: two delayed-consequence rules (guard_true) in each phase a learner can be in "
-     "while it is mixed (drip_runs in case_1_shell.py). A guard_true clock does not carry "
-     "across a phase change, so an order that crosses one waits again: 60 or 90 seconds in "
-     "phases 3 and 7. A known gap. The infusion's own phases (responding, stabilized, "
-     "ventilated) are where it runs."),
+     "Pressing the infusion orders it. Pharmacy has it running 10 seconds later (owner, 13 "
+     "November 2026), whoever has been called: one delayed-consequence rule (guard_true) in "
+     "each phase a learner can order it in (drip_runs in case_1_shell.py). After a stop, "
+     "only a restart in the relapse phases brings him back, in 10 seconds. The infusion's "
+     "own phases (responding, stabilized, ventilated) are where it runs."),
  },
  "phases": PHASES,
  "tag_vocabulary": {
@@ -64,7 +65,7 @@ CASE = {
  },
  "flag_namespace_note": (
    "epi_im_ed: any ED IM dose. epi_im_2: the second (flags_set_repeat). epi_onset (10 s) and "
-   "epi_bridge_acting (60 s) are timed. epi_drip_ordered and epi_drip_stopped are permanent. "
+   "epi_bridge_acting (40 s) are timed. epi_drip_ordered and epi_drip_stopped are permanent. "
    "relapsed and relapsed_vent are granted by the stop transitions, so a stop plays once. help_called from "
    "the PICU call. second_line from the second IV. sedated_p1 to p3 by phase (flags_set_if). "
    "fluid_x2 on the second bolus. rescued_once is granted by the rescue transition. Hidden "

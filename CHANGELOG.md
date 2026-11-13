@@ -5,6 +5,13 @@ is usable with learners.
 
 ---
 
+## SWEET revised: a 10-second infusion and new critical actions (13 November 2026, owner's instruction)
+
+- Pharmacy has the epinephrine infusion running 10 seconds after the order, whoever has been called (was 60 s with PICU and 120 s without). The first ED IM dose lasts 60 seconds (was 120), a later dose 40.
+- Monitor, IV access, the second line, lying flat and the PICU call are recommended, no longer critical. New critical actions: the airway exam (swelling and stridor) in phases 1 to 4, and a second look once the ED dose wears off (any airway, breathing, circulation or lung exam after it, prompted at 20 s). IM epinephrine, the bolus, the infusion and the branch rescues stay critical.
+- Two new phases, relapse and vent_relapse, for a stopped infusion, so the infusion order stays a positive guard and can run in 10 seconds in every phase. The arrival IM prompt no longer fires at the edge of arrest or after the tube.
+- SWEET: 650 engine checks, 7 of 7 scenarios, validator 0 errors. kit_check 0 errors. Case Maps version 28. Backup in `Claude outputs/sweet-build/backup-before-r4/`.
+
 ## SWEET, case 11: refractory anaphylaxis in a 12-year-old (11 November 2026)
 
 - New pack `cases/SWEET/`, from the owner's case structure and his answers the same day. Drafted by a language model, not reviewed, not for learners. The crew's IM dose, one ED IM dose that acts at 10 s and fades by 120 s, then the infusion. A later IM dose works half as long and never brings phase 3 sooner than no dose. SEED and review packet in the pack.

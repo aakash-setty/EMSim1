@@ -10,46 +10,31 @@ Two questions per row. Would this patient really deteriorate in that time if tha
 
 Vitals in this phase: HR 140, BP 88/54, RR 32, SpO2 93%, T 37.1
 
-**Rule 1: at 60s (measured from guard_true) → `responding`**
-
-- guard: `flag epi_drip_ordered set AND flag help_called set`
-- destination vitals: HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1
-- narration: “The epi infusion's up and running.”
-- author rationale: Delayed consequence of the infusion order: mixed and running 60 seconds after the order once help has been called. Teaching choice, owner's timing.
-
-All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
-
-1. 30s `epinephrine_intramuscular` (first)
-2. 45s `normal_saline_500ml_bolus` (first)
-3. 50s `lay_back_legs_raised` (first)
-
-**Rule 2: at 120s (measured from guard_true) → `responding`**
+**Rule 1: at 10s (measured from guard_true) → `responding`**
 
 - guard: `flag epi_drip_ordered set`
 - destination vitals: HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1
 - narration: “The epi infusion's up and running.”
-- author rationale: Delayed consequence of the infusion order: mixed and running 120 seconds after the order. Teaching choice, owner's timing.
+- author rationale: Delayed consequence of the infusion order: pharmacy has it running 10 seconds after the order (owner, 13 November 2026). A teaching compression of the minutes it takes to mix.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 1. 30s `epinephrine_intramuscular` (first)
 2. 45s `normal_saline_500ml_bolus` (first)
-3. 50s `lay_back_legs_raised` (first)
 
-**Rule 5: at 120s (measured from guard_true) → `persistent`**
+**Rule 4: at 60s (measured from guard_true) → `persistent`**
 
 - guard: `flag epi_im_ed set`
 - destination vitals: HR 152, BP 76/40, RR 36, SpO2 91%, T 37.1
 - narration: “That epi's worn off already. He's stopped asking for his mom, and he's breathing harder than when he came in.”
-- author rationale: Delayed consequence, scripted. The first ED dose acts from 10 seconds and wears off by 120 (owner, 11 November 2026: kicks in at 10 seconds, then fades). This child is refractory by design, so when it wears off he is worse than on arrival. Two minutes is a teaching compression of the five to fifteen minutes a real dose acts.
+- author rationale: Delayed consequence, scripted. The first ED dose acts from 10 seconds and is gone by 60 (owner, 11 November 2026: kicks in at 10 seconds, then fades; 13 November 2026: lasts only 60 seconds). This child is refractory by design, so when it wears off he is worse than on arrival. One minute is a teaching compression of the five to fifteen minutes a real dose acts.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 1. 30s `epinephrine_intramuscular` (first)
 2. 45s `normal_saline_500ml_bolus` (first)
-3. 50s `lay_back_legs_raised` (first)
 
-**Rule 6: at 180s (measured from phase_entry) → `persistent`**
+**Rule 5: at 180s (measured from phase_entry) → `persistent`**
 
 - guard: `NOT flag epi_im_ed set`
 - destination vitals: HR 152, BP 76/40, RR 36, SpO2 91%, T 37.1
@@ -64,46 +49,30 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 1. 30s `epinephrine_intramuscular` (first)
 2. 45s `normal_saline_500ml_bolus` (first)
-3. 50s `lay_back_legs_raised` (first)
 
 ### `persistent`: Refractory anaphylaxis after two IM doses
 
 Vitals in this phase: HR 152, BP 76/40, RR 36, SpO2 91%, T 37.1
 
-**Rule 1: at 60s (measured from guard_true) → `responding`**
-
-- guard: `flag epi_drip_ordered set AND flag help_called set`
-- destination vitals: HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1
-- narration: “The epi infusion's up and running.”
-- author rationale: Delayed consequence of the infusion order: mixed and running 60 seconds after the order once help has been called. Teaching choice, owner's timing.
-
-All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
-
-1. 30s `epinephrine_drip` (first)
-2. 30s `epinephrine_intramuscular` (first)
-3. 45s `consult_critical_care` (first)
-4. 45s `normal_saline_500ml_bolus` (first)
-
-**Rule 2: at 120s (measured from guard_true) → `responding`**
+**Rule 1: at 10s (measured from guard_true) → `responding`**
 
 - guard: `flag epi_drip_ordered set`
 - destination vitals: HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1
 - narration: “The epi infusion's up and running.”
-- author rationale: Delayed consequence of the infusion order: mixed and running 120 seconds after the order. Teaching choice, owner's timing.
+- author rationale: Delayed consequence of the infusion order: pharmacy has it running 10 seconds after the order (owner, 13 November 2026). A teaching compression of the minutes it takes to mix.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 1. 30s `epinephrine_drip` (first)
 2. 30s `epinephrine_intramuscular` (first)
-3. 45s `consult_critical_care` (first)
-4. 45s `normal_saline_500ml_bolus` (first)
+3. 45s `normal_saline_500ml_bolus` (first)
 
-**Rule 5: at 150s (measured from phase_entry) → `worsening`**
+**Rule 4: at 150s (measured from phase_entry) → `worsening`**
 
 - guard: `NOT flag epi_drip_ordered set AND NOT flag epi_bridge_acting set`
 - destination vitals: HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1
 - narration: “He's gone floppy on me. He's stopped fighting the mask.”
-- author rationale: Deterioration on inaction: no infusion ordered. 150 seconds, owner's revision of 11 November 2026. A second IM dose holds him here only while it acts (epi_bridge_acting, 60 seconds), so it never brings phase 3 sooner than no dose would (owner, 11 November 2026). Prompted for the infusion at 30 seconds (90 in normal mode).
+- author rationale: Deterioration on inaction: no infusion ordered. 150 seconds, owner's revision of 11 November 2026. A second IM dose holds him here only while it acts (epi_bridge_acting, 40 seconds), so it never brings phase 3 sooner than no dose would (owner, 11 November 2026). Prompted for the infusion at 30 seconds (90 in normal mode).
 
 Prompts in this phase that set epi_bridge_acting, epi_drip_ordered, which is what the fairness rule requires:
 
@@ -113,15 +82,14 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 1. 30s `epinephrine_drip` (first)
 2. 30s `epinephrine_intramuscular` (first)
-3. 45s `consult_critical_care` (first)
-4. 45s `normal_saline_500ml_bolus` (first)
+3. 45s `normal_saline_500ml_bolus` (first)
 
-**Rule 6: at 240s (measured from phase_entry) → `worsening`**
+**Rule 5: at 240s (measured from phase_entry) → `worsening`**
 
 - guard: `NOT flag epi_bridge_acting set`
 - destination vitals: HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1
 - narration: “He's gone floppy on me. He's stopped fighting the mask.”
-- author rationale: Ordered but not yet running. Refractory anaphylaxis keeps progressing while the infusion is mixed. 240 seconds leaves room for an order placed in the first 120 seconds without a call (120-second preparation) and in the first 180 with one (60 seconds). A bridge IM dose holds him while it acts. Model output, owner's timing.
+- author rationale: The cap for a learner who keeps repeating IM doses instead of ordering the infusion: each dose holds him while it acts, and at 240 seconds he goes floppy once none is acting. An ordered infusion runs within 10 seconds, so it never meets this rule. Model output.
 
 Prompts in this phase that set epi_bridge_acting, which is what the fairness rule requires:
 
@@ -131,62 +99,25 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 1. 30s `epinephrine_drip` (first)
 2. 30s `epinephrine_intramuscular` (first)
-3. 45s `consult_critical_care` (first)
-4. 45s `normal_saline_500ml_bolus` (first)
+3. 45s `normal_saline_500ml_bolus` (first)
 
 ### `worsening`: Refractory anaphylaxis, decompensating
 
 Vitals in this phase: HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1
 
-**Rule 1: at 60s (measured from guard_true) → `responding`**
+**Rule 1: at 10s (measured from guard_true) → `responding`**
 
-- guard: `flag epi_drip_ordered set AND flag help_called set AND NOT flag relapsed set`
+- guard: `flag epi_drip_ordered set`
 - destination vitals: HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1
-- narration: “The epi infusion's been running a minute. He's opening his eyes and asking for his mom.”
-- author rationale: Delayed consequence of the infusion order: mixed and running 60 seconds after the order once help has been called. Teaching choice, owner's timing.
-
-Prompts in this phase that set epi_drip_ordered, help_called, relapsed, which is what the fairness rule requires:
-
-- `epinephrine_drip` first at 30s, 30s of lead
-- `consult_critical_care` first at 45s, 15s of lead  **UNDER THE 20s FLOOR**
+- narration: “The epi infusion's running. He's opening his eyes and asking for his mom.”
+- author rationale: Delayed consequence of the infusion order: pharmacy has it running 10 seconds after the order (owner, 13 November 2026). A teaching compression of the minutes it takes to mix.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 1. 30s `epinephrine_drip` (first)
 2. 40s `bolus_here_p3` (first)
-3. 45s `consult_critical_care` (first)
 
-**Rule 2: at 90s (measured from guard_true) → `responding`**
-
-- guard: `flag epi_drip_ordered set AND NOT flag relapsed set`
-- destination vitals: HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1
-- narration: “The epi infusion's been running a minute. He's opening his eyes and asking for his mom.”
-- author rationale: Delayed consequence of the infusion order: mixed and running 90 seconds after the order. Teaching choice, owner's timing.
-
-Prompts in this phase that set epi_drip_ordered, relapsed, which is what the fairness rule requires:
-
-- `epinephrine_drip` first at 30s, 60s of lead
-
-All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
-
-1. 30s `epinephrine_drip` (first)
-2. 40s `bolus_here_p3` (first)
-3. 45s `consult_critical_care` (first)
-
-**Rule 3: at 30s (measured from guard_true) → `responding`**
-
-- guard: `flag relapsed set AND action drip_restarted taken`
-- destination vitals: HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1
-- narration: “The epi's back on. He's opening his eyes again.”
-- author rationale: Delayed consequence of restarting the infusion after a stop. The bag is still hung. Model timing.
-
-All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
-
-1. 30s `epinephrine_drip` (first)
-2. 40s `bolus_here_p3` (first)
-3. 45s `consult_critical_care` (first)
-
-**Rule 6: at 150s (measured from phase_entry) → `peri_arrest`**
+**Rule 4: at 150s (measured from phase_entry) → `peri_arrest`**
 
 - guard: `NOT flag epi_drip_ordered set`
 - destination vitals: HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1
@@ -201,9 +132,8 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 1. 30s `epinephrine_drip` (first)
 2. 40s `bolus_here_p3` (first)
-3. 45s `consult_critical_care` (first)
 
-**Rule 7: at 240s (measured from phase_entry) → `peri_arrest`**
+**Rule 5: at 240s (measured from phase_entry) → `peri_arrest`**
 
 - guard: `NOT action bolus_here_p3 taken`
 - destination vitals: HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1
@@ -214,9 +144,8 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 1. 30s `epinephrine_drip` (first)
 2. 40s `bolus_here_p3` (first)
-3. 45s `consult_critical_care` (first)
 
-**Rule 8: at 360s (measured from phase_entry) → `peri_arrest`**
+**Rule 6: at 360s (measured from phase_entry) → `peri_arrest`**
 
 - guard: `(none: fires regardless)`
 - destination vitals: HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1
@@ -227,13 +156,29 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 1. 30s `epinephrine_drip` (first)
 2. 40s `bolus_here_p3` (first)
-3. 45s `consult_critical_care` (first)
 
 ### `peri_arrest`: Peri-arrest
 
 Vitals in this phase: HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1
 
-**Rule 2: at 30s (measured from guard_true) → `worsening`**
+**Rule 2: at 30s (measured from guard_true) → `relapse`**
+
+- guard: `flag relapsed set AND NOT flag rescued_once set AND action bolus_here_p4 taken AND action epi_here_p4 taken`
+- destination vitals: HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1
+- narration: “He's breathing for himself again, but he's still floppy.”
+- author rationale: As the rescue below, for a child whose infusion had been stopped: back to the relapse phase, where only a restart brings him back.
+
+Prompts in this phase that set relapsed, rescued_once, which is what the fairness rule requires:
+
+- **NONE. This is a trap rather than a lesson.**
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 15s `epi_here_p4` (first)
+2. 25s `bolus_here_p4` (first)
+3. 30s `epinephrine_drip` (first)
+
+**Rule 3: at 30s (measured from guard_true) → `worsening`**
 
 - guard: `NOT flag rescued_once set AND action bolus_here_p4 taken AND action epi_here_p4 taken`
 - destination vitals: HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1
@@ -250,7 +195,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 2. 25s `bolus_here_p4` (first)
 3. 30s `epinephrine_drip` (first)
 
-**Rule 3: at 180s (measured from phase_entry) → `bradycardic_arrest`  (TERMINAL)**
+**Rule 4: at 180s (measured from phase_entry) → `bradycardic_arrest`  (TERMINAL)**
 
 - guard: `(none: fires regardless)`
 - destination vitals: HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1
@@ -268,12 +213,12 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 Vitals in this phase: HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1
 
-**Rule 2: at 120s (measured from guard_true) → `worsening`**
+**Rule 2: at 120s (measured from guard_true) → `relapse`**
 
 - guard: `flag epi_drip_stopped set AND NOT flag relapsed set`
 - destination vitals: HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1
 - narration: “Since the epi stopped, he's gone floppy again.”
-- author rationale: Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). The relapse flag makes it happen once, so the stop and the restart cannot loop.
+- author rationale: Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). A restart inside the 120 seconds still lets the relapse play, and brings him back 10 seconds after it (a known gap). The relapse flag makes it happen once, so the stop and the restart cannot loop.
 
 Prompts in this phase that set epi_drip_stopped, relapsed, which is what the fairness rule requires:
 
@@ -298,12 +243,12 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 Vitals in this phase: HR 122, BP 102/64, RR 24, SpO2 96%, T 37.1
 
-**Rule 2: at 120s (measured from guard_true) → `worsening`**
+**Rule 2: at 120s (measured from guard_true) → `relapse`**
 
 - guard: `flag epi_drip_stopped set AND NOT flag relapsed set`
 - destination vitals: HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1
 - narration: “Since the epi stopped, he's gone floppy again.”
-- author rationale: Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). The relapse flag makes it happen once, so the stop and the restart cannot loop.
+- author rationale: Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). A restart inside the 120 seconds still lets the relapse play, and brings him back 10 seconds after it (a known gap). The relapse flag makes it happen once, so the stop and the restart cannot loop.
 
 Prompts in this phase that set epi_drip_stopped, relapsed, which is what the fairness rule requires:
 
@@ -316,51 +261,19 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 Vitals in this phase: HR 172, BP 60/32, RR 20, SpO2 88%, T 37.1
 
-**Rule 1: at 60s (measured from guard_true) → `ventilated`**
+**Rule 1: at 10s (measured from guard_true) → `ventilated`**
 
-- guard: `flag epi_drip_ordered set AND flag help_called set AND NOT flag relapsed_vent set`
+- guard: `flag epi_drip_ordered set`
 - destination vitals: HR 148, BP 88/52, RR 20, SpO2 94%, T 37.1
 - narration: “The epi infusion's running. His pressure's coming up.”
-- author rationale: Delayed consequence of the infusion order: mixed and running 60 seconds after the order once help has been called. Teaching choice, owner's timing.
-
-Prompts in this phase that set epi_drip_ordered, help_called, relapsed_vent, which is what the fairness rule requires:
-
-- `epinephrine_drip` first at 30s, 30s of lead
+- author rationale: Delayed consequence of the infusion order: pharmacy has it running 10 seconds after the order (owner, 13 November 2026). A teaching compression of the minutes it takes to mix.
 
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 1. 20s `bridge_here_p7` (first)
 2. 30s `epinephrine_drip` (first)
 
-**Rule 2: at 90s (measured from guard_true) → `ventilated`**
-
-- guard: `flag epi_drip_ordered set AND NOT flag relapsed_vent set`
-- destination vitals: HR 148, BP 88/52, RR 20, SpO2 94%, T 37.1
-- narration: “The epi infusion's running. His pressure's coming up.”
-- author rationale: Delayed consequence of the infusion order: mixed and running 90 seconds after the order. Teaching choice, owner's timing.
-
-Prompts in this phase that set epi_drip_ordered, relapsed_vent, which is what the fairness rule requires:
-
-- `epinephrine_drip` first at 30s, 60s of lead
-
-All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
-
-1. 20s `bridge_here_p7` (first)
-2. 30s `epinephrine_drip` (first)
-
-**Rule 3: at 30s (measured from guard_true) → `ventilated`**
-
-- guard: `flag relapsed_vent set AND action drip_restarted taken`
-- destination vitals: HR 148, BP 88/52, RR 20, SpO2 94%, T 37.1
-- narration: “The epi's back on. His pressure's coming up.”
-- author rationale: Delayed consequence of restarting the infusion after a stop. The bag is still hung. Model timing.
-
-All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
-
-1. 20s `bridge_here_p7` (first)
-2. 30s `epinephrine_drip` (first)
-
-**Rule 4: at 150s (measured from phase_entry) → `bradycardic_arrest`  (TERMINAL)**
+**Rule 2: at 150s (measured from phase_entry) → `bradycardic_arrest`  (TERMINAL)**
 
 - guard: `NOT action bridge_here_p7 taken`
 - destination vitals: HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1
@@ -373,7 +286,7 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 1. 20s `bridge_here_p7` (first)
 2. 30s `epinephrine_drip` (first)
 
-**Rule 5: at 360s (measured from phase_entry) → `bradycardic_arrest`  (TERMINAL)**
+**Rule 3: at 360s (measured from phase_entry) → `bradycardic_arrest`  (TERMINAL)**
 
 - guard: `(none: fires regardless)`
 - destination vitals: HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1
@@ -390,12 +303,12 @@ All prompts schedulable in this phase, in firing order (per-phase cap is 4, so o
 
 Vitals in this phase: HR 148, BP 88/52, RR 20, SpO2 94%, T 37.1
 
-**Rule 1: at 120s (measured from guard_true) → `post_induction_collapse`**
+**Rule 1: at 120s (measured from guard_true) → `vent_relapse`**
 
 - guard: `flag epi_drip_stopped set AND NOT flag relapsed_vent set`
 - destination vitals: HR 172, BP 60/32, RR 20, SpO2 88%, T 37.1
 - narration: “Since the epi stopped, his pressure's falling.”
-- author rationale: Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). The relapse flag makes it happen once, so the stop and the restart cannot loop.
+- author rationale: Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). A restart inside the 120 seconds still lets the relapse play, and brings him back 10 seconds after it (a known gap). The relapse flag makes it happen once, so the stop and the restart cannot loop.
 
 Prompts in this phase that set epi_drip_stopped, relapsed_vent, which is what the fairness rule requires:
 
@@ -404,6 +317,104 @@ Prompts in this phase that set epi_drip_stopped, relapsed_vent, which is what th
 All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
 
 
+### `relapse`: Relapse after the infusion was stopped
+
+Vitals in this phase: HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1
+
+**Rule 1: at 10s (measured from guard_true) → `responding`**
+
+- guard: `action drip_restarted taken`
+- destination vitals: HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1
+- narration: “The epi's back on. He's opening his eyes again.”
+- author rationale: Delayed consequence of restarting the infusion after a stop. As fast as a new order. Model timing.
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 20s `drip_restarted` (first)
+2. 30s `epinephrine_drip` (first)
+3. 40s `bolus_here_p3` (first)
+
+**Rule 4: at 150s (measured from phase_entry) → `peri_arrest`**
+
+- guard: `NOT action drip_restarted taken`
+- destination vitals: HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1
+- narration: “He's barely breathing for himself, and his lips are blue. His voice is just a whisper.”
+- author rationale: Deterioration on inaction: the infusion not restarted. As phase 3's no-order rule. Prompted at 20 seconds (60 in normal mode).
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 20s `drip_restarted` (first)
+2. 30s `epinephrine_drip` (first)
+3. 40s `bolus_here_p3` (first)
+
+**Rule 5: at 240s (measured from phase_entry) → `peri_arrest`**
+
+- guard: `NOT action bolus_here_p3 taken`
+- destination vitals: HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1
+- narration: “He's barely breathing for himself, and his lips are blue. His voice is just a whisper.”
+- author rationale: As phase 3: no fluid bolus in this phase. Prompted at 40 seconds (120 in normal mode).
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 20s `drip_restarted` (first)
+2. 30s `epinephrine_drip` (first)
+3. 40s `bolus_here_p3` (first)
+
+**Rule 6: at 360s (measured from phase_entry) → `peri_arrest`**
+
+- guard: `(none: fires regardless)`
+- destination vitals: HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1
+- narration: “He's barely breathing for himself, and his lips are blue. His voice is just a whisper.”
+- author rationale: Scheduled natural history: refractory anaphylaxis with the infusion off.
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 20s `drip_restarted` (first)
+2. 30s `epinephrine_drip` (first)
+3. 40s `bolus_here_p3` (first)
+
+### `vent_relapse`: Ventilated, infusion stopped
+
+Vitals in this phase: HR 172, BP 60/32, RR 20, SpO2 88%, T 37.1
+
+**Rule 1: at 10s (measured from guard_true) → `ventilated`**
+
+- guard: `action drip_restarted taken`
+- destination vitals: HR 148, BP 88/52, RR 20, SpO2 94%, T 37.1
+- narration: “The epi's back on. His pressure's coming up.”
+- author rationale: Delayed consequence of restarting the infusion after a stop. As fast as a new order. Model timing.
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 20s `drip_restarted` (first)
+2. 30s `epinephrine_drip` (first)
+
+**Rule 2: at 150s (measured from phase_entry) → `bradycardic_arrest`  (TERMINAL)**
+
+- guard: `NOT action drip_restarted taken`
+- destination vitals: HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1
+- **opted in to ending the case on the clock**
+- narration: “His heart rate's dropping. I can barely feel a pulse.”
+- author rationale: Deterioration on inaction to a terminal phase.
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 20s `drip_restarted` (first)
+2. 30s `epinephrine_drip` (first)
+
+**Rule 3: at 360s (measured from phase_entry) → `bradycardic_arrest`  (TERMINAL)**
+
+- guard: `(none: fires regardless)`
+- destination vitals: HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1
+- **opted in to ending the case on the clock**
+- narration: “His heart rate's dropping. I can barely feel a pulse.”
+- author rationale: Scheduled natural history to a terminal phase.
+
+All prompts schedulable in this phase, in firing order (per-phase cap is 4, so only the first 4 first warnings are heard; escalations are exempt):
+
+1. 20s `drip_restarted` (first)
+2. 30s `epinephrine_drip` (first)
+
 ## 2. The do-nothing trajectory
 
 What a resident who performs no state-changing action at all sees, from arrival to wherever the case leaves them. This is the path an author is least likely to have imagined and the one a frozen learner will actually be looking at.
@@ -411,10 +422,10 @@ What a resident who performs no state-changing action at all sees, from arrival 
 | clock | phase | vitals | how it was reached |
 |---|---|---|---|
 | 0:00 | `presentation` | HR 140, BP 88/54, RR 32, SpO2 93%, T 37.1 | arrival |
-| 3:00 | `persistent` | HR 152, BP 76/40, RR 36, SpO2 91%, T 37.1 | rule 6 fired at 180s |
-| 5:30 | `worsening` | HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1 | rule 5 fired at 150s |
-| 8:00 | `peri_arrest` | HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1 | rule 6 fired at 150s |
-| 11:00 | `bradycardic_arrest` | HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1 | rule 3 fired at 180s |
+| 3:00 | `persistent` | HR 152, BP 76/40, RR 36, SpO2 91%, T 37.1 | rule 5 fired at 180s |
+| 5:30 | `worsening` | HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1 | rule 4 fired at 150s |
+| 8:00 | `peri_arrest` | HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1 | rule 4 fired at 150s |
+| 11:00 | `bradycardic_arrest` | HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1 | rule 4 fired at 180s |
 
 **The last row is a terminal phase.** This case can end without the resident touching the patient. That should be a decision the author remembers making.
 
@@ -424,31 +435,33 @@ A narration is the one place a nurse may describe a trajectory, because one has 
 
 | from | at | to | vitals immediately after | the line |
 |---|---|---|---|---|
-| `presentation` | 60s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi infusion's up and running.” |
-| `presentation` | 120s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi infusion's up and running.” |
-| `presentation` | 120s | `persistent` | HR 152, BP 76/40, RR 36, SpO2 91%, T 37.1 | “That epi's worn off already. He's stopped asking for his mom, and he's breathing harder than when he came in.” |
+| `presentation` | 10s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi infusion's up and running.” |
+| `presentation` | 60s | `persistent` | HR 152, BP 76/40, RR 36, SpO2 91%, T 37.1 | “That epi's worn off already. He's stopped asking for his mom, and he's breathing harder than when he came in.” |
 | `presentation` | 180s | `persistent` | HR 152, BP 76/40, RR 36, SpO2 91%, T 37.1 | “He's stopped asking for his mom, and he's working harder to breathe.” |
-| `persistent` | 60s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi infusion's up and running.” |
-| `persistent` | 120s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi infusion's up and running.” |
+| `persistent` | 10s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi infusion's up and running.” |
 | `persistent` | 150s | `worsening` | HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1 | “He's gone floppy on me. He's stopped fighting the mask.” |
 | `persistent` | 240s | `worsening` | HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1 | “He's gone floppy on me. He's stopped fighting the mask.” |
-| `worsening` | 60s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi infusion's been running a minute. He's opening his eyes and asking for his mom.” |
-| `worsening` | 90s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi infusion's been running a minute. He's opening his eyes and asking for his mom.” |
-| `worsening` | 30s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi's back on. He's opening his eyes again.” |
+| `worsening` | 10s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi infusion's running. He's opening his eyes and asking for his mom.” |
 | `worsening` | 150s | `peri_arrest` | HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1 | “He's barely breathing for himself, and his lips are blue. His voice is just a whisper.” |
 | `worsening` | 240s | `peri_arrest` | HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1 | “He's barely breathing for himself, and his lips are blue. His voice is just a whisper.” |
 | `worsening` | 360s | `peri_arrest` | HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1 | “He's barely breathing for himself, and his lips are blue. His voice is just a whisper.” |
+| `peri_arrest` | 30s | `relapse` | HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1 | “He's breathing for himself again, but he's still floppy.” |
 | `peri_arrest` | 30s | `worsening` | HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1 | “He's breathing for himself again, but he's still floppy.” |
 | `peri_arrest` | 180s | `bradycardic_arrest` | HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1 | “His heart rate's dropping. I can barely feel a pulse.” |
-| `responding` | 120s | `worsening` | HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1 | “Since the epi stopped, he's gone floppy again.” |
+| `responding` | 120s | `relapse` | HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1 | “Since the epi stopped, he's gone floppy again.” |
 | `responding` | 180s | `stabilized` | HR 122, BP 102/64, RR 24, SpO2 96%, T 37.1 | “We're moving the clock faster here. Over what would be several minutes, he's pinked up and he's talking in full sentences.” |
-| `stabilized` | 120s | `worsening` | HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1 | “Since the epi stopped, he's gone floppy again.” |
-| `post_induction_collapse` | 60s | `ventilated` | HR 148, BP 88/52, RR 20, SpO2 94%, T 37.1 | “The epi infusion's running. His pressure's coming up.” |
-| `post_induction_collapse` | 90s | `ventilated` | HR 148, BP 88/52, RR 20, SpO2 94%, T 37.1 | “The epi infusion's running. His pressure's coming up.” |
-| `post_induction_collapse` | 30s | `ventilated` | HR 148, BP 88/52, RR 20, SpO2 94%, T 37.1 | “The epi's back on. His pressure's coming up.” |
+| `stabilized` | 120s | `relapse` | HR 160, BP 70/38, RR 40, SpO2 89%, T 37.1 | “Since the epi stopped, he's gone floppy again.” |
+| `post_induction_collapse` | 10s | `ventilated` | HR 148, BP 88/52, RR 20, SpO2 94%, T 37.1 | “The epi infusion's running. His pressure's coming up.” |
 | `post_induction_collapse` | 150s | `bradycardic_arrest` | HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1 | “His heart rate's dropping. I can barely feel a pulse.” |
 | `post_induction_collapse` | 360s | `bradycardic_arrest` | HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1 | “His heart rate's dropping. I can barely feel a pulse.” |
-| `ventilated` | 120s | `post_induction_collapse` | HR 172, BP 60/32, RR 20, SpO2 88%, T 37.1 | “Since the epi stopped, his pressure's falling.” |
+| `ventilated` | 120s | `vent_relapse` | HR 172, BP 60/32, RR 20, SpO2 88%, T 37.1 | “Since the epi stopped, his pressure's falling.” |
+| `relapse` | 10s | `responding` | HR 150, BP 86/50, RR 34, SpO2 92%, T 37.1 | “The epi's back on. He's opening his eyes again.” |
+| `relapse` | 150s | `peri_arrest` | HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1 | “He's barely breathing for himself, and his lips are blue. His voice is just a whisper.” |
+| `relapse` | 240s | `peri_arrest` | HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1 | “He's barely breathing for himself, and his lips are blue. His voice is just a whisper.” |
+| `relapse` | 360s | `peri_arrest` | HR 168, BP 58/30, RR 44, SpO2 82%, T 37.1 | “He's barely breathing for himself, and his lips are blue. His voice is just a whisper.” |
+| `vent_relapse` | 10s | `ventilated` | HR 148, BP 88/52, RR 20, SpO2 94%, T 37.1 | “The epi's back on. His pressure's coming up.” |
+| `vent_relapse` | 150s | `bradycardic_arrest` | HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1 | “His heart rate's dropping. I can barely feel a pulse.” |
+| `vent_relapse` | 360s | `bradycardic_arrest` | HR 48, BP 40/20, RR 6, SpO2 70%, T 37.1 | “His heart rate's dropping. I can barely feel a pulse.” |
 
 Compare each line with the row before it in section 2, not only with the destination: a line saying a number has fallen must be preceded by a phase in which it was higher.
 

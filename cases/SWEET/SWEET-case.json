@@ -13,8 +13,8 @@
   "author": "Drafted by Claude at the request of Aakash Setty on 11 November 2026, from his case structure and his answers to three rounds of questions the same day. Authoring requirements section 1 applies.",
   "warning": "A physician decided the things listed in SWEET-SEED.md section 0. Everything else is model output and awaits sign-off: every vital sign, finding, laboratory value, delay, tag, debrief note, interview answer and diagnosis explanation.",
   "author_only_fields_pending_signoff": [
-   "Every vital sign in every phase. Phases 1 to 6 are the owner's S1 to S6, with temperature 37.1 added. Phases 7 and 8 and the terminal phase are model output.",
-   "Every delay: the first IM dose acting from 10 seconds and fading from 80 to 120, a later dose from 10 and fading from 40 to 60, the 150 and 240 second exits from phase 2, the infusion's preparation (60 seconds with help and 120 without in phases 1 and 2, 60 and 90 in phases 3 and 7), the phase 3 exits (150, 240, 360), the rescue at 30 seconds, the 180 seconds to the terminal phase, the 150 seconds after a tube with no bridge, the 120 seconds after a stop, the 30 seconds after a restart, phase 5 to 6 at 180 seconds.",
+   "Every vital sign in every phase. Phases 1 to 6 are the owner's S1 to S6, with temperature 37.1 added. Phases 7 and 8, relapse, vent_relapse and the terminal phase are model output.",
+   "Every delay: the first IM dose acting from 10 seconds and fading from 40 to 60, a later dose from 10 and fading from 25 to 40, the 150 and 240 second exits from phase 2, the infusion's 10 second preparation and 10 second restart, the phase 3 exits (150, 240, 360), the relapse exits (150, 240, 360), the rescue at 30 seconds, the 180 seconds to the terminal phase, the 150 seconds after a tube with no bridge or after a stop with no restart, the 120 seconds after a stop, phase 5 to 6 at 180 seconds.",
    "Every laboratory value and interval, including the pediatric intervals.",
    "Every abnormal flag on every result, finding and status line.",
    "The vital effects of IM epinephrine, the IV push, the boluses, posture, albuterol and the oxygen devices. Teaching choices.",
@@ -138,7 +138,7 @@
   "complaint": "Trouble breathing after eating",
   "category": "Pediatrics",
   "library": {
-   "tempo": "minutes: an IM dose wears off, then the infusion takes time to start",
+   "tempo": "seconds: an IM dose works for a minute and wears off, then the infusion",
    "uncertainty": "when IM epinephrine has failed",
    "right_answer": "one more IM dose, then an infusion, and call for help early",
    "danger": "behind a brief response to the crew's dose",
@@ -158,9 +158,9 @@
   "handover_authoring_note": "Section 2.3. Two sentences, 44 words. No vital sign, no diagnosis, no allergen. It carries the treatment already given, which the default leaves out, because a crew states what it gave and the case is about that dose (owner, 11 November 2026: EMS gives the first dose)."
  },
  "phase_notes": {
-  "count_justification": "Eight live phases and two terminal. The owner's six states, plus two intubated phases because every case can be intubated (authoring 8.5) and the owner's S6 is untrue of an intubated child: after the tube without an infusion, and ventilated with one.",
-  "refractory_by_design": "IM epinephrine never ends the reaction. The first ED dose works from 10 to 120 seconds and a later dose from 10 to 60, then he is worse (owner, 11 November 2026). The epinephrine infusion is the only thing that moves him to responding.",
-  "infusion_preparation": "Pressing the infusion orders it. It runs 120 seconds later, or 60 once PICU has been called: two delayed-consequence rules (guard_true) in each phase a learner can be in while it is mixed (drip_runs in case_1_shell.py). A guard_true clock does not carry across a phase change, so an order that crosses one waits again: 60 or 90 seconds in phases 3 and 7. A known gap. The infusion's own phases (responding, stabilized, ventilated) are where it runs."
+  "count_justification": "Ten live phases and two terminal. The owner's six states, plus two intubated phases because every case can be intubated (authoring 8.5) and the owner's S6 is untrue of an intubated child: after the tube without an infusion, and ventilated with one. Two more for a stopped infusion (relapse, vent_relapse), so that the infusion order can stay a positive guard everywhere else and still run in 10 seconds.",
+  "refractory_by_design": "IM epinephrine never ends the reaction. The first ED dose works from 10 to 60 seconds and a later dose from 10 to 40, then he is worse (owner, 11 and 13 November 2026). The epinephrine infusion is the only thing that moves him to responding.",
+  "infusion_preparation": "Pressing the infusion orders it. Pharmacy has it running 10 seconds later (owner, 13 November 2026), whoever has been called: one delayed-consequence rule (guard_true) in each phase a learner can order it in (drip_runs in case_1_shell.py). After a stop, only a restart in the relapse phases brings him back, in 10 seconds. The infusion's own phases (responding, stabilized, ventilated) are where it runs."
  },
  "phases": [
   {
@@ -199,24 +199,14 @@
      "author_note": "First in every list."
     },
     {
-     "when": "flag epi_drip_ordered set AND flag help_called set",
-     "after_seconds": 60,
-     "measured_from": "guard_true",
-     "to": "responding",
-     "narration": "The epi infusion's up and running.",
-     "narration_ventilated": "The epi infusion's up and running.",
-     "debrief_note": "The epinephrine infusion is what changed him. Each intramuscular dose had worked for a minute or two and worn off. A titrated infusion gives the same drug continuously, which is the escalation for refractory anaphylaxis. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
-     "author_rationale": "Delayed consequence of the infusion order: mixed and running 60 seconds after the order once help has been called. Teaching choice, owner's timing."
-    },
-    {
      "when": "flag epi_drip_ordered set",
-     "after_seconds": 120,
+     "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "responding",
      "narration": "The epi infusion's up and running.",
      "narration_ventilated": "The epi infusion's up and running.",
      "debrief_note": "The epinephrine infusion is what changed him. Each intramuscular dose had worked for a minute or two and worn off. A titrated infusion gives the same drug continuously, which is the escalation for refractory anaphylaxis. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
-     "author_rationale": "Delayed consequence of the infusion order: mixed and running 120 seconds after the order. Teaching choice, owner's timing."
+     "author_rationale": "Delayed consequence of the infusion order: pharmacy has it running 10 seconds after the order (owner, 13 November 2026). A teaching compression of the minutes it takes to mix."
     },
     {
      "when": "flag sedated_p1 set",
@@ -230,12 +220,12 @@
     },
     {
      "when": "flag epi_im_ed set",
-     "after_seconds": 120,
+     "after_seconds": 60,
      "measured_from": "guard_true",
      "to": "persistent",
      "narration": "That epi's worn off already. He's stopped asking for his mom, and he's breathing harder than when he came in.",
      "debrief_note": "The second intramuscular dose did what the crew's dose had done: a few minutes of better numbers, then worse than before. Two appropriate IM doses without a lasting response is refractory anaphylaxis. The next step is not a third drug. It is the same drug as a titrated infusion, and help to run it. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
-     "author_rationale": "Delayed consequence, scripted. The first ED dose acts from 10 seconds and wears off by 120 (owner, 11 November 2026: kicks in at 10 seconds, then fades). This child is refractory by design, so when it wears off he is worse than on arrival. Two minutes is a teaching compression of the five to fifteen minutes a real dose acts."
+     "author_rationale": "Delayed consequence, scripted. The first ED dose acts from 10 seconds and is gone by 60 (owner, 11 November 2026: kicks in at 10 seconds, then fades; 13 November 2026: lasts only 60 seconds). This child is refractory by design, so when it wears off he is worse than on arrival. One minute is a teaching compression of the five to fifteen minutes a real dose acts."
     },
     {
      "when": "NOT flag epi_im_ed set",
@@ -283,24 +273,14 @@
      "author_note": "First in every list."
     },
     {
-     "when": "flag epi_drip_ordered set AND flag help_called set",
-     "after_seconds": 60,
-     "measured_from": "guard_true",
-     "to": "responding",
-     "narration": "The epi infusion's up and running.",
-     "narration_ventilated": "The epi infusion's up and running.",
-     "debrief_note": "The epinephrine infusion is what changed him. Each intramuscular dose had worked for a minute or two and worn off. A titrated infusion gives the same drug continuously, which is the escalation for refractory anaphylaxis. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
-     "author_rationale": "Delayed consequence of the infusion order: mixed and running 60 seconds after the order once help has been called. Teaching choice, owner's timing."
-    },
-    {
      "when": "flag epi_drip_ordered set",
-     "after_seconds": 120,
+     "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "responding",
      "narration": "The epi infusion's up and running.",
      "narration_ventilated": "The epi infusion's up and running.",
      "debrief_note": "The epinephrine infusion is what changed him. Each intramuscular dose had worked for a minute or two and worn off. A titrated infusion gives the same drug continuously, which is the escalation for refractory anaphylaxis. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
-     "author_rationale": "Delayed consequence of the infusion order: mixed and running 120 seconds after the order. Teaching choice, owner's timing."
+     "author_rationale": "Delayed consequence of the infusion order: pharmacy has it running 10 seconds after the order (owner, 13 November 2026). A teaching compression of the minutes it takes to mix."
     },
     {
      "when": "flag sedated_p2 set",
@@ -317,16 +297,16 @@
      "after_seconds": 150,
      "to": "worsening",
      "narration": "He's gone floppy on me. He's stopped fighting the mask.",
-     "debrief_note": "He went floppy because nothing was given that lasts. An IM dose buys a minute or two in a child who is refractory. The infusion was the step that holds, and in this case it takes a minute or two to be mixed, so it has to be ordered as soon as the second dose fails. Calling PICU or the senior halves the wait here, and in real life gets the infusion running sooner.",
-     "author_rationale": "Deterioration on inaction: no infusion ordered. 150 seconds, owner's revision of 11 November 2026. A second IM dose holds him here only while it acts (epi_bridge_acting, 60 seconds), so it never brings phase 3 sooner than no dose would (owner, 11 November 2026). Prompted for the infusion at 30 seconds (90 in normal mode)."
+     "debrief_note": "He went floppy because nothing was given that lasts. An IM dose buys a minute in a child who is refractory. The infusion was the step that holds, and it has to be ordered as soon as the second dose fails. In a real department it takes minutes to mix, which is why you order it early and keep giving IM doses until it runs.",
+     "author_rationale": "Deterioration on inaction: no infusion ordered. 150 seconds, owner's revision of 11 November 2026. A second IM dose holds him here only while it acts (epi_bridge_acting, 40 seconds), so it never brings phase 3 sooner than no dose would (owner, 11 November 2026). Prompted for the infusion at 30 seconds (90 in normal mode)."
     },
     {
      "when": "NOT flag epi_bridge_acting set",
      "after_seconds": 240,
      "to": "worsening",
      "narration": "He's gone floppy on me. He's stopped fighting the mask.",
-     "debrief_note": "He went floppy because nothing was given that lasts. An IM dose buys a minute or two in a child who is refractory. The infusion was the step that holds, and in this case it takes a minute or two to be mixed, so it has to be ordered as soon as the second dose fails. Calling PICU or the senior halves the wait here, and in real life gets the infusion running sooner.",
-     "author_rationale": "Ordered but not yet running. Refractory anaphylaxis keeps progressing while the infusion is mixed. 240 seconds leaves room for an order placed in the first 120 seconds without a call (120-second preparation) and in the first 180 with one (60 seconds). A bridge IM dose holds him while it acts. Model output, owner's timing."
+     "debrief_note": "He went floppy because nothing was given that lasts. An IM dose buys a minute in a child who is refractory. The infusion was the step that holds, and it has to be ordered as soon as the second dose fails. In a real department it takes minutes to mix, which is why you order it early and keep giving IM doses until it runs.",
+     "author_rationale": "The cap for a learner who keeps repeating IM doses instead of ordering the infusion: each dose holds him while it acts, and at 240 seconds he goes floppy once none is acting. An ordered infusion runs within 10 seconds, so it never meets this rule. Model output."
     }
    ]
   },
@@ -366,34 +346,14 @@
      "author_note": "First in every list."
     },
     {
-     "when": "flag epi_drip_ordered set AND flag help_called set AND NOT flag relapsed set",
-     "after_seconds": 60,
+     "when": "flag epi_drip_ordered set",
+     "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "responding",
-     "narration": "The epi infusion's been running a minute. He's opening his eyes and asking for his mom.",
-     "narration_ventilated": "The epi infusion's been running a minute. He's opening his eyes and asking for his mom.",
+     "narration": "The epi infusion's running. He's opening his eyes and asking for his mom.",
+     "narration_ventilated": "The epi infusion's running. He's opening his eyes and asking for his mom.",
      "debrief_note": "The epinephrine infusion is what changed him. Each intramuscular dose had worked for a minute or two and worn off. A titrated infusion gives the same drug continuously, which is the escalation for refractory anaphylaxis. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
-     "author_rationale": "Delayed consequence of the infusion order: mixed and running 60 seconds after the order once help has been called. Teaching choice, owner's timing."
-    },
-    {
-     "when": "flag epi_drip_ordered set AND NOT flag relapsed set",
-     "after_seconds": 90,
-     "measured_from": "guard_true",
-     "to": "responding",
-     "narration": "The epi infusion's been running a minute. He's opening his eyes and asking for his mom.",
-     "narration_ventilated": "The epi infusion's been running a minute. He's opening his eyes and asking for his mom.",
-     "debrief_note": "The epinephrine infusion is what changed him. Each intramuscular dose had worked for a minute or two and worn off. A titrated infusion gives the same drug continuously, which is the escalation for refractory anaphylaxis. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
-     "author_rationale": "Delayed consequence of the infusion order: mixed and running 90 seconds after the order. Teaching choice, owner's timing."
-    },
-    {
-     "when": "flag relapsed set AND action drip_restarted taken",
-     "after_seconds": 30,
-     "measured_from": "guard_true",
-     "to": "responding",
-     "narration": "The epi's back on. He's opening his eyes again.",
-     "narration_ventilated": "The epi's back on. He's opening his eyes again.",
-     "debrief_note": "Restarted, the infusion brought him back. It should not have been stopped.",
-     "author_rationale": "Delayed consequence of restarting the infusion after a stop. The bag is still hung. Model timing."
+     "author_rationale": "Delayed consequence of the infusion order: pharmacy has it running 10 seconds after the order (owner, 13 November 2026). A teaching compression of the minutes it takes to mix."
     },
     {
      "when": "flag sedated_p3 set",
@@ -473,6 +433,18 @@
      "author_rationale": "A tube with no epinephrine infusion running. Induction drugs and positive pressure take away vascular tone and venous return in a child already in distributive and hypovolemic shock, and the pressure falls. Model output."
     },
     {
+     "when": "flag relapsed set AND NOT flag rescued_once set AND action bolus_here_p4 taken AND action epi_here_p4 taken",
+     "after_seconds": 30,
+     "measured_from": "guard_true",
+     "to": "relapse",
+     "flags_set": [
+      "rescued_once"
+     ],
+     "narration": "He's breathing for himself again, but he's still floppy.",
+     "debrief_note": "Epinephrine and fluid pulled him back from the edge. The infusion was still stopped, and only restarting it would hold him.",
+     "author_rationale": "As the rescue below, for a child whose infusion had been stopped: back to the relapse phase, where only a restart brings him back."
+    },
+    {
      "when": "NOT flag rescued_once set AND action bolus_here_p4 taken AND action epi_here_p4 taken",
      "after_seconds": 30,
      "measured_from": "guard_true",
@@ -541,14 +513,14 @@
      "when": "flag epi_drip_stopped set AND NOT flag relapsed set",
      "after_seconds": 120,
      "measured_from": "guard_true",
-     "to": "worsening",
+     "to": "relapse",
      "flags_set": [
       "relapsed"
      ],
      "narration": "Since the epi stopped, he's gone floppy again.",
      "narration_ventilated": "Since the epi stopped, he's gone floppy again.",
      "debrief_note": "The infusion was stopped and the reaction came back. Do not wean it in the department.",
-     "author_rationale": "Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). The relapse flag makes it happen once, so the stop and the restart cannot loop."
+     "author_rationale": "Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). A restart inside the 120 seconds still lets the relapse play, and brings him back 10 seconds after it (a known gap). The relapse flag makes it happen once, so the stop and the restart cannot loop."
     },
     {
      "when": "flag fluid_x2 set OR action fluid_here_p5 taken",
@@ -604,14 +576,14 @@
      "when": "flag epi_drip_stopped set AND NOT flag relapsed set",
      "after_seconds": 120,
      "measured_from": "guard_true",
-     "to": "worsening",
+     "to": "relapse",
      "flags_set": [
       "relapsed"
      ],
      "narration": "Since the epi stopped, he's gone floppy again.",
      "narration_ventilated": "Since the epi stopped, he's gone floppy again.",
      "debrief_note": "The infusion was stopped and the reaction came back. Do not wean it in the department.",
-     "author_rationale": "Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). The relapse flag makes it happen once, so the stop and the restart cannot loop."
+     "author_rationale": "Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). A restart inside the 120 seconds still lets the relapse play, and brings him back 10 seconds after it (a known gap). The relapse flag makes it happen once, so the stop and the restart cannot loop."
     }
    ]
   },
@@ -651,34 +623,14 @@
      "author_note": "First in every list."
     },
     {
-     "when": "flag epi_drip_ordered set AND flag help_called set AND NOT flag relapsed_vent set",
-     "after_seconds": 60,
+     "when": "flag epi_drip_ordered set",
+     "after_seconds": 10,
      "measured_from": "guard_true",
      "to": "ventilated",
      "narration": "The epi infusion's running. His pressure's coming up.",
      "narration_ventilated": "The epi infusion's running. His pressure's coming up.",
      "debrief_note": "The epinephrine infusion is what changed him. Each intramuscular dose had worked for a minute or two and worn off. A titrated infusion gives the same drug continuously, which is the escalation for refractory anaphylaxis. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
-     "author_rationale": "Delayed consequence of the infusion order: mixed and running 60 seconds after the order once help has been called. Teaching choice, owner's timing."
-    },
-    {
-     "when": "flag epi_drip_ordered set AND NOT flag relapsed_vent set",
-     "after_seconds": 90,
-     "measured_from": "guard_true",
-     "to": "ventilated",
-     "narration": "The epi infusion's running. His pressure's coming up.",
-     "narration_ventilated": "The epi infusion's running. His pressure's coming up.",
-     "debrief_note": "The epinephrine infusion is what changed him. Each intramuscular dose had worked for a minute or two and worn off. A titrated infusion gives the same drug continuously, which is the escalation for refractory anaphylaxis. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
-     "author_rationale": "Delayed consequence of the infusion order: mixed and running 90 seconds after the order. Teaching choice, owner's timing."
-    },
-    {
-     "when": "flag relapsed_vent set AND action drip_restarted taken",
-     "after_seconds": 30,
-     "measured_from": "guard_true",
-     "to": "ventilated",
-     "narration": "The epi's back on. His pressure's coming up.",
-     "narration_ventilated": "The epi's back on. His pressure's coming up.",
-     "debrief_note": "Restarted, the infusion brought him back. It should not have been stopped.",
-     "author_rationale": "Delayed consequence of restarting the infusion after a stop. The bag is still hung. Model timing."
+     "author_rationale": "Delayed consequence of the infusion order: pharmacy has it running 10 seconds after the order (owner, 13 November 2026). A teaching compression of the minutes it takes to mix."
     },
     {
      "when": "NOT action bridge_here_p7 taken",
@@ -745,14 +697,167 @@
      "when": "flag epi_drip_stopped set AND NOT flag relapsed_vent set",
      "after_seconds": 120,
      "measured_from": "guard_true",
-     "to": "post_induction_collapse",
+     "to": "vent_relapse",
      "flags_set": [
       "relapsed_vent"
      ],
      "narration": "Since the epi stopped, his pressure's falling.",
      "narration_ventilated": "Since the epi stopped, his pressure's falling.",
      "debrief_note": "The infusion was stopped and the reaction came back. Do not wean it in the department.",
-     "author_rationale": "Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). The relapse flag makes it happen once, so the stop and the restart cannot loop."
+     "author_rationale": "Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 seconds a teaching choice (the structure said within 3 minutes). A restart inside the 120 seconds still lets the relapse play, and brings him back 10 seconds after it (a known gap). The relapse flag makes it happen once, so the stop and the restart cannot loop."
+    }
+   ],
+   "ventilated": true
+  },
+  {
+   "id": "relapse",
+   "label": "Relapse after the infusion was stopped",
+   "short_label": "floppy again",
+   "clinical_description": "The infusion was stopped and the reaction has come back: floppy, single words, poor air movement, mottled legs, as in phase 3. Only restarting the infusion brings him back.",
+   "vitals": {
+    "heart_rate": 160,
+    "systolic_bp": 70,
+    "diastolic_bp": 38,
+    "respiratory_rate": 40,
+    "oxygen_saturation": 89,
+    "temperature_c": 37.1
+   },
+   "appearance": {
+    "distress_level": 3,
+    "alertness_level": 1,
+    "pupil_size": "normal",
+    "pupil_reactivity": "reactive"
+   },
+   "rhythm": "regular",
+   "ecg": {
+    "pattern": "organised",
+    "p_waves": true,
+    "pr_ms": 130,
+    "qrs_ms": 80,
+    "qtc_ms": 420,
+    "author_note": "Sinus at the phase's rate. Normal intervals for a 12-year-old. Rate 160. Model output."
+   },
+   "terminal": false,
+   "transitions": [
+    {
+     "when": "action handoff_submit taken",
+     "to": "case_complete",
+     "author_note": "First in every list."
+    },
+    {
+     "when": "action drip_restarted taken",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "responding",
+     "narration": "The epi's back on. He's opening his eyes again.",
+     "narration_ventilated": "The epi's back on. He's opening his eyes again.",
+     "debrief_note": "Restarted, the infusion brought him back. It should not have been stopped.",
+     "author_rationale": "Delayed consequence of restarting the infusion after a stop. As fast as a new order. Model timing."
+    },
+    {
+     "when": "flag sedated_p3 set",
+     "to": "peri_arrest",
+     "author_rationale": "A benzodiazepine or an opioid given for distress. It blunts the drive of a hypoxic, tiring child, lowers his pressure, and removes the agitation that was the warning sign. One phase worse at once, a teaching compression (owner's structure and defaults, 11 November 2026). The nurse's words are on the drug, since an instant transition speaks no narration."
+    },
+    {
+     "when": "flag intubated set",
+     "to": "vent_relapse",
+     "author_rationale": "A tube with the infusion stopped. As collapse after induction, and only restarting the infusion brings the pressure back. Model output."
+    },
+    {
+     "when": "NOT action drip_restarted taken",
+     "after_seconds": 150,
+     "to": "peri_arrest",
+     "narration": "He's barely breathing for himself, and his lips are blue. His voice is just a whisper.",
+     "debrief_note": "Without the infusion, he went from floppy to barely breathing. A child who is silent, limp and blue with a hoarse voice and a soft noise on breathing in is close to arrest. Epinephrine by the fastest route, fluid, and breaths with a bag are the next minute. The airway swelling makes the tube a hard one.",
+     "author_rationale": "Deterioration on inaction: the infusion not restarted. As phase 3's no-order rule. Prompted at 20 seconds (60 in normal mode)."
+    },
+    {
+     "when": "NOT action bolus_here_p3 taken",
+     "after_seconds": 240,
+     "to": "peri_arrest",
+     "narration": "He's barely breathing for himself, and his lips are blue. His voice is just a whisper.",
+     "debrief_note": "Without the infusion, he went from floppy to barely breathing. A child who is silent, limp and blue with a hoarse voice and a soft noise on breathing in is close to arrest. Epinephrine by the fastest route, fluid, and breaths with a bag are the next minute. The airway swelling makes the tube a hard one.",
+     "author_rationale": "As phase 3: no fluid bolus in this phase. Prompted at 40 seconds (120 in normal mode)."
+    },
+    {
+     "when": null,
+     "after_seconds": 360,
+     "to": "peri_arrest",
+     "narration": "He's barely breathing for himself, and his lips are blue. His voice is just a whisper.",
+     "debrief_note": "Without the infusion, he went from floppy to barely breathing. A child who is silent, limp and blue with a hoarse voice and a soft noise on breathing in is close to arrest. Epinephrine by the fastest route, fluid, and breaths with a bag are the next minute. The airway swelling makes the tube a hard one.",
+     "author_rationale": "Scheduled natural history: refractory anaphylaxis with the infusion off.",
+     "unguarded_rationale": "As phase 3. The restart rule above is the exit."
+    }
+   ]
+  },
+  {
+   "id": "vent_relapse",
+   "label": "Ventilated, infusion stopped",
+   "short_label": "pressure falling",
+   "clinical_description": "Intubated, the infusion stopped, the pressure falling as after induction. Only restarting the infusion brings it back.",
+   "vitals": {
+    "heart_rate": 172,
+    "systolic_bp": 60,
+    "diastolic_bp": 32,
+    "respiratory_rate": 20,
+    "oxygen_saturation": 88,
+    "temperature_c": 37.1
+   },
+   "appearance": {
+    "distress_level": 0,
+    "alertness_level": 3,
+    "pupil_size": "normal",
+    "pupil_reactivity": "reactive"
+   },
+   "rhythm": "regular",
+   "ecg": {
+    "pattern": "organised",
+    "p_waves": true,
+    "pr_ms": 130,
+    "qrs_ms": 80,
+    "qtc_ms": 420,
+    "author_note": "Sinus at the phase's rate. Normal intervals for a 12-year-old. Rate 172. Model output."
+   },
+   "terminal": false,
+   "transitions": [
+    {
+     "when": "action handoff_submit taken",
+     "to": "case_complete",
+     "author_note": "First in every list."
+    },
+    {
+     "when": "action drip_restarted taken",
+     "after_seconds": 10,
+     "measured_from": "guard_true",
+     "to": "ventilated",
+     "narration": "The epi's back on. His pressure's coming up.",
+     "narration_ventilated": "The epi's back on. His pressure's coming up.",
+     "debrief_note": "Restarted, the infusion brought him back. It should not have been stopped.",
+     "author_rationale": "Delayed consequence of restarting the infusion after a stop. As fast as a new order. Model timing."
+    },
+    {
+     "when": "NOT action drip_restarted taken",
+     "after_seconds": 150,
+     "to": "bradycardic_arrest",
+     "narration": "His heart rate's dropping. I can barely feel a pulse.",
+     "narration_ventilated": "His heart rate's dropping. I can barely feel a pulse.",
+     "debrief_note": "The infusion was stopped after the tube and not restarted. A falling heart rate in a hypoxic, shocked child is the last sign before arrest. In children, bradycardia with poor perfusion is treated as arrest. [UNVERIFIED: PALS bradycardia guidance, from memory]",
+     "allow_time_to_terminal": true,
+     "terminal_opt_in_rationale": "Intubated with the infusion off and not restarted. Prompted at 20 seconds (60 in normal mode).",
+     "author_rationale": "Deterioration on inaction to a terminal phase."
+    },
+    {
+     "when": null,
+     "after_seconds": 360,
+     "to": "bradycardic_arrest",
+     "narration": "His heart rate's dropping. I can barely feel a pulse.",
+     "narration_ventilated": "His heart rate's dropping. I can barely feel a pulse.",
+     "debrief_note": "A falling heart rate in a hypoxic, shocked child is the last sign before arrest. In children, bradycardia with poor perfusion is treated as arrest. [UNVERIFIED: PALS bradycardia guidance, from memory]",
+     "allow_time_to_terminal": true,
+     "terminal_opt_in_rationale": "Six minutes intubated with the infusion off.",
+     "author_rationale": "Scheduled natural history to a terminal phase.",
+     "unguarded_rationale": "The restart rule above is the exit."
     }
    ],
    "ventilated": true
@@ -838,14 +943,14 @@
   ],
   "note": "Harmful is not used. Nothing halts this case: every mistake plays out on the patient."
  },
- "flag_namespace_note": "epi_im_ed: any ED IM dose. epi_im_2: the second (flags_set_repeat). epi_onset (10 s) and epi_bridge_acting (60 s) are timed. epi_drip_ordered and epi_drip_stopped are permanent. relapsed and relapsed_vent are granted by the stop transitions, so a stop plays once. help_called from the PICU call. second_line from the second IV. sedated_p1 to p3 by phase (flags_set_if). fluid_x2 on the second bolus. rescued_once is granted by the rescue transition. Hidden targets carry 'done in this phase': bolus_here_p3, bolus_here_p4, fluid_here_p5, epi_here_p4, bridge_here_p7.",
+ "flag_namespace_note": "epi_im_ed: any ED IM dose. epi_im_2: the second (flags_set_repeat). epi_onset (10 s) and epi_bridge_acting (40 s) are timed. epi_drip_ordered and epi_drip_stopped are permanent. relapsed and relapsed_vent are granted by the stop transitions, so a stop plays once. help_called from the PICU call. second_line from the second IV. sedated_p1 to p3 by phase (flags_set_if). fluid_x2 on the second bolus. rescued_once is granted by the rescue transition. Hidden targets carry 'done in this phase': bolus_here_p3, bolus_here_p4, fluid_here_p5, epi_here_p4, bridge_here_p7.",
  "case_actions": [
   {
    "catalog_id": "attach_monitor",
    "tag": [
     {
      "when": null,
-     "value": "critical"
+     "value": "recommended"
     }
    ],
    "flags_set": [
@@ -858,8 +963,8 @@
    "catalog_id": "insert_iv",
    "tag": [
     {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest",
-     "value": "critical"
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest",
+     "value": "recommended"
     },
     {
      "when": null,
@@ -876,12 +981,8 @@
    "catalog_id": "second_iv",
    "tag": [
     {
-     "when": "phase is presentation",
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse",
      "value": "recommended"
-    },
-    {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse",
-     "value": "critical"
     },
     {
      "when": null,
@@ -938,11 +1039,7 @@
    "catalog_id": "lay_back_legs_raised",
    "tag": [
     {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest",
-     "value": "critical"
-    },
-    {
-     "when": "phase is responding OR phase is stabilized",
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized",
      "value": "recommended"
     },
     {
@@ -1017,7 +1114,7 @@
      "value": "critical"
     },
     {
-     "when": "phase is persistent OR phase is worsening",
+     "when": "phase is persistent OR phase is worsening OR phase is relapse",
      "value": "recommended"
     },
     {
@@ -1033,7 +1130,7 @@
    "flags_set_timed": [
     {
      "flag": "epi_bridge_acting",
-     "duration_seconds": 60
+     "duration_seconds": 40
     },
     {
      "flag": "epi_onset",
@@ -1063,261 +1160,261 @@
      "delta": 6,
      "key": "epi1_heart_rate_0",
      "onset_seconds": 10,
-     "duration_seconds": 80,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "duration_seconds": 40,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "heart_rate",
      "delta": 4,
      "key": "epi1_heart_rate_1",
-     "onset_seconds": 80,
-     "duration_seconds": 100,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "onset_seconds": 40,
+     "duration_seconds": 50,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "heart_rate",
      "delta": 2,
      "key": "epi1_heart_rate_2",
-     "onset_seconds": 100,
-     "duration_seconds": 120,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "onset_seconds": 50,
+     "duration_seconds": 60,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "systolic_bp",
      "delta": 12,
      "key": "epi1_systolic_bp_0",
      "onset_seconds": 10,
-     "duration_seconds": 80,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "duration_seconds": 40,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "systolic_bp",
      "delta": 8,
      "key": "epi1_systolic_bp_1",
-     "onset_seconds": 80,
-     "duration_seconds": 100,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "onset_seconds": 40,
+     "duration_seconds": 50,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "systolic_bp",
      "delta": 4,
      "key": "epi1_systolic_bp_2",
-     "onset_seconds": 100,
-     "duration_seconds": 120,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "onset_seconds": 50,
+     "duration_seconds": 60,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "diastolic_bp",
      "delta": 8,
      "key": "epi1_diastolic_bp_0",
      "onset_seconds": 10,
-     "duration_seconds": 80,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "duration_seconds": 40,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "diastolic_bp",
      "delta": 5,
      "key": "epi1_diastolic_bp_1",
-     "onset_seconds": 80,
-     "duration_seconds": 100,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "onset_seconds": 40,
+     "duration_seconds": 50,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "diastolic_bp",
      "delta": 3,
      "key": "epi1_diastolic_bp_2",
-     "onset_seconds": 100,
-     "duration_seconds": 120,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "onset_seconds": 50,
+     "duration_seconds": 60,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "respiratory_rate",
      "delta": -4,
      "key": "epi1_respiratory_rate_0",
      "onset_seconds": 10,
-     "duration_seconds": 80,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "duration_seconds": 40,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "respiratory_rate",
      "delta": -3,
      "key": "epi1_respiratory_rate_1",
-     "onset_seconds": 80,
-     "duration_seconds": 100,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "onset_seconds": 40,
+     "duration_seconds": 50,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "respiratory_rate",
      "delta": -1,
      "key": "epi1_respiratory_rate_2",
-     "onset_seconds": 100,
-     "duration_seconds": 120,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "onset_seconds": 50,
+     "duration_seconds": 60,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "oxygen_saturation",
      "delta": 2,
      "key": "epi1_oxygen_saturation_0",
      "onset_seconds": 10,
-     "duration_seconds": 80,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "duration_seconds": 40,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "oxygen_saturation",
      "delta": 1,
      "key": "epi1_oxygen_saturation_1",
-     "onset_seconds": 80,
-     "duration_seconds": 100,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "onset_seconds": 40,
+     "duration_seconds": 50,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "oxygen_saturation",
      "delta": 1,
      "key": "epi1_oxygen_saturation_2",
-     "onset_seconds": 100,
-     "duration_seconds": 120,
-     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026)."
+     "onset_seconds": 50,
+     "duration_seconds": 60,
+     "while": "NOT flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026)."
     },
     {
      "vital": "heart_rate",
      "delta": 4,
      "key": "epi2_heart_rate_0",
      "onset_seconds": 10,
-     "duration_seconds": 40,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "duration_seconds": 25,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "heart_rate",
      "delta": 3,
      "key": "epi2_heart_rate_1",
-     "onset_seconds": 40,
-     "duration_seconds": 50,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "onset_seconds": 25,
+     "duration_seconds": 32,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "heart_rate",
      "delta": 1,
      "key": "epi2_heart_rate_2",
-     "onset_seconds": 50,
-     "duration_seconds": 60,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "onset_seconds": 32,
+     "duration_seconds": 40,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "systolic_bp",
      "delta": 8,
      "key": "epi2_systolic_bp_0",
      "onset_seconds": 10,
-     "duration_seconds": 40,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "duration_seconds": 25,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "systolic_bp",
      "delta": 5,
      "key": "epi2_systolic_bp_1",
-     "onset_seconds": 40,
-     "duration_seconds": 50,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "onset_seconds": 25,
+     "duration_seconds": 32,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "systolic_bp",
      "delta": 3,
      "key": "epi2_systolic_bp_2",
-     "onset_seconds": 50,
-     "duration_seconds": 60,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "onset_seconds": 32,
+     "duration_seconds": 40,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "diastolic_bp",
      "delta": 4,
      "key": "epi2_diastolic_bp_0",
      "onset_seconds": 10,
-     "duration_seconds": 40,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "duration_seconds": 25,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "diastolic_bp",
      "delta": 3,
      "key": "epi2_diastolic_bp_1",
-     "onset_seconds": 40,
-     "duration_seconds": 50,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "onset_seconds": 25,
+     "duration_seconds": 32,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "diastolic_bp",
      "delta": 1,
      "key": "epi2_diastolic_bp_2",
-     "onset_seconds": 50,
-     "duration_seconds": 60,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "onset_seconds": 32,
+     "duration_seconds": 40,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "respiratory_rate",
      "delta": -2,
      "key": "epi2_respiratory_rate_0",
      "onset_seconds": 10,
-     "duration_seconds": 40,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "duration_seconds": 25,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "respiratory_rate",
      "delta": -1,
      "key": "epi2_respiratory_rate_1",
-     "onset_seconds": 40,
-     "duration_seconds": 50,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "onset_seconds": 25,
+     "duration_seconds": 32,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "respiratory_rate",
      "delta": -1,
      "key": "epi2_respiratory_rate_2",
-     "onset_seconds": 50,
-     "duration_seconds": 60,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "onset_seconds": 32,
+     "duration_seconds": 40,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "oxygen_saturation",
      "delta": 1,
      "key": "epi2_oxygen_saturation_0",
      "onset_seconds": 10,
-     "duration_seconds": 40,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "duration_seconds": 25,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     },
     {
      "vital": "oxygen_saturation",
      "delta": 1,
      "key": "epi2_oxygen_saturation_1",
-     "onset_seconds": 40,
-     "duration_seconds": 50,
-     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening)",
-     "note": "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."
+     "onset_seconds": 25,
+     "duration_seconds": 32,
+     "while": "flag epi_im_2 set AND (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse)",
+     "note": "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."
     }
    ],
    "nurse_alert": [
@@ -1326,7 +1423,7 @@
      "value": "In his thigh. Let's see what it does."
     },
     {
-     "when": "phase is persistent OR phase is worsening",
+     "when": "phase is persistent OR phase is worsening OR phase is relapse",
      "value": "In. It'll buy us a little time."
     },
     {
@@ -1339,7 +1436,7 @@
     "guard": "NOT flag epi_im_ed set AND NOT phase is peri_arrest AND NOT phase is post_induction_collapse",
     "text": "He's still struggling, even after the epi in the ambulance. What do you want to give him?"
    },
-   "debrief_note": "The crew's dose was one dose, not completed treatment. It worked for a few minutes and wore off, which is the commonest story in anaphylaxis that comes back. Repeat it in the anterolateral thigh after 5 minutes if there is no lasting response, before any adjunct.\n\nThe dose is 0.01 mg/kg of the 1 mg/mL solution, 0.4 mg for his 40 kg. US guidance caps a child's dose at 0.3 mg and UK guidance gives 0.5 mg over 12 years, so 0.3 to 0.5 mg is reasonable here, and the 0.3 mg pen is acceptable. State the weight before you order. This simulator does not take doses.\n\nHere the second dose did what the first had done: better for a minute or two, then worse. After two appropriate IM doses that is refractory anaphylaxis, and the next step is the infusion. A further IM dose while it is mixed is right and buys a little time. [UNVERIFIED: Resuscitation Council UK anaphylaxis and refractory anaphylaxis algorithms 2021, read through search] [UNVERIFIED: Shaker et al., J Allergy Clin Immunol 2020 (anaphylaxis practice parameter), read through a Cleveland Clinic Journal of Medicine summary]"
+   "debrief_note": "The crew's dose was one dose, not completed treatment. It worked for a few minutes and wore off, which is the commonest story in anaphylaxis that comes back. Repeat it in the anterolateral thigh after 5 minutes if there is no lasting response, before any adjunct.\n\nThe dose is 0.01 mg/kg of the 1 mg/mL solution, 0.4 mg for his 40 kg. US guidance caps a child's dose at 0.3 mg and UK guidance gives 0.5 mg over 12 years, so 0.3 to 0.5 mg is reasonable here, and the 0.3 mg pen is acceptable. State the weight before you order. This simulator does not take doses.\n\nHere the second dose did what the first had done: better for a minute, then worse. After two appropriate IM doses that is refractory anaphylaxis, and the next step is the infusion. A further IM dose while it is mixed is right and buys a little time. [UNVERIFIED: Resuscitation Council UK anaphylaxis and refractory anaphylaxis algorithms 2021, read through search] [UNVERIFIED: Shaker et al., J Allergy Clin Immunol 2020 (anaphylaxis practice parameter), read through a Cleveland Clinic Journal of Medicine summary]"
   },
   {
    "catalog_id": "epinephrine_drip",
@@ -1353,7 +1450,7 @@
      "value": "neutral"
     },
     {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse",
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse",
      "value": "critical"
     },
     {
@@ -1393,12 +1490,8 @@
      "value": "Restarting it. The bag's still up."
     },
     {
-     "when": "flag help_called set",
-     "value": "Pharmacy's mixing it. With PICU on the way they're rushing it."
-    },
-    {
      "when": null,
-     "value": "Pharmacy's mixing it. It'll be a couple of minutes."
+     "value": "Pharmacy's sending it up now."
     }
    ],
    "prompt": {
@@ -1406,7 +1499,7 @@
     "guard": "NOT flag epi_drip_ordered set",
     "text": "He's not picking up, even after the epi. What's next?"
    },
-   "debrief_note": "The escalation for refractory anaphylaxis: the same drug, given continuously, on a pump, on its own line, with continuous monitoring, titrated to his pressure and his breathing. Not repeated IV pushes and not another vasopressor in its place.\n\nA common start is 0.1 microgram/kg/min, 4 micrograms a minute at 40 kg. UK guidance mixes 1 mg in 100 mL and starts at 0.5 to 1 mL/kg/hour, which is 0.08 to 0.17 microgram/kg/min. Follow your own protocol.\n\nIt takes minutes to mix. Order it as soon as the second IM dose fails, and call for help, which in this case halved the wait. Keep giving IM doses until it runs. [UNVERIFIED: Resuscitation Council UK anaphylaxis and refractory anaphylaxis algorithms 2021, read through search]"
+   "debrief_note": "The escalation for refractory anaphylaxis: the same drug, given continuously, on a pump, on its own line, with continuous monitoring, titrated to his pressure and his breathing. Not repeated IV pushes and not another vasopressor in its place.\n\nA common start is 0.1 microgram/kg/min, 4 micrograms a minute at 40 kg. UK guidance mixes 1 mg in 100 mL and starts at 0.5 to 1 mL/kg/hour, which is 0.08 to 0.17 microgram/kg/min. Follow your own protocol.\n\nIn a real department it takes minutes to mix and hang. Here pharmacy has it running 10 seconds after the order, a teaching compression. Order it as soon as the second IM dose fails, and keep giving IM doses until it runs. [UNVERIFIED: Resuscitation Council UK anaphylaxis and refractory anaphylaxis algorithms 2021, read through search]"
   },
   {
    "catalog_id": "stop_epinephrine",
@@ -1481,10 +1574,6 @@
    "catalog_id": "consult_critical_care",
    "tag": [
     {
-     "when": "phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse",
-     "value": "critical"
-    },
-    {
      "when": null,
      "value": "recommended"
     }
@@ -1507,10 +1596,10 @@
    ],
    "prompt": {
     "deadline_seconds": 45,
-    "guard": "phase is persistent OR phase is worsening",
+    "guard": "phase is persistent OR phase is worsening OR phase is relapse",
     "text": "Who else do you want in here?"
    },
-   "debrief_note": "Two doses and still struggling is the moment to call the senior and the PICU, and to do it while you give the next dose, not after. In this case the call halved the time to get the infusion running. In the department it brings hands, a pharmacist and an airway plan.\n\nThis button stands for both the PICU team and the senior pediatric emergency physician (owner's defaults, 11 November 2026)."
+   "debrief_note": "Two doses and still struggling is the moment to call the senior and the PICU, and to do it while you give the next dose, not after. In the department it brings hands, a pharmacist, an airway plan and a PICU bed. Recommended, not scored as critical (owner, 13 November 2026).\n\nThis button stands for both the PICU team and the senior pediatric emergency physician (owner's defaults, 11 November 2026)."
   },
   {
    "catalog_id": "norepinephrine_drip",
@@ -1568,7 +1657,7 @@
    "catalog_id": "normal_saline_500ml_bolus",
    "tag": [
     {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse",
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse",
      "value": "critical"
     },
     {
@@ -1594,7 +1683,7 @@
    "also_satisfies": [
     {
      "id": "bolus_here_p3",
-     "when": "phase is worsening"
+     "when": "phase is worsening OR phase is relapse"
     },
     {
      "id": "bolus_here_p4",
@@ -1663,7 +1752,7 @@
     },
     {
      "id": "bolus_here_p3",
-     "when": "phase is worsening"
+     "when": "phase is worsening OR phase is relapse"
     },
     {
      "id": "bolus_here_p4",
@@ -1763,7 +1852,7 @@
    "catalog_id": "bolus_here_p3",
    "tag": [
     {
-     "when": "phase is worsening",
+     "when": "phase is worsening OR phase is relapse",
      "value": "critical"
     },
     {
@@ -1776,7 +1865,7 @@
    "expectation_label": "Bolus while floppy",
    "prompt": {
     "deadline_seconds": 40,
-    "guard": "phase is worsening",
+    "guard": "phase is worsening OR phase is relapse",
     "text": "He's cold to the knees. Anything for his circulation?"
    },
    "debrief_note": "Not an order. Credited when the act is done in this phase, so a dose earlier in the run does not count for it. A transition reads it."
@@ -1873,7 +1962,7 @@
    "catalog_id": "drip_restarted",
    "tag": [
     {
-     "when": "(flag relapsed set AND phase is worsening) OR (flag relapsed_vent set AND phase is post_induction_collapse)",
+     "when": "phase is relapse OR phase is vent_relapse",
      "value": "critical"
     },
     {
@@ -1886,7 +1975,7 @@
    "expectation_label": "Infusion restarted after a stop",
    "prompt": {
     "deadline_seconds": 20,
-    "guard": "(flag relapsed set AND phase is worsening) OR (flag relapsed_vent set AND phase is post_induction_collapse)",
+    "guard": "phase is relapse OR phase is vent_relapse",
     "text": "Since the epi stopped he's gone downhill. What do you want?"
    },
    "debrief_note": "Not an order. Credited when the act is done in this phase, so a dose earlier in the run does not count for it. A transition reads it."
@@ -1956,7 +2045,7 @@
    "catalog_id": "non_invasive_positive_pressure_ventilation",
    "tag": [
     {
-     "when": "phase is worsening OR phase is peri_arrest",
+     "when": "phase is worsening OR phase is relapse OR phase is peri_arrest",
      "value": "discouraged"
     },
     {
@@ -2002,7 +2091,7 @@
      "value": "discouraged"
     },
     {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized",
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized",
      "value": "recommended"
     },
     {
@@ -2192,12 +2281,12 @@
     },
     {
      "flag": "sedated_p3",
-     "when": "phase is worsening"
+     "when": "phase is worsening OR phase is relapse"
     }
    ],
    "nurse_alert": [
     {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening",
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse",
      "value": "He's gone very still since that went in."
     },
     {
@@ -2230,12 +2319,12 @@
     },
     {
      "flag": "sedated_p3",
-     "when": "phase is worsening"
+     "when": "phase is worsening OR phase is relapse"
     }
    ],
    "nurse_alert": [
     {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening",
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse",
      "value": "He's gone very still since that went in."
     },
     {
@@ -2264,12 +2353,12 @@
     },
     {
      "flag": "sedated_p3",
-     "when": "phase is worsening"
+     "when": "phase is worsening OR phase is relapse"
     }
    ],
    "nurse_alert": [
     {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening",
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse",
      "value": "He's gone very still since that went in."
     },
     {
@@ -2298,12 +2387,12 @@
     },
     {
      "flag": "sedated_p3",
-     "when": "phase is worsening"
+     "when": "phase is worsening OR phase is relapse"
     }
    ],
    "nurse_alert": [
     {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening",
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse",
      "value": "He's gone very still since that went in."
     },
     {
@@ -2376,6 +2465,10 @@
     {
      "when": "phase is responding OR phase is stabilized OR phase is ventilated",
      "value": "Tube's in. His pressure's holding on the drip."
+    },
+    {
+     "when": "phase is relapse",
+     "value": "Tube's in. His pressure's falling, and the epi's still off."
     },
     {
      "when": null,
@@ -2481,7 +2574,11 @@
    "catalog_id": "reassessed_after_epi",
    "tag": [
     {
-     "when": "phase is presentation OR phase is persistent OR phase is worsening",
+     "when": "phase is persistent AND flag epi_im_ed set",
+     "value": "critical"
+    },
+    {
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse",
      "value": "recommended"
     },
     {
@@ -2491,24 +2588,34 @@
    ],
    "hidden": true,
    "display_name": "Reassessed after epinephrine",
-   "expectation_label": "Reassessed after an epinephrine dose",
-   "debrief_note": "Not an order. Credited when the airway, breathing, circulation or lungs are examined after an ED epinephrine dose. The brief response after each dose looked like recovery. Looking again a minute or two later showed it was not."
+   "expectation_label": "Examined him again after the IM dose",
+   "prompt": {
+    "deadline_seconds": 20,
+    "guard": "phase is persistent AND flag epi_im_ed set",
+    "text": "He looked better for a minute there. Can you take another look at him?"
+   },
+   "debrief_note": "Not an order. Credited when the airway, breathing, circulation or lungs are examined after an ED epinephrine dose. The brief response after the dose looked like recovery. Looking again once it wore off showed a child getting worse: slower answers, no longer asking for his mother, harder work to breathe. That is how a refractory reaction is recognized, and it is the moment to order the infusion (owner, 13 November 2026: a critical action tied to the case's goals)."
   },
   {
    "catalog_id": "exam_airway",
    "tag": [
     {
+     "when": "phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest",
+     "value": "critical"
+    },
+    {
      "when": null,
      "value": "recommended"
     }
    ],
-   "debrief_note": "Lips and tongue swelling make this an airway to watch. A hoarse voice and stridor mean it is closing. [UNVERIFIED: written by a model from memory, no source opened]",
    "also_satisfies": [
     {
      "id": "reassessed_after_epi",
      "when": "flag epi_im_ed set"
     }
-   ]
+   ],
+   "debrief_note": "The critical exam in anaphylaxis. Look at the lips and tongue, listen to the voice and for stridor, and ask whether he can swallow. Swelling here decides how early the airway becomes the problem and who should manage it, and a hoarse voice or stridor means it is closing. Repeat it after every dose (owner, 13 November 2026: a critical action tied to the case's goals). [UNVERIFIED: Resuscitation Council UK anaphylaxis and refractory anaphylaxis algorithms 2021, read through search]",
+   "expectation_label": "Airway checked for swelling and stridor"
   },
   {
    "catalog_id": "exam_breath",
@@ -2752,6 +2859,14 @@
      }
     },
     {
+     "when": "phase is relapse",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Single words. No stridor. Lips swollen, tongue full."
+     }
+    },
+    {
      "when": "phase is persistent",
      "value": {
       "kind": "exam_findings",
@@ -2794,6 +2909,14 @@
      }
     },
     {
+     "when": "(phase is persistent OR phase is relapse) AND flag epi_bridge_acting set AND NOT flag epi_onset set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "A little easier for the moment. Still retracting."
+     }
+    },
+    {
      "when": "phase is peri_arrest",
      "value": {
       "kind": "exam_findings",
@@ -2803,6 +2926,14 @@
     },
     {
      "when": "phase is worsening",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Marked retractions below and between the ribs. Tiring, poor effort."
+     }
+    },
+    {
+     "when": "phase is relapse",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
@@ -2868,6 +2999,14 @@
      }
     },
     {
+     "when": "(phase is persistent OR phase is relapse) AND flag epi_bridge_acting set AND NOT flag epi_onset set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Wheeze throughout, a little less for now. Air entry still poor."
+     }
+    },
+    {
      "when": "phase is peri_arrest",
      "value": {
       "kind": "exam_findings",
@@ -2884,7 +3023,23 @@
      }
     },
     {
+     "when": "phase is relapse AND flag albuterol_given set",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Wheeze with poor air movement, slightly better after the nebulizer."
+     }
+    },
+    {
      "when": "phase is worsening",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Wheeze with poor air movement."
+     }
+    },
+    {
+     "when": "phase is relapse",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
@@ -2958,6 +3113,14 @@
      }
     },
     {
+     "when": "phase is relapse",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Cool, mottled legs. Weak peripheral pulses. Capillary refill 4 seconds."
+     }
+    },
+    {
      "when": "phase is persistent",
      "value": {
       "kind": "exam_findings",
@@ -2983,6 +3146,14 @@
     },
     {
      "when": "phase is post_induction_collapse",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Mottled. Weak pulses. Capillary refill 5 seconds."
+     }
+    },
+    {
+     "when": "phase is vent_relapse",
      "value": {
       "kind": "exam_findings",
       "abnormal": true,
@@ -3100,6 +3271,14 @@
      }
     },
     {
+     "when": "phase is relapse",
+     "value": {
+      "kind": "exam_findings",
+      "abnormal": true,
+      "findings": "Floppy, opens his eyes to voice. GCS 12."
+     }
+    },
+    {
      "when": "phase is persistent",
      "value": {
       "kind": "exam_findings",
@@ -3155,6 +3334,14 @@
      }
     },
     {
+     "when": "flag intubated set AND phase is vent_relapse",
+     "value": {
+      "kind": "general_status",
+      "abnormal": true,
+      "findings": "Intubated and paralyzed. Mottled."
+     }
+    },
+    {
      "when": "flag intubated set",
      "value": {
       "kind": "general_status",
@@ -3172,6 +3359,14 @@
     },
     {
      "when": "phase is worsening",
+     "value": {
+      "kind": "general_status",
+      "abnormal": true,
+      "findings": "Floppy, single words, no longer fighting the mask. GCS 12."
+     }
+    },
+    {
+     "when": "phase is relapse",
      "value": {
       "kind": "general_status",
       "abnormal": true,
@@ -3239,6 +3434,16 @@
     },
     {
      "when": "phase is worsening",
+     "value": {
+      "work_of_breathing": "severe",
+      "addons": [
+       "nonrebreather",
+       "sweating"
+      ]
+     }
+    },
+    {
+     "when": "phase is relapse",
      "value": {
       "work_of_breathing": "severe",
       "addons": [
@@ -3353,6 +3558,44 @@
      },
      {
       "when": "phase is worsening",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.17",
+         "unit": "",
+         "reference_range": "7.31-7.41",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "48",
+         "unit": "mmHg",
+         "reference_range": "41-51",
+         "abnormal": false
+        },
+        {
+         "label": "HCO3",
+         "value": "17",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": true
+        },
+        {
+         "label": "Lactate",
+         "value": "5.5",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Model output, not from a physician or a laboratory reference. Pediatric intervals to be checked. [UNVERIFIED]"
+      }
+     },
+     {
+      "when": "phase is relapse",
       "value": {
        "kind": "panel",
        "abnormal": true,
@@ -3542,6 +3785,44 @@
       }
      },
      {
+      "when": "phase is vent_relapse",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.06",
+         "unit": "",
+         "reference_range": "7.31-7.41",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "55",
+         "unit": "mmHg",
+         "reference_range": "41-51",
+         "abnormal": true
+        },
+        {
+         "label": "HCO3",
+         "value": "15",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": true
+        },
+        {
+         "label": "Lactate",
+         "value": "6.5",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Model output, not from a physician or a laboratory reference. Pediatric intervals to be checked. [UNVERIFIED]"
+      }
+     },
+     {
       "when": null,
       "value": {
        "kind": "panel",
@@ -3676,6 +3957,51 @@
      },
      {
       "when": "phase is worsening",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.19",
+         "unit": "",
+         "reference_range": "7.35-7.45",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "43",
+         "unit": "mmHg",
+         "reference_range": "35-45",
+         "abnormal": false
+        },
+        {
+         "label": "pO2",
+         "value": "56",
+         "unit": "mmHg",
+         "reference_range": "80-100",
+         "abnormal": true
+        },
+        {
+         "label": "HCO3",
+         "value": "16",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": true
+        },
+        {
+         "label": "Lactate",
+         "value": "5.5",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Model output, not from a physician or a laboratory reference. Pediatric intervals to be checked. [UNVERIFIED]"
+      }
+     },
+     {
+      "when": "phase is relapse",
       "value": {
        "kind": "panel",
        "abnormal": true,
@@ -3900,6 +4226,51 @@
       }
      },
      {
+      "when": "phase is vent_relapse",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "pH",
+         "value": "7.07",
+         "unit": "",
+         "reference_range": "7.35-7.45",
+         "abnormal": true
+        },
+        {
+         "label": "pCO2",
+         "value": "50",
+         "unit": "mmHg",
+         "reference_range": "35-45",
+         "abnormal": true
+        },
+        {
+         "label": "pO2",
+         "value": "56",
+         "unit": "mmHg",
+         "reference_range": "80-100",
+         "abnormal": true
+        },
+        {
+         "label": "HCO3",
+         "value": "14",
+         "unit": "mEq/L",
+         "reference_range": "22-26",
+         "abnormal": true
+        },
+        {
+         "label": "Lactate",
+         "value": "6.5",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Model output, not from a physician or a laboratory reference. Pediatric intervals to be checked. [UNVERIFIED]"
+      }
+     },
+     {
       "when": null,
       "value": {
        "kind": "panel",
@@ -4001,6 +4372,23 @@
       }
      },
      {
+      "when": "phase is relapse",
+      "value": {
+       "kind": "value",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "Lactate",
+         "value": "5.5",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Model output, not from a physician or a laboratory reference. Pediatric intervals to be checked. [UNVERIFIED]"
+      }
+     },
+     {
       "when": "phase is peri_arrest",
       "value": {
        "kind": "value",
@@ -4053,6 +4441,23 @@
      },
      {
       "when": "phase is post_induction_collapse",
+      "value": {
+       "kind": "value",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "Lactate",
+         "value": "6.5",
+         "unit": "mmol/L",
+         "reference_range": "0.5-2.0",
+         "abnormal": true
+        }
+       ],
+       "verify": "Model output, not from a physician or a laboratory reference. Pediatric intervals to be checked. [UNVERIFIED]"
+      }
+     },
+     {
+      "when": "phase is vent_relapse",
       "value": {
        "kind": "value",
        "abnormal": true,
@@ -4292,6 +4697,73 @@
       }
      },
      {
+      "when": "phase is relapse",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "Sodium",
+         "value": "139",
+         "unit": "mEq/L",
+         "reference_range": "135-145",
+         "abnormal": false
+        },
+        {
+         "label": "Potassium",
+         "value": "3.8",
+         "unit": "mEq/L",
+         "reference_range": "3.5-5.0",
+         "abnormal": false
+        },
+        {
+         "label": "Chloride",
+         "value": "105",
+         "unit": "mEq/L",
+         "reference_range": "98-107",
+         "abnormal": false
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "18",
+         "unit": "mEq/L",
+         "reference_range": "22-29",
+         "abnormal": true
+        },
+        {
+         "label": "BUN",
+         "value": "12",
+         "unit": "mg/dL",
+         "reference_range": "7-20",
+         "abnormal": false
+        },
+        {
+         "label": "Creatinine",
+         "value": "0.6",
+         "unit": "mg/dL",
+         "reference_range": "0.3-0.7 (age 12)",
+         "abnormal": false
+        },
+        {
+         "label": "Glucose",
+         "value": "138",
+         "unit": "mg/dL",
+         "reference_range": "70-140 (random)",
+         "abnormal": false
+        },
+        {
+         "label": "Anion gap",
+         "value": "16",
+         "unit": "mEq/L",
+         "reference_range": "8-16",
+         "abnormal": false
+        }
+       ],
+       "verify": "Model output, not from a physician or a laboratory reference. Pediatric intervals to be checked. [UNVERIFIED]",
+       "comment": "Anion gap calculated without potassium."
+      }
+     },
+     {
       "when": "phase is peri_arrest",
       "value": {
        "kind": "panel",
@@ -4494,6 +4966,73 @@
      },
      {
       "when": "phase is post_induction_collapse",
+      "value": {
+       "kind": "panel",
+       "abnormal": true,
+       "components": [
+        {
+         "label": "Sodium",
+         "value": "139",
+         "unit": "mEq/L",
+         "reference_range": "135-145",
+         "abnormal": false
+        },
+        {
+         "label": "Potassium",
+         "value": "3.8",
+         "unit": "mEq/L",
+         "reference_range": "3.5-5.0",
+         "abnormal": false
+        },
+        {
+         "label": "Chloride",
+         "value": "105",
+         "unit": "mEq/L",
+         "reference_range": "98-107",
+         "abnormal": false
+        },
+        {
+         "label": "Bicarbonate",
+         "value": "16",
+         "unit": "mEq/L",
+         "reference_range": "22-29",
+         "abnormal": true
+        },
+        {
+         "label": "BUN",
+         "value": "12",
+         "unit": "mg/dL",
+         "reference_range": "7-20",
+         "abnormal": false
+        },
+        {
+         "label": "Creatinine",
+         "value": "0.6",
+         "unit": "mg/dL",
+         "reference_range": "0.3-0.7 (age 12)",
+         "abnormal": false
+        },
+        {
+         "label": "Glucose",
+         "value": "138",
+         "unit": "mg/dL",
+         "reference_range": "70-140 (random)",
+         "abnormal": false
+        },
+        {
+         "label": "Anion gap",
+         "value": "18",
+         "unit": "mEq/L",
+         "reference_range": "8-16",
+         "abnormal": true
+        }
+       ],
+       "verify": "Model output, not from a physician or a laboratory reference. Pediatric intervals to be checked. [UNVERIFIED]",
+       "comment": "Anion gap calculated without potassium."
+      }
+     },
+     {
+      "when": "phase is vent_relapse",
       "value": {
        "kind": "panel",
        "abnormal": true,
@@ -4777,6 +5316,10 @@
      "value": "PICU fellow: Keep the epi infusion going and titrate to his pressure. Keep the fluid going. We're bringing a vent down. He comes to us."
     },
     {
+     "when": "phase is vent_relapse",
+     "value": "PICU fellow: His pressure's going because the epi's off. Restart the infusion now and give fluid. Don't wean it down there. I'm coming down."
+    },
+    {
      "when": "flag intubated set",
      "value": "PICU fellow: His pressure's going after the tube. Epi now, IM or a small push, and get the infusion running. Fluid in fast. I'm coming down."
     },
@@ -4793,20 +5336,16 @@
      "value": "PICU fellow: Running down. Epi now, IM if the drip isn't up. Fluid in fast. Bag him. Get the airway kit and the video scope ready."
     },
     {
-     "when": "phase is worsening AND flag epi_drip_ordered set",
-     "value": "PICU fellow: Coming. Keep IM epi going until the infusion runs, and push fluid. Have the airway kit ready, but drip before tube."
+     "when": "phase is relapse",
+     "value": "PICU fellow: Why's the epi off? Restart the infusion now, don't wean it down there. IM epi while it goes back on, and push fluid. I'm coming down."
     },
     {
      "when": "phase is worsening",
      "value": "PICU fellow: He needs an epi infusion now. Get it mixing, IM again until it runs, and push fluid. I'm coming down."
     },
     {
-     "when": "phase is persistent AND flag epi_drip_ordered set",
-     "value": "PICU fellow: Good, an epi infusion. I'll get pharmacy to rush it. IM again if it's slow, second line, more fluid. Attending's coming too."
-    },
-    {
      "when": "phase is persistent",
-     "value": "PICU fellow: Two doses and worse is refractory. Start an epi infusion and I'll rush pharmacy. IM again until it runs. Attending's coming too."
+     "value": "PICU fellow: Two doses and worse is refractory. Start an epi infusion now, on its own line. More fluid. Attending's coming too."
     },
     {
      "when": "flag epi_im_ed set",
@@ -4829,7 +5368,7 @@
   },
   "global_answer_rules": [
    {
-    "when": "flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete",
+    "when": "flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete",
     "value": "His mother is at the foot of the bed, crying. 'Please, just help him.' There is no history to be had right now.",
     "note": "Section 8.5. Covers the phases at alertness 2 and 3 (peri-arrest, after the tube, ventilated, the terminal phase) and every intubated state. The mother is present but the team is resuscitating."
    }
@@ -4954,7 +5493,7 @@
     ],
     "answer": [
      {
-      "when": "phase is persistent OR phase is worsening",
+      "when": "phase is persistent OR phase is worsening OR phase is relapse",
       "value": "His mother: 'He ate some dessert and his mouth started itching, then hives and wheezing. The shot helped for a few minutes. Now he's so sleepy.'"
      },
      {
@@ -5278,7 +5817,7 @@
     ],
     "answer": [
      {
-      "when": "phase is persistent OR phase is worsening",
+      "when": "phase is persistent OR phase is worsening OR phase is relapse",
       "value": "His mother: 'He was talking to me before. Now he's so sleepy.'"
      },
      {
@@ -5545,7 +6084,7 @@
     ],
     "answer": [
      {
-      "when": "phase is persistent OR phase is worsening",
+      "when": "phase is persistent OR phase is worsening OR phase is relapse",
       "value": "His mother: 'He's getting sleepy. That's not like him at all.'"
      },
      {
@@ -6342,13 +6881,14 @@
     "id": "first",
     "label": "The first minutes",
     "actions": [
-     "attach_monitor",
      "epinephrine_intramuscular",
-     "lay_back_legs_raised",
-     "insert_iv",
-     "second_iv",
+     "exam_airway",
      "normal_saline_500ml_bolus",
-     "reassessed_after_epi"
+     "reassessed_after_epi",
+     "lay_back_legs_raised",
+     "attach_monitor",
+     "insert_iv",
+     "second_iv"
     ]
    },
    {
@@ -6358,7 +6898,8 @@
      "epinephrine_drip",
      "consult_critical_care",
      "bolus_here_p3",
-     "fluid_here_p5"
+     "fluid_here_p5",
+     "drip_restarted"
     ]
    },
    {
@@ -6430,7 +6971,7 @@
    "stabilized",
    "case_complete"
   ],
-  "intended_path_note": "IM epinephrine on arrival with the monitor, posture, two lines and a bolus. When it wears off, the PICU call and the infusion. A second bolus. Albuterol for the wheeze. PICU.",
+  "intended_path_note": "IM epinephrine on arrival, the airway examined, a bolus, with the monitor, posture and two lines. When it wears off, look at him again, order the infusion and call PICU. A second bolus. Albuterol for the wheeze. PICU.",
   "trap_actions": [
    "diphenhydramine",
    "methylprednisolone_bolus",
@@ -6442,7 +6983,7 @@
    "A drug that helped and then stopped helping has not finished its job. Give it once more, on time, and when that fails too, change how you give it rather than what you give.",
    "Epinephrine before arrival is one dose, not completed treatment. Repeat it in the thigh now, before any antihistamine, steroid or nebulizer. [UNVERIFIED: Resuscitation Council UK anaphylaxis algorithm 2021, read through search]",
    "Read a child's numbers against his age. At 12, a systolic under 90 is hypotension and a heart rate of 140 is tachycardia. A child who stops talking and stops asking for his parent is getting worse, whatever the monitor says. [UNVERIFIED: PALS 2015 vital sign tables as reproduced by PedsCases]",
-   "After two IM doses without a lasting response, call for help and start the infusion, and keep giving IM doses until it runs. The call is part of the treatment. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
+   "After two IM doses without a lasting response, start the infusion and call for help, and keep giving IM doses until it runs. [UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]",
    "Anaphylactic shock needs volume and posture: two lines, weight-based boluses, and lying flat with the legs up. Never sit or stand a hypotensive child. [UNVERIFIED: Pumphrey, J Allergy Clin Immunol 2003, read through BestBETs]",
    "State the weight before any drug or fluid. This simulator does not take doses, so it is taught here: IM epinephrine 0.01 mg/kg (0.4 mg at 40 kg, 0.3 to 0.5 mg acceptable), boluses of 10 to 20 mL/kg, an infusion from about 0.1 microgram/kg/min."
   ],

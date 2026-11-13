@@ -1,30 +1,31 @@
 {
  "scenarios_version": "0.1",
  "case_id": "sweet-anaphylaxis-01",
- "note": "End-to-end paths. The runner charges 8 seconds per action, ignores timed flags, effects and also_satisfies, and asserts the final phase only. So it cannot see the epinephrine bridge or the second IM dose. SWEET-tests.js is the authority.",
+ "note": "End-to-end paths. The runner charges 8 seconds per action, ignores timed flags, effects and also_satisfies, and asserts the final phase only. So it cannot see the epinephrine bridge or the second IM dose. SWEET-tests.js is the authority. The runner cannot see a restart (it is credited through also_satisfies), so the restart path is in the tests only.",
  "scenarios": [
   {
-   "name": "Intended path: dose, legs up, a bolus, PICU called, infusion, a second bolus",
+   "name": "Intended path: dose, airway, a bolus, infusion, PICU, a second bolus",
    "steps": [
     "attach_monitor",
     "insert_iv",
     "second_iv",
     "epinephrine_intramuscular",
-    "lay_back_legs_raised",
+    "exam_airway",
     "normal_saline_500ml_bolus",
     {
-     "wait": 110
+     "wait": 40
     },
-    "consult_critical_care",
+    "exam_breath",
     "epinephrine_drip",
+    "consult_critical_care",
     "normal_saline_500ml_bolus",
     {
-     "wait": 260
+     "wait": 200
     },
     "handoff_submit"
    ],
    "expect_phase": "case_complete",
-   "note": "Still struggling 120 s after the dose, talking again 60 s after the order with help, settling 180 s later."
+   "note": "Still struggling 60 s after the dose, talking again 10 s after the order, settling 180 s later."
   },
   {
    "name": "Does nothing: the terminal phase",
@@ -43,29 +44,29 @@
     "insert_iv",
     "epinephrine_intramuscular",
     {
-     "wait": 300
+     "wait": 230
     }
    ],
    "expect_phase": "worsening",
-   "note": "Still struggling at about 144, floppy 150 s later."
+   "note": "Still struggling about 60 s after the dose, floppy 150 s later."
   },
   {
-   "name": "Infusion without help runs in 120 seconds",
+   "name": "Infusion in phase 2 runs in 10 seconds",
    "steps": [
     "attach_monitor",
     "insert_iv",
     "second_iv",
     "epinephrine_intramuscular",
     {
-     "wait": 120
+     "wait": 60
     },
     "epinephrine_drip",
     {
-     "wait": 125
+     "wait": 12
     }
    ],
    "expect_phase": "responding",
-   "note": "Ordered in phase 2 with no PICU call."
+   "note": "No PICU call needed."
   },
   {
    "name": "Intubated without the infusion",
@@ -74,7 +75,7 @@
     "insert_iv",
     "epinephrine_intramuscular",
     {
-     "wait": 130
+     "wait": 60
     },
     "ketamine_bolus",
     "rocuronium_bolus",
@@ -94,19 +95,18 @@
     "second_iv",
     "epinephrine_intramuscular",
     {
-     "wait": 110
+     "wait": 60
     },
-    "consult_critical_care",
     "epinephrine_drip",
     {
-     "wait": 70
+     "wait": 20
     },
     "stop_epinephrine",
     {
      "wait": 130
     }
    ],
-   "expect_phase": "worsening",
+   "expect_phase": "relapse",
    "note": "Relapse 120 s after the stop."
   },
   {

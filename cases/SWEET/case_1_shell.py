@@ -12,17 +12,18 @@ Five learning goals drive the structure (SEED section 2):
   1. A dose in the field is not completed treatment. One more IM dose now, before any adjunct.
   2. Read a child's vitals and behavior against his age. A child who stops talking is worse.
   3. Anaphylactic shock needs volume and posture.
-  4. After two IM doses, this is refractory: call for help and start the epinephrine infusion.
+  4. After two IM doses, this is refractory: start the epinephrine infusion, and call for help.
   5. Adjuncts and the airway in their place.
 
-Structure (owner, 11 November 2026). The first ED dose works within 10 seconds and wears off
-over two minutes, then he is worse than on arrival (phase 2). Phase 2 is the window to order
-the infusion, which runs 60 seconds after the order if PICU has been called and 120 if not.
-A second IM dose works for less time (60 seconds) and he then goes floppy (phase 3), never
-sooner than he would have without it. Without the infusion he goes from floppy to silent
-(phase 4) and then to a terminal bradycardia. The infusion moves him to phase 5 and, with
-enough fluid, to phase 6. A tube without the infusion collapses him (phase 7). With it, he is
-ventilated (phase 8).
+Structure (owner, 11 and 13 November 2026). The first ED dose works within 10 seconds and is
+gone by 60, then he is worse than on arrival (phase 2). Phase 2 is the window to order the
+infusion, which pharmacy has running 10 seconds after the order. A second IM dose works for
+less time (gone by 40 seconds) and he then goes floppy (phase 3), never sooner than he would
+have without it. Without the infusion he goes from floppy to silent (phase 4) and then to a
+terminal bradycardia. The infusion moves him to phase 5 and, with enough fluid, to phase 6. A
+tube without the infusion collapses him (phase 7). With it, he is ventilated (phase 8).
+Stopping the infusion sends him to a floppy phase of its own (relapse), or after the tube to a
+falling pressure of its own (vent_relapse), from which only restarting it brings him back.
 """
 
 META = {
@@ -64,7 +65,7 @@ META = {
  "complaint": "Trouble breathing after eating",
  "category": "Pediatrics",
  "library": {
-   "tempo": "minutes: an IM dose wears off, then the infusion takes time to start",
+   "tempo": "seconds: an IM dose works for a minute and wears off, then the infusion",
    "uncertainty": "when IM epinephrine has failed",
    "right_answer": "one more IM dose, then an infusion, and call for help early",
    "danger": "behind a brief response to the crew's dose",
@@ -125,23 +126,28 @@ def ecg(rate_note, pr=130, qrs=80, qtc=420):
 
 
 # --------------------------------------------------------------------------- conditions
-# The epinephrine infusion runs 120 seconds after it is ordered, or 60 once PICU or the
-# senior has been called (owner's structure rule 5, shortened by the owner on 11 November
-# 2026). That is a delayed consequence of the order, measured from guard_true, so it has to
-# be written in each phase a learner can be in while it is mixed. A guard_true clock does not
-# carry into the next phase (authoring 15.1): an order that crosses a phase change waits
-# again in the new phase, a known gap. In phases 3 and 7 the wait is shorter (60 and 90).
-# The infusion's own phases (responding, stabilized, ventilated) are where it is running,
-# so a tube there goes to ventilated and a tube anywhere else collapses him.
+# The epinephrine infusion runs 10 seconds after it is ordered: pharmacy makes it that fast
+# (owner, 13 November 2026). That is a delayed consequence of the order, measured from
+# guard_true, written in each phase a learner can order it in. A stopped infusion sends him to
+# a phase of its own (relapse, vent_relapse), where only a restart brings him back, so the
+# order flag can stay a plain positive guard everywhere else. The infusion's own phases
+# (responding, stabilized, ventilated) are where it is running, so a tube there goes to
+# ventilated and a tube anywhere else collapses him.
 ORDERED = "flag epi_drip_ordered set"
-HELP = "flag help_called set"
 TUBED = "flag intubated set"
+RESTARTED = "action drip_restarted taken"
+DRIP_SECONDS = 10
 
 HANDOFF_T = {"when": "action handoff_submit taken", "to": "case_complete",
              "author_note": "First in every list."}
 
 
-def tube_rules(running):
+def tube_rules(running, dest=None):
+    if dest:
+        return [{"when": TUBED, "to": dest,
+                 "author_rationale": (
+                   "A tube with the infusion stopped. As collapse after induction, and only "
+                   "restarting the infusion brings the pressure back. Model output.")}]
     if running:
         return [{"when": TUBED, "to": "ventilated",
                  "author_rationale": (
@@ -171,24 +177,19 @@ DRIP_NOTE = (
   "[UNVERIFIED: Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]")
 
 
-def drip_runs(dest, fast, slow, narration, extra_guard=""):
-    g = (" AND " + extra_guard) if extra_guard else ""
-    rule = lambda when, after, why: {
-      "when": when + g, "after_seconds": after, "measured_from": "guard_true", "to": dest,
-      "narration": narration, "narration_ventilated": narration, "debrief_note": DRIP_NOTE,
-      "author_rationale": "Delayed consequence of the infusion order: " + why}
-    return [rule(ORDERED + " AND " + HELP, fast,
-                 "mixed and running %d seconds after the order once help has been called. Teaching choice, owner's timing." % fast),
-            rule(ORDERED, slow,
-                 "mixed and running %d seconds after the order. Teaching choice, owner's timing." % slow)]
+def drip_runs(dest, narration):
+    return [{"when": ORDERED, "after_seconds": DRIP_SECONDS, "measured_from": "guard_true", "to": dest,
+             "narration": narration, "narration_ventilated": narration, "debrief_note": DRIP_NOTE,
+             "author_rationale": ("Delayed consequence of the infusion order: pharmacy has it "
+                                  "running 10 seconds after the order (owner, 13 November 2026). "
+                                  "A teaching compression of the minutes it takes to mix.")}]
 
 
-def restart(dest, relapse_flag, narration):
-    return {"when": "flag " + relapse_flag + " set AND action drip_restarted taken", "after_seconds": 30,
-            "measured_from": "guard_true", "to": dest,
+def restart(dest, narration):
+    return {"when": RESTARTED, "after_seconds": DRIP_SECONDS, "measured_from": "guard_true", "to": dest,
             "narration": narration, "narration_ventilated": narration,
             "debrief_note": "Restarted, the infusion brought him back. It should not have been stopped.",
-            "author_rationale": "Delayed consequence of restarting the infusion after a stop. The bag is still hung. Model timing."}
+            "author_rationale": "Delayed consequence of restarting the infusion after a stop. As fast as a new order. Model timing."}
 
 
 def stop_rule(dest, relapse_flag, narration):
@@ -203,8 +204,9 @@ def stop_rule(dest, relapse_flag, narration):
 STOP_RATIONALE = (
   "Delayed consequence of stopping the infusion. Refractory anaphylaxis needs continuous "
   "epinephrine until the reaction settles, which takes hours. Owner's structure rule 8, 120 "
-  "seconds a teaching choice (the structure said within 3 minutes). The relapse flag makes it "
-  "happen once, so the stop and the restart cannot loop.")
+  "seconds a teaching choice (the structure said within 3 minutes). A restart inside the 120 "
+  "seconds still lets the relapse play, and brings him back 10 seconds after it (a known gap). "
+  "The relapse flag makes it happen once, so the stop and the restart cannot loop.")
 
 INTO_P2 = ("That epi's worn off already. He's stopped asking for his mom, and he's breathing "
            "harder than when he came in.")
@@ -224,11 +226,10 @@ P2_NONE_NOTE = (
   "his breathing and pressure got worse. Prior epinephrine is not completed treatment. "
   "Repeat it in the thigh, now, before anything else.")
 P3_NOTE = (
-  "He went floppy because nothing was given that lasts. An IM dose buys a minute or two in a "
-  "child who is refractory. The infusion was the step that holds, and in this case it takes "
-  "a minute or two to be mixed, so it has to be ordered as soon as the second dose fails. "
-  "Calling PICU or the senior halves the wait here, and in real life gets the infusion "
-  "running sooner.")
+  "He went floppy because nothing was given that lasts. An IM dose buys a minute in a "
+  "child who is refractory. The infusion was the step that holds, and it has to be ordered as "
+  "soon as the second dose fails. In a real department it takes minutes to mix, which is why "
+  "you order it early and keep giving IM doses until it runs.")
 P4_NOTE = (
   "Without the infusion, he went from floppy to barely breathing. A child who is silent, "
   "limp and blue with a hoarse voice and a soft noise on breathing in is close to arrest. "
@@ -248,16 +249,17 @@ PHASES = [
    "mother. On the crew's nonrebreather.",
    140, 88, 54, 32, 93, 2, 0,
    [HANDOFF_T]
-   + drip_runs("responding", 60, 120, "The epi infusion's up and running.")
+   + drip_runs("responding", "The epi infusion's up and running.")
    + [sedated("sedated_p1", "persistent")]
    + tube_rules(False) +
-   [{"when": "flag epi_im_ed set", "after_seconds": 120, "measured_from": "guard_true",
+   [{"when": "flag epi_im_ed set", "after_seconds": 60, "measured_from": "guard_true",
      "to": "persistent", "narration": INTO_P2, "debrief_note": P2_NOTE,
      "author_rationale": (
-       "Delayed consequence, scripted. The first ED dose acts from 10 seconds and wears off "
-       "by 120 (owner, 11 November 2026: kicks in at 10 seconds, then fades). This child is "
-       "refractory by design, so when it wears off he is worse than on arrival. Two minutes "
-       "is a teaching compression of the five to fifteen minutes a real dose acts.")},
+       "Delayed consequence, scripted. The first ED dose acts from 10 seconds and is gone by "
+       "60 (owner, 11 November 2026: kicks in at 10 seconds, then fades; 13 November 2026: "
+       "lasts only 60 seconds). This child is refractory by design, so when it wears off he is "
+       "worse than on arrival. One minute is a teaching compression of the five to fifteen "
+       "minutes a real dose acts.")},
     {"when": "NOT flag epi_im_ed set", "after_seconds": 180, "to": "persistent",
      "narration": INTO_P2_NONE, "debrief_note": P2_NONE_NOTE,
      "author_rationale": (
@@ -273,7 +275,7 @@ PHASES = [
    "anaphylaxis. The window to order the infusion.",
    152, 76, 40, 36, 91, 2, 1,
    [HANDOFF_T]
-   + drip_runs("responding", 60, 120, "The epi infusion's up and running.")
+   + drip_runs("responding", "The epi infusion's up and running.")
    + [sedated("sedated_p2", "worsening")]
    + tube_rules(False) +
    [{"when": "NOT flag epi_drip_ordered set AND NOT flag epi_bridge_acting set",
@@ -282,15 +284,15 @@ PHASES = [
      "author_rationale": (
        "Deterioration on inaction: no infusion ordered. 150 seconds, owner's revision of 11 "
        "November 2026. A second IM dose holds him here only while it acts (epi_bridge_acting, "
-       "60 seconds), so it never brings phase 3 sooner than no dose would (owner, 11 November "
+       "40 seconds), so it never brings phase 3 sooner than no dose would (owner, 11 November "
        "2026). Prompted for the infusion at 30 seconds (90 in normal mode).")},
     {"when": "NOT flag epi_bridge_acting set", "after_seconds": 240, "to": "worsening",
      "narration": INTO_P3, "debrief_note": P3_NOTE,
      "author_rationale": (
-       "Ordered but not yet running. Refractory anaphylaxis keeps progressing while the "
-       "infusion is mixed. 240 seconds leaves room for an order placed in the first 120 seconds "
-       "without a call (120-second preparation) and in the first 180 with one (60 seconds). "
-       "A bridge IM dose holds him while it acts. Model output, owner's timing.")}],
+       "The cap for a learner who keeps repeating IM doses instead of ordering the infusion: "
+       "each dose holds him while it acts, and at 240 seconds he goes floppy once none is "
+       "acting. An ordered infusion runs within 10 seconds, so it never meets this rule. "
+       "Model output.")}],
    ecg("Rate 152.")),
 
  phase("worsening",
@@ -300,11 +302,8 @@ PHASES = [
    "cool mottled legs, weak peripheral pulses.",
    160, 70, 38, 40, 89, 3, 1,
    [HANDOFF_T]
-   + drip_runs("responding", 60, 90,
-               "The epi infusion's been running a minute. He's opening his eyes and asking for his mom.",
-               extra_guard="NOT flag relapsed set")
-   + [restart("responding", "relapsed", "The epi's back on. He's opening his eyes again."),
-      sedated("sedated_p3", "peri_arrest")]
+   + drip_runs("responding", "The epi infusion's running. He's opening his eyes and asking for his mom.")
+   + [sedated("sedated_p3", "peri_arrest")]
    + tube_rules(False) +
    [{"when": "NOT flag epi_drip_ordered set", "after_seconds": 150, "to": "peri_arrest",
      "narration": INTO_P4, "debrief_note": P4_NOTE,
@@ -335,7 +334,15 @@ PHASES = [
    168, 58, 30, 44, 82, 3, 2,
    [HANDOFF_T]
    + tube_rules(False) +
-   [{"when": "NOT flag rescued_once set AND action bolus_here_p4 taken AND action epi_here_p4 taken",
+   [{"when": "flag relapsed set AND NOT flag rescued_once set AND action bolus_here_p4 taken AND action epi_here_p4 taken",
+     "after_seconds": 30, "measured_from": "guard_true", "to": "relapse",
+     "flags_set": ["rescued_once"],
+     "narration": "He's breathing for himself again, but he's still floppy.",
+     "debrief_note": ("Epinephrine and fluid pulled him back from the edge. The infusion was "
+                      "still stopped, and only restarting it would hold him."),
+     "author_rationale": ("As the rescue below, for a child whose infusion had been stopped: "
+                          "back to the relapse phase, where only a restart brings him back.")},
+    {"when": "NOT flag rescued_once set AND action bolus_here_p4 taken AND action epi_here_p4 taken",
      "after_seconds": 30, "measured_from": "guard_true", "to": "worsening",
      "flags_set": ["rescued_once"],
      "narration": "He's breathing for himself again, but he's still floppy.",
@@ -362,7 +369,7 @@ PHASES = [
    150, 86, 50, 34, 92, 2, 1,
    [HANDOFF_T]
    + tube_rules(True) +
-   [stop_rule("worsening", "relapsed", "Since the epi stopped, he's gone floppy again."),
+   [stop_rule("relapse", "relapsed", "Since the epi stopped, he's gone floppy again."),
     {"when": "flag fluid_x2 set OR action fluid_here_p5 taken", "after_seconds": 180,
      "to": "stabilized",
      "narration": ("We're moving the clock faster here. Over what would be several minutes, "
@@ -383,7 +390,7 @@ PHASES = [
    122, 102, 64, 24, 96, 1, 0,
    [HANDOFF_T]
    + tube_rules(True) +
-   [stop_rule("worsening", "relapsed", "Since the epi stopped, he's gone floppy again.")],
+   [stop_rule("relapse", "relapsed", "Since the epi stopped, he's gone floppy again.")],
    ecg("Rate 122.")),
 
  phase("post_induction_collapse",
@@ -392,10 +399,8 @@ PHASES = [
    "Intubated and paralyzed. Pressure falling after induction and positive pressure.",
    172, 60, 32, 20, 88, 0, 3,
    [HANDOFF_T]
-   + drip_runs("ventilated", 60, 90, "The epi infusion's running. His pressure's coming up.",
-               extra_guard="NOT flag relapsed_vent set")
-   + [restart("ventilated", "relapsed_vent", "The epi's back on. His pressure's coming up."),
-    {"when": "NOT action bridge_here_p7 taken", "after_seconds": 150, "to": "bradycardic_arrest",
+   + drip_runs("ventilated", "The epi infusion's running. His pressure's coming up.")
+   + [{"when": "NOT action bridge_here_p7 taken", "after_seconds": 150, "to": "bradycardic_arrest",
      "narration": INTO_END, "narration_ventilated": INTO_END, "debrief_note": (
        "Induction without epinephrine running, and no bridge dose afterwards. " + END_NOTE),
      "allow_time_to_terminal": True,
@@ -417,8 +422,54 @@ PHASES = [
    "(SpO2 94, continuing at S4).",
    148, 88, 52, 20, 94, 0, 3,
    [HANDOFF_T,
-    stop_rule("post_induction_collapse", "relapsed_vent", "Since the epi stopped, his pressure's falling.")],
+    stop_rule("vent_relapse", "relapsed_vent", "Since the epi stopped, his pressure's falling.")],
    ecg("Rate 148."), ventilated=True),
+
+ phase("relapse",
+   "Relapse after the infusion was stopped",
+   "floppy again",
+   "The infusion was stopped and the reaction has come back: floppy, single words, poor air "
+   "movement, mottled legs, as in phase 3. Only restarting the infusion brings him back.",
+   160, 70, 38, 40, 89, 3, 1,
+   [HANDOFF_T,
+    restart("responding", "The epi's back on. He's opening his eyes again."),
+    sedated("sedated_p3", "peri_arrest")]
+   + tube_rules(False, dest="vent_relapse") +
+   [{"when": "NOT " + RESTARTED, "after_seconds": 150, "to": "peri_arrest",
+     "narration": INTO_P4, "debrief_note": P4_NOTE,
+     "author_rationale": (
+       "Deterioration on inaction: the infusion not restarted. As phase 3's no-order rule. "
+       "Prompted at 20 seconds (60 in normal mode).")},
+    {"when": "NOT action bolus_here_p3 taken", "after_seconds": 240, "to": "peri_arrest",
+     "narration": INTO_P4, "debrief_note": P4_NOTE,
+     "author_rationale": "As phase 3: no fluid bolus in this phase. Prompted at 40 seconds (120 in normal mode)."},
+    {"when": None, "after_seconds": 360, "to": "peri_arrest",
+     "narration": INTO_P4, "debrief_note": P4_NOTE,
+     "author_rationale": "Scheduled natural history: refractory anaphylaxis with the infusion off.",
+     "unguarded_rationale": "As phase 3. The restart rule above is the exit."}],
+   ecg("Rate 160.")),
+
+ phase("vent_relapse",
+   "Ventilated, infusion stopped",
+   "pressure falling",
+   "Intubated, the infusion stopped, the pressure falling as after induction. Only restarting "
+   "the infusion brings it back.",
+   172, 60, 32, 20, 88, 0, 3,
+   [HANDOFF_T,
+    restart("ventilated", "The epi's back on. His pressure's coming up."),
+    {"when": "NOT " + RESTARTED, "after_seconds": 150, "to": "bradycardic_arrest",
+     "narration": INTO_END, "narration_ventilated": INTO_END, "debrief_note": (
+       "The infusion was stopped after the tube and not restarted. " + END_NOTE),
+     "allow_time_to_terminal": True,
+     "terminal_opt_in_rationale": "Intubated with the infusion off and not restarted. Prompted at 20 seconds (60 in normal mode).",
+     "author_rationale": "Deterioration on inaction to a terminal phase."},
+    {"when": None, "after_seconds": 360, "to": "bradycardic_arrest",
+     "narration": INTO_END, "narration_ventilated": INTO_END, "debrief_note": END_NOTE,
+     "allow_time_to_terminal": True,
+     "terminal_opt_in_rationale": "Six minutes intubated with the infusion off.",
+     "author_rationale": "Scheduled natural history to a terminal phase.",
+     "unguarded_rationale": "The restart rule above is the exit."}],
+   ecg("Rate 172."), ventilated=True),
 
  phase("bradycardic_arrest",
    "Bradycardia with poor perfusion, then arrest",

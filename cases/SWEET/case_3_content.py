@@ -5,8 +5,12 @@ structure (S1 to S6). Reference intervals are pediatric where the catalog's are 
 each needs a signature.
 
 Phase rules come first in every list. Inside a phase, the brief response to an IM dose is a
-flag variant above the phase's own line: the first ED dose acts from 10 to 120 seconds in
-phase 1 (epi_onset lapses at 10), a later dose from 10 to 60 seconds (epi_bridge_acting).
+flag variant above the phase's own line: the first ED dose acts from 10 to 60 seconds in
+phase 1 (epi_onset lapses at 10), a later dose from 10 to 40 seconds (epi_bridge_acting).
+
+The two phases a stopped infusion leads to (relapse, vent_relapse) show what phase 3 and phase
+7 show: every rule naming either of those phases is copied for its relapse twin at the end of
+this file, atom for atom.
 
 No report and no exam line quotes a heart rate, a pressure or a respiratory rate: the IM
 doses, the boluses, posture, albuterol and the IV push move them.
@@ -185,8 +189,8 @@ GAS = {
  "p4": (62, 15, "7.0", 46), "p5": (40, 18, "4.2", 64), "p6": (38, 19, "3.6", 88),
  "p7": (55, 15, "6.5", 56), "p8": (45, 17, "5.0", 74),
 }
-PHASE_KEY = [(P1, "p1"), (P2, "p2"), (P3, "p3"), (P4, "p4"), (P5, "p5"), (P6, "p6"),
-             (P7, "p7"), (P8, "p8")]
+PHASE_KEY = [(P1, "p1"), (P2, "p2"), (P3, "p3"), ("phase is relapse", "p3"), (P4, "p4"), (P5, "p5"),
+             (P6, "p6"), (P7, "p7"), ("phase is vent_relapse", "p7"), (P8, "p8")]
 
 
 def ph(pco2, hco3):
@@ -291,6 +295,8 @@ CONSULTANTS = {
  "consult_critical_care": [
    {"when": TUBED + " AND " + P8,
     "value": "PICU fellow: Keep the epi infusion going and titrate to his pressure. Keep the fluid going. We're bringing a vent down. He comes to us."},
+   {"when": "phase is vent_relapse",
+    "value": "PICU fellow: His pressure's going because the epi's off. Restart the infusion now and give fluid. Don't wean it down there. I'm coming down."},
    {"when": TUBED,
     "value": "PICU fellow: His pressure's going after the tube. Epi now, IM or a small push, and get the infusion running. Fluid in fast. I'm coming down."},
    {"when": P6,
@@ -299,16 +305,54 @@ CONSULTANTS = {
     "value": "PICU fellow: He's turning. Keep the infusion on, titrate to his pressure, and give more fluid. We'll come and get him."},
    {"when": P4,
     "value": "PICU fellow: Running down. Epi now, IM if the drip isn't up. Fluid in fast. Bag him. Get the airway kit and the video scope ready."},
-   {"when": P3 + " AND " + DRIP_ORDERED,
-    "value": "PICU fellow: Coming. Keep IM epi going until the infusion runs, and push fluid. Have the airway kit ready, but drip before tube."},
+   {"when": "phase is relapse",
+    "value": "PICU fellow: Why's the epi off? Restart the infusion now, don't wean it down there. IM epi while it goes back on, and push fluid. I'm coming down."},
    {"when": P3,
     "value": "PICU fellow: He needs an epi infusion now. Get it mixing, IM again until it runs, and push fluid. I'm coming down."},
-   {"when": P2 + " AND " + DRIP_ORDERED,
-    "value": "PICU fellow: Good, an epi infusion. I'll get pharmacy to rush it. IM again if it's slow, second line, more fluid. Attending's coming too."},
    {"when": P2,
-    "value": "PICU fellow: Two doses and worse is refractory. Start an epi infusion and I'll rush pharmacy. IM again until it runs. Attending's coming too."},
+    "value": "PICU fellow: Two doses and worse is refractory. Start an epi infusion now, on its own line. More fluid. Attending's coming too."},
    {"when": ED_EPI,
     "value": "PICU fellow: Second dose is in, good. Fluid, legs up, a second line. If he's worse when it wears off, he needs an infusion. Call me."},
    {"when": None,
     "value": "PICU fellow: He's had one dose and he's back? Give IM epi again now, fluid, legs up. If it doesn't hold, call me back for an infusion."}],
 }
+
+
+# ============================================================== RELAPSE TWINS
+# A stopped infusion sends him to relapse (as phase 3) or, intubated, to vent_relapse (as
+# phase 7). Each rule naming phase 3 or 7 gets a copy right after it with that one atom
+# swapped, so the two phases read the same and first-match order is unchanged. A list that
+# already names the twin (the consultants) is left alone for it.
+TWINS = (("phase is worsening", "phase is relapse"),
+         ("phase is post_induction_collapse", "phase is vent_relapse"))
+
+
+def _twin(rules):
+    out = []
+    for r in rules:
+        out.append(r)
+        w = r.get("when") if isinstance(r, dict) else None
+        if not isinstance(w, str):
+            continue
+        for a, b in TWINS:
+            if a in w and not any(isinstance(x, dict) and b in (x.get("when") or "") for x in rules):
+                c = dict(r)
+                c["when"] = w.replace(a, b)
+                out.append(c)
+    return out
+
+
+def _walk(o):
+    if isinstance(o, list) and o and all(isinstance(r, dict) and "when" in r for r in o):
+        return _twin(o)
+    if isinstance(o, dict):
+        return {k: _walk(v) for k, v in o.items()}
+    return o
+
+
+EXAM = _walk(EXAM)
+GENERAL_STATUS = _walk(GENERAL_STATUS)
+PATIENT_VISUAL = _walk(PATIENT_VISUAL)
+LABS = _walk(LABS)
+IMAGING = _walk(IMAGING)
+CONSULTANTS = _walk(CONSULTANTS)

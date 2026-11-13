@@ -64,10 +64,12 @@ HANDOFF = {
 DEBRIEF = {
  "clinical_domains": [
    {"id": "first", "label": "The first minutes",
-    "actions": ["attach_monitor", "epinephrine_intramuscular", "lay_back_legs_raised", "insert_iv",
-                "second_iv", "normal_saline_500ml_bolus", "reassessed_after_epi"]},
+    "actions": ["epinephrine_intramuscular", "exam_airway", "normal_saline_500ml_bolus",
+                "reassessed_after_epi", "lay_back_legs_raised", "attach_monitor", "insert_iv",
+                "second_iv"]},
    {"id": "refractory", "label": "When it does not hold",
-    "actions": ["epinephrine_drip", "consult_critical_care", "bolus_here_p3", "fluid_here_p5"]},
+    "actions": ["epinephrine_drip", "consult_critical_care", "bolus_here_p3", "fluid_here_p5",
+                "drip_restarted"]},
    {"id": "rescue", "label": "At the edge",
     "actions": ["epi_here_p4", "bolus_here_p4", "bridge_here_p7", "intubate_rapid_sequence"]},
    {"id": "adjuncts", "label": "Adjuncts in their place",
@@ -86,8 +88,9 @@ DEBRIEF = {
  "key_exams_note": "The six recommended exams. Model judgment.",
  "intended_path": ["presentation", "persistent", "responding", "stabilized", "case_complete"],
  "intended_path_note": (
-   "IM epinephrine on arrival with the monitor, posture, two lines and a bolus. When it wears "
-   "off, the PICU call and the infusion. A second bolus. Albuterol for the wheeze. PICU."),
+   "IM epinephrine on arrival, the airway examined, a bolus, with the monitor, posture and two "
+   "lines. When it wears off, look at him again, order the infusion and call PICU. A second "
+   "bolus. Albuterol for the wheeze. PICU."),
  "trap_actions": ["diphenhydramine", "methylprednisolone_bolus", "lorazepam_bolus", "norepinephrine_drip",
                   "epinephrine_bolus"],
  "cross_cutting_teaching_points": [
@@ -100,8 +103,8 @@ DEBRIEF = {
     "heart rate of 140 is tachycardia. A child who stops talking and stops asking for his "
     "parent is getting worse, whatever the monitor says. [UNVERIFIED: PALS 2015 vital sign "
     "tables as reproduced by PedsCases]"),
-   ("After two IM doses without a lasting response, call for help and start the infusion, "
-    "and keep giving IM doses until it runs. The call is part of the treatment. [UNVERIFIED: "
+   ("After two IM doses without a lasting response, start the infusion and call for help, "
+    "and keep giving IM doses until it runs. [UNVERIFIED: "
     "Resuscitation Council UK refractory anaphylaxis algorithm 2021, read through search]"),
    ("Anaphylactic shock needs volume and posture: two lines, weight-based boluses, and lying "
     "flat with the legs up. Never sit or stand a hypotensive child. [UNVERIFIED: Pumphrey, J "
@@ -124,8 +127,8 @@ PROVENANCE = {
    "model output and awaits sign-off: every vital sign, finding, laboratory value, delay, "
    "tag, debrief note, interview answer and diagnosis explanation."),
  "author_only_fields_pending_signoff": [
-   "Every vital sign in every phase. Phases 1 to 6 are the owner's S1 to S6, with temperature 37.1 added. Phases 7 and 8 and the terminal phase are model output.",
-   "Every delay: the first IM dose acting from 10 seconds and fading from 80 to 120, a later dose from 10 and fading from 40 to 60, the 150 and 240 second exits from phase 2, the infusion's preparation (60 seconds with help and 120 without in phases 1 and 2, 60 and 90 in phases 3 and 7), the phase 3 exits (150, 240, 360), the rescue at 30 seconds, the 180 seconds to the terminal phase, the 150 seconds after a tube with no bridge, the 120 seconds after a stop, the 30 seconds after a restart, phase 5 to 6 at 180 seconds.",
+   "Every vital sign in every phase. Phases 1 to 6 are the owner's S1 to S6, with temperature 37.1 added. Phases 7 and 8, relapse, vent_relapse and the terminal phase are model output.",
+   "Every delay: the first IM dose acting from 10 seconds and fading from 40 to 60, a later dose from 10 and fading from 25 to 40, the 150 and 240 second exits from phase 2, the infusion's 10 second preparation and 10 second restart, the phase 3 exits (150, 240, 360), the relapse exits (150, 240, 360), the rescue at 30 seconds, the 180 seconds to the terminal phase, the 150 seconds after a tube with no bridge or after a stop with no restart, the 120 seconds after a stop, phase 5 to 6 at 180 seconds.",
    "Every laboratory value and interval, including the pediatric intervals.",
    "Every abnormal flag on every result, finding and status line.",
    "The vital effects of IM epinephrine, the IV push, the boluses, posture, albuterol and the oxygen devices. Teaching choices.",

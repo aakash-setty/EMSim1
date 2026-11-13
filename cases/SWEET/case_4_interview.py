@@ -18,7 +18,7 @@ TOPICS = []
 NEGATIVES = {"asthma", "current_medications", "heart_history", "past_surgical_history",
              "nausea_vomiting", "abdominal_pain", "fever_and_chills", "cough_sore_throat",
              "family_history"}
-LATER = "phase is persistent OR phase is worsening"
+LATER = "phase is persistent OR phase is worsening OR phase is relapse"
 
 
 def topic(tid, answer, canonical=None, variants=None, echo=None, extra=None, more=None, facts=None):
@@ -200,7 +200,7 @@ TOPICS.insert(0, {
 # ------------------------------------------------------------------ global rules
 GLOBAL_RULES = [
  {"when": ("flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR "
-           "phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete"),
+           "phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete"),
   "value": "His mother is at the foot of the bed, crying. 'Please, just help him.' There is no history to be had right now.",
   "note": ("Section 8.5. Covers the phases at alertness 2 and 3 (peri-arrest, after the tube, "
            "ventilated, the terminal phase) and every intubated state. The mother is present "

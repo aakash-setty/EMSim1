@@ -28,8 +28,10 @@ P5 = "phase is responding"
 P6 = "phase is stabilized"
 P7 = "phase is post_induction_collapse"
 P8 = "phase is ventilated"
+PR = "phase is relapse"                              # floppy again after a stop, as phase 3
+PVR = "phase is vent_relapse"                        # ventilated, the infusion stopped
 RUNNING = P5 + " OR " + P6 + " OR " + P8            # the infusion's own phases
-EARLY = P1 + " OR " + P2 + " OR " + P3          # the phases a sedative or an IM dose acts in
+EARLY = P1 + " OR " + P2 + " OR " + P3 + " OR " + PR   # the phases a sedative or an IM dose acts in
 SICK = EARLY + " OR " + P4                       # before the infusion
 TUBED = "flag intubated set"
 ED_EPI = "flag epi_im_ed set"
@@ -45,7 +47,7 @@ IV_LINE = "flag iv_access set OR flag central_access set OR flag io_access set"
 
 # =====================================================================  FIRST MINUTES
 
-act("attach_monitor", ALWAYS("critical"),
+act("attach_monitor", ALWAYS("recommended"),
     flags_set=["monitor_on"],
     expectation_label="Monitor on",
     debrief_note=(
@@ -53,14 +55,13 @@ act("attach_monitor", ALWAYS("critical"),
       "rate of 140 and a systolic of 88 are tachycardia and hypotension at his age, where "
       "hypotension starts below 90." + PALS))
 
-act("insert_iv", [{"when": SICK, "value": "critical"}, {"when": None, "value": "neutral"}],
+act("insert_iv", [{"when": SICK, "value": "recommended"}, {"when": None, "value": "neutral"}],
     flags_set=["iv_access"],
     expectation_label="IV access",
     debrief_note=("Every bolus and the infusion need a line. Either an IV or an intraosseous "
                   "line meets this. Go to the IO if the IV does not come quickly."))
 
-act("second_iv", [{"when": P1, "value": "recommended"},
-                  {"when": EARLY + " OR " + P4 + " OR " + P7, "value": "critical"},
+act("second_iv", [{"when": SICK + " OR " + P7, "value": "recommended"},
                   {"when": None, "value": "neutral"}],
     flags_set=["iv_access", "second_line"],
     expectation_label="A second line",
@@ -75,7 +76,7 @@ for cid in ("central_venous_catheter_triple_lumen", "central_venous_catheter_cor
         debrief_note="Counts as access. Not needed in a child who has two peripheral lines.")
 
 act("lay_back_legs_raised",
-    [{"when": SICK, "value": "critical"}, {"when": P5 + " OR " + P6, "value": "recommended"},
+    [{"when": SICK + " OR " + P5 + " OR " + P6, "value": "recommended"},
      {"when": None, "value": "neutral"}],
     display_name="Lay him back, legs raised",
     expectation_label="Lying flat or back, legs raised",
@@ -102,8 +103,8 @@ act("lower_head_of_bed", ALWAYS("neutral"),
     debrief_note="Counted as lying him back. Raising the legs as well adds a little more venous return.")
 
 # =====================================================================  EPINEPHRINE
-# First ED dose (owner, 11 November 2026): kicks in at 10 seconds, fades by 120, then phase 2.
-# Every later dose: 10 to 60 seconds, smaller. Separate keys, so the first dose's effect and a
+# First ED dose (owner, 11 and 13 November 2026): kicks in at 10 seconds, gone by 60, then
+# phase 2. Every later dose: 10 to 40 seconds, smaller. Separate keys, so the first dose's effect and a
 # later one's never stack. In phases 4 and 7 the dose is part of a rescue and has no effect of
 # its own here (the phase change carries it).
 IM_WHERE = "(" + EARLY + ")"
@@ -123,28 +124,28 @@ def fading(tiers, key, guard, note):
 
 
 IM_EFFECTS = (
-  fading((EPI1, [(10, 80, 1.0), (80, 100, 2 / 3), (100, 120, 1 / 3)]), "epi1_",
+  fading((EPI1, [(10, 40, 1.0), (40, 50, 2 / 3), (50, 60, 1 / 3)]), "epi1_",
          "NOT flag epi_im_2 set AND " + IM_WHERE,
-         "Teaching choice. The first ED dose acts at 10 s and fades from 80 s to nothing at 120 s (owner, 11 November 2026).") +
-  fading((EPI2, [(10, 40, 1.0), (40, 50, 2 / 3), (50, 60, 1 / 3)]), "epi2_",
+         "Teaching choice. The first ED dose acts at 10 s and fades from 40 s to nothing at 60 s (owner, 11 and 13 November 2026).") +
+  fading((EPI2, [(10, 25, 1.0), (25, 32, 2 / 3), (32, 40, 1 / 3)]), "epi2_",
          "flag epi_im_2 set AND " + IM_WHERE,
-         "Teaching choice. A later dose acts at 10 s and fades by 60 s, half as long (owner, 11 November 2026)."))
+         "Teaching choice. A later dose acts at 10 s and is gone by 40 s, shorter than the first (owner, 11 November 2026: works for less time)."))
 
 act("epinephrine_intramuscular",
     [{"when": P1 + " OR " + P4 + " OR " + P7, "value": "critical"},
      {"when": P2 + " AND NOT " + ED_EPI, "value": "critical"},
-     {"when": P2 + " OR " + P3, "value": "recommended"},
+     {"when": P2 + " OR " + P3 + " OR " + PR, "value": "recommended"},
      {"when": None, "value": "neutral"}],
     display_name="Epinephrine (Intramuscular)",
     expectation_label="IM epinephrine, anterolateral thigh",
     flags_set=["epi_im_ed"],
-    flags_set_timed=[{"flag": "epi_bridge_acting", "duration_seconds": 60},
+    flags_set_timed=[{"flag": "epi_bridge_acting", "duration_seconds": 40},
                      {"flag": "epi_onset", "duration_seconds": 10}],
     flags_set_repeat=[{"flag": "epi_im_2", "after_administrations": 2, "counter": "epi_im"}],
     also_satisfies=[{"id": "epi_here_p4", "when": P4}, {"id": "bridge_here_p7", "when": P7}],
     vital_effects=IM_EFFECTS,
     nurse_alert=[{"when": P1 + " AND NOT " + ED_EPI, "value": "In his thigh. Let's see what it does."},
-                 {"when": P2 + " OR " + P3, "value": "In. It'll buy us a little time."},
+                 {"when": P2 + " OR " + P3 + " OR " + PR, "value": "In. It'll buy us a little time."},
                  {"when": None, "value": "In his thigh."}],
     prompt={"deadline_seconds": 30,
             "guard": "NOT " + ED_EPI + " AND NOT " + P4 + " AND NOT " + P7,
@@ -158,7 +159,7 @@ act("epinephrine_intramuscular",
       "a child's dose at 0.3 mg and UK guidance gives 0.5 mg over 12 years, so 0.3 to 0.5 mg "
       "is reasonable here, and the 0.3 mg pen is acceptable. State the weight before you "
       "order. This simulator does not take doses.\n\n"
-      "Here the second dose did what the first had done: better for a minute or two, then "
+      "Here the second dose did what the first had done: better for a minute, then "
       "worse. After two appropriate IM doses that is refractory anaphylaxis, and the next "
       "step is the infusion. A further IM dose while it is mixed is right and buys a little "
       "time." + RCUK + JTF))
@@ -166,7 +167,7 @@ act("epinephrine_intramuscular",
 act("epinephrine_drip",
     [{"when": P1 + " AND NOT " + ED_EPI, "value": "discouraged"},
      {"when": P1, "value": "neutral"},
-     {"when": SICK + " OR " + P7, "value": "critical"},
+     {"when": SICK + " OR " + P7 + " OR " + PVR, "value": "critical"},
      {"when": None, "value": "neutral"}],
     display_name="Epinephrine drip",
     expectation_label="Epinephrine infusion",
@@ -180,8 +181,7 @@ act("epinephrine_drip",
        "failure_message": "The fluid's in his only line. Can we get another one for the drip?"}],
     vital_effects=[],
     nurse_alert=[{"when": "flag epi_drip_stopped set", "value": "Restarting it. The bag's still up."},
-                 {"when": "flag help_called set", "value": "Pharmacy's mixing it. With PICU on the way they're rushing it."},
-                 {"when": None, "value": "Pharmacy's mixing it. It'll be a couple of minutes."}],
+                 {"when": None, "value": "Pharmacy's sending it up now."}],
     prompt={"deadline_seconds": 30, "guard": "NOT flag epi_drip_ordered set",
             "text": "He's not picking up, even after the epi. What's next?"},
     debrief_note=(
@@ -191,8 +191,9 @@ act("epinephrine_drip",
       "A common start is 0.1 microgram/kg/min, 4 micrograms a minute at 40 kg. UK guidance "
       "mixes 1 mg in 100 mL and starts at 0.5 to 1 mL/kg/hour, which is 0.08 to 0.17 "
       "microgram/kg/min. Follow your own protocol.\n\n"
-      "It takes minutes to mix. Order it as soon as the second IM dose fails, and call for "
-      "help, which in this case halved the wait. Keep giving IM doses until it runs."
+      "In a real department it takes minutes to mix and hang. Here pharmacy has it running "
+      "10 seconds after the order, a teaching compression. Order it as soon as the second IM "
+      "dose fails, and keep giving IM doses until it runs."
       + RCUK))
 
 act("stop_epinephrine",
@@ -224,21 +225,20 @@ act("epinephrine_bolus",
       "as a small diluted push." + RCUK + CAMPBELL))
 
 act("consult_critical_care",
-    [{"when": P2 + " OR " + P3 + " OR " + P4 + " OR " + P7, "value": "critical"},
-     {"when": None, "value": "recommended"}],
+    ALWAYS("recommended"),
     display_name="Consult Critical Care (PICU)",
     expectation_label="PICU and senior called",
     narration_override="Paging the PICU fellow and your senior.",
     flags_set=["help_called"], state_changing=True,
     voice_phrases=["call picu", "picu", "call the picu", "page picu", "call my attending",
                    "call the attending", "call for help"],
-    prompt={"deadline_seconds": 45, "guard": P2 + " OR " + P3,
+    prompt={"deadline_seconds": 45, "guard": P2 + " OR " + P3 + " OR " + PR,
             "text": "Who else do you want in here?"},
     debrief_note=(
       "Two doses and still struggling is the moment to call the senior and the PICU, and to "
-      "do it while you give the next dose, not after. In this case the call halved the time "
-      "to get the infusion running. In the department it brings hands, a pharmacist and an "
-      "airway plan.\n\n"
+      "do it while you give the next dose, not after. In the department it brings hands, a "
+      "pharmacist, an airway plan and a PICU bed. Recommended, not scored as critical "
+      "(owner, 13 November 2026).\n\n"
       "This button stands for both the PICU team and the senior pediatric emergency physician "
       "(owner's defaults, 11 November 2026)."))
 
@@ -265,7 +265,7 @@ BOLUS_EFFECTS = [
    "note": "Teaching choice."},
   {"vital": "heart_rate", "delta": -5, "key": "bolus_hr", "onset_seconds": 10, "duration_seconds": 300,
    "note": "Teaching choice. The owner's structure gives -4 to -6."}]
-BOLUS_CREDIT = [{"id": "bolus_here_p3", "when": P3}, {"id": "bolus_here_p4", "when": P4},
+BOLUS_CREDIT = [{"id": "bolus_here_p3", "when": P3 + " OR " + PR}, {"id": "bolus_here_p4", "when": P4},
                 {"id": "fluid_here_p5", "when": P5}]
 BOLUS_NOTE = (
   "Anaphylactic shock is a leak as well as a dilation: fluid pours out of the vessels. Rapid "
@@ -308,17 +308,17 @@ for cid, note in (("normal_saline_infusion", "A maintenance-rate infusion is not
 
 # Hidden targets: one bolus or one dose in a named phase. Read by transitions (authoring 22.2).
 for cid, name, tag_when, text, deadline in (
-    ("bolus_here_p3", "Bolus while floppy", P3, "He's cold to the knees. Anything for his circulation?", 40),
+    ("bolus_here_p3", "Bolus while floppy", P3 + " OR " + PR, "He's cold to the knees. Anything for his circulation?", 40),
     ("bolus_here_p4", "Bolus at the edge of arrest", P4, "He's barely breathing and he's blue. What do you need?", 25),
     ("fluid_here_p5", "More fluid once the infusion runs", P5 + " AND NOT flag fluid_x2 set", "His hands are still cool. Anything else for his circulation?", 60),
     ("epi_here_p4", "Epinephrine at the edge of arrest", P4, "He's barely breathing and he's blue. Epi?", 15),
     ("bridge_here_p7", "Epinephrine after the tube", P7, "His pressure's falling since the tube. Should we do something?", 20),
-    ("drip_restarted", "Infusion restarted after a stop",
-     "(flag relapsed set AND " + P3 + ") OR (flag relapsed_vent set AND " + P7 + ")",
+    ("drip_restarted", "Infusion restarted after a stop", PR + " OR " + PVR,
      "Since the epi stopped he's gone downhill. What do you want?", 20)):
+    guard = tag_when
     act(cid, [{"when": tag_when, "value": "critical"}, {"when": None, "value": "neutral"}],
         hidden=True, display_name=name, expectation_label=name,
-        prompt={"deadline_seconds": deadline, "guard": tag_when, "text": text},
+        prompt={"deadline_seconds": deadline, "guard": guard, "text": text},
         debrief_note=("Not an order. Credited when the act is done in this phase, so a dose "
                       "earlier in the run does not count for it. A transition reads it."))
 
@@ -337,7 +337,7 @@ act("high_flow_nasal_cannula", ALWAYS("neutral"),
                     "note": "Teaching choice."}],
     debrief_note="Acceptable. It does not treat the cause.")
 act("non_invasive_positive_pressure_ventilation",
-    [{"when": P3 + " OR " + P4, "value": "discouraged"}, {"when": None, "value": "neutral"}],
+    [{"when": P3 + " OR " + PR + " OR " + P4, "value": "discouraged"}, {"when": None, "value": "neutral"}],
     vital_effects=[{"vital": "oxygen_saturation", "delta": 2, "key": "resp_support", "while": RESP,
                     "note": "Teaching choice. The owner's structure gives +2 to 3, no pressure benefit."}],
     debrief_note=("A small rise in saturation and no help to the pressure. In a floppy child "
@@ -400,7 +400,7 @@ SED_NOTE = (
   "hypoxic child, lowered his pressure, and hid the sign you were watching: whether he was "
   "still asking for his mother. Distress in anaphylaxis is treated with epinephrine, oxygen "
   "and his mother at the bedside." + MEMORY)
-SED_IF = [{"flag": "sedated_p1", "when": P1}, {"flag": "sedated_p2", "when": P2}, {"flag": "sedated_p3", "when": P3}]
+SED_IF = [{"flag": "sedated_p1", "when": P1}, {"flag": "sedated_p2", "when": P2}, {"flag": "sedated_p3", "when": P3 + " OR " + PR}]
 SED_ALERT = [{"when": EARLY, "value": "He's gone very still since that went in."},
              {"when": None, "value": "It's in."}]
 for cid in ("lorazepam_bolus", "morphine_bolus"):
@@ -424,6 +424,7 @@ act("intubate_rapid_sequence",
      {"when": None, "value": "neutral"}],
     expectation_label="Decision to intubate",
     nurse_alert=[{"when": RUNNING, "value": "Tube's in. His pressure's holding on the drip."},
+                 {"when": PR, "value": "Tube's in. His pressure's falling, and the epi's still off."},
                  {"when": None, "value": "Tube's in. His pressure's falling."}],
     follow_ups_triggered=["sedation_after_tube"],
     debrief_note=(
@@ -453,13 +454,20 @@ for cid, note in (
     act(cid, ALWAYS("neutral"), debrief_note=note + MEMORY)
 
 # =====================================================================  REASSESSMENT
-act("reassessed_after_epi", [{"when": EARLY, "value": "recommended"}, {"when": None, "value": "neutral"}],
+act("reassessed_after_epi",
+    [{"when": P2 + " AND " + ED_EPI, "value": "critical"},
+     {"when": EARLY, "value": "recommended"}, {"when": None, "value": "neutral"}],
     hidden=True, display_name="Reassessed after epinephrine",
-    expectation_label="Reassessed after an epinephrine dose",
+    expectation_label="Examined him again after the IM dose",
+    prompt={"deadline_seconds": 20, "guard": P2 + " AND " + ED_EPI,
+            "text": "He looked better for a minute there. Can you take another look at him?"},
     debrief_note=(
       "Not an order. Credited when the airway, breathing, circulation or lungs are examined "
-      "after an ED epinephrine dose. The brief response after each dose looked like recovery. "
-      "Looking again a minute or two later showed it was not."))
+      "after an ED epinephrine dose. The brief response after the dose looked like recovery. "
+      "Looking again once it wore off showed a child getting worse: slower answers, no longer "
+      "asking for his mother, harder work to breathe. That is how a refractory reaction is "
+      "recognized, and it is the moment to order the infusion (owner, 13 November 2026: a "
+      "critical action tied to the case's goals)."))
 
 EXAM_NOTES = {
   "exam_airway": "Lips and tongue swelling make this an airway to watch. A hoarse voice and stridor mean it is closing.",
@@ -471,8 +479,20 @@ EXAM_NOTES = {
   "exam_neuro": "GCS by phase. A child who stops talking is getting worse.",
   "exam_card": "Tachycardia. No murmur.",
 }
+AIRWAY_NOTE = (
+  "The critical exam in anaphylaxis. Look at the lips and tongue, listen to the voice and for "
+  "stridor, and ask whether he can swallow. Swelling here decides how early the airway "
+  "becomes the problem and who should manage it, and a hoarse voice or stridor means it is "
+  "closing. Repeat it after every dose (owner, 13 November 2026: a critical action tied to "
+  "the case's goals)." + RCUK)
 for cid, note in EXAM_NOTES.items():
     kw = {}
+    if cid == "exam_airway":
+        kw["expectation_label"] = "Airway checked for swelling and stridor"
+        note = AIRWAY_NOTE
+        act(cid, [{"when": SICK, "value": "critical"}, {"when": None, "value": "recommended"}],
+            also_satisfies=[{"id": "reassessed_after_epi", "when": ED_EPI}], debrief_note=note, **kw)
+        continue
     if cid in ("exam_airway", "exam_breath", "exam_circ", "exam_pulm"):
         kw["also_satisfies"] = [{"id": "reassessed_after_epi", "when": ED_EPI}]
     act(cid, ALWAYS("recommended" if cid in ("exam_airway", "exam_breath", "exam_circ", "exam_pulm", "exam_skin", "exam_neuro") else "neutral"),

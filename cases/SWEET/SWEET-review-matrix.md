@@ -17,10 +17,11 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| peri_arrest | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest) | plausible |
-| persistent | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest) | plausible |
-| worsening | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest) | plausible |
+| peri_arrest | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| persistent | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| relapse | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| worsening | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -28,12 +29,13 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| peri_arrest | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| persistent | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| post_induction_collapse | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| presentation | rule 0 (phase is presentation) | plausible |
-| worsening | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| «any other phase» | rule 2 (default) | plausible |
+| peri_arrest | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| persistent | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| post_induction_collapse | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| relapse | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| worsening | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/intraosseous_line`
@@ -55,13 +57,14 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| peri_arrest | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest) | plausible |
-| persistent | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest) | plausible |
-| responding | rule 1 (phase is responding OR phase is stabilized) | plausible |
-| stabilized | rule 1 (phase is responding OR phase is stabilized) | plausible |
-| worsening | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest) | plausible |
-| «any other phase» | rule 2 (default) | plausible |
+| peri_arrest | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| persistent | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| relapse | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| responding | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| stabilized | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| worsening | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/lower_head_of_bed`
@@ -76,13 +79,15 @@ Single unconditional rule; nothing to enumerate.
 | peri_arrest | no | rule 0 (phase is presentation OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
 | peri_arrest | yes | rule 0 (phase is presentation OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
 | persistent | no | rule 1 (phase is persistent AND NOT flag epi_im_ed set) | plausible |
-| persistent | yes | rule 2 (phase is persistent OR phase is worsening) | plausible |
+| persistent | yes | rule 2 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
 | post_induction_collapse | no | rule 0 (phase is presentation OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
 | post_induction_collapse | yes | rule 0 (phase is presentation OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
 | presentation | no | rule 0 (phase is presentation OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
 | presentation | yes | rule 0 (phase is presentation OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| worsening | no | rule 2 (phase is persistent OR phase is worsening) | plausible |
-| worsening | yes | rule 2 (phase is persistent OR phase is worsening) | plausible |
+| relapse | no | rule 2 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| relapse | yes | rule 2 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| worsening | no | rule 2 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| worsening | yes | rule 2 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
 | «any other phase» | no | rule 3 (default) | plausible |
 | «any other phase» | yes | rule 3 (default) | plausible |
 
@@ -91,16 +96,20 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | epi_im_ed | resolves to | reachable? |
 |---|---|---|---|
-| peri_arrest | no | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| peri_arrest | yes | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| persistent | no | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| persistent | yes | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| post_induction_collapse | no | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| post_induction_collapse | yes | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| peri_arrest | no | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
+| peri_arrest | yes | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
+| persistent | no | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
+| persistent | yes | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
+| post_induction_collapse | no | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
+| post_induction_collapse | yes | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
 | presentation | no | rule 0 (phase is presentation AND NOT flag epi_im_ed set) | plausible |
 | presentation | yes | rule 1 (phase is presentation) | plausible |
-| worsening | no | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| worsening | yes | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| relapse | no | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
+| relapse | yes | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
+| vent_relapse | no | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
+| vent_relapse | yes | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
+| worsening | no | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
+| worsening | yes | rule 2 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse OR phase is vent_relapse) | plausible |
 | «any other phase» | no | rule 3 (default) | plausible |
 | «any other phase» | yes | rule 3 (default) | plausible |
 
@@ -126,13 +135,7 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/consult_critical_care`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| peri_arrest | rule 0 (phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| persistent | rule 0 (phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| post_induction_collapse | rule 0 (phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| worsening | rule 0 (phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+Single unconditional rule; nothing to enumerate.
 
 
 ### `action_tag/norepinephrine_drip`
@@ -186,18 +189,20 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | fluid_x2 | resolves to | reachable? |
 |---|---|---|---|
-| peri_arrest | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| peri_arrest | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| persistent | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| persistent | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| post_induction_collapse | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| post_induction_collapse | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| presentation | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| presentation | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| peri_arrest | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| peri_arrest | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| persistent | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| persistent | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| post_induction_collapse | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| post_induction_collapse | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| presentation | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| presentation | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| relapse | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| relapse | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
 | responding | no | rule 1 (phase is responding AND NOT flag fluid_x2 set) | plausible |
 | responding | yes | rule 2 (default) | plausible |
-| worsening | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
-| worsening | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| worsening | no | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
+| worsening | yes | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is post_induction_collapse) | plausible |
 | «any other phase» | no | rule 2 (default) | plausible |
 | «any other phase» | yes | rule 2 (default) | plausible |
 
@@ -243,7 +248,8 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| worsening | rule 0 (phase is worsening) | plausible |
+| relapse | rule 0 (phase is worsening OR phase is relapse) | plausible |
+| worsening | rule 0 (phase is worsening OR phase is relapse) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -283,20 +289,11 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/drip_restarted`
 
-| phase | relapsed | relapsed_vent | resolves to | reachable? |
-|---|---|---|---|---|
-| post_induction_collapse | no | no | rule 1 (default) | plausible |
-| post_induction_collapse | no | yes | rule 0 ((flag relapsed set AND phase is worsening) OR (flag relapsed_vent set AND phase is post_induction_collapse)) | plausible |
-| post_induction_collapse | yes | no | rule 1 (default) | plausible |
-| post_induction_collapse | yes | yes | rule 0 ((flag relapsed set AND phase is worsening) OR (flag relapsed_vent set AND phase is post_induction_collapse)) | plausible |
-| worsening | no | no | rule 1 (default) | plausible |
-| worsening | no | yes | rule 1 (default) | plausible |
-| worsening | yes | no | rule 0 ((flag relapsed set AND phase is worsening) OR (flag relapsed_vent set AND phase is post_induction_collapse)) | plausible |
-| worsening | yes | yes | rule 0 ((flag relapsed set AND phase is worsening) OR (flag relapsed_vent set AND phase is post_induction_collapse)) | plausible |
-| «any other phase» | no | no | rule 1 (default) | plausible |
-| «any other phase» | no | yes | rule 1 (default) | plausible |
-| «any other phase» | yes | no | rule 1 (default) | plausible |
-| «any other phase» | yes | yes | rule 1 (default) | plausible |
+| phase | resolves to | reachable? |
+|---|---|---|
+| relapse | rule 0 (phase is relapse OR phase is vent_relapse) | plausible |
+| vent_relapse | rule 0 (phase is relapse OR phase is vent_relapse) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/non_rebreather_mask`
@@ -321,8 +318,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| peri_arrest | rule 0 (phase is worsening OR phase is peri_arrest) | plausible |
-| worsening | rule 0 (phase is worsening OR phase is peri_arrest) | plausible |
+| peri_arrest | rule 0 (phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| relapse | rule 0 (phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| worsening | rule 0 (phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -335,18 +333,20 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | epi_im_ed | resolves to | reachable? |
 |---|---|---|---|
-| peri_arrest | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
-| peri_arrest | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
-| persistent | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
-| persistent | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| peri_arrest | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| peri_arrest | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| persistent | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| persistent | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
 | presentation | no | rule 0 (phase is presentation AND NOT flag epi_im_ed set) | plausible |
-| presentation | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
-| responding | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
-| responding | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
-| stabilized | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
-| stabilized | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
-| worsening | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
-| worsening | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| presentation | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| relapse | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| relapse | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| responding | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| responding | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| stabilized | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| stabilized | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| worsening | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
+| worsening | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest OR phase is responding OR phase is stabilized) | plausible |
 | «any other phase» | no | rule 2 (default) | plausible |
 | «any other phase» | yes | rule 2 (default) | plausible |
 
@@ -540,17 +540,30 @@ Single unconditional rule; nothing to enumerate.
 
 ### `action_tag/reassessed_after_epi`
 
-| phase | resolves to | reachable? |
-|---|---|---|
-| persistent | rule 0 (phase is presentation OR phase is persistent OR phase is worsening) | plausible |
-| presentation | rule 0 (phase is presentation OR phase is persistent OR phase is worsening) | plausible |
-| worsening | rule 0 (phase is presentation OR phase is persistent OR phase is worsening) | plausible |
-| «any other phase» | rule 1 (default) | plausible |
+| phase | epi_im_ed | resolves to | reachable? |
+|---|---|---|---|
+| persistent | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| persistent | yes | rule 0 (phase is persistent AND flag epi_im_ed set) | plausible |
+| presentation | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| presentation | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| relapse | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| relapse | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| worsening | no | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| worsening | yes | rule 1 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| «any other phase» | no | rule 2 (default) | plausible |
+| «any other phase» | yes | rule 2 (default) | plausible |
 
 
 ### `action_tag/exam_airway`
 
-Single unconditional rule; nothing to enumerate.
+| phase | resolves to | reachable? |
+|---|---|---|
+| peri_arrest | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| persistent | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| presentation | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| relapse | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| worsening | rule 0 (phase is presentation OR phase is persistent OR phase is worsening OR phase is relapse OR phase is peri_arrest) | plausible |
+| «any other phase» | rule 1 (default) | plausible |
 
 
 ### `action_tag/exam_breath`
@@ -639,219 +652,221 @@ Single unconditional rule; nothing to enumerate.
 |---|---|---|---|
 | peri_arrest | no | rule 1 (phase is peri_arrest) &rarr; ABNORMAL: Hoarse whisper. Soft high-pitched noise on breathing in. Lips and tong... | plausible |
 | peri_arrest | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place and secured. | plausible |
-| persistent | no | rule 3 (phase is persistent) &rarr; ABNORMAL: Answers slowly. No stridor. Lips swollen. | plausible |
+| persistent | no | rule 4 (phase is persistent) &rarr; ABNORMAL: Answers slowly. No stridor. Lips swollen. | plausible |
 | persistent | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place and secured. | plausible |
+| relapse | no | rule 3 (phase is relapse) &rarr; ABNORMAL: Single words. No stridor. Lips swollen, tongue full. | plausible |
+| relapse | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place and secured. | plausible |
 | worsening | no | rule 2 (phase is worsening) &rarr; ABNORMAL: Single words. No stridor. Lips swollen, tongue full. | plausible |
 | worsening | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place and secured. | plausible |
-| «any other phase» | no | rule 4 (default) &rarr; ABNORMAL: Talking in short phrases. No stridor. Handling his secretions. Lips sw... | plausible |
+| «any other phase» | no | rule 5 (default) &rarr; ABNORMAL: Talking in short phrases. No stridor. Handling his secretions. Lips sw... | plausible |
 | «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Endotracheal tube in place and secured. | plausible |
 
 
 ### `exam/exam_breath`
 
-_112 combinations, exceeds the 96-row display cap. Axes: phases=['peri_arrest', 'persistent', 'presentation', 'responding', 'stabilized', 'worsening', '«any other phase»'], flags=['epi_bridge_acting', 'epi_im_ed', 'epi_onset', 'intubated'], studies=[], actions=[]._
+_128 combinations, exceeds the 96-row display cap. Axes: phases=['peri_arrest', 'persistent', 'presentation', 'relapse', 'responding', 'stabilized', 'worsening', '«any other phase»'], flags=['epi_bridge_acting', 'epi_im_ed', 'epi_onset', 'intubated'], studies=[], actions=[]._
 
 | phase | epi_bridge_acting | epi_im_ed | epi_onset | intubated | resolves to | reachable? |
 |---|---|---|---|---|---|---|
-| peri_arrest | no | no | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
+| peri_arrest | no | no | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
 | peri_arrest | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| peri_arrest | no | no | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
+| peri_arrest | no | no | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
 | peri_arrest | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| peri_arrest | no | yes | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
+| peri_arrest | no | yes | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
 | peri_arrest | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| peri_arrest | no | yes | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
+| peri_arrest | no | yes | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
 | peri_arrest | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| peri_arrest | yes | no | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
+| peri_arrest | yes | no | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
 | peri_arrest | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| peri_arrest | yes | no | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
+| peri_arrest | yes | no | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
 | peri_arrest | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| peri_arrest | yes | yes | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
+| peri_arrest | yes | yes | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
 | peri_arrest | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| peri_arrest | yes | yes | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
+| peri_arrest | yes | yes | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Shallow, weak effort. | plausible |
 | peri_arrest | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| persistent | no | no | no | no | rule 5 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
+| persistent | no | no | no | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
 | persistent | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| persistent | no | no | yes | no | rule 5 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
+| persistent | no | no | yes | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
 | persistent | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| persistent | no | yes | no | no | rule 5 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
+| persistent | no | yes | no | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
 | persistent | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| persistent | no | yes | yes | no | rule 5 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
+| persistent | no | yes | yes | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
 | persistent | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
 | persistent | yes | no | no | no | rule 2 ((phase is persistent OR phase is worsening) AND flag epi_bridge_acting set AND NOT flag epi_onset set) &rarr; ABNORMAL: A little easier for the moment. Still retracting. | plausible |
 | persistent | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| persistent | yes | no | yes | no | rule 5 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
+| persistent | yes | no | yes | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
 | persistent | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
 | persistent | yes | yes | no | no | rule 2 ((phase is persistent OR phase is worsening) AND flag epi_bridge_acting set AND NOT flag epi_onset set) &rarr; ABNORMAL: A little easier for the moment. Still retracting. | plausible |
 | persistent | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| persistent | yes | yes | yes | no | rule 5 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
+| persistent | yes | yes | yes | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Retractions below and between the ribs. | plausible |
 | persistent | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| presentation | no | no | no | no | rule 8 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
+| presentation | no | no | no | no | rule 10 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
 | presentation | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| presentation | no | no | yes | no | rule 8 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
+| presentation | no | no | yes | no | rule 10 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
 | presentation | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
 | presentation | no | yes | no | no | rule 1 (phase is presentation AND flag epi_im_ed set AND NOT flag epi_onset set) &rarr; ABNORMAL: Breathing a little easier for now. Mild retractions. | plausible |
 | presentation | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| presentation | no | yes | yes | no | rule 8 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
+| presentation | no | yes | yes | no | rule 10 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
 | presentation | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| presentation | yes | no | no | no | rule 8 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
+| presentation | yes | no | no | no | rule 10 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
 | presentation | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| presentation | yes | no | yes | no | rule 8 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
+| presentation | yes | no | yes | no | rule 10 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
 | presentation | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
 | presentation | yes | yes | no | no | rule 1 (phase is presentation AND flag epi_im_ed set AND NOT flag epi_onset set) &rarr; ABNORMAL: Breathing a little easier for now. Mild retractions. | plausible |
 | presentation | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| presentation | yes | yes | yes | no | rule 8 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
+| presentation | yes | yes | yes | no | rule 10 (default) &rarr; ABNORMAL: Fast breathing, mild retractions, sitting forward. | plausible |
 | presentation | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| responding | no | no | no | no | rule 6 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
+| relapse | no | no | no | no | rule 6 (phase is relapse) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
+| relapse | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| relapse | no | no | yes | no | rule 6 (phase is relapse) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
+| relapse | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| relapse | no | yes | no | no | rule 6 (phase is relapse) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
+| relapse | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| relapse | no | yes | yes | no | rule 6 (phase is relapse) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
+| relapse | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| relapse | yes | no | no | no | rule 3 ((phase is persistent OR phase is relapse) AND flag epi_bridge_acting set AND NOT flag epi_onset set) &rarr; ABNORMAL: A little easier for the moment. Still retracting. | plausible |
+| relapse | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| relapse | yes | no | yes | no | rule 6 (phase is relapse) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
+| relapse | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| relapse | yes | yes | no | no | rule 3 ((phase is persistent OR phase is relapse) AND flag epi_bridge_acting set AND NOT flag epi_onset set) &rarr; ABNORMAL: A little easier for the moment. Still retracting. | plausible |
+| relapse | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| relapse | yes | yes | yes | no | rule 6 (phase is relapse) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
+| relapse | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
+| responding | no | no | no | no | rule 8 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
 | responding | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| responding | no | no | yes | no | rule 6 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
+| responding | no | no | yes | no | rule 8 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
 | responding | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| responding | no | yes | no | no | rule 6 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
+| responding | no | yes | no | no | rule 8 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
 | responding | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| responding | no | yes | yes | no | rule 6 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
+| responding | no | yes | yes | no | rule 8 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
 | responding | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| responding | yes | no | no | no | rule 6 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
+| responding | yes | no | no | no | rule 8 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
 | responding | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| responding | yes | no | yes | no | rule 6 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
+| responding | yes | no | yes | no | rule 8 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
 | responding | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| responding | yes | yes | no | no | rule 6 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
+| responding | yes | yes | no | no | rule 8 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
 | responding | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| responding | yes | yes | yes | no | rule 6 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
+| responding | yes | yes | yes | no | rule 8 (phase is responding) &rarr; ABNORMAL: Retractions easing. | plausible |
 | responding | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| stabilized | no | no | no | no | rule 7 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
+| stabilized | no | no | no | no | rule 9 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
 | stabilized | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| stabilized | no | no | yes | no | rule 7 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
+| stabilized | no | no | yes | no | rule 9 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
 | stabilized | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| stabilized | no | yes | no | no | rule 7 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
+| stabilized | no | yes | no | no | rule 9 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
 | stabilized | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| stabilized | no | yes | yes | no | rule 7 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
+| stabilized | no | yes | yes | no | rule 9 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
 | stabilized | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| stabilized | yes | no | no | no | rule 7 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
+| stabilized | yes | no | no | no | rule 9 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
 | stabilized | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| stabilized | yes | no | yes | no | rule 7 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
+| stabilized | yes | no | yes | no | rule 9 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
 | stabilized | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| stabilized | yes | yes | no | no | rule 7 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
+| stabilized | yes | yes | no | no | rule 9 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
 | stabilized | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| stabilized | yes | yes | yes | no | rule 7 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
+| stabilized | yes | yes | yes | no | rule 9 (phase is stabilized) &rarr; ABNORMAL: Mild retractions. | plausible |
 | stabilized | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| worsening | no | no | no | no | rule 4 (phase is worsening) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
-| worsening | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| worsening | no | no | yes | no | rule 4 (phase is worsening) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
-| worsening | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| worsening | no | yes | no | no | rule 4 (phase is worsening) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
-| worsening | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| worsening | no | yes | yes | no | rule 4 (phase is worsening) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
-| worsening | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| worsening | yes | no | no | no | rule 2 ((phase is persistent OR phase is worsening) AND flag epi_bridge_acting set AND NOT flag epi_onset set) &rarr; ABNORMAL: A little easier for the moment. Still retracting. | plausible |
-| worsening | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| worsening | yes | no | yes | no | rule 4 (phase is worsening) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
-| worsening | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| worsening | yes | yes | no | no | rule 2 ((phase is persistent OR phase is worsening) AND flag epi_bridge_acting set AND NOT flag epi_onset set) &rarr; ABNORMAL: A little easier for the moment. Still retracting. | plausible |
-| worsening | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
-| worsening | yes | yes | yes | no | rule 4 (phase is worsening) &rarr; ABNORMAL: Marked retractions below and between the ribs. Tiring, poor effort. | plausible |
-| worsening | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Ventilated. Chest rising equally. | plausible |
 
 
 ### `exam/exam_pulm`
 
-_224 combinations, exceeds the 96-row display cap. Axes: phases=['peri_arrest', 'persistent', 'presentation', 'responding', 'stabilized', 'worsening', '«any other phase»'], flags=['albuterol_given', 'epi_bridge_acting', 'epi_im_ed', 'epi_onset', 'intubated'], studies=[], actions=[]._
+_256 combinations, exceeds the 96-row display cap. Axes: phases=['peri_arrest', 'persistent', 'presentation', 'relapse', 'responding', 'stabilized', 'worsening', '«any other phase»'], flags=['albuterol_given', 'epi_bridge_acting', 'epi_im_ed', 'epi_onset', 'intubated'], studies=[], actions=[]._
 
 | phase | albuterol_given | epi_bridge_acting | epi_im_ed | epi_onset | intubated | resolves to | reachable? |
 |---|---|---|---|---|---|---|---|
-| peri_arrest | no | no | no | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | no | no | no | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | no | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | no | no | no | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | no | no | no | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | no | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | no | no | yes | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | no | no | yes | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | no | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | no | no | yes | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | no | no | yes | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | no | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | no | yes | no | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | no | yes | no | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | no | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | no | yes | no | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | no | yes | no | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | no | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | no | yes | yes | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | no | yes | yes | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | no | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | no | yes | yes | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | no | yes | yes | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | no | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | yes | no | no | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | yes | no | no | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | yes | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | yes | no | no | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | yes | no | no | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | yes | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | yes | no | yes | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | yes | no | yes | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | yes | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | yes | no | yes | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | yes | no | yes | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | yes | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | yes | yes | no | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | yes | yes | no | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | yes | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | yes | yes | no | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | yes | yes | no | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | yes | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | yes | yes | yes | no | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | yes | yes | yes | no | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | yes | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| peri_arrest | yes | yes | yes | yes | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
+| peri_arrest | yes | yes | yes | yes | no | rule 4 (phase is peri_arrest) &rarr; ABNORMAL: Almost no air movement. Faint wheeze. | plausible |
 | peri_arrest | yes | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | no | no | no | no | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| persistent | no | no | no | no | no | rule 10 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | persistent | no | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | no | no | no | yes | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| persistent | no | no | no | yes | no | rule 10 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | persistent | no | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | no | no | yes | no | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| persistent | no | no | yes | no | no | rule 10 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | persistent | no | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | no | no | yes | yes | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| persistent | no | no | yes | yes | no | rule 10 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | persistent | no | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
 | persistent | no | yes | no | no | no | rule 2 ((phase is persistent OR phase is worsening) AND flag epi_bridge_acting set AND NOT flag epi_onset set) &rarr; ABNORMAL: Wheeze throughout, a little less for now. Air entry still poor. | plausible |
 | persistent | no | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | no | yes | no | yes | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| persistent | no | yes | no | yes | no | rule 10 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | persistent | no | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
 | persistent | no | yes | yes | no | no | rule 2 ((phase is persistent OR phase is worsening) AND flag epi_bridge_acting set AND NOT flag epi_onset set) &rarr; ABNORMAL: Wheeze throughout, a little less for now. Air entry still poor. | plausible |
 | persistent | no | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | no | yes | yes | yes | no | rule 7 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| persistent | no | yes | yes | yes | no | rule 10 (phase is persistent) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | persistent | no | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | yes | no | no | no | no | rule 6 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| persistent | yes | no | no | no | no | rule 9 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | persistent | yes | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | yes | no | no | yes | no | rule 6 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| persistent | yes | no | no | yes | no | rule 9 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | persistent | yes | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | yes | no | yes | no | no | rule 6 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| persistent | yes | no | yes | no | no | rule 9 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | persistent | yes | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | yes | no | yes | yes | no | rule 6 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| persistent | yes | no | yes | yes | no | rule 9 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | persistent | yes | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
 | persistent | yes | yes | no | no | no | rule 2 ((phase is persistent OR phase is worsening) AND flag epi_bridge_acting set AND NOT flag epi_onset set) &rarr; ABNORMAL: Wheeze throughout, a little less for now. Air entry still poor. | plausible |
 | persistent | yes | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | yes | yes | no | yes | no | rule 6 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| persistent | yes | yes | no | yes | no | rule 9 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | persistent | yes | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
 | persistent | yes | yes | yes | no | no | rule 2 ((phase is persistent OR phase is worsening) AND flag epi_bridge_acting set AND NOT flag epi_onset set) &rarr; ABNORMAL: Wheeze throughout, a little less for now. Air entry still poor. | plausible |
 | persistent | yes | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| persistent | yes | yes | yes | yes | no | rule 6 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| persistent | yes | yes | yes | yes | no | rule 9 (phase is persistent AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | persistent | yes | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | no | no | no | no | no | rule 11 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| presentation | no | no | no | no | no | rule 14 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | presentation | no | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | no | no | no | yes | no | rule 11 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| presentation | no | no | no | yes | no | rule 14 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | presentation | no | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
 | presentation | no | no | yes | no | no | rule 1 (phase is presentation AND flag epi_im_ed set AND NOT flag epi_onset set) &rarr; ABNORMAL: Wheeze throughout, a little less than before. | plausible |
 | presentation | no | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | no | no | yes | yes | no | rule 11 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| presentation | no | no | yes | yes | no | rule 14 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | presentation | no | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | no | yes | no | no | no | rule 11 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| presentation | no | yes | no | no | no | rule 14 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | presentation | no | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | no | yes | no | yes | no | rule 11 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| presentation | no | yes | no | yes | no | rule 14 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | presentation | no | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
 | presentation | no | yes | yes | no | no | rule 1 (phase is presentation AND flag epi_im_ed set AND NOT flag epi_onset set) &rarr; ABNORMAL: Wheeze throughout, a little less than before. | plausible |
 | presentation | no | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | no | yes | yes | yes | no | rule 11 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
+| presentation | no | yes | yes | yes | no | rule 14 (default) &rarr; ABNORMAL: Wheeze throughout both lungs. | plausible |
 | presentation | no | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | yes | no | no | no | no | rule 10 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| presentation | yes | no | no | no | no | rule 13 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | presentation | yes | no | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | yes | no | no | yes | no | rule 10 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| presentation | yes | no | no | yes | no | rule 13 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | presentation | yes | no | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
 | presentation | yes | no | yes | no | no | rule 1 (phase is presentation AND flag epi_im_ed set AND NOT flag epi_onset set) &rarr; ABNORMAL: Wheeze throughout, a little less than before. | plausible |
 | presentation | yes | no | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | yes | no | yes | yes | no | rule 10 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| presentation | yes | no | yes | yes | no | rule 13 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | presentation | yes | no | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | yes | yes | no | no | no | rule 10 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| presentation | yes | yes | no | no | no | rule 13 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | presentation | yes | yes | no | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | yes | yes | no | yes | no | rule 10 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| presentation | yes | yes | no | yes | no | rule 13 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | presentation | yes | yes | no | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
 | presentation | yes | yes | yes | no | no | rule 1 (phase is presentation AND flag epi_im_ed set AND NOT flag epi_onset set) &rarr; ABNORMAL: Wheeze throughout, a little less than before. | plausible |
 | presentation | yes | yes | yes | no | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
-| presentation | yes | yes | yes | yes | no | rule 10 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
+| presentation | yes | yes | yes | yes | no | rule 13 (phase is presentation AND flag albuterol_given set) &rarr; ABNORMAL: Wheeze throughout, slightly less after the nebulizer. | plausible |
 | presentation | yes | yes | yes | yes | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Wheeze on both sides. Air entry equal. | plausible |
 
 
@@ -860,13 +875,15 @@ _224 combinations, exceeds the 96-row display cap. Axes: phases=['peri_arrest', 
 | phase | resolves to | reachable? |
 |---|---|---|
 | peri_arrest | rule 0 (phase is peri_arrest) &rarr; ABNORMAL: Mottled. Central pulse weak. Peripheral pulses barely felt. | plausible |
-| persistent | rule 2 (phase is persistent) &rarr; ABNORMAL: Cool hands. Capillary refill 4 seconds. Pulses fast and thready. | plausible |
-| post_induction_collapse | rule 5 (phase is post_induction_collapse) &rarr; ABNORMAL: Mottled. Weak pulses. Capillary refill 5 seconds. | plausible |
-| responding | rule 3 (phase is responding) &rarr; ABNORMAL: Capillary refill 3 to 4 seconds. Pulses stronger. | plausible |
-| stabilized | rule 4 (phase is stabilized) &rarr; normal: Warm hands. Capillary refill under 3 seconds. | plausible |
-| ventilated | rule 6 (phase is ventilated) &rarr; ABNORMAL: Capillary refill 3 seconds. Pulses palpable. | plausible |
+| persistent | rule 3 (phase is persistent) &rarr; ABNORMAL: Cool hands. Capillary refill 4 seconds. Pulses fast and thready. | plausible |
+| post_induction_collapse | rule 6 (phase is post_induction_collapse) &rarr; ABNORMAL: Mottled. Weak pulses. Capillary refill 5 seconds. | plausible |
+| relapse | rule 2 (phase is relapse) &rarr; ABNORMAL: Cool, mottled legs. Weak peripheral pulses. Capillary refill 4 seconds... | plausible |
+| responding | rule 4 (phase is responding) &rarr; ABNORMAL: Capillary refill 3 to 4 seconds. Pulses stronger. | plausible |
+| stabilized | rule 5 (phase is stabilized) &rarr; normal: Warm hands. Capillary refill under 3 seconds. | plausible |
+| vent_relapse | rule 7 (phase is vent_relapse) &rarr; ABNORMAL: Mottled. Weak pulses. Capillary refill 5 seconds. | plausible |
+| ventilated | rule 8 (phase is ventilated) &rarr; ABNORMAL: Capillary refill 3 seconds. Pulses palpable. | plausible |
 | worsening | rule 1 (phase is worsening) &rarr; ABNORMAL: Cool, mottled legs. Weak peripheral pulses. Capillary refill 4 seconds... | plausible |
-| «any other phase» | rule 7 (default) &rarr; ABNORMAL: Capillary refill 3 seconds. Pulses fast and thready. | plausible |
+| «any other phase» | rule 9 (default) &rarr; ABNORMAL: Capillary refill 3 seconds. Pulses fast and thready. | plausible |
 
 
 ### `exam/exam_heent`
@@ -909,15 +926,17 @@ _224 combinations, exceeds the 96-row display cap. Axes: phases=['peri_arrest', 
 |---|---|---|---|
 | peri_arrest | no | rule 1 (phase is peri_arrest) &rarr; ABNORMAL: Limp. Responds to pain. GCS 8. | plausible |
 | peri_arrest | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated and paralyzed. Pupils equal and reactive. | plausible |
-| persistent | no | rule 3 (phase is persistent) &rarr; ABNORMAL: Eyes closing between questions, slow answers. GCS 14. | plausible |
+| persistent | no | rule 4 (phase is persistent) &rarr; ABNORMAL: Eyes closing between questions, slow answers. GCS 14. | plausible |
 | persistent | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated and paralyzed. Pupils equal and reactive. | plausible |
-| responding | no | rule 4 (phase is responding) &rarr; ABNORMAL: Opens his eyes to voice, asks for his mother. GCS 13. | plausible |
+| relapse | no | rule 3 (phase is relapse) &rarr; ABNORMAL: Floppy, opens his eyes to voice. GCS 12. | plausible |
+| relapse | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated and paralyzed. Pupils equal and reactive. | plausible |
+| responding | no | rule 5 (phase is responding) &rarr; ABNORMAL: Opens his eyes to voice, asks for his mother. GCS 13. | plausible |
 | responding | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated and paralyzed. Pupils equal and reactive. | plausible |
-| stabilized | no | rule 5 (phase is stabilized) &rarr; normal: Alert and tired. GCS 15. | plausible |
+| stabilized | no | rule 6 (phase is stabilized) &rarr; normal: Alert and tired. GCS 15. | plausible |
 | stabilized | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated and paralyzed. Pupils equal and reactive. | plausible |
 | worsening | no | rule 2 (phase is worsening) &rarr; ABNORMAL: Floppy, opens his eyes to voice. GCS 12. | plausible |
 | worsening | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated and paralyzed. Pupils equal and reactive. | plausible |
-| «any other phase» | no | rule 6 (default) &rarr; normal: Alert, frightened, asking for his mother. GCS 15. | plausible |
+| «any other phase» | no | rule 7 (default) &rarr; normal: Alert, frightened, asking for his mother. GCS 15. | plausible |
 | «any other phase» | yes | rule 0 (flag intubated set) &rarr; ABNORMAL: Sedated and paralyzed. Pupils equal and reactive. | plausible |
 
 
@@ -930,20 +949,24 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | intubated | resolves to | reachable? |
 |---|---|---|---|
-| peri_arrest | no | rule 2 (phase is peri_arrest) &rarr; ABNORMAL: Silent and limp, lips blue. GCS 8. | plausible |
-| peri_arrest | yes | rule 1 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
-| persistent | no | rule 4 (phase is persistent) &rarr; ABNORMAL: Has stopped crying and stopped asking for his mother. Slow answers. GC... | plausible |
-| persistent | yes | rule 1 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
-| post_induction_collapse | no | rule 7 (default) &rarr; ABNORMAL: Frightened and tearful, sitting forward, pulling at the mask, asking f... | plausible |
+| peri_arrest | no | rule 3 (phase is peri_arrest) &rarr; ABNORMAL: Silent and limp, lips blue. GCS 8. | plausible |
+| peri_arrest | yes | rule 2 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| persistent | no | rule 6 (phase is persistent) &rarr; ABNORMAL: Has stopped crying and stopped asking for his mother. Slow answers. GC... | plausible |
+| persistent | yes | rule 2 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| post_induction_collapse | no | rule 9 (default) &rarr; ABNORMAL: Frightened and tearful, sitting forward, pulling at the mask, asking f... | plausible |
 | post_induction_collapse | yes | rule 0 (flag intubated set AND phase is post_induction_collapse) &rarr; ABNORMAL: Intubated and paralyzed. Mottled. | plausible |
-| responding | no | rule 5 (phase is responding) &rarr; ABNORMAL: Opening his eyes, asking for his mother again. GCS 13. | plausible |
-| responding | yes | rule 1 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
-| stabilized | no | rule 6 (phase is stabilized) &rarr; ABNORMAL: Alert and tired, talking in full sentences. GCS 15. | plausible |
-| stabilized | yes | rule 1 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
-| worsening | no | rule 3 (phase is worsening) &rarr; ABNORMAL: Floppy, single words, no longer fighting the mask. GCS 12. | plausible |
-| worsening | yes | rule 1 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
-| «any other phase» | no | rule 7 (default) &rarr; ABNORMAL: Frightened and tearful, sitting forward, pulling at the mask, asking f... | plausible |
-| «any other phase» | yes | rule 1 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| relapse | no | rule 5 (phase is relapse) &rarr; ABNORMAL: Floppy, single words, no longer fighting the mask. GCS 12. | plausible |
+| relapse | yes | rule 2 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| responding | no | rule 7 (phase is responding) &rarr; ABNORMAL: Opening his eyes, asking for his mother again. GCS 13. | plausible |
+| responding | yes | rule 2 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| stabilized | no | rule 8 (phase is stabilized) &rarr; ABNORMAL: Alert and tired, talking in full sentences. GCS 15. | plausible |
+| stabilized | yes | rule 2 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| vent_relapse | no | rule 9 (default) &rarr; ABNORMAL: Frightened and tearful, sitting forward, pulling at the mask, asking f... | plausible |
+| vent_relapse | yes | rule 1 (flag intubated set AND phase is vent_relapse) &rarr; ABNORMAL: Intubated and paralyzed. Mottled. | plausible |
+| worsening | no | rule 4 (phase is worsening) &rarr; ABNORMAL: Floppy, single words, no longer fighting the mask. GCS 12. | plausible |
+| worsening | yes | rule 2 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
+| «any other phase» | no | rule 9 (default) &rarr; ABNORMAL: Frightened and tearful, sitting forward, pulling at the mask, asking f... | plausible |
+| «any other phase» | yes | rule 2 (flag intubated set) &rarr; ABNORMAL: Intubated and sedated. | plausible |
 
 
 ### `patient_visual`
@@ -952,11 +975,13 @@ Single unconditional rule; nothing to enumerate.
 |---|---|---|---|
 | peri_arrest | no | rule 1 (phase is peri_arrest) &rarr; figure: eyes open, work of breathing severe, +nonrebreather, +cyanosis, +pallor | plausible |
 | peri_arrest | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
-| stabilized | no | rule 3 (phase is stabilized) &rarr; figure: eyes open, +nonrebreather, +flushed | plausible |
+| relapse | no | rule 3 (phase is relapse) &rarr; figure: eyes open, work of breathing severe, +nonrebreather, +sweating | plausible |
+| relapse | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
+| stabilized | no | rule 4 (phase is stabilized) &rarr; figure: eyes open, +nonrebreather, +flushed | plausible |
 | stabilized | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
 | worsening | no | rule 2 (phase is worsening) &rarr; figure: eyes open, work of breathing severe, +nonrebreather, +sweating | plausible |
 | worsening | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
-| «any other phase» | no | rule 4 (default) &rarr; figure: eyes open, work of breathing increased, +nonrebreather, +flushed, +sweating | plausible |
+| «any other phase» | no | rule 5 (default) &rarr; figure: eyes open, work of breathing increased, +nonrebreather, +flushed, +sweating | plausible |
 | «any other phase» | yes | rule 0 (flag intubated set) &rarr; figure: eyes closed, +intubated | plausible |
 
 
@@ -964,56 +989,64 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| peri_arrest | rule 3 (phase is peri_arrest) &rarr; **pH 7.01**; **pCO2 62 mmHg**; **HCO3 15 mEq/L**; **Lactate 7.0 mmol/L** | plausible |
+| peri_arrest | rule 4 (phase is peri_arrest) &rarr; **pH 7.01**; **pCO2 62 mmHg**; **HCO3 15 mEq/L**; **Lactate 7.0 mmol/L** | plausible |
 | persistent | rule 1 (phase is persistent) &rarr; **pH 7.30**; **pCO2 38 mmHg**; **HCO3 18 mEq/L**; **Lactate 4.0 mmol/L** | plausible |
-| post_induction_collapse | rule 6 (phase is post_induction_collapse) &rarr; **pH 7.06**; **pCO2 55 mmHg**; **HCO3 15 mEq/L**; **Lactate 6.5 mmol/L** | plausible |
+| post_induction_collapse | rule 7 (phase is post_induction_collapse) &rarr; **pH 7.06**; **pCO2 55 mmHg**; **HCO3 15 mEq/L**; **Lactate 6.5 mmol/L** | plausible |
 | presentation | rule 0 (phase is presentation) &rarr; pH 7.35; **pCO2 36 mmHg**; **HCO3 19 mEq/L**; **Lactate 3.0 mmol/L** | plausible |
-| responding | rule 4 (phase is responding) &rarr; **pH 7.28**; **pCO2 40 mmHg**; **HCO3 18 mEq/L**; **Lactate 4.2 mmol/L** | plausible |
-| stabilized | rule 5 (phase is stabilized) &rarr; pH 7.32; **pCO2 38 mmHg**; **HCO3 19 mEq/L**; **Lactate 3.6 mmol/L** | plausible |
+| relapse | rule 3 (phase is relapse) &rarr; **pH 7.17**; pCO2 48 mmHg; **HCO3 17 mEq/L**; **Lactate 5.5 mmol/L** | plausible |
+| responding | rule 5 (phase is responding) &rarr; **pH 7.28**; **pCO2 40 mmHg**; **HCO3 18 mEq/L**; **Lactate 4.2 mmol/L** | plausible |
+| stabilized | rule 6 (phase is stabilized) &rarr; pH 7.32; **pCO2 38 mmHg**; **HCO3 19 mEq/L**; **Lactate 3.6 mmol/L** | plausible |
+| vent_relapse | rule 8 (phase is vent_relapse) &rarr; **pH 7.06**; **pCO2 55 mmHg**; **HCO3 15 mEq/L**; **Lactate 6.5 mmol/L** | plausible |
 | worsening | rule 2 (phase is worsening) &rarr; **pH 7.17**; pCO2 48 mmHg; **HCO3 17 mEq/L**; **Lactate 5.5 mmol/L** | plausible |
-| «any other phase» | rule 7 (default) &rarr; **pH 7.20**; pCO2 45 mmHg; **HCO3 17 mEq/L**; **Lactate 5.0 mmol/L** | plausible |
+| «any other phase» | rule 9 (default) &rarr; **pH 7.20**; pCO2 45 mmHg; **HCO3 17 mEq/L**; **Lactate 5.0 mmol/L** | plausible |
 
 
 ### `labs/arterial_blood_gas`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| peri_arrest | rule 3 (phase is peri_arrest) &rarr; **pH 7.01**; **pCO2 57 mmHg**; **pO2 46 mmHg**; **HCO3 14 mEq/L**; **Lactate 7.0 mmol/L** | plausible |
+| peri_arrest | rule 4 (phase is peri_arrest) &rarr; **pH 7.01**; **pCO2 57 mmHg**; **pO2 46 mmHg**; **HCO3 14 mEq/L**; **Lactate 7.0 mmol/L** | plausible |
 | persistent | rule 1 (phase is persistent) &rarr; **pH 7.33**; **pCO2 33 mmHg**; **pO2 62 mmHg**; **HCO3 17 mEq/L**; **Lactate 4.0 mmol/L** | plausible |
-| post_induction_collapse | rule 6 (phase is post_induction_collapse) &rarr; **pH 7.07**; **pCO2 50 mmHg**; **pO2 56 mmHg**; **HCO3 14 mEq/L**; **Lactate 6.5 mmol/L** | plausible |
+| post_induction_collapse | rule 7 (phase is post_induction_collapse) &rarr; **pH 7.07**; **pCO2 50 mmHg**; **pO2 56 mmHg**; **HCO3 14 mEq/L**; **Lactate 6.5 mmol/L** | plausible |
 | presentation | rule 0 (phase is presentation) &rarr; pH 7.39; **pCO2 31 mmHg**; **pO2 70 mmHg**; **HCO3 18 mEq/L**; **Lactate 3.0 mmol/L** | plausible |
-| responding | rule 4 (phase is responding) &rarr; **pH 7.31**; pCO2 35 mmHg; **pO2 64 mmHg**; **HCO3 17 mEq/L**; **Lactate 4.2 mmol/L** | plausible |
-| stabilized | rule 5 (phase is stabilized) &rarr; pH 7.36; **pCO2 33 mmHg**; pO2 88 mmHg; **HCO3 18 mEq/L**; **Lactate 3.6 mmol/L** | plausible |
+| relapse | rule 3 (phase is relapse) &rarr; **pH 7.19**; pCO2 43 mmHg; **pO2 56 mmHg**; **HCO3 16 mEq/L**; **Lactate 5.5 mmol/L** | plausible |
+| responding | rule 5 (phase is responding) &rarr; **pH 7.31**; pCO2 35 mmHg; **pO2 64 mmHg**; **HCO3 17 mEq/L**; **Lactate 4.2 mmol/L** | plausible |
+| stabilized | rule 6 (phase is stabilized) &rarr; pH 7.36; **pCO2 33 mmHg**; pO2 88 mmHg; **HCO3 18 mEq/L**; **Lactate 3.6 mmol/L** | plausible |
+| vent_relapse | rule 8 (phase is vent_relapse) &rarr; **pH 7.07**; **pCO2 50 mmHg**; **pO2 56 mmHg**; **HCO3 14 mEq/L**; **Lactate 6.5 mmol/L** | plausible |
 | worsening | rule 2 (phase is worsening) &rarr; **pH 7.19**; pCO2 43 mmHg; **pO2 56 mmHg**; **HCO3 16 mEq/L**; **Lactate 5.5 mmol/L** | plausible |
-| «any other phase» | rule 7 (default) &rarr; **pH 7.22**; pCO2 40 mmHg; **pO2 74 mmHg**; **HCO3 16 mEq/L**; **Lactate 5.0 mmol/L** | plausible |
+| «any other phase» | rule 9 (default) &rarr; **pH 7.22**; pCO2 40 mmHg; **pO2 74 mmHg**; **HCO3 16 mEq/L**; **Lactate 5.0 mmol/L** | plausible |
 
 
 ### `labs/lactate`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| peri_arrest | rule 3 (phase is peri_arrest) &rarr; **Lactate 7.0 mmol/L** | plausible |
+| peri_arrest | rule 4 (phase is peri_arrest) &rarr; **Lactate 7.0 mmol/L** | plausible |
 | persistent | rule 1 (phase is persistent) &rarr; **Lactate 4.0 mmol/L** | plausible |
-| post_induction_collapse | rule 6 (phase is post_induction_collapse) &rarr; **Lactate 6.5 mmol/L** | plausible |
+| post_induction_collapse | rule 7 (phase is post_induction_collapse) &rarr; **Lactate 6.5 mmol/L** | plausible |
 | presentation | rule 0 (phase is presentation) &rarr; **Lactate 3.0 mmol/L** | plausible |
-| responding | rule 4 (phase is responding) &rarr; **Lactate 4.2 mmol/L** | plausible |
-| stabilized | rule 5 (phase is stabilized) &rarr; **Lactate 3.6 mmol/L** | plausible |
+| relapse | rule 3 (phase is relapse) &rarr; **Lactate 5.5 mmol/L** | plausible |
+| responding | rule 5 (phase is responding) &rarr; **Lactate 4.2 mmol/L** | plausible |
+| stabilized | rule 6 (phase is stabilized) &rarr; **Lactate 3.6 mmol/L** | plausible |
+| vent_relapse | rule 8 (phase is vent_relapse) &rarr; **Lactate 6.5 mmol/L** | plausible |
 | worsening | rule 2 (phase is worsening) &rarr; **Lactate 5.5 mmol/L** | plausible |
-| «any other phase» | rule 7 (default) &rarr; **Lactate 5.0 mmol/L** | plausible |
+| «any other phase» | rule 9 (default) &rarr; **Lactate 5.0 mmol/L** | plausible |
 
 
 ### `labs/basic_chemistry_chem_7`
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| peri_arrest | rule 3 (phase is peri_arrest) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 16 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; **Anion gap 18 mEq/L** | plausible |
+| peri_arrest | rule 4 (phase is peri_arrest) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 16 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; **Anion gap 18 mEq/L** | plausible |
 | persistent | rule 1 (phase is persistent) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 19 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; Anion gap 15 mEq/L | plausible |
-| post_induction_collapse | rule 6 (phase is post_induction_collapse) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 16 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; **Anion gap 18 mEq/L** | plausible |
+| post_induction_collapse | rule 7 (phase is post_induction_collapse) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 16 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; **Anion gap 18 mEq/L** | plausible |
 | presentation | rule 0 (phase is presentation) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 20 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; Anion gap 14 mEq/L | plausible |
-| responding | rule 4 (phase is responding) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 19 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; Anion gap 15 mEq/L | plausible |
-| stabilized | rule 5 (phase is stabilized) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 20 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; Anion gap 14 mEq/L | plausible |
+| relapse | rule 3 (phase is relapse) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 18 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; Anion gap 16 mEq/L | plausible |
+| responding | rule 5 (phase is responding) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 19 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; Anion gap 15 mEq/L | plausible |
+| stabilized | rule 6 (phase is stabilized) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 20 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; Anion gap 14 mEq/L | plausible |
+| vent_relapse | rule 8 (phase is vent_relapse) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 16 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; **Anion gap 18 mEq/L** | plausible |
 | worsening | rule 2 (phase is worsening) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 18 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; Anion gap 16 mEq/L | plausible |
-| «any other phase» | rule 7 (default) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 18 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; Anion gap 16 mEq/L | plausible |
+| «any other phase» | rule 9 (default) &rarr; Sodium 139 mEq/L; Potassium 3.8 mEq/L; Chloride 105 mEq/L; **Bicarbonate 18 mEq/L**; BUN 12 mg/dL; Creatinine 0.6 mg/dL; Glucose 138 mg/dL; Anion gap 16 mEq/L | plausible |
 
 
 ### `labs/complete_blood_count_cbc`
@@ -1046,64 +1079,44 @@ Single unconditional rule; nothing to enumerate.
 
 ### `consultant/consult_critical_care`
 
-| phase | epi_drip_ordered | epi_im_ed | intubated | resolves to | reachable? |
-|---|---|---|---|---|---|
-| peri_arrest | no | no | no | rule 4 (phase is peri_arrest) | plausible |
-| peri_arrest | no | no | yes | rule 1 (flag intubated set) | plausible |
-| peri_arrest | no | yes | no | rule 4 (phase is peri_arrest) | plausible |
-| peri_arrest | no | yes | yes | rule 1 (flag intubated set) | plausible |
-| peri_arrest | yes | no | no | rule 4 (phase is peri_arrest) | plausible |
-| peri_arrest | yes | no | yes | rule 1 (flag intubated set) | plausible |
-| peri_arrest | yes | yes | no | rule 4 (phase is peri_arrest) | plausible |
-| peri_arrest | yes | yes | yes | rule 1 (flag intubated set) | plausible |
-| persistent | no | no | no | rule 8 (phase is persistent) | plausible |
-| persistent | no | no | yes | rule 1 (flag intubated set) | plausible |
-| persistent | no | yes | no | rule 8 (phase is persistent) | plausible |
-| persistent | no | yes | yes | rule 1 (flag intubated set) | plausible |
-| persistent | yes | no | no | rule 7 (phase is persistent AND flag epi_drip_ordered set) | plausible |
-| persistent | yes | no | yes | rule 1 (flag intubated set) | plausible |
-| persistent | yes | yes | no | rule 7 (phase is persistent AND flag epi_drip_ordered set) | plausible |
-| persistent | yes | yes | yes | rule 1 (flag intubated set) | plausible |
-| responding | no | no | no | rule 3 (phase is responding) | plausible |
-| responding | no | no | yes | rule 1 (flag intubated set) | plausible |
-| responding | no | yes | no | rule 3 (phase is responding) | plausible |
-| responding | no | yes | yes | rule 1 (flag intubated set) | plausible |
-| responding | yes | no | no | rule 3 (phase is responding) | plausible |
-| responding | yes | no | yes | rule 1 (flag intubated set) | plausible |
-| responding | yes | yes | no | rule 3 (phase is responding) | plausible |
-| responding | yes | yes | yes | rule 1 (flag intubated set) | plausible |
-| stabilized | no | no | no | rule 2 (phase is stabilized) | plausible |
-| stabilized | no | no | yes | rule 1 (flag intubated set) | plausible |
-| stabilized | no | yes | no | rule 2 (phase is stabilized) | plausible |
-| stabilized | no | yes | yes | rule 1 (flag intubated set) | plausible |
-| stabilized | yes | no | no | rule 2 (phase is stabilized) | plausible |
-| stabilized | yes | no | yes | rule 1 (flag intubated set) | plausible |
-| stabilized | yes | yes | no | rule 2 (phase is stabilized) | plausible |
-| stabilized | yes | yes | yes | rule 1 (flag intubated set) | plausible |
-| ventilated | no | no | no | rule 10 (default) | plausible |
-| ventilated | no | no | yes | rule 0 (flag intubated set AND phase is ventilated) | plausible |
-| ventilated | no | yes | no | rule 9 (flag epi_im_ed set) | plausible |
-| ventilated | no | yes | yes | rule 0 (flag intubated set AND phase is ventilated) | plausible |
-| ventilated | yes | no | no | rule 10 (default) | plausible |
-| ventilated | yes | no | yes | rule 0 (flag intubated set AND phase is ventilated) | plausible |
-| ventilated | yes | yes | no | rule 9 (flag epi_im_ed set) | plausible |
-| ventilated | yes | yes | yes | rule 0 (flag intubated set AND phase is ventilated) | plausible |
-| worsening | no | no | no | rule 6 (phase is worsening) | plausible |
-| worsening | no | no | yes | rule 1 (flag intubated set) | plausible |
-| worsening | no | yes | no | rule 6 (phase is worsening) | plausible |
-| worsening | no | yes | yes | rule 1 (flag intubated set) | plausible |
-| worsening | yes | no | no | rule 5 (phase is worsening AND flag epi_drip_ordered set) | plausible |
-| worsening | yes | no | yes | rule 1 (flag intubated set) | plausible |
-| worsening | yes | yes | no | rule 5 (phase is worsening AND flag epi_drip_ordered set) | plausible |
-| worsening | yes | yes | yes | rule 1 (flag intubated set) | plausible |
-| «any other phase» | no | no | no | rule 10 (default) | plausible |
-| «any other phase» | no | no | yes | rule 1 (flag intubated set) | plausible |
-| «any other phase» | no | yes | no | rule 9 (flag epi_im_ed set) | plausible |
-| «any other phase» | no | yes | yes | rule 1 (flag intubated set) | plausible |
-| «any other phase» | yes | no | no | rule 10 (default) | plausible |
-| «any other phase» | yes | no | yes | rule 1 (flag intubated set) | plausible |
-| «any other phase» | yes | yes | no | rule 9 (flag epi_im_ed set) | plausible |
-| «any other phase» | yes | yes | yes | rule 1 (flag intubated set) | plausible |
+| phase | epi_im_ed | intubated | resolves to | reachable? |
+|---|---|---|---|---|
+| peri_arrest | no | no | rule 5 (phase is peri_arrest) | plausible |
+| peri_arrest | no | yes | rule 2 (flag intubated set) | plausible |
+| peri_arrest | yes | no | rule 5 (phase is peri_arrest) | plausible |
+| peri_arrest | yes | yes | rule 2 (flag intubated set) | plausible |
+| persistent | no | no | rule 8 (phase is persistent) | plausible |
+| persistent | no | yes | rule 2 (flag intubated set) | plausible |
+| persistent | yes | no | rule 8 (phase is persistent) | plausible |
+| persistent | yes | yes | rule 2 (flag intubated set) | plausible |
+| relapse | no | no | rule 6 (phase is relapse) | plausible |
+| relapse | no | yes | rule 2 (flag intubated set) | plausible |
+| relapse | yes | no | rule 6 (phase is relapse) | plausible |
+| relapse | yes | yes | rule 2 (flag intubated set) | plausible |
+| responding | no | no | rule 4 (phase is responding) | plausible |
+| responding | no | yes | rule 2 (flag intubated set) | plausible |
+| responding | yes | no | rule 4 (phase is responding) | plausible |
+| responding | yes | yes | rule 2 (flag intubated set) | plausible |
+| stabilized | no | no | rule 3 (phase is stabilized) | plausible |
+| stabilized | no | yes | rule 2 (flag intubated set) | plausible |
+| stabilized | yes | no | rule 3 (phase is stabilized) | plausible |
+| stabilized | yes | yes | rule 2 (flag intubated set) | plausible |
+| vent_relapse | no | no | rule 1 (phase is vent_relapse) | plausible |
+| vent_relapse | no | yes | rule 1 (phase is vent_relapse) | plausible |
+| vent_relapse | yes | no | rule 1 (phase is vent_relapse) | plausible |
+| vent_relapse | yes | yes | rule 1 (phase is vent_relapse) | plausible |
+| ventilated | no | no | rule 10 (default) | plausible |
+| ventilated | no | yes | rule 0 (flag intubated set AND phase is ventilated) | plausible |
+| ventilated | yes | no | rule 9 (flag epi_im_ed set) | plausible |
+| ventilated | yes | yes | rule 0 (flag intubated set AND phase is ventilated) | plausible |
+| worsening | no | no | rule 7 (phase is worsening) | plausible |
+| worsening | no | yes | rule 2 (flag intubated set) | plausible |
+| worsening | yes | no | rule 7 (phase is worsening) | plausible |
+| worsening | yes | yes | rule 2 (flag intubated set) | plausible |
+| «any other phase» | no | no | rule 10 (default) | plausible |
+| «any other phase» | no | yes | rule 2 (flag intubated set) | plausible |
+| «any other phase» | yes | no | rule 9 (flag epi_im_ed set) | plausible |
+| «any other phase» | yes | yes | rule 2 (flag intubated set) | plausible |
 
 
 ### `interview/out_of_scope_fallback`
@@ -1115,8 +1128,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| persistent | rule 0 (phase is persistent OR phase is worsening) | plausible |
-| worsening | rule 0 (phase is persistent OR phase is worsening) | plausible |
+| persistent | rule 0 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| relapse | rule 0 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| worsening | rule 0 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1154,8 +1168,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| persistent | rule 0 (phase is persistent OR phase is worsening) | plausible |
-| worsening | rule 0 (phase is persistent OR phase is worsening) | plausible |
+| persistent | rule 0 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| relapse | rule 0 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| worsening | rule 0 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1188,8 +1203,9 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | resolves to | reachable? |
 |---|---|---|
-| persistent | rule 0 (phase is persistent OR phase is worsening) | plausible |
-| worsening | rule 0 (phase is persistent OR phase is worsening) | plausible |
+| persistent | rule 0 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| relapse | rule 0 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
+| worsening | rule 0 (phase is persistent OR phase is worsening OR phase is relapse) | plausible |
 | «any other phase» | rule 1 (default) | plausible |
 
 
@@ -1277,15 +1293,17 @@ Single unconditional rule; nothing to enumerate.
 
 | phase | intubated | resolves to | reachable? |
 |---|---|---|---|
-| bradycardic_arrest | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
-| bradycardic_arrest | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
-| case_complete | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
-| case_complete | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
-| peri_arrest | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
-| peri_arrest | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
-| post_induction_collapse | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
-| post_induction_collapse | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
-| ventilated | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
-| ventilated | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| bradycardic_arrest | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| bradycardic_arrest | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| case_complete | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| case_complete | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| peri_arrest | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| peri_arrest | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| post_induction_collapse | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| post_induction_collapse | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| vent_relapse | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| vent_relapse | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| ventilated | no | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| ventilated | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
 | «any other phase» | no | **NO RULE MATCHES** | plausible |
-| «any other phase» | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
+| «any other phase» | yes | rule 0 (flag intubated set OR phase is peri_arrest OR phase is post_induction_collapse OR phase is ventilated OR phase is vent_relapse OR phase is bradycardic_arrest OR phase is case_complete) | plausible |
